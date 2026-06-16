@@ -1,0 +1,60 @@
+packages/twenty-server/src/engine/core-modules/related-person-ids/related-person-ids.module.ts
+  s_42715868b491cc::t_28c5fe940709bb 1-11
+packages/twenty-front/src/modules/activities/hooks/__tests__/useCustomResolver.test.tsx
+  s_42715868b491cc::t_28c5fe940709bb 1,3-4,6-7,10-55
+packages/twenty-front/src/modules/activities/emails/components/EmailsCard.tsx
+  s_42715868b491cc::t_28c5fe940709bb 10,54-55,61-62
+packages/twenty-front/src/modules/activities/emails/hooks/useSendEmail.ts
+  s_42715868b491cc::t_28c5fe940709bb 6,61
+packages/twenty-server/src/engine/core-modules/calendar/timeline-calendar-event.service.ts
+  s_42715868b491cc::t_28c5fe940709bb 11,30,262,264-265,271-272,277-296
+packages/twenty-server/src/engine/core-modules/messaging/timeline-messaging.resolver.ts
+  s_42715868b491cc::t_28c5fe940709bb 25-27,30,50,54-59,71,73-74
+packages/twenty-server/src/engine/core-modules/related-person-ids/utils/find-relation-paths-to-person.util.ts
+  s_42715868b491cc::t_dfa489064787f9 97,103-104
+  s_42715868b491cc::t_11d42761aea95a 1,4,10-11,70,74-77,80,84-94
+  s_42715868b491cc::t_a660d4219ef266 2,37-40,44,47-49,51-56,63,66,69,71,81,95-96,98-102,105-128
+  s_42715868b491cc::t_66ee91e55bd466 72-73,79,82
+  s_42715868b491cc::t_ce1965d90bba57 3,6-9,12-30,41-43,45-46,50,57-62,64-65,78,83,129
+  s_42715868b491cc::t_2cc69ddedb0674 5,31-36,67-68
+packages/twenty-front/src/modules/activities/calendar/components/__stories__/Calendar.stories.tsx
+  s_42715868b491cc::t_28c5fe940709bb 6,44,49,59
+packages/twenty-front/src/modules/activities/calendar/graphql/queries/getTimelineCalendarEventsFromObjectRecord.ts
+  s_42715868b491cc::t_ce1965d90bba57 4-7,11-13
+packages/twenty-front/src/modules/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord.ts
+  s_42715868b491cc::t_ce1965d90bba57 2,4-7,11-13
+packages/twenty-front/src/generated/graphql.ts
+  s_42715868b491cc::t_28c5fe940709bb 262-263,270-271,274,278-279,282,567-569,575,583-585,591,747-748
+packages/twenty-front/src/modules/activities/calendar/components/CalendarEventsCard.tsx
+  s_42715868b491cc::t_28c5fe940709bb 9,54-55,62
+packages/twenty-server/src/engine/core-modules/messaging/timeline-messaging.module.ts
+  s_42715868b491cc::t_28c5fe940709bb 7,24
+packages/twenty-server/src/engine/core-modules/messaging/services/get-messages.service.ts
+  s_42715868b491cc::t_28c5fe940709bb 7,13,67,69-70,75-79,81-86,88-93
+packages/twenty-server/src/engine/core-modules/related-person-ids/services/related-person-ids.service.ts
+  s_42715868b491cc::t_28c5fe940709bb 1-130
+packages/twenty-front/src/modules/activities/hooks/useCustomResolver.ts
+  s_42715868b491cc::t_28c5fe940709bb 49-50
+packages/twenty-server/src/engine/core-modules/calendar/timeline-calendar-event.module.ts
+  s_42715868b491cc::t_28c5fe940709bb 7,15
+packages/twenty-server/src/engine/core-modules/calendar/timeline-calendar-event.resolver.ts
+  s_42715868b491cc::t_28c5fe940709bb 18-20,23,41,44-45,48,53,56-57
+packages/twenty-server/src/engine/core-modules/related-person-ids/utils/__tests__/find-relation-paths-to-person.util.spec.ts
+  s_42715868b491cc::t_28c5fe940709bb 1-237
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "30510f596575fc58f74c4ad9c2d8ad30070a0f40",
+  "prompts": {},
+  "sessions": {
+    "s_42715868b491cc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "54397ad0-f1d2-4221-90d1-7d0e1f9e2668",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
