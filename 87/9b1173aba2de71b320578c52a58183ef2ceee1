@@ -1,0 +1,20 @@
+packages/twenty-server/src/engine/core-modules/calendar/timeline-calendar-event.service.spec.ts
+  s_42715868b491cc::t_99e4dd7edfa52a 100-103
+  s_42715868b491cc::t_3091741765e229 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "879b1173aba2de71b320578c52a58183ef2ceee1",
+  "prompts": {},
+  "sessions": {
+    "s_42715868b491cc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "54397ad0-f1d2-4221-90d1-7d0e1f9e2668",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
