@@ -17,16 +17,17 @@ Built on [Twenty](https://twenty.com) with [`twenty-sdk`](https://www.npmjs.com/
   - `post-install` — first-run setup.
 - **Roles** (`src/roles/`)
   - **Twenty Partner Ops** — internal team role, full CRUD on Partner/Company/Person/Opportunity.
-  - **Partner** — placeholder external-partner role. *Do not assign until Twenty ships
-    row-level permissions* — it currently grants access to every record.
+  - **Partner** — external-partner role, object-scoped (`canReadAllObjectRecords: false`;
+    explicit per-object permissions). Record-level scoping (a partner sees only their own
+    deals) is available now that Twenty ships row-level permissions (twentyhq/twenty#21386).
 - **Views** (`src/views/`)
-  - `Waiting for match` — opportunities awaiting human action (`matchStatus` is `TO_BE_MATCHED`).
-  - `Matches overview` — full matching funnel grouped by `matchStatus` (configure Kanban
-    grouping manually in the UI).
-  - `Opportunities` — replacement of the native opportunities view with the partner columns.
-  - `Partners` and `All matched deals` — partner-side index and deal log.
-- **Sidebar nav** — surfaced in workflow order: `Waiting for match`, `All partner deals`,
-  `Matches overview`, `Partners`, `Opportunities`.
+  - `Briefs`, `Applications`, `Awaiting intro` — the matching workflow surfaces.
+  - `Opportunities` — adds the partner columns to the Opportunity object; reached from the
+    native Opportunities entry (no separate nav item, to avoid a duplicate).
+  - `Partners`, `Validated partners`, `Partner applications`, `Partner content` — partner-side indexes.
+- **Sidebar nav** — two folders: **Matching** (`Briefs`, `Applications`, `Awaiting intro`)
+  and **Partners** (`Validated partners`, `Partner applications`, `Partners`, `Partner content`).
+  Opportunities stays on Twenty's native top-level entry.
 - **Seed scripts** (`src/scripts/`) — populate a fresh workspace with realistic demo data.
 
 ## Match status pipeline

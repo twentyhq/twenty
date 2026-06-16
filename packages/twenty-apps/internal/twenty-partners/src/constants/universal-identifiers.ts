@@ -5,9 +5,7 @@ export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER = 'ee18c3f3-ebe7-4c56-ad6d-aad555
 export const PARTNER_OBJECT_UNIVERSAL_IDENTIFIER = '39101b39-1c16-4148-9e82-45dc271bb90d';
 export const PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER = '65172140-d377-41c1-a2ae-190e96fb79dd';
 export const ALL_PARTNERS_VIEW_UNIVERSAL_IDENTIFIER = '379b11d5-44d5-476b-ba7d-31d5f515c9b4';
-export const ALL_MATCHED_DEALS_VIEW_UNIVERSAL_IDENTIFIER = '7a34da39-a8e1-44c7-88b4-91ceaa064920';
 export const PARTNERS_NAV_UNIVERSAL_IDENTIFIER = '3fe15ab5-e38b-4914-af17-2270b210aeb2';
-export const PARTNER_DEALS_NAV_UNIVERSAL_IDENTIFIER = 'c5e4ac36-bede-4f4b-bfe8-bbd09518abae';
 export const POST_INSTALL_FN_UNIVERSAL_IDENTIFIER = 'f92bad2e-5905-4757-96ee-af9869d4ca0c';
 export const ON_PARTNER_APPLICATION_CREATED_FN_UNIVERSAL_IDENTIFIER = '43888cce-a2aa-4100-afbc-59a4f978ce53';
 export const MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER = 'd8dd0623-3a4c-4ab3-a1e0-4ece7df24fb2';
@@ -17,20 +15,12 @@ export const INTRO_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER = 'fcf39b0c-0547-415e-806d
 export const TWENTY_PARTNER_OPS_ROLE_UNIVERSAL_IDENTIFIER = '3340ca65-863d-4cdc-95c9-8abdec13d0f6';
 export const PARTNER_ROLE_UNIVERSAL_IDENTIFIER = 'c3c1dc2e-1a08-4de5-abb7-2139b3d99343';
 
-// Views (Task 3)
-export const WAITING_FOR_MATCH_VIEW_UNIVERSAL_IDENTIFIER = 'fe11e738-6bf3-4714-929c-51c76a3fd050';
-export const MATCHES_OVERVIEW_VIEW_UNIVERSAL_IDENTIFIER = '5a8fd51a-cf9e-4a6a-b1b4-b833b215fc1c';
-
-// Nav items (Task 5)
-export const WAITING_FOR_MATCH_NAV_UNIVERSAL_IDENTIFIER = '00be7449-8927-47c8-a6a1-212d9106587f';
-export const MATCHES_OVERVIEW_NAV_UNIVERSAL_IDENTIFIER = '0cf349c9-fcbf-40f8-8e91-142c02bbde9c';
-
 // Page layout (Task 6)
 export const PARTNER_RECORD_PAGE_UNIVERSAL_IDENTIFIER = 'a888b39e-d64a-48ba-a044-d8cb685fad74';
 
-// All Opportunities view + nav
+// All Opportunities view (partner columns). No nav item: the view is reachable
+// from the native Opportunities object; the app no longer adds a duplicate entry.
 export const ALL_OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER = '6ce1300b-6e91-4c28-83bb-6f692dbc7a98';
-export const ALL_OPPORTUNITIES_NAV_UNIVERSAL_IDENTIFIER = '37944f52-cbe5-4814-a1e6-be5b21425870';
 
 // Partner views + nav (harmonization)
 export const PARTNER_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER = 'b57a84ed-d7c1-420d-b0eb-348db0dac612';
