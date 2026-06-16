@@ -1,19 +1,25 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import {
+  IconDotsVertical,
+  IconLayoutGrid,
+  IconTrash,
+} from '@tabler/icons-react';
 
-import { PRODUCT_FEATURE_SCENE } from '@/tokens/feature-scenes/product-feature-scene';
+import { PRODUCT_FEATURE_PALETTE } from '@/tokens/feature-scenes/product-feature-palette';
 
 import { BarChart } from './bar-chart';
 import { DASHBOARD_VISUAL_DATA } from './dashboard-visual-data';
 import { DonutChart } from './donut-chart';
 
-const scene = PRODUCT_FEATURE_SCENE.window;
+const palette = PRODUCT_FEATURE_PALETTE;
 
 const Window = styled.div`
-  background-color: ${scene.background};
+  background-color: ${palette.background};
   display: flex;
   flex-direction: column;
+  font-family: ${palette.font};
   height: 100%;
   overflow: hidden;
   width: 100%;
@@ -21,7 +27,7 @@ const Window = styled.div`
 
 const Topbar = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${scene.border};
+  border-bottom: 1px solid ${palette.borderLight};
   display: flex;
   flex-shrink: 0;
   gap: 8px;
@@ -36,18 +42,18 @@ const BreadcrumbNav = styled.div`
 
 const BreadcrumbIcon = styled.span`
   align-items: center;
-  color: ${scene.textSecondary};
+  color: ${palette.textSecondary};
   display: flex;
 `;
 
 const BreadcrumbText = styled.span`
-  color: ${scene.textSecondary};
+  color: ${palette.textSecondary};
   font-size: 12px;
   letter-spacing: 0.01em;
 `;
 
 const BreadcrumbBold = styled.span`
-  color: ${scene.textPrimary};
+  color: ${palette.textPrimary};
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.01em;
@@ -62,9 +68,9 @@ const TopbarActions = styled.div`
 
 const ActionButton = styled.span`
   align-items: center;
-  border: 1px solid ${scene.border};
+  border: 1px solid ${palette.border};
   border-radius: 4px;
-  color: ${scene.textSecondary};
+  color: ${palette.textSecondary};
   display: flex;
   font-size: 11px;
   gap: 4px;
@@ -72,7 +78,7 @@ const ActionButton = styled.span`
 `;
 
 const ActionIcon = styled.span`
-  color: ${scene.textMuted};
+  color: ${palette.textTertiary};
   display: flex;
 `;
 
@@ -93,14 +99,15 @@ const BarChartCell = styled.div`
 `;
 
 const BottomPanel = styled.div`
-  background-color: ${scene.panelBackground};
-  border: 1px solid ${scene.border};
+  background-color: ${palette.background};
+  border: 1px solid ${palette.border};
   border-radius: 10px;
+  box-shadow: ${palette.shadow.light};
   padding: 14px 16px;
 `;
 
 const WidgetTitle = styled.span`
-  color: ${scene.textSecondary};
+  color: ${palette.textSecondary};
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -113,44 +120,18 @@ export function DashboardVisual({ active }: { active: boolean }) {
       <Topbar>
         <BreadcrumbNav>
           <BreadcrumbIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <rect height="7" width="7" x="3" y="3" />
-              <rect height="7" width="7" x="14" y="3" />
-              <rect height="7" width="7" x="3" y="14" />
-              <rect height="7" width="7" x="14" y="14" />
-            </svg>
+            <IconLayoutGrid size={14} stroke={1.6} />
           </BreadcrumbIcon>
           <BreadcrumbText>Dashboard /</BreadcrumbText>
           <BreadcrumbBold>Sales performances</BreadcrumbBold>
         </BreadcrumbNav>
         <TopbarActions>
           <ActionButton>
-            <svg
-              fill="none"
-              height="12"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              width="12"
-            >
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-            </svg>
+            <IconTrash size={12} stroke={1.6} />
             Delete
           </ActionButton>
           <ActionIcon>
-            <svg fill="currentColor" height="14" viewBox="0 0 24 24" width="14">
-              <circle cx="12" cy="5" r="1.5" />
-              <circle cx="12" cy="12" r="1.5" />
-              <circle cx="12" cy="19" r="1.5" />
-            </svg>
+            <IconDotsVertical size={14} stroke={1.6} />
           </ActionIcon>
           <ActionButton>⌘K</ActionButton>
         </TopbarActions>

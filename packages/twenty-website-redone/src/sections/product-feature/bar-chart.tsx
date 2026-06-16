@@ -4,15 +4,15 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 
 import { EASING } from '@/tokens';
-import { PRODUCT_FEATURE_SCENE } from '@/tokens/feature-scenes/product-feature-scene';
+import { PRODUCT_FEATURE_PALETTE } from '@/tokens/feature-scenes/product-feature-palette';
 
-const scene = PRODUCT_FEATURE_SCENE.window;
-const inks = PRODUCT_FEATURE_SCENE.dashboard;
+const palette = PRODUCT_FEATURE_PALETTE;
 
 const Panel = styled.div`
-  background-color: ${scene.panelBackground};
-  border: 1px solid ${scene.border};
+  background-color: ${palette.background};
+  border: 1px solid ${palette.border};
   border-radius: 10px;
+  box-shadow: ${palette.shadow.light};
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -22,7 +22,7 @@ const Panel = styled.div`
 `;
 
 const PanelTitle = styled.span`
-  color: ${scene.textSecondary};
+  color: ${palette.textSecondary};
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -43,7 +43,7 @@ const ChartBody = styled.div`
 
 const YAxisTitle = styled.span`
   align-self: center;
-  color: ${scene.textMuted};
+  color: ${palette.textTertiary};
   font-size: 9px;
   letter-spacing: 0.03em;
   margin-right: 12px;
@@ -62,7 +62,7 @@ const YAxis = styled.div`
 `;
 
 const YLabel = styled.span`
-  color: ${scene.textMuted};
+  color: ${palette.textTertiary};
   font-size: 9px;
   font-variant-numeric: tabular-nums;
   line-height: 1;
@@ -125,7 +125,7 @@ const Bar = styled.div`
 `;
 
 const BarValue = styled.span`
-  color: ${scene.textSecondary};
+  color: ${palette.textSecondary};
   font-size: 8px;
   font-variant-numeric: tabular-nums;
   font-weight: 500;
@@ -133,14 +133,14 @@ const BarValue = styled.span`
 `;
 
 const BarLabel = styled.span`
-  color: ${scene.textMuted};
+  color: ${palette.textTertiary};
   font-size: 9px;
   font-weight: 400;
   letter-spacing: 0.02em;
 `;
 
 const XAxisTitle = styled.div`
-  color: ${scene.textMuted};
+  color: ${palette.textTertiary};
   font-size: 9px;
   letter-spacing: 0.03em;
   padding-top: 6px;
@@ -210,7 +210,7 @@ export function BarChart({
                         ) : null}
                         <Bar
                           style={{
-                            backgroundColor: inks.accent,
+                            backgroundColor: palette.chart.primary,
                             filter: isHovered ? 'brightness(1.2)' : 'none',
                             height: active ? `${firstHeight}%` : '0%',
                             transitionDelay: active
@@ -227,7 +227,7 @@ export function BarChart({
                         ) : null}
                         <Bar
                           style={{
-                            backgroundColor: inks.accentSecondary,
+                            backgroundColor: palette.chart.secondary,
                             filter: isHovered ? 'brightness(1.2)' : 'none',
                             height: active ? `${secondHeight}%` : '0%',
                             transitionDelay: active

@@ -26,6 +26,14 @@ export const PRODUCT_FEATURE_PALETTE = {
   accentBorder: 'color(display-p3 0.685 0.74 0.957)',
   accentSurfaceSoft: '#0047f112',
 
+  // Dashboard data-viz: primary == accent9 (indigo), a purple companion
+  // series, and the donut's unfilled track.
+  chart: {
+    primary: 'color(display-p3 0.276 0.384 0.837)',
+    secondary: 'color(display-p3 0.475 0.22 0.698)',
+    track: 'color(display-p3 0.914 0.914 0.914)',
+  },
+
   shadow: {
     light:
       '0px 2px 4px 0px color(display-p3 0 0 0 / 0.039), 0px 0px 4px 0px color(display-p3 0 0 0 / 0.078)',

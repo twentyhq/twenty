@@ -4,10 +4,9 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 
 import { EASING } from '@/tokens';
-import { PRODUCT_FEATURE_SCENE } from '@/tokens/feature-scenes/product-feature-scene';
+import { PRODUCT_FEATURE_PALETTE } from '@/tokens/feature-scenes/product-feature-palette';
 
-const scene = PRODUCT_FEATURE_SCENE.window;
-const inks = PRODUCT_FEATURE_SCENE.dashboard;
+const palette = PRODUCT_FEATURE_PALETTE;
 
 const RADIUS = 46;
 const STROKE_WIDTH = 14;
@@ -15,9 +14,10 @@ const SIZE = 130;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 const Panel = styled.div`
-  background-color: ${scene.panelBackground};
-  border: 1px solid ${scene.border};
+  background-color: ${palette.background};
+  border: 1px solid ${palette.border};
   border-radius: 10px;
+  box-shadow: ${palette.shadow.light};
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -25,7 +25,7 @@ const Panel = styled.div`
 `;
 
 const PanelTitle = styled.span`
-  color: ${scene.textSecondary};
+  color: ${palette.textSecondary};
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -50,7 +50,7 @@ const CenterLabel = styled.div`
 `;
 
 const CenterValue = styled.span`
-  color: ${scene.textPrimary};
+  color: ${palette.textPrimary};
   font-size: 26px;
   font-variant-numeric: tabular-nums;
   font-weight: 700;
@@ -65,14 +65,14 @@ const Legend = styled.div`
 `;
 
 const LegendDot = styled.span`
-  background-color: ${inks.accent};
+  background-color: ${palette.chart.primary};
   border-radius: 50%;
   height: 7px;
   width: 7px;
 `;
 
 const LegendLabel = styled.span`
-  color: ${scene.textMuted};
+  color: ${palette.textTertiary};
   font-size: 10px;
   letter-spacing: 0.02em;
 `;
@@ -99,7 +99,7 @@ export function DonutChart({
             cy={SIZE / 2}
             fill="none"
             r={RADIUS}
-            stroke={inks.accentDim}
+            stroke={palette.chart.track}
             strokeWidth={STROKE_WIDTH}
           />
           <circle
@@ -109,7 +109,7 @@ export function DonutChart({
             onPointerEnter={() => setHovered(true)}
             onPointerLeave={() => setHovered(false)}
             r={RADIUS}
-            stroke={inks.accent}
+            stroke={palette.chart.primary}
             strokeDasharray={`${filled} ${gap}`}
             strokeDashoffset={active ? CIRCUMFERENCE * 0.25 : CIRCUMFERENCE}
             strokeLinecap="round"
