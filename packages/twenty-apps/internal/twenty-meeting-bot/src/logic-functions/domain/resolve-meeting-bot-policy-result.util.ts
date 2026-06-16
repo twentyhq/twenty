@@ -36,7 +36,7 @@ export const resolveMeetingBotPolicyResult = ({
     return botNotRequired('EVENT_NOT_UPCOMING');
   }
 
-  return botRequired('WORKSPACE_AUTO_RECORD');
+  return botRequired('RECORDING_ENABLED');
 };
 
 const isCalendarEventInFuture = ({

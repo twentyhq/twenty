@@ -5,8 +5,8 @@ import {
 } from 'twenty-sdk/define';
 
 import { MeetingBotPreference } from 'src/constants/meeting-bot-preference';
-import { MEETING_BOT_PREFERENCE_AUTO_OPTION_ID } from 'src/constants/meeting-bot-preference-auto-option-id';
 import { MEETING_BOT_PREFERENCE_OFF_OPTION_ID } from 'src/constants/meeting-bot-preference-off-option-id';
+import { MEETING_BOT_PREFERENCE_ON_OPTION_ID } from 'src/constants/meeting-bot-preference-on-option-id';
 import { MEETING_BOT_PREFERENCE_ON_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/meeting-bot-preference-on-calendar-event-field-universal-identifier';
 
 export default defineField({
@@ -18,22 +18,22 @@ export default defineField({
   name: 'meetingBotPreference',
   label: 'Recording Bot',
   description:
-    'Recording is enabled by default when the meeting bot app is installed. Disable it for this event when needed.',
+    'Meeting bot recording is on by default when the app is installed. Turn it off for this event when needed.',
   icon: 'IconRobot',
   isNullable: false,
-  defaultValue: `'${MeetingBotPreference.AUTO}'`,
+  defaultValue: `'${MeetingBotPreference.ON}'`,
   options: [
     {
-      id: MEETING_BOT_PREFERENCE_AUTO_OPTION_ID,
-      value: MeetingBotPreference.AUTO,
-      label: 'Record by default',
+      id: MEETING_BOT_PREFERENCE_ON_OPTION_ID,
+      value: MeetingBotPreference.ON,
+      label: 'On',
       position: 0,
-      color: 'gray',
+      color: 'green',
     },
     {
       id: MEETING_BOT_PREFERENCE_OFF_OPTION_ID,
       value: MeetingBotPreference.OFF,
-      label: 'Do not record',
+      label: 'Off',
       position: 1,
       color: 'red',
     },

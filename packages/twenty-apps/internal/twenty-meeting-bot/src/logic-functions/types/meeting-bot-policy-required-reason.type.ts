@@ -1,1 +1,1 @@
-export type MeetingBotPolicyRequiredReason = 'WORKSPACE_AUTO_RECORD';
+export type MeetingBotPolicyRequiredReason = 'RECORDING_ENABLED';

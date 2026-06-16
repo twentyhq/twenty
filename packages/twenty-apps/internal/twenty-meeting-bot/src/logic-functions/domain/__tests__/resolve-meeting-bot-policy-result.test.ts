@@ -10,11 +10,11 @@ const PAST_STARTS_AT = '2026-01-01T09:00:00.000Z';
 const PAST_ENDS_AT = '2026-01-01T10:00:00.000Z';
 
 describe('resolveMeetingBotPolicyResult', () => {
-  it('requires a bot when preference is AUTO and the event is upcoming', () => {
+  it('requires a bot when preference is ON and the event is upcoming', () => {
     expect(
       resolveMeetingBotPolicyResult({
         input: {
-          meetingBotPreference: MeetingBotPreference.AUTO,
+          meetingBotPreference: MeetingBotPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -24,15 +24,15 @@ describe('resolveMeetingBotPolicyResult', () => {
       }),
     ).toEqual({
       shouldRequestBot: true,
-      reason: 'WORKSPACE_AUTO_RECORD',
+      reason: 'RECORDING_ENABLED',
     });
   });
 
-  it('does not request a bot for AUTO when the meeting has no conference link', () => {
+  it('does not request a bot for ON when the meeting has no conference link', () => {
     expect(
       resolveMeetingBotPolicyResult({
         input: {
-          meetingBotPreference: MeetingBotPreference.AUTO,
+          meetingBotPreference: MeetingBotPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -60,7 +60,7 @@ describe('resolveMeetingBotPolicyResult', () => {
       }),
     ).toEqual({
       shouldRequestBot: true,
-      reason: 'WORKSPACE_AUTO_RECORD',
+      reason: 'RECORDING_ENABLED',
     });
   });
 

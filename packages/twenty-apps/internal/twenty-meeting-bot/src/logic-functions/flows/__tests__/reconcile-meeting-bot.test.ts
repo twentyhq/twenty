@@ -194,7 +194,7 @@ const buildCalendarEvent = (
   conferenceLink: {
     primaryLinkUrl: 'https://meet.example.com/customer-sync',
   },
-  meetingBotPreference: 'AUTO',
+  meetingBotPreference: 'ON',
   ...overrides,
 });
 
@@ -262,7 +262,7 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
     });
   });
 
-  it('creates a scheduled call recording for the default AUTO preference', async () => {
+  it('creates a scheduled call recording for the default ON preference', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [buildCalendarEvent({ meetingBotPreference: null })],
     });

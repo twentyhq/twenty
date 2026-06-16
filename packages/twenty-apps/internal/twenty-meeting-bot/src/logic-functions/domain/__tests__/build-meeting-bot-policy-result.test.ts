@@ -19,17 +19,17 @@ const buildCalendarEventInput = (
 });
 
 describe('buildMeetingBotPolicyResult', () => {
-  it('requests a bot for the AUTO wire value', () => {
+  it('requests a bot for the ON wire value', () => {
     const policyResult = buildMeetingBotPolicyResult(
       buildCalendarEventInput({
-        meetingBotPreference: 'AUTO',
+        meetingBotPreference: 'ON',
       }),
       NOW,
     );
 
-    expect(policyResult.meetingBotPreference).toBe('AUTO');
+    expect(policyResult.meetingBotPreference).toBe('ON');
     expect(policyResult.shouldRequestBot).toBe(true);
-    expect(policyResult.reason).toBe('WORKSPACE_AUTO_RECORD');
+    expect(policyResult.reason).toBe('RECORDING_ENABLED');
   });
 
   it('does not request a bot for the OFF wire value', () => {
