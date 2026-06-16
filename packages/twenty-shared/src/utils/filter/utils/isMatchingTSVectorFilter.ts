@@ -14,6 +14,15 @@ export const isMatchingTSVectorFilter = ({
 
   switch (true) {
     case tsVectorFilter.search !== undefined: {
+      // Guard against non-string search values that crash .toLowerCase() / .split()
+      if (typeof tsVectorFilter.search !== 'string') {
+        return false;
+      }
+
+      if (typeof value !== 'string') {
+        return false;
+      }
+
       const searchQuery = tsVectorFilter.search.toLowerCase();
       const searchValue = value.toLowerCase();
       const searchWords = searchQuery.split(/\s+/).filter(Boolean);
