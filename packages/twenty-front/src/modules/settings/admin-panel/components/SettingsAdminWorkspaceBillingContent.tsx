@@ -220,11 +220,6 @@ export const SettingsAdminWorkspaceBillingContent = ({
     : null;
   const isTrialing = subscription?.status === SubscriptionStatus.Trialing;
 
-  const usageProgressValue =
-    isDefined(usage) && usage.totalGrantedCredits > 0
-      ? (usage.usedCredits / usage.totalGrantedCredits) * 100
-      : 0;
-
   const usageItems = isDefined(usage)
     ? [
         {
