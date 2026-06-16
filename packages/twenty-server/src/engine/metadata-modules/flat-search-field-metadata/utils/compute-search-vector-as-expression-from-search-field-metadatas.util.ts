@@ -15,6 +15,16 @@ export type SearchVectorTargetField = {
   sortKey: string;
 };
 
+export const buildSearchVectorTargetField = (
+  field: { name: string; type: FieldMetadataType; createdAt: string },
+  sortKey: string,
+): SearchVectorTargetField => ({
+  name: field.name,
+  type: field.type,
+  createdAt: field.createdAt,
+  sortKey,
+});
+
 // Builds the searchVector to_tsvector asExpression from the fields targeted by an
 // object's searchFieldMetadata rows. Callers MUST pass the POST-change field set
 // (i.e. account for any row being added/removed in the same operation) rather than

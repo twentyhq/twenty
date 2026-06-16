@@ -10,7 +10,10 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { computeSearchVectorAsExpressionFromSearchFieldMetadatas } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/compute-search-vector-as-expression-from-search-field-metadatas.util';
+import {
+  buildSearchVectorTargetField,
+  computeSearchVectorAsExpressionFromSearchFieldMetadatas,
+} from 'src/engine/metadata-modules/flat-search-field-metadata/utils/compute-search-vector-as-expression-from-search-field-metadatas.util';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 
 type RecomputeSearchVectorFieldFromSearchFieldMetadatasArgs = {
@@ -61,12 +64,10 @@ export const recomputeSearchVectorFieldFromSearchFieldMetadatas = ({
         );
       }
 
-      return {
-        name: flatFieldMetadata.name,
-        type: flatFieldMetadata.type,
-        createdAt: flatFieldMetadata.createdAt,
-        sortKey: flatFieldMetadata.id,
-      };
+      return buildSearchVectorTargetField(
+        flatFieldMetadata,
+        flatFieldMetadata.id,
+      );
     },
   );
 
