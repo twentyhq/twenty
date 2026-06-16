@@ -7,12 +7,14 @@ import { calendarBookingPageIdState } from '@/client-config/states/calendarBooki
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { reportUnknownObjectRoute } from '@/object-metadata/utils/reportUnknownObjectRoute';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useEffect, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -53,6 +55,8 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
 
   const pageLayoutId = params.pageLayoutId;
+
+  const unknownObjectRouteNamePluralRef = useRef<string | null>(null);
   const isOnPageLayoutPage = isMatchingLocation(
     location,
     AppPath.PageLayoutPage,
@@ -73,6 +77,40 @@ export const usePageChangeEffectNavigateLocation = () => {
   const resolvedReturnToPath = isNonEmptyString(returnToPath)
     ? returnToPath
     : readReturnToPathFromUrlSearchParams();
+
+  const shouldRedirectToNotFoundForUnknownObjectRoute =
+    isMatchingLocation(location, AppPath.RecordIndexPage) &&
+    !isDefined(objectMetadataItem);
+
+  const shouldReportUnknownObjectRoute =
+    shouldRedirectToNotFoundForUnknownObjectRoute &&
+    isNonEmptyString(objectNamePlural) &&
+    isDefined(objectMetadataItems) &&
+    objectMetadataItems.length > 0;
+
+  useEffect(() => {
+    if (!shouldReportUnknownObjectRoute || !isDefined(objectMetadataItems)) {
+      unknownObjectRouteNamePluralRef.current = null;
+      return;
+    }
+
+    if (unknownObjectRouteNamePluralRef.current === objectNamePlural) {
+      return;
+    }
+
+    unknownObjectRouteNamePluralRef.current = objectNamePlural;
+
+    void reportUnknownObjectRoute({
+      objectNamePlural,
+      pathname: location.pathname,
+      objectMetadataItemsCount: objectMetadataItems.length,
+    });
+  }, [
+    shouldReportUnknownObjectRoute,
+    location.pathname,
+    objectMetadataItems,
+    objectNamePlural,
+  ]);
 
   if (
     (!hasAccessTokenPair || (hasAccessTokenPair && !isOnAWorkspace)) &&
@@ -171,10 +209,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     return resolvedReturnToPath ?? defaultHomePagePath;
   }
 
-  if (
-    isMatchingLocation(location, AppPath.RecordIndexPage) &&
-    !isDefined(objectMetadataItem)
-  ) {
+  if (shouldRedirectToNotFoundForUnknownObjectRoute) {
     return AppPath.NotFound;
   }
 

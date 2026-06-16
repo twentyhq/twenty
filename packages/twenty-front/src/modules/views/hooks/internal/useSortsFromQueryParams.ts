@@ -1,8 +1,7 @@
 import qs from 'qs';
 import { useCallback, useMemo } from 'react';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { sortUrlQueryParamsSchema } from '@/views/schemas/sortUrlQueryParamsSchema';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -12,12 +11,10 @@ import { type ViewSortDirection } from '~/generated-metadata/graphql';
 export const useSortsFromQueryParams = () => {
   const [searchParams] = useSearchParams();
   const { objectNamePlural = '' } = useParams();
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { findObjectMetadataItemByNamePlural } =
+    useFilteredObjectMetadataItems();
+  const objectMetadataItem =
+    findObjectMetadataItemByNamePlural(objectNamePlural);
 
   const queryParamsValidation = sortUrlQueryParamsSchema.safeParse(
     qs.parse(searchParams.toString()),
@@ -33,7 +30,9 @@ export const useSortsFromQueryParams = () => {
     isDefined(sortQueryParams) && Object.entries(sortQueryParams).length > 0;
 
   const getSortsFromQueryParams = useCallback((): RecordSort[] => {
-    if (!hasSortsQueryParams) return [];
+    if (!hasSortsQueryParams || !isDefined(objectMetadataItem)) {
+      return [];
+    }
 
     return Object.entries(sortQueryParams)
       .map(([fieldName, direction]) => {
@@ -50,8 +49,7 @@ export const useSortsFromQueryParams = () => {
         };
       })
       .filter(isDefined);
-  }, [hasSortsQueryParams, sortQueryParams, objectMetadataItem.fields]);
-
+  }, [hasSortsQueryParams, sortQueryParams, objectMetadataItem]);
   return {
     hasSortsQueryParams,
     getSortsFromQueryParams,

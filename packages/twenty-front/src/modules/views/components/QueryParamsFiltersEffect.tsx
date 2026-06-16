@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -19,12 +18,10 @@ export const QueryParamsFiltersEffect = () => {
   const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
   const { objectNamePlural = '' } = useParams();
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { findObjectMetadataItemByNamePlural } =
+    useFilteredObjectMetadataItems();
+  const objectMetadataItem =
+    findObjectMetadataItemByNamePlural(objectNamePlural);
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -41,6 +38,7 @@ export const QueryParamsFiltersEffect = () => {
   );
 
   const currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem =
+    !isDefined(objectMetadataItem) ||
     currentView?.objectMetadataId !== objectMetadataItem.id;
 
   useEffect(() => {

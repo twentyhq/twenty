@@ -1,8 +1,7 @@
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 import qs from 'qs';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -18,12 +17,10 @@ import { isDefined, isExpectedSubFieldName } from 'twenty-shared/utils';
 export const useFiltersFromQueryParams = () => {
   const [searchParams] = useSearchParams();
   const { objectNamePlural = '' } = useParams();
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { findObjectMetadataItemByNamePlural } =
+    useFilteredObjectMetadataItems();
+  const objectMetadataItem =
+    findObjectMetadataItemByNamePlural(objectNamePlural);
 
   const queryParamsValidation = filterUrlQueryParamsSchema.safeParse(
     qs.parse(searchParams.toString()),
@@ -32,7 +29,9 @@ export const useFiltersFromQueryParams = () => {
   const getFiltersFromQueryParams = useCallback(async (): Promise<
     ViewFilter[]
   > => {
-    if (!queryParamsValidation.success) return [];
+    if (!queryParamsValidation.success || !isDefined(objectMetadataItem)) {
+      return [];
+    }
 
     const filterQueryParams = queryParamsValidation.data.filter;
 
@@ -109,8 +108,7 @@ export const useFiltersFromQueryParams = () => {
     }
 
     return (await Promise.all(promises)).filter(isDefined);
-  }, [queryParamsValidation, objectMetadataItem.fields]);
-
+  }, [queryParamsValidation, objectMetadataItem]);
   const filterGroupQueryParams = queryParamsValidation.success
     ? queryParamsValidation.data.filterGroup
     : undefined;
@@ -120,6 +118,10 @@ export const useFiltersFromQueryParams = () => {
     recordFilterGroups: RecordFilterGroup[];
   }> => {
     if (!isDefined(filterGroupQueryParams)) {
+      return { recordFilters: [], recordFilterGroups: [] };
+    }
+
+    if (!isDefined(objectMetadataItem)) {
       return { recordFilters: [], recordFilterGroups: [] };
     }
 
