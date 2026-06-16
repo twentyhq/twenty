@@ -4,8 +4,9 @@ name: Visual Regression Dispatch
 # Runs in the context of the base repo (not the fork) so it has access to secrets,
 # making it work for external contributor PRs.
 #
-# All dispatches use the same event_type=visual-regression with project/artifact_name
-# in the payload. ci-privileged routes to the correct Argos project based on these.
+# All paths trigger the same ci-privileged workflow (post-visual-regression-comment.yaml)
+# via workflow_dispatch, passing the project as an input. ci-privileged routes to the
+# correct Argos project based on it.
 
 on:
   workflow_run:
@@ -146,9 +147,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Mint ci-privileged dispatch token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-privileged
+          permission-actions: write
+
       - name: Dispatch to ci-privileged
         env:
-          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PROJECT: ${{ needs.resolve-context.outputs.project }}
           PR_NUMBER: ${{ needs.resolve-context.outputs.pr_number }}
           WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
@@ -159,21 +170,19 @@ jobs:
           ARTIFACT_NAME: ${{ needs.resolve-context.outputs.artifact_name }}
         run: |
           ARGS=(
-            --method POST
-            -f event_type=visual-regression
-            -f "client_payload[project]=$PROJECT"
-            -f "client_payload[artifact_name]=$ARTIFACT_NAME"
-            -f "client_payload[run_id]=$WORKFLOW_RUN_ID"
-            -f "client_payload[repo]=$REPOSITORY"
-            -f "client_payload[branch]=$BRANCH"
-            -f "client_payload[commit]=$COMMIT"
+            -f project="$PROJECT"
+            -f artifact_name="$ARTIFACT_NAME"
+            -f run_id="$WORKFLOW_RUN_ID"
+            -f repo="$REPOSITORY"
+            -f branch="$BRANCH"
+            -f commit="$COMMIT"
           )
 
           if [ -n "$PR_NUMBER" ]; then
-            ARGS+=(-f "client_payload[pr_number]=$PR_NUMBER")
+            ARGS+=(-f pr_number="$PR_NUMBER")
           fi
           if [ -n "$REFERENCE_COMMIT" ]; then
-            ARGS+=(-f "client_payload[reference_commit]=$REFERENCE_COMMIT")
+            ARGS+=(-f reference_commit="$REFERENCE_COMMIT")
           fi
 
-          gh api repos/twentyhq/ci-privileged/dispatches "${ARGS[@]}"
+          gh workflow run post-visual-regression-comment.yaml --repo twentyhq/ci-privileged --ref main "${ARGS[@]}"

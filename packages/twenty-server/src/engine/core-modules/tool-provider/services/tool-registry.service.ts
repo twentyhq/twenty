@@ -13,6 +13,7 @@ import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/too
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { wrapWithErrorHandler } from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import {
@@ -241,6 +242,31 @@ export class ToolRegistryService {
     });
   }
 
+  async suggestSimilarToolNames(
+    toolNames: string[],
+    context: ToolContext,
+  ): Promise<Record<string, string[]>> {
+    const fullContext = this.buildContextFromToolContext(context);
+
+    const catalog = await this.getCatalog(fullContext);
+    const candidateToolNames = catalog.map((entry) => entry.name);
+
+    const suggestionsByToolName: Record<string, string[]> = {};
+
+    for (const toolName of toolNames) {
+      const similarToolNames = findSimilarToolNames(
+        toolName,
+        candidateToolNames,
+      );
+
+      if (similarToolNames.length > 0) {
+        suggestionsByToolName[toolName] = similarToolNames;
+      }
+    }
+
+    return suggestionsByToolName;
+  }
+
   async resolveAndExecute(
     toolName: string,
     args: Record<string, unknown> | undefined,
@@ -254,10 +280,19 @@ export class ToolRegistryService {
       const entry = index.find((indexEntry) => indexEntry.name === toolName);
 
       if (!entry) {
+        const similarToolNames = findSimilarToolNames(
+          toolName,
+          index.map((indexEntry) => indexEntry.name),
+        );
+        const suggestionHint =
+          similarToolNames.length > 0
+            ? ` Did you mean: ${similarToolNames.join(', ')}?`
+            : '';
+
         return {
           success: false,
           message: `Tool "${toolName}" not found`,
-          error: `Tool "${toolName}" not found. Use learn_tools to discover available tools.`,
+          error: `Tool "${toolName}" not found.${suggestionHint} Use learn_tools to discover available tools.`,
         };
       }
 
