@@ -1878,9 +1878,11 @@ export interface PublicConnectionParametersOutput {
     host: Scalars['String']
     port: Scalars['Float']
     username?: Scalars['String']
-    secure?: Scalars['Boolean']
+    connectionSecurity?: EmailConnectionSecurity
     __typename: 'PublicConnectionParametersOutput'
 }
+
+export type EmailConnectionSecurity = 'NONE' | 'STARTTLS' | 'SSL_TLS'
 
 export interface PublicImapSmtpCaldavConnectionParameters {
     IMAP?: PublicConnectionParametersOutput
@@ -2235,7 +2237,7 @@ export interface ImapSmtpCaldavPublicConnectionParams {
     host: Scalars['String']
     port: Scalars['Float']
     username?: Scalars['String']
-    secure?: Scalars['Boolean']
+    connectionSecurity?: EmailConnectionSecurity
     __typename: 'ImapSmtpCaldavPublicConnectionParams'
 }
 
@@ -4934,7 +4936,7 @@ export interface PublicConnectionParametersOutputGenqlSelection{
     host?: boolean | number
     port?: boolean | number
     username?: boolean | number
-    secure?: boolean | number
+    connectionSecurity?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5317,7 +5319,7 @@ export interface ImapSmtpCaldavPublicConnectionParamsGenqlSelection{
     host?: boolean | number
     port?: boolean | number
     username?: boolean | number
-    secure?: boolean | number
+    connectionSecurity?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6476,7 +6478,7 @@ export interface SendEmailAttachmentInput {id: Scalars['String'],name: Scalars['
 
 export interface EmailAccountConnectionParameters {IMAP?: (ConnectionParametersInput | null),SMTP?: (ConnectionParametersInput | null),CALDAV?: (ConnectionParametersInput | null)}
 
-export interface ConnectionParametersInput {host: Scalars['String'],port: Scalars['Float'],username?: (Scalars['String'] | null),password?: (Scalars['String'] | null),secure?: (Scalars['Boolean'] | null)}
+export interface ConnectionParametersInput {host: Scalars['String'],port: Scalars['Float'],username?: (Scalars['String'] | null),password?: (Scalars['String'] | null),connectionSecurity?: (EmailConnectionSecurity | null)}
 
 export interface UpdateLabPublicFeatureFlagInput {publicFeatureFlag: Scalars['String'],value: Scalars['Boolean']}
 
@@ -9025,6 +9027,12 @@ export const enumBillingEntitlementKey = {
    CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
    RLS: 'RLS' as const,
    AUDIT_LOGS: 'AUDIT_LOGS' as const
+}
+
+export const enumEmailConnectionSecurity = {
+   NONE: 'NONE' as const,
+   STARTTLS: 'STARTTLS' as const,
+   SSL_TLS: 'SSL_TLS' as const
 }
 
 export const enumEmailingDomainStatus = {

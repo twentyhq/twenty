@@ -2234,7 +2234,13 @@ type PublicConnectionParametersOutput {
   host: String!
   port: Float!
   username: String
-  secure: Boolean
+  connectionSecurity: EmailConnectionSecurity
+}
+
+enum EmailConnectionSecurity {
+  NONE
+  STARTTLS
+  SSL_TLS
 }
 
 type PublicImapSmtpCaldavConnectionParameters {
@@ -2589,7 +2595,7 @@ type ImapSmtpCaldavPublicConnectionParams {
   host: String!
   port: Float!
   username: String
-  secure: Boolean
+  connectionSecurity: EmailConnectionSecurity
 }
 
 type ImapSmtpCaldavPublicConnectionParameters {
@@ -4546,7 +4552,7 @@ input ConnectionParametersInput {
   port: Float!
   username: String
   password: String
-  secure: Boolean
+  connectionSecurity: EmailConnectionSecurity
 }
 
 input UpdateLabPublicFeatureFlagInput {
