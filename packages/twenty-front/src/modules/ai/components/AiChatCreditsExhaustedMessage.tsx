@@ -5,7 +5,6 @@ import { useCreditUpgradeAction } from '@/settings/billing/hooks/useCreditUpgrad
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -28,7 +27,6 @@ export const AiChatCreditsExhaustedMessage = () => {
   const navigateSettings = useNavigateSettings();
   const { openModal } = useModal();
 
-
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToManageBilling } =
     usePermissionFlagMap();
 
@@ -45,8 +43,6 @@ export const AiChatCreditsExhaustedMessage = () => {
     upgradeCreditPlan,
     isUpgrading,
   } = useCreditUpgradeAction();
-
-
 
   if (!hasPermissionToManageBilling) {
     return (

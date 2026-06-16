@@ -318,9 +318,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'credits-exhausted': {
-
-
-
           //TODO : add real time on currentUser
           store.set(currentWorkspaceState.atom, (currentWorkspace) => {
             const currentBillingSubscription =
@@ -340,12 +337,11 @@ export const useAgentChatSubscription = (threadId: string | null) => {
               ...currentWorkspace,
               currentBillingSubscription: {
                 ...currentBillingSubscription,
-                billingSubscriptionItems: billingSubscriptionItems.map(
-                  (item) =>
-                    item.billingProduct.metadata?.['productKey'] ===
-                    BillingProductKey.RESOURCE_CREDIT
-                      ? { ...item, hasReachedCurrentPeriodCap: true }
-                      : item,
+                billingSubscriptionItems: billingSubscriptionItems.map((item) =>
+                  item.billingProduct.metadata?.['productKey'] ===
+                  BillingProductKey.RESOURCE_CREDIT
+                    ? { ...item, hasReachedCurrentPeriodCap: true }
+                    : item,
                 ),
               },
             };

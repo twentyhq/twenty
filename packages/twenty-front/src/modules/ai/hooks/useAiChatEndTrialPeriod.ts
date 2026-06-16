@@ -5,13 +5,14 @@ import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSu
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLocation } from 'react-router-dom';
 
-
 export const useAiChatEndTrialPeriod = () => {
   const location = useLocation();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
   const { endTrialPeriod, isLoading } = useEndSubscriptionTrialPeriod();
-  const hasPaymentMethod = useAtomStateValue(billingHasPaymentMethodSelector);
+  const billingHasPaymentMethod = useAtomStateValue(
+    billingHasPaymentMethodSelector,
+  );
 
   const endTrialPeriodFromAiChat = async () => {
     await endTrialPeriod({
@@ -26,6 +27,6 @@ export const useAiChatEndTrialPeriod = () => {
   return {
     endTrialPeriodFromAiChat,
     isEndTrialLoading: isLoading,
-    hasPaymentMethod,
+    hasPaymentMethod: billingHasPaymentMethod,
   };
 };

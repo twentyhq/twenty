@@ -250,7 +250,6 @@ export class BillingPortalWorkspaceService {
     return session.url;
   }
 
-
   private buildReturnUrl(workspace: WorkspaceEntity, returnUrlPath?: string) {
     const frontBaseUrl = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
@@ -261,7 +260,6 @@ export class BillingPortalWorkspaceService {
     }
 
     const resolvedUrl = new URL(returnUrlPath, frontBaseUrl);
-
 
     if (resolvedUrl.origin !== frontBaseUrl.origin) {
       return frontBaseUrl.toString();

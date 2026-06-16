@@ -27,7 +27,6 @@ export const useEndSubscriptionTrialPeriod = () => {
   const { redirect } = useRedirect();
   const location = useLocation();
 
-
   const redirectToPaymentMethodUpdate = async (
     fallbackUrl: string | null | undefined,
     finalRedirectPath: string,
@@ -72,11 +71,11 @@ export const useEndSubscriptionTrialPeriod = () => {
     try {
       setIsLoading(true);
 
-      if(options?.skipPaymentMethodRedirect === true) {
-      enqueueInfoSnackBar({
-        message: t`Activating subscription...`,
-      });
-    }
+      if (options?.skipPaymentMethodRedirect === true) {
+        enqueueInfoSnackBar({
+          message: t`Activating subscription...`,
+        });
+      }
 
       const finalRedirectPath =
         options?.finalRedirectPath ?? `${location.pathname}${location.search}`;
@@ -107,10 +106,13 @@ export const useEndSubscriptionTrialPeriod = () => {
           currentBillingSubscription: {
             ...currentWorkspace?.currentBillingSubscription,
             status: updatedSubscriptionStatus,
-            billingSubscriptionItems: currentWorkspace?.currentBillingSubscription?.billingSubscriptionItems?.map((item) => ({
-              ...item,
-              hasReachedCurrentPeriodCap: false,
-            })),
+            billingSubscriptionItems:
+              currentWorkspace?.currentBillingSubscription?.billingSubscriptionItems?.map(
+                (item) => ({
+                  ...item,
+                  hasReachedCurrentPeriodCap: false,
+                }),
+              ),
           },
         });
       }

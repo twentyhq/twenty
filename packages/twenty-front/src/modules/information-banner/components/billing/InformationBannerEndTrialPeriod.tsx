@@ -19,7 +19,9 @@ export const InformationBannerEndTrialPeriod = () => {
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
     usePermissionFlagMap();
 
-  const hasPaymentMethod = useAtomStateValue(billingHasPaymentMethodSelector);
+  const billingHasPaymentMethod = useAtomStateValue(
+    billingHasPaymentMethodSelector,
+  );
 
   return (
     <>

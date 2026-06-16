@@ -4,9 +4,7 @@ import { EndTrialAfterPaymentMethodEffect } from '@/settings/billing/effect-comp
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSearchParams } from 'react-router-dom';
 
-// Cheap, always-mounted guard. It only reads the billing config atom and the
-// URL search params, and renders the (hook-heavy) effect exclusively when the
-// user is returning from the Stripe payment-method-update portal.
+
 export const EndTrialAfterPaymentMethodGater = () => {
   const billing = useAtomStateValue(billingState);
   const [searchParams] = useSearchParams();

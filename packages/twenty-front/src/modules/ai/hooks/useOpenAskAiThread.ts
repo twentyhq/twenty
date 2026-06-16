@@ -5,7 +5,6 @@ import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPage
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
-
 export const useOpenAskAiThread = () => {
   const agentChatVisibleThreads = useAtomStateValue(
     agentChatVisibleThreadsSelector,

@@ -288,7 +288,7 @@ export class BillingResolver {
         billingPortalUrl,
       };
     }
-    
+
     return {
       hasPaymentMethod: result.hasPaymentMethod,
       status: result.status,

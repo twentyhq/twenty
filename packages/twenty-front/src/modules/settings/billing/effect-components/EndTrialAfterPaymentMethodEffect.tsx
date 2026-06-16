@@ -11,7 +11,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
-
 export const EndTrialAfterPaymentMethodEffect = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,7 +20,6 @@ export const EndTrialAfterPaymentMethodEffect = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   useEffect(() => {
-
     if (!isDefined(subscriptionStatus)) {
       return;
     }

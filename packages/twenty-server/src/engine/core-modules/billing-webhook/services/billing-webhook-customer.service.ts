@@ -16,12 +16,15 @@ import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billi
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { isDefined } from 'twenty-shared/utils';
+import { isString } from '@sniptt/guards';
 @Injectable()
 export class BillingWebhookCustomerService {
   protected readonly logger = new Logger(BillingWebhookCustomerService.name);
   constructor(
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository -- resolves workspaceId from a Stripe customerId before any workspace context exists
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepositoryUnscoped: Repository<BillingCustomerEntity>,
     private readonly stripeCustomerService: StripeCustomerService,
@@ -89,26 +92,24 @@ export class BillingWebhookCustomerService {
       { stripeCustomerId },
       { hasPaymentMethod: true },
     );
-
   }
 
   private async processPaymentMethodDetachedEvent(
     data: Stripe.PaymentMethodDetachedEvent.Data,
   ) {
-
     const stripeCustomerId = this.extractStripeCustomerId(
       data.previous_attributes?.customer,
     );
 
-    if (!stripeCustomerId) {
-      return ;
+    if (!isDefined(stripeCustomerId)) {
+      return;
     }
 
     const workspaceId =
       await this.getWorkspaceIdFromStripeCustomerId(stripeCustomerId);
 
-    if (!workspaceId) {
-      return ;
+    if (!isDefined(workspaceId)) {
+      return;
     }
 
     const hasPaymentMethod =
@@ -119,18 +120,16 @@ export class BillingWebhookCustomerService {
       { stripeCustomerId },
       { hasPaymentMethod },
     );
-
   }
 
   private async getWorkspaceIdFromStripeCustomerId(
     stripeCustomerId: string,
   ): Promise<string | null> {
-    const billingCustomer = await this.billingCustomerRepositoryUnscoped.findOne(
-      {
+    const billingCustomer =
+      await this.billingCustomerRepositoryUnscoped.findOne({
         where: { stripeCustomerId },
         select: { workspaceId: true },
-      },
-    );
+      });
 
     return billingCustomer?.workspaceId ?? null;
   }
@@ -147,6 +146,6 @@ export class BillingWebhookCustomerService {
       return null;
     }
 
-    return typeof customer === 'string' ? customer : customer.id;
+    return isString(customer) ? customer : customer.id;
   }
 }

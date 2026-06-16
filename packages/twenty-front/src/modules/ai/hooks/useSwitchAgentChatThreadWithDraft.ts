@@ -5,7 +5,6 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 
-
 export const useSwitchAgentChatThreadWithDraft = () => {
   const [currentAiChatThread, setCurrentAiChatThread] = useAtomState(
     currentAiChatThreadState,

@@ -1,7 +1,6 @@
 import { ASK_AI_THREAD_ID_QUERY_PARAM } from '@/ai/constants/AskAiThreadIdQueryParam';
 import { isNonEmptyString } from '@sniptt/guards';
 
-
 export const buildAskAiThreadRedirectPath = ({
   pathname,
   search,

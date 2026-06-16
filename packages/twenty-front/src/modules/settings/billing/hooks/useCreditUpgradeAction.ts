@@ -63,13 +63,17 @@ export const useCreditUpgradeAction = () => {
       ) {
         setCurrentWorkspace({
           ...currentWorkspace,
-          currentBillingSubscription:
-            {...data.setResourceCreditSubscriptionPrice.currentBillingSubscription,
-              billingSubscriptionItems: data.setResourceCreditSubscriptionPrice.currentBillingSubscription?.billingSubscriptionItems?.map((item) => ({
-                ...item,
-                hasReachedCurrentPeriodCap: false,
-              })),
-            },
+          currentBillingSubscription: {
+            ...data.setResourceCreditSubscriptionPrice
+              .currentBillingSubscription,
+            billingSubscriptionItems:
+              data.setResourceCreditSubscriptionPrice.currentBillingSubscription?.billingSubscriptionItems?.map(
+                (item) => ({
+                  ...item,
+                  hasReachedCurrentPeriodCap: false,
+                }),
+              ),
+          },
           billingSubscriptions:
             data.setResourceCreditSubscriptionPrice.billingSubscriptions,
         });
