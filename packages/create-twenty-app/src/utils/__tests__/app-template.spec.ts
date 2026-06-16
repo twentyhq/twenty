@@ -154,6 +154,9 @@ describe('copyBaseApplicationProject', () => {
     expect(packageJson.devDependencies['twenty-client-sdk']).toBe(
       createTwentyAppPackageJson.version,
     );
+    expect(packageJson.twenty.serverVersion).toBe(
+      createTwentyAppPackageJson.version,
+    );
   });
 
   it('should create an empty public directory in the scaffolded project', async () => {

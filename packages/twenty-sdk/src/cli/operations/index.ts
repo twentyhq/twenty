@@ -40,6 +40,7 @@ export {
   getImageDigest,
   getImageForVersion,
 } from '@/cli/utilities/server/docker-container';
+export { getAppServerVersion } from '@/cli/utilities/version/get-app-server-version';
 
 // Config
 export { ConfigService } from '@/cli/utilities/config/config-service';

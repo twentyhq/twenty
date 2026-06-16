@@ -9,6 +9,9 @@
   },
   "keywords": [],
   "packageManager": "yarn@4.9.2",
+  "twenty": {
+    "serverVersion": "TO-BE-GENERATED"
+  },
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",

@@ -15,8 +15,10 @@ import {
   ConfigService,
   DEV_API_KEY,
   DEV_API_URL,
+  getImageForVersion,
   serverStart,
 } from 'twenty-sdk/cli';
+import createTwentyAppPackageJson from 'package.json';
 import { isDefined, normalizeUrl } from 'twenty-shared/utils';
 import {
   getDockerInstallInstructions,
@@ -24,7 +26,10 @@ import {
 } from '@/utils/docker-install';
 
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
-const IMAGE = 'twentycrm/twenty-app-dev:latest';
+// Pin to the version this scaffolder ships, matching the generated app's
+// `twenty.serverVersion`, so the started server and the app stay in lockstep.
+const SERVER_VERSION = createTwentyAppPackageJson.version;
+const IMAGE = getImageForVersion(SERVER_VERSION);
 
 export type AuthenticationMethod = 'oauth' | 'apiKey';
 
@@ -299,6 +304,7 @@ export class CreateAppCommand {
     }
 
     const startResult = await serverStart({
+      version: SERVER_VERSION,
       onProgress: (message: string) => this.logDetail(message),
     });
 

@@ -11,6 +11,7 @@ Use `yarn twenty docker:*` to control the local Twenty container:
 | Command | What it does |
 |---------|--------------|
 | `yarn twenty docker:start` | Start the server (pulls the image if needed) |
+| `yarn twenty docker:start 2.2.0` | Start a specific server version |
 | `yarn twenty docker:start --port 3030` | Start on a custom port |
 | `yarn twenty docker:stop` | Stop the server (preserves data) |
 | `yarn twenty docker:status` | Show URL, version, and login credentials |
@@ -20,6 +21,20 @@ Use `yarn twenty docker:*` to control the local Twenty container:
 | `yarn twenty docker:upgrade 2.2.0` | Upgrade to a specific version |
 
 Data persists across restarts in two Docker volumes (`twenty-app-dev-data` for PostgreSQL, `twenty-app-dev-storage` for files). Use `reset` to wipe everything.
+
+## Pinning the server version
+
+When no version is passed, `docker:start` uses the `twenty.serverVersion` field in your app's `package.json`, falling back to `latest`. Scaffolded apps pin this to the version they were created with, so the server stays reproducible as code:
+
+```json filename="package.json"
+{
+  "twenty": {
+    "serverVersion": "2.2.0"
+  }
+}
+```
+
+Pass a version explicitly to override the pin for a single run: `yarn twenty docker:start 2.3.0`. This only affects a freshly created container — an existing container keeps its image until you `docker:upgrade` or `docker:reset`.
 
 ## Upgrading the server image
 

@@ -10,7 +10,7 @@ import {
   DEFAULT_TEST_PORT,
   getContainerPort,
   getDockerNotRunningMessage,
-  IMAGE,
+  getImageForVersion,
   isContainerRunning,
   TEST_CONTAINER_NAME,
 } from '@/cli/utilities/server/docker-container';
@@ -19,6 +19,7 @@ import {
   detectLocalServer,
 } from '@/cli/utilities/server/detect-local-server';
 import { checkServerVersionCompatibility } from '@/cli/utilities/version/check-server-version-compatibility';
+import { getAppServerVersion } from '@/cli/utilities/version/get-app-server-version';
 import { execSync, spawn, spawnSync } from 'node:child_process';
 import chalk from 'chalk';
 
@@ -107,6 +108,9 @@ const waitForHealthy = async (
 export type ServerStartOptions = {
   port?: number;
   test?: boolean;
+  // Server image version to run. Falls back to the app's pinned
+  // `twenty.serverVersion` (package.json), then to 'latest'.
+  version?: string;
   onProgress?: (message: string) => void;
 };
 
@@ -119,6 +123,9 @@ const innerServerStart = async (
   options: ServerStartOptions = {},
 ): Promise<CommandResult<ServerStartResult>> => {
   const { onProgress, test: isTest } = options;
+
+  const version = options.version ?? getAppServerVersion() ?? 'latest';
+  const image = getImageForVersion(version);
 
   const containerName = isTest ? TEST_CONTAINER_NAME : CONTAINER_NAME;
   const defaultPort = isTest ? DEFAULT_TEST_PORT : DEFAULT_PORT;
@@ -211,7 +218,9 @@ const innerServerStart = async (
     onProgress?.('Starting existing container...');
     execSync(`docker start ${containerName}`, { stdio: 'ignore' });
   } else {
-    onProgress?.('Pulling Docker image and starting Twenty container...');
+    onProgress?.(
+      `Pulling Docker image (${image}) and starting Twenty container...`,
+    );
 
     const runResult = spawnSync(
       'docker',
@@ -230,7 +239,7 @@ const innerServerStart = async (
         `${volumeData}:/data/postgres`,
         '-v',
         `${volumeStorage}:/app/packages/twenty-server/.local-storage`,
-        IMAGE,
+        image,
       ],
       { stdio: 'inherit' },
     );

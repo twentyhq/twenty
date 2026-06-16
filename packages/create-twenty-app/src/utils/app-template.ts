@@ -125,6 +125,13 @@ const updatePackageJson = async ({
   packageJson.devDependencies['twenty-client-sdk'] =
     createTwentyAppPackageJson.version;
 
+  // Pin the local server image to the version this app was scaffolded with so
+  // `twenty docker:start` is reproducible. Edit `twenty.serverVersion` to change it.
+  packageJson.twenty = {
+    ...packageJson.twenty,
+    serverVersion: createTwentyAppPackageJson.version,
+  };
+
   await fs.writeFile(
     join(appDirectory, 'package.json'),
     JSON.stringify(packageJson, null, 2),
