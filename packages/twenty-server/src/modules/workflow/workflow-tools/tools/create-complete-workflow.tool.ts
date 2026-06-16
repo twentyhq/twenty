@@ -18,6 +18,7 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { summarizeValidation } from 'src/modules/workflow/workflow-tools/utils/summarize-validation.util';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const createCompleteWorkflowSchema = z.object({
@@ -106,7 +107,9 @@ IMPORTANT: The tool schema provides comprehensive field descriptions, examples, 
 - Variable reference syntax: {{trigger.fieldName}} for trigger data, {{<step-id>.result.fieldName}} for step outputs (step-id is the step's UUID, not its name)
 - Error handling options
 
-This is the most efficient way for AI to create workflows as it handles all the complexity in one call.`,
+This is the most efficient way for AI to create workflows as it handles all the complexity in one call.
+
+The response includes a compact validation summary. For the full validation report with available variable paths, call validate_workflow once after your edits — not after every change.`,
   inputSchema: createCompleteWorkflowSchema,
   execute: async (parameters: {
     name: string;
@@ -197,9 +200,8 @@ This is the most efficient way for AI to create workflows as it handles all the 
           workflowId,
           workflowVersionId,
           name: parameters.name,
-          trigger: parameters.trigger,
-          steps: parameters.steps,
-          validation,
+          stepIds: parameters.steps.map((step) => step.id),
+          validation: summarizeValidation(validation),
         },
         recordReferences: [
           {

@@ -106,6 +106,73 @@ function buildPartnerFields(input: SubmitPartnerApplicationInput): PartnerFields
   return fields;
 }
 
+function normalizeDomainHost(
+  value: string | null | undefined,
+): string | undefined {
+  if (!isNonEmptyString(value)) return undefined;
+  const host = value
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .replace(/[/:?#].*$/, '');
+  return host.length > 0 ? host : undefined;
+}
+
+// ponytail: matches active rows only — soft-deleted companies still hold the unique index; clear those with `yarn purge:prod`.
+async function findOrCreateCompanyId(
+  client: CoreApiClient,
+  input: SubmitPartnerApplicationInput,
+): Promise<string> {
+  const domain = isNonEmptyString(input.domainName)
+    ? input.domainName.trim()
+    : undefined;
+  const host = normalizeDomainHost(domain);
+
+  if (host !== undefined) {
+    // Broad ilike catches every stored URL form (bare, any protocol, paths, www).
+    // Paginate to exhaustion so the real match is never paged out; client-side
+    // normalization rejects false positives on each page.
+    let cursor: string | null = null;
+    do {
+      const existing = await client.query({
+        companies: {
+          __args: {
+            filter: { domainName: { primaryLinkUrl: { ilike: `%${host}%` } } },
+            first: 20,
+            ...(cursor !== null ? { after: cursor } : {}),
+          },
+          pageInfo: { hasNextPage: true, endCursor: true },
+          edges: { node: { id: true, domainName: { primaryLinkUrl: true } } },
+        },
+      });
+      const match = existing.companies?.edges?.find(
+        (edge) => normalizeDomainHost(edge.node.domainName?.primaryLinkUrl) === host,
+      );
+      if (match !== undefined) {
+        return match.node.id;
+      }
+      const pageInfo = existing.companies?.pageInfo;
+      cursor = pageInfo?.hasNextPage ? (pageInfo.endCursor ?? null) : null;
+    } while (cursor !== null);
+  }
+
+  const companyData: CoreSchema.CompanyCreateInput = {
+    name: input.companyName.trim(),
+  };
+  if (domain !== undefined) {
+    companyData.domainName = { primaryLinkUrl: domain };
+  }
+  const companyResult = await client.mutation({
+    createCompany: { __args: { data: companyData }, id: true },
+  });
+  const companyId = companyResult.createCompany?.id;
+  if (companyId === undefined) {
+    throw new Error('createCompany did not return an id');
+  }
+  return companyId;
+}
+
 type SubmitPartnerApplicationEvent = {
   headers?: Record<string, string | undefined>;
   body?: unknown;
@@ -191,17 +258,7 @@ export const handler = async (
       return { ok: true, created: false, partnerId };
     }
 
-    const companyData: CoreSchema.CompanyCreateInput = { name: input.companyName.trim() };
-    if (isNonEmptyString(input.domainName)) {
-      companyData.domainName = { primaryLinkUrl: input.domainName.trim() };
-    }
-    const companyResult = await client.mutation({
-      createCompany: { __args: { data: companyData }, id: true },
-    });
-    const companyId = companyResult.createCompany?.id;
-    if (companyId === undefined) {
-      throw new Error('createCompany did not return an id');
-    }
+    const companyId = await findOrCreateCompanyId(client, input);
 
     const partnerResult = await client.mutation({
       createPartner: {
