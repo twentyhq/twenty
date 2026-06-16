@@ -8,15 +8,15 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { ViewSortDirection } from '~/generated-metadata/graphql';
+import { type ViewSortDirection } from '~/generated-metadata/graphql';
 
-type UseHandleToggleColumnSortProps = {
+type UseHandleSetColumnSortProps = {
   objectMetadataItemId: string;
 };
 
-export const useHandleToggleColumnSort = ({
+export const useHandleSetColumnSort = ({
   objectMetadataItemId,
-}: UseHandleToggleColumnSortProps) => {
+}: UseHandleSetColumnSortProps) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
@@ -32,8 +32,8 @@ export const useHandleToggleColumnSort = ({
 
   const store = useStore();
 
-  const handleToggleColumnSort = useCallback(
-    (fieldMetadataId: string) => {
+  const handleSetColumnSort = useCallback(
+    (fieldMetadataId: string, direction: ViewSortDirection) => {
       const correspondingColumnDefinition = columnDefinitions.find(
         (columnDefinition) =>
           columnDefinition.fieldMetadataId === fieldMetadataId,
@@ -50,11 +50,7 @@ export const useHandleToggleColumnSort = ({
       const newSort: RecordSort = {
         id: existingSort?.id ?? v4(),
         fieldMetadataId,
-        direction: existingSort
-          ? existingSort.direction === ViewSortDirection.ASC
-            ? ViewSortDirection.DESC
-            : ViewSortDirection.ASC
-          : ViewSortDirection.ASC,
+        direction,
       };
 
       upsertRecordSort(newSort);
@@ -67,5 +63,5 @@ export const useHandleToggleColumnSort = ({
     ],
   );
 
-  return handleToggleColumnSort;
+  return handleSetColumnSort;
 };

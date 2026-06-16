@@ -5,7 +5,7 @@ import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metad
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
+import { useHandleSetColumnSort } from '@/object-record/record-index/hooks/useHandleSetColumnSort';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
@@ -21,9 +21,11 @@ import {
   IconArrowRight,
   IconEyeOff,
   IconFilter,
+  IconSortAscending,
   IconSortDescending,
 } from 'twenty-ui-deprecated/display';
 import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   recordField: RecordField;
@@ -102,14 +104,14 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
-  const handleToggleColumnSort = useHandleToggleColumnSort({
+  const handleSetColumnSort = useHandleSetColumnSort({
     objectMetadataItemId: objectMetadataId,
   });
 
-  const handleSortClick = () => {
+  const handleSortClick = (direction: ViewSortDirection) => {
     closeDropdownAndToggleScroll();
 
-    handleToggleColumnSort(recordField.fieldMetadataItemId);
+    handleSetColumnSort(recordField.fieldMetadataItemId, direction);
   };
 
   const { openRecordFilterChipFromTableHeader } =
@@ -142,11 +144,18 @@ export const RecordTableColumnHeadDropdownMenu = ({
             />
           )}
           {isSortable && (
-            <MenuItem
-              LeftIcon={IconSortDescending}
-              onClick={handleSortClick}
-              text={t`Sort`}
-            />
+            <>
+              <MenuItem
+                LeftIcon={IconSortAscending}
+                onClick={() => handleSortClick(ViewSortDirection.ASC)}
+                text={t`Sort ascending`}
+              />
+              <MenuItem
+                LeftIcon={IconSortDescending}
+                onClick={() => handleSortClick(ViewSortDirection.DESC)}
+                text={t`Sort descending`}
+              />
+            </>
           )}
           {showSeparator && <DropdownMenuSeparator />}
           {canMoveLeft && (

@@ -115,8 +115,12 @@ export const useTriggerInitialRecordTableDataLoad = () => {
 
   const triggerInitialRecordTableDataLoad = useCallback(
     async ({
+      horizontalScrollToRestore,
       shouldScrollToStart = true,
-    }: { shouldScrollToStart?: boolean } = {}) => {
+    }: {
+      horizontalScrollToRestore?: number;
+      shouldScrollToStart?: boolean;
+    } = {}) => {
       const isInitializingVirtualTableDataLoading = store.get(
         isInitializingVirtualTableDataLoadingCallbackState,
       );
@@ -199,14 +203,28 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         store.set(lastRealIndexSetCallbackState, null);
         store.set(scrollAtRealIndexCallbackState, 0);
 
-        setIsRecordTableScrolledHorizontally(false);
+        const shouldRestoreHorizontalScroll =
+          isDefined(horizontalScrollToRestore) && horizontalScrollToRestore > 0;
+
+        setIsRecordTableScrolledHorizontally(shouldRestoreHorizontalScroll);
         setIsRecordTableScrolledVertically(false);
+
+        updateRecordTableCSSVariable(
+          recordTableId,
+          RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
+          shouldRestoreHorizontalScroll ? 'visible' : 'hidden',
+        );
+
         resetTableFocuses();
 
         if (shouldScrollToStart) {
           scrollTableToPosition({
-            horizontalScrollInPx: 0,
+            horizontalScrollInPx: horizontalScrollToRestore ?? 0,
             verticalScrollInPx: 0,
+          });
+        } else if (isDefined(horizontalScrollToRestore)) {
+          scrollTableToPosition({
+            horizontalScrollInPx: horizontalScrollToRestore,
           });
         }
       } finally {

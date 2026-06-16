@@ -1,4 +1,5 @@
 import { useRecordIndexTableLazyQuery } from '@/object-record/record-index/hooks/useRecordIndexTableLazyQuery';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -8,17 +9,22 @@ import { isInitializingVirtualTableDataLoadingComponentState } from '@/object-re
 import { lastContextStoreVirtualizedViewIdComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedViewIdComponentState';
 import { lastContextStoreVirtualizedVisibleRecordFieldsComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedVisibleRecordFieldsComponentState';
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
+import { lastRecordTableRecordSortsSignatureComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableRecordSortsSignatureComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
+import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useStore } from 'jotai';
 import isEmpty from 'lodash.isempty';
 import { useEffect, useState } from 'react';
 
 // TODO: see if we can merge the initial and load more processes, to have only one load at scroll index effect
 export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
+  const recordTableScrollWrapperId = `record-table-scroll-${recordTableId}`;
 
   const { queryIdentifier } = useRecordIndexTableLazyQuery(objectNameSingular);
 
@@ -30,6 +36,24 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
+
+  const scrollWrapperScrollLeftCallbackState =
+    useAtomComponentStateCallbackState(
+      scrollWrapperScrollLeftComponentState,
+      recordTableScrollWrapperId,
+    );
+
+  const currentRecordSortsCallbackState = useAtomComponentStateCallbackState(
+    currentRecordSortsComponentState,
+  );
+
+  const lastRecordTableRecordSortsSignatureCallbackState =
+    useAtomComponentStateCallbackState(
+      lastRecordTableRecordSortsSignatureComponentState,
+    );
+
+  const store = useStore();
+
   const [isInitializingVirtualTableDataLoading] = useAtomComponentState(
     isInitializingVirtualTableDataLoadingComponentState,
   );
@@ -80,6 +104,10 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
         setLastContextStoreVirtualizedViewId(currentView?.id ?? null);
         setLastRecordTableQueryIdentifier(queryIdentifier);
         setLastContextStoreVirtualizedVisibleRecordFields(visibleRecordFields);
+        store.set(
+          lastRecordTableRecordSortsSignatureCallbackState,
+          JSON.stringify(store.get(currentRecordSortsCallbackState)),
+        );
 
         await triggerInitialRecordTableDataLoad();
       } else if (
@@ -88,7 +116,30 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
       ) {
         setLastRecordTableQueryIdentifier(queryIdentifier);
 
-        await triggerInitialRecordTableDataLoad();
+        const currentRecordSortsSignature = JSON.stringify(
+          store.get(currentRecordSortsCallbackState),
+        );
+        const lastRecordSortsSignature = store.get(
+          lastRecordTableRecordSortsSignatureCallbackState,
+        );
+        const didRecordSortsChange =
+          currentRecordSortsSignature !== lastRecordSortsSignature;
+
+        store.set(
+          lastRecordTableRecordSortsSignatureCallbackState,
+          currentRecordSortsSignature,
+        );
+
+        const scrollWrapperScrollLeft = store.get(
+          scrollWrapperScrollLeftCallbackState,
+        );
+
+        await triggerInitialRecordTableDataLoad({
+          horizontalScrollToRestore:
+            didRecordSortsChange && scrollWrapperScrollLeft > 0
+              ? scrollWrapperScrollLeft
+              : undefined,
+        });
       } else if (recordTableWentFromEmptyToNotEmpty) {
         setRecordTableWentFromEmptyToNotEmpty(false);
 
@@ -111,6 +162,10 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
         }
       } else if (!isInitializedOnMount) {
         setIsInitializedOnMount(true);
+        store.set(
+          lastRecordTableRecordSortsSignatureCallbackState,
+          JSON.stringify(store.get(currentRecordSortsCallbackState)),
+        );
         await triggerInitialRecordTableDataLoad();
       }
     })();
@@ -129,6 +184,10 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     lastContextStoreVirtualizedVisibleRecordFields,
     setLastContextStoreVirtualizedVisibleRecordFields,
     visibleRecordFields,
+    currentRecordSortsCallbackState,
+    lastRecordTableRecordSortsSignatureCallbackState,
+    scrollWrapperScrollLeftCallbackState,
+    store,
     isInitializedOnMount,
     setIsInitializedOnMount,
   ]);
