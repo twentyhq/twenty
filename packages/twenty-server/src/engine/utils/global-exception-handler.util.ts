@@ -104,7 +104,10 @@ export const handleException = <
   statusCode?: number;
   shouldBeCapturedBySentry?: boolean;
 }): T => {
-  if (shouldBeCapturedBySentry && shouldCaptureException(exception, statusCode)) {
+  if (
+    shouldBeCapturedBySentry &&
+    shouldCaptureException(exception, statusCode)
+  ) {
     exceptionHandlerService.captureExceptions([exception], { user, workspace });
   }
 
