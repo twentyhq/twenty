@@ -5,7 +5,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
-import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/isRecordTableCreateDisabled';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -29,8 +29,6 @@ export const RecordTableNoRecordGroupAddNew = () => {
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
@@ -71,11 +69,12 @@ export const RecordTableNoRecordGroupAddNew = () => {
     return null;
   }
 
-  if (!hasObjectUpdatePermissions) {
-    return null;
-  }
-
-  if (isRecordTableCreateDisabled(objectMetadataItem)) {
+  if (
+    !canCreateRecordsForObjectMetadataItem({
+      objectPermissions,
+      objectMetadataItem,
+    })
+  ) {
     return null;
   }
 

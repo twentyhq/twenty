@@ -1,3 +1,4 @@
+import '@/settings/playground/utils/setupGraphiqlMonacoWorkers';
 import {
   isPlaygroundApiKeyFresh,
   playgroundApiKeyState,
@@ -6,10 +7,10 @@ import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
-import '@graphiql/plugin-explorer/dist/style.css';
+import '@graphiql/plugin-explorer/style.css';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
-import 'graphiql/graphiql.css';
+import 'graphiql/style.css';
 import { useContext } from 'react';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {

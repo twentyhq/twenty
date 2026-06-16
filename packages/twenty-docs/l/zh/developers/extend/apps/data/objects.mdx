@@ -86,6 +86,17 @@ export default defineObject({
 **基础字段会自动添加。** 当你定义自定义对象时，Twenty 会为你创建标准字段，例如 `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy` 和 `deletedAt`。 你无需在 `fields` 数组中声明这些字段——只需声明你的自定义字段。 你可以通过声明一个同名字段来覆盖默认字段，但这么做通常并不是一个好主意。
 </Note>
 
+## 默认值
+
+字面量字符串默认值必须在字符串**内部**用单引号包裹——应写成 `defaultValue: "'Draft'"`，而不是 `defaultValue: "Draft"`。 这就是上面的 `status` 字段使用 `` `'${PostCardStatus.DRAFT}'` `` 的原因。
+
+未加引号的字符串保留用于计算得到的默认值，这些默认值会在创建记录时进行求值：
+
+* `'uuid'` — 生成一个 UUID（用于 `UUID` 字段）
+* `'now'` — 当前时间戳（用于 `DATE_TIME` 字段）
+
+同样的约定也适用于复合默认值的字符串子字段（例如 `ACTOR` 字段上的 `{ source: "'MANUAL'" }`）以及 `SELECT`/`MULTI_SELECT` 值。 在构建应用时，未加引号的字面字符串默认值会触发警告。
+
 ## 接下来
 
 * **将此对象与其他对象关联**——关于双向关系模式，参见 [Relations](/l/zh/developers/extend/apps/data/relations)。

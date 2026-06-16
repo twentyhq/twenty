@@ -61,12 +61,12 @@ describe('compactMetadataOutput', () => {
     const record = {
       id: '123',
       isLabelSyncedWithName: false,
-      isUIReadOnly: false,
+      isSystem: false,
       isActive: true,
     };
 
     const result = compactMetadataOutput(record, {
-      stripWhenFalse: ['isLabelSyncedWithName', 'isUIReadOnly'],
+      stripWhenFalse: ['isLabelSyncedWithName', 'isSystem'],
     });
 
     expect(result).toEqual({
@@ -79,41 +79,75 @@ describe('compactMetadataOutput', () => {
     const record = {
       id: '123',
       isLabelSyncedWithName: true,
-      isUIReadOnly: true,
+      isSystem: true,
     };
 
     const result = compactMetadataOutput(record, {
-      stripWhenFalse: ['isLabelSyncedWithName', 'isUIReadOnly'],
+      stripWhenFalse: ['isLabelSyncedWithName', 'isSystem'],
     });
 
     expect(result).toEqual({
       id: '123',
       isLabelSyncedWithName: true,
-      isUIReadOnly: true,
+      isSystem: true,
     });
   });
 
-  it('should apply both stripWhenNullish and stripWhenFalse together', () => {
+  it('should strip keys with true values when listed in stripWhenTrue', () => {
+    const record = {
+      id: '123',
+      isUIEditable: true,
+      isActive: true,
+    };
+
+    const result = compactMetadataOutput(record, {
+      stripWhenTrue: ['isUIEditable'],
+    });
+
+    expect(result).toEqual({
+      id: '123',
+      isActive: true,
+    });
+  });
+
+  it('should not strip keys with false values when listed in stripWhenTrue', () => {
+    const record = {
+      id: '123',
+      isUIEditable: false,
+    };
+
+    const result = compactMetadataOutput(record, {
+      stripWhenTrue: ['isUIEditable'],
+    });
+
+    expect(result).toEqual({
+      id: '123',
+      isUIEditable: false,
+    });
+  });
+
+  it('should apply stripWhenNullish, stripWhenFalse and stripWhenTrue together', () => {
     const record = {
       id: '123',
       name: 'test',
       description: null,
       icon: 'IconStar',
       isLabelSyncedWithName: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       options: null,
     };
 
     const result = compactMetadataOutput(record, {
       stripWhenNullish: ['description', 'options'],
-      stripWhenFalse: ['isLabelSyncedWithName', 'isUIReadOnly'],
+      stripWhenFalse: ['isLabelSyncedWithName'],
+      stripWhenTrue: ['isUIEditable'],
     });
 
     expect(result).toEqual({
       id: '123',
       name: 'test',
       icon: 'IconStar',
-      isUIReadOnly: true,
+      isUIEditable: false,
     });
   });
 

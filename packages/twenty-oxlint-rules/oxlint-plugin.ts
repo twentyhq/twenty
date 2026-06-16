@@ -33,6 +33,10 @@ import {
   RULE_NAME as maxConstsPerFileName,
 } from './rules/max-consts-per-file';
 import {
+  rule as noDataMutationInFastInstanceCommand,
+  RULE_NAME as noDataMutationInFastInstanceCommandName,
+} from './rules/no-data-mutation-in-fast-instance-command';
+import {
   rule as noDirectAtomFamilyInSelector,
   RULE_NAME as noDirectAtomFamilyInSelectorName,
 } from './rules/no-direct-atom-family-in-selector';
@@ -84,6 +88,8 @@ export default definePlugin({
     [injectWorkspaceRepositoryName]: injectWorkspaceRepository,
     [matchingStateVariableName]: matchingStateVariable,
     [maxConstsPerFileName]: maxConstsPerFile,
+    [noDataMutationInFastInstanceCommandName]:
+      noDataMutationInFastInstanceCommand,
     [noDirectAtomFamilyInSelectorName]: noDirectAtomFamilyInSelector,
     [noHardcodedColorsName]: noHardcodedColors,
     [noJotaiStoreInSelectorName]: noJotaiStoreInSelector,

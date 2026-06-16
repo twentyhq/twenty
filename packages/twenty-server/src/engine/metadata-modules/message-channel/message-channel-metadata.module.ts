@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
@@ -8,6 +9,7 @@ import { MessageChannelMetadataService } from 'src/engine/metadata-modules/messa
 import { MessageChannelResolver } from 'src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 
 @Module({
@@ -16,6 +18,8 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
     PermissionsModule,
     ConnectedAccountMetadataModule,
     MessagingImportManagerModule,
+    EmailingDomainModule,
+    WorkspaceEventEmitterModule,
   ],
   providers: [
     MessageChannelMetadataService,

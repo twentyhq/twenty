@@ -13,6 +13,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { type BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -55,14 +56,14 @@ export class BillingUsageService {
       return true;
     }
 
-    const { billingSubscription } =
+    const { currentBillingSubscription } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
+        'currentBillingSubscription',
       ]);
 
     return (
-      isDefined(billingSubscription) &&
-      billingSubscription.status !== SubscriptionStatus.Canceled
+      currentBillingSubscription !== NO_BILLING_SUBSCRIPTION &&
+      currentBillingSubscription.status !== SubscriptionStatus.Canceled
     );
   }
 
@@ -254,11 +255,16 @@ export class BillingUsageService {
     workspaceId: string;
     usedCredits: number;
   }): Promise<number> {
-    const {
-      billingSubscription: { currentPeriodStart, currentPeriodEnd },
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'billingSubscription',
-    ]);
+    const { currentBillingSubscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'currentBillingSubscription',
+      ]);
+
+    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
+      return 0;
+    }
+
+    const { currentPeriodStart, currentPeriodEnd } = currentBillingSubscription;
 
     const cachedAvailableCredits =
       await this.billingUsageCacheService.getAvailableCredits(
@@ -319,10 +325,17 @@ export class BillingUsageService {
       return false;
     }
 
-    const { billingSubscription: subscription } =
+    const { currentBillingSubscription } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
+        'currentBillingSubscription',
       ]);
+
+    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
+      return false;
+    }
+
+    const subscription = currentBillingSubscription;
+
     const cached = await this.billingUsageCacheService.getAvailableCredits(
       subscription.workspaceId,
       subscription.currentPeriodStart,

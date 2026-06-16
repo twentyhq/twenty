@@ -56,7 +56,8 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   isLabelSyncedWithName: true,
   isRemote: false,
   isSystem: false,
-  isUIReadOnly: false,
+  isUIEditable: true,
+  isUICreatable: true,
 };
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({

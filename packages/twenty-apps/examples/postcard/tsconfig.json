@@ -30,6 +30,8 @@
   "exclude": [
     "node_modules",
     "dist",
+    "e2e",
+    "playwright.config.ts",
     "**/*.test.ts",
     "**/*.spec.ts",
     "**/*.integration-test.ts"

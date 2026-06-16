@@ -7,6 +7,7 @@ import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 export type BatchEnrichmentAdapter<TNode, TData, TParams> = {
   objectNameSingular: string;
   noIdentifierMessage: string;
+  costPerMatchDollars: number;
   readRecords: (args: {
     client: CoreApiClient;
     recordIds: string[];

@@ -73,7 +73,7 @@ describe('WorkspaceRepository', () => {
       isNullable: false,
       isUnique: true,
       isSystem: true,
-      isUIReadOnly: false,
+      isUIEditable: true,
       isLabelSyncedWithName: false,
       label: 'ID',
       description: 'Record ID',
