@@ -144,6 +144,7 @@ export const CodeEditor = ({
             formatOnPaste: true,
             formatOnType: true,
             overviewRulerLanes: 0,
+            scrollBeyondLastLine: false,
             scrollbar: {
               vertical: 'hidden',
               horizontal: 'hidden',
