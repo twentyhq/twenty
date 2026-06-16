@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { BackfillSearchFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-workspace-command-1799000067000-backfill-search-field-metadata.command';
 import { SyncCallRecordingRequestStatusCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-workspace-command-1799000065000-sync-call-recording-request-status.command';
 import { DropCalendarEventRecordingPreferenceCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-workspace-command-1799000066000-drop-calendar-event-recording-preference.command';
 import { FixStandardRelationFieldLabelsIconsCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-workspace-command-1799000040000-fix-standard-relation-field-labels-icons.command';
@@ -19,6 +20,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FixStandardRelationFieldLabelsIconsCommand,
     SyncCallRecordingRequestStatusCommand,
     DropCalendarEventRecordingPreferenceCommand,
+    BackfillSearchFieldMetadataCommand,
   ],
 })
 export class V2_14_UpgradeVersionCommandModule {}
