@@ -305,6 +305,26 @@ msgstr "AC&T moved to a self-hosted Twenty instance with no vendor risk, no forc
 msgid "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
 msgstr "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
 
+#. js-lingui-id: Kqfsda
+#: src/platform/routing/static-website-routes.ts
+msgid "Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance."
+msgstr "Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance."
+
+#. js-lingui-id: muhZ+X
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Activating your enterprise license…"
+msgstr "Activating your enterprise license…"
+
+#. js-lingui-id: +cggij
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Activation failed. Please try again."
+msgstr "Activation failed. Please try again."
+
+#. js-lingui-id: trCWSt
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Activation response was incomplete."
+msgstr "Activation response was incomplete."
+
 #. js-lingui-id: Yyn/dP
 #: src/partners-marketplace/active-filter-pills.tsx
 msgid "Active filters"
@@ -1174,6 +1194,26 @@ msgstr "Control without drag"
 msgid "Control without the overhead"
 msgstr "Control without the overhead"
 
+#. js-lingui-id: PiH3UR
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Copied!"
+msgstr "Copied!"
+
+#. js-lingui-id: he3ygx
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Copy"
+msgstr "Copy"
+
+#. js-lingui-id: 7qTWwB
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Copy the enterprise key above."
+msgstr "Copy the enterprise key above."
+
+#. js-lingui-id: PXnj76
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Copy this key and paste it into your Twenty self-hosted instance settings."
+msgstr "Copy this key and paste it into your Twenty self-hosted instance settings."
+
 #. js-lingui-id: FapWIq
 #: src/sections/product-feature/product-feature.tsx
 msgid "Core Features"
@@ -1759,6 +1799,16 @@ msgstr "Enter a valid email address."
 msgid "Enter a valid URL (starting with http:// or https://)."
 msgstr "Enter a valid URL (starting with http:// or https://)."
 
+#. js-lingui-id: 87BcPj
+#: src/sections/enterprise-activate/enterprise-activate-hero.tsx
+msgid "Enterprise *activation*"
+msgstr "Enterprise *activation*"
+
+#. js-lingui-id: NTskGY
+#: src/platform/routing/static-website-routes.ts
+msgid "Enterprise Activation | Twenty"
+msgstr "Enterprise Activation | Twenty"
+
 #. js-lingui-id: c0nqfC
 #: src/partner-application/data/partner-country-options.ts
 msgid "Equatorial Guinea 🇬🇶"
@@ -1834,6 +1884,11 @@ msgstr "Expertise & experience"
 #: src/sections/case-study-promo/case-study-promo.tsx
 msgid "Explore customer stories"
 msgstr "Explore customer stories"
+
+#. js-lingui-id: tX4pRm
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Failed to activate enterprise key. Please try again."
+msgstr "Failed to activate enterprise key. Please try again."
 
 #. js-lingui-id: akLvep
 #: src/sections/feature-cards/feature-cards.data.ts
@@ -2739,6 +2794,11 @@ msgstr "Liberia 🇱🇷"
 msgid "Libya 🇱🇾"
 msgstr "Libya 🇱🇾"
 
+#. js-lingui-id: tHFTlp
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Licensee:"
+msgstr "Licensee:"
+
 #. js-lingui-id: K41WYc
 #: src/partner-application/data/partner-country-options.ts
 msgid "Liechtenstein 🇱🇮"
@@ -2785,6 +2845,11 @@ msgstr "Live data and AI built"
 #: src/platform/releases/release-notes.tsx
 msgid "Live updates"
 msgstr "Live updates"
+
+#. js-lingui-id: ObPscj
+#: src/sections/enterprise-activate/enterprise-activate-panel.tsx
+msgid "Loading activation…"
+msgstr "Loading activation…"
 
 #. js-lingui-id: Oyf4mg
 #: src/contact-cal/contact-cal-modal.tsx
@@ -3137,6 +3202,11 @@ msgstr "New Zealand 🇳🇿"
 msgid "Next →"
 msgstr "Next →"
 
+#. js-lingui-id: KqojOL
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Next steps"
+msgstr "Next steps"
+
 #. js-lingui-id: awYrJD
 #: src/sections/testimonials/testimonials-carousel.tsx
 #: src/sections/testimonials/partner-testimonials-carousel.tsx
@@ -3192,6 +3262,11 @@ msgstr "No more renting someone else's structure"
 #: src/partners-marketplace/empty-state.tsx
 msgid "No partners match your filters"
 msgstr "No partners match your filters"
+
+#. js-lingui-id: nDjC8E
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "No session ID provided. Please complete the checkout first."
+msgstr "No session ID provided. Please complete the checkout first."
 
 #. js-lingui-id: q9f4Tp
 #: src/case-studies/case-study-catalog.ts
@@ -3288,6 +3363,11 @@ msgstr "One API to rule them all"
 msgid "Open menu"
 msgstr "Open menu"
 
+#. js-lingui-id: pkXQA+
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Open your Twenty self-hosted instance Settings → Enterprise."
+msgstr "Open your Twenty self-hosted instance Settings → Enterprise."
+
 #. js-lingui-id: 5RkmVr
 #: src/sections/why-twenty-signoff/why-twenty-signoff.tsx
 msgid "Open-source, AI-ready, and yours to shape."
@@ -3378,6 +3458,11 @@ msgstr "Partner testimonials"
 #: src/sections/footer/footer.data.ts
 msgid "Partners"
 msgstr "Partners"
+
+#. js-lingui-id: 9yo8NN
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Paste the key and click Activate."
+msgstr "Paste the key and click Activate."
 
 #. js-lingui-id: TMErUt
 #: src/platform/releases/release-notes.tsx
@@ -3948,6 +4033,11 @@ msgstr "Self-hosted means control"
 #: src/platform/releases/release-notes.tsx
 msgid "Self-hosted workspaces can now track usage more cleanly with usage-based billing support."
 msgstr "Self-hosted workspaces can now track usage more cleanly with usage-based billing support."
+
+#. js-lingui-id: GrBvv/
+#: src/sections/enterprise-activate/enterprise-activate-hero.tsx
+msgid "Self-hosting"
+msgstr "Self-hosting"
 
 #. js-lingui-id: uVBq8r
 #: src/platform/releases/release-notes.tsx
@@ -5503,6 +5593,21 @@ msgstr "You don't buy your deployment pipeline off the shelf. You don't rent you
 #: src/platform/releases/release-notes.tsx
 msgid "You now have the ability to duplicate nodes, change node types, and use a streamlined filter design in your workflows."
 msgstr "You now have the ability to duplicate nodes, change node types, and use a streamlined filter design in your workflows."
+
+#. js-lingui-id: SfJVcK
+#: src/sections/enterprise-activate/enterprise-activate-hero.tsx
+msgid "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
+msgstr "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
+
+#. js-lingui-id: krHgj1
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Your enterprise key"
+msgstr "Your enterprise key"
+
+#. js-lingui-id: +dxjCu
+#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+msgid "Your enterprise license has been activated successfully."
+msgstr "Your enterprise license has been activated successfully."
 
 #. js-lingui-id: pEQiCY
 #: src/partner-application/partner-application-copy.ts

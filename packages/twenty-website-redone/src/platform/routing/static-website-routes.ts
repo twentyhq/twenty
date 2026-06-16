@@ -104,4 +104,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     priority: 0.3,
     title: msg`Terms of Service | Twenty`,
   },
+  {
+    // Post-checkout license activation: noindex (a utility route reached only
+    // with a Stripe ?session_id=, excluded from the sitemap).
+    changeFrequency: 'yearly',
+    description: msg`Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance.`,
+    id: 'enterpriseActivate',
+    indexed: false,
+    path: '/enterprise/activate',
+    priority: 0.3,
+    title: msg`Enterprise Activation | Twenty`,
+  },
 ];

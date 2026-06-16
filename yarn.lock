@@ -55854,9 +55854,11 @@ __metadata:
     react: "npm:19.2.3"
     react-dom: "npm:19.2.3"
     server-only: "npm:^0.0.1"
+    stripe: "npm:^20.3.1"
     three: "npm:^0.184.0"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
+    zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
 
