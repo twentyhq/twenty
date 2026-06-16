@@ -82,7 +82,7 @@ export default defineApplication({
 URL обратного вызова OAuth, который вашему провайдеру нужно добавить в список разрешенных:
 
 ```
-https://<your-twenty-server>/apps/oauth/callback
+https://<your-twenty-server>/auth/apps/callback
 ```
 
 </Accordion>
@@ -182,7 +182,7 @@ const conn = connections.find((c) => c.visibility === 'workspace');
 Для каждого провайдера подключения администратору сервера сначала нужно зарегистрировать у стороннего сервиса приложение OAuth.
 
 1. Перейдите в настройки разработчика провайдера (например, https://linear.app/settings/api/applications/new).
-2. Установите **Redirect URI** в значение `\<SERVER_URL>/apps/oauth/callback`.
+2. Установите **Redirect URI** в значение `\<SERVER_URL>/auth/apps/callback`.
 3. Скопируйте сгенерированные **Client ID** и **Client Secret**.
 4. Откройте установленное приложение в Twenty под учетной записью администратора сервера → задайте значения в соответствующих `serverVariables`.
 5. Затем участники рабочего пространства смогут добавлять подключения в разделе **Подключения** конкретного приложения.
