@@ -1,0 +1,87 @@
+# RxReport Billing — production compose for billing.rxreport.com
+# Lives on the server at /opt/rxreport/twenty/docker-compose.yml
+#
+#   cd /opt/rxreport/twenty
+#   docker compose pull && docker compose up -d
+#
+# Isolated from the other stacks on the host: own compose project (twenty-billing),
+# own Postgres/Redis/volumes, and the server bound to 127.0.0.1:3100 behind nginx
+# (host ports 3000/3030/4000/4040/8001/8002 are already taken).
+name: twenty-billing
+
+services:
+  server:
+    image: ghcr.io/rxreport/twenty:${TAG:-latest}
+    volumes:
+      - server-local-data:/app/packages/twenty-server/.local-storage
+    ports:
+      - "127.0.0.1:3100:3000"
+    environment:
+      NODE_PORT: 3000
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
+      SERVER_URL: ${SERVER_URL}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS}
+      DISABLE_CRON_JOBS_REGISTRATION: ${DISABLE_CRON_JOBS_REGISTRATION}
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      APP_SECRET: ${APP_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://localhost:3000/healthz
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: always
+
+  worker:
+    image: ghcr.io/rxreport/twenty:${TAG:-latest}
+    volumes:
+      - server-local-data:/app/packages/twenty-server/.local-storage
+    command: ["yarn", "worker:prod"]
+    environment:
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
+      SERVER_URL: ${SERVER_URL}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      APP_SECRET: ${APP_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+    restart: always
+
+  db:
+    image: postgres:16
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${PG_DATABASE_NAME:-default}
+      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
+    healthcheck:
+      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
+  redis:
+    image: redis
+    restart: always
+    command: ["--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db-data:
+  server-local-data:
