@@ -242,8 +242,6 @@ export class ToolRegistryService {
     });
   }
 
-  // Best-effort "did you mean" suggestions for tool names that did not resolve,
-  // so a mistyped name (often a singular/plural slip) does not dead-end the agent.
   async suggestSimilarToolNames(
     toolNames: string[],
     context: ToolContext,

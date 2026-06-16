@@ -50,6 +50,56 @@ describe('createLearnToolsTool', () => {
     expect(result.notFound).toEqual([]);
     expect(result.suggestions).toBeUndefined();
     expect(suggestSimilarToolNames).not.toHaveBeenCalled();
-    expect(result.message).toBe('Learned 1 tool(s): group_by_people.');
+    expect(result.message).toBe('Learned 1 tool: group_by_people.');
+  });
+
+  it('pluralizes the learned-tools count', async () => {
+    const toolRegistry = {
+      getToolInfo: jest
+        .fn()
+        .mockResolvedValue([
+          { name: 'find_many_people' },
+          { name: 'group_by_people' },
+        ]),
+      suggestSimilarToolNames: jest.fn(),
+    } as unknown as ToolRegistryService;
+
+    const learnTools = createLearnToolsTool(toolRegistry, context);
+
+    const result = await learnTools.execute({
+      toolNames: ['find_many_people', 'group_by_people'],
+      aspects: ['description'],
+    });
+
+    expect(result.message).toBe(
+      'Learned 2 tools: find_many_people, group_by_people.',
+    );
+  });
+
+  it('does not report excluded tools as not found or suggest alternatives', async () => {
+    const suggestSimilarToolNames = jest.fn();
+    const toolRegistry = {
+      getToolInfo: jest.fn().mockResolvedValue([]),
+      suggestSimilarToolNames,
+    } as unknown as ToolRegistryService;
+
+    const learnTools = createLearnToolsTool(
+      toolRegistry,
+      context,
+      new Set(['code_interpreter']),
+    );
+
+    const result = await learnTools.execute({
+      toolNames: ['code_interpreter'],
+      aspects: ['description'],
+    });
+
+    expect(toolRegistry.getToolInfo).toHaveBeenCalledWith([], context, [
+      'description',
+    ]);
+    expect(result.notFound).toEqual([]);
+    expect(result.suggestions).toBeUndefined();
+    expect(suggestSimilarToolNames).not.toHaveBeenCalled();
+    expect(result.message).toBe('No matching tools found.');
   });
 });
