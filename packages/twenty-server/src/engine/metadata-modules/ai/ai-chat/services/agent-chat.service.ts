@@ -514,16 +514,7 @@ export class AgentChatService {
 
     await this.broadcastThreadUpdated(thread, ['deletedAt'], userWorkspaceId);
 
-    // Best-effort: reclaim the conversation's warm sandbox now; the age sweep is the backstop.
-    void this.codeInterpreterService
-      .releaseThreadSandbox(workspaceId, threadId)
-      .catch((error) =>
-        this.logger.warn(
-          `Failed to release code interpreter sandbox for thread ${threadId}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        ),
-      );
+    this.releaseThreadSandboxBestEffort(workspaceId, threadId);
 
     return thread;
   }
@@ -611,6 +602,24 @@ export class AgentChatService {
         },
       ],
     });
+
+    this.releaseThreadSandboxBestEffort(workspaceId, threadId);
+  }
+
+  // Best-effort: reclaim a conversation's warm sandbox; the age sweep is the backstop.
+  private releaseThreadSandboxBestEffort(
+    workspaceId: string,
+    threadId: string,
+  ): void {
+    void this.codeInterpreterService
+      .releaseThreadSandbox(workspaceId, threadId)
+      .catch((error) =>
+        this.logger.warn(
+          `Failed to release code interpreter sandbox for thread ${threadId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        ),
+      );
   }
 
   async notifyThreadActivityUpdated({
