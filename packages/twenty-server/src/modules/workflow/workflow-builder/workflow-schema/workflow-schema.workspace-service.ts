@@ -4,12 +4,15 @@ import { isString } from '@sniptt/guards';
 import { isDefined, isValidVariable } from 'twenty-shared/utils';
 import {
   BaseOutputSchemaV2,
+  buildManualTriggerMetadataNode,
+  buildManualTriggerMetadataRecordField,
   BulkRecordsAvailability,
   extractRawVariableNamePart,
   GlobalAvailability,
   navigateOutputSchemaProperty,
   SingleRecordAvailability,
   TRIGGER_STEP_ID,
+  WORKFLOW_TRIGGER_METADATA_KEY,
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
@@ -291,14 +294,30 @@ export class WorkflowSchemaWorkspaceService {
     workspaceId: string;
   }): Promise<OutputSchema> {
     if (availability.type === 'GLOBAL') {
-      return {};
+      return {
+        [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
+      };
     }
 
     if (availability.type === 'SINGLE_RECORD') {
-      return this.computeRecordOutputSchema({
-        objectType: availability.objectNameSingular,
-        workspaceId,
+      const objectMetadataInfo =
+        await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+          availability.objectNameSingular,
+          workspaceId,
+        );
+
+      const recordOutputSchema = generateFakeObjectRecord({
+        objectMetadataInfo,
       });
+
+      return {
+        ...recordOutputSchema,
+        fields: {
+          ...recordOutputSchema.fields,
+          [WORKFLOW_TRIGGER_METADATA_KEY]:
+            buildManualTriggerMetadataRecordField(),
+        },
+      };
     }
 
     if (availability.type === 'BULK_RECORDS') {
@@ -316,6 +335,7 @@ export class WorkflowSchemaWorkspaceService {
           value:
             'Array of ' + objectMetadataInfo.flatObjectMetadata.labelPlural,
         },
+        [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
       };
     }
 
