@@ -95,7 +95,10 @@ export const CodeEditor = ({
   });
 
   const shouldAutoHeight = autoHeight && !resizable;
-  const codeEditorPadding = theme.spacingMultiplicator * 4;
+  const codeEditorPadding =
+    typeof theme.spacingMultiplicator === 'number'
+      ? theme.spacingMultiplicator * 4
+      : undefined;
   const currentHeight = shouldAutoHeight
     ? (autoHeightContentHeight ?? height)
     : resizable
