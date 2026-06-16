@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 import {
   convertToModelMessages,
   type LanguageModelUsage,
@@ -36,10 +37,6 @@ import {
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
-import {
-  getLearntToolNames,
-  getLoadedSkillNames,
-} from 'src/engine/core-modules/tool-provider/utils/meta-tool-inner-names.util';
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
@@ -499,8 +496,17 @@ export class ChatExecutionService {
             attributes: executionAttributes,
           });
 
+          const { input } = part;
+
           if (part.toolName === LEARN_TOOLS_TOOL_NAME) {
-            for (const learntToolName of getLearntToolNames(part.input)) {
+            const learntToolNames =
+              isObject(input) && 'toolNames' in input
+                ? input.toolNames
+                : undefined;
+
+            for (const learntToolName of Array.isArray(learntToolNames)
+              ? learntToolNames.filter(isNonEmptyString)
+              : []) {
               this.metricsService.incrementCounterBy({
                 key: succeeded
                   ? MetricsKeys.AiChatToolLearnedSucceeded
@@ -515,7 +521,14 @@ export class ChatExecutionService {
           }
 
           if (part.toolName === LOAD_SKILL_TOOL_NAME) {
-            for (const loadedSkillName of getLoadedSkillNames(part.input)) {
+            const loadedSkillNames =
+              isObject(input) && 'skillNames' in input
+                ? input.skillNames
+                : undefined;
+
+            for (const loadedSkillName of Array.isArray(loadedSkillNames)
+              ? loadedSkillNames.filter(isNonEmptyString)
+              : []) {
               this.metricsService.incrementCounterBy({
                 key: succeeded
                   ? MetricsKeys.AiChatSkillLoadedSucceeded
