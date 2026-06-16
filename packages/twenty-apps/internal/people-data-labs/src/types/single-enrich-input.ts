@@ -1,5 +1,5 @@
-export type EnrichToolInput = {
+export type SingleEnrichInput = {
   recordId?: string;
-  recordIds?: string[];
   overrideExistingValues?: boolean;
+  minLikelihood?: number;
 };

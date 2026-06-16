@@ -1,7 +1,10 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
 import { describe, expect, it } from 'vitest';
+
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
+import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
@@ -24,21 +27,60 @@ describe('App installation', () => {
   });
 });
 
-describe('CoreApiClient', () => {
-  it('should support CRUD on standard objects', async () => {
+describe('CallRecording status contract', () => {
+  it('accepts every status and request status value the app mirrors', async () => {
     const client = new CoreApiClient();
 
     const created = await client.mutation({
-      createNote: {
-        __args: { data: { title: 'Integration test note' } },
+      createCallRecording: {
+        __args: {
+          data: {
+            title: 'Integration test recording',
+            status: CallRecordingStatus.SCHEDULED,
+            recordingRequestStatus: CallRecordingRequestStatus.REQUESTED,
+          },
+        },
         id: true,
       },
     });
-    expect(created.createNote.id).toBeDefined();
+
+    const callRecordingId = created.createCallRecording?.id;
+
+    expect(callRecordingId).toBeDefined();
+
+    if (callRecordingId === undefined) {
+      throw new Error('Expected call recording creation to return an id');
+    }
+
+    for (const status of Object.values(CallRecordingStatus)) {
+      const updated = await client.mutation({
+        updateCallRecording: {
+          __args: { id: callRecordingId, data: { status } },
+          status: true,
+        },
+      });
+
+      expect(updated.updateCallRecording?.status).toBe(status);
+    }
+
+    for (const recordingRequestStatus of Object.values(
+      CallRecordingRequestStatus,
+    )) {
+      const updated = await client.mutation({
+        updateCallRecording: {
+          __args: { id: callRecordingId, data: { recordingRequestStatus } },
+          recordingRequestStatus: true,
+        },
+      });
+
+      expect(updated.updateCallRecording?.recordingRequestStatus).toBe(
+        recordingRequestStatus,
+      );
+    }
 
     await client.mutation({
-      destroyNote: {
-        __args: { id: created.createNote.id },
+      destroyCallRecording: {
+        __args: { id: callRecordingId },
         id: true,
       },
     });

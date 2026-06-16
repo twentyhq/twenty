@@ -243,6 +243,7 @@ export const CodeEditor = ({
               enabled: false,
             },
             overviewRulerLanes: 0,
+            scrollBeyondLastLine: false,
             scrollbar: {
               vertical: 'hidden',
               horizontal: 'hidden',
