@@ -33,23 +33,19 @@ const getNextOnboardingStatus = ({
   isAccountSyncEnabled,
 }: GetNextOnboardingStatusArgs) => {
   if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
+    return isAccountSyncEnabled
+      ? OnboardingStatus.SYNC_EMAIL
+      : OnboardingStatus.PROFILE_CREATION;
+  }
+
+  if (currentUser?.onboardingStatus === OnboardingStatus.SYNC_EMAIL) {
     return OnboardingStatus.PROFILE_CREATION;
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
-    if (currentWorkspace?.workspaceMembersCount === 1) {
-      if (isAccountSyncEnabled) {
-        return OnboardingStatus.SYNC_EMAIL;
-      }
-      return OnboardingStatus.INVITE_TEAM;
-    }
-    return OnboardingStatus.COMPLETED;
-  }
-  if (
-    currentUser?.onboardingStatus === OnboardingStatus.SYNC_EMAIL &&
-    currentWorkspace?.workspaceMembersCount === 1
-  ) {
-    return OnboardingStatus.INVITE_TEAM;
+    return currentWorkspace?.workspaceMembersCount === 1
+      ? OnboardingStatus.INVITE_TEAM
+      : OnboardingStatus.COMPLETED;
   }
   if (currentUser?.onboardingStatus === OnboardingStatus.INVITE_TEAM) {
     return isDefined(calendarBookingPageId)

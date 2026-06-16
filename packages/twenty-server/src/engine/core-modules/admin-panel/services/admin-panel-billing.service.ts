@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, type Repository } from 'typeorm';
 
 import { AdminPanelWorkspaceBillingDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing.dto';
+import { type AdminPanelWorkspaceUsageDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-usage.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 const CREDIT_BALANCE_MICRO_UNIT = 1_000_000;
@@ -19,12 +23,17 @@ const KNOWN_PLAN_KEYS: ReadonlySet<string> = new Set(
 
 @Injectable()
 export class AdminPanelBillingService {
+  private readonly logger = new Logger(AdminPanelBillingService.name);
+
   constructor(
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     @InjectRepository(BillingPriceEntity)
     private readonly billingPriceRepository: Repository<BillingPriceEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingUsageService: BillingUsageService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -57,8 +66,11 @@ export class AdminPanelBillingService {
         stripeCustomerId,
         creditBalance,
         subscription: null,
+        usage: null,
       };
     }
+
+    const usage = await this.getWorkspaceUsage(workspaceId);
 
     const items = subscription.billingSubscriptionItems ?? [];
     const priceIds = items.map((item) => item.stripePriceId);
@@ -80,6 +92,7 @@ export class AdminPanelBillingService {
     return {
       stripeCustomerId,
       creditBalance,
+      usage,
       subscription: {
         stripeSubscriptionId: subscription.stripeSubscriptionId,
         status: subscription.status,
@@ -111,5 +124,49 @@ export class AdminPanelBillingService {
         }),
       },
     };
+  }
+
+  private async getWorkspaceUsage(
+    workspaceId: string,
+  ): Promise<AdminPanelWorkspaceUsageDTO | null> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+    });
+
+    if (!workspace) {
+      return null;
+    }
+
+    try {
+      const [usage] =
+        await this.billingUsageService.getResourceCreditProductUsage(workspace);
+
+      if (!usage) {
+        return null;
+      }
+
+      const usedCredits = toDisplayCredits(usage.usedCredits);
+      const grantedCredits = toDisplayCredits(usage.grantedCredits);
+      const rolloverCredits = toDisplayCredits(usage.rolloverCredits);
+      const totalGrantedCredits = toDisplayCredits(usage.totalGrantedCredits);
+
+      return {
+        periodStart: usage.periodStart,
+        periodEnd: usage.periodEnd,
+        usedCredits,
+        grantedCredits,
+        rolloverCredits,
+        totalGrantedCredits,
+        remainingCredits: totalGrantedCredits - usedCredits,
+      };
+    } catch (error) {
+      this.logger.warn(
+        `Failed to compute credit usage for workspace ${workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      return null;
+    }
   }
 }

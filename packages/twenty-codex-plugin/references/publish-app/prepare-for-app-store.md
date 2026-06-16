@@ -122,7 +122,7 @@ Use plain product language:
 - Name the Twenty objects and views users will actually interact with.
 - Explain setup variables by their exact names.
 - Distinguish server admin setup from workspace member usage.
-- For OAuth connections, mention the provider redirect URI: `<SERVER_URL>/apps/oauth/callback`.
+- For OAuth connections, mention the provider redirect URI: `<SERVER_URL>/auth/apps/callback`.
 - Document permissions in terms of user risk: read, create, update, soft delete, destroy, third-party send.
 
 Avoid:
