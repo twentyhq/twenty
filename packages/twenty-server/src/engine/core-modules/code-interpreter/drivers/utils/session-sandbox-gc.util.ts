@@ -68,7 +68,8 @@ export const sweepExpiredSessionSandboxes = async (
   const expiredSandboxes = sandboxes.filter(
     (sandbox) =>
       isDefined(sandbox.metadata?.[SESSION_SANDBOX_METADATA_KEY]) &&
-      sandbox.startedAt.getTime() < expiredBefore,
+      // startedAt is typed as Date but comes back as an ISO string at runtime.
+      new Date(sandbox.startedAt).getTime() < expiredBefore,
   );
 
   await Promise.all(

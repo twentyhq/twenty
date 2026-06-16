@@ -13,7 +13,8 @@ const dayMs = 24 * 60 * 60 * 1000;
 type ListedSandbox = {
   sandboxId: string;
   metadata: Record<string, string>;
-  startedAt: Date;
+  // E2B returns this as an ISO string at runtime even though it's typed Date.
+  startedAt: string;
 };
 
 const paginatorOf = (items: ListedSandbox[]) => {
@@ -44,7 +45,7 @@ const sandboxInfo = (
 ): ListedSandbox => ({
   sandboxId,
   metadata: tag === null ? {} : { [SESSION_SANDBOX_METADATA_KEY]: tag },
-  startedAt: new Date(Date.now() - ageMs),
+  startedAt: new Date(Date.now() - ageMs).toISOString(),
 });
 
 describe('releaseSessionSandboxes', () => {
