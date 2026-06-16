@@ -204,6 +204,63 @@ describe('findRelationPathsToPerson', () => {
     ]);
   });
 
+  it('collects both a direct and a longer relation chain to person (opportunity)', () => {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      buildGraphFixtures({
+        opportunity: [
+          {
+            fieldName: 'pointOfContact',
+            relationType: RelationType.MANY_TO_ONE,
+            targetObjectNameSingular: 'person',
+            inverseFieldName: 'pointOfContactForOpportunities',
+          },
+          {
+            fieldName: 'company',
+            relationType: RelationType.MANY_TO_ONE,
+            targetObjectNameSingular: 'company',
+            inverseFieldName: 'opportunities',
+          },
+        ],
+        company: [
+          {
+            fieldName: 'people',
+            relationType: RelationType.ONE_TO_MANY,
+            targetObjectNameSingular: 'person',
+            inverseFieldName: 'company',
+          },
+        ],
+        person: [],
+      });
+
+    expect(
+      findRelationPathsToPerson({
+        rootObjectNameSingular: 'opportunity',
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    ).toEqual([
+      [
+        {
+          direction: RelationType.MANY_TO_ONE,
+          queryObjectNameSingular: 'opportunity',
+          joinColumnName: 'pointOfContactId',
+        },
+      ],
+      [
+        {
+          direction: RelationType.MANY_TO_ONE,
+          queryObjectNameSingular: 'opportunity',
+          joinColumnName: 'companyId',
+        },
+        {
+          direction: RelationType.ONE_TO_MANY,
+          queryObjectNameSingular: 'person',
+          joinColumnName: 'companyId',
+        },
+      ],
+    ]);
+  });
+
   it('returns no path when person is unreachable, terminating on relation cycles', () => {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       buildGraphFixtures({

@@ -47,9 +47,9 @@ export const findRelationPathsToPerson = ({
 
   let frontier = [{ objectId: rootObjectId, path: [] as RelationPathToPerson }];
   const visitedObjectIds = new Set<string>([rootObjectId]);
+  const pathsToPerson: RelationPathToPerson[] = [];
 
   for (let depth = 0; depth < maxDepth; depth++) {
-    const pathsToPerson: RelationPathToPerson[] = [];
     const nextFrontier: typeof frontier = [];
     const objectIdsReachedThisDepth = new Set<string>();
 
@@ -117,13 +117,9 @@ export const findRelationPathsToPerson = ({
       }
     }
 
-    if (pathsToPerson.length > 0) {
-      return pathsToPerson;
-    }
-
     objectIdsReachedThisDepth.forEach((id) => visitedObjectIds.add(id));
     frontier = nextFrontier;
   }
 
-  return [];
+  return pathsToPerson;
 };
