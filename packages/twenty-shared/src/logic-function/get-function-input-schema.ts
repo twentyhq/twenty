@@ -18,13 +18,27 @@ import {
 } from 'typescript';
 
 import { type InputJsonSchema } from '@/logic-function';
-import { type KnownObjectTypes } from '@/logic-function/known-object-types';
 import { isDefined } from '@/utils/validation/isDefined';
 
-const getTypeString = (
-  typeNode: TypeNode,
-  knownObjectTypes: KnownObjectTypes,
-): InputJsonSchema => {
+const TWENTY_RECORD_TYPE_NAME = 'TwentyRecord';
+
+const getObjectUniversalIdentifierFromTypeArgument = (
+  typeReferenceNode: TypeReferenceNode,
+): string | undefined => {
+  const typeArgument = typeReferenceNode.typeArguments?.[0];
+
+  if (
+    isDefined(typeArgument) &&
+    typeArgument.kind === SyntaxKind.LiteralType &&
+    (typeArgument as LiteralTypeNode).literal.kind === SyntaxKind.StringLiteral
+  ) {
+    return ((typeArgument as LiteralTypeNode).literal as StringLiteral).text;
+  }
+
+  return undefined;
+};
+
+const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
   switch (typeNode.kind) {
     case SyntaxKind.NumberKeyword:
       return { type: 'number' };
@@ -35,10 +49,7 @@ const getTypeString = (
     case SyntaxKind.ArrayType:
       return {
         type: 'array',
-        items: getTypeString(
-          (typeNode as ArrayTypeNode).elementType,
-          knownObjectTypes,
-        ),
+        items: getTypeString((typeNode as ArrayTypeNode).elementType),
       };
     case SyntaxKind.TypeReference: {
       const typeReferenceNode = typeNode as TypeReferenceNode;
@@ -52,18 +63,17 @@ const getTypeString = (
 
         return {
           type: 'array',
-          items: isDefined(elementType)
-            ? getTypeString(elementType, knownObjectTypes)
-            : {},
+          items: isDefined(elementType) ? getTypeString(elementType) : {},
         };
       }
 
-      const objectUniversalIdentifier = isDefined(typeName)
-        ? knownObjectTypes[typeName]
-        : undefined;
+      if (typeName === TWENTY_RECORD_TYPE_NAME) {
+        const objectUniversalIdentifier =
+          getObjectUniversalIdentifierFromTypeArgument(typeReferenceNode);
 
-      if (isDefined(objectUniversalIdentifier)) {
-        return { type: 'object', objectUniversalIdentifier };
+        if (isDefined(objectUniversalIdentifier)) {
+          return { type: 'object', objectUniversalIdentifier };
+        }
       }
 
       return {};
@@ -77,7 +87,7 @@ const getTypeString = (
         if (isDefined(member.name) && isDefined(member.type)) {
           const memberName = (member.name as any).text;
 
-          properties[memberName] = getTypeString(member.type, knownObjectTypes);
+          properties[memberName] = getTypeString(member.type);
         }
       });
 
@@ -117,7 +127,6 @@ const getTypeString = (
 const computeFunctionParameters = (
   funcNode: FunctionDeclaration | FunctionLikeDeclaration | ArrowFunction,
   schema: InputJsonSchema[],
-  knownObjectTypes: KnownObjectTypes,
 ): InputJsonSchema[] => {
   const params = funcNode.parameters;
 
@@ -125,7 +134,7 @@ const computeFunctionParameters = (
     const typeNode = param.type;
 
     if (isDefined(typeNode)) {
-      return [...updatedSchema, getTypeString(typeNode, knownObjectTypes)];
+      return [...updatedSchema, getTypeString(typeNode)];
     } else {
       return [...updatedSchema, {}];
     }
@@ -154,9 +163,7 @@ const extractFunctions = (node: Node): FunctionLikeDeclaration[] => {
 
 export const getFunctionInputSchema = (
   fileContent: string,
-  options?: { knownObjectTypes?: KnownObjectTypes },
 ): InputJsonSchema[] => {
-  const knownObjectTypes = options?.knownObjectTypes ?? {};
   const sourceFile = createSourceFile(
     'temp.ts',
     fileContent,
@@ -173,7 +180,7 @@ export const getFunctionInputSchema = (
       const functions = extractFunctions(node);
 
       functions.forEach((func) => {
-        schema = computeFunctionParameters(func, schema, knownObjectTypes);
+        schema = computeFunctionParameters(func, schema);
       });
     }
   });

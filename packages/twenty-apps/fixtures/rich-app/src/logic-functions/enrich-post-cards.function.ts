@@ -1,14 +1,11 @@
-import { defineLogicFunction } from 'twenty-sdk/define';
-
-type Company = { id: string };
-type PostCard = { id: string };
+import { defineLogicFunction, type TwentyRecord } from 'twenty-sdk/define';
 
 const handler = async (params: {
-  company: Company;
-  postCards: PostCard[];
+  company: TwentyRecord<'20202020-b374-4779-a561-80086cb2e17f'>;
+  postCards: TwentyRecord<'54b589ca-eeed-4950-a176-358418b85c05'>[];
 }) => {
   return {
-    companyId: params.company.id,
+    companyId: params.company,
     postCardCount: params.postCards.length,
   };
 };

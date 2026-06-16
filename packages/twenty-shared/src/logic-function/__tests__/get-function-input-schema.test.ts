@@ -86,20 +86,17 @@ describe('getFunctionInputSchema', () => {
     ]);
   });
 
-  it('should resolve known object type references to record schemas', () => {
+  it('should resolve TwentyRecord markers to record schemas', () => {
     const fileContent = `
         export const main = (params: {
-          company: Company;
-          companies: Company[];
-          otherCompanies: Array<Company>;
-          unknownRef: Foo;
+          company: TwentyRecord<'company-universal-identifier'>;
+          companies: TwentyRecord<'company-universal-identifier'>[];
+          otherCompanies: Array<TwentyRecord<'company-universal-identifier'>>;
         }): void => {
           return;
         };
       `;
-    const result = getFunctionInputSchema(fileContent, {
-      knownObjectTypes: { Company: 'company-universal-identifier' },
-    });
+    const result = getFunctionInputSchema(fileContent);
 
     expect(result).toEqual([
       {
@@ -123,15 +120,14 @@ describe('getFunctionInputSchema', () => {
               objectUniversalIdentifier: 'company-universal-identifier',
             },
           },
-          unknownRef: {},
         },
       },
     ]);
   });
 
-  it('should not resolve object type references without known object types', () => {
+  it('should leave a bare TwentyRecord without a literal argument unresolved', () => {
     const fileContent = `
-        export const main = (params: { companies: Company[] }): void => {
+        export const main = (params: { record: TwentyRecord }): void => {
           return;
         };
       `;
@@ -141,6 +137,28 @@ describe('getFunctionInputSchema', () => {
       {
         type: 'object',
         properties: {
+          record: {},
+        },
+      },
+    ]);
+  });
+
+  it('should not resolve plain object type references to records', () => {
+    const fileContent = `
+        export const main = (params: {
+          company: Company;
+          companies: Company[];
+        }): void => {
+          return;
+        };
+      `;
+    const result = getFunctionInputSchema(fileContent);
+
+    expect(result).toEqual([
+      {
+        type: 'object',
+        properties: {
+          company: {},
           companies: { type: 'array', items: {} },
         },
       },

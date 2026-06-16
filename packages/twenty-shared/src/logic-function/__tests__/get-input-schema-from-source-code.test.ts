@@ -24,13 +24,13 @@ describe('getInputSchemaFromSourceCode', () => {
     const result = await getInputSchemaFromSourceCode(fileContent);
     expect(result).toEqual(DEFAULT_TOOL_INPUT_SCHEMA);
   });
-  it('should forward known object types to the schema inference', async () => {
+  it('should infer record schemas from TwentyRecord markers', async () => {
     const fileContent = `
-        function testFunction(params: { companies: Company[] }) { return }
+        function testFunction(params: {
+          companies: TwentyRecord<'company-universal-identifier'>[];
+        }) { return }
       `;
-    const result = await getInputSchemaFromSourceCode(fileContent, {
-      knownObjectTypes: { Company: 'company-universal-identifier' },
-    });
+    const result = await getInputSchemaFromSourceCode(fileContent);
     expect(result).toEqual({
       type: 'object',
       properties: {

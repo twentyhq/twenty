@@ -21,6 +21,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { useContext, useId, useState } from 'react';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui-deprecated/display';
 import {
@@ -94,6 +95,7 @@ export const FormMultiRecordPicker = ({
   const { records: selectedRecords } = useFindManyRecords({
     objectNameSingular,
     filter: { id: { in: staticRecordIds } },
+    limit: Math.min(staticRecordIds.length, QUERY_MAX_RECORDS),
     skip: staticRecordIds.length === 0,
     withSoftDeleted: true,
   });

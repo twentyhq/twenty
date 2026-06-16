@@ -50,11 +50,9 @@ import {
   type ViewManifest,
 } from 'twenty-shared/application';
 import {
-  buildKnownObjectTypes,
   getInputSchemaFromSourceCode,
   jsonSchemaToInputSchema,
 } from 'twenty-shared/logic-function';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
@@ -96,11 +94,6 @@ export const buildManifest = async (
   const agents: AgentManifest[] = [];
   const connectionProviders: ConnectionProviderManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
-  const pendingLogicFunctions: Array<{
-    config: LogicFunctionConfig;
-    fileContent: string;
-    relativeFilePath: string;
-  }> = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
   const views: ViewManifest[] = [];
@@ -284,11 +277,49 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
 
-        pendingLogicFunctions.push({
-          config: extract.config,
-          fileContent,
-          relativeFilePath: relativePath,
-        });
+        const { handler: _, ...rest } = extract.config;
+
+        const inferredJsonSchema =
+          (rest.toolTriggerSettings && !rest.toolTriggerSettings.inputSchema) ||
+          (rest.workflowActionTriggerSettings &&
+            !rest.workflowActionTriggerSettings.inputSchema)
+            ? await getInputSchemaFromSourceCode(fileContent)
+            : null;
+
+        const toolTriggerSettings = rest.toolTriggerSettings
+          ? {
+              ...rest.toolTriggerSettings,
+              inputSchema:
+                rest.toolTriggerSettings.inputSchema ??
+                inferredJsonSchema ??
+                undefined,
+            }
+          : undefined;
+
+        const workflowActionTriggerSettings = rest.workflowActionTriggerSettings
+          ? {
+              ...rest.workflowActionTriggerSettings,
+              inputSchema:
+                rest.workflowActionTriggerSettings.inputSchema ??
+                (inferredJsonSchema
+                  ? jsonSchemaToInputSchema(inferredJsonSchema)
+                  : undefined),
+            }
+          : undefined;
+
+        const config: LogicFunctionManifest = {
+          ...rest,
+          ...(toolTriggerSettings ? { toolTriggerSettings } : {}),
+          ...(workflowActionTriggerSettings
+            ? { workflowActionTriggerSettings }
+            : {}),
+          handlerName: 'default.config.handler',
+          sourceHandlerPath: relativePath,
+          builtHandlerPath: relativePath.replace(/\.tsx?$/, '.mjs'),
+          builtHandlerChecksum: '[default-checksum]',
+        };
+
+        logicFunctions.push(config);
         logicFunctionsFilePaths.push(relativePath);
 
         if (
@@ -459,72 +490,6 @@ export const buildManifest = async (
         assertUnreachable(entity);
       }
     }
-  }
-
-  const knownObjectTypes = buildKnownObjectTypes([
-    ...Object.entries(STANDARD_OBJECTS).map(
-      ([nameSingular, standardObject]) => ({
-        nameSingular,
-        universalIdentifier: standardObject.universalIdentifier,
-      }),
-    ),
-    ...objects.map((object) => ({
-      nameSingular: object.nameSingular,
-      universalIdentifier: object.universalIdentifier,
-    })),
-  ]);
-
-  for (const {
-    config: pendingConfig,
-    fileContent,
-    relativeFilePath,
-  } of pendingLogicFunctions) {
-    const { handler: _, ...rest } = pendingConfig;
-
-    // Auto-infer inputSchema for any trigger that opts in but omits one.
-    // For the AI tool surface we use the JSON schema directly; for the
-    // workflow action surface we convert to Twenty's InputSchema.
-    const inferredJsonSchema =
-      (rest.toolTriggerSettings && !rest.toolTriggerSettings.inputSchema) ||
-      (rest.workflowActionTriggerSettings &&
-        !rest.workflowActionTriggerSettings.inputSchema)
-        ? await getInputSchemaFromSourceCode(fileContent, { knownObjectTypes })
-        : null;
-
-    const toolTriggerSettings = rest.toolTriggerSettings
-      ? {
-          ...rest.toolTriggerSettings,
-          inputSchema:
-            rest.toolTriggerSettings.inputSchema ??
-            inferredJsonSchema ??
-            undefined,
-        }
-      : undefined;
-
-    const workflowActionTriggerSettings = rest.workflowActionTriggerSettings
-      ? {
-          ...rest.workflowActionTriggerSettings,
-          inputSchema:
-            rest.workflowActionTriggerSettings.inputSchema ??
-            (inferredJsonSchema
-              ? jsonSchemaToInputSchema(inferredJsonSchema)
-              : undefined),
-        }
-      : undefined;
-
-    const config: LogicFunctionManifest = {
-      ...rest,
-      ...(toolTriggerSettings ? { toolTriggerSettings } : {}),
-      ...(workflowActionTriggerSettings
-        ? { workflowActionTriggerSettings }
-        : {}),
-      handlerName: 'default.config.handler',
-      sourceHandlerPath: relativeFilePath,
-      builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
-      builtHandlerChecksum: '[default-checksum]',
-    };
-
-    logicFunctions.push(config);
   }
 
   const assetFiles = await loadAssets(appPath);

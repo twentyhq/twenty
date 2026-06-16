@@ -6,11 +6,10 @@ import {
 
 export const getInputSchemaFromSourceCode = async (
   sourceCode: string,
-  options?: { knownObjectTypes?: Record<string, string> },
 ): Promise<InputJsonSchema> => {
   const { getFunctionInputSchema } =
     await import('./get-function-input-schema');
-  const inputSchema = getFunctionInputSchema(sourceCode, options);
+  const inputSchema = getFunctionInputSchema(sourceCode);
 
   const firstParam = inputSchema[0];
 

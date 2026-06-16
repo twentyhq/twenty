@@ -3,10 +3,7 @@ import {
   useLogicFunctionUpdateFormState,
 } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useMemo } from 'react';
 import {
-  buildKnownObjectTypes,
   getInputSchemaFromSourceCode,
   jsonSchemaToInputSchema,
   type InputJsonSchema,
@@ -22,13 +19,6 @@ export const useLogicFunctionForm = ({
 
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({ logicFunctionId });
-
-  const { objectMetadataItems } = useObjectMetadataItems();
-
-  const knownObjectTypes = useMemo(
-    () => buildKnownObjectTypes(objectMetadataItems),
-    [objectMetadataItems],
-  );
 
   const handleSave = useDebouncedCallback(async () => {
     await updateLogicFunction({
@@ -46,7 +36,6 @@ export const useLogicFunctionForm = ({
       if (key === 'sourceHandlerCode') {
         const inferredJsonSchema = await getInputSchemaFromSourceCode(
           value as LogicFunctionFormValues['sourceHandlerCode'],
-          { knownObjectTypes },
         );
 
         setFormValues((prevState: LogicFunctionFormValues) => ({
