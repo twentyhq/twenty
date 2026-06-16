@@ -69,7 +69,9 @@ describe('DraftEmailTool', () => {
       }),
     });
 
-    const result = await tool.execute(baseInput, { workspaceId: 'workspace-1' });
+    const result = await tool.execute(baseInput, {
+      workspaceId: 'workspace-1',
+    });
 
     expect(result.success).toBe(false);
     expect(result.message).toContain('insufficient permissions');
@@ -86,7 +88,9 @@ describe('DraftEmailTool', () => {
       }),
     });
 
-    const result = await tool.execute(baseInput, { workspaceId: 'workspace-1' });
+    const result = await tool.execute(baseInput, {
+      workspaceId: 'workspace-1',
+    });
 
     expect(result.success).toBe(true);
     expect(mockCreateDraft).toHaveBeenCalledTimes(1);

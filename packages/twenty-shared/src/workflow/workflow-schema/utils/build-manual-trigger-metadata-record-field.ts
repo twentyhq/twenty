@@ -1,10 +1,8 @@
 import { FieldMetadataType } from '@/types/FieldMetadataType';
-import {
-  WORKFLOW_TRIGGER_METADATA_KEY,
-  WORKFLOW_TRIGGER_METADATA_LABEL,
-  WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY,
-  WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_LABEL,
-} from '@/workflow/constants/ManualTriggerMetadata';
+import { WORKFLOW_TRIGGER_METADATA_KEY } from '@/workflow/constants/WorkflowTriggerMetadataKey';
+import { WORKFLOW_TRIGGER_METADATA_LABEL } from '@/workflow/constants/WorkflowTriggerMetadataLabel';
+import { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY } from '@/workflow/constants/WorkflowTriggerMetadataWorkspaceMemberIdKey';
+import { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_LABEL } from '@/workflow/constants/WorkflowTriggerMetadataWorkspaceMemberIdLabel';
 import { type RecordFieldNode } from '@/workflow/workflow-schema/types/output-schema.type';
 
 export const buildManualTriggerMetadataRecordField = (): RecordFieldNode => ({

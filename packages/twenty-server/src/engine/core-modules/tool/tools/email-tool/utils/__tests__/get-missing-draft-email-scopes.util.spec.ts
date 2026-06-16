@@ -63,7 +63,9 @@ describe('getMissingDraftEmailScopes', () => {
       ConnectedAccountProvider.OIDC,
       ConnectedAccountProvider.SAML,
     ])('never requires scopes for %s accounts', (provider) => {
-      expect(getMissingDraftEmailScopes({ provider, scopes: null })).toEqual([]);
+      expect(getMissingDraftEmailScopes({ provider, scopes: null })).toEqual(
+        [],
+      );
     });
   });
 });

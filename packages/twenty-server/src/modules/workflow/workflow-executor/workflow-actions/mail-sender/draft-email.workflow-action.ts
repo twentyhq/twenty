@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
@@ -16,7 +15,6 @@ import {
 import { EmailWorkflowActionBase } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/email-workflow-action.base';
 import { isWorkflowDraftEmailAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/guards/is-workflow-draft-email-action.guard';
 import { type EmailStepLogMode } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
-import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
@@ -46,22 +44,6 @@ export class DraftEmailWorkflowAction extends EmailWorkflowActionBase {
 
   protected getMode(): EmailStepLogMode {
     return 'DRAFT';
-  }
-
-  protected override async postprocessInput(
-    resolvedInput: WorkflowSendEmailActionInput,
-    workspaceId: string,
-  ): Promise<WorkflowSendEmailActionInput> {
-    if (!isDefined(resolvedInput.connectedAccountId)) {
-      return resolvedInput;
-    }
-
-    const connectedAccountId = await this.resolveSenderConnectedAccountId(
-      resolvedInput.connectedAccountId,
-      workspaceId,
-    );
-
-    return { ...resolvedInput, connectedAccountId };
   }
 
   protected assertStep(step: WorkflowAction): void {

@@ -277,8 +277,6 @@ export const VariableSender: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Account')).toBeVisible();
-    expect(
-      await canvas.findByLabelText('Remove variable'),
-    ).toBeInTheDocument();
+    expect(await canvas.findByLabelText('Remove variable')).toBeInTheDocument();
   },
 };

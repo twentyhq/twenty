@@ -48,6 +48,22 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     return { ...rawInput, body: renderedBody };
   }
 
+  protected override async postprocessInput(
+    resolvedInput: WorkflowSendEmailActionInput,
+    workspaceId: string,
+  ): Promise<WorkflowSendEmailActionInput> {
+    if (!isDefined(resolvedInput.connectedAccountId)) {
+      return resolvedInput;
+    }
+
+    const connectedAccountId = await this.resolveSenderConnectedAccountId(
+      resolvedInput.connectedAccountId,
+      workspaceId,
+    );
+
+    return { ...resolvedInput, connectedAccountId };
+  }
+
   // The sender configured on an email step is either a connected account id
   // (static pick) or a workspace member id (from a resolved workflow variable).
   // When it is a workspace member id, resolve that member's first connected
@@ -63,31 +79,34 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMember = await this.findWorkspaceMemberById(
-        senderId,
-        workspaceId,
-      );
-
-      if (!isDefined(workspaceMember)) {
-        return senderId;
-      }
-
-      const connectedAccountId =
-        await this.findFirstConnectedAccountIdByWorkspaceMember(
-          workspaceMember,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workspaceMember = await this.findWorkspaceMemberById(
+          senderId,
           workspaceId,
         );
 
-      if (!isDefined(connectedAccountId)) {
-        throw new WorkflowStepExecutorException(
-          `No connected account found for workspace member '${senderId}'`,
-          WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
-        );
-      }
+        if (!isDefined(workspaceMember)) {
+          return senderId;
+        }
 
-      return connectedAccountId;
-    }, authContext);
+        const connectedAccountId =
+          await this.findFirstConnectedAccountIdByWorkspaceMember(
+            workspaceMember,
+            workspaceId,
+          );
+
+        if (!isDefined(connectedAccountId)) {
+          throw new WorkflowStepExecutorException(
+            `No connected account found for workspace member '${senderId}'`,
+            WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+          );
+        }
+
+        return connectedAccountId;
+      },
+      authContext,
+    );
   }
 
   private async findWorkspaceMemberById(
