@@ -26,6 +26,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "objectPermissionUniversalIdentifiers",
     "fieldPermissionUniversalIdentifiers",
     "viewUniversalIdentifiers",
+    "searchFieldMetadataUniversalIdentifiers",
   ],
   "objectPermission": [],
   "pageLayout": [
@@ -53,6 +54,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "childRowLevelPermissionPredicateGroupUniversalIdentifiers",
     "rowLevelPermissionPredicateUniversalIdentifiers",
   ],
+  "searchFieldMetadata": [],
   "skill": [],
   "view": [
     "viewFieldUniversalIdentifiers",

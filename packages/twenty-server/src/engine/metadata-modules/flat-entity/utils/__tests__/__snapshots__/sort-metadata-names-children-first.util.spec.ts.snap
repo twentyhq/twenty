@@ -11,6 +11,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "objectPermission",
   "pageLayoutWidget",
   "rolePermissionFlag",
+  "searchFieldMetadata",
   "viewSort",
   "index",
   "pageLayout",
