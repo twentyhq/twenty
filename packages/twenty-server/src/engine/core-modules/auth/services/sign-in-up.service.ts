@@ -13,7 +13,9 @@ import {
 } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
+import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/user/user-signup';
 import { WORKSPACE_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
@@ -634,15 +636,14 @@ export class SignInUpService {
 
       return { user, workspace };
     } catch (error) {
-      const pgErrorCode =
-        error instanceof QueryFailedError
-          ? ((error as { code?: string }).code ??
-            (error as { driverError?: { code?: string } }).driverError?.code)
-          : undefined;
-
       // Translate a concurrent unique-constraint violation on the chosen
       // subdomain into the same error the upfront check throws.
-      if (isDefined(requestedSubdomain) && pgErrorCode === '23505') {
+      const isSubdomainConflict =
+        error instanceof QueryFailedError &&
+        (error as QueryFailedErrorWithCode).code ===
+          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
+
+      if (isDefined(requestedSubdomain) && isSubdomainConflict) {
         throw new WorkspaceException(
           'Subdomain already taken',
           WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,

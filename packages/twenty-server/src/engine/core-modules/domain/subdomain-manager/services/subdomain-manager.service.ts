@@ -39,16 +39,13 @@ export class SubdomainManagerService {
     userEmail?: string;
     workspaceDisplayName?: string;
   }) {
+    // findAvailableSubdomain normalizes its input and falls back to a random
+    // subdomain when no valid base can be derived, so pass the raw extraction.
     const extractedSubdomain =
       getSubdomainFromEmail(userEmail) ||
       getSubdomainSlugFromDisplayName(workspaceDisplayName);
 
-    const base =
-      isDefined(extractedSubdomain) && isSubdomainValid(extractedSubdomain)
-        ? extractedSubdomain
-        : generateRandomSubdomain();
-
-    return this.findAvailableSubdomain(base);
+    return this.findAvailableSubdomain(extractedSubdomain ?? '');
   }
 
   // Suggests workspace creation defaults from a work email (e.g. jane@acme.com
