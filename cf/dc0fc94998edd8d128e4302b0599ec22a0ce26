@@ -1,0 +1,19 @@
+packages/twenty-server/src/engine/core-modules/messaging/utils/format-threads.util.ts
+  s_3809b9881bd3da::t_284cc029efff02 28-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "cfdc0fc94998edd8d128e4302b0599ec22a0ce26",
+  "prompts": {},
+  "sessions": {
+    "s_3809b9881bd3da": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2c3ae0fa-c11d-4036-b22a-861fbec98ccc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
