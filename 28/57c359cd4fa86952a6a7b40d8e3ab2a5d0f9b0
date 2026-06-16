@@ -1,0 +1,44 @@
+packages/twenty-server/test/integration/utils/restore-seeded-records.ts
+  s_3226b097c1ff8f::t_f6793776bc6529 1-11,19-81,83,85-88,91
+  s_3226b097c1ff8f::t_ab53713e36cb54 12-18,82,84,89-90,92
+packages/twenty-server/test/integration/graphql/suites/all-people-resolvers.integration-spec.ts
+  s_3226b097c1ff8f::t_8a162c41f62436 19,27-28
+packages/twenty-server/test/integration/graphql/suites/event-logs/object-event-write.integration-spec.ts
+  s_3226b097c1ff8f::t_3bfdab36f998a6 17
+  s_3226b097c1ff8f::t_805f3d6ff9dec9 58
+packages/twenty-server/test/integration/graphql/suites/object-generated/people-create-many.integration-spec.ts
+  s_3226b097c1ff8f::t_500f3e9264499c 7,16-17
+packages/twenty-server/test/integration/rest/suites/rest-api-core-update.integration-spec.ts
+  s_3226b097c1ff8f::t_5e91e554360ad9 48
+  s_3226b097c1ff8f::t_f5f40c1af70319 9
+  s_3226b097c1ff8f::t_9ce89c79889bcc 47,49-51
+packages/twenty-server/test/integration/graphql/suites/composite-field-pagination.integration-spec.ts
+  s_3226b097c1ff8f::t_94ae726351e6b5 13,16-19
+packages/twenty-server/test/integration/rest/suites/rest-api-core-find-duplicates.integration-spec.ts
+  s_3226b097c1ff8f::t_ee97bf428a7d34 10,13-17
+packages/twenty-server/test/integration/graphql/suites/search/search-resolver.integration-spec.ts
+  s_3226b097c1ff8f::t_f5b6ffae683bcb 203-204,206-212,215-216
+  s_3226b097c1ff8f::t_121f33fd6ac527 205,213-214
+  s_3226b097c1ff8f::t_e9c3631009a9f6 29
+packages/twenty-server/test/integration/rest/suites/rest-api-core-create-one.integration-spec.ts
+  s_3226b097c1ff8f::t_26ba0e11f5bbf7 32-33
+  s_3226b097c1ff8f::t_904df91ce6943f 9
+packages/twenty-server/test/integration/utils/delete-all-records.ts
+  s_3226b097c1ff8f::t_95f89ef498acaa 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "2857c359cd4fa86952a6a7b40d8e3ab2a5d0f9b0",
+  "prompts": {},
+  "sessions": {
+    "s_3226b097c1ff8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37fe379b-1108-44f6-ae35-d2db6ea5c15c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
