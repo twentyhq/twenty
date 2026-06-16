@@ -240,6 +240,9 @@ export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspac
         availabilityObjectMetadataUniversalIdentifier: null,
         pageLayoutId: null,
         pageLayoutUniversalIdentifier: null,
+        isActive: true,
+        overrides: null,
+        universalOverrides: null,
         createdAt: now,
         updatedAt: now,
       });

@@ -19,7 +19,7 @@ const StyledAnimatedContainer = styled(motion.div)`
   flex-shrink: 0;
   height: 100%;
   overflow: hidden;
-  padding: ${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]}
+  padding: ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[4]}
     ${themeCssVariables.spacing[2]};
 `;
 

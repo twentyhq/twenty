@@ -15,8 +15,10 @@ import { OPPORTUNITY_SUBSCRIPTION_FREQUENCY_FIELD_ID } from 'src/fields/opportun
 import { OPPORTUNITY_SUBSCRIPTION_TYPE_FIELD_ID } from 'src/fields/opportunity-subscription-type.field';
 import { OPPORTUNITY_TFT_ID_FIELD_ID } from 'src/fields/opportunity-tft-id.field';
 import { OPPORTUNITY_USE_CASE_FIELD_ID } from 'src/fields/opportunity-use-case.field';
+import { PARTNER_COMPANY_FIELD_ID } from 'src/fields/partner-company.field';
 import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-on-opportunity.field';
 import { PARTNER_USER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-user-on-opportunity.field';
+import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
 
 // Shared with configure-partner-rls.ts, which locates the role by this label.
 export const PARTNER_ROLE_LABEL = 'Partner';
@@ -211,6 +213,56 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
       fieldUniversalIdentifier: OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    // Partner object — lock admin-managed fields so partners can't self-promote or alter ops data.
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: 'a0000002-0000-4000-8000-000000000002',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: '2ca9856f-f54a-4326-9ff3-668fd7da0b50',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: '5af4e57e-7fa7-4c4f-b40f-37549361459a',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: '5412e4ca-cc96-4be8-8652-b73dace7673b',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: 'd4fa6461-37b6-49ee-9181-dd482e74a70b',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: 'a0000011-0000-4000-8000-000000000011',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: 'a0000010-0000-4000-8000-000000000010',
+      canUpdateFieldValue: false,
+    },
+    // Relation locks — the FK relations the Partner record itself owns. partnerUser is the
+    // RLS pivot: clearing or repointing it would drop the partner's own record out of scope
+    // (an orphan only admins can see). company is read-only as an object, so its link must
+    // not be repointable either. Mirrors the Opportunity partner/partnerUser locks above.
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_USER_ON_PARTNER_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_COMPANY_FIELD_ID,
       canUpdateFieldValue: false,
     },
   ],

@@ -61,6 +61,16 @@ export class FieldMetadataResolver {
     });
   }
 
+  @ResolveField(() => Boolean, {
+    nullable: true,
+    deprecationReason: 'Use isUIEditable',
+  })
+  async isUIReadOnly(
+    @Parent() fieldMetadata: Pick<FieldMetadataDTO, 'isUIEditable'>,
+  ): Promise<boolean> {
+    return !(fieldMetadata.isUIEditable ?? true);
+  }
+
   @ResolveField(() => String, { nullable: true })
   async label(
     @Parent() fieldMetadata: FieldMetadataStandardOverrideParent,

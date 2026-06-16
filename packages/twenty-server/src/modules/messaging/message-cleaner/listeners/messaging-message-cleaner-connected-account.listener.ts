@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ObjectRecordDeleteEvent } from 'twenty-shared/database-events';
+import { isDefined } from 'twenty-shared/utils';
 
+import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { CONNECTED_ACCOUNT_DELETED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-deleted.constant';
+import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
+import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import {
   MessagingConnectedAccountDeletionCleanupJob,
   type MessagingConnectedAccountDeletionCleanupJobData,
 } from 'src/modules/messaging/message-cleaner/jobs/messaging-connected-account-deletion-cleanup.job';
-import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class MessagingMessageCleanerConnectedAccountListener {
@@ -21,19 +21,23 @@ export class MessagingMessageCleanerConnectedAccountListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseBatchEvent('connectedAccount', DatabaseEventAction.DESTROYED)
-  async handleDestroyedEvent(
-    payload: WorkspaceEventBatch<
-      ObjectRecordDeleteEvent<ConnectedAccountEntity>
-    >,
+  @OnCustomBatchEvent(CONNECTED_ACCOUNT_DELETED_EVENT)
+  async handleDeletedEvent(
+    batchEvent: CustomWorkspaceEventBatch<ConnectedAccountDeletedEvent>,
   ) {
+    const { workspaceId } = batchEvent;
+
+    if (!isDefined(workspaceId)) {
+      return;
+    }
+
     await Promise.all(
-      payload.events.map((eventPayload) =>
+      batchEvent.events.map((event) =>
         this.messageQueueService.add<MessagingConnectedAccountDeletionCleanupJobData>(
           MessagingConnectedAccountDeletionCleanupJob.name,
           {
-            workspaceId: payload.workspaceId,
-            connectedAccountId: eventPayload.recordId,
+            workspaceId,
+            connectedAccountId: event.connectedAccountId,
           },
         ),
       ),
