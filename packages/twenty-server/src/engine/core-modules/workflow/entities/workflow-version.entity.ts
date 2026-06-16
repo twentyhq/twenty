@@ -9,9 +9,6 @@ import {
 } from 'typeorm';
 
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
-// These types currently live in the workspace module alongside the standard
-// object. They are reused here while the workspace `workflowVersion` object is
-// being migrated to core; they move to a shared location when it is dropped.
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -52,7 +49,6 @@ export class WorkflowVersionEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'double precision', nullable: false, default: 0 })
   position: number;
 
-  // Soft reference to the workspace `workflow` object — no cross-boundary FK.
   @Column({ type: 'uuid', nullable: false })
   workflowId: string;
 

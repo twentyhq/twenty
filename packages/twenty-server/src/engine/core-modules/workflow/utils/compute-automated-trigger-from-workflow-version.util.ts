@@ -5,9 +5,6 @@ import { type DatabaseEventTriggerSettings } from 'src/modules/workflow/workflow
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 
-// Mirrors `enableAutomatedTrigger` in the workspace trigger service: derives the
-// automated trigger (CRON / DATABASE_EVENT) from a version's `trigger`. MANUAL
-// and WEBHOOK triggers are not automated, so they produce no entry.
 export const computeAutomatedTriggerFromWorkflowVersion = (
   workflowVersion: WorkflowVersionEntity,
 ): CachedWorkflowAutomatedTrigger | null => {
