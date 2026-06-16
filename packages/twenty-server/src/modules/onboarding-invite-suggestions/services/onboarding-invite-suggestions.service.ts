@@ -9,11 +9,9 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
-import {
-  ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS,
-  ONBOARDING_INVITE_SUGGESTIONS_MAX_COUNT,
-  getOnboardingInviteSuggestionsCacheKey,
-} from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions.constants';
+import { ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-cache-ttl-ms.constant';
+import { ONBOARDING_INVITE_SUGGESTIONS_MAX_COUNT } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-max-count.constant';
+import { getOnboardingInviteSuggestionsCacheKey } from 'src/modules/onboarding-invite-suggestions/utils/get-onboarding-invite-suggestions-cache-key.util';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { CalendarAttendeesService } from 'src/modules/onboarding-invite-suggestions/services/calendar-attendees.service';
 import { type CalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/calendar-attendee.type';
