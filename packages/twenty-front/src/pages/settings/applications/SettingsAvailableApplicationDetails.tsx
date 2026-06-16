@@ -9,6 +9,7 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -75,6 +76,8 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const displayName = app?.displayName ?? detail?.name ?? '';
   const description = app?.description ?? '';
+  const author = isNonEmptyString(app?.author) ? app.author : undefined;
+  const category = isNonEmptyString(app?.category) ? app.category : undefined;
 
   const currentVersion = application?.version;
   const latestAvailableVersion = detail?.latestAvailableVersion;
@@ -215,8 +218,8 @@ export const SettingsAvailableApplicationDetails = () => {
             description={description}
             aboutDescription={app?.aboutDescription}
             screenshots={app?.screenshots}
-            author={app?.author ?? 'Unknown'}
-            category={app?.category}
+            author={author ?? 'Unknown'}
+            category={category}
             contentEntries={contentEntries}
             currentVersion={
               isAlreadyInstalled

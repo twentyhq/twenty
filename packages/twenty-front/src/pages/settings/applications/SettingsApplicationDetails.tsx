@@ -15,6 +15,7 @@ import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -92,6 +93,8 @@ export const SettingsApplicationDetails = () => {
   const displayName =
     app?.displayName ?? application?.name ?? t`Application details`;
   const description = app?.description ?? resolvedDescription;
+  const author = isNonEmptyString(app?.author) ? app.author : undefined;
+  const category = isNonEmptyString(app?.category) ? app.category : undefined;
 
   const getScreenshots = () => {
     if (app?.screenshots?.length) return app.screenshots;
@@ -259,8 +262,8 @@ export const SettingsApplicationDetails = () => {
             description={description}
             aboutDescription={app?.aboutDescription}
             screenshots={screenshots}
-            author={app?.author}
-            category={app?.category}
+            author={author}
+            category={category}
             contentEntries={contentEntries}
             currentVersion={currentVersion ?? undefined}
             latestAvailableVersion={latestAvailableVersion ?? undefined}

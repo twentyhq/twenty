@@ -114,6 +114,9 @@ export const SettingsApplicationAboutSidebar = ({
     (entry) => entry.count > 0,
   );
 
+  const safeAuthor = isNonEmptyString(author) ? author : undefined;
+  const safeCategory = isNonEmptyString(category) ? category : undefined;
+
   const hasDeveloperLinks =
     isDefined(developerLinks) &&
     (isNonEmptyString(developerLinks.websiteUrl) ||
@@ -128,17 +131,17 @@ export const SettingsApplicationAboutSidebar = ({
         <StyledSidebarSection>{actionButton}</StyledSidebarSection>
       )}
 
-      {isDefined(author) && (
+      {isDefined(safeAuthor) && (
         <StyledSidebarSection>
           <StyledSidebarLabel>{t`Created by`}</StyledSidebarLabel>
-          <StyledSidebarValue>{author}</StyledSidebarValue>
+          <StyledSidebarValue>{safeAuthor}</StyledSidebarValue>
         </StyledSidebarSection>
       )}
 
-      {isDefined(category) && (
+      {isDefined(safeCategory) && (
         <StyledSidebarSection>
           <StyledSidebarLabel>{t`Category`}</StyledSidebarLabel>
-          <StyledSidebarValue>{category}</StyledSidebarValue>
+          <StyledSidebarValue>{safeCategory}</StyledSidebarValue>
         </StyledSidebarSection>
       )}
 

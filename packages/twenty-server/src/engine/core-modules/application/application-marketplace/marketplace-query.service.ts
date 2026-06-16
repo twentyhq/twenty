@@ -20,6 +20,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 export class MarketplaceQueryService {
   private readonly logger = new Logger(MarketplaceQueryService.name);
   private hasSyncBeenEnqueued = false;
+  private readonly invalidManifestFieldWarnings = new Set<string>();
 
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
@@ -105,6 +106,18 @@ export class MarketplaceQueryService {
   private toMarketplaceAppDetailDTO(
     registration: ApplicationRegistrationEntity,
   ): MarketplaceAppDetailDTO {
+    this.logUnexpectedManifestFieldShape(
+      registration,
+      'author',
+      registration.manifest?.application?.author,
+    );
+
+    this.logUnexpectedManifestFieldShape(
+      registration,
+      'category',
+      registration.manifest?.application?.category,
+    );
+
     return {
       id: registration.id,
       universalIdentifier: registration.universalIdentifier,
@@ -116,5 +129,37 @@ export class MarketplaceQueryService {
       isFeatured: registration.isFeatured,
       manifest: registration.manifest ?? undefined,
     };
+  }
+
+  private logUnexpectedManifestFieldShape(
+    registration: ApplicationRegistrationEntity,
+    fieldName: 'author' | 'category',
+    value: unknown,
+  ) {
+    if (!isDefined(value) || typeof value === 'string') {
+      return;
+    }
+
+    const warningKey = `${registration.id}:${fieldName}`;
+
+    if (this.invalidManifestFieldWarnings.has(warningKey)) {
+      return;
+    }
+
+    this.invalidManifestFieldWarnings.add(warningKey);
+
+    this.logger.warn(
+      `Unexpected marketplace manifest application.${fieldName} type for registration ${registration.universalIdentifier}: ${typeof value}`,
+      JSON.stringify({
+        appRegistrationId: registration.id,
+        appRegistrationUniversalIdentifier: registration.universalIdentifier,
+        manifestField: `application.${fieldName}`,
+        valueType: typeof value,
+        valueKeys:
+          typeof value === 'object' && value !== null
+            ? Object.keys(value as Record<string, unknown>)
+            : undefined,
+      }),
+    );
   }
 }
