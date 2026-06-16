@@ -23,9 +23,8 @@ jobs:
           repositories: twenty-infra
           permission-actions: write
 
-      - name: Trigger twenty-infra deploys
+      - name: Trigger twenty-infra deploy
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          gh workflow run dev-cd.yaml --repo twentyhq/twenty-infra --ref main
-          gh workflow run deploy-website.yaml --repo twentyhq/twenty-infra --ref main
+          gh workflow run auto-deploy-main.yaml --repo twentyhq/twenty-infra --ref main
