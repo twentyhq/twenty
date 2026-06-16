@@ -202,6 +202,17 @@ const SocialItem = styled(ExternalLink)`
   }
 `;
 
+const handleNavClick = (
+  event: MouseEvent<HTMLAnchorElement>,
+  targetId: string,
+) => {
+  event.preventDefault();
+  document.getElementById(targetId)?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  });
+};
+
 export type CaseStudyArticleNavProps = {
   items: readonly MessageDescriptor[];
 };
@@ -260,17 +271,6 @@ export function CaseStudyArticleNav({ items }: CaseStudyArticleNavProps) {
   }, [sectionCount]);
 
   useScheduledOnScroll(updateFromScroll);
-
-  const handleNavClick = (
-    event: MouseEvent<HTMLAnchorElement>,
-    targetId: string,
-  ) => {
-    event.preventDefault();
-    document.getElementById(targetId)?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
-  };
 
   const progressPercent =
     sectionCount === 0 ? 0 : ((activeIndex + 1) / sectionCount) * 100;
