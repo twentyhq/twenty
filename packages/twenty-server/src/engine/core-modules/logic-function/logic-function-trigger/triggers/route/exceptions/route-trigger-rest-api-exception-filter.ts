@@ -50,6 +50,9 @@ export class RouteTriggerRestApiExceptionFilter implements ExceptionFilter {
           exception as CustomException,
           response,
           500,
+          undefined,
+          undefined,
+          { shouldBeCapturedBySentry: false },
         );
       case RouteTriggerExceptionCode.ROUTE_ALREADY_EXIST:
       case RouteTriggerExceptionCode.ROUTE_PATH_ALREADY_EXIST:

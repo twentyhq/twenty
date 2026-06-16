@@ -98,6 +98,12 @@ export class GoogleAPIsAuthController {
 
       const handle = emails[0].value.toLowerCase();
 
+      const shouldComputeInviteSuggestions =
+        await this.onboardingService.shouldComputeInviteSuggestionsOnConnect({
+          userId,
+          workspaceId,
+        });
+
       const connectedAccountId =
         await this.googleAPIsService.refreshGoogleRefreshToken({
           handle,
@@ -109,6 +115,7 @@ export class GoogleAPIsAuthController {
           calendarVisibility,
           messageVisibility,
           skipMessageChannelConfiguration,
+          shouldComputeInviteSuggestions,
         });
 
       if (userId) {

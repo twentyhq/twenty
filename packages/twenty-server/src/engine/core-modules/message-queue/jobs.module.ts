@@ -42,6 +42,7 @@ import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/cale
 import { CalendarModule } from 'src/modules/calendar/calendar.module';
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/contact-creation-manager/jobs/auto-companies-and-contacts-creation-job.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
+import { OnboardingInviteSuggestionsModule } from 'src/modules/onboarding-invite-suggestions/onboarding-invite-suggestions.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
@@ -66,6 +67,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     MessagingModule,
     CalendarModule,
     CalendarEventParticipantManagerModule,
+    OnboardingInviteSuggestionsModule,
     TimelineActivityModule,
     StripeModule,
     FeatureFlagModule,

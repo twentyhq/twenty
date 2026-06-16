@@ -1,13 +1,16 @@
 import { useUploadWorkflowFile } from '@/advanced-text-editor/hooks/useUploadWorkflowFile';
 import { AttachmentChip } from '@/file/components/AttachmentChip';
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
+import { VariableChip } from '@/object-record/record-field/ui/form-types/components/VariableChip';
+import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 
+import { isString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
+import { useContext, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type WorkflowAttachment } from 'twenty-shared/workflow';
+import { type WorkflowEmailFiles } from 'twenty-shared/workflow';
 import { IconUpload } from 'twenty-ui-deprecated/display';
 import {
   ThemeContext,
@@ -15,9 +18,11 @@ import {
 } from 'twenty-ui-deprecated/theme-constants';
 
 type WorkflowSendEmailAttachmentsProps = {
-  files: WorkflowAttachment[];
-  onChange: (files: WorkflowAttachment[]) => void;
+  files: WorkflowEmailFiles;
+  onChange: (files: WorkflowEmailFiles) => void;
   label?: string;
+  readonly?: boolean;
+  VariablePicker?: VariablePickerComponent;
 };
 
 const StyledContainer = styled.div`
@@ -25,11 +30,24 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledUploadArea = styled.div<{ hasFiles: boolean }>`
+const StyledRow = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const StyledUploadArea = styled.div<{ hasFiles: boolean; hasPicker: boolean }>`
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
+  border-bottom-right-radius: ${({ hasPicker }) =>
+    hasPicker ? '0' : themeCssVariables.border.radius.sm};
+  border-right: ${({ hasPicker }) =>
+    hasPicker ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
+  border-top-left-radius: ${themeCssVariables.border.radius.sm};
+  border-top-right-radius: ${({ hasPicker }) =>
+    hasPicker ? '0' : themeCssVariables.border.radius.sm};
   display: flex;
+  flex: 1;
   flex-direction: column;
   justify-content: center;
   min-height: ${({ hasFiles }) => (hasFiles ? 'auto' : '24px')};
@@ -51,6 +69,10 @@ const StyledChipsContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledVariableChipWrapper = styled.span`
+  display: inline-flex;
+`;
+
 const StyledUploadAreaLabel = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
@@ -64,7 +86,10 @@ export const WorkflowSendEmailAttachments = ({
   files,
   label,
   onChange,
+  readonly,
+  VariablePicker,
 }: WorkflowSendEmailAttachmentsProps) => {
+  const instanceId = useId();
   const { theme } = useContext(ThemeContext);
   const { uploadWorkflowFile } = useUploadWorkflowFile();
   const { openFileUpload } = useFileUpload();
@@ -83,41 +108,76 @@ export const WorkflowSendEmailAttachments = ({
   };
 
   const handleAddFileClick = () => {
+    if (readonly) {
+      return;
+    }
+
     openFileUpload({
       multiple: true,
       onUpload: handleUploadFiles,
     });
   };
 
-  const handleRemoveFile = (fileId: string) => {
-    onChange(files.filter((file) => file.id !== fileId));
+  const handleAddVariable = (variableName: string) => {
+    onChange([...files, variableName]);
   };
+
+  const handleRemoveItem = (indexToRemove: number) => {
+    onChange(files.filter((_, index) => index !== indexToRemove));
+  };
+
+  const hasPicker = isDefined(VariablePicker) && !readonly;
 
   return (
     <StyledContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
-      <StyledUploadArea
-        hasFiles={files.length > 0}
-        onClick={handleAddFileClick}
-      >
-        {files.length > 0 ? (
-          <StyledChipsContainer>
-            {files.map((file: WorkflowAttachment) => (
-              <AttachmentChip
-                key={file.id}
-                file={file}
-                onRemove={() => handleRemoveFile(file.id)}
-              />
-            ))}
-          </StyledChipsContainer>
-        ) : (
-          <StyledUploadAreaLabel>
-            <IconUpload size={theme.icon.size.sm} />
-            <span>{t`Upload file`}</span>
-          </StyledUploadAreaLabel>
-        )}
-      </StyledUploadArea>
+      <StyledRow>
+        <StyledUploadArea
+          hasFiles={files.length > 0}
+          hasPicker={hasPicker}
+          onClick={handleAddFileClick}
+        >
+          {files.length > 0 ? (
+            <StyledChipsContainer>
+              {files.map((file, index) =>
+                isString(file) ? (
+                  <StyledVariableChipWrapper
+                    key={index}
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <VariableChip
+                      rawVariableName={file}
+                      onRemove={
+                        readonly ? undefined : () => handleRemoveItem(index)
+                      }
+                    />
+                  </StyledVariableChipWrapper>
+                ) : (
+                  <AttachmentChip
+                    key={index}
+                    file={file}
+                    onRemove={() => handleRemoveItem(index)}
+                    readonly={readonly}
+                  />
+                ),
+              )}
+            </StyledChipsContainer>
+          ) : (
+            <StyledUploadAreaLabel>
+              <IconUpload size={theme.icon.size.sm} />
+              <span>{t`Upload file`}</span>
+            </StyledUploadAreaLabel>
+          )}
+        </StyledUploadArea>
+
+        {hasPicker ? (
+          <VariablePicker
+            instanceId={instanceId}
+            onVariableSelect={handleAddVariable}
+          />
+        ) : null}
+      </StyledRow>
     </StyledContainer>
   );
 };

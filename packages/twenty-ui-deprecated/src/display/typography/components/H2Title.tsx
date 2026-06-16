@@ -32,6 +32,7 @@ const StyledDescription = styled.h3`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   margin: 0;
   margin-top: ${themeCssVariables.spacing[2]};
 `;

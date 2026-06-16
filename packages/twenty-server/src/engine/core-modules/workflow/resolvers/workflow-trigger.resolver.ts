@@ -2,6 +2,11 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  WORKFLOW_TRIGGER_METADATA_KEY,
+  WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY,
+  WORKFLOW_TRIGGER_PAYLOAD_KEY,
+} from 'twenty-shared/workflow';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -98,7 +103,14 @@ export class WorkflowTriggerResolver {
     return this.workflowTriggerWorkspaceService.runWorkflowVersion({
       workflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
-      payload: payload ?? {},
+      payload: {
+        ...(payload ?? {}),
+        [WORKFLOW_TRIGGER_PAYLOAD_KEY]: { ...(payload ?? {}) },
+        [WORKFLOW_TRIGGER_METADATA_KEY]: {
+          [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]:
+            workspaceMember.id,
+        },
+      },
       createdBy: buildCreatedByFromFullNameMetadata({
         fullNameMetadata: {
           firstName: workspaceMember.name.firstName,
