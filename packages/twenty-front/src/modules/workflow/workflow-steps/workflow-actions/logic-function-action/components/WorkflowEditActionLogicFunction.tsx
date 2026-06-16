@@ -1,6 +1,4 @@
-import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
-import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
@@ -10,7 +8,6 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowLogicFunctionAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
@@ -79,7 +76,9 @@ export const WorkflowEditActionLogicFunction = ({
     id: logicFunctionId,
   });
 
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isThirdPartyApp = useIsThirdPartyApplication(
+    logicFunction?.applicationId,
+  );
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -189,18 +188,7 @@ export const WorkflowEditActionLogicFunction = ({
 
   const hasInputFields = Object.keys(functionInput).length > 0;
 
-  const logicFunctionApplication = currentWorkspace?.installedApplications.find(
-    (installedApplication) =>
-      installedApplication.id === logicFunction?.applicationId,
-  );
-
-  const isLogicFunctionFromIntegrationApp =
-    isDefined(logicFunctionApplication) &&
-    !isTwentyStandardApplication(logicFunctionApplication) &&
-    !isWorkspaceCustomApplication(logicFunctionApplication, currentWorkspace);
-
-  const isTestTabActive =
-    !isLogicFunctionFromIntegrationApp && activeTabId === TEST_TAB_ID;
+  const isTestTabActive = !isThirdPartyApp && activeTabId === TEST_TAB_ID;
 
   const tabs = [
     {
@@ -218,7 +206,7 @@ export const WorkflowEditActionLogicFunction = ({
   return (
     <>
       <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
-      {!isLogicFunctionFromIntegrationApp && (
+      {!isThirdPartyApp && (
         <StyledTabListContainer>
           <TabList
             tabs={tabs}
