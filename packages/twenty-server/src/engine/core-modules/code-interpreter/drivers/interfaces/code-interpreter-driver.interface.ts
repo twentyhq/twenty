@@ -36,7 +36,6 @@ export interface CodeInterpreterDriver {
     context?: ExecutionContext,
     callbacks?: StreamCallbacks,
   ): Promise<CodeExecutionResult>;
-  // Only stateful drivers (E2B) keep reusable sandboxes that need reclaiming.
   releaseSession?(sessionId: string): Promise<void>;
   sweepExpiredSessions?(maxAgeMs: number): Promise<number>;
 }

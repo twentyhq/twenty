@@ -606,7 +606,6 @@ export class AgentChatService {
     this.releaseThreadSandboxBestEffort(workspaceId, threadId);
   }
 
-  // Best-effort: reclaim a conversation's warm sandbox; the age sweep is the backstop.
   private releaseThreadSandboxBestEffort(
     workspaceId: string,
     threadId: string,

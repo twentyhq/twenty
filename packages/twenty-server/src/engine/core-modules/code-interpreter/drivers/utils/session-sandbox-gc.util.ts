@@ -12,9 +12,6 @@ const killSandboxById = (
   sandboxId: string,
 ) => sandboxApi.kill(sandboxId, { apiKey }).catch(() => undefined);
 
-// Kills every sandbox tagged for a session — used when a conversation is
-// deleted so its warm sandbox isn't left paused (and billed for storage) until
-// the age sweep would reclaim it.
 export const releaseSessionSandboxes = async (
   sandboxApi: SandboxApi,
   apiKey: string,
@@ -44,9 +41,7 @@ export const releaseSessionSandboxes = async (
   );
 };
 
-// Kills session sandboxes whose last start is older than maxAgeMs. Paused
-// sandboxes are retained indefinitely by E2B, so abandoned conversations (never
-// explicitly deleted) would otherwise accumulate forever; this is the bound.
+// E2B retains paused sandboxes indefinitely, so abandoned sessions need an age bound.
 export const sweepExpiredSessionSandboxes = async (
   sandboxApi: SandboxApi,
   apiKey: string,
