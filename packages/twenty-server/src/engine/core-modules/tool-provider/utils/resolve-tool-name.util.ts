@@ -1,5 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 
 import {
   EXECUTE_TOOL_TOOL_NAME,
@@ -9,10 +8,7 @@ import {
 const hasExecuteToolName = (
   input: unknown,
 ): input is Pick<ExecuteToolInput, 'toolName'> =>
-  isDefined(input) &&
-  typeof input === 'object' &&
-  'toolName' in input &&
-  isNonEmptyString(input.toolName);
+  isObject(input) && 'toolName' in input && isNonEmptyString(input.toolName);
 
 export const resolveToolName = (part: {
   toolName: string;
