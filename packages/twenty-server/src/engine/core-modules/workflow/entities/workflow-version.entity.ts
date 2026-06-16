@@ -33,7 +33,7 @@ export class WorkflowVersionEntity extends WorkspaceRelatedEntity {
   name: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  trigger: WorkflowTrigger | null;
+  triggers: WorkflowTrigger[] | null;
 
   @Column({ type: 'jsonb', nullable: true })
   steps: WorkflowAction[] | null;

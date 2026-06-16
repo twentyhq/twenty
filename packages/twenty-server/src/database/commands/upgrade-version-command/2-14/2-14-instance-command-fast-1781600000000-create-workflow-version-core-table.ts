@@ -18,7 +18,7 @@ export class CreateWorkflowVersionCoreTableFastInstanceCommand
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "deletedAt" TIMESTAMP WITH TIME ZONE,
         "name" character varying,
-        "trigger" jsonb,
+        "triggers" jsonb,
         "steps" jsonb,
         "status" "core"."workflowVersion_status_enum" NOT NULL DEFAULT 'DRAFT',
         "position" double precision NOT NULL DEFAULT 0,

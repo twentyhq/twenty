@@ -8,7 +8,7 @@ import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-tr
 export const computeAutomatedTriggerFromWorkflowVersion = (
   workflowVersion: WorkflowVersionEntity,
 ): CachedWorkflowAutomatedTrigger | null => {
-  const trigger = workflowVersion.trigger;
+  const trigger = workflowVersion.triggers?.[0] ?? null;
 
   if (trigger === null) {
     return null;
