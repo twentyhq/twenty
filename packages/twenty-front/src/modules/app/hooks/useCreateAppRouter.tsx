@@ -34,6 +34,12 @@ const MarketingHomePage = lazy(() =>
   })),
 );
 
+const MarketingCampaignBuilderPage = lazy(() =>
+  import('~/pages/propel/MarketingCampaignBuilderPage').then((module) => ({
+    default: module.MarketingCampaignBuilderPage,
+  })),
+);
+
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
     default: module.SignInUp,
@@ -237,6 +243,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <MarketingHomePage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.MarketingCampaignBuilder}
+            element={
+              <LazyRoute>
+                <MarketingCampaignBuilderPage />
               </LazyRoute>
             }
           />

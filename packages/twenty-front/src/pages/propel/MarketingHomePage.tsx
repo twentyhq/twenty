@@ -1,7 +1,14 @@
 import { Button, Center, Group, Loader, SegmentedControl } from '@mantine/core';
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { type Layouts } from 'react-grid-layout';
-import { IconBroadcast, IconCheck, IconPencil } from 'twenty-ui/display';
+import { AppPath } from 'twenty-shared/types';
+import {
+  IconBroadcast,
+  IconCheck,
+  IconPencil,
+  IconPlus,
+} from 'twenty-ui/display';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PropelMantineProvider } from '@/propel/components/PropelMantineProvider';
@@ -13,6 +20,7 @@ import { type AnalyticsRange } from '@/propel/types/marketingHome';
 // (the nav sidebar + top bar come from the router <Outlet/>); this page owns only
 // the page header + the customizable widget grid, wrapped in its own Mantine scope.
 export const MarketingHomePage = () => {
+  const navigate = useNavigate();
   const [range, setRange] = useState<AnalyticsRange>('30d');
   const [editMode, setEditMode] = useState(false);
 
@@ -59,6 +67,14 @@ export const MarketingHomePage = () => {
           Icon={IconBroadcast}
         >
           <Group gap="sm" wrap="nowrap">
+            <Button
+              size="xs"
+              color="red"
+              leftSection={<IconPlus size={14} />}
+              onClick={() => navigate(AppPath.MarketingCampaignBuilder)}
+            >
+              New campaign
+            </Button>
             <SegmentedControl
               size="xs"
               value={range}
