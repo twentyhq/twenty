@@ -300,7 +300,6 @@ export interface CommandMenuItem {
     universalIdentifier?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     isActive: Scalars['Boolean']
-    isSystemSideEffect: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'CommandMenuItem'
@@ -505,7 +504,6 @@ export interface ViewField {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     isActive: Scalars['Boolean']
-    isSystemSideEffect: Scalars['Boolean']
     deletedAt?: Scalars['DateTime']
     /** @deprecated isOverridden is deprecated */
     isOverridden?: Scalars['Boolean']
@@ -624,7 +622,6 @@ export interface View {
     visibility: ViewVisibility
     createdByUserWorkspaceId?: Scalars['UUID']
     isActive: Scalars['Boolean']
-    isSystemSideEffect: Scalars['Boolean']
     __typename: 'View'
 }
 
@@ -772,7 +769,6 @@ export interface PageLayoutWidget {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     isActive: Scalars['Boolean']
-    isSystemSideEffect: Scalars['Boolean']
     deletedAt?: Scalars['DateTime']
     /** @deprecated isOverridden is deprecated */
     isOverridden?: Scalars['Boolean']
@@ -1051,7 +1047,6 @@ export interface PageLayoutTab {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     isActive: Scalars['Boolean']
-    isSystemSideEffect: Scalars['Boolean']
     deletedAt?: Scalars['DateTime']
     /** @deprecated isOverridden is deprecated */
     isOverridden?: Scalars['Boolean']
@@ -1066,7 +1061,6 @@ export interface PageLayout {
     tabs?: PageLayoutTab[]
     defaultTabToFocusOnMobileAndSidePanelId?: Scalars['UUID']
     universalIdentifier: Scalars['UUID']
-    isSystemSideEffect: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
@@ -3262,7 +3256,6 @@ export interface CommandMenuItemGenqlSelection{
     universalIdentifier?: boolean | number
     applicationId?: boolean | number
     isActive?: boolean | number
-    isSystemSideEffect?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number
@@ -3506,7 +3499,6 @@ export interface ViewFieldGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     isActive?: boolean | number
-    isSystemSideEffect?: boolean | number
     deletedAt?: boolean | number
     /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
@@ -3623,7 +3615,6 @@ export interface ViewGenqlSelection{
     visibility?: boolean | number
     createdByUserWorkspaceId?: boolean | number
     isActive?: boolean | number
-    isSystemSideEffect?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3762,7 +3753,6 @@ export interface PageLayoutWidgetGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     isActive?: boolean | number
-    isSystemSideEffect?: boolean | number
     deletedAt?: boolean | number
     /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
@@ -4062,7 +4052,6 @@ export interface PageLayoutTabGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     isActive?: boolean | number
-    isSystemSideEffect?: boolean | number
     deletedAt?: boolean | number
     /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
@@ -4078,7 +4067,6 @@ export interface PageLayoutGenqlSelection{
     tabs?: PageLayoutTabGenqlSelection
     defaultTabToFocusOnMobileAndSidePanelId?: boolean | number
     universalIdentifier?: boolean | number
-    isSystemSideEffect?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
