@@ -1256,10 +1256,20 @@ msgstr "Clear filters"
 msgid "Close"
 msgstr "Close"
 
+#. js-lingui-id: cu6iol
+#: src/sections/pricing-salesfarce/salesfarce-wrong-choice-popup.tsx
+msgid "Close dialog"
+msgstr "Close dialog"
+
 #. js-lingui-id: vcpc5o
 #: src/sections/menu/menu.tsx
 msgid "Close menu"
 msgstr "Close menu"
+
+#. js-lingui-id: oLsrmd
+#: src/sections/pricing-salesfarce/salesfarce-window.tsx
+msgid "Close pricing window"
+msgstr "Close pricing window"
 
 #. js-lingui-id: R7zx6E
 #: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
@@ -2652,6 +2662,7 @@ msgid "Halftone generator"
 msgstr "Halftone generator"
 
 #. js-lingui-id: c3XJ18
+#: src/sections/pricing-salesfarce/salesfarce-window.tsx
 #: src/sections/footer/footer.data.ts
 msgid "Help"
 msgstr "Help"
@@ -4573,6 +4584,11 @@ msgstr "See what shipped in {0}"
 msgid "Select {0}"
 msgstr "Select {0}"
 
+#. js-lingui-id: wgNoIs
+#: src/sections/pricing-salesfarce/salesfarce-window.tsx
+msgid "Select all"
+msgstr "Select all"
+
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
 msgid "Select your country"
@@ -5404,6 +5420,11 @@ msgstr "Trinidad & Tobago 🇹🇹"
 #: src/sections/footer/footer.data.ts
 msgid "Trust Center"
 msgstr "Trust Center"
+
+#. js-lingui-id: HlusPQ
+#: src/sections/pricing-salesfarce/pricing-salesfarce.tsx
+msgid "Trust the n°1 CRM, *or not!*"
+msgstr "Trust the n°1 CRM, *or not!*"
 
 #. js-lingui-id: KtyN0b
 #: src/sections/trusted-by/trusted-by.tsx

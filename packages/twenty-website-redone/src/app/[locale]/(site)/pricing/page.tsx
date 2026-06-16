@@ -10,12 +10,10 @@ import { Menu } from '@/sections/menu';
 import { PricingEngagementBand } from '@/sections/pricing-engagement-band';
 import { PlanTable } from '@/sections/pricing-plan-table';
 import { PricingPlans } from '@/sections/pricing-plans';
+import { PricingSalesfarce } from '@/sections/pricing-salesfarce';
 
 export const generateMetadata = buildRouteMetadata('pricing');
 
-// PlanTable and Salesforce land next, in old-site order; the provider widens to
-// wrap PlanTable too (it pivots on the same hosting state). The FAQ JSON-LD
-// rides the Faq section itself.
 export default async function PricingPage({
   params,
 }: {
@@ -35,6 +33,7 @@ export default async function PricingPage({
           <PricingEngagementBand />
           <PlanTable />
         </PricingStateProvider>
+        <PricingSalesfarce />
         <Faq />
       </main>
     </>

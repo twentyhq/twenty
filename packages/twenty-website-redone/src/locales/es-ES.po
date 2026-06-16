@@ -1232,9 +1232,19 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
+#. js-lingui-id: cu6iol
+#: src/sections/pricing-salesfarce/salesfarce-wrong-choice-popup.tsx
+msgid "Close dialog"
+msgstr ""
+
 #. js-lingui-id: vcpc5o
 #: src/sections/menu/menu.tsx
 msgid "Close menu"
+msgstr ""
+
+#. js-lingui-id: oLsrmd
+#: src/sections/pricing-salesfarce/salesfarce-window.tsx
+msgid "Close pricing window"
 msgstr ""
 
 #. js-lingui-id: R7zx6E
@@ -2624,6 +2634,7 @@ msgid "Halftone generator"
 msgstr ""
 
 #. js-lingui-id: c3XJ18
+#: src/sections/pricing-salesfarce/salesfarce-window.tsx
 #: src/sections/footer/footer.data.ts
 msgid "Help"
 msgstr ""
@@ -4535,6 +4546,11 @@ msgstr ""
 msgid "Select {0}"
 msgstr ""
 
+#. js-lingui-id: wgNoIs
+#: src/sections/pricing-salesfarce/salesfarce-window.tsx
+msgid "Select all"
+msgstr ""
+
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
 msgid "Select your country"
@@ -5359,6 +5375,11 @@ msgstr ""
 #. js-lingui-id: tdZpCd
 #: src/sections/footer/footer.data.ts
 msgid "Trust Center"
+msgstr ""
+
+#. js-lingui-id: HlusPQ
+#: src/sections/pricing-salesfarce/pricing-salesfarce.tsx
+msgid "Trust the n°1 CRM, *or not!*"
 msgstr ""
 
 #. js-lingui-id: KtyN0b
