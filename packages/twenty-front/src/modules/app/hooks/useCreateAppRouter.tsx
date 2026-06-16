@@ -40,6 +40,12 @@ const MarketingCampaignBuilderPage = lazy(() =>
   })),
 );
 
+const SequenceEditorPage = lazy(() =>
+  import('~/pages/propel/SequenceEditorPage').then((module) => ({
+    default: module.SequenceEditorPage,
+  })),
+);
+
 const OneOnOneRunnerPage = lazy(() =>
   import('~/pages/propel/OneOnOneRunnerPage').then((module) => ({
     default: module.OneOnOneRunnerPage,
@@ -257,6 +263,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <MarketingCampaignBuilderPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.MarketingSequenceEditor}
+            element={
+              <LazyRoute>
+                <SequenceEditorPage />
               </LazyRoute>
             }
           />

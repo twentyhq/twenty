@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { type Layouts } from 'react-grid-layout';
 import { AppPath } from 'twenty-shared/types';
 import {
+  IconArrowsSplit2,
   IconBroadcast,
   IconCheck,
   IconPencil,
@@ -74,6 +75,14 @@ export const MarketingHomePage = () => {
               onClick={() => navigate(AppPath.MarketingCampaignBuilder)}
             >
               New campaign
+            </Button>
+            <Button
+              size="xs"
+              variant="default"
+              leftSection={<IconArrowsSplit2 size={14} />}
+              onClick={() => navigate(AppPath.MarketingSequenceEditor)}
+            >
+              Sequences
             </Button>
             <SegmentedControl
               size="xs"
