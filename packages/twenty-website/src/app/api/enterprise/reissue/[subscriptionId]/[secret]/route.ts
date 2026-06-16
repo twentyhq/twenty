@@ -51,12 +51,16 @@ export async function GET(
     const licensee = getLicenseeFromStripeCustomer(subscription.customer);
     const enterpriseKey = signEnterpriseKey(subscription.id, licensee);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       enterpriseKey,
       licensee,
       subscriptionId: subscription.id,
       subscriptionStatus: subscription.status,
     });
+
+    response.headers.set('Cache-Control', 'no-store');
+
+    return response;
   } catch (error: unknown) {
     console.error('Enterprise key reissue failed', error);
 
