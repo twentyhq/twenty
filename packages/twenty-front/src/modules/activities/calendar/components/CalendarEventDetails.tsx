@@ -12,8 +12,12 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
+import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
+import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
+import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import {
   FieldContext,
   type RecordUpdateHook,
@@ -23,6 +27,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -104,6 +109,23 @@ export const CalendarEventDetails = ({
     excludeCreatedAtAndUpdatedAt: true,
   });
 
+  const {
+    inlineFieldMetadataItems: portalPositionInlineFieldMetadataItems,
+    legacyActivityTargetFieldMetadataItems,
+  } = useFieldListFieldMetadataItems({
+    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+  });
+
+  const portalPositionFieldMetadataItems = [
+    ...legacyActivityTargetFieldMetadataItems,
+    ...portalPositionInlineFieldMetadataItems,
+  ];
+
+  const setRecordFieldListHoverPosition = useSetAtomComponentState(
+    recordFieldListHoverPositionComponentState,
+    INPUT_ID_PREFIX,
+  );
+
   const standardFieldOrder = [
     'startsAt',
     'endsAt',
@@ -177,6 +199,11 @@ export const CalendarEventDetails = ({
       objectPermissionsByObjectMetadataId,
     });
 
+    const portalPosition = portalPositionFieldMetadataItems.findIndex(
+      (portalPositionFieldMetadataItem) =>
+        portalPositionFieldMetadataItem.id === fieldMetadataItem.id,
+    );
+
     return (
       <StyledPropertyBoxContainer key={fieldMetadataItem.id}>
         <PropertyBox>
@@ -188,6 +215,15 @@ export const CalendarEventDetails = ({
               useUpdateRecord: useUpdateOneCalendarEventRecordMutation,
               maxWidth: 300,
               isRecordFieldReadOnly: isReadOnly,
+              anchorId: getRecordFieldInputInstanceId({
+                recordId: calendarEvent.id,
+                fieldName: fieldMetadataItem.name,
+                prefix: INPUT_ID_PREFIX,
+              }),
+              onMouseEnter: () =>
+                setRecordFieldListHoverPosition(
+                  portalPosition === -1 ? null : portalPosition,
+                ),
             }}
           >
             <RecordFieldComponentInstanceContext.Provider
@@ -199,7 +235,7 @@ export const CalendarEventDetails = ({
                 }),
               }}
             >
-              <RecordInlineCell />
+              <RecordInlineCell instanceIdPrefix={INPUT_ID_PREFIX} />
             </RecordFieldComponentInstanceContext.Provider>
           </FieldContext.Provider>
         </PropertyBox>
@@ -211,39 +247,51 @@ export const CalendarEventDetails = ({
     <RecordFieldsScopeContextProvider
       value={{ scopeInstanceId: INPUT_ID_PREFIX }}
     >
-      <StyledContainer>
-        <StyledEventChipWrapper>
-          <Chip
-            accent={ChipAccent.TextSecondary}
-            size={ChipSize.Large}
-            variant={ChipVariant.Highlighted}
-            clickable={false}
-            leftComponent={<AvatarOrIcon Icon={IconCalendarEvent} />}
-            label={t`Event`}
-          />
-        </StyledEventChipWrapper>
-        <StyledHeader>
-          <StyledTitle canceled={calendarEvent.isCanceled}>
-            {calendarEvent.title}
-          </StyledTitle>
-          <StyledCreatedAt>
-            {t`Created`}{' '}
-            {beautifyPastDateRelativeToNow(
-              new Date(calendarEvent.externalCreatedAt),
-            )}
-          </StyledCreatedAt>
-        </StyledHeader>
-        <StyledFields>
-          {standardFields.slice(0, 2).map(renderField)}
-          {calendarEventParticipants && (
-            <CalendarEventParticipantsResponseStatus
-              participants={calendarEventParticipants}
+      <RecordFieldListComponentInstanceContext.Provider
+        value={{ instanceId: INPUT_ID_PREFIX }}
+      >
+        <StyledContainer>
+          <StyledEventChipWrapper>
+            <Chip
+              accent={ChipAccent.TextSecondary}
+              size={ChipSize.Large}
+              variant={ChipVariant.Highlighted}
+              clickable={false}
+              leftComponent={<AvatarOrIcon Icon={IconCalendarEvent} />}
+              label={t`Event`}
             />
-          )}
-          {standardFields.slice(2).map(renderField)}
-          {customFields.map(renderField)}
-        </StyledFields>
-      </StyledContainer>
+          </StyledEventChipWrapper>
+          <StyledHeader>
+            <StyledTitle canceled={calendarEvent.isCanceled}>
+              {calendarEvent.title}
+            </StyledTitle>
+            <StyledCreatedAt>
+              {t`Created`}{' '}
+              {beautifyPastDateRelativeToNow(
+                new Date(calendarEvent.externalCreatedAt),
+              )}
+            </StyledCreatedAt>
+          </StyledHeader>
+          <StyledFields>
+            {standardFields.slice(0, 2).map(renderField)}
+            {calendarEventParticipants && (
+              <CalendarEventParticipantsResponseStatus
+                participants={calendarEventParticipants}
+              />
+            )}
+            {standardFields.slice(2).map(renderField)}
+            {customFields.map(renderField)}
+          </StyledFields>
+          <RecordFieldListCellHoveredPortal
+            objectMetadataItem={objectMetadataItem}
+            recordId={calendarEvent.id}
+          />
+          <RecordFieldListCellEditModePortal
+            objectMetadataItem={objectMetadataItem}
+            recordId={calendarEvent.id}
+          />
+        </StyledContainer>
+      </RecordFieldListComponentInstanceContext.Provider>
     </RecordFieldsScopeContextProvider>
   );
 };

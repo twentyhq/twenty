@@ -76,6 +76,7 @@ const StyledIconChevronRightContainer = styled.span`
 `;
 
 const StyledDescription = styled.div`
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   padding-bottom: ${themeCssVariables.spacing[2]};
   padding-left: ${themeCssVariables.spacing[7]};
 `;
