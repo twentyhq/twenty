@@ -20,9 +20,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 // (e.g. '[]","' or '"(number|countryCode|callingCode)"').
 const QUOTED_COLUMN_NAME_REGEX = /"([A-Za-z0-9_]+)"/g;
 
-@RegisteredWorkspaceCommand('2.14.0', 1799000067000)
+@RegisteredWorkspaceCommand('2.15.0', 1799100000000)
 @Command({
-  name: 'upgrade:2-14:backfill-search-field-metadata',
+  name: 'upgrade:2-15:backfill-search-field-metadata',
   description:
     'Backfill searchFieldMetadata rows mirroring each searchable object searchVector field set. Idempotent: existing rows are skipped.',
 })
