@@ -23192,6 +23192,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/semver@npm:^7.5.8":
+  version: 7.7.1
+  resolution: "@types/semver@npm:7.7.1"
+  checksum: 10c0/c938aef3bf79a73f0f3f6037c16e2e759ff40c54122ddf0b2583703393d8d3127130823facb880e694caa324eb6845628186aac1997ee8b31dc2d18fafe26268
+  languageName: node
+  linkType: hard
+
 "@types/send@npm:*":
   version: 0.17.4
   resolution: "@types/send@npm:0.17.4"
@@ -53602,6 +53609,7 @@ __metadata:
     "@types/node": "npm:^24.0.0"
     "@types/react": "npm:^19.2.0"
     "@types/react-dom": "npm:^19.2.0"
+    "@types/semver": "npm:^7.5.8"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     "@vitest/coverage-v8": "npm:^4.0.18"
     axios: "npm:^1.16.0"
@@ -53619,6 +53627,7 @@ __metadata:
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
     rollup-plugin-dts: "npm:^6.4.1"
+    semver: "npm:7.6.3"
     tinyglobby: "npm:^0.2.15"
     ts-morph: "npm:^25.0.0"
     tsc-alias: "npm:^1.8.16"
