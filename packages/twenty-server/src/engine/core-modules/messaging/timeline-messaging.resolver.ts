@@ -22,35 +22,12 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 
 @ArgsType()
-class GetTimelineThreadsFromPersonIdArgs {
+class GetTimelineThreadsFromObjectRecordArgs {
+  @Field(() => String)
+  objectNameSingular: string;
+
   @Field(() => UUIDScalarType)
-  personId: string;
-
-  @Field(() => Int)
-  page: number;
-
-  @Field(() => Int)
-  @Max(TIMELINE_THREADS_MAX_PAGE_SIZE)
-  pageSize: number;
-}
-
-@ArgsType()
-class GetTimelineThreadsFromCompanyIdArgs {
-  @Field(() => UUIDScalarType)
-  companyId: string;
-
-  @Field(() => Int)
-  page: number;
-
-  @Field(() => Int)
-  @Max(TIMELINE_THREADS_MAX_PAGE_SIZE)
-  pageSize: number;
-}
-
-@ArgsType()
-class GetTimelineThreadsFromOpportunityIdArgs {
-  @Field(() => UUIDScalarType)
-  opportunityId: string;
+  recordId: string;
 
   @Field(() => Int)
   page: number;
@@ -70,65 +47,16 @@ export class TimelineMessagingResolver {
   ) {}
 
   @Query(() => TimelineThreadsWithTotalDTO)
-  async getTimelineThreadsFromPersonId(
-    @AuthUser() user: AuthContextUser,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args() { personId, page, pageSize }: GetTimelineThreadsFromPersonIdArgs,
-  ) {
-    const workspaceMember = await this.userService.loadWorkspaceMember(
-      user,
-      workspace,
-    );
-
-    if (!workspaceMember) {
-      return;
-    }
-
-    const timelineThreads =
-      await this.getMessagesFromPersonIdsService.getMessagesFromPersonIds(
-        workspaceMember.id,
-        [personId],
-        workspace.id,
-        page,
-        pageSize,
-      );
-
-    return timelineThreads;
-  }
-
-  @Query(() => TimelineThreadsWithTotalDTO)
-  async getTimelineThreadsFromCompanyId(
-    @AuthUser() user: AuthContextUser,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args() { companyId, page, pageSize }: GetTimelineThreadsFromCompanyIdArgs,
-  ) {
-    const workspaceMember = await this.userService.loadWorkspaceMember(
-      user,
-      workspace,
-    );
-
-    if (!workspaceMember) {
-      return;
-    }
-
-    const timelineThreads =
-      await this.getMessagesFromPersonIdsService.getMessagesFromCompanyId(
-        workspaceMember.id,
-        companyId,
-        workspace.id,
-        page,
-        pageSize,
-      );
-
-    return timelineThreads;
-  }
-
-  @Query(() => TimelineThreadsWithTotalDTO)
-  async getTimelineThreadsFromOpportunityId(
+  async getTimelineThreadsFromObjectRecord(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args()
-    { opportunityId, page, pageSize }: GetTimelineThreadsFromOpportunityIdArgs,
+    {
+      objectNameSingular,
+      recordId,
+      page,
+      pageSize,
+    }: GetTimelineThreadsFromObjectRecordArgs,
   ) {
     const workspaceMember = await this.userService.loadWorkspaceMember(
       user,
@@ -140,9 +68,10 @@ export class TimelineMessagingResolver {
     }
 
     const timelineThreads =
-      await this.getMessagesFromPersonIdsService.getMessagesFromOpportunityId(
+      await this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
         workspaceMember.id,
-        opportunityId,
+        objectNameSingular,
+        recordId,
         workspace.id,
         page,
         pageSize,

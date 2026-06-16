@@ -15,35 +15,12 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @ArgsType()
-class GetTimelineCalendarEventsFromPersonIdArgs {
+class GetTimelineCalendarEventsFromObjectRecordArgs {
+  @Field(() => String)
+  objectNameSingular: string;
+
   @Field(() => UUIDScalarType)
-  personId: string;
-
-  @Field(() => Int)
-  page: number;
-
-  @Field(() => Int)
-  @Max(TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE)
-  pageSize: number;
-}
-
-@ArgsType()
-class GetTimelineCalendarEventsFromCompanyIdArgs {
-  @Field(() => UUIDScalarType)
-  companyId: string;
-
-  @Field(() => Int)
-  page: number;
-
-  @Field(() => Int)
-  @Max(TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE)
-  pageSize: number;
-}
-
-@ArgsType()
-class GetTimelineCalendarEventsFromOpportunityIdArgs {
-  @Field(() => UUIDScalarType)
-  opportunityId: string;
+  recordId: string;
 
   @Field(() => Int)
   page: number;
@@ -61,59 +38,23 @@ export class TimelineCalendarEventResolver {
   ) {}
 
   @Query(() => TimelineCalendarEventsWithTotalDTO)
-  async getTimelineCalendarEventsFromPersonId(
-    @Args()
-    { personId, page, pageSize }: GetTimelineCalendarEventsFromPersonIdArgs,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ) {
-    const timelineCalendarEvents =
-      await this.timelineCalendarEventService.getCalendarEventsFromPersonIds({
-        currentWorkspaceMemberId: workspaceMemberId,
-        personIds: [personId],
-        workspaceId: workspace.id,
-        page,
-        pageSize,
-      });
-
-    return timelineCalendarEvents;
-  }
-
-  @Query(() => TimelineCalendarEventsWithTotalDTO)
-  async getTimelineCalendarEventsFromCompanyId(
-    @Args()
-    { companyId, page, pageSize }: GetTimelineCalendarEventsFromCompanyIdArgs,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ) {
-    const timelineCalendarEvents =
-      await this.timelineCalendarEventService.getCalendarEventsFromCompanyId({
-        currentWorkspaceMemberId: workspaceMemberId,
-        companyId,
-        workspaceId: workspace.id,
-        page,
-        pageSize,
-      });
-
-    return timelineCalendarEvents;
-  }
-
-  @Query(() => TimelineCalendarEventsWithTotalDTO)
-  async getTimelineCalendarEventsFromOpportunityId(
+  async getTimelineCalendarEventsFromObjectRecord(
     @Args()
     {
-      opportunityId,
+      objectNameSingular,
+      recordId,
       page,
       pageSize,
-    }: GetTimelineCalendarEventsFromOpportunityIdArgs,
+    }: GetTimelineCalendarEventsFromObjectRecordArgs,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     const timelineCalendarEvents =
-      await this.timelineCalendarEventService.getCalendarEventsFromOpportunityId(
+      await this.timelineCalendarEventService.getCalendarEventsFromObjectRecord(
         {
           currentWorkspaceMemberId: workspaceMemberId,
-          opportunityId,
+          objectNameSingular,
+          recordId,
           workspaceId: workspace.id,
           page,
           pageSize,
