@@ -124,7 +124,11 @@ export class OnboardingInviteSuggestionsService {
       const isSameCompanyColleague =
         getDomainNameFromHandle(attendeeEmail) === connectedAccountDomain;
 
-      if (isOwnEmail || !isSameCompanyColleague || isGroupEmail(attendeeEmail)) {
+      if (
+        isOwnEmail ||
+        !isSameCompanyColleague ||
+        isGroupEmail(attendeeEmail)
+      ) {
         continue;
       }
 
