@@ -132,6 +132,9 @@ export class FixStandardRelationFieldLabelsIconsCommand extends ActiveOrSuspende
           workspaceId,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
+          // These default relation fields are system-owned; mutating their
+          // label/icon is only permitted under a system build.
+          isSystemBuild: true,
         },
       );
 
