@@ -2,41 +2,75 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { createElement, useEffect, type ReactNode } from 'react';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import {
+  type NavigationMenuItem,
+  NavigationMenuItemType,
   ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
 } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
-import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
+import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 const Wrapper = ({ children }: { children: ReactNode }) =>
   createElement(JotaiProvider, { store: jotaiStore }, children);
+
+const buildObjectNavigationMenuItem = (
+  objectNameSingular: string,
+  position: number,
+): NavigationMenuItem => ({
+  __typename: 'NavigationMenuItem',
+  id: `navigation-menu-item-${objectNameSingular}`,
+  type: NavigationMenuItemType.OBJECT,
+  targetObjectMetadataId:
+    getMockObjectMetadataItemOrThrow(objectNameSingular).id,
+  position,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
+});
+
+const buildViewNavigationMenuItem = (
+  viewId: string,
+  position: number,
+): NavigationMenuItem => ({
+  __typename: 'NavigationMenuItem',
+  id: `navigation-menu-item-view-${viewId}`,
+  type: NavigationMenuItemType.VIEW,
+  viewId,
+  position,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
+});
 
 const renderHooks = ({
   withCurrentUser,
   withExistingView,
   withObjectMetadataLoaded = true,
+  objectMetadataItems = getTestEnrichedObjectMetadataItemsMock(),
+  navigationMenuItems = [],
+  withNavigationMenuItemsLoaded = true,
 }: {
   withCurrentUser: boolean;
   withExistingView: boolean;
   withObjectMetadataLoaded?: boolean;
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
+  navigationMenuItems?: NavigationMenuItem[];
+  withNavigationMenuItemsLoaded?: boolean;
 }) => {
   if (withObjectMetadataLoaded) {
-    setTestObjectMetadataItemsInMetadataStore(
-      jotaiStore,
-      getTestEnrichedObjectMetadataItemsMock(),
-    );
+    setTestObjectMetadataItemsInMetadataStore(jotaiStore, objectMetadataItems);
   } else {
     jotaiStore.set(metadataStoreState.atomFamily('objectMetadataItems'), {
       current: [],
@@ -44,6 +78,12 @@ const renderHooks = ({
       status: 'empty',
     });
   }
+
+  jotaiStore.set(metadataStoreState.atomFamily('navigationMenuItems'), {
+    current: navigationMenuItems,
+    draft: [],
+    status: withNavigationMenuItemsLoaded ? 'up-to-date' : 'empty',
+  });
 
   const { result } = renderHook(
     () => {
@@ -119,25 +159,55 @@ describe('useDefaultHomePagePath', () => {
       expect(result.current.defaultHomePagePath).toEqual(AppPath.SignInUp);
     });
   });
-  it('should return proper path when currentUser is defined', async () => {
+  it('should redirect to the first object of the navigation menu', async () => {
     const { result } = renderHooks({
       withCurrentUser: true,
       withExistingView: false,
+      navigationMenuItems: [
+        buildObjectNavigationMenuItem('person', 0),
+        buildObjectNavigationMenuItem('company', 1),
+      ],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual('/objects/people');
+    });
+  });
+  it('should honor the view of a VIEW navigation menu item', async () => {
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: true,
+      navigationMenuItems: [buildViewNavigationMenuItem('viewId', 0)],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual(
+        '/objects/companies?viewId=viewId',
+      );
+    });
+  });
+  it('should fall back to the first readable object when the menu has no object item', async () => {
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [],
     });
 
     await waitFor(() => {
       expect(result.current.defaultHomePagePath).toEqual('/objects/companies');
     });
   });
-  it('should return proper path when currentUser is defined and view exists', async () => {
+  it('should redirect to profile settings when there is no readable object', async () => {
     const { result } = renderHooks({
       withCurrentUser: true,
-      withExistingView: true,
+      withExistingView: false,
+      objectMetadataItems: [],
+      navigationMenuItems: [],
     });
 
     await waitFor(() => {
       expect(result.current.defaultHomePagePath).toEqual(
-        '/objects/companies?viewId=viewId',
+        getSettingsPath(SettingsPath.ProfilePage),
       );
     });
   });
@@ -149,6 +219,18 @@ describe('useDefaultHomePagePath', () => {
       withCurrentUser: true,
       withExistingView: false,
       withObjectMetadataLoaded: false,
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual(AppPath.Index);
+    });
+  });
+  it('should defer to AppPath.Index when navigation menu items are not loaded yet', async () => {
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [buildObjectNavigationMenuItem('person', 0)],
+      withNavigationMenuItemsLoaded: false,
     });
 
     await waitFor(() => {
