@@ -3392,16 +3392,6 @@ msgstr "Manual work at core"
 msgid "Maps view"
 msgstr "Maps view"
 
-#. js-lingui-id: SDF1oV
-#: src/sections/product-feature/tasks-visual.tsx
-msgid "Mark complete"
-msgstr "Mark complete"
-
-#. js-lingui-id: SbuvhW
-#: src/sections/product-feature/tasks-visual.tsx
-msgid "Mark incomplete"
-msgstr "Mark incomplete"
-
 #. js-lingui-id: Zt5PUS
 #: src/partners-marketplace/marketplace-header.tsx
 msgid "Marketplace"
