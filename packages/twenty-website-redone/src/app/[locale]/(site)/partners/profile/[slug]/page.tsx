@@ -6,8 +6,8 @@ import { getCommunityStats } from '@/platform/community';
 import { getRouteI18n } from '@/platform/i18n/get-route-i18n';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
+import { fetchLiveMarketplacePartners } from '@/partners-marketplace/fetch-live-marketplace-partners';
 import { getMarketplacePartnerBySlug } from '@/partners-marketplace/get-marketplace-partner-by-slug';
-import { loadMarketplacePartners } from '@/partners-marketplace/load-marketplace-partners';
 import { PartnerProfile } from '@/partners-marketplace/partner-profile';
 import { buildBreadcrumbListJsonLd, JsonLd } from '@/platform/seo';
 import { Menu } from '@/sections/menu';
@@ -15,10 +15,9 @@ import { Menu } from '@/sections/menu';
 type PartnerProfileParams = { locale: string; slug: string };
 
 // The parent [locale] segment sets dynamicParams=false, so each partner slug
-// must be enumerated here too or it 404s. Reads the same seam as the rest (the
-// dev fixture today, the live list once wired); unknown slugs still 404.
+// must be enumerated here too or it 404s.
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  const partners = await loadMarketplacePartners();
+  const partners = await fetchLiveMarketplacePartners();
   return partners.map((partner) => ({ slug: partner.slug }));
 }
 
