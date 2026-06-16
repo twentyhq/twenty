@@ -354,6 +354,7 @@ export class ToolRegistryService {
       authContext: context.authContext,
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
+      threadId: context.threadId,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
     };
   }

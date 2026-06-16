@@ -3,7 +3,10 @@ import { join } from 'path';
 
 import { Sandbox } from '@e2b/code-interpreter';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { DEFAULT_CODE_INTERPRETER_TIMEOUT_MS } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
+import { getOrCreateSessionSandbox } from 'src/engine/core-modules/code-interpreter/drivers/utils/get-or-create-session-sandbox.util';
 import { getMimeType } from 'src/engine/core-modules/code-interpreter/utils/get-mime-type.util';
 
 import {
@@ -18,12 +21,13 @@ import {
 export type E2BDriverOptions = {
   apiKey: string;
   timeoutMs?: number;
+  idleTimeoutMs?: number;
 };
 
 const SANDBOX_SCRIPTS_PATH = join(__dirname, '..', 'sandbox-scripts');
 
 async function uploadDirectoryToSandbox(
-  sbx: Sandbox,
+  sandbox: Sandbox,
   localPath: string,
   remotePath: string,
 ) {
@@ -34,12 +38,12 @@ async function uploadDirectoryToSandbox(
     const remoteEntryPath = `${remotePath}/${entry.name}`;
 
     if (entry.isDirectory()) {
-      await uploadDirectoryToSandbox(sbx, localEntryPath, remoteEntryPath);
+      await uploadDirectoryToSandbox(sandbox, localEntryPath, remoteEntryPath);
     } else {
       const content = await fs.readFile(localEntryPath);
       const arrayBuffer = new Uint8Array(content).buffer;
 
-      await sbx.files.write(remoteEntryPath, arrayBuffer);
+      await sandbox.files.write(remoteEntryPath, arrayBuffer);
     }
   }
 }
@@ -53,27 +57,64 @@ export class E2BDriver implements CodeInterpreterDriver {
     context?: ExecutionContext,
     callbacks?: StreamCallbacks,
   ): Promise<CodeExecutionResult> {
-    const sbx = await Sandbox.create({
-      apiKey: this.options.apiKey,
-      timeoutMs: this.options.timeoutMs ?? DEFAULT_CODE_INTERPRETER_TIMEOUT_MS,
-    });
+    const { apiKey } = this.options;
+    const sessionId = context?.sessionId;
+    const idleTimeoutMs =
+      this.options.idleTimeoutMs ?? DEFAULT_CODE_INTERPRETER_TIMEOUT_MS;
+    const timeoutMs =
+      this.options.timeoutMs ?? DEFAULT_CODE_INTERPRETER_TIMEOUT_MS;
+
+    let sandbox: Sandbox;
+    let isReused = false;
+    let keepWarm = false;
+
+    if (isDefined(sessionId)) {
+      keepWarm = true;
+      ({ sandbox, isReused } = await getOrCreateSessionSandbox({
+        sandboxApi: Sandbox,
+        apiKey,
+        sessionId,
+        idleTimeoutMs,
+      }));
+    } else {
+      sandbox = await Sandbox.create({ apiKey, timeoutMs });
+    }
 
     try {
-      // Upload pre-installed scripts to sandbox
-      try {
-        await uploadDirectoryToSandbox(
-          sbx,
-          SANDBOX_SCRIPTS_PATH,
-          '/home/user/scripts',
-        );
-      } catch {
-        // Scripts directory might not exist
+      // Pre-installed scripts only need uploading to a fresh sandbox; a reused
+      // one already has them, along with its prior files and kernel state.
+      if (!isReused) {
+        try {
+          await uploadDirectoryToSandbox(
+            sandbox,
+            SANDBOX_SCRIPTS_PATH,
+            '/home/user/scripts',
+          );
+        } catch {
+          // Scripts directory might not exist
+        }
+      }
+
+      // A reused sandbox still holds the previous call's output files; reset the
+      // output directory so this run only returns the artifacts it produces.
+      // Durable state (working files, kernel variables) is kept across calls.
+      if (isReused) {
+        try {
+          await sandbox.files.remove('/home/user/output');
+        } catch {
+          // No output directory from a previous call.
+        }
+        try {
+          await sandbox.files.makeDir('/home/user/output');
+        } catch {
+          // Output directory already present.
+        }
       }
 
       for (const file of files ?? []) {
         const arrayBuffer = new Uint8Array(file.content).buffer;
 
-        await sbx.files.write(`/home/user/${file.filename}`, arrayBuffer);
+        await sandbox.files.write(`/home/user/${file.filename}`, arrayBuffer);
       }
 
       const envSetup = context?.env
@@ -93,7 +134,7 @@ export class E2BDriver implements CodeInterpreterDriver {
       const outputFiles: OutputFile[] = [];
       let chartCounter = 0;
 
-      const execution = await sbx.runCode(envSetup + code, {
+      const execution = await sandbox.runCode(envSetup + code, {
         onStdout: (data) => callbacks?.onStdout?.(data.line),
         onStderr: (data) => callbacks?.onStderr?.(data.line),
         onResult: async (result) => {
@@ -111,11 +152,11 @@ export class E2BDriver implements CodeInterpreterDriver {
       });
 
       try {
-        const outputDir = await sbx.files.list('/home/user/output');
+        const outputDir = await sandbox.files.list('/home/user/output');
 
         for (const file of outputDir) {
           if (file.type === 'file') {
-            const content = await sbx.files.read(
+            const content = await sandbox.files.read(
               `/home/user/output/${file.name}`,
             );
 
@@ -141,7 +182,11 @@ export class E2BDriver implements CodeInterpreterDriver {
         error: execution.error?.value,
       };
     } finally {
-      await sbx.kill();
+      // A warm session sandbox is left running for the next call and reclaimed
+      // by E2B after the idle timeout; one-shot sandboxes are torn down now.
+      if (!keepWarm) {
+        await sandbox.kill();
+      }
     }
   }
 }

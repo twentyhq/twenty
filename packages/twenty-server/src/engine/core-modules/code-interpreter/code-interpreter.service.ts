@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { CodeInterpreterDriverFactory } from 'src/engine/core-modules/code-interpreter/code-interpreter-driver.factory';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import {
@@ -13,6 +15,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class CodeInterpreterService implements CodeInterpreterDriver {
+  // Tail of each session's execution chain, used to serialize calls that share
+  // a reused sandbox so concurrent tool calls don't race the same kernel.
+  private readonly sessionExecutionTails = new Map<string, Promise<void>>();
+
   constructor(
     private readonly codeInterpreterDriverFactory: CodeInterpreterDriverFactory,
     private readonly twentyConfigService: TwentyConfigService,
@@ -31,8 +37,52 @@ export class CodeInterpreterService implements CodeInterpreterDriver {
     context?: ExecutionContext,
     callbacks?: StreamCallbacks,
   ): Promise<CodeExecutionResult> {
-    const driver = this.codeInterpreterDriverFactory.getCurrentDriver();
+    const sessionId = context?.sessionId;
 
-    return driver.execute(code, files, context, callbacks);
+    // A reused sandbox is shared across a conversation's calls; serialize them
+    // so concurrent tool calls can't race the same kernel.
+    if (isDefined(sessionId)) {
+      return this.runSerializedPerSession(sessionId, () =>
+        this.runOnDriver(code, files, context, callbacks),
+      );
+    }
+
+    return this.runOnDriver(code, files, context, callbacks);
+  }
+
+  private runOnDriver(
+    code: string,
+    files?: InputFile[],
+    context?: ExecutionContext,
+    callbacks?: StreamCallbacks,
+  ): Promise<CodeExecutionResult> {
+    return this.codeInterpreterDriverFactory
+      .getCurrentDriver()
+      .execute(code, files, context, callbacks);
+  }
+
+  // In-process serialization: a conversation's turns run on a single worker, so
+  // chaining on a per-session tail is enough to prevent overlapping executions.
+  private async runSerializedPerSession<T>(
+    sessionId: string,
+    task: () => Promise<T>,
+  ): Promise<T> {
+    const previous =
+      this.sessionExecutionTails.get(sessionId) ?? Promise.resolve();
+    const result = previous.then(task, task);
+    const tail = result.then(
+      () => undefined,
+      () => undefined,
+    );
+
+    this.sessionExecutionTails.set(sessionId, tail);
+
+    try {
+      return await result;
+    } finally {
+      if (this.sessionExecutionTails.get(sessionId) === tail) {
+        this.sessionExecutionTails.delete(sessionId);
+      }
+    }
   }
 }

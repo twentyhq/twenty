@@ -82,8 +82,13 @@ export class CodeInterpreterTool implements Tool {
     parameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const { workspaceId, userId, userWorkspaceId, onCodeExecutionUpdate } =
-      context;
+    const {
+      workspaceId,
+      userId,
+      userWorkspaceId,
+      threadId,
+      onCodeExecutionUpdate,
+    } = context;
     const { code, files } = parameters as CodeInterpreterInput;
     const executionId = v4();
     const startTime = Date.now();
@@ -128,6 +133,7 @@ export class CodeInterpreterTool implements Tool {
             TWENTY_SERVER_URL: serverUrl,
             TWENTY_API_TOKEN: sessionToken,
           },
+          sessionId: threadId ? `${workspaceId}:${threadId}` : undefined,
         },
         {
           onStdout: (line) => {

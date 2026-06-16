@@ -20,6 +20,7 @@ export type CodeExecutionResult = {
 
 export type ExecutionContext = {
   env?: Record<string, string>;
+  sessionId?: string;
 };
 
 export type StreamCallbacks = {
