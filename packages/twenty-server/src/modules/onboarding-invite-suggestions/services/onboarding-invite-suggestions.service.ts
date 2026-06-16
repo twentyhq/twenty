@@ -14,6 +14,7 @@ import {
   ONBOARDING_INVITE_SUGGESTIONS_MAX_COUNT,
   getOnboardingInviteSuggestionsCacheKey,
 } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions.constants';
+import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { CalendarAttendeesService } from 'src/modules/onboarding-invite-suggestions/services/calendar-attendees.service';
 import { type InviteSuggestion } from 'src/modules/onboarding-invite-suggestions/types/invite-suggestion.type';
 import { type RawCalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/raw-calendar-attendee.type';
@@ -124,7 +125,7 @@ export class OnboardingInviteSuggestionsService {
       const isSameCompanyColleague =
         getDomainNameFromHandle(attendeeEmail) === connectedAccountDomain;
 
-      if (isOwnEmail || !isSameCompanyColleague) {
+      if (isOwnEmail || !isSameCompanyColleague || isGroupEmail(attendeeEmail)) {
         continue;
       }
 
