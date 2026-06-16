@@ -959,19 +959,17 @@ export class AuthService {
   ): Promise<string> {
     const email = rawEmail.toLowerCase();
 
-    const availableWorkspacesCount =
-      action === 'list-available-workspaces'
-        ? await this.countAvailableWorkspacesByEmail(email)
-        : 0;
-
     const existingUser =
       await this.userService.findUserByEmailWithWorkspaces(email);
 
+    // On the central sign-up domain (multi-workspace), bounce SSO users back
+    // with a workspace-agnostic token so the frontend runs the same
+    // create-or-select decision as credentials, instead of redirecting
+    // straight onto a workspace subdomain (which skips the onboarding step).
     if (
       !workspaceId &&
       !workspaceInviteHash &&
-      action === 'list-available-workspaces' &&
-      availableWorkspacesCount > 1
+      action === 'list-available-workspaces'
     ) {
       const user =
         existingUser ??
