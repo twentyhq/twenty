@@ -2816,6 +2816,7 @@ export interface Mutation {
     updateOneLogicFunction: Scalars['Boolean']
     createCommandMenuItem: CommandMenuItem
     updateCommandMenuItem: CommandMenuItem
+    resetCommandMenuItem: CommandMenuItem
     deleteCommandMenuItem: CommandMenuItem
     createFrontComponent: FrontComponent
     updateFrontComponent: FrontComponent
@@ -5967,6 +5968,7 @@ export interface MutationGenqlSelection{
     updateOneLogicFunction?: { __args: {input: UpdateLogicFunctionFromSourceInput} }
     createCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: CreateCommandMenuItemInput} })
     updateCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: UpdateCommandMenuItemInput} })
+    resetCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     createFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: CreateFrontComponentInput} })
     updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })

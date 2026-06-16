@@ -80,6 +80,15 @@ export const WorkflowEditActionUpdateRecord = ({
     saveAction(newFormData);
   };
 
+  const handleFieldClear = (fieldName: keyof UpdateRecordFormData) => {
+    const newFormData: UpdateRecordFormData = { ...formData };
+    delete newFormData[fieldName];
+
+    setFormData(newFormData);
+
+    saveAction(newFormData);
+  };
+
   const selectedObjectMetadataItem = activeNonSystemObjectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
   );
@@ -228,6 +237,9 @@ export const WorkflowEditActionUpdateRecord = ({
               field={fieldDefinition}
               onChange={(value) => {
                 handleFieldChange(fieldName, value);
+              }}
+              onClear={() => {
+                handleFieldClear(fieldName);
               }}
               VariablePicker={WorkflowVariablePicker}
               readonly={isFormDisabled}

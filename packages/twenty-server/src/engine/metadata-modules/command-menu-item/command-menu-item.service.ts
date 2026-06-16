@@ -245,6 +245,90 @@ export class CommandMenuItemService {
     );
   }
 
+  async reset(id: string, workspaceId: string): Promise<CommandMenuItemDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatCommandMenuItemMaps'],
+        },
+      );
+
+    const existingFlatCommandMenuItem = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: existingFlatCommandMenuItemMaps,
+    });
+
+    if (!isDefined(existingFlatCommandMenuItem)) {
+      throw new CommandMenuItemException(
+        'Command menu item not found',
+        CommandMenuItemExceptionCode.COMMAND_MENU_ITEM_NOT_FOUND,
+      );
+    }
+
+    if (
+      existingFlatCommandMenuItem.applicationUniversalIdentifier ===
+      workspaceCustomFlatApplication.universalIdentifier
+    ) {
+      throw new CommandMenuItemException(
+        'Custom command menu item cannot be reset to default',
+        CommandMenuItemExceptionCode.COMMAND_MENU_ITEM_CANNOT_BE_RESET,
+      );
+    }
+
+    const flatCommandMenuItemToUpdate: FlatCommandMenuItem = {
+      ...existingFlatCommandMenuItem,
+      isActive: true,
+      overrides: null,
+      universalOverrides: null,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            commandMenuItem: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatCommandMenuItemToUpdate],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while resetting command menu item to default',
+      );
+    }
+
+    const { flatCommandMenuItemMaps: recomputedFlatCommandMenuItemMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatCommandMenuItemMaps'],
+        },
+      );
+
+    return fromFlatCommandMenuItemToCommandMenuItemDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatCommandMenuItemMaps,
+      }),
+    );
+  }
+
   async delete(id: string, workspaceId: string): Promise<CommandMenuItemDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(

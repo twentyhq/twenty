@@ -3294,6 +3294,7 @@ type Mutation {
   updateOneLogicFunction(input: UpdateLogicFunctionFromSourceInput!): Boolean!
   createCommandMenuItem(input: CreateCommandMenuItemInput!): CommandMenuItem!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
+  resetCommandMenuItem(id: UUID!): CommandMenuItem!
   deleteCommandMenuItem(id: UUID!): CommandMenuItem!
   createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
