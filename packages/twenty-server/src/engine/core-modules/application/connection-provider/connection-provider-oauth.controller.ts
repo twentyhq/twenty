@@ -23,7 +23,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('apps/oauth')
+@Controller('auth/apps')
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 export class ConnectionProviderOAuthController {
   private readonly logger = new Logger(ConnectionProviderOAuthController.name);

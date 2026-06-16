@@ -132,12 +132,30 @@ export class FixStandardRelationFieldLabelsIconsCommand extends ActiveOrSuspende
           workspaceId,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
+          // These default relation fields are system-owned; mutating their
+          // label/icon is only permitted under a system build.
+          isSystemBuild: true,
         },
       );
 
     if (result.status === 'fail') {
+      const failureDetails = Object.values(result.report)
+        .flat()
+        .map((failedValidation) => {
+          const errorMessages = failedValidation.errors
+            .map((error) => `${error.code}: ${error.message}`)
+            .join('; ');
+
+          return `[${failedValidation.metadataName}] ${failedValidation.flatEntityMinimalInformation.universalIdentifier ?? failedValidation.flatEntityMinimalInformation.id ?? 'unknown'} -> ${errorMessages}`;
+        })
+        .join('\n');
+
+      this.logger.error(
+        `Migration build failed for workspace ${workspaceId} while healing standard relation field labels/icons:\n${failureDetails}`,
+      );
+
       throw new Error(
-        `Migration failed for workspace ${workspaceId} while healing standard relation field labels/icons`,
+        `Migration failed for workspace ${workspaceId} while healing standard relation field labels/icons:\n${failureDetails}`,
       );
     }
 
