@@ -127,6 +127,9 @@ export class ViewDTO {
   @Field(() => Boolean, { nullable: false })
   isActive: boolean;
 
+  @Field(() => Boolean, { nullable: false })
+  isSystemSideEffect: boolean;
+
   @HideField()
   overrides?: ViewOverrides | null;
 }

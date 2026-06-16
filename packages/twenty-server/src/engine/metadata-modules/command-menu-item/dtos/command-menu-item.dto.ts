@@ -108,6 +108,9 @@ export class CommandMenuItemDTO {
   @Field(() => Boolean, { nullable: false })
   isActive: boolean;
 
+  @Field(() => Boolean, { nullable: false })
+  isSystemSideEffect: boolean;
+
   @IsDateString()
   @Field()
   createdAt: Date;

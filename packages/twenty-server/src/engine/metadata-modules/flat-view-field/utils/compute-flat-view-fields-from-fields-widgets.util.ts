@@ -1,8 +1,8 @@
+import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
-import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatViewFieldGroupMaps } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group-maps.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { type FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
@@ -19,6 +19,11 @@ type FieldToCreateInfo = {
   fieldMetadataUniversalIdentifier: string;
 };
 
+type FieldViewTarget = {
+  viewId: string;
+  isVisible: boolean;
+};
+
 const isFieldsWidgetConfiguration = (
   configuration: AllPageLayoutWidgetConfiguration,
 ): configuration is FieldsConfigurationDTO => {
@@ -28,25 +33,65 @@ const isFieldsWidgetConfiguration = (
   );
 };
 
-const getMatchingFieldsWidgets = ({
+const getFieldViewTargets = ({
   objectMetadataUniversalIdentifier,
   flatPageLayoutWidgetMaps,
+  flatViewMaps,
 }: {
   objectMetadataUniversalIdentifier: string;
   flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
-}): FlatPageLayoutWidget[] =>
-  Object.values(flatPageLayoutWidgetMaps.byUniversalIdentifier)
-    .filter(isDefined)
-    .filter(
-      (widget) =>
-        widget.isActive &&
-        widget.type === WidgetType.FIELDS &&
-        widget.objectMetadataUniversalIdentifier ===
-          objectMetadataUniversalIdentifier &&
-        isFieldsWidgetConfiguration(widget.configuration) &&
-        isDefined(widget.configuration.viewId) &&
-        isDefined(widget.configuration.newFieldDefaultVisibility),
-    );
+  flatViewMaps: FlatViewMaps;
+}): FieldViewTarget[] => {
+  const targets: FieldViewTarget[] = [];
+  const seenViewIds = new Set<string>();
+
+  for (const widget of Object.values(
+    flatPageLayoutWidgetMaps.byUniversalIdentifier,
+  ).filter(isDefined)) {
+    if (
+      !widget.isActive ||
+      widget.type !== WidgetType.FIELDS ||
+      widget.objectMetadataUniversalIdentifier !==
+        objectMetadataUniversalIdentifier ||
+      !isFieldsWidgetConfiguration(widget.configuration)
+    ) {
+      continue;
+    }
+
+    const { viewId, newFieldDefaultVisibility } = widget.configuration;
+
+    if (
+      !isDefined(viewId) ||
+      !isDefined(newFieldDefaultVisibility) ||
+      seenViewIds.has(viewId)
+    ) {
+      continue;
+    }
+
+    seenViewIds.add(viewId);
+    targets.push({ viewId, isVisible: newFieldDefaultVisibility });
+  }
+
+  for (const view of Object.values(flatViewMaps.byUniversalIdentifier).filter(
+    isDefined,
+  )) {
+    if (
+      view.key !== ViewKey.INDEX ||
+      !view.isActive ||
+      isDefined(view.deletedAt) ||
+      view.objectMetadataUniversalIdentifier !==
+        objectMetadataUniversalIdentifier ||
+      seenViewIds.has(view.id)
+    ) {
+      continue;
+    }
+
+    seenViewIds.add(view.id);
+    targets.push({ viewId: view.id, isVisible: false });
+  }
+
+  return targets;
+};
 
 const findLastViewFieldGroupId = ({
   viewId,
@@ -130,11 +175,13 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
   ];
 
   const nextPositionByKey = new Map<string, number>();
+  const queuedViewFieldKeys = new Set<string>();
 
   for (const objectMetadataUniversalIdentifier of objectMetadataUniversalIdentifiers) {
-    const matchingWidgets = getMatchingFieldsWidgets({
+    const targets = getFieldViewTargets({
       objectMetadataUniversalIdentifier,
       flatPageLayoutWidgetMaps,
+      flatViewMaps,
     });
 
     const fieldsForObject = fieldsToCreate.filter(
@@ -143,16 +190,7 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
         objectMetadataUniversalIdentifier,
     );
 
-    for (const widget of matchingWidgets) {
-      if (!isFieldsWidgetConfiguration(widget.configuration)) {
-        continue;
-      }
-
-      const configuration = widget.configuration;
-
-      const viewId = configuration.viewId!;
-      const isVisible = configuration.newFieldDefaultVisibility!;
-
+    for (const { viewId, isVisible } of targets) {
       const viewUniversalIdentifier =
         flatViewMaps.universalIdentifierById[viewId] ?? null;
 
@@ -184,6 +222,14 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
       }
 
       for (const field of fieldsForObject) {
+        const dedupKey = `${viewId}:${field.fieldMetadataUniversalIdentifier}`;
+
+        if (queuedViewFieldKeys.has(dedupKey)) {
+          continue;
+        }
+
+        queuedViewFieldKeys.add(dedupKey);
+
         const position = nextPositionByKey.get(positionKey)!;
 
         nextPositionByKey.set(positionKey, position + 1);
@@ -200,6 +246,7 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
           position,
           aggregateOperation: null,
           isActive: true,
+          isSystemSideEffect: true,
           universalOverrides: null,
           createdAt: now,
           updatedAt: now,

@@ -143,6 +143,7 @@ export const createStandardViewFlatMetadata = <
     visibility: ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: null,
     isActive: true,
+    isSystemSideEffect: false,
     overrides: null,
     universalOverrides: null,
     viewFieldIds: [],

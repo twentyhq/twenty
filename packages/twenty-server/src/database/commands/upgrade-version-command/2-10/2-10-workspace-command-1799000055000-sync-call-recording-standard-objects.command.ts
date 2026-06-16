@@ -122,6 +122,7 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   icon: 'IconSettingsAutomation',
   isActive: true,
   isSystem: false,
+  isSystemSideEffect: false,
   isNullable: false,
   isUnique: false,
   isUIEditable: true,

@@ -12,6 +12,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/engine/metadata-modules/flat-entity/constant/is-system-side-effect-upgrade-command-name.constant';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -78,4 +80,10 @@ export class IndexMetadataEntity
     nullable: false,
   })
   indexType: IndexType;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isSystemSideEffect: boolean;
 }

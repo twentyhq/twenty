@@ -346,6 +346,7 @@ type CommandMenuItem {
   universalIdentifier: UUID
   applicationId: UUID
   isActive: Boolean!
+  isSystemSideEffect: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -740,6 +741,7 @@ type ViewField {
   createdAt: DateTime!
   updatedAt: DateTime!
   isActive: Boolean!
+  isSystemSideEffect: Boolean!
   deletedAt: DateTime
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }
@@ -887,6 +889,7 @@ type View {
   visibility: ViewVisibility!
   createdByUserWorkspaceId: UUID
   isActive: Boolean!
+  isSystemSideEffect: Boolean!
 }
 
 enum ViewType {
@@ -1062,6 +1065,7 @@ type PageLayoutWidget {
   createdAt: DateTime!
   updatedAt: DateTime!
   isActive: Boolean!
+  isSystemSideEffect: Boolean!
   deletedAt: DateTime
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }
@@ -1393,6 +1397,7 @@ type PageLayoutTab {
   createdAt: DateTime!
   updatedAt: DateTime!
   isActive: Boolean!
+  isSystemSideEffect: Boolean!
   deletedAt: DateTime
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }
@@ -1405,6 +1410,7 @@ type PageLayout {
   tabs: [PageLayoutTab!]
   defaultTabToFocusOnMobileAndSidePanelId: UUID
   universalIdentifier: UUID!
+  isSystemSideEffect: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime

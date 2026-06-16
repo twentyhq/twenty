@@ -51,6 +51,9 @@ export class ViewFieldDTO {
   @Field(() => Boolean, { nullable: false })
   isActive: boolean;
 
+  @Field(() => Boolean, { nullable: false })
+  isSystemSideEffect: boolean;
+
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | null;
 

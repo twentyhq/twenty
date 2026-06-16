@@ -107,6 +107,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     objectMetadataId,
     objectMetadataUniversalIdentifier,
     isActive: true,
+    isSystemSideEffect: false,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

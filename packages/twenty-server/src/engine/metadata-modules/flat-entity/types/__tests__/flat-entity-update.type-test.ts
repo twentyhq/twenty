@@ -16,6 +16,7 @@ type Assertions = [
       | 'icon'
       | 'description'
       | 'isActive'
+      | 'isSystemSideEffect'
       | 'defaultValue'
       | 'standardOverrides'
       | 'options'

@@ -35,6 +35,9 @@ export class PageLayoutDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   universalIdentifier: string;
 
+  @Field(() => Boolean, { nullable: false })
+  isSystemSideEffect: boolean;
+
   @Field()
   createdAt: Date;
 

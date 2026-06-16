@@ -936,6 +936,7 @@ export type CommandMenuItem = {
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
   isPinned: Scalars['Boolean']['output'];
+  isSystemSideEffect: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
   pageLayoutId?: Maybe<Scalars['UUID']['output']>;
   payload?: Maybe<CommandMenuItemPayload>;
@@ -3975,6 +3976,7 @@ export type PageLayout = {
   defaultTabToFocusOnMobileAndSidePanelId?: Maybe<Scalars['UUID']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
+  isSystemSideEffect: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   objectMetadataId?: Maybe<Scalars['UUID']['output']>;
   tabs?: Maybe<Array<PageLayoutTab>>;
@@ -3993,6 +3995,7 @@ export type PageLayoutTab = {
   isActive: Scalars['Boolean']['output'];
   /** @deprecated isOverridden is deprecated */
   isOverridden?: Maybe<Scalars['Boolean']['output']>;
+  isSystemSideEffect: Scalars['Boolean']['output'];
   layoutMode?: Maybe<PageLayoutTabLayoutMode>;
   pageLayoutId: Scalars['UUID']['output'];
   position: Scalars['Float']['output'];
@@ -4028,6 +4031,7 @@ export type PageLayoutWidget = {
   isActive: Scalars['Boolean']['output'];
   /** @deprecated isOverridden is deprecated */
   isOverridden?: Maybe<Scalars['Boolean']['output']>;
+  isSystemSideEffect: Scalars['Boolean']['output'];
   objectMetadataId?: Maybe<Scalars['UUID']['output']>;
   pageLayoutTabId: Scalars['UUID']['output'];
   position?: Maybe<PageLayoutWidgetPosition>;
@@ -5827,6 +5831,7 @@ export type View = {
   isActive: Scalars['Boolean']['output'];
   isCompact: Scalars['Boolean']['output'];
   isCustom: Scalars['Boolean']['output'];
+  isSystemSideEffect: Scalars['Boolean']['output'];
   kanbanAggregateOperation?: Maybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   key?: Maybe<ViewKey>;
@@ -5869,6 +5874,7 @@ export type ViewField = {
   isActive: Scalars['Boolean']['output'];
   /** @deprecated isOverridden is deprecated */
   isOverridden?: Maybe<Scalars['Boolean']['output']>;
+  isSystemSideEffect: Scalars['Boolean']['output'];
   isVisible: Scalars['Boolean']['output'];
   position: Scalars['Float']['output'];
   size: Scalars['Float']['output'];

@@ -35,6 +35,7 @@ type Assertions = [
       | 'icon'
       | 'description'
       | 'isActive'
+      | 'isSystemSideEffect'
       | 'defaultValue'
       | 'standardOverrides'
       | 'options'
@@ -50,6 +51,7 @@ type Assertions = [
       MetadataUniversalFlatEntityPropertiesToCompare<'view'>,
       | 'name'
       | 'icon'
+      | 'isSystemSideEffect'
       | 'deletedAt'
       | 'type'
       | 'position'

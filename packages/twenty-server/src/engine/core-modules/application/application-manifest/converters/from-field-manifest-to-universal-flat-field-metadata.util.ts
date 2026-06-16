@@ -94,6 +94,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     universalSettings: fieldManifest.universalSettings ?? null,
     isActive: true,
     isSystem: fieldManifest.name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
+    isSystemSideEffect: false,
     isUIEditable: fieldManifest.isUIEditable ?? true,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,

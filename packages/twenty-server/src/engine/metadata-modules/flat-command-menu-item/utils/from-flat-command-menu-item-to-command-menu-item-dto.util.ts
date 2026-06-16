@@ -33,6 +33,7 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
     workspaceId: effectiveFlatCommandMenuItem.workspaceId,
     applicationId: effectiveFlatCommandMenuItem.applicationId ?? undefined,
     isActive: effectiveFlatCommandMenuItem.isActive,
+    isSystemSideEffect: effectiveFlatCommandMenuItem.isSystemSideEffect,
     createdAt: new Date(effectiveFlatCommandMenuItem.createdAt),
     updatedAt: new Date(effectiveFlatCommandMenuItem.updatedAt),
   };

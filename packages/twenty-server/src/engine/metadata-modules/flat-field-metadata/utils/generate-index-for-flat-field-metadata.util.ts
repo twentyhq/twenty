@@ -38,6 +38,7 @@ export const generateIndexForFlatFieldMetadata = ({
         indexWhereClause: null,
         isCustom: true,
         isUnique: flatFieldMetadata.isUnique ?? false,
+        isSystemSideEffect: true,
         objectMetadataUniversalIdentifier:
           flatObjectMetadata.universalIdentifier,
         universalIdentifier: indexMetadataUniversalIdentifier,

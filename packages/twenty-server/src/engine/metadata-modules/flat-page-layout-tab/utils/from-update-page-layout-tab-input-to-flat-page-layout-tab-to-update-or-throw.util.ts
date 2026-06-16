@@ -60,6 +60,7 @@ export const fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow = ({
     entityApplicationUniversalIdentifier:
       existingFlatPageLayoutTabToUpdate.applicationUniversalIdentifier,
     workspaceCustomApplicationUniversalIdentifier,
+    isSystemSideEffect: existingFlatPageLayoutTabToUpdate.isSystemSideEffect,
   });
 
   const { overrides, updatedEditableProperties } =

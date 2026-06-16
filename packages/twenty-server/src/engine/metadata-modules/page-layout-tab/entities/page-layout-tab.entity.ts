@@ -15,6 +15,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/engine/metadata-modules/flat-entity/constant/is-system-side-effect-upgrade-command-name.constant';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
@@ -69,6 +71,12 @@ export class PageLayoutTabEntity
     default: PageLayoutTabLayoutMode.GRID,
   })
   layoutMode: PageLayoutTabLayoutMode;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isSystemSideEffect: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

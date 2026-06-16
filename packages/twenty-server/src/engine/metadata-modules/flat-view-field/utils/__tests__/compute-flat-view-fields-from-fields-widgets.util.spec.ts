@@ -1,3 +1,5 @@
+import { ViewKey } from 'twenty-shared/types';
+
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatViewFieldGroupMaps } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group-maps.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
@@ -21,13 +23,28 @@ const buildEmptyFlatEntityMaps = () => ({
 });
 
 const buildFlatViewMaps = (
-  entries: { id: string; universalIdentifier: string }[] = [],
+  entries: {
+    id: string;
+    universalIdentifier: string;
+    key?: ViewKey | null;
+    isActive?: boolean;
+    objectMetadataUniversalIdentifier?: string | null;
+    deletedAt?: string | null;
+  }[] = [],
 ): FlatViewMaps =>
   ({
     byUniversalIdentifier: Object.fromEntries(
       entries.map((entry) => [
         entry.universalIdentifier,
-        { universalIdentifier: entry.universalIdentifier, id: entry.id },
+        {
+          universalIdentifier: entry.universalIdentifier,
+          id: entry.id,
+          key: entry.key ?? null,
+          isActive: entry.isActive ?? true,
+          objectMetadataUniversalIdentifier:
+            entry.objectMetadataUniversalIdentifier ?? null,
+          deletedAt: entry.deletedAt ?? null,
+        },
       ]),
     ),
     universalIdentifierById: Object.fromEntries(
@@ -273,6 +290,7 @@ describe('computeFlatViewFieldsFromFieldsWidgets', () => {
         viewUniversalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
         viewFieldGroupUniversalIdentifier: null,
         isVisible: true,
+        isSystemSideEffect: true,
         size: DEFAULT_VIEW_FIELD_SIZE,
         position: 0,
         aggregateOperation: null,
@@ -710,6 +728,137 @@ describe('computeFlatViewFieldsFromFieldsWidgets', () => {
 
       expect(viewFieldForObj1?.viewUniversalIdentifier).toBe('view-uid-A');
       expect(viewFieldForObj2?.viewUniversalIdentifier).toBe('view-uid-B');
+    });
+  });
+
+  describe('INDEX view propagation', () => {
+    it('should add a hidden, flagged view field to the object INDEX view even without a fields widget', () => {
+      const result = computeFlatViewFieldsFromFieldsWidgets({
+        fieldsToCreate: [
+          {
+            objectMetadataUniversalIdentifier:
+              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier: 'field-uid-1',
+          },
+        ],
+        flatPageLayoutWidgetMaps:
+          buildEmptyFlatEntityMaps() as unknown as FlatPageLayoutWidgetMaps,
+        flatViewFieldMaps: buildFlatViewFieldMaps(),
+        flatViewMaps: buildFlatViewMaps([
+          {
+            id: 'index-view-db-id',
+            universalIdentifier: 'index-view-uid',
+            key: ViewKey.INDEX,
+            objectMetadataUniversalIdentifier:
+              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
+          },
+        ]),
+        flatViewFieldGroupMaps: buildFlatViewFieldGroupMaps(),
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        viewUniversalIdentifier: 'index-view-uid',
+        fieldMetadataUniversalIdentifier: 'field-uid-1',
+        isVisible: false,
+        isSystemSideEffect: true,
+      });
+    });
+
+    it('should not target a standalone non-INDEX view without a widget', () => {
+      const result = computeFlatViewFieldsFromFieldsWidgets({
+        fieldsToCreate: [
+          {
+            objectMetadataUniversalIdentifier:
+              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier: 'field-uid-1',
+          },
+        ],
+        flatPageLayoutWidgetMaps:
+          buildEmptyFlatEntityMaps() as unknown as FlatPageLayoutWidgetMaps,
+        flatViewFieldMaps: buildFlatViewFieldMaps(),
+        flatViewMaps: buildFlatViewMaps([
+          {
+            id: 'plain-view-db-id',
+            universalIdentifier: 'plain-view-uid',
+            key: null,
+            objectMetadataUniversalIdentifier:
+              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
+          },
+        ]),
+        flatViewFieldGroupMaps: buildFlatViewFieldGroupMaps(),
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      });
+
+      expect(result).toEqual([]);
+    });
+
+    it('should skip an inactive or soft-deleted INDEX view', () => {
+      const result = computeFlatViewFieldsFromFieldsWidgets({
+        fieldsToCreate: [
+          {
+            objectMetadataUniversalIdentifier:
+              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier: 'field-uid-1',
+          },
+        ],
+        flatPageLayoutWidgetMaps:
+          buildEmptyFlatEntityMaps() as unknown as FlatPageLayoutWidgetMaps,
+        flatViewFieldMaps: buildFlatViewFieldMaps(),
+        flatViewMaps: buildFlatViewMaps([
+          {
+            id: 'inactive-index-view-db-id',
+            universalIdentifier: 'inactive-index-view-uid',
+            key: ViewKey.INDEX,
+            isActive: false,
+            objectMetadataUniversalIdentifier:
+              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
+          },
+          {
+            id: 'deleted-index-view-db-id',
+            universalIdentifier: 'deleted-index-view-uid',
+            key: ViewKey.INDEX,
+            deletedAt: '2024-01-01T00:00:00.000Z',
+            objectMetadataUniversalIdentifier:
+              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
+          },
+        ]),
+        flatViewFieldGroupMaps: buildFlatViewFieldGroupMaps(),
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      });
+
+      expect(result).toEqual([]);
+    });
+
+    it('should not duplicate a field when a fields widget and the INDEX view share the same view', () => {
+      const result = computeFlatViewFieldsFromFieldsWidgets({
+        fieldsToCreate: [
+          {
+            objectMetadataUniversalIdentifier:
+              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier: 'field-uid-1',
+          },
+        ],
+        flatPageLayoutWidgetMaps: buildFlatPageLayoutWidgetMaps([
+          buildFieldsWidget({ viewId: 'index-view-db-id', isVisible: true }),
+        ]),
+        flatViewFieldMaps: buildFlatViewFieldMaps(),
+        flatViewMaps: buildFlatViewMaps([
+          {
+            id: 'index-view-db-id',
+            universalIdentifier: 'index-view-uid',
+            key: ViewKey.INDEX,
+            objectMetadataUniversalIdentifier:
+              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
+          },
+        ]),
+        flatViewFieldGroupMaps: buildFlatViewFieldGroupMaps(),
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].isVisible).toBe(true);
     });
   });
 

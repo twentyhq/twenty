@@ -69,6 +69,7 @@ export const createStandardPageLayoutTabFlatMetadata = ({
     widgetIds,
     widgetUniversalIdentifiers,
     isActive: true,
+    isSystemSideEffect: false,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
