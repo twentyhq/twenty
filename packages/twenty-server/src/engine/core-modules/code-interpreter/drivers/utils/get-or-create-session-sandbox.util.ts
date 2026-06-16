@@ -36,13 +36,22 @@ const connectAndKeepAlive = async (
   sandboxId: string,
   idleTimeoutMs: number,
 ): Promise<Sandbox | undefined> => {
-  try {
-    const sandbox = await sandboxApi.connect(sandboxId, { apiKey });
+  const sandbox = await sandboxApi
+    .connect(sandboxId, { apiKey })
+    .catch(() => undefined);
 
+  if (!isDefined(sandbox)) {
+    return undefined;
+  }
+
+  try {
     await sandbox.setTimeout(idleTimeoutMs);
 
     return sandbox;
   } catch {
+    // Couldn't refresh the timeout — kill it instead of leaking a running sandbox.
+    await sandbox.kill().catch(() => undefined);
+
     return undefined;
   }
 };

@@ -197,4 +197,30 @@ describe('getOrCreateSessionSandbox', () => {
     expect(mock.connect).not.toHaveBeenCalled();
     expect(mock.create).toHaveBeenCalledTimes(1);
   });
+
+  it('kills a connected sandbox and creates fresh when refreshing its timeout fails', async () => {
+    const stale = {
+      setTimeout: jest
+        .fn()
+        .mockRejectedValue(new Error('timeout refresh failed')),
+      kill: jest.fn().mockResolvedValue(undefined),
+    } as unknown as Sandbox;
+    const created = buildFakeSandbox();
+    const { api, mock } = buildSandboxApi({
+      list: jest.fn().mockResolvedValue([listedSandbox('sbx-stale')]),
+      connect: jest.fn().mockResolvedValue(stale),
+      create: jest.fn().mockResolvedValue(created),
+    });
+
+    const result = await getOrCreateSessionSandbox({
+      sandboxApi: api,
+      apiKey,
+      sessionId,
+      idleTimeoutMs,
+    });
+
+    expect(result).toEqual({ sandbox: created, isReused: false });
+    expect(stale.kill).toHaveBeenCalledTimes(1);
+    expect(mock.create).toHaveBeenCalledTimes(1);
+  });
 });
