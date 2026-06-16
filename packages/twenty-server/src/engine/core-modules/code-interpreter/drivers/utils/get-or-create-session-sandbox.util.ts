@@ -27,6 +27,15 @@ export const getOrCreateSessionSandbox = async ({
     query: { metadata: { [SESSION_SANDBOX_METADATA_KEY]: sessionId } },
   });
 
+  // Defense in depth: the list query is filtered server-side, but we re-check
+  // the tag client-side and only ever reuse (or reap) an EXACT match. A warm
+  // sandbox carries the previous turn's files, kernel state and injected token,
+  // so a loose or prefixed metadata match must never hand one session's sandbox
+  // to another tenant.
+  const sessionSandboxes = runningSandboxes.filter(
+    (sandbox) => sandbox.metadata?.[SESSION_SANDBOX_METADATA_KEY] === sessionId,
+  );
+
   // Try the candidates in order and keep the first one we can actually connect
   // to — a listed sandbox may have been reclaimed between list and connect. We
   // only reap the rest after securing a live one, so a valid sandbox is never
@@ -34,10 +43,10 @@ export const getOrCreateSessionSandbox = async ({
   let reusedSandbox: Sandbox | undefined;
   let keptIndex = -1;
 
-  for (let index = 0; index < runningSandboxes.length; index++) {
+  for (let index = 0; index < sessionSandboxes.length; index++) {
     try {
       const sandbox = await sandboxApi.connect(
-        runningSandboxes[index].sandboxId,
+        sessionSandboxes[index].sandboxId,
         { apiKey },
       );
 
@@ -55,7 +64,7 @@ export const getOrCreateSessionSandbox = async ({
     // A race can leave more than one sandbox for a session; reap the ones we
     // didn't keep instead of letting them linger until their idle timeout.
     await Promise.all(
-      runningSandboxes
+      sessionSandboxes
         .filter((_, index) => index !== keptIndex)
         .map((duplicate) =>
           sandboxApi

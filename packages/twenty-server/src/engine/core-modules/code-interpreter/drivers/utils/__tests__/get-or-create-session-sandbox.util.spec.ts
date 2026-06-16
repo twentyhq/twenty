@@ -34,11 +34,21 @@ const apiKey = 'test-api-key';
 const sessionId = 'workspace-1:thread-1';
 const idleTimeoutMs = 300_000;
 
+// E2B returns SandboxInfo entries with their metadata; the resolver re-checks
+// the session tag client-side, so listed sandboxes are tagged accordingly.
+const listedSandbox = (
+  sandboxId: string,
+  tag: string = sessionId,
+): { sandboxId: string; metadata: Record<string, string> } => ({
+  sandboxId,
+  metadata: { [SESSION_SANDBOX_METADATA_KEY]: tag },
+});
+
 describe('getOrCreateSessionSandbox', () => {
   it('reuses and extends the existing sandbox for the session', async () => {
     const sandbox = buildFakeSandbox();
     const { api, mock } = buildSandboxApi({
-      list: jest.fn().mockResolvedValue([{ sandboxId: 'sbx-1' }]),
+      list: jest.fn().mockResolvedValue([listedSandbox('sbx-1')]),
       connect: jest.fn().mockResolvedValue(sandbox),
     });
 
@@ -92,9 +102,9 @@ describe('getOrCreateSessionSandbox', () => {
       list: jest
         .fn()
         .mockResolvedValue([
-          { sandboxId: 'sbx-keep' },
-          { sandboxId: 'sbx-dup-1' },
-          { sandboxId: 'sbx-dup-2' },
+          listedSandbox('sbx-keep'),
+          listedSandbox('sbx-dup-1'),
+          listedSandbox('sbx-dup-2'),
         ]),
       connect: jest.fn((sandboxId: string) =>
         Promise.resolve(sandboxesById[sandboxId]),
@@ -119,7 +129,7 @@ describe('getOrCreateSessionSandbox', () => {
   it('creates a fresh sandbox when connecting to the existing one fails', async () => {
     const created = buildFakeSandbox();
     const { api, mock } = buildSandboxApi({
-      list: jest.fn().mockResolvedValue([{ sandboxId: 'sbx-dead' }]),
+      list: jest.fn().mockResolvedValue([listedSandbox('sbx-dead')]),
       connect: jest.fn().mockRejectedValue(new Error('sandbox not found')),
       create: jest.fn().mockResolvedValue(created),
     });
@@ -141,8 +151,8 @@ describe('getOrCreateSessionSandbox', () => {
       list: jest
         .fn()
         .mockResolvedValue([
-          { sandboxId: 'sbx-dead' },
-          { sandboxId: 'sbx-live' },
+          listedSandbox('sbx-dead'),
+          listedSandbox('sbx-live'),
         ]),
       connect: jest.fn((sandboxId: string) =>
         sandboxId === 'sbx-live'
@@ -161,5 +171,30 @@ describe('getOrCreateSessionSandbox', () => {
     expect(result).toEqual({ sandbox: live, isReused: true });
     expect(live.setTimeout).toHaveBeenCalledWith(idleTimeoutMs);
     expect(mock.create).not.toHaveBeenCalled();
+  });
+
+  it('never reuses a sandbox whose metadata does not exactly match the session', async () => {
+    const created = buildFakeSandbox();
+    const { api, mock } = buildSandboxApi({
+      // A sandbox from a different session/tenant that a loose server-side match
+      // could surface — it must be ignored, never connected to or reaped.
+      list: jest
+        .fn()
+        .mockResolvedValue([
+          listedSandbox('sbx-foreign', 'workspace-2:thread-9'),
+        ]),
+      create: jest.fn().mockResolvedValue(created),
+    });
+
+    const result = await getOrCreateSessionSandbox({
+      sandboxApi: api,
+      apiKey,
+      sessionId,
+      idleTimeoutMs,
+    });
+
+    expect(result).toEqual({ sandbox: created, isReused: false });
+    expect(mock.connect).not.toHaveBeenCalled();
+    expect(mock.create).toHaveBeenCalledTimes(1);
   });
 });
