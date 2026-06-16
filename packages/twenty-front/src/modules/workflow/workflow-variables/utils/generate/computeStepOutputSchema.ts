@@ -11,11 +11,6 @@ import { generateRecordEventOutputSchema } from '@/workflow/workflow-variables/u
 import { generateRecordOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordOutputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  buildManualTriggerMetadataNode,
-  buildManualTriggerMetadataRecordField,
-  WORKFLOW_TRIGGER_METADATA_KEY,
-} from 'twenty-shared/workflow';
 import { DatabaseEventAction } from '~/generated-metadata/graphql';
 
 const PERSISTED_OUTPUT_SCHEMA_TYPES = [
@@ -106,9 +101,7 @@ export const computeStepOutputSchema = ({
       }
 
       if (availability.type === 'GLOBAL') {
-        return {
-          [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
-        };
+        return {};
       }
 
       if (
@@ -125,17 +118,7 @@ export const computeStepOutputSchema = ({
         }
 
         if (availability.type === 'SINGLE_RECORD') {
-          const recordOutputSchema =
-            generateRecordOutputSchema(objectMetadataItem);
-
-          return {
-            ...recordOutputSchema,
-            fields: {
-              ...recordOutputSchema.fields,
-              [WORKFLOW_TRIGGER_METADATA_KEY]:
-                buildManualTriggerMetadataRecordField(),
-            },
-          };
+          return generateRecordOutputSchema(objectMetadataItem);
         }
 
         // BULK_RECORDS - return array indicator
@@ -146,7 +129,6 @@ export const computeStepOutputSchema = ({
             type: 'array',
             value: `Array of ${objectMetadataItem.labelPlural}`,
           },
-          [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
         };
       }
 

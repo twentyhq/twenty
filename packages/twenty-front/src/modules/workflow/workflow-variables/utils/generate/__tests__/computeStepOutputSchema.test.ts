@@ -159,7 +159,7 @@ describe('computeStepOutputSchema', () => {
       expect(result).toEqual({});
     });
 
-    it('should expose workspace member metadata for GLOBAL availability', () => {
+    it('should return empty object for GLOBAL availability', () => {
       const result = computeStepOutputSchema({
         step: {
           type: 'MANUAL',
@@ -168,16 +168,10 @@ describe('computeStepOutputSchema', () => {
         objectMetadataItems: [mockCompanyObjectMetadataItem],
       });
 
-      expect(result).toHaveProperty('_metadata');
-      expect((result as any)._metadata).toMatchObject({
-        isLeaf: false,
-        value: {
-          workspaceMemberId: { isLeaf: true },
-        },
-      });
+      expect(result).toEqual({});
     });
 
-    it('should return record output schema with metadata for SINGLE_RECORD availability', () => {
+    it('should return record output schema for SINGLE_RECORD availability', () => {
       const result = computeStepOutputSchema({
         step: {
           type: 'MANUAL',
@@ -193,13 +187,9 @@ describe('computeStepOutputSchema', () => {
 
       expect(result).toHaveProperty('_outputSchemaType', 'RECORD');
       expect(result).toHaveProperty('object');
-      expect((result as any).fields).toHaveProperty('_metadata');
-      expect((result as any).fields._metadata.value).toHaveProperty(
-        'workspaceMemberId',
-      );
     });
 
-    it('should return array indicator and metadata for BULK_RECORDS availability', () => {
+    it('should return array indicator for BULK_RECORDS availability', () => {
       const result = computeStepOutputSchema({
         step: {
           type: 'MANUAL',
@@ -219,10 +209,6 @@ describe('computeStepOutputSchema', () => {
         label: 'Companies',
         type: 'array',
       });
-      expect(result).toHaveProperty('_metadata');
-      expect((result as any)._metadata.value).toHaveProperty(
-        'workspaceMemberId',
-      );
     });
 
     it('should return empty object when object metadata is not found for SINGLE_RECORD', () => {
