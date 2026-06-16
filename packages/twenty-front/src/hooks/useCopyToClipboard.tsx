@@ -4,15 +4,11 @@ import { IconCopy, IconExclamationCircle } from 'twenty-ui-deprecated/display';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
-const copyToClipboardWithExecCommand = (valueAsString: string) => {
-  const activeElement = document.activeElement;
-  const selection = document.getSelection();
-  const selectedRanges =
-    selection === null
-      ? []
-      : Array.from({ length: selection.rangeCount }, (_, index) =>
-          selection.getRangeAt(index),
-        );
+const copyToClipboardWithTextArea = (valueAsString: string) => {
+  if (typeof document.execCommand !== 'function') {
+    return false;
+  }
+
   const textarea = document.createElement('textarea');
 
   textarea.value = valueAsString;
@@ -30,12 +26,6 @@ const copyToClipboardWithExecCommand = (valueAsString: string) => {
     return document.execCommand('copy');
   } finally {
     document.body.removeChild(textarea);
-    selection?.removeAllRanges();
-    selectedRanges.forEach((range) => selection?.addRange(range));
-
-    if (activeElement instanceof HTMLElement) {
-      activeElement.focus();
-    }
   }
 };
 
@@ -45,7 +35,26 @@ export const useCopyToClipboard = () => {
   const { t } = useLingui();
 
   const copyToClipboard = async (valueAsString: string, message?: string) => {
-    const enqueueSuccess = () => {
+    const isClipboardApiAvailable =
+      window.isSecureContext &&
+      typeof navigator.clipboard?.writeText === 'function';
+
+    let hasCopied = false;
+
+    if (isClipboardApiAvailable) {
+      try {
+        await navigator.clipboard.writeText(valueAsString);
+        hasCopied = true;
+      } catch {
+        hasCopied = false;
+      }
+    }
+
+    if (!hasCopied) {
+      hasCopied = copyToClipboardWithTextArea(valueAsString);
+    }
+
+    if (hasCopied) {
       enqueueSuccessSnackBar({
         message: message || t`Copied to clipboard`,
         options: {
@@ -53,38 +62,19 @@ export const useCopyToClipboard = () => {
           duration: 2000,
         },
       });
-    };
-
-    if (copyToClipboardWithExecCommand(valueAsString)) {
-      enqueueSuccess();
-      return;
-    }
-
-    if (!window.isSecureContext) {
-      enqueueErrorSnackBar({
-        message: t`Clipboard requires a secure connection (HTTPS). Please access this app over HTTPS to enable copying.`,
-        options: {
-          icon: <IconExclamationCircle size={16} color="red" />,
-          duration: 6000,
-        },
-      });
 
       return;
     }
 
-    try {
-      await navigator.clipboard.writeText(valueAsString);
-
-      enqueueSuccess();
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Couldn't copy to clipboard`,
-        options: {
-          icon: <IconExclamationCircle size={16} color="red" />,
-          duration: 2000,
-        },
-      });
-    }
+    enqueueErrorSnackBar({
+      message: window.isSecureContext
+        ? t`Couldn't copy to clipboard`
+        : t`Clipboard requires a secure connection (HTTPS). Please access this app over HTTPS to enable copying.`,
+      options: {
+        icon: <IconExclamationCircle size={16} color="red" />,
+        duration: window.isSecureContext ? 2000 : 6000,
+      },
+    });
   };
 
   return { copyToClipboard };
