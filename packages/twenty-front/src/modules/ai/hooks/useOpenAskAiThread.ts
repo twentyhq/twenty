@@ -1,9 +1,8 @@
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 
@@ -11,7 +10,7 @@ export const useOpenAskAiThread = () => {
   const agentChatVisibleThreads = useAtomStateValue(
     agentChatVisibleThreadsSelector,
   );
-  const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
+  const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
 
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
@@ -29,7 +28,7 @@ export const useOpenAskAiThread = () => {
     }
 
     if (isValidUuid(threadId)) {
-      setCurrentAiChatThread(threadId);
+      switchThreadWithDraft(threadId);
     }
 
     openAskAiPage({ resetNavigationStack: true });

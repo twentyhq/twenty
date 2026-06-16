@@ -25,6 +25,7 @@ import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { BillingProductKey } from '~/generated-metadata/graphql';
 
 const THROTTLE_MS = 100;
 
@@ -340,10 +341,11 @@ export const useAgentChatSubscription = (threadId: string | null) => {
               currentBillingSubscription: {
                 ...currentBillingSubscription,
                 billingSubscriptionItems: billingSubscriptionItems.map(
-                  (item) => ({
-                    ...item,
-                    hasReachedCurrentPeriodCap: true,
-                  }),
+                  (item) =>
+                    item.billingProduct.metadata?.['productKey'] ===
+                    BillingProductKey.RESOURCE_CREDIT
+                      ? { ...item, hasReachedCurrentPeriodCap: true }
+                      : item,
                 ),
               },
             };

@@ -6,13 +6,12 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
-// Mounted only by EndTrialAfterPaymentMethodGater, i.e. once the card-less trial
-// user returns from the Stripe payment-method-update portal. It ends the trial
-// in place (no redirection) and reopens the Ask AI thread they came from.
+
 export const EndTrialAfterPaymentMethodEffect = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,16 +20,11 @@ export const EndTrialAfterPaymentMethodEffect = () => {
   const { openAskAiThread } = useOpenAskAiThread();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  // A ref is used so the activation runs once even though StrictMode
-  // double-invokes effects on mount.
-  // oxlint-disable-next-line twenty/no-state-useref
-  const hasRunRef = useRef(false);
-
   useEffect(() => {
-    if (hasRunRef.current) {
+
+    if (!isDefined(subscriptionStatus)) {
       return;
     }
-    hasRunRef.current = true;
 
     const searchParams = new URLSearchParams(location.search);
     const askAiThreadId = searchParams.get(ASK_AI_THREAD_ID_QUERY_PARAM);

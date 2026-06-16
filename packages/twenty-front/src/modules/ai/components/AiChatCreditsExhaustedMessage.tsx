@@ -7,7 +7,6 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,9 +28,6 @@ export const AiChatCreditsExhaustedMessage = () => {
   const navigateSettings = useNavigateSettings();
   const { openModal } = useModal();
 
-  const hasReachedCurrentBillingPeriodCap = useAtomStateValue(
-    hasReachedCurrentBillingPeriodCapSelector,
-  );
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToManageBilling } =
     usePermissionFlagMap();

@@ -250,18 +250,24 @@ export class BillingPortalWorkspaceService {
     return session.url;
   }
 
-  // Resolves returnUrlPath against the workspace base URL so query strings are
-  // preserved (assigning to URL.pathname would percent-encode the `?` separator).
+
   private buildReturnUrl(workspace: WorkspaceEntity, returnUrlPath?: string) {
     const frontBaseUrl = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
     });
 
-    if (!returnUrlPath) {
+    if (!isDefined(returnUrlPath)) {
       return frontBaseUrl.toString();
     }
 
-    return new URL(returnUrlPath, frontBaseUrl).toString();
+    const resolvedUrl = new URL(returnUrlPath, frontBaseUrl);
+
+
+    if (resolvedUrl.origin !== frontBaseUrl.origin) {
+      return frontBaseUrl.toString();
+    }
+
+    return resolvedUrl.toString();
   }
 
   private getDefaultResourceCreditPrice(
