@@ -22,6 +22,7 @@ export enum AppPath {
   OpportunitiesPage = '/objects/opportunities',
   MarketingHub = '/marketing',
   MarketingCampaignBuilder = '/marketing/campaign/new',
+  OneOnOneRunner = '/one-on-one',
 
   RecordIndexPage = '/objects/:objectNamePlural',
   RecordShowPage = '/object/:objectNameSingular/:objectRecordId',

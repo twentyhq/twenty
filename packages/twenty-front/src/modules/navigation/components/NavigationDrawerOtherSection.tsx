@@ -4,14 +4,16 @@ import {
   IconBroadcast,
   IconHelpCircle,
   IconSettings,
+  IconUsers,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
-// Propel: the graduated Marketing Home hub nav entry is gated behind a build/runtime
-// flag so it only appears where the engine image enables it. Same dual mechanism as
-// the dialer dock (window._env_ for the Docker runtime injection, import.meta.env for
-// vite dev). The /marketing route itself registers unconditionally (it simply 404s
-// when nav-hidden); only this nav item is gated.
+// Propel: the graduated Marketing Home hub and the 1:1 Runner hub nav entries are
+// gated behind a build/runtime flag so they only appear where the engine image
+// enables them. Same dual mechanism as the dialer dock (window._env_ for the Docker
+// runtime injection, import.meta.env for vite dev). The /marketing and /one-on-one
+// routes themselves register unconditionally (they simply 404 when nav-hidden); only
+// these nav items are gated.
 const PROPEL_MARKETING_HUB_ENABLED =
   Boolean(window._env_?.REACT_APP_PROPEL_MARKETING_HUB) ||
   Boolean(import.meta.env.REACT_APP_PROPEL_MARKETING_HUB);
@@ -65,6 +67,13 @@ export const NavigationDrawerOtherSection = () => {
             label={t`Marketing`}
             to={AppPath.MarketingHub}
             Icon={IconBroadcast}
+          />
+        )}
+        {PROPEL_MARKETING_HUB_ENABLED && (
+          <NavigationDrawerItem
+            label={t`Weekly 1:1`}
+            to={AppPath.OneOnOneRunner}
+            Icon={IconUsers}
           />
         )}
         <NavigationDrawerItem

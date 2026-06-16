@@ -40,6 +40,12 @@ const MarketingCampaignBuilderPage = lazy(() =>
   })),
 );
 
+const OneOnOneRunnerPage = lazy(() =>
+  import('~/pages/propel/OneOnOneRunnerPage').then((module) => ({
+    default: module.OneOnOneRunnerPage,
+  })),
+);
+
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
     default: module.SignInUp,
@@ -251,6 +257,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <MarketingCampaignBuilderPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.OneOnOneRunner}
+            element={
+              <LazyRoute>
+                <OneOnOneRunnerPage />
               </LazyRoute>
             }
           />
