@@ -41,7 +41,7 @@ export const SettingsMcpSetup = () => {
     <Section>
       <H2Title
         title={t`Connect your AI assistant`}
-        description={t`Add Twenty as a Model Context Protocol (MCP) server. Paste this config into Claude Desktop, Cursor, Cline, Continue, Zed, or any other MCP-aware client.`}
+        description={t`Paste this configuration into MCP-aware clients like Claude, Codex, or Cursor.`}
       />
       <CoreEditorHeader
         leftNodes={[
