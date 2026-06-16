@@ -152,7 +152,7 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ vars.CI_BOT_PUBLIC_APP_ID }}
+          client-id: ${{ vars.CI_BOT_PUBLIC_CLIENT_ID }}
           private-key: ${{ secrets.CI_BOT_PUBLIC_APP_PRIVATE_KEY }}
           owner: twentyhq
           repositories: ci-privileged
@@ -203,7 +203,7 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ vars.CI_BOT_PUBLIC_APP_ID }}
+          client-id: ${{ vars.CI_BOT_PUBLIC_CLIENT_ID }}
           private-key: ${{ secrets.CI_BOT_PUBLIC_APP_PRIVATE_KEY }}
           owner: twentyhq
           repositories: ci-privileged
@@ -241,7 +241,7 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ vars.CI_BOT_PUBLIC_APP_ID }}
+          client-id: ${{ vars.CI_BOT_PUBLIC_CLIENT_ID }}
           private-key: ${{ secrets.CI_BOT_PUBLIC_APP_PRIVATE_KEY }}
           owner: twentyhq
           repositories: ci-privileged
