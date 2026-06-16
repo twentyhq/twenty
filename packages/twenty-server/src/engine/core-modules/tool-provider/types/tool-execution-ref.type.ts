@@ -6,5 +6,6 @@ export type ToolExecutionRef =
       objectNameSingular: string;
       operation: DatabaseCrudOperation;
     }
+  | { kind: 'query' }
   | { kind: 'static'; toolId: string }
   | { kind: 'logic_function'; logicFunctionId: string };

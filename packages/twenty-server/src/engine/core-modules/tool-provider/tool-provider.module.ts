@@ -8,6 +8,7 @@ import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/prov
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
 import { NavigationMenuItemToolProvider } from 'src/engine/core-modules/tool-provider/providers/navigation-menu-item-tool.provider';
+import { QueryToolProvider } from 'src/engine/core-modules/tool-provider/providers/query-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
@@ -69,6 +70,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ToolExecutorService,
     ActionToolProvider,
     DatabaseToolProvider,
+    QueryToolProvider,
     MetadataToolProvider,
     NavigationMenuItemToolProvider,
     LogicFunctionToolProvider,
@@ -84,6 +86,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
       useFactory: (
         actionProvider: ActionToolProvider,
         databaseProvider: DatabaseToolProvider,
+        queryProvider: QueryToolProvider,
         metadataProvider: MetadataToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
         navigationMenuItemProvider: NavigationMenuItemToolProvider,
@@ -93,6 +96,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
       ) => [
         actionProvider,
         databaseProvider,
+        queryProvider,
         metadataProvider,
         logicFunctionProvider,
         navigationMenuItemProvider,
@@ -103,6 +107,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
       inject: [
         ActionToolProvider,
         DatabaseToolProvider,
+        QueryToolProvider,
         MetadataToolProvider,
         LogicFunctionToolProvider,
         NavigationMenuItemToolProvider,

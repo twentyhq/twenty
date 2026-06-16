@@ -393,6 +393,8 @@ ${tools
         return 'Navigation Menu Item Tools (sidebar entries, folders, and user favorites)';
       case ToolCategory.WEBHOOK:
         return 'Webhook Tools (outgoing webhooks)';
+      case ToolCategory.QUERY:
+        return 'Query Tool (structured reads: filters, sorting, aggregation)';
       default:
         return assertUnreachable(category);
     }

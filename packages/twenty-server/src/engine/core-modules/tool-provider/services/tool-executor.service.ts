@@ -24,6 +24,7 @@ import { DeleteManyRecordsService } from 'src/engine/core-modules/record-crud/se
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
+import { QueryRecordsService } from 'src/engine/core-modules/record-crud/services/query-records.service';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
@@ -46,6 +47,7 @@ export class ToolExecutorService {
     private readonly providers: ToolProvider[],
     private readonly findRecordsService: FindRecordsService,
     private readonly groupByRecordsService: GroupByRecordsService,
+    private readonly queryRecordsService: QueryRecordsService,
     private readonly createRecordService: CreateRecordService,
     private readonly createManyRecordsService: CreateManyRecordsService,
     private readonly updateRecordService: UpdateRecordService,
@@ -73,6 +75,8 @@ export class ToolExecutorService {
           safeArgs,
           context,
         );
+      case 'query':
+        return this.dispatchQuery(safeArgs, context);
       case 'static':
         return this.dispatchStaticTool(descriptor, safeArgs, context);
       case 'logic_function':
@@ -221,6 +225,20 @@ export class ToolExecutorService {
         });
       }
     }
+  }
+
+  private async dispatchQuery(
+    args: Record<string, unknown>,
+    context: ToolProviderContext,
+  ): Promise<ToolOutput> {
+    const authContext =
+      context.authContext ?? (await this.buildAuthContext(context));
+
+    return this.queryRecordsService.execute({
+      input: args,
+      authContext,
+      rolePermissionConfig: context.rolePermissionConfig,
+    });
   }
 
   private async dispatchStaticTool(

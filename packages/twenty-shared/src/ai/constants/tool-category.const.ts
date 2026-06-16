@@ -1,5 +1,6 @@
 export enum ToolCategory {
   DATABASE_CRUD = 'DATABASE_CRUD',
+  QUERY = 'QUERY',
   ACTION = 'ACTION',
   WORKFLOW = 'WORKFLOW',
   METADATA = 'METADATA',
