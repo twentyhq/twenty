@@ -1,7 +1,7 @@
 import { type HTMLMotionProps, motion } from 'framer-motion';
 import { type AnimationDuration } from '@ui/theme';
 import { ThemeContext } from '@ui/theme-constants';
-import { useContext } from 'react';
+import { type JSX, useContext } from 'react';
 
 import styles from './AnimatedRotate.module.scss';
 

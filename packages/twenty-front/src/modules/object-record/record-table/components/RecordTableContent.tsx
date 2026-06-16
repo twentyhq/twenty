@@ -34,7 +34,7 @@ const StyledTableContainer = styled.div`
 `;
 
 export interface RecordTableContentProps {
-  tableBodyRef: React.RefObject<HTMLDivElement>;
+  tableBodyRef: React.RefObject<HTMLDivElement | null>;
   handleDragSelectionStart: () => void;
   handleDragSelectionEnd: () => void;
   hasRecordGroups: boolean;

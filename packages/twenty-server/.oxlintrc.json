@@ -82,6 +82,7 @@
     "twenty/rest-api-methods-should-be-guarded": "error",
     "twenty/graphql-resolvers-should-be-guarded": "error",
     "twenty/upgrade-command-filename": "error",
+    "twenty/no-data-mutation-in-fast-instance-command": "error",
     "twenty/enforce-module-boundaries": [
       "error",
       {

@@ -91,6 +91,9 @@ export const prefillFrontComponentCommandMenuItems = async ({
         hotKeys: null,
         pageLayoutId: definition.pageLayoutId ?? null,
         pageLayoutUniversalIdentifier: definition.pageLayoutId ?? null,
+        isActive: true,
+        overrides: null,
+        universalOverrides: null,
         createdAt: now,
         updatedAt: now,
       };
