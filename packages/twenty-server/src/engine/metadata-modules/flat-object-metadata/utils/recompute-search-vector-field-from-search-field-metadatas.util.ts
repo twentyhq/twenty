@@ -85,9 +85,9 @@ export const recomputeSearchVectorFieldFromSearchFieldMetadatas = ({
         generatedType: 'STORED',
       },
     };
-  } catch {
+  } catch (error) {
     throw new ObjectMetadataException(
-      `Failed to compute search vector column expression for object metadata ${flatObjectMetadata.id}`,
+      `Failed to compute search vector column expression for object metadata ${flatObjectMetadata.id}: ${error instanceof Error ? error.message : String(error)}`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
     );
   }
