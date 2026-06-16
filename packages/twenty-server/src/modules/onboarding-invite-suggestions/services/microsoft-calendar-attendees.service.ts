@@ -6,7 +6,7 @@ import {
   ONBOARDING_INVITE_SUGGESTIONS_LOOKBACK_DAYS,
   ONBOARDING_INVITE_SUGGESTIONS_MAX_EVENTS,
 } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions.constants';
-import { type RawCalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/raw-calendar-attendee.type';
+import { type CalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/calendar-attendee.type';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -35,7 +35,7 @@ export class MicrosoftCalendarAttendeesService {
 
   async getRecentAttendees(
     connectedAccountId: string,
-  ): Promise<RawCalendarAttendee[]> {
+  ): Promise<CalendarAttendee[]> {
     const microsoftClient =
       await this.microsoftOAuth2ClientProvider.getClient(connectedAccountId);
 
@@ -56,7 +56,7 @@ export class MicrosoftCalendarAttendeesService {
       .get();
 
     const events = response.value ?? [];
-    const attendees: RawCalendarAttendee[] = [];
+    const attendees: CalendarAttendee[] = [];
 
     for (const event of events) {
       const displayNameByEmail = new Map<string, string | undefined>();

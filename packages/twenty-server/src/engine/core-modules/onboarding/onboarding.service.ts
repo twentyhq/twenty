@@ -2,13 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type QueryRunner, Repository } from 'typeorm';
 
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -35,7 +33,6 @@ export class OnboardingService {
     private readonly billingService: BillingService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -97,28 +94,12 @@ export class OnboardingService {
       userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING) ===
       true;
 
-    const isInviteSuggestionsEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
-        workspace.id,
-      );
+    if (isConnectAccountPending) {
+      return OnboardingStatus.SYNC_EMAIL;
+    }
 
-    if (isInviteSuggestionsEnabled) {
-      if (isConnectAccountPending) {
-        return OnboardingStatus.SYNC_EMAIL;
-      }
-
-      if (isProfileCreationPending) {
-        return OnboardingStatus.PROFILE_CREATION;
-      }
-    } else {
-      if (isProfileCreationPending) {
-        return OnboardingStatus.PROFILE_CREATION;
-      }
-
-      if (isConnectAccountPending) {
-        return OnboardingStatus.SYNC_EMAIL;
-      }
+    if (isProfileCreationPending) {
+      return OnboardingStatus.PROFILE_CREATION;
     }
 
     if (isInviteTeamPending) {
@@ -176,17 +157,10 @@ export class OnboardingService {
     }
 
     try {
-      const isConnectAccountPending =
-        await this.isOnboardingConnectAccountPending({ userId, workspaceId });
-
-      if (!isConnectAccountPending) {
-        return false;
-      }
-
-      return await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
+      return await this.isOnboardingConnectAccountPending({
+        userId,
         workspaceId,
-      );
+      });
     } catch {
       return false;
     }

@@ -16,8 +16,7 @@ import {
 } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions.constants';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { CalendarAttendeesService } from 'src/modules/onboarding-invite-suggestions/services/calendar-attendees.service';
-import { type InviteSuggestion } from 'src/modules/onboarding-invite-suggestions/types/invite-suggestion.type';
-import { type RawCalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/raw-calendar-attendee.type';
+import { type CalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/calendar-attendee.type';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 type ComputeAndCacheSuggestionsArgs = {
@@ -44,9 +43,9 @@ export class OnboardingInviteSuggestionsService {
   }: {
     workspaceId: string;
     userId: string;
-  }): Promise<InviteSuggestion[]> {
+  }): Promise<CalendarAttendee[]> {
     const cachedSuggestions = await this.cacheStorageService.get<
-      InviteSuggestion[]
+      CalendarAttendee[]
     >(getOnboardingInviteSuggestionsCacheKey(workspaceId, userId));
 
     return cachedSuggestions ?? [];
@@ -67,7 +66,7 @@ export class OnboardingInviteSuggestionsService {
     });
 
     if (!isDefined(connectedAccount)) {
-      await this.cacheStorageService.set<InviteSuggestion[]>(
+      await this.cacheStorageService.set<CalendarAttendee[]>(
         cacheKey,
         [],
         ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS,
@@ -79,7 +78,7 @@ export class OnboardingInviteSuggestionsService {
     const connectedAccountHandle = connectedAccount.handle.toLowerCase();
 
     if (!isWorkEmail(connectedAccountHandle)) {
-      await this.cacheStorageService.set<InviteSuggestion[]>(
+      await this.cacheStorageService.set<CalendarAttendee[]>(
         cacheKey,
         [],
         ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS,
@@ -98,7 +97,7 @@ export class OnboardingInviteSuggestionsService {
       ),
     ]);
 
-    let attendees: RawCalendarAttendee[] = [];
+    let attendees: CalendarAttendee[] = [];
 
     try {
       attendees =
@@ -149,11 +148,11 @@ export class OnboardingInviteSuggestionsService {
       eventCountByColleagueEmail.entries(),
     ).sort(([, left], [, right]) => right.eventCount - left.eventCount);
 
-    const suggestions: InviteSuggestion[] = mostFrequentColleaguesFirst
+    const suggestions: CalendarAttendee[] = mostFrequentColleaguesFirst
       .slice(0, ONBOARDING_INVITE_SUGGESTIONS_MAX_COUNT)
       .map(([email, { displayName }]) => ({ email, displayName }));
 
-    await this.cacheStorageService.set<InviteSuggestion[]>(
+    await this.cacheStorageService.set<CalendarAttendee[]>(
       cacheKey,
       suggestions,
       ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS,

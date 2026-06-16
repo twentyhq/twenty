@@ -19,7 +19,6 @@ import {
   useForm,
 } from 'react-hook-form';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client/react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,10 +27,7 @@ import { LightButton, MainButton } from 'twenty-ui-deprecated/input';
 import { ClickToActionLink } from 'twenty-ui-deprecated/navigation';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { z } from 'zod';
-import {
-  FeatureFlagKey,
-  GetInviteSuggestionsDocument,
-} from '~/generated-metadata/graphql';
+import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
@@ -95,16 +91,11 @@ export const InviteTeam = () => {
     name: 'emails',
   });
 
-  const isInviteSuggestionsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
-  );
-
   const [hasPrefilledSuggestions, setHasPrefilledSuggestions] = useState(false);
 
   const { data: inviteSuggestionsData } = useQuery(
     GetInviteSuggestionsDocument,
     {
-      skip: !isInviteSuggestionsEnabled,
       fetchPolicy: 'network-only',
     },
   );

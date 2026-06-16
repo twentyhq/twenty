@@ -5,7 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GoogleCalendarAttendeesService } from 'src/modules/onboarding-invite-suggestions/services/google-calendar-attendees.service';
 import { MicrosoftCalendarAttendeesService } from 'src/modules/onboarding-invite-suggestions/services/microsoft-calendar-attendees.service';
-import { type RawCalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/raw-calendar-attendee.type';
+import { type CalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/calendar-attendee.type';
 
 @Injectable()
 export class CalendarAttendeesService {
@@ -16,7 +16,7 @@ export class CalendarAttendeesService {
 
   async getRecentAttendees(
     connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>,
-  ): Promise<RawCalendarAttendee[]> {
+  ): Promise<CalendarAttendee[]> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
         return this.googleCalendarAttendeesService.getRecentAttendees(

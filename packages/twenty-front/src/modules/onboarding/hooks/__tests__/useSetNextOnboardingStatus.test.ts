@@ -15,7 +15,6 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import {
-  FeatureFlagKey,
   OnboardingStatus,
   PermissionFlagType,
   SubscriptionStatus,
@@ -33,7 +32,6 @@ const renderHooks = (
   withCurrentBillingSubscription: boolean,
   withOneWorkspaceMember = true,
   permissionFlags = mockedUserData.currentUserWorkspace.permissionFlags,
-  withInviteSuggestionsEnabled = false,
 ) => {
   const { result } = renderHook(
     () => {
@@ -72,14 +70,6 @@ const renderHooks = (
           }
         : undefined,
       workspaceMembersCount: withOneWorkspaceMember ? 1 : 2,
-      featureFlags: withInviteSuggestionsEnabled
-        ? [
-            {
-              key: FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
-              value: true,
-            },
-          ]
-        : [],
     });
   });
   act(() => {
@@ -93,47 +83,47 @@ describe('useSetNextOnboardingStatus', () => {
     resetJotaiStore();
   });
 
-  it('should set next onboarding status for ProfileCreation', () => {
+  it('should sync emails right after workspace activation', () => {
     const nextOnboardingStatus = renderHooks(
-      OnboardingStatus.PROFILE_CREATION,
+      OnboardingStatus.WORKSPACE_ACTIVATION,
       false,
       true,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
   });
 
-  it('should skip SyncEmail when user is not first workspace member', () => {
-    const nextOnboardingStatus = renderHooks(
-      OnboardingStatus.PROFILE_CREATION,
-      false,
-      false,
-    );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-  });
-
   it('should skip SyncEmail when account sync is disabled', () => {
     const nextOnboardingStatus = renderHooks(
-      OnboardingStatus.PROFILE_CREATION,
+      OnboardingStatus.WORKSPACE_ACTIVATION,
       false,
       true,
       [PermissionFlagType.WORKSPACE_MEMBERS],
     );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
   });
 
-  it('should set next onboarding status for SyncEmail', () => {
+  it('should create profile after syncing emails', () => {
     const nextOnboardingStatus = renderHooks(
       OnboardingStatus.SYNC_EMAIL,
+      false,
+      true,
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
+  });
+
+  it('should invite the team right after profile creation', () => {
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.PROFILE_CREATION,
       false,
       true,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
   });
 
-  it('should skip invite when more than 1 workspaceMember exist', () => {
+  it('should complete after profile creation when more than 1 workspaceMember exist', () => {
     const nextOnboardingStatus = renderHooks(
-      OnboardingStatus.SYNC_EMAIL,
-      true,
+      OnboardingStatus.PROFILE_CREATION,
+      false,
       false,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
@@ -146,40 +136,5 @@ describe('useSetNextOnboardingStatus', () => {
       true,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-  });
-
-  describe('when invite suggestions are enabled', () => {
-    it('should connect account right after workspace activation', () => {
-      const nextOnboardingStatus = renderHooks(
-        OnboardingStatus.WORKSPACE_ACTIVATION,
-        false,
-        true,
-        mockedUserData.currentUserWorkspace.permissionFlags,
-        true,
-      );
-      expect(nextOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
-    });
-
-    it('should create profile after syncing emails', () => {
-      const nextOnboardingStatus = renderHooks(
-        OnboardingStatus.SYNC_EMAIL,
-        false,
-        true,
-        mockedUserData.currentUserWorkspace.permissionFlags,
-        true,
-      );
-      expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
-    });
-
-    it('should invite the team right after profile creation', () => {
-      const nextOnboardingStatus = renderHooks(
-        OnboardingStatus.PROFILE_CREATION,
-        false,
-        true,
-        mockedUserData.currentUserWorkspace.permissionFlags,
-        true,
-      );
-      expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
-    });
   });
 });
