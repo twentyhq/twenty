@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
+import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 
@@ -60,10 +61,12 @@ export class McpToolExecutorService {
       });
     }
 
-    const metricToolName = resolveToolName({
-      toolName,
-      input: params.arguments,
-    });
+    const metricToolName = getToolMetricName(
+      resolveToolName({
+        toolName,
+        input: params.arguments,
+      }),
+    );
 
     try {
       const result = await tool.execute(params.arguments, {

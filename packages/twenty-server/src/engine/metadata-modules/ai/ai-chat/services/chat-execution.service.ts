@@ -34,6 +34,7 @@ import {
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
+import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -481,7 +482,7 @@ export class ChatExecutionService {
 
           const toolAttributes = {
             model: registeredModel.modelId,
-            tool: resolveToolName(part),
+            tool: getToolMetricName(resolveToolName(part)),
           };
 
           this.metricsService.incrementCounterBy({
