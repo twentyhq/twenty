@@ -36,6 +36,10 @@ import {
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
+import {
+  getLearntToolNames,
+  getLoadedSkillNames,
+} from 'src/engine/core-modules/tool-provider/utils/meta-tool-inner-names.util';
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
@@ -85,11 +89,6 @@ export type ChatExecutionResult = {
   modelConfig: AiModelConfig;
   hasNoMoreAvailableCredits: () => boolean;
 };
-
-const METRICS_EXCLUDED_TOOL_NAMES = new Set<string>([
-  LEARN_TOOLS_TOOL_NAME,
-  LOAD_SKILL_TOOL_NAME,
-]);
 
 @Injectable()
 export class ChatExecutionService {
@@ -473,14 +472,14 @@ export class ChatExecutionService {
             continue;
           }
 
-          if (METRICS_EXCLUDED_TOOL_NAMES.has(part.toolName)) {
-            continue;
-          }
-
           const succeeded =
             part.type === 'tool-result' && isToolOutputSuccessful(part.output);
 
-          const toolAttributes = {
+          const outputTokens = estimateToolOutputTokens(
+            part.type === 'tool-result' ? part.output : part.error,
+          );
+
+          const executionAttributes = {
             model: registeredModel.modelId,
             tool: getToolMetricName(resolveToolName(part)),
           };
@@ -490,17 +489,45 @@ export class ChatExecutionService {
               ? MetricsKeys.AiChatToolExecutionSucceeded
               : MetricsKeys.AiChatToolExecutionFailed,
             amount: 1,
-            attributes: toolAttributes,
+            attributes: executionAttributes,
           });
 
           this.metricsService.recordHistogram({
             key: MetricsKeys.AiChatToolOutputTokens,
-            value: estimateToolOutputTokens(
-              part.type === 'tool-result' ? part.output : part.error,
-            ),
+            value: outputTokens,
             unit: 'token',
-            attributes: toolAttributes,
+            attributes: executionAttributes,
           });
+
+          if (part.toolName === LEARN_TOOLS_TOOL_NAME) {
+            for (const learntToolName of getLearntToolNames(part.input)) {
+              this.metricsService.incrementCounterBy({
+                key: succeeded
+                  ? MetricsKeys.AiChatToolLearnedSucceeded
+                  : MetricsKeys.AiChatToolLearnedFailed,
+                amount: 1,
+                attributes: {
+                  model: registeredModel.modelId,
+                  tool: getToolMetricName(learntToolName),
+                },
+              });
+            }
+          }
+
+          if (part.toolName === LOAD_SKILL_TOOL_NAME) {
+            for (const loadedSkillName of getLoadedSkillNames(part.input)) {
+              this.metricsService.incrementCounterBy({
+                key: succeeded
+                  ? MetricsKeys.AiChatSkillLoadedSucceeded
+                  : MetricsKeys.AiChatSkillLoadedFailed,
+                amount: 1,
+                attributes: {
+                  model: registeredModel.modelId,
+                  skill: loadedSkillName,
+                },
+              });
+            }
+          }
         }
       },
       onAbort: async ({ steps }) => {
