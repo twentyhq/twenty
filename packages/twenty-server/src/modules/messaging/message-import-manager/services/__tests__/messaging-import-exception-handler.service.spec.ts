@@ -132,7 +132,7 @@ describe('MessageImportExceptionHandlerService — refresh code dispatch', () =>
     ).toHaveBeenCalled();
   });
 
-  it('should mark FAILED_UNKNOWN on ACCESS_TOKEN_NOT_FOUND (matches pre-refactor fall-through)', async () => {
+  it('should mark FAILED_INSUFFICIENT_PERMISSIONS and fire monitoring on ACCESS_TOKEN_NOT_FOUND', async () => {
     await service.handleDriverException(
       new ConnectedAccountRefreshAccessTokenException(
         'no access token',
@@ -146,18 +146,18 @@ describe('MessageImportExceptionHandlerService — refresh code dispatch', () =>
     expect(messageChannelSyncStatusService.markAsFailed).toHaveBeenCalledWith(
       [messageChannel.id],
       workspaceId,
-      MessageChannelSyncStatus.FAILED_UNKNOWN,
+      MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
     );
-    expect(exceptionHandlerService.captureExceptions).toHaveBeenCalledWith(
-      expect.any(Array),
+    expect(messagingMonitoringService.track).toHaveBeenCalledWith(
       expect.objectContaining({
-        additionalData: expect.objectContaining({
-          messageChannelId: messageChannel.id,
-          syncStep: MessageImportSyncStep.MESSAGE_LIST_FETCH,
-        }),
+        eventName: 'refresh_token.error.access_token_missing',
+        workspaceId,
+        connectedAccountId: messageChannel.connectedAccountId,
+        messageChannelId: messageChannel.id,
+        message: expect.stringContaining('ACCESS_TOKEN_NOT_FOUND'),
       }),
     );
-    expect(messagingMonitoringService.track).not.toHaveBeenCalled();
+    expect(exceptionHandlerService.captureExceptions).not.toHaveBeenCalled();
   });
 
   it('should mark FAILED_UNKNOWN on PROVIDER_NOT_SUPPORTED', async () => {

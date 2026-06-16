@@ -295,6 +295,39 @@ describe('ConnectedAccountRefreshTokensService', () => {
       );
     });
 
+    it('should refresh when access token is missing even if lastCredentialsRefreshedAt is recent', async () => {
+      const connectedAccount = {
+        id: mockConnectedAccountId,
+        provider: ConnectedAccountProvider.GOOGLE,
+        accessToken: null,
+        refreshToken: mockEncryptedRefreshToken,
+        lastCredentialsRefreshedAt: new Date(Date.now() - 5 * 60 * 1000),
+      } as unknown as ConnectedAccountEntity;
+
+      const newPlaintextTokens = {
+        accessToken: mockNewAccessTokenPlaintext,
+        refreshToken: mockRefreshTokenPlaintext,
+      };
+
+      jest
+        .spyOn(googleAPIRefreshAccessTokenService, 'refreshTokens')
+        .mockResolvedValue(newPlaintextTokens);
+
+      const result = await service.resolveTokens(
+        connectedAccount,
+        mockWorkspaceId,
+      );
+
+      expect(result).toEqual({
+        accessToken: `${FAKE_CIPHER_PREFIX}CIPHER(${mockNewAccessTokenPlaintext})`,
+        refreshToken: `${FAKE_CIPHER_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`,
+      });
+      expect(googleAPIRefreshAccessTokenService.refreshTokens).toHaveBeenCalledWith(
+        mockRefreshTokenPlaintext,
+      );
+      expect(connectedAccountRepository.update).toHaveBeenCalled();
+    });
+
     it('should return the encrypted access token and null refresh token when access token is valid but no refresh token exists', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
@@ -423,6 +456,19 @@ describe('ConnectedAccountRefreshTokensService', () => {
         provider: ConnectedAccountProvider.MICROSOFT,
         lastCredentialsRefreshedAt: null,
       } as ConnectedAccountEntity;
+
+      const result = await service.isAccessTokenStillValid(connectedAccount);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return false when accessToken is missing even if lastCredentialsRefreshedAt is recent', async () => {
+      const connectedAccount = {
+        id: mockConnectedAccountId,
+        provider: ConnectedAccountProvider.MICROSOFT,
+        accessToken: null,
+        lastCredentialsRefreshedAt: new Date(Date.now() - 10 * 60 * 1000),
+      } as unknown as ConnectedAccountEntity;
 
       const result = await service.isAccessTokenStillValid(connectedAccount);
 

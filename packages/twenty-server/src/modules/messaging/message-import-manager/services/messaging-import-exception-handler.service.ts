@@ -100,6 +100,19 @@ export class MessageImportExceptionHandlerService {
             workspaceId,
           );
           break;
+        case ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND:
+          await this.messagingMonitoringService.track({
+            eventName: `refresh_token.error.access_token_missing`,
+            workspaceId,
+            connectedAccountId: messageChannel.connectedAccountId,
+            messageChannelId: messageChannel.id,
+            message: `${exception.code}: ${exception.message ?? ''}`,
+          });
+          await this.handleInsufficientPermissionsException(
+            messageChannel,
+            workspaceId,
+          );
+          break;
         case MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
           await this.handleInsufficientPermissionsException(
             messageChannel,
@@ -112,7 +125,6 @@ export class MessageImportExceptionHandlerService {
             workspaceId,
           );
           break;
-        case ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND:
         case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
         case MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED:
         case MessageImportDriverExceptionCode.ACCESS_TOKEN_MISSING:

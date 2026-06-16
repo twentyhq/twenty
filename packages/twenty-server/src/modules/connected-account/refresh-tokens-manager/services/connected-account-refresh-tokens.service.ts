@@ -137,7 +137,10 @@ export class ConnectedAccountRefreshTokensService {
       case ConnectedAccountProvider.GOOGLE:
       case ConnectedAccountProvider.MICROSOFT:
       case ConnectedAccountProvider.APP: {
-        if (!connectedAccount.lastCredentialsRefreshedAt) {
+        if (
+          !connectedAccount.lastCredentialsRefreshedAt ||
+          !isDefined(connectedAccount.accessToken)
+        ) {
           return false;
         }
 
