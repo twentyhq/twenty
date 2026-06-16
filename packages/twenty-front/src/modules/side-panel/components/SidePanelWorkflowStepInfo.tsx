@@ -1,4 +1,5 @@
 import { AppChip } from '@/applications/components/AppChip';
+import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
@@ -103,6 +104,10 @@ export const SidePanelWorkflowStepInfo = ({
   const isThirdPartyApplication = useIsThirdPartyApplication(
     logicFunctionApplicationId,
   );
+
+  const { applicationChipData } = useApplicationChipData({
+    applicationId: logicFunctionApplicationId,
+  });
 
   const agentId = getAgentIdFromStep(stepDefinition);
   const { updateAgentLabel } = useUpdateAgentLabel(agentId);
@@ -214,7 +219,13 @@ export const SidePanelWorkflowStepInfo = ({
           onShiftTab={saveTitle}
         />
       }
-      label={isTrigger ? t`Trigger` : t`Action`}
+      label={
+        isThirdPartyApplication
+          ? applicationChipData.name
+          : isTrigger
+            ? t`Trigger`
+            : t`Action`
+      }
     />
   );
 };
