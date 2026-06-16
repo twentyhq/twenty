@@ -94,15 +94,15 @@ export const EditExistingItem: Story = {
     await userEvent.click(firstItemChip);
 
     const openSecondItemMenuButton = await waitFor(() => {
-      const button = canvasElement.ownerDocument.body.querySelector(
-        '[aria-controls$="-1-options"] > button',
+      const buttons = canvasElement.ownerDocument.body.querySelectorAll(
+        '[aria-controls$="-options"] > button',
       );
 
-      if (!isDefined(button)) {
+      if (buttons.length < 2) {
         throw new Error('Button not found');
       }
 
-      return button;
+      return buttons[1];
     });
 
     await userEvent.click(openSecondItemMenuButton);
@@ -151,15 +151,15 @@ export const DeleteExistingItem: Story = {
     await userEvent.click(firstItemChip);
 
     const openSecondItemMenuButton = await waitFor(() => {
-      const button = canvasElement.ownerDocument.body.querySelector(
-        '[aria-controls$="-1-options"] > button',
+      const buttons = canvasElement.ownerDocument.body.querySelectorAll(
+        '[aria-controls$="-options"] > button',
       );
 
-      if (!isDefined(button)) {
+      if (buttons.length < 2) {
         throw new Error('Button not found');
       }
 
-      return button;
+      return buttons[1];
     });
 
     await userEvent.click(openSecondItemMenuButton);
