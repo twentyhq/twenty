@@ -1,3 +1,5 @@
+import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
+import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
@@ -187,15 +189,18 @@ export const WorkflowEditActionLogicFunction = ({
 
   const hasInputFields = Object.keys(functionInput).length > 0;
 
-  const workspaceCustomApplicationId =
-    currentWorkspace?.workspaceCustomApplication?.id;
+  const logicFunctionApplication = currentWorkspace?.installedApplications.find(
+    (installedApplication) =>
+      installedApplication.id === logicFunction?.applicationId,
+  );
 
-  const isManagedLogicFunction =
-    isDefined(logicFunction?.applicationId) &&
-    logicFunction.applicationId !== workspaceCustomApplicationId;
+  const isLogicFunctionFromIntegrationApp =
+    isDefined(logicFunctionApplication) &&
+    !isTwentyStandardApplication(logicFunctionApplication) &&
+    !isWorkspaceCustomApplication(logicFunctionApplication, currentWorkspace);
 
   const isTestTabActive =
-    !isManagedLogicFunction && activeTabId === TEST_TAB_ID;
+    !isLogicFunctionFromIntegrationApp && activeTabId === TEST_TAB_ID;
 
   const tabs = [
     {
@@ -213,7 +218,7 @@ export const WorkflowEditActionLogicFunction = ({
   return (
     <>
       <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
-      {!isManagedLogicFunction && (
+      {!isLogicFunctionFromIntegrationApp && (
         <StyledTabListContainer>
           <TabList
             tabs={tabs}
