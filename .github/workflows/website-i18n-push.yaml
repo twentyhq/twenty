@@ -102,9 +102,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Mint twenty-infra dispatch token
+        id: app-token
+        if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ vars.CI_BOT_PUBLIC_APP_ID }}
+          private-key: ${{ secrets.CI_BOT_PUBLIC_APP_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty-infra
+          permission-actions: write
+
       - name: Trigger i18n automerge
         if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
         env:
-          GH_TOKEN: ${{ secrets.TWENTY_INFRA_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          gh api repos/twentyhq/twenty-infra/dispatches -f event_type=i18n-pr-ready
+          gh workflow run automerge-i18n.yaml --repo twentyhq/twenty-infra --ref main
