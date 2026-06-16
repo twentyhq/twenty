@@ -155,4 +155,27 @@ describe('partnerApplicationReducer', () => {
     });
     expect(next.applicationNotes).toBe('Workspace: https://x · refs: Acme');
   });
+
+  it('SET_FIELD_ERRORS replaces fieldErrors', () => {
+    const next = partnerApplicationReducer(INITIAL_PARTNER_APPLICATION_STATE, {
+      type: 'SET_FIELD_ERRORS',
+      errors: { hourlyRate: 'required', projectBudgetMin: 'required' },
+    });
+    expect(next.fieldErrors).toEqual({
+      hourlyRate: 'required',
+      projectBudgetMin: 'required',
+    });
+  });
+
+  it('flags Commercials required fields (hourlyRate, projectBudgetMin) when empty', () => {
+    const onCommercials: PartnerApplicationState = {
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      stepIndex: 3,
+    };
+    const blocked = partnerApplicationReducer(onCommercials, {
+      type: 'GO_NEXT',
+    });
+    expect(blocked.fieldErrors.hourlyRate).toBe('required');
+    expect(blocked.fieldErrors.projectBudgetMin).toBe('required');
+  });
 });

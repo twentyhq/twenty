@@ -177,6 +177,7 @@ export function PartnerApplicationWizard({
     setSubmitError,
     setSubmitted,
     reset,
+    validateCurrentStep,
   } = controller;
 
   useEffect(() => {
@@ -214,6 +215,9 @@ export function PartnerApplicationWizard({
         return;
       }
       if (state.isSubmitting) return;
+      // Fail fast: the final step bypasses GO_NEXT's gate, so validate its
+      // required fields here before hitting the server.
+      if (!validateCurrentStep()) return;
 
       const payload = buildPartnerApplicationRequestBody(state);
 
@@ -244,6 +248,7 @@ export function PartnerApplicationWizard({
     [
       isLastStep,
       goNext,
+      validateCurrentStep,
       state,
       setSubmitError,
       setSubmitting,

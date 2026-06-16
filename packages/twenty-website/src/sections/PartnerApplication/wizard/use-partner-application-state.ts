@@ -92,6 +92,7 @@ export type PartnerApplicationAction =
   | { type: 'TOGGLE_SCOPE'; value: PartnerScopeValue }
   | { type: 'TOGGLE_LANGUAGE'; value: PartnerLanguageValue }
   | { type: 'SET_SKILLS'; value: string[] }
+  | { type: 'SET_FIELD_ERRORS'; errors: Partial<Record<string, string>> }
   | { type: 'GO_NEXT' }
   | { type: 'GO_BACK' }
   | { type: 'SET_SUBMITTING'; value: boolean }
@@ -194,6 +195,8 @@ export function partnerApplicationReducer(
     }
     case 'SET_SKILLS':
       return { ...state, skills: action.value };
+    case 'SET_FIELD_ERRORS':
+      return { ...state, fieldErrors: action.errors };
     case 'GO_NEXT': {
       const errors = validateStep(state);
       if (Object.keys(errors).length > 0) {
@@ -270,6 +273,15 @@ export function usePartnerApplicationState() {
   );
   const reset = useCallback(() => dispatch({ type: 'RESET' }), []);
 
+  // Validate the current step on demand. The final step submits directly and
+  // never passes through GO_NEXT's gate, so the wizard calls this before POSTing
+  // to catch empty required fields client-side instead of round-tripping.
+  const validateCurrentStep = useCallback(() => {
+    const errors = validateStep(state);
+    dispatch({ type: 'SET_FIELD_ERRORS', errors });
+    return Object.keys(errors).length === 0;
+  }, [state]);
+
   return {
     state,
     setField,
@@ -282,6 +294,7 @@ export function usePartnerApplicationState() {
     setSubmitError,
     setSubmitted,
     reset,
+    validateCurrentStep,
   };
 }
 

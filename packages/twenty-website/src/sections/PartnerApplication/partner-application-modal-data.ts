@@ -29,10 +29,10 @@ export const PARTNER_APPLICATION_FIELD_COPY = {
   name: msg`Your name *`,
   email: msg`Work email *`,
   company: msg`Company or brand *`,
-  website: msg`Website or GitHub`,
+  website: msg`Website or GitHub *`,
   // Profile
   linkedin: msg`LinkedIn URL`,
-  city: msg`City`,
+  city: msg`City *`,
   country: msg`Country *`,
   countryPlaceholder: msg`Select your country`,
   countrySearchPlaceholder: msg`Search a country…`,
@@ -49,9 +49,9 @@ export const PARTNER_APPLICATION_FIELD_COPY = {
   applicationNotes: msg`Anything else we should know?`,
   applicationNotesPlaceholder: msg`Workspace URL, customer references, relevant links…`,
   // Commercials
-  hourlyRate: msg`Hourly rate`,
+  hourlyRate: msg`Hourly rate *`,
   hourlyRatePlaceholder: msg`150`,
-  projectBudgetMin: msg`Minimum project budget`,
+  projectBudgetMin: msg`Minimum project budget *`,
   projectBudgetMinPlaceholder: msg`5,000`,
   calendarLink: msg`Calendar / booking link`,
 } as const;
