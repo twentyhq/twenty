@@ -73,6 +73,7 @@ export class HttpExceptionHandlerService {
     errorCode?: number,
     user?: ExceptionHandlerUser,
     workspace?: ExceptionHandlerWorkspace,
+    { shouldBeCapturedBySentry = true }: { shouldBeCapturedBySentry?: boolean } = {},
   ): Response | undefined => {
     const params = this.request?.params;
 
@@ -116,6 +117,7 @@ export class HttpExceptionHandlerService {
       user,
       workspace,
       statusCode,
+      shouldBeCapturedBySentry,
     });
 
     return response.status(statusCode).send({
