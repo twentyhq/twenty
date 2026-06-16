@@ -198,6 +198,10 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
         continue;
       }
 
+      const isSystemSideEffect =
+        flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier]
+          ?.isSystemSideEffect ?? false;
+
       const viewFieldGroupId = findLastViewFieldGroupId({
         viewId,
         flatViewFieldGroupMaps,
@@ -246,7 +250,7 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
           position,
           aggregateOperation: null,
           isActive: true,
-          isSystemSideEffect: true,
+          isSystemSideEffect,
           universalOverrides: null,
           createdAt: now,
           updatedAt: now,

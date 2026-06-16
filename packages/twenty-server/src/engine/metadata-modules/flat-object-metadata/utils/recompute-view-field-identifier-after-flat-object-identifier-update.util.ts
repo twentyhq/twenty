@@ -93,11 +93,16 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
 
       accumulator.flatViewFieldsToCreate.push(flatViewFieldToCreate);
     } else if (
-      labelMetadataIdentifierViewField.position > lowestViewFieldPosition
+      labelMetadataIdentifierViewField.position > lowestViewFieldPosition ||
+      labelMetadataIdentifierViewField.isVisible === false
     ) {
       const updatedFlatViewField = {
         ...labelMetadataIdentifierViewField,
-        position: lowestViewFieldPosition - 1,
+        position:
+          labelMetadataIdentifierViewField.position > lowestViewFieldPosition
+            ? lowestViewFieldPosition - 1
+            : labelMetadataIdentifierViewField.position,
+        isVisible: true,
       };
 
       accumulator.flatViewFieldsToUpdate.push(updatedFlatViewField);

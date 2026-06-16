@@ -28,6 +28,7 @@ const buildFlatViewMaps = (
     universalIdentifier: string;
     key?: ViewKey | null;
     isActive?: boolean;
+    isSystemSideEffect?: boolean;
     objectMetadataUniversalIdentifier?: string | null;
     deletedAt?: string | null;
   }[] = [],
@@ -41,6 +42,7 @@ const buildFlatViewMaps = (
           id: entry.id,
           key: entry.key ?? null,
           isActive: entry.isActive ?? true,
+          isSystemSideEffect: entry.isSystemSideEffect ?? false,
           objectMetadataUniversalIdentifier:
             entry.objectMetadataUniversalIdentifier ?? null,
           deletedAt: entry.deletedAt ?? null,
@@ -290,7 +292,6 @@ describe('computeFlatViewFieldsFromFieldsWidgets', () => {
         viewUniversalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
         viewFieldGroupUniversalIdentifier: null,
         isVisible: true,
-        isSystemSideEffect: true,
         size: DEFAULT_VIEW_FIELD_SIZE,
         position: 0,
         aggregateOperation: null,
@@ -731,6 +732,64 @@ describe('computeFlatViewFieldsFromFieldsWidgets', () => {
     });
   });
 
+  describe('isSystemSideEffect inheritance from parent view', () => {
+    it('should flag the created view field when the parent view is a system side effect', () => {
+      const result = computeFlatViewFieldsFromFieldsWidgets({
+        fieldsToCreate: [
+          {
+            objectMetadataUniversalIdentifier:
+              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier: 'field-uid-1',
+          },
+        ],
+        flatPageLayoutWidgetMaps: buildFlatPageLayoutWidgetMaps([
+          buildFieldsWidget(),
+        ]),
+        flatViewFieldMaps: buildFlatViewFieldMaps(),
+        flatViewMaps: buildFlatViewMaps([
+          {
+            id: VIEW_ID,
+            universalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
+            isSystemSideEffect: true,
+          },
+        ]),
+        flatViewFieldGroupMaps: buildFlatViewFieldGroupMaps(),
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].isSystemSideEffect).toBe(true);
+    });
+
+    it('should not flag the created view field when the parent view is not a system side effect', () => {
+      const result = computeFlatViewFieldsFromFieldsWidgets({
+        fieldsToCreate: [
+          {
+            objectMetadataUniversalIdentifier:
+              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier: 'field-uid-1',
+          },
+        ],
+        flatPageLayoutWidgetMaps: buildFlatPageLayoutWidgetMaps([
+          buildFieldsWidget(),
+        ]),
+        flatViewFieldMaps: buildFlatViewFieldMaps(),
+        flatViewMaps: buildFlatViewMaps([
+          {
+            id: VIEW_ID,
+            universalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
+            isSystemSideEffect: false,
+          },
+        ]),
+        flatViewFieldGroupMaps: buildFlatViewFieldGroupMaps(),
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].isSystemSideEffect).toBe(false);
+    });
+  });
+
   describe('INDEX view propagation', () => {
     it('should add a hidden, flagged view field to the object INDEX view even without a fields widget', () => {
       const result = computeFlatViewFieldsFromFieldsWidgets({
@@ -749,6 +808,7 @@ describe('computeFlatViewFieldsFromFieldsWidgets', () => {
             id: 'index-view-db-id',
             universalIdentifier: 'index-view-uid',
             key: ViewKey.INDEX,
+            isSystemSideEffect: true,
             objectMetadataUniversalIdentifier:
               OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
           },
