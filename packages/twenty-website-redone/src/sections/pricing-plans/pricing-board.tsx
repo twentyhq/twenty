@@ -9,7 +9,7 @@ import { BillingToggle } from './billing-toggle';
 import { PlanCard } from './plan-card';
 import { PLANS_DATA, type PlansBillingPeriod } from './plans-data';
 import { SelfHostToggle } from './self-host-toggle';
-import { usePricingState } from './use-pricing-state';
+import { usePricingState } from '@/pricing-state';
 
 // The interactive island below the intro: the switcher and the cards.
 // It sits 32px under the intro (the hero's intro-to-CTA gap); the cards

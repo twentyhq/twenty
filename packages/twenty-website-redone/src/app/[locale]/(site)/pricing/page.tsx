@@ -4,10 +4,11 @@ import {
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
 import { buildRouteMetadata } from '@/platform/seo';
+import { PricingStateProvider } from '@/pricing-state';
 import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 import { PricingEngagementBand } from '@/sections/pricing-engagement-band';
-import { PricingPlans, PricingStateProvider } from '@/sections/pricing-plans';
+import { PricingPlans } from '@/sections/pricing-plans';
 
 export const generateMetadata = buildRouteMetadata('pricing');
 

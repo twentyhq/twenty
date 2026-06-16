@@ -15,7 +15,7 @@ import {
 
 import { CheckMark } from '@/icons';
 
-import { type PlansHostingMode } from './pricing-state-context';
+import { type PlansHostingMode } from '@/pricing-state';
 
 const ToggleRow = styled.label`
   align-items: center;

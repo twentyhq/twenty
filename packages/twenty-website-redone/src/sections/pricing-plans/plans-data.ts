@@ -1,7 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-import { type PlansHostingMode } from './pricing-state-context';
+import { type PlansHostingMode } from '@/pricing-state';
 
 export type PlansBillingPeriod = 'monthly' | 'yearly';
 export type PlansTierId = 'organization' | 'pro';

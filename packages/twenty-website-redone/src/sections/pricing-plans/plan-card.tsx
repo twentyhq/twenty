@@ -16,7 +16,7 @@ import {
   type PlansTierId,
 } from './plans-data';
 import { PlanFeatureList } from './plan-feature-list';
-import { type PlansHostingMode } from './pricing-state-context';
+import { type PlansHostingMode } from '@/pricing-state';
 import { useFeatureTransition } from './use-feature-transition';
 
 const CardShell = styled.div`
