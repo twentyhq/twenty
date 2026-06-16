@@ -1,9 +1,9 @@
 import * as crypto from 'crypto';
 
 import { signEnterpriseKey } from '@/lib/enterprise/enterprise-jwt';
+import { getLicenseeFromStripeCustomer } from '@/lib/enterprise/stripe-customer-helpers';
 import { getStripeClient } from '@/lib/enterprise/stripe-client';
 import { NextResponse } from 'next/server';
-import type Stripe from 'stripe';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,14 +22,6 @@ const isSecretValid = (providedSecret: string): boolean => {
   }
 
   return crypto.timingSafeEqual(expectedBuffer, providedBuffer);
-};
-
-const getLicensee = (customer: Stripe.Subscription['customer']): string => {
-  if (customer && typeof customer !== 'string' && !customer.deleted) {
-    return customer.name ?? customer.email ?? 'Unknown';
-  }
-
-  return 'Unknown';
 };
 
 export async function GET(
@@ -56,7 +48,7 @@ export async function GET(
       expand: ['customer'],
     });
 
-    const licensee = getLicensee(subscription.customer);
+    const licensee = getLicenseeFromStripeCustomer(subscription.customer);
     const enterpriseKey = signEnterpriseKey(subscription.id, licensee);
 
     return NextResponse.json({
@@ -66,10 +58,10 @@ export async function GET(
       subscriptionStatus: subscription.status,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Enterprise key reissue failed', error);
 
     return NextResponse.json(
-      { error: `Reissue error: ${message}` },
+      { error: 'Internal server error' },
       { status: 500 },
     );
   }
