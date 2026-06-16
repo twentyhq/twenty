@@ -78,8 +78,16 @@ export const RecordTableCellHoveredPortalContent = () => {
   // should show the edit button even though the field is read-only,
   // because the button triggers create-note/task instead of inline edit
   const isActivityTargetOnNonActivityObject =
-    isNoteTargetOnNonActivityObject(fieldName, objectMetadataNameSingular, fieldType) ||
-    isTaskTargetOnNonActivityObject(fieldName, objectMetadataNameSingular, fieldType);
+    isNoteTargetOnNonActivityObject(
+      fieldName,
+      objectMetadataNameSingular,
+      fieldType,
+    ) ||
+    isTaskTargetOnNonActivityObject(
+      fieldName,
+      objectMetadataNameSingular,
+      fieldType,
+    );
 
   const showButton =
     !isFieldInputOnly &&
