@@ -4,7 +4,12 @@ import { styled } from '@linaria/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { IconBrandLinkedin, IconBrandX } from '@tabler/icons-react';
+import {
+  IconBrandDiscord,
+  IconBrandGithub,
+  IconBrandLinkedin,
+  IconBrandX,
+} from '@tabler/icons-react';
 import { type MouseEvent, useCallback, useRef, useState } from 'react';
 
 import { getMessageDescriptorSource } from '@/platform/i18n/get-message-descriptor-source';
@@ -22,7 +27,7 @@ import {
   Z_INDEX,
 } from '@/tokens';
 
-import { DiscordMark, GitHubMark, type IconComponent } from '@/icons';
+import { type IconComponent } from '@/icons';
 import { SITE_URLS } from '@/platform/site-urls';
 import { ExternalLink } from '@/ui';
 
@@ -44,12 +49,12 @@ const SOCIAL_LINKS: readonly SocialLink[] = [
   {
     ariaLabel: msg`GitHub (opens in new tab)`,
     href: SITE_URLS.github,
-    icon: GitHubMark,
+    icon: IconBrandGithub,
   },
   {
     ariaLabel: msg`Discord (opens in new tab)`,
     href: SITE_URLS.discord,
-    icon: DiscordMark,
+    icon: IconBrandDiscord,
   },
   {
     ariaLabel: msg`LinkedIn (opens in new tab)`,
