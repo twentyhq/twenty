@@ -28,6 +28,12 @@ const RecordShowPage = lazy(() =>
   })),
 );
 
+const MarketingHomePage = lazy(() =>
+  import('~/pages/propel/MarketingHomePage').then((module) => ({
+    default: module.MarketingHomePage,
+  })),
+);
+
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
     default: module.SignInUp,
@@ -223,6 +229,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <RecordShowPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.MarketingHub}
+            element={
+              <LazyRoute>
+                <MarketingHomePage />
               </LazyRoute>
             }
           />

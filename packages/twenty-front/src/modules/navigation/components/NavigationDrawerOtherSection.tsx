@@ -1,7 +1,20 @@
 import { useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { IconHelpCircle, IconSettings } from 'twenty-ui/display';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import {
+  IconBroadcast,
+  IconHelpCircle,
+  IconSettings,
+} from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+
+// Propel: the graduated Marketing Home hub nav entry is gated behind a build/runtime
+// flag so it only appears where the engine image enables it. Same dual mechanism as
+// the dialer dock (window._env_ for the Docker runtime injection, import.meta.env for
+// vite dev). The /marketing route itself registers unconditionally (it simply 404s
+// when nav-hidden); only this nav item is gated.
+const PROPEL_MARKETING_HUB_ENABLED =
+  Boolean(window._env_?.REACT_APP_PROPEL_MARKETING_HUB) ||
+  Boolean(import.meta.env.REACT_APP_PROPEL_MARKETING_HUB);
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
@@ -47,6 +60,13 @@ export const NavigationDrawerOtherSection = () => {
         containAnimation
         initial={false}
       >
+        {PROPEL_MARKETING_HUB_ENABLED && (
+          <NavigationDrawerItem
+            label={t`Marketing`}
+            to={AppPath.MarketingHub}
+            Icon={IconBroadcast}
+          />
+        )}
         <NavigationDrawerItem
           label={t`Settings`}
           Icon={IconSettings}
