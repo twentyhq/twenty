@@ -1,6 +1,7 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 import {
   findOrThrow,
+  fromArrayToValuesByKeyRecord,
   isDefined,
   isSearchableFieldType,
 } from 'twenty-shared/utils';
@@ -9,7 +10,10 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { computeSearchVectorAsExpressionFromSearchFieldMetadatas } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/compute-search-vector-as-expression-from-search-field-metadatas.util';
+import {
+  buildSearchVectorTargetField,
+  computeSearchVectorAsExpressionFromSearchFieldMetadatas,
+} from 'src/engine/metadata-modules/flat-search-field-metadata/utils/compute-search-vector-as-expression-from-search-field-metadatas.util';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
@@ -40,26 +44,13 @@ export const computeSearchFieldMetadataCreationForFields = ({
   searchFieldMetadatasToCreate: UniversalFlatSearchFieldMetadata[];
   flatSearchVectorFieldsToUpdate: FlatFieldMetadata<FieldMetadataType.TS_VECTOR>[];
 } => {
-  const searchableFieldsByObjectUniversalIdentifier = new Map<
-    string,
-    UniversalFlatFieldMetadata[]
-  >();
-
-  for (const flatFieldMetadata of flatFieldMetadatasToCreate) {
-    if (!isSearchableFieldType(flatFieldMetadata.type)) {
-      continue;
-    }
-
-    const existingFields =
-      searchableFieldsByObjectUniversalIdentifier.get(
-        flatFieldMetadata.objectMetadataUniversalIdentifier,
-      ) ?? [];
-
-    searchableFieldsByObjectUniversalIdentifier.set(
-      flatFieldMetadata.objectMetadataUniversalIdentifier,
-      [...existingFields, flatFieldMetadata],
-    );
-  }
+  const searchableFieldsByObjectUniversalIdentifier =
+    fromArrayToValuesByKeyRecord({
+      array: flatFieldMetadatasToCreate.filter((flatFieldMetadata) =>
+        isSearchableFieldType(flatFieldMetadata.type),
+      ),
+      key: 'objectMetadataUniversalIdentifier',
+    });
 
   const searchFieldMetadatasToCreate: UniversalFlatSearchFieldMetadata[] = [];
   const flatSearchVectorFieldsToUpdate: FlatFieldMetadata<FieldMetadataType.TS_VECTOR>[] =
@@ -68,7 +59,7 @@ export const computeSearchFieldMetadataCreationForFields = ({
   for (const [
     objectMetadataUniversalIdentifier,
     newSearchableFields,
-  ] of searchableFieldsByObjectUniversalIdentifier.entries()) {
+  ] of Object.entries(searchableFieldsByObjectUniversalIdentifier)) {
     const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
       flatEntityMaps: flatObjectMetadataMaps,
       universalIdentifier: objectMetadataUniversalIdentifier,
@@ -109,20 +100,17 @@ export const computeSearchFieldMetadataCreationForFields = ({
       flatEntityIds: existingSearchFieldMetadatas.map(
         (searchFieldMetadata) => searchFieldMetadata.fieldMetadataId,
       ),
-    }).map((flatFieldMetadata) => ({
-      name: flatFieldMetadata.name,
-      type: flatFieldMetadata.type,
-      createdAt: flatFieldMetadata.createdAt,
-      sortKey: flatFieldMetadata.id,
-    }));
+    }).map((flatFieldMetadata) =>
+      buildSearchVectorTargetField(flatFieldMetadata, flatFieldMetadata.id),
+    );
 
-    const newTargetFields = newSearchableFields.map((newSearchableField) => ({
-      name: newSearchableField.name,
-      type: newSearchableField.type,
-      createdAt: newSearchableField.createdAt,
-      // Field not persisted yet, no id: use universalIdentifier as tie-break.
-      sortKey: newSearchableField.universalIdentifier,
-    }));
+    // Field not persisted yet, no id: use universalIdentifier as tie-break.
+    const newTargetFields = newSearchableFields.map((newSearchableField) =>
+      buildSearchVectorTargetField(
+        newSearchableField,
+        newSearchableField.universalIdentifier,
+      ),
+    );
 
     const newAsExpression =
       computeSearchVectorAsExpressionFromSearchFieldMetadatas([
