@@ -91,7 +91,7 @@ export const CreateWorkspace = () => {
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
-      name: '',
+      name: currentWorkspace?.displayName ?? '',
     },
     resolver: zodResolver(validationSchema),
   });

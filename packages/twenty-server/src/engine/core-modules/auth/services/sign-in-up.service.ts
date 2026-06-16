@@ -5,7 +5,12 @@ import { msg } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository, type DataSource, type QueryRunner } from 'typeorm';
+import {
+  QueryFailedError,
+  Repository,
+  type DataSource,
+  type QueryRunner,
+} from 'typeorm';
 import { v4 } from 'uuid';
 
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
@@ -45,6 +50,10 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
@@ -486,6 +495,7 @@ export class SignInUpService {
 
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
+    options?: { displayName?: string; subdomain?: string },
   ) {
     const email =
       userData.type === 'newUserWithPicture'
@@ -504,6 +514,14 @@ export class SignInUpService {
 
     await this.assertWorkspaceCreationAllowed(userData);
 
+    const requestedSubdomain = options?.subdomain;
+
+    if (isDefined(requestedSubdomain)) {
+      await this.subdomainManagerService.validateSubdomainOrThrow(
+        requestedSubdomain,
+      );
+    }
+
     const shouldGrantServerAdmin = !(await this.hasServerAdmin());
 
     const isWorkEmailFound = isWorkEmail(email);
@@ -518,11 +536,13 @@ export class SignInUpService {
 
           const workspaceToCreate = this.workspaceRepository.create({
             id: workspaceId,
-            subdomain: await this.subdomainManagerService.generateSubdomain(
-              isWorkEmailFound ? { userEmail: email } : {},
-            ),
+            subdomain: isDefined(requestedSubdomain)
+              ? requestedSubdomain
+              : await this.subdomainManagerService.generateSubdomain(
+                  isWorkEmailFound ? { userEmail: email } : {},
+                ),
             workspaceCustomApplicationId,
-            displayName: '',
+            displayName: options?.displayName ?? '',
             inviteHash: v4(),
             activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
           });
@@ -613,6 +633,23 @@ export class SignInUpService {
         .insertWorkspaceEvent(WORKSPACE_CREATED_EVENT, {});
 
       return { user, workspace };
+    } catch (error) {
+      const pgErrorCode =
+        error instanceof QueryFailedError
+          ? ((error as { code?: string }).code ??
+            (error as { driverError?: { code?: string } }).driverError?.code)
+          : undefined;
+
+      // Translate a concurrent unique-constraint violation on the chosen
+      // subdomain into the same error the upfront check throws.
+      if (isDefined(requestedSubdomain) && pgErrorCode === '23505') {
+        throw new WorkspaceException(
+          'Subdomain already taken',
+          WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
+        );
+      }
+
+      throw error;
     } finally {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatApplicationMaps',
