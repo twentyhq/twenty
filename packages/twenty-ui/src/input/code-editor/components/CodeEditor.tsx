@@ -14,12 +14,6 @@ import styles from './CodeEditor.module.scss';
 type CodeEditorVariant = 'default' | 'with-header' | 'borderless';
 type CodeEditorContentPadding = 'default' | 'comfortable';
 
-const getCodeEditorContentPadding = (spacing: string) => {
-  const parsedSpacing = Number.parseFloat(spacing);
-
-  return Number.isNaN(parsedSpacing) ? undefined : parsedSpacing;
-};
-
 const layoutCodeEditor = (
   editor: editor.IStandaloneCodeEditor,
   height: string | number,
@@ -101,25 +95,23 @@ export const CodeEditor = ({
   });
 
   const shouldAutoHeight = autoHeight && !resizable;
-  const codeEditorPadding = getCodeEditorContentPadding(theme.spacing[4]);
+  const codeEditorPadding = theme.spacingMultiplicator * 4;
   const currentHeight = shouldAutoHeight
     ? (autoHeightContentHeight ?? height)
     : resizable
       ? resizableHeight
       : height;
-  const contentPaddingOptions = isDefined(codeEditorPadding)
-    ? {
-        ...(contentPadding === 'comfortable'
-          ? {
-              lineDecorationsWidth: codeEditorPadding,
-            }
-          : {}),
-        padding: {
-          bottom: codeEditorPadding,
-          top: codeEditorPadding,
-        },
-      }
-    : {};
+  const contentPaddingOptions = {
+    ...(contentPadding === 'comfortable'
+      ? {
+          lineDecorationsWidth: codeEditorPadding,
+        }
+      : {}),
+    padding: {
+      bottom: codeEditorPadding,
+      top: codeEditorPadding,
+    },
+  };
   const { padding: _callerPadding, ...editorOptions } = options ?? {};
 
   const setModelMarkers = (
@@ -183,7 +175,7 @@ export const CodeEditor = ({
     return () => {
       disposable.dispose();
     };
-  }, [codeEditorPadding, editor, shouldAutoHeight, value]);
+  }, [codeEditorPadding, editor, shouldAutoHeight]);
 
   return isLoading ? (
     <div

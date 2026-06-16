@@ -2,12 +2,14 @@ import { type ThemeType } from '@ui/theme-constants';
 import { type editor } from 'monaco-editor';
 import { isDefined } from 'twenty-shared/utils';
 
-const convertColorToHex = (color: string): string => {
-  if (color.trim() === 'transparent') {
+const convertColorToHex = (color: string | number): string => {
+  const colorAsString = String(color);
+
+  if (colorAsString.trim() === 'transparent') {
     return '#00000000';
   }
 
-  const displayP3Match = color.match(
+  const displayP3Match = colorAsString.match(
     /color\(display-p3\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s+\/\s+([\d.]+))?\)/,
   );
 
@@ -32,7 +34,7 @@ const convertColorToHex = (color: string): string => {
     return `#${rHex}${gHex}${bHex}`;
   }
 
-  return color;
+  return colorAsString;
 };
 
 export const getBaseCodeEditorTheme = (
