@@ -1,10 +1,11 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
-import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   ObjectMetadataException,
@@ -40,10 +41,19 @@ export const recomputeSearchVectorFieldFromSearchFieldMetadatas = ({
       flatEntityIds: flatObjectMetadata.fieldIds,
     });
 
-  const searchVectorField = findOrThrow(
-    objectFlatFieldMetadatas,
+  const searchVectorField = objectFlatFieldMetadatas.find(
     (field) => field.name === SEARCH_VECTOR_FIELD.name,
-  ) as FlatFieldMetadata<FieldMetadataType.TS_VECTOR>;
+  );
+
+  if (
+    !isDefined(searchVectorField) ||
+    !isFlatFieldMetadataOfType(searchVectorField, FieldMetadataType.TS_VECTOR)
+  ) {
+    throw new ObjectMetadataException(
+      `Search vector field not found for object metadata ${flatObjectMetadata.id}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
 
   const targetSearchableFields = searchFieldMetadataFieldIds.map(
     (fieldMetadataId) => {
