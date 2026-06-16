@@ -21,14 +21,10 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
-<<<<<<< HEAD
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDisableDragSelectOnPointerDown } from '@/object-record/record-table/record-table-header/hooks/useDisableDragSelectOnPointerDown';
-=======
-import { isDefined } from 'twenty-shared/utils';
->>>>>>> 09694b2f3bfb8cdbf4882a669db86f5e48b609df
 
 const StyledSortableHandle = styled.div`
   height: 100%;
@@ -72,11 +68,6 @@ export const RecordTableHeaderFirstScrollableCell = ({
     0,
   );
 
-<<<<<<< HEAD
-=======
-  const recordField = visibleRecordFields[1] as RecordField | undefined;
-
->>>>>>> 09694b2f3bfb8cdbf4882a669db86f5e48b609df
   const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
   );
