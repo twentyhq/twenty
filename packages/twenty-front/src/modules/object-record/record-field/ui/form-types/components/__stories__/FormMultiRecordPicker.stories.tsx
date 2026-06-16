@@ -62,8 +62,16 @@ export const WithManyRecords: Story = {
   args: {
     label: 'Companies',
     defaultValue: [
-      '20202020-1553-45c6-a028-5a9064cce07f',
       '20202020-a000-4485-94de-70c2a98daef2',
+      '20202020-a018-492d-89de-f9cd4ee80437',
+      '20202020-a023-4180-9da1-6b417beacf0e',
+      '20202020-a026-43c0-b042-0123f72f6cf9',
+      '20202020-a026-47d2-9474-75fb625f5eb1',
+      '20202020-a02e-4e28-b4a9-6096b36e26df',
+      '20202020-a043-441a-b269-a2378afed31c',
+      '20202020-a045-4266-b9e4-0e7a0697322b',
+      '20202020-a045-4b32-8484-a6807e9e0d22',
+      '20202020-a048-4007-9024-3ac47b8484d5',
     ],
     objectNameSingular: 'company',
     onChange: fn(),
