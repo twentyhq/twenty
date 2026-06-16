@@ -485,6 +485,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const {
       flatObjectMetadataToCreate,
       flatIndexMetadataToCreate,
+      flatSearchFieldMetadataToCreate,
       flatFieldMetadataToCreateOnObject,
       relationTargetFlatFieldMetadataToCreate,
     } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
@@ -617,6 +618,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             pageLayoutWidget: {
               flatEntityToCreate:
                 flatDefaultRecordPageLayoutsToCreate.pageLayoutWidgets,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            searchFieldMetadata: {
+              flatEntityToCreate: flatSearchFieldMetadataToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
