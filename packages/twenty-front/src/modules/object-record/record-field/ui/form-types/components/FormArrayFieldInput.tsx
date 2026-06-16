@@ -190,6 +190,14 @@ export const FormArrayFieldInput = ({
     });
     onChange(updatedItems);
 
+    if (itemToEditIndex === index) {
+      setIsInputDisplayed(false);
+      setInputValue('');
+      setItemToEditIndex(-1);
+    } else if (itemToEditIndex > index) {
+      setItemToEditIndex((prev) => prev - 1);
+    }
+
     const isDropdownGoingToBeHiddenNext = updatedItems.length === 0;
     if (isDropdownGoingToBeHiddenNext) {
       closeDropdown(dropdownId);

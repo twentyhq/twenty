@@ -34,13 +34,16 @@ export const RecordTableCellEditButton = () => {
   const secondaryButton = useGetSecondaryRecordTableCellButton();
 
   const fieldName = fieldDefinition.metadata.fieldName;
+  const fieldType = fieldDefinition.type;
   const isNoteTargetField = isNoteTargetOnNonActivityObject(
     fieldName,
     objectNameSingular,
+    fieldType,
   );
   const isTaskTargetField = isTaskTargetOnNonActivityObject(
     fieldName,
     objectNameSingular,
+    fieldType,
   );
   const isActivityTargetOnNonActivityObject =
     isNoteTargetField || isTaskTargetField;
