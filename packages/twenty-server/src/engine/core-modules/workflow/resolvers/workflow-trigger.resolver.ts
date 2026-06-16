@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   WORKFLOW_TRIGGER_METADATA_KEY,
   WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY,
+  WORKFLOW_TRIGGER_PAYLOAD_KEY,
 } from 'twenty-shared/workflow';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
@@ -104,6 +105,7 @@ export class WorkflowTriggerResolver {
       workflowRunId: workflowRunId ?? undefined,
       payload: {
         ...(payload ?? {}),
+        [WORKFLOW_TRIGGER_PAYLOAD_KEY]: { ...(payload ?? {}) },
         [WORKFLOW_TRIGGER_METADATA_KEY]: {
           [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]:
             workspaceMember.id,
