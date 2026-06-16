@@ -6,9 +6,6 @@ type StripeCustomerField =
   | Stripe.DeletedCustomer
   | null;
 
-// Derives the licensee label embedded in the enterprise key from a Stripe
-// customer. Falls back to 'Unknown' when the customer is unexpanded (a string
-// id), deleted, or has no name/email.
 export const getLicenseeFromStripeCustomer = (
   customer: StripeCustomerField,
 ): string => {
