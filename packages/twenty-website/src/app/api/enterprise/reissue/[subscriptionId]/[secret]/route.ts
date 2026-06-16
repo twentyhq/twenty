@@ -59,12 +59,16 @@ export async function GET(
     const licensee = getLicensee(subscription.customer);
     const enterpriseKey = signEnterpriseKey(subscription.id, licensee);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       enterpriseKey,
       licensee,
       subscriptionId: subscription.id,
       subscriptionStatus: subscription.status,
     });
+
+    response.headers.set('Cache-Control', 'no-store');
+
+    return response;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
 
