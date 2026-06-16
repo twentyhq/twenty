@@ -11,6 +11,7 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { OnboardingInviteSuggestionsService } from 'src/modules/onboarding-invite-suggestions/services/onboarding-invite-suggestions.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -31,10 +32,12 @@ export class OnboardingResolver {
   async getInviteSuggestions(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<InviteSuggestionDTO[]> {
-    return this.onboardingInviteSuggestionsService.getCachedSuggestions({
+    return this.onboardingInviteSuggestionsService.getOrComputeSuggestions({
       workspaceId: workspace.id,
       userId: user.id,
+      userWorkspaceId,
     });
   }
 
