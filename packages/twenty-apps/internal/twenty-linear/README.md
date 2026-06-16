@@ -40,8 +40,8 @@ this — the OAuth credentials are already configured.
 ### 1. Register an OAuth app in Linear
 
 1. Visit https://linear.app/settings/api/applications/new.
-2. Set the **Redirect URI** to `<SERVER_URL>/apps/oauth/callback` (for
-   local dev: `http://localhost:3000/apps/oauth/callback`).
+2. Set the **Redirect URI** to `<SERVER_URL>/auth/apps/callback` (for
+   local dev: `http://localhost:3000/auth/apps/callback`).
 3. Copy the generated **Client ID** and **Client Secret**.
 
 ### 2. Wire the credentials into Twenty
