@@ -153,6 +153,7 @@ export default defineConfig(({ mode }) => {
         '@nivo/pie',
         '@nivo/line',
         '@nivo/arcs',
+        '@react-spring/web',
         'd3-shape',
       ],
     },
