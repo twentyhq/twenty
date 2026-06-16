@@ -1,9 +1,14 @@
-import { ConfigService } from '@/cli/utilities/config/config-service';
 import { isNonEmptyString } from '@sniptt/guards';
-import axios, { type AxiosInstance } from 'axios';
+import axios, {
+  type AxiosInstance,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig,
+} from 'axios';
 import chalk from 'chalk';
 import { isDefined } from 'twenty-shared/utils';
+
 import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 
 export class ApiClient {
   readonly client: AxiosInstance;
@@ -50,7 +55,7 @@ export class ApiClient {
     }
 
     this.client.interceptors.response.use(
-      (response) => {
+      async (response) => {
         // Handle auth errors returned as GraphQL errors in HTTP 200 responses
         if (
           response.status === 200 &&
@@ -66,6 +71,16 @@ export class ApiClient {
           );
 
           if (hasAuthError) {
+            if (!this.reauthAttempted) {
+              const retried = await this.tryReauthenticateAndRetry(
+                response.config,
+              );
+
+              if (retried) {
+                return retried;
+              }
+            }
+
             const authError = new Error(
               'Authentication failed: GraphQL auth error in response',
             ) as Error & { response: typeof response };
@@ -78,22 +93,11 @@ export class ApiClient {
       },
       async (error) => {
         if (error.response?.status === 401 && error.config) {
-          // Prevent recursion: only attempt reauth once
-          if (this.reauthAttempted) {
-            throw error;
-          }
-          this.reauthAttempted = true;
+          if (!this.reauthAttempted) {
+            const retried = await this.tryReauthenticateAndRetry(error.config);
 
-          const remoteName = ConfigService.getActiveRemote();
-          console.error(`Authentication failed on remote "${remoteName}"`);
-          const outcome = await promptForReauthentication(remoteName);
-
-          if (outcome === 'reauthenticated') {
-            const authToken = await this.resolveAuthToken();
-
-            if (authToken) {
-              error.config.headers.Authorization = `Bearer ${authToken}`;
-              return this.client.request(error.config);
+            if (retried) {
+              return retried;
             }
           }
         } else if (error.response?.status === 403) {
@@ -110,6 +114,30 @@ export class ApiClient {
         throw error;
       },
     );
+  }
+
+  private async tryReauthenticateAndRetry(
+    config: InternalAxiosRequestConfig,
+  ): Promise<AxiosResponse | null> {
+    // Prevent recursion: only attempt reauth once per client instance
+    this.reauthAttempted = true;
+
+    const remoteName = ConfigService.getActiveRemote();
+    console.error(`Authentication failed on remote "${remoteName}"`);
+
+    const outcome = await promptForReauthentication(remoteName);
+
+    if (outcome === 'reauthenticated') {
+      const authToken = await this.resolveAuthToken();
+
+      if (authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`;
+
+        return this.client.request(config);
+      }
+    }
+
+    return null;
   }
 
   async getFrontendUrl(): Promise<string | null> {

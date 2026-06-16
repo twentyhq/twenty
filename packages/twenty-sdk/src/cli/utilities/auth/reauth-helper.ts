@@ -1,15 +1,14 @@
 import inquirer from 'inquirer';
 import chalk from 'chalk';
-import { ApiService } from '@/cli/utilities/api/api-service';
+import { authLoginOAuth } from '@/cli/operations/login-oauth';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 
 export type ReauthOutcome = 'reauthenticated' | 'declined' | 'non-interactive';
-
-const isInteractive = (): boolean => process.stdin.isTTY === true;
 
 export const promptForReauthentication = async (
   remoteName: string,
 ): Promise<ReauthOutcome> => {
-  if (!isInteractive()) {
+  if (!process.stdout.isTTY) {
     return 'non-interactive';
   }
 
@@ -26,20 +25,19 @@ export const promptForReauthentication = async (
     return 'declined';
   }
 
-  // Disable interceptors to prevent recursion: validateAuth() hitting 401
-  // would otherwise trigger the same interceptor that called this function.
-  const apiService = new ApiService({ disableInterceptors: true });
-  const { authValid } = await apiService.validateAuth();
+  const configService = new ConfigService();
+  const { apiUrl } = await configService.getConfig();
 
-  if (authValid) {
-    console.log(chalk.green(`✓ Authenticated to "${remoteName}".`));
+  const result = await authLoginOAuth({ apiUrl, remote: remoteName });
+
+  if (result.success) {
+    console.log(chalk.green(`✓ Re-authenticated "${remoteName}".`));
 
     return 'reauthenticated';
   }
 
-  console.log(
-    chalk.yellow(`Run \`yarn twenty remote:add\` to re-authenticate.`),
-  );
+  console.log(chalk.yellow(result.error.message));
+  console.log(chalk.yellow('Run `yarn twenty remote:add` to re-authenticate.'));
 
   return 'declined';
 };
