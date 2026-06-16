@@ -94,12 +94,12 @@ export class OnboardingService {
       userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING) ===
       true;
 
-    if (isProfileCreationPending) {
-      return OnboardingStatus.PROFILE_CREATION;
-    }
-
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
+    }
+
+    if (isProfileCreationPending) {
+      return OnboardingStatus.PROFILE_CREATION;
     }
 
     if (isInviteTeamPending) {
@@ -127,6 +127,43 @@ export class OnboardingService {
     }
 
     return OnboardingStatus.COMPLETED;
+  }
+
+  async isOnboardingConnectAccountPending({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const value = await this.userVarsService.get({
+      userId,
+      workspaceId,
+      key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+    });
+
+    return value === true;
+  }
+
+  async shouldComputeInviteSuggestionsOnConnect({
+    userId,
+    workspaceId,
+  }: {
+    userId?: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    if (!isDefined(userId)) {
+      return false;
+    }
+
+    try {
+      return await this.isOnboardingConnectAccountPending({
+        userId,
+        workspaceId,
+      });
+    } catch {
+      return false;
+    }
   }
 
   async setOnboardingConnectAccountPending(
