@@ -8,6 +8,7 @@ import { PricingStateProvider } from '@/pricing-state';
 import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 import { PricingEngagementBand } from '@/sections/pricing-engagement-band';
+import { PlanTable } from '@/sections/pricing-plan-table';
 import { PricingPlans } from '@/sections/pricing-plans';
 
 export const generateMetadata = buildRouteMetadata('pricing');
@@ -32,6 +33,7 @@ export default async function PricingPage({
         <PricingStateProvider>
           <PricingPlans />
           <PricingEngagementBand />
+          <PlanTable />
         </PricingStateProvider>
         <Faq />
       </main>

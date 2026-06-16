@@ -109,10 +109,31 @@ msgstr "<0>Edit Kanban Stages:</0> You can now edit Kanban stages directly from 
 msgid "<0>Quick Access to Records</0>: Side panel lets you view and edit records without leaving your current page. <1>Keyboard Navigation</1>: Navigate the side panel with keyboard for better accessibility and faster workflows. <2>Pinned Actions</2>: More actions now displayed directly in the navbar for easier access."
 msgstr "<0>Quick Access to Records</0>: Side panel lets you view and edit records without leaving your current page. <1>Keyboard Navigation</1>: Navigate the side panel with keyboard for better accessibility and faster workflows. <2>Pinned Actions</2>: More actions now displayed directly in the navbar for easier access."
 
+#. js-lingui-id: be30i9
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$0"
+msgstr "$0"
+
+#. js-lingui-id: EkIZkY
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$19"
+msgstr "$19"
+
+#. js-lingui-id: 8r6DgO
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$9"
+msgstr "$9"
+
 #. js-lingui-id: EHNAf2
 #: src/case-studies/case-study-catalog.ts
 msgid "1 click"
 msgstr "1 click"
+
+#. js-lingui-id: 6WQdu8
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "100 per minute"
+msgstr "100 per minute"
 
 #. js-lingui-id: 2szX5S
 #: src/partner-application/partner-application-copy.ts
@@ -142,6 +163,12 @@ msgstr "2025"
 msgid "3 product lines"
 msgstr "3 product lines"
 
+#. js-lingui-id: 7SJhyh
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "30+"
+msgstr "30+"
+
 #. js-lingui-id: Pdl2UE
 #: src/case-studies/case-study-catalog.ts
 msgid "4 tools"
@@ -156,6 +183,11 @@ msgstr "5 workflow credits/month included"
 #: src/partner-application/partner-application-copy.ts
 msgid "5,000"
 msgstr "5,000"
+
+#. js-lingui-id: Z2TH0F
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "50 per minute"
+msgstr "50 per minute"
 
 #. js-lingui-id: CiRGZ8
 #: src/sections/pricing-plans/plans-data.ts
@@ -436,6 +468,16 @@ msgstr "Aggregates"
 msgid "Agribusiness"
 msgstr "Agribusiness"
 
+#. js-lingui-id: aUn7Ps
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "AI & Automations"
+msgstr "AI & Automations"
+
+#. js-lingui-id: HbXHSp
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "AI agents"
+msgstr "AI agents"
+
 #. js-lingui-id: WGXwzu
 #: src/sections/why-twenty-editorial/editorials.data.ts
 msgid "AI agents are starting to draft outreach, score leads, research accounts, write follow-ups, update deal stages. Every one of these actions reads from and writes to the CRM. The scoreboard became the playbook. The database became the brain."
@@ -518,6 +560,11 @@ msgstr "Alternative Partners replaced Salesforce with self-hosted Twenty, using 
 msgid "Alternative Partners used agentic AI to compress what would typically be weeks of Salesforce migration work into something a single person could oversee."
 msgstr "Alternative Partners used agentic AI to compress what would typically be weeks of Salesforce migration work into something a single person could oversee."
 
+#. js-lingui-id: +BHPrF
+#: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
+msgid "always"
+msgstr "always"
+
 #. js-lingui-id: iFLhqi
 #: src/sections/testimonials/testimonials.data.ts
 msgid "Amrendra Pratap Singh"
@@ -567,6 +614,11 @@ msgstr "Anything that needs devops skills."
 #: src/partners-marketplace/served-geo-labels.ts
 msgid "APAC"
 msgstr "APAC"
+
+#. js-lingui-id: 30KnZB
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "API calls"
+msgstr "API calls"
 
 #. js-lingui-id: 42FQ3y
 #: src/case-studies/case-study-catalog.ts
@@ -638,6 +690,11 @@ msgstr "Attachment Visualizer"
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Attachments without the chaos."
 msgstr "Attachments without the chaos."
+
+#. js-lingui-id: y2W2Hg
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Audit logs"
+msgstr "Audit logs"
 
 #. js-lingui-id: tw0/s1
 #: src/partner-application/data/partner-country-options.ts
@@ -1038,6 +1095,11 @@ msgstr "Close"
 msgid "Close menu"
 msgstr "Close menu"
 
+#. js-lingui-id: R7zx6E
+#: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
+msgid "cloud"
+msgstr "cloud"
+
 #. js-lingui-id: L/LPQZ
 #: src/sections/faq/faq.data.ts
 msgid "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control."
@@ -1074,12 +1136,18 @@ msgstr "Colombia 🇨🇴"
 msgid "Column-to-field mapping (including relations)"
 msgstr "Column-to-field mapping (including relations)"
 
+#. js-lingui-id: KGD9Kt
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Commercial license (no AGPL obligations)"
+msgstr "Commercial license (no AGPL obligations)"
+
 #. js-lingui-id: OnPROL
 #: src/partner-application/partner-application-copy.ts
 msgid "Commercials"
 msgstr "Commercials"
 
 #. js-lingui-id: chL5IG
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/menu/menu-social.tsx
 msgid "Community"
 msgstr "Community"
@@ -1347,6 +1415,11 @@ msgstr "Croatia 🇭🇷"
 msgid "CSV export anytime"
 msgstr "CSV export anytime"
 
+#. js-lingui-id: 8RWevB
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "CSV import & export"
+msgstr "CSV import & export"
+
 #. js-lingui-id: s+QiQi
 #: src/sections/product-feature/feature-tiles.ts
 msgid "CSV import flow"
@@ -1369,8 +1442,14 @@ msgstr "Currency Field"
 
 #. js-lingui-id: lh6aPn
 #: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom AI models"
 msgstr "Custom AI models"
+
+#. js-lingui-id: OaTurC
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom apps"
+msgstr "Custom apps"
 
 #. js-lingui-id: TcUCTv
 #: src/partner-application/data/partner-scope-options.ts
@@ -1403,6 +1482,16 @@ msgstr "Custom Development"
 msgid "Custom domain"
 msgstr "Custom domain"
 
+#. js-lingui-id: Vz1Vq2
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom domain (crm.yourco.com)"
+msgstr "Custom domain (crm.yourco.com)"
+
+#. js-lingui-id: oPwQt4
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom fields"
+msgstr "Custom fields"
+
 #. js-lingui-id: U1RB/7
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Custom fields and relationships"
@@ -1413,15 +1502,30 @@ msgstr "Custom fields and relationships"
 msgid "Custom fields, relationships, and a unified timeline for every contact and company in your workspace."
 msgstr "Custom fields, relationships, and a unified timeline for every contact and company in your workspace."
 
+#. js-lingui-id: prIqWa
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom layout"
+msgstr "Custom layout"
+
 #. js-lingui-id: RuYs9T
 #: src/platform/releases/release-notes.tsx
 msgid "Custom layouts"
 msgstr "Custom layouts"
 
+#. js-lingui-id: 8skTDV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom objects"
+msgstr "Custom objects"
+
 #. js-lingui-id: y5pLQH
 #: src/platform/releases/release-notes.tsx
 msgid "Custom sidebar"
 msgstr "Custom sidebar"
+
+#. js-lingui-id: AbyZbl
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom views"
+msgstr "Custom views"
 
 #. js-lingui-id: 5xK1jE
 #: src/sections/helped/helped-scene.tsx
@@ -1457,6 +1561,7 @@ msgstr "Customers"
 
 #. js-lingui-id: qqLY+j
 #: src/sections/stepper/product-stepper-content.tsx
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Customization"
 msgstr "Customization"
 
@@ -1546,6 +1651,7 @@ msgid "Dev teams power company-wide *change with Twenty*"
 msgstr "Dev teams power company-wide *change with Twenty*"
 
 #. js-lingui-id: n+SX4g
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
 msgid "Developers"
@@ -1723,10 +1829,20 @@ msgstr "Email & Calendar"
 msgid "Email and calendar Blocklist"
 msgstr "Email and calendar Blocklist"
 
+#. js-lingui-id: AoN898
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Email and Chat"
+msgstr "Email and Chat"
+
 #. js-lingui-id: rc8HEz
 #: src/platform/releases/release-notes.tsx
 msgid "Email replies"
 msgstr "Email replies"
+
+#. js-lingui-id: ObCvfI
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Email sharing"
+msgstr "Email sharing"
 
 #. js-lingui-id: 7o9obN
 #: src/platform/releases/release-notes.tsx
@@ -1738,10 +1854,20 @@ msgstr "Email thread widgets and an inline reply composer make it easier to work
 msgid "Email/calendar activity on each record"
 msgstr "Email/calendar activity on each record"
 
+#. js-lingui-id: XGd8Wo
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Emails & Calendar"
+msgstr "Emails & Calendar"
+
 #. js-lingui-id: o4/9l1
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Emails and events linked to CRM records"
 msgstr "Emails and events linked to CRM records"
+
+#. js-lingui-id: QOINDn
+#: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
+msgid "empty"
+msgstr "empty"
 
 #. js-lingui-id: ZxDrUL
 #: src/platform/releases/release-notes.tsx
@@ -1752,6 +1878,11 @@ msgstr "Enable beta features using the new Labs tab in settings. The first beta 
 #: src/platform/releases/release-notes.tsx
 msgid "Enabled two-factor authentication with authenticator apps like 1Password, Authy, or Microsoft Authenticator to add an extra layer of security at sign-in."
 msgstr "Enabled two-factor authentication with authenticator apps like 1Password, Authy, or Microsoft Authenticator to add an extra layer of security at sign-in."
+
+#. js-lingui-id: Iy8Gze
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Encryption key rotation"
+msgstr "Encryption key rotation"
 
 #. js-lingui-id: lYGfRP
 #: src/partners-marketplace/spoken-language-labels.ts
@@ -1808,6 +1939,11 @@ msgstr "Enterprise *activation*"
 #: src/platform/routing/static-website-routes.ts
 msgid "Enterprise Activation | Twenty"
 msgstr "Enterprise Activation | Twenty"
+
+#. js-lingui-id: 3dQ6zJ
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Environments"
+msgstr "Environments"
 
 #. js-lingui-id: c0nqfC
 #: src/partner-application/data/partner-country-options.ts
@@ -1920,6 +2056,11 @@ msgstr "Favorites now live in the navigation menu, making the sidebar easier to 
 msgid "Favorites Views and Favorites Folders"
 msgstr "Favorites Views and Favorites Folders"
 
+#. js-lingui-id: +LREeu
+#: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
+msgid "feature"
+msgstr "feature"
+
 #. js-lingui-id: hXRm6J
 #: src/platform/releases/release-notes.tsx
 msgid "Field Level Permission"
@@ -1939,6 +2080,11 @@ msgstr "Field widgets are easier to configure directly from the page where you u
 #: src/platform/releases/release-notes.tsx
 msgid "Field widgets now support more relation types, so custom layouts work better across more objects."
 msgstr "Field widgets now support more relation types, so custom layouts work better across more objects."
+
+#. js-lingui-id: e6BgMV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Field-level permissions"
+msgstr "Field-level permissions"
 
 #. js-lingui-id: z+q1Th
 #: src/partner-application/data/partner-country-options.ts
@@ -2047,6 +2193,11 @@ msgstr "Focus on the use case, not the *plumbing*"
 msgid "Focus on the use case, not the plumbing"
 msgstr "Focus on the use case, not the plumbing"
 
+#. js-lingui-id: wdVyxi
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Folder/Label import"
+msgstr "Folder/Label import"
+
 #. js-lingui-id: qwJuVW
 #: src/sections/footer/footer-nav.tsx
 msgid "Footer"
@@ -2151,6 +2302,12 @@ msgstr "Full customization"
 #: src/case-studies/case-study-catalog.ts
 msgid "Full ownership"
 msgstr "Full ownership"
+
+#. js-lingui-id: hdxwWi
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Fully customizable"
+msgstr "Fully customizable"
 
 #. js-lingui-id: //hrfs
 #: src/partner-application/data/partner-country-options.ts
@@ -2287,6 +2444,11 @@ msgstr "Halftone generator"
 #: src/sections/footer/footer.data.ts
 msgid "Help"
 msgstr "Help"
+
+#. js-lingui-id: CRzGla
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Help center"
+msgstr "Help center"
 
 #. js-lingui-id: LiWOgh
 #: src/partners-marketplace/partner-profile-ctas.tsx
@@ -2430,10 +2592,20 @@ msgstr "Identity"
 msgid "IMAP"
 msgstr "IMAP"
 
+#. js-lingui-id: l0JGUk
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Impersonate users"
+msgstr "Impersonate users"
+
 #. js-lingui-id: N4OVNn
 #: src/case-studies/case-study-stories.ts
 msgid "Implementation"
 msgstr "Implementation"
+
+#. js-lingui-id: yHueLx
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Implementation partners"
+msgstr "Implementation partners"
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/release-notes.tsx
@@ -2500,6 +2672,11 @@ msgstr "Indonesian"
 msgid "Industry"
 msgstr "Industry"
 
+#. js-lingui-id: K8iwJx
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Install shared tarball app"
+msgstr "Install shared tarball app"
+
 #. js-lingui-id: AHWM9N
 #: src/case-studies/case-study-stories.ts
 msgid "Integration"
@@ -2519,6 +2696,11 @@ msgstr "Internal Email Privacy"
 #: src/platform/releases/release-notes.tsx
 msgid "Internal team emails won't sync, protecting privacy by preventing access to internal discussions."
 msgstr "Internal team emails won't sync, protecting privacy by preventing access to internal discussions."
+
+#. js-lingui-id: a+PGuG
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Internet accounts per user"
+msgstr "Internet accounts per user"
 
 #. js-lingui-id: 87rKhU
 #: src/platform/releases/release-notes.tsx
@@ -2699,6 +2881,11 @@ msgstr "Kazakhstan 🇰🇿"
 msgid "Kenya 🇰🇪"
 msgstr "Kenya 🇰🇪"
 
+#. js-lingui-id: TLanjj
+#: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
+msgid "kept"
+msgstr "kept"
+
 #. js-lingui-id: IxBSi8
 #: src/partner-application/data/partner-country-options.ts
 msgid "Kiribati 🇰🇮"
@@ -2730,6 +2917,7 @@ msgid "Labs"
 msgstr "Labs"
 
 #. js-lingui-id: GAmD3h
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/partners-marketplace/partner-facts-list.tsx
 #: src/partners-marketplace/partner-card.tsx
 #: src/partners-marketplace/filter-bar.tsx
@@ -2867,6 +3055,12 @@ msgstr "Loading form…"
 msgid "Loading…"
 msgstr "Loading…"
 
+#. js-lingui-id: 7VBQ2j
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Local, Production"
+msgstr "Local, Production"
+
 #. js-lingui-id: sQia9P
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu-drawer.tsx
@@ -2977,6 +3171,11 @@ msgstr "Mauritania 🇲🇷"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Mauritius 🇲🇺"
 msgstr "Mauritius 🇲🇺"
+
+#. js-lingui-id: Zw+Zv+
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "MCP server"
+msgstr "MCP server"
 
 #. js-lingui-id: bwCiCi
 #: src/sections/menu/menu.data.ts
@@ -3123,6 +3322,11 @@ msgstr "Multi-Workspace"
 msgid "Myanmar 🇲🇲"
 msgstr "Myanmar 🇲🇲"
 
+#. js-lingui-id: 6YtxFj
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Name"
+msgstr "Name"
+
 #. js-lingui-id: yYmxee
 #: src/partner-application/data/partner-country-options.ts
 msgid "Namibia 🇳🇦"
@@ -3254,6 +3458,11 @@ msgstr "Nine Dots rebuilt Homeseller's operations on Twenty, with a custom data 
 msgid "Nine Dots Ventures"
 msgstr "Nine Dots Ventures"
 
+#. js-lingui-id: 1UzENP
+#: src/sections/pricing-plan-table/plan-table-content.tsx
+msgid "No"
+msgstr "No"
+
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
 msgid "No matching country."
@@ -3324,6 +3533,11 @@ msgstr "Notifications"
 msgid "Now a developer can describe what they want to Claude Code and have a working app in an afternoon. A custom object, a scoring workflow, a new view, an integration. The bottleneck isn't building anymore. It's whether your platform lets you."
 msgstr "Now a developer can describe what they want to Claude Code and have a working app in an afternoon. A custom object, a scoring workflow, a new view, an integration. The bottleneck isn't building anymore. It's whether your platform lets you."
 
+#. js-lingui-id: CzeIij
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Number of dashboards"
+msgstr "Number of dashboards"
+
 #. js-lingui-id: pkrZnO
 #: src/case-studies/case-study-stories.ts
 msgid "Olivier recognizes that NetZero's current use of Twenty is still relatively simple: workflows and integrations are not yet as deep as he eventually wants, because he prioritized getting foundations right first."
@@ -3359,6 +3573,11 @@ msgstr "On this page"
 msgid "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
 msgstr "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
 
+#. js-lingui-id: pbmZ7R
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Onboarding Packs"
+msgstr "Onboarding Packs"
+
 #. js-lingui-id: 37OSdM
 #: src/case-studies/case-study-stories.ts
 msgid "One *API* to rule them all"
@@ -3386,6 +3605,7 @@ msgstr "Open-source, AI-ready, and yours to shape."
 
 #. js-lingui-id: ucgZ0o
 #: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Organization"
 msgstr "Organization"
 
@@ -3567,6 +3787,11 @@ msgstr "Press Enter or comma to add a skill."
 msgid "Previous testimonial"
 msgstr "Previous testimonial"
 
+#. js-lingui-id: a7u1N9
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Price"
+msgstr "Price"
+
 #. js-lingui-id: aHCEmh
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -3593,6 +3818,7 @@ msgstr "Principal and Founder, Alternative Partners"
 
 #. js-lingui-id: k62X/2
 #: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Priority support"
 msgstr "Priority support"
 
@@ -3609,6 +3835,7 @@ msgstr "Privacy Policy | Twenty"
 
 #. js-lingui-id: 3fPjUY
 #: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Pro"
 msgstr "Pro"
 
@@ -3688,6 +3915,11 @@ msgstr "Reach out"
 msgid "Read the case"
 msgstr "Read the case"
 
+#. js-lingui-id: EqCbT9
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Read/Edit/Delete permissions"
+msgstr "Read/Edit/Delete permissions"
+
 #. js-lingui-id: /6qiAz
 #: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
 msgid ""
@@ -3738,6 +3970,11 @@ msgstr "Record is created or updated trigger"
 msgid "Record quarter"
 msgstr "Record quarter"
 
+#. js-lingui-id: PWlTvh
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Records"
+msgstr "Records"
+
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/partner-card.tsx
 #: src/partners-marketplace/filter-bar.tsx
@@ -3781,6 +4018,11 @@ msgstr "Remove {skill}"
 msgid "Rename, download, and delete attachments"
 msgstr "Rename, download, and delete attachments"
 
+#. js-lingui-id: t9yxlZ
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Reports"
+msgstr "Reports"
+
 #. js-lingui-id: SY/an2
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Reports & Dashboards"
@@ -3805,6 +4047,11 @@ msgstr "Resize navbar and side panel"
 #: src/sections/menu/menu.data.ts
 msgid "Resources"
 msgstr "Resources"
+
+#. js-lingui-id: oC2l7f
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "REST & GraphQL API"
+msgstr "REST & GraphQL API"
 
 #. js-lingui-id: kx0s+n
 #: src/case-studies/case-study-stories.ts
@@ -3859,6 +4106,7 @@ msgstr "Romanian"
 #. js-lingui-id: Wdh41P
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Row-level permissions"
 msgstr "Row-level permissions"
 
@@ -3979,6 +4227,16 @@ msgstr "Search a country…"
 msgid "Search in field pickers and add-column menus makes table and layout customization faster."
 msgstr "Search in field pickers and add-column menus makes table and layout customization faster."
 
+#. js-lingui-id: HVOGoW
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Seats limit"
+msgstr "Seats limit"
+
+#. js-lingui-id: a3LDKx
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Security"
+msgstr "Security"
+
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/customers-hero.tsx
 msgid ""
@@ -3987,6 +4245,11 @@ msgid ""
 msgstr ""
 "See how teams\n"
 "build *on Twenty*"
+
+#. js-lingui-id: aB+XpI
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "See more features"
+msgstr "See more features"
 
 #. js-lingui-id: JDp1bg
 #: src/sections/three-cards/product-three-cards-data.ts
@@ -4009,6 +4272,11 @@ msgstr "Select {0}"
 #: src/partner-application/partner-application-copy.ts
 msgid "Select your country"
 msgstr "Select your country"
+
+#. js-lingui-id: sXYD/i
+#: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
+msgid "self"
+msgstr "self"
 
 #. js-lingui-id: 6JhL+3
 #: src/case-studies/case-study-catalog.ts
@@ -4046,6 +4314,7 @@ msgid "Self-hosted workspaces can now track usage more cleanly with usage-based 
 msgstr "Self-hosted workspaces can now track usage more cleanly with usage-based billing support."
 
 #. js-lingui-id: GrBvv/
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/enterprise-activate/enterprise-activate-hero.tsx
 msgid "Self-hosting"
 msgstr "Self-hosting"
@@ -4089,6 +4358,11 @@ msgstr "Ship a product on Twenty"
 #: src/app-preview/terminal/diff/diff-pill.tsx
 msgid "Show changes"
 msgstr "Show changes"
+
+#. js-lingui-id: 6lGV3K
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Show less"
+msgstr "Show less"
 
 #. js-lingui-id: RhU4bB
 #: src/partners-marketplace/filter-bar.tsx
@@ -4215,6 +4489,11 @@ msgstr "Somalia 🇸🇴"
 msgid "Some teammate changes now appear right away, so collaboration feels faster and more up to date."
 msgstr "Some teammate changes now appear right away, so collaboration feels faster and more up to date."
 
+#. js-lingui-id: B/mYo/
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Source code access"
+msgstr "Source code access"
+
 #. js-lingui-id: zHJB/O
 #: src/partner-application/data/partner-country-options.ts
 msgid "South Africa 🇿🇦"
@@ -4245,6 +4524,11 @@ msgstr "Spanish"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Sri Lanka 🇱🇰"
 msgstr "Sri Lanka 🇱🇰"
+
+#. js-lingui-id: vnS6Rf
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "SSO"
+msgstr "SSO"
 
 #. js-lingui-id: uQl22y
 #: src/sections/pricing-plans/plans-data.ts
@@ -4312,6 +4596,11 @@ msgstr "Sub-field Filtering"
 msgid "Sub-field filtering is now supported for currency, address, name, email, link, phone, and actor fields. For example, you can filter by the amount in a currency without needing the full field."
 msgstr "Sub-field filtering is now supported for currency, address, name, email, link, phone, and actor fields. For example, you can filter by the amount in a currency without needing the full field."
 
+#. js-lingui-id: Sv4BSp
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Subdomain (yourco.twenty.com)"
+msgstr "Subdomain (yourco.twenty.com)"
+
 #. js-lingui-id: H5/rZQ
 #: src/partner-application/partner-application-copy.ts
 msgid "Submit application"
@@ -4327,6 +4616,11 @@ msgstr "Submitting…"
 msgid "Sudan 🇸🇩"
 msgstr "Sudan 🇸🇩"
 
+#. js-lingui-id: XYLcNv
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Support"
+msgstr "Support"
+
 #. js-lingui-id: Aq66kg
 #: src/partner-application/data/partner-country-options.ts
 msgid "Suriname 🇸🇷"
@@ -4336,6 +4630,11 @@ msgstr "Suriname 🇸🇷"
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Swahili"
 msgstr "Swahili"
+
+#. js-lingui-id: 6u3kqB
+#: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
+msgid "swap"
+msgstr "swap"
 
 #. js-lingui-id: b2//Ip
 #: src/partner-application/data/partner-country-options.ts
@@ -4356,6 +4655,12 @@ msgstr "Switzerland 🇨🇭"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Syria 🇸🇾"
 msgstr "Syria 🇸🇾"
+
+#. js-lingui-id: 3w+Aox
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Table, Kanban, Calendar"
+msgstr "Table, Kanban, Calendar"
 
 #. js-lingui-id: ISVD3+
 #: src/partners-marketplace/spoken-language-labels.ts
@@ -4950,6 +5255,11 @@ msgstr "Twenty's certified partners help teams migrate, customise, and operate t
 msgid "Two Factor Authentication"
 msgstr "Two Factor Authentication"
 
+#. js-lingui-id: EIU345
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Two-factor authentication"
+msgstr "Two-factor authentication"
+
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts
 msgid "Type of team *"
@@ -4989,6 +5299,35 @@ msgstr "Ukrainian"
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Unified timeline (emails, events, tasks, notes, files)"
 msgstr "Unified timeline (emails, events, tasks, notes, files)"
+
+#. js-lingui-id: NIuIk1
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Unlimited"
+msgstr "Unlimited"
 
 #. js-lingui-id: q7vKOJ
 #: src/platform/releases/release-notes.tsx
@@ -5051,6 +5390,11 @@ msgstr "User Guide"
 msgid "User impersonation"
 msgstr "User impersonation"
 
+#. js-lingui-id: 3XIgKU
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "User roles"
+msgstr "User roles"
+
 #. js-lingui-id: UCUX2+
 #: src/partner-application/data/partner-scope-options.ts
 msgid "User-side rollout & ongoing support."
@@ -5111,6 +5455,11 @@ msgstr "View on LinkedIn"
 #: src/partners-marketplace/partner-card.tsx
 msgid "View profile"
 msgstr "View profile"
+
+#. js-lingui-id: BAzC1v
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "View types"
+msgstr "View types"
 
 #. js-lingui-id: CsHuOr
 #: src/sections/three-cards/three-cards.data.ts
@@ -5224,6 +5573,7 @@ msgid "We've introduced advanced settings for email and calendar management: <0>
 msgstr "We've introduced advanced settings for email and calendar management: <0>Auto-Create Contact Options:</0> Choose when an email interaction should automatically create a contact. Options include: People I've sent emails to and received emails from People I've sent emails to Don't auto create contact <1>Email Exclusions:</1> Ability to exclude non-professional emails (e.g., Gmail, Outlook) and team emails (e.g., support@, team@) from being synced to the CRM. <2>Calendar Events:</2> Auto-contact creation settings are now available for calendar events as well."
 
 #. js-lingui-id: v1kQyJ
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/platform/releases/release-notes.tsx
 msgid "Webhooks"
 msgstr "Webhooks"
@@ -5439,6 +5789,7 @@ msgid "Workflow Search Node Limit"
 msgstr "Workflow Search Node Limit"
 
 #. js-lingui-id: woYYQq
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/platform/releases/release-notes.tsx
 msgid "Workflows"
 msgstr "Workflows"
@@ -5452,6 +5803,11 @@ msgstr "Workflows that *actually get used*"
 #: src/case-studies/case-study-stories.ts
 msgid "Workflows that actually get used"
 msgstr "Workflows that actually get used"
+
+#. js-lingui-id: pmUArF
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Workspace"
+msgstr "Workspace"
 
 #. js-lingui-id: bwECg/
 #: src/partner-application/partner-application-copy.ts
@@ -5474,6 +5830,52 @@ msgstr "Yearly"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Yemen 🇾🇪"
 msgstr "Yemen 🇾🇪"
+
+#. js-lingui-id: l75CjT
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-content.tsx
+msgid "Yes"
+msgstr "Yes"
 
 #. js-lingui-id: bo6pUs
 #: src/sections/faq/faq.data.ts
