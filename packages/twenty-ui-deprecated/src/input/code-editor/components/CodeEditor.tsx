@@ -23,85 +23,6 @@ const getCodeEditorContentPadding = (spacing: string) => {
   return Number.isNaN(parsedSpacing) ? undefined : parsedSpacing;
 };
 
-const resolveCssVariable = (value: string) => {
-  if (
-    value.startsWith('var(') &&
-    typeof getComputedStyle === 'function' &&
-    typeof document !== 'undefined'
-  ) {
-    const variableName = value.slice(4, -1);
-
-    return getComputedStyle(document.documentElement)
-      .getPropertyValue(variableName)
-      .trim();
-  }
-
-  return value;
-};
-
-const getCssNumber = (value: string | number) => {
-  if (typeof value === 'number') {
-    return value;
-  }
-
-  const parsedValue = Number.parseFloat(resolveCssVariable(value));
-
-  return Number.isFinite(parsedValue) ? parsedValue : undefined;
-};
-
-const getCssLengthInPixels = (length: string | number) => {
-  if (typeof length === 'number') {
-    return length;
-  }
-
-  const resolvedLength = resolveCssVariable(length);
-  const parsedLength = Number.parseFloat(resolvedLength);
-
-  if (!Number.isFinite(parsedLength)) {
-    return undefined;
-  }
-
-  if (
-    resolvedLength.endsWith('rem') &&
-    typeof getComputedStyle === 'function'
-  ) {
-    const rootFontSize = Number.parseFloat(
-      getComputedStyle(document.documentElement).fontSize,
-    );
-
-    return !Number.isFinite(rootFontSize)
-      ? undefined
-      : parsedLength * rootFontSize;
-  }
-
-  return parsedLength;
-};
-
-const getCodeEditorLineHeight = (theme: ThemeType) => {
-  const fontSize = getCssLengthInPixels(theme.font.size.md);
-  const lineHeight = getCssNumber(theme.text.lineHeight.md);
-
-  return isDefined(fontSize) && isDefined(lineHeight)
-    ? fontSize * lineHeight
-    : undefined;
-};
-
-const getCodeEditorLineCount = (value: string | undefined) =>
-  Math.max(value?.split('\n').length ?? 1, 1);
-
-const getMinimumCodeEditorContentHeight = ({
-  contentPadding,
-  lineCount,
-  lineHeight,
-}: {
-  contentPadding: number | undefined;
-  lineCount: number;
-  lineHeight: number | undefined;
-}) =>
-  isDefined(lineHeight) && Number.isFinite(lineHeight) && lineHeight > 0
-    ? lineCount * lineHeight + (contentPadding ?? 0) * 2
-    : undefined;
-
 const layoutCodeEditor = (
   editor: editor.IStandaloneCodeEditor,
   height: string | number,
@@ -268,15 +189,8 @@ export const CodeEditor = ({
 
   const shouldAutoHeight = autoHeight && !resizable;
   const codeEditorPadding = getCodeEditorContentPadding(theme.spacing[4]);
-  const minimumAutoHeight = shouldAutoHeight
-    ? getMinimumCodeEditorContentHeight({
-        contentPadding: codeEditorPadding,
-        lineCount: getCodeEditorLineCount(value),
-        lineHeight: getCodeEditorLineHeight(theme),
-      })
-    : undefined;
   const currentHeight = shouldAutoHeight
-    ? Math.max(autoHeightContentHeight ?? 0, minimumAutoHeight ?? 0) || height
+    ? (autoHeightContentHeight ?? height)
     : resizable
       ? resizableHeight
       : height;
@@ -332,39 +246,17 @@ export const CodeEditor = ({
   }, [currentHeight, editor, shouldAutoHeight]);
 
   useEffect(() => {
-    if (!shouldAutoHeight || !isDefined(editor) || !isDefined(monaco)) {
+    if (!shouldAutoHeight || !isDefined(editor)) {
       setAutoHeightContentHeight(undefined);
       return;
     }
 
     const updateAutoHeight = () => {
-      const themeLineHeight = getCodeEditorLineHeight(theme);
-      const editorLineHeight = editor.getOption(
-        monaco.editor.EditorOption.lineHeight,
-      );
-      const lineHeight =
-        isDefined(themeLineHeight) && Number.isFinite(themeLineHeight)
-          ? themeLineHeight
-          : editorLineHeight;
+      const nextHeight = editor.getContentHeight();
 
-      if (
-        !isDefined(lineHeight) ||
-        !Number.isFinite(lineHeight) ||
-        lineHeight <= 0
-      ) {
+      if (!Number.isFinite(nextHeight) || nextHeight <= 0) {
         return;
       }
-
-      const lineCount = editor.getModel()?.getLineCount() ?? 1;
-      const minimumContentHeight = getMinimumCodeEditorContentHeight({
-        contentPadding: codeEditorPadding,
-        lineCount,
-        lineHeight,
-      });
-      const nextHeight = Math.max(
-        editor.getContentHeight(),
-        minimumContentHeight ?? 0,
-      );
 
       setAutoHeightContentHeight((currentHeight) =>
         currentHeight === nextHeight ? currentHeight : nextHeight,
@@ -378,7 +270,7 @@ export const CodeEditor = ({
     return () => {
       disposable.dispose();
     };
-  }, [codeEditorPadding, editor, monaco, shouldAutoHeight, theme, value]);
+  }, [codeEditorPadding, editor, shouldAutoHeight, value]);
 
   return isLoading ? (
     <StyledEditorLoader height={currentHeight} variant={variant}>

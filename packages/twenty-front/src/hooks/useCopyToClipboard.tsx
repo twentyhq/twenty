@@ -24,6 +24,8 @@ const copyToClipboardWithTextArea = (valueAsString: string) => {
 
   try {
     return document.execCommand('copy');
+  } catch {
+    return false;
   } finally {
     document.body.removeChild(textarea);
   }
