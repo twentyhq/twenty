@@ -128,13 +128,13 @@ describe('query tool execution (integration)', () => {
 
     expect(payload.success).toBe(true);
 
-    const records = (payload.result as FindResult).records;
+    const result = payload.result as FindResult;
 
-    expect(records).toHaveLength(3);
-    expect((payload.result as FindResult).count).toBe(3);
-    expect(records[0].employees).toBe(30);
-    expect(records[records.length - 1].employees).toBe(10);
-    expect(records.map((record) => record.name).sort()).toEqual(
+    expect(result.records).toHaveLength(3);
+    expect(result.count).toBe(3);
+    expect(result.records[0].employees).toBe(30);
+    expect(result.records[result.records.length - 1].employees).toBe(10);
+    expect(result.records.map((record) => record.name).sort()).toEqual(
       [`${prefix} Alpha`, `${prefix} Beta`, `${prefix} Gamma`].sort(),
     );
   });

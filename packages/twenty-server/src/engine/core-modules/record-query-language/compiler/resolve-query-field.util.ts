@@ -1,9 +1,13 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { shouldExcludeFieldFromAgentToolSchema } from 'twenty-shared/utils';
+import { getEditDistance } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
-import { type QueryCompileError } from 'src/engine/core-modules/record-query-language/types/query-compile-result.type';
+import {
+  type QueryCompileError,
+  type QueryCompileErrorCode,
+} from 'src/engine/core-modules/record-query-language/types/query-compile-result.type';
 import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/field-filters.zod-schema';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -26,8 +30,10 @@ export type QueryFieldResolution =
 
 export type QueryFieldResolver = {
   resolve: (fieldPath: string, astPath: string) => QueryFieldResolution;
-  // Canonical filterable field names (FK column for relations), for select
-  // validation and did-you-mean suggestions.
+  // Closest filterable field name to the input, for did-you-mean errors.
+  suggest: (input: string) => string | undefined;
+  // Canonical filterable field names (FK column for relations), used to
+  // validate select entries at field granularity.
   fieldNames: string[];
 };
 
@@ -64,29 +70,6 @@ const isNestedSchema = (objectSchema: z.ZodObject<z.ZodRawShape>): boolean =>
     (value) => unwrapToObjectSchema(value as z.ZodType) !== null,
   );
 
-const levenshtein = (a: string, b: string): number => {
-  const distances = Array.from({ length: b.length + 1 }, (_, index) => index);
-
-  for (let i = 1; i <= a.length; i++) {
-    let previous = distances[0];
-
-    distances[0] = i;
-
-    for (let j = 1; j <= b.length; j++) {
-      const current = distances[j];
-
-      distances[j] = Math.min(
-        distances[j] + 1,
-        distances[j - 1] + 1,
-        previous + (a[i - 1] === b[j - 1] ? 0 : 1),
-      );
-      previous = current;
-    }
-  }
-
-  return distances[b.length];
-};
-
 const suggestClosest = (
   input: string,
   candidates: string[],
@@ -95,7 +78,10 @@ const suggestClosest = (
   let bestDistance = Number.POSITIVE_INFINITY;
 
   for (const candidate of candidates) {
-    const distance = levenshtein(input.toLowerCase(), candidate.toLowerCase());
+    const distance = getEditDistance(
+      input.toLowerCase(),
+      candidate.toLowerCase(),
+    );
 
     if (distance < bestDistance) {
       bestDistance = distance;
@@ -124,33 +110,55 @@ export const createQueryFieldResolver = (
     filterableFields.map((field) => [field.name, field]),
   );
 
+  // Compile each field's filter schema once. resolve() reuses these instead of
+  // recomputing generateFieldFilterZodSchema per lookup (SELECT/MULTI_SELECT
+  // allocate a fresh enum schema on every call).
+  const objectSchemaByName = new Map<string, z.ZodObject<z.ZodRawShape>>();
   const fieldNames: string[] = [];
 
   for (const field of filterableFields) {
-    if (generateFieldFilterZodSchema(field) === null) {
+    const fieldSchema = generateFieldFilterZodSchema(field);
+    const objectSchema =
+      fieldSchema !== null ? unwrapToObjectSchema(fieldSchema) : null;
+
+    if (objectSchema === null) {
       continue;
     }
 
+    objectSchemaByName.set(field.name, objectSchema);
     fieldNames.push(
       isManyToOneRelation(field) ? `${field.name}Id` : field.name,
     );
   }
 
+  const suggest = (input: string): string | undefined =>
+    suggestClosest(input, fieldNames);
+
   const resolve = (
     fieldPath: string,
     astPath: string,
   ): QueryFieldResolution => {
+    const fail = (
+      code: QueryCompileErrorCode,
+      message: string,
+      suggestion?: string,
+    ): QueryFieldResolution => ({
+      ok: false,
+      error: {
+        path: astPath,
+        code,
+        message,
+        ...(suggestion !== undefined ? { suggestion } : {}),
+      },
+    });
+
     const segments = fieldPath.split('.');
 
     if (segments.length > 2) {
-      return {
-        ok: false,
-        error: {
-          path: astPath,
-          code: 'relation_path_too_deep',
-          message: `"${fieldPath}" traverses more than one relation, which is not supported. Filter relations by their FK column instead (e.g. "companyId").`,
-        },
-      };
+      return fail(
+        'relation_path_too_deep',
+        `"${fieldPath}" traverses more than one relation, which is not supported. Filter relations by their FK column instead (e.g. "companyId").`,
+      );
     }
 
     const [head, subField] = segments;
@@ -167,42 +175,28 @@ export const createQueryFieldResolver = (
     }
 
     if (field === undefined) {
-      return {
-        ok: false,
-        error: {
-          path: astPath,
-          code: 'unknown_field',
-          message: `Unknown field "${head}" on ${objectMetadata.nameSingular}.`,
-          suggestion: suggestClosest(head, fieldNames),
-        },
-      };
+      return fail(
+        'unknown_field',
+        `Unknown field "${head}" on ${objectMetadata.nameSingular}.`,
+        suggestClosest(head, fieldNames),
+      );
     }
 
-    const fieldSchema = generateFieldFilterZodSchema(field);
-    const objectSchema =
-      fieldSchema !== null ? unwrapToObjectSchema(fieldSchema) : null;
+    const objectSchema = objectSchemaByName.get(field.name);
 
-    if (objectSchema === null) {
-      return {
-        ok: false,
-        error: {
-          path: astPath,
-          code: 'field_not_filterable',
-          message: `Field "${field.name}" cannot be filtered.`,
-        },
-      };
+    if (objectSchema === undefined) {
+      return fail(
+        'field_not_filterable',
+        `Field "${field.name}" cannot be filtered.`,
+      );
     }
 
     if (isManyToOneRelation(field)) {
       if (subField !== undefined) {
-        return {
-          ok: false,
-          error: {
-            path: astPath,
-            code: 'relation_path_too_deep',
-            message: `Cannot filter relation "${field.name}" by a related field. Filter by its FK column "${field.name}Id" instead.`,
-          },
-        };
+        return fail(
+          'relation_path_too_deep',
+          `Cannot filter relation "${field.name}" by a related field. Filter by its FK column "${field.name}Id" instead.`,
+        );
       }
 
       return {
@@ -220,15 +214,11 @@ export const createQueryFieldResolver = (
       const subFieldNames = Object.keys(objectSchema.shape);
 
       if (subField === undefined) {
-        return {
-          ok: false,
-          error: {
-            path: astPath,
-            code: 'composite_subfield_required',
-            message: `Field "${field.name}" is composite — target a subfield (e.g. "${field.name}.${subFieldNames[0]}"). Available: ${subFieldNames.join(', ')}.`,
-            suggestion: `${field.name}.${subFieldNames[0]}`,
-          },
-        };
+        return fail(
+          'composite_subfield_required',
+          `Field "${field.name}" is composite — target a subfield (e.g. "${field.name}.${subFieldNames[0]}"). Available: ${subFieldNames.join(', ')}.`,
+          `${field.name}.${subFieldNames[0]}`,
+        );
       }
 
       const subFieldSchemaRaw = objectSchema.shape[subField] as
@@ -240,15 +230,11 @@ export const createQueryFieldResolver = (
           : null;
 
       if (subFieldSchema === null) {
-        return {
-          ok: false,
-          error: {
-            path: astPath,
-            code: 'unknown_field',
-            message: `Unknown subfield "${subField}" on composite field "${field.name}".`,
-            suggestion: suggestClosest(subField, subFieldNames),
-          },
-        };
+        return fail(
+          'unknown_field',
+          `Unknown subfield "${subField}" on composite field "${field.name}".`,
+          suggestClosest(subField, subFieldNames),
+        );
       }
 
       return {
@@ -263,14 +249,10 @@ export const createQueryFieldResolver = (
     }
 
     if (subField !== undefined) {
-      return {
-        ok: false,
-        error: {
-          path: astPath,
-          code: 'unknown_field',
-          message: `Field "${field.name}" is scalar and takes no subfield "${subField}".`,
-        },
-      };
+      return fail(
+        'unknown_field',
+        `Field "${field.name}" is scalar and takes no subfield "${subField}".`,
+      );
     }
 
     return {
@@ -284,5 +266,5 @@ export const createQueryFieldResolver = (
     };
   };
 
-  return { resolve, fieldNames };
+  return { resolve, suggest, fieldNames };
 };

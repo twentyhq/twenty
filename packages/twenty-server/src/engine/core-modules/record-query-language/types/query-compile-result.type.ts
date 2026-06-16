@@ -6,8 +6,7 @@ export type QueryCompileErrorCode =
   | 'composite_subfield_required'
   | 'operator_not_allowed'
   | 'value_type_mismatch'
-  | 'relation_path_too_deep'
-  | 'unknown_aggregate_operation';
+  | 'relation_path_too_deep';
 
 export type QueryCompileError = {
   // Location inside the AST, e.g. "where.of[1].field" or "select[0]".
@@ -19,5 +18,5 @@ export type QueryCompileError = {
 };
 
 export type QueryCompileResult =
-  | { ok: true; query: CompiledQuery; warnings: string[] }
+  | { ok: true; query: CompiledQuery }
   | { ok: false; errors: QueryCompileError[] };

@@ -1,5 +1,8 @@
 import { type QueryCompileError } from 'src/engine/core-modules/record-query-language/types/query-compile-result.type';
-import { type QueryFilterNode } from 'src/engine/core-modules/record-query-language/types/query-ast.type';
+import {
+  type QueryComparisonNode,
+  type QueryFilterNode,
+} from 'src/engine/core-modules/record-query-language/types/query-ast.type';
 import {
   buildNestedTree,
   type QueryFieldResolver,
@@ -11,7 +14,7 @@ export type CompiledFilterNode = {
 };
 
 const compileComparison = (
-  node: Extract<QueryFilterNode, { type: 'cmp' }>,
+  node: QueryComparisonNode,
   resolver: QueryFieldResolver,
   astPath: string,
 ): CompiledFilterNode => {
