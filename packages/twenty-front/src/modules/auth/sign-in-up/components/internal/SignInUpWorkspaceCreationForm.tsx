@@ -34,8 +34,13 @@ const StyledAvailableHint = styled.div`
   margin-top: ${themeCssVariables.spacing[0.5]};
 `;
 
-const StyledSuggestionContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[1]};
+const StyledUnavailableHint = styled.div`
+  color: ${themeCssVariables.color.red};
+  display: flex;
+  flex-direction: column;
+  font-size: ${themeCssVariables.font.size.xs};
+  gap: ${themeCssVariables.spacing[1]};
+  margin-top: ${themeCssVariables.spacing[0.5]};
 `;
 
 export const SignInUpWorkspaceCreationForm = () => {
@@ -123,7 +128,7 @@ export const SignInUpWorkspaceCreationForm = () => {
             isNonEmptyString(frontDomain) ? `.${frontDomain}` : undefined
           }
           error={subdomainError}
-          noErrorHelper={!isDefined(subdomainError)}
+          noErrorHelper={status === 'unavailable' || !isDefined(subdomainError)}
           fullWidth
         />
         {status === 'checking' && <InputHint>{t`Checking…`}</InputHint>}
@@ -132,12 +137,15 @@ export const SignInUpWorkspaceCreationForm = () => {
             {t`This address is available`}
           </StyledAvailableHint>
         )}
-        {status === 'unavailable' && isDefined(suggestion) && (
-          <StyledSuggestionContainer>
-            <ClickToActionLink onClick={applySuggestion}>
-              {t`Use ${suggestion} instead`}
-            </ClickToActionLink>
-          </StyledSuggestionContainer>
+        {status === 'unavailable' && (
+          <StyledUnavailableHint>
+            {subdomainError}
+            {isDefined(suggestion) && (
+              <ClickToActionLink onClick={applySuggestion}>
+                {t`Use ${suggestion} instead`}
+              </ClickToActionLink>
+            )}
+          </StyledUnavailableHint>
         )}
       </StyledSection>
       <StyledButtonContainer>
