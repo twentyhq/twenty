@@ -1,9 +1,7 @@
 import { type Sandbox } from '@e2b/code-interpreter';
 
-import {
-  getOrCreateSessionSandbox,
-  SESSION_SANDBOX_METADATA_KEY,
-} from 'src/engine/core-modules/code-interpreter/drivers/utils/get-or-create-session-sandbox.util';
+import { SESSION_SANDBOX_METADATA_KEY } from 'src/engine/core-modules/code-interpreter/constants/session-sandbox-metadata-key.constant';
+import { getOrCreateSessionSandbox } from 'src/engine/core-modules/code-interpreter/drivers/utils/get-or-create-session-sandbox.util';
 
 type SandboxApiMock = {
   list: jest.Mock;

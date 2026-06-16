@@ -1,10 +1,7 @@
 import { type Sandbox } from '@e2b/code-interpreter';
 
-import { SESSION_SANDBOX_METADATA_KEY } from 'src/engine/core-modules/code-interpreter/drivers/utils/get-or-create-session-sandbox.util';
-import {
-  releaseSessionSandboxes,
-  sweepExpiredSessionSandboxes,
-} from 'src/engine/core-modules/code-interpreter/drivers/utils/session-sandbox-gc.util';
+import { SESSION_SANDBOX_METADATA_KEY } from 'src/engine/core-modules/code-interpreter/constants/session-sandbox-metadata-key.constant';
+import { sweepExpiredSessionSandboxes } from 'src/engine/core-modules/code-interpreter/drivers/utils/sweep-expired-session-sandboxes.util';
 
 const apiKey = 'test-api-key';
 const sessionId = 'workspace-1:thread-1';
@@ -13,7 +10,6 @@ const dayMs = 24 * 60 * 60 * 1000;
 type ListedSandbox = {
   sandboxId: string;
   metadata: Record<string, string>;
-  // E2B returns this as an ISO string at runtime even though it's typed Date.
   startedAt: string;
 };
 
@@ -46,37 +42,6 @@ const sandboxInfo = (
   sandboxId,
   metadata: tag === null ? {} : { [SESSION_SANDBOX_METADATA_KEY]: tag },
   startedAt: new Date(Date.now() - ageMs).toISOString(),
-});
-
-describe('releaseSessionSandboxes', () => {
-  it('kills every sandbox tagged for the session', async () => {
-    const { api, kill, list } = buildApi([
-      sandboxInfo('sbx-1'),
-      sandboxInfo('sbx-2'),
-    ]);
-
-    await releaseSessionSandboxes(api, apiKey, sessionId);
-
-    expect(list).toHaveBeenCalledWith({
-      apiKey,
-      query: {
-        state: ['running', 'paused'],
-        metadata: { [SESSION_SANDBOX_METADATA_KEY]: sessionId },
-      },
-    });
-    expect(kill).toHaveBeenCalledWith('sbx-1', { apiKey });
-    expect(kill).toHaveBeenCalledWith('sbx-2', { apiKey });
-  });
-
-  it('ignores a sandbox whose tag does not match the session', async () => {
-    const { api, kill } = buildApi([
-      sandboxInfo('sbx-other', { tag: 'workspace-2:thread-9' }),
-    ]);
-
-    await releaseSessionSandboxes(api, apiKey, sessionId);
-
-    expect(kill).not.toHaveBeenCalled();
-  });
 });
 
 describe('sweepExpiredSessionSandboxes', () => {

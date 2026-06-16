@@ -2,7 +2,7 @@ import { type Sandbox } from '@e2b/code-interpreter';
 
 import { isDefined } from 'twenty-shared/utils';
 
-export const SESSION_SANDBOX_METADATA_KEY = 'twentySessionId';
+import { SESSION_SANDBOX_METADATA_KEY } from 'src/engine/core-modules/code-interpreter/constants/session-sandbox-metadata-key.constant';
 
 type SandboxApi = typeof Sandbox;
 

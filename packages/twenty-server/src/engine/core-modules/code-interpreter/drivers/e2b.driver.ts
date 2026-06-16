@@ -8,10 +8,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_CODE_INTERPRETER_TIMEOUT_MS } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
 import { getOrCreateSessionSandbox } from 'src/engine/core-modules/code-interpreter/drivers/utils/get-or-create-session-sandbox.util';
-import {
-  releaseSessionSandboxes,
-  sweepExpiredSessionSandboxes,
-} from 'src/engine/core-modules/code-interpreter/drivers/utils/session-sandbox-gc.util';
+import { releaseSessionSandboxes } from 'src/engine/core-modules/code-interpreter/drivers/utils/release-session-sandboxes.util';
+import { sweepExpiredSessionSandboxes } from 'src/engine/core-modules/code-interpreter/drivers/utils/sweep-expired-session-sandboxes.util';
 import { getMimeType } from 'src/engine/core-modules/code-interpreter/utils/get-mime-type.util';
 
 import {
