@@ -13,6 +13,7 @@ import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { buildBreadcrumbListJsonLd, JsonLd } from '@/platform/seo';
 import {
+  CaseStudyArticleNav,
   CaseStudyBody,
   CaseStudyHero,
   CaseStudyHighlights,
@@ -84,6 +85,7 @@ export default async function CaseStudyPage({
         />
         <CaseStudyHighlights industry={entry.industry} kpis={entry.kpis} />
         <CaseStudyBody story={story} />
+        <CaseStudyArticleNav items={story.tableOfContents} />
         <CustomersCaseStudySignoff />
       </main>
     </>

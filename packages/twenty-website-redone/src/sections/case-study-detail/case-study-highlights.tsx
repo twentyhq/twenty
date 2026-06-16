@@ -5,6 +5,8 @@ import { styled } from '@linaria/react';
 import { type CaseStudyKpi, CaseStudyStatGrid } from '@/case-studies';
 import { SectionShell } from '@/ui';
 
+import { CASE_STUDY_HIGHLIGHTS_ANCHOR } from './case-study-highlights-anchor';
+
 const Frame = styled.div`
   margin-inline: auto;
   max-width: 556px;
@@ -27,7 +29,7 @@ export function CaseStudyHighlights({
 
   return (
     <SectionShell scheme="light">
-      <Frame>
+      <Frame id={CASE_STUDY_HIGHLIGHTS_ANCHOR}>
         <CaseStudyStatGrid cells={cells} frame="band" />
       </Frame>
     </SectionShell>

@@ -1531,6 +1531,7 @@ msgstr ""
 #. js-lingui-id: 30qcNY
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
+#: src/sections/case-study-detail/case-study-article-nav.tsx
 msgid "Discord (opens in new tab)"
 msgstr ""
 
@@ -2128,6 +2129,7 @@ msgstr ""
 #. js-lingui-id: 3QRTgQ
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
+#: src/sections/case-study-detail/case-study-article-nav.tsx
 msgid "GitHub (opens in new tab)"
 msgstr ""
 
@@ -2742,6 +2744,7 @@ msgstr ""
 #. js-lingui-id: 3hSKC5
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
+#: src/sections/case-study-detail/case-study-article-nav.tsx
 msgid "LinkedIn (opens in new tab)"
 msgstr ""
 
@@ -3240,6 +3243,11 @@ msgstr ""
 #. js-lingui-id: w5ATz2
 #: src/platform/releases/release-notes.tsx
 msgid "On record pages, you can now expand relation cards to view their fields without navigating to their individual record pages. For example, on a Company record page, you can expand an employee card to view their job title. This feature applies to all types of objects, including custom ones."
+msgstr ""
+
+#. js-lingui-id: XhXmzW
+#: src/sections/case-study-detail/case-study-article-nav.tsx
+msgid "On this page"
 msgstr ""
 
 #. js-lingui-id: jxC7HY
@@ -5318,6 +5326,7 @@ msgstr ""
 #. js-lingui-id: p3ZD6C
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
+#: src/sections/case-study-detail/case-study-article-nav.tsx
 msgid "X (opens in new tab)"
 msgstr ""
 
