@@ -24,7 +24,7 @@ import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTrigge
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
-import { findById, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui-deprecated/display';
 import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
@@ -98,7 +98,9 @@ export const SidePanelWorkflowStepInfo = ({
       : undefined;
 
   const logicFunctionApplicationId = isDefined(logicFunctionId)
-    ? logicFunctions.find(findById(logicFunctionId))?.applicationId
+    ? logicFunctions.find(
+        (logicFunction) => logicFunction.id === logicFunctionId,
+      )?.applicationId
     : undefined;
 
   const isThirdPartyApplication = useIsThirdPartyApplication(
