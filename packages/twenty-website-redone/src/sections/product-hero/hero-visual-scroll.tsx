@@ -22,6 +22,7 @@ import {
   buildSchemeDeclarations,
   color,
   fontSize,
+  MAX_CONTENT_WIDTH_PX,
   mediaUp,
   PRODUCT_HERO_SCENE,
   spacing,
@@ -116,6 +117,9 @@ function sameDiscrete(a: HeroDiscreteState, b: HeroDiscreteState): boolean {
 
 const PatternOverlay = styled.div`
   inset: 0;
+  margin-inline: auto;
+  max-width: ${MAX_CONTENT_WIDTH_PX}px;
+  overflow: clip;
   pointer-events: none;
   position: absolute;
   z-index: -1;
@@ -709,7 +713,7 @@ export function HeroVisualScroll({
               </ActionSlot>
             </IntroContainer>
             <VisualWrapper>
-              <PatternOverlay>
+              <PatternOverlay data-background-layer="">
                 {isDesktop ? <ProductBackdrop dash="blue" /> : null}
               </PatternOverlay>
               <ProductVisual
@@ -791,7 +795,7 @@ export function HeroVisualScroll({
               </ActionSlot>
             </IntroContainer>
             <VisualWrapper id="product-hero-ai-panel" role="tabpanel">
-              <PatternOverlay>
+              <PatternOverlay data-background-layer="">
                 {isDesktop ? <ProductBackdrop dash="white" /> : null}
               </PatternOverlay>
               <ProductVisual

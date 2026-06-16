@@ -3,6 +3,7 @@ import { type ReactNode } from 'react';
 
 import {
   buildSchemeContext,
+  MAX_CONTENT_WIDTH_PX,
   mediaUp,
   RHYTHM,
   type Scheme,
@@ -102,6 +103,8 @@ const sectionShellClassName = css`
 
 const backgroundLayerClassName = css`
   inset: 0;
+  margin-inline: auto;
+  max-width: ${MAX_CONTENT_WIDTH_PX}px;
   overflow: clip;
   pointer-events: none;
   position: absolute;
@@ -115,7 +118,8 @@ const contentLayerClassName = css`
 
 export type SectionShellProps = {
   ariaLabel?: string;
-  // Decorative full-bleed layer behind the content (gradients, visuals).
+  // Decorative layer behind the content (gradients, visuals), capped at the
+  // content width — only the section's solid colour bleeds full-width.
   background?: ReactNode;
   children: ReactNode;
   // Forms one continuous frame with the section directly above (same scheme):
@@ -152,7 +156,11 @@ export function SectionShell({
       data-scheme={scheme}
     >
       {background !== undefined && (
-        <div aria-hidden className={backgroundLayerClassName}>
+        <div
+          aria-hidden
+          className={backgroundLayerClassName}
+          data-background-layer=""
+        >
           {background}
         </div>
       )}
