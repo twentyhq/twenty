@@ -1,0 +1,25 @@
+packages/twenty-server/src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider.ts
+  s_b791a762ae8e2d::t_a2b65af7c60c1a 75-79
+packages/twenty-server/src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service.ts
+  s_b791a762ae8e2d::t_8bddf0afb7a2f5 22,25
+  s_b791a762ae8e2d::t_1ac30724e345c4 23-24,26
+packages/twenty-server/src/engine/core-modules/auth/services/google-apis-service-availability.service.ts
+  s_b791a762ae8e2d::t_9b48256eeac314 23,26
+  s_b791a762ae8e2d::t_ec454950c29e82 24-25,27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "4e5c04716524bad787dc301aaab1409859c214e3",
+  "prompts": {},
+  "sessions": {
+    "s_b791a762ae8e2d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "011ab88a-fc16-4877-85c8-8d34b3fc5e93",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
