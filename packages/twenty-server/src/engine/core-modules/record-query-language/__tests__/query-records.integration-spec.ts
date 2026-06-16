@@ -131,9 +131,11 @@ describe('query tool execution (integration)', () => {
     const result = payload.result as FindResult;
 
     expect(result.records).toHaveLength(3);
-    expect(result.count).toBe(3);
-    expect(result.records[0].employees).toBe(30);
-    expect(result.records[result.records.length - 1].employees).toBe(10);
+    expect(Number(result.count)).toBe(3);
+    expect(Number(result.records[0].employees)).toBe(30);
+    expect(Number(result.records[result.records.length - 1].employees)).toBe(
+      10,
+    );
     expect(result.records.map((record) => record.name).sort()).toEqual(
       [`${prefix} Alpha`, `${prefix} Beta`, `${prefix} Gamma`].sort(),
     );
