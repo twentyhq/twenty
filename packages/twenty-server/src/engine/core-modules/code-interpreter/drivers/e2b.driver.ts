@@ -149,6 +149,7 @@ export class E2BDriver implements CodeInterpreterDriver {
           if (file.type === 'file') {
             const content = await sandbox.files.read(
               `/home/user/output/${file.name}`,
+              { format: 'bytes' },
             );
 
             const outputFile: OutputFile = {
