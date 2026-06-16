@@ -49,6 +49,15 @@ export const Default: Story = {
     const selectedOption = await canvas.findByText('Work Policy');
 
     expect(selectedOption).toBeVisible();
+
+    const selectControl = await canvas.findByText('Work Policy 1');
+    await userEvent.click(selectControl);
+
+    const dropdown = within(canvasElement.ownerDocument.body);
+
+    await waitFor(() => {
+      expect(dropdown.getByText('No Work Policy')).toBeVisible();
+    });
   },
 };
 

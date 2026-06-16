@@ -97,13 +97,13 @@ export const FormSelectFieldInput = ({
     (option) => option.value === draftValue.value,
   );
 
-  const emptyOption = !isNullable
-    ? undefined
-    : {
+  const emptyOption = isNullable
+    ? {
         label: label ? t`No ${label}` : t`No value`,
         value: '',
         icon: IconCircleOff,
-      };
+      }
+    : undefined;
 
   const handleUnlinkVariable = () => {
     setDraftValue({
