@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { color, mediaUp, radius, spacing } from '@/tokens';
+import { color, mediaUp, radius, REDUCED_MOTION, spacing } from '@/tokens';
 import {
   Eyebrow,
   Heading,
@@ -29,6 +29,11 @@ const IntroMeasure = styled.div`
   }
 `;
 
+// The bento's authored column ratios (60/40 alternating across rows) and the
+// muted-surface depth pattern, indexed by tile (spotlight first).
+const CARD_SPANS = [60, 40, 40, 60, 60, 40];
+const TILE_MUTED = [true, false, true, true, false, false, true];
+
 const Grid = styled.div`
   border: 1px solid ${color('black-20')};
   border-radius: ${radius(2)};
@@ -37,7 +42,7 @@ const Grid = styled.div`
   overflow: hidden;
 
   ${mediaUp('md')} {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(100, 1fr);
   }
 `;
 
@@ -47,8 +52,12 @@ const SpotlightCell = styled.div`
   flex-direction: column;
   min-width: 0;
 
+  &[data-muted] {
+    background-color: ${color('neutral')};
+  }
+
   ${mediaUp('md')} {
-    grid-column: span 2;
+    grid-column: span 100;
   }
 `;
 
@@ -58,7 +67,19 @@ const GridCell = styled.div`
   flex-direction: column;
   min-width: 0;
 
+  &[data-muted] {
+    background-color: ${color('neutral')};
+  }
+
   ${mediaUp('md')} {
+    &[data-span='40'] {
+      grid-column: span 40;
+    }
+
+    &[data-span='60'] {
+      grid-column: span 60;
+    }
+
     &:nth-child(even) {
       border-right: 1px solid ${color('black-20')};
     }
@@ -74,26 +95,37 @@ const SpotlightInner = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
-
-  ${mediaUp('md')} {
-    flex-direction: row;
-    min-height: 420px;
-  }
 `;
 
 const SpotlightContent = styled.div`
-  ${mediaUp('md')} {
-    flex: 1;
-    min-width: 0;
-  }
+  width: 100%;
 `;
 
 const SpotlightVisual = styled.div`
+  margin: ${spacing(4)};
   min-height: 260px;
+  overflow: hidden;
+  transform-origin: center;
+  transition:
+    transform 0.3s ease,
+    filter 0.25s ease;
+
+  &:hover {
+    filter: brightness(1.06);
+    transform: scale(1.01);
+  }
+
+  ${REDUCED_MOTION} {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
 
   ${mediaUp('md')} {
-    flex: 1.1;
-    min-width: 0;
+    margin: ${spacing(5)};
+    min-height: 420px;
   }
 `;
 
@@ -109,6 +141,23 @@ const CardVisualFrame = styled.div`
   margin: ${spacing(4)} ${spacing(4)} 0;
   overflow: hidden;
   position: relative;
+  transform-origin: center;
+  transition:
+    transform 0.3s ease,
+    filter 0.25s ease;
+
+  &:hover {
+    filter: brightness(1.06);
+    transform: scale(1.018);
+  }
+
+  ${REDUCED_MOTION} {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
 
   ${mediaUp('md')} {
     height: 340px;
@@ -138,7 +187,10 @@ function Tiles({ tiles }: { tiles: FeatureTile[] }) {
 
         if (tileNumber === 0) {
           return (
-            <SpotlightCell key={tileNumber}>
+            <SpotlightCell
+              key={tileNumber}
+              data-muted={TILE_MUTED[tileNumber] ? '' : undefined}
+            >
               <ScrollEntrance>
                 <SpotlightInner>
                   <SpotlightContent>
@@ -154,7 +206,11 @@ function Tiles({ tiles }: { tiles: FeatureTile[] }) {
         }
 
         return (
-          <GridCell key={tileNumber}>
+          <GridCell
+            key={tileNumber}
+            data-muted={TILE_MUTED[tileNumber] ? '' : undefined}
+            data-span={CARD_SPANS[tileNumber - 1]}
+          >
             <ScrollEntrance>
               <CardInner>
                 <CardVisualFrame>
