@@ -77,6 +77,8 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = ({
     updatedAt: objectMetadataEntity.updatedAt.toISOString(),
     viewIds: objectMetadataEntity.views.map(({ id }) => id),
     indexMetadataIds: objectMetadataEntity.indexMetadatas.map(({ id }) => id),
+    searchFieldMetadataIds:
+      objectMetadataEntity.searchFieldMetadatas?.map(({ id }) => id) ?? [],
     fieldIds: objectMetadataEntity.fields.map(({ id }) => id),
     objectPermissionIds: objectMetadataEntity.objectPermissions.map(
       ({ id }) => id,
@@ -92,6 +94,10 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = ({
     indexMetadataUniversalIdentifiers: objectMetadataEntity.indexMetadatas.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
+    searchFieldMetadataUniversalIdentifiers:
+      objectMetadataEntity.searchFieldMetadatas?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
     viewUniversalIdentifiers: objectMetadataEntity.views.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
