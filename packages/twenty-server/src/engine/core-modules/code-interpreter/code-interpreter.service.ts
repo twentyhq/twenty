@@ -15,13 +15,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class CodeInterpreterService implements CodeInterpreterDriver {
-  // Serializes calls that share a reused sandbox so concurrent tool calls can't
-  // race the same kernel. In-process is sufficient: a thread has at most one
-  // active stream at a time (the chat resolver queues new messages while the
-  // thread's activeStreamId is set), and that stream runs as a single job in one
-  // worker process — so the only concurrency to guard is parallel tool calls
-  // within a single turn, which share this process. The session key is
-  // workspaceId:threadId, so distinct threads never contend for the same entry.
+  // One active stream per thread (the chat resolver queues the rest), so
+  // in-process chaining is enough to serialize a session — no distributed lock.
   private readonly sessionExecutionTails = new Map<string, Promise<void>>();
 
   constructor(
@@ -44,8 +39,6 @@ export class CodeInterpreterService implements CodeInterpreterDriver {
   ): Promise<CodeExecutionResult> {
     const sessionId = context?.sessionId;
 
-    // A reused sandbox is shared across a conversation's calls; serialize them
-    // so concurrent tool calls can't race the same kernel.
     if (isDefined(sessionId)) {
       return this.runSerializedPerSession(sessionId, () =>
         this.runOnDriver(code, files, context, callbacks),
@@ -66,8 +59,6 @@ export class CodeInterpreterService implements CodeInterpreterDriver {
       .execute(code, files, context, callbacks);
   }
 
-  // Chains each new task on the session's previous one so executions sharing a
-  // session run strictly one after another.
   private async runSerializedPerSession<T>(
     sessionId: string,
     task: () => Promise<T>,

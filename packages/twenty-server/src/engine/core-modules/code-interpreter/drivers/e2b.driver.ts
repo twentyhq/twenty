@@ -84,8 +84,7 @@ export class E2BDriver implements CodeInterpreterDriver {
     }
 
     try {
-      // Pre-installed scripts only need uploading to a fresh sandbox; a reused
-      // one already has them, along with its prior files and kernel state.
+      // A reused sandbox already has the scripts from its first run.
       if (!isReused) {
         try {
           await uploadDirectoryToSandbox(
@@ -98,9 +97,6 @@ export class E2BDriver implements CodeInterpreterDriver {
         }
       }
 
-      // A reused sandbox still holds the previous call's output files; reset the
-      // output directory so this run only returns the artifacts it produces.
-      // Durable state (working files, kernel variables) is kept across calls.
       if (isReused) {
         await this.resetOutputDirectory(sandbox);
       }
@@ -176,18 +172,12 @@ export class E2BDriver implements CodeInterpreterDriver {
         error: execution.error?.value,
       };
     } finally {
-      // A warm session sandbox is left running for the next call and reclaimed
-      // by E2B after the idle timeout; one-shot sandboxes are torn down now.
       if (!keepWarm) {
         await sandbox.kill();
       }
     }
   }
 
-  // Clear a reused sandbox's output directory before a run. A missing directory
-  // is the expected case (it hasn't produced output yet); any other failure
-  // means stale files could survive into this run's results, so it is logged
-  // instead of being silently swallowed.
   private async resetOutputDirectory(sandbox: Sandbox): Promise<void> {
     const outputDirectory = '/home/user/output';
 

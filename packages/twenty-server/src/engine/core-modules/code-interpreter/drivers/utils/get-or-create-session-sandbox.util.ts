@@ -2,16 +2,72 @@ import { type Sandbox } from '@e2b/code-interpreter';
 
 import { isDefined } from 'twenty-shared/utils';
 
-// Sandboxes are tagged with this metadata so a conversation's sandbox can be
-// found by its session id alone — E2B is the registry, no external store.
 export const SESSION_SANDBOX_METADATA_KEY = 'twentySessionId';
 
+type SandboxApi = typeof Sandbox;
+
 type GetOrCreateSessionSandboxArgs = {
-  sandboxApi: typeof Sandbox;
+  sandboxApi: SandboxApi;
   apiKey: string;
   sessionId: string;
   idleTimeoutMs: number;
 };
+
+const listSandboxesForSession = async (
+  sandboxApi: SandboxApi,
+  apiKey: string,
+  sessionId: string,
+) => {
+  const sandboxes = await sandboxApi.list({
+    apiKey,
+    query: { metadata: { [SESSION_SANDBOX_METADATA_KEY]: sessionId } },
+  });
+
+  // Re-check the tag client-side so a loose server-side match can never reuse
+  // another tenant's sandbox.
+  return sandboxes.filter(
+    (sandbox) => sandbox.metadata?.[SESSION_SANDBOX_METADATA_KEY] === sessionId,
+  );
+};
+
+const connectAndKeepAlive = async (
+  sandboxApi: SandboxApi,
+  apiKey: string,
+  sandboxId: string,
+  idleTimeoutMs: number,
+): Promise<Sandbox | undefined> => {
+  try {
+    const sandbox = await sandboxApi.connect(sandboxId, { apiKey });
+
+    await sandbox.setTimeout(idleTimeoutMs);
+
+    return sandbox;
+  } catch {
+    return undefined;
+  }
+};
+
+const killSandboxById = (
+  sandboxApi: SandboxApi,
+  apiKey: string,
+  sandboxId: string,
+) =>
+  sandboxApi
+    .connect(sandboxId, { apiKey })
+    .then((sandbox) => sandbox.kill())
+    .catch(() => undefined);
+
+const createSessionSandbox = (
+  sandboxApi: SandboxApi,
+  apiKey: string,
+  sessionId: string,
+  idleTimeoutMs: number,
+) =>
+  sandboxApi.create({
+    apiKey,
+    timeoutMs: idleTimeoutMs,
+    metadata: { [SESSION_SANDBOX_METADATA_KEY]: sessionId },
+  });
 
 export const getOrCreateSessionSandbox = async ({
   sandboxApi,
@@ -22,66 +78,46 @@ export const getOrCreateSessionSandbox = async ({
   sandbox: Sandbox;
   isReused: boolean;
 }> => {
-  const runningSandboxes = await sandboxApi.list({
+  const sessionSandboxes = await listSandboxesForSession(
+    sandboxApi,
     apiKey,
-    query: { metadata: { [SESSION_SANDBOX_METADATA_KEY]: sessionId } },
-  });
-
-  // Defense in depth: the list query is filtered server-side, but we re-check
-  // the tag client-side and only ever reuse (or reap) an EXACT match. A warm
-  // sandbox carries the previous turn's files, kernel state and injected token,
-  // so a loose or prefixed metadata match must never hand one session's sandbox
-  // to another tenant.
-  const sessionSandboxes = runningSandboxes.filter(
-    (sandbox) => sandbox.metadata?.[SESSION_SANDBOX_METADATA_KEY] === sessionId,
+    sessionId,
   );
 
-  // Try the candidates in order and keep the first one we can actually connect
-  // to — a listed sandbox may have been reclaimed between list and connect. We
-  // only reap the rest after securing a live one, so a valid sandbox is never
-  // killed before it has been tried.
   let reusedSandbox: Sandbox | undefined;
-  let keptIndex = -1;
+  let reusedSandboxId: string | undefined;
 
-  for (let index = 0; index < sessionSandboxes.length; index++) {
-    try {
-      const sandbox = await sandboxApi.connect(
-        sessionSandboxes[index].sandboxId,
-        { apiKey },
-      );
+  for (const { sandboxId } of sessionSandboxes) {
+    const sandbox = await connectAndKeepAlive(
+      sandboxApi,
+      apiKey,
+      sandboxId,
+      idleTimeoutMs,
+    );
 
-      await sandbox.setTimeout(idleTimeoutMs);
-
+    if (isDefined(sandbox)) {
       reusedSandbox = sandbox;
-      keptIndex = index;
+      reusedSandboxId = sandboxId;
       break;
-    } catch {
-      // Not connectable — try the next candidate.
     }
   }
 
   if (isDefined(reusedSandbox)) {
-    // A race can leave more than one sandbox for a session; reap the ones we
-    // didn't keep instead of letting them linger until their idle timeout.
     await Promise.all(
       sessionSandboxes
-        .filter((_, index) => index !== keptIndex)
-        .map((duplicate) =>
-          sandboxApi
-            .connect(duplicate.sandboxId, { apiKey })
-            .then((sandbox) => sandbox.kill())
-            .catch(() => undefined),
-        ),
+        .filter(({ sandboxId }) => sandboxId !== reusedSandboxId)
+        .map(({ sandboxId }) => killSandboxById(sandboxApi, apiKey, sandboxId)),
     );
 
     return { sandbox: reusedSandbox, isReused: true };
   }
 
-  const sandbox = await sandboxApi.create({
+  const sandbox = await createSessionSandbox(
+    sandboxApi,
     apiKey,
-    timeoutMs: idleTimeoutMs,
-    metadata: { [SESSION_SANDBOX_METADATA_KEY]: sessionId },
-  });
+    sessionId,
+    idleTimeoutMs,
+  );
 
   return { sandbox, isReused: false };
 };
