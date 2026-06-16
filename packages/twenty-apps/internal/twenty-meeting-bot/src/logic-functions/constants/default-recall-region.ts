@@ -1,1 +1,1 @@
-export const DEFAULT_RECALL_REGION = 'ap-northeast-1';
+export const DEFAULT_RECALL_REGION = 'eu-central-1';

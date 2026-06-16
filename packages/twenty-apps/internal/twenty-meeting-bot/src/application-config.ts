@@ -32,7 +32,7 @@ export default defineApplication({
       isRequired: true,
     },
     [RECALL_REGION_ENV_VAR_NAME]: {
-      description: `Recall.ai region used for API requests. Defaults to ${DEFAULT_RECALL_REGION} when unset. Asia Pacific Tokyo is ap-northeast-1.`,
+      description: `Recall.ai region used for API requests. Defaults to ${DEFAULT_RECALL_REGION} when unset. Europe Frankfurt is eu-central-1.`,
       isSecret: false,
     },
     [RECALL_WEBHOOK_SECRET_ENV_VAR_NAME]: {
