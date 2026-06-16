@@ -1,7 +1,7 @@
 import {
   type RecordId,
   type Variable,
-} from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+} from '@/object-record/record-field/ui/form-types/types/RecordPickerValue';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { isValidUuid } from 'twenty-shared/utils';
 
@@ -15,6 +15,15 @@ export type FormMultiRecordPickerDraftValue =
       value: Variable;
     };
 
+const keepRecordIdsAndVariables = (
+  entries: unknown[],
+): Array<RecordId | Variable> =>
+  entries.filter(
+    (entry): entry is string =>
+      typeof entry === 'string' &&
+      (isValidUuid(entry) || isStandaloneVariableString(entry)),
+  );
+
 export const getFormMultiRecordPickerDraftValue = (
   defaultValue:
     | Array<RecordId | Variable>
@@ -26,9 +35,7 @@ export const getFormMultiRecordPickerDraftValue = (
   if (Array.isArray(defaultValue)) {
     return {
       type: 'static',
-      value: defaultValue.filter(
-        (entry): entry is string => typeof entry === 'string',
-      ),
+      value: keepRecordIdsAndVariables(defaultValue),
     };
   }
 
@@ -47,9 +54,7 @@ export const getFormMultiRecordPickerDraftValue = (
       if (Array.isArray(parsedValue)) {
         return {
           type: 'static',
-          value: parsedValue.filter(
-            (entry): entry is string => typeof entry === 'string',
-          ),
+          value: keepRecordIdsAndVariables(parsedValue),
         };
       }
     } catch {

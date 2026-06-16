@@ -3,11 +3,11 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormMultiRecordFieldChips } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips';
+import { useOpenFormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/hooks/useOpenFormMultiRecordPicker';
 import {
   type RecordId,
   type Variable,
-} from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
-import { useOpenFormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/hooks/useOpenFormMultiRecordPicker';
+} from '@/object-record/record-field/ui/form-types/types/RecordPickerValue';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import {
   type FormMultiRecordPickerDraftValue,
@@ -15,14 +15,17 @@ import {
 } from '@/object-record/record-field/ui/form-types/utils/getFormMultiRecordPickerDraftValue';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useContext, useId, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { IconChevronDown } from 'twenty-ui-deprecated/display';
 import {
   ThemeContext,
@@ -83,6 +86,7 @@ export const FormMultiRecordPicker = ({
   const variablesDropdownId = `form-multi-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useCloseDropdown();
+  const { enqueueWarningSnackBar } = useSnackBar();
   const { openFormMultiRecordPicker } = useOpenFormMultiRecordPicker({
     objectNameSingular,
   });
@@ -100,6 +104,15 @@ export const FormMultiRecordPicker = ({
     withSoftDeleted: true,
   });
 
+  const selectedRecordsById = mapArrayToObject(
+    selectedRecords,
+    (record) => record.id,
+  );
+
+  const orderedSelectedRecords = staticRecordIds
+    .map((recordId) => selectedRecordsById[recordId])
+    .filter(isDefined);
+
   const handleOpenDropdown = () => {
     if (draftValue.type !== 'static') {
       return;
@@ -108,7 +121,7 @@ export const FormMultiRecordPicker = ({
     openFormMultiRecordPicker({
       pickerInstanceId: dropdownId,
       selectedRecordIds: staticRecordIds,
-      selectedRecords,
+      selectedRecords: orderedSelectedRecords,
     });
   };
 
@@ -120,6 +133,20 @@ export const FormMultiRecordPicker = ({
     const valueWithoutRecord = draftValue.value.filter(
       (entry) => entry !== morphItem.recordId,
     );
+
+    if (morphItem.isSelected) {
+      const selectedRecordCount = valueWithoutRecord.filter((entry) =>
+        isValidUuid(entry),
+      ).length;
+
+      if (selectedRecordCount >= QUERY_MAX_RECORDS) {
+        enqueueWarningSnackBar({
+          message: t`You can select at most ${QUERY_MAX_RECORDS} records.`,
+        });
+
+        return;
+      }
+    }
 
     const updatedValue = morphItem.isSelected
       ? [...valueWithoutRecord, morphItem.recordId]
@@ -153,7 +180,7 @@ export const FormMultiRecordPicker = ({
   const chips = (
     <FormMultiRecordFieldChips
       draftValue={draftValue}
-      selectedRecords={selectedRecords}
+      selectedRecords={orderedSelectedRecords}
       objectNameSingular={objectNameSingular}
       readonly={readonly}
       onUnlinkVariable={handleUnlinkVariable}
@@ -223,6 +250,7 @@ export const FormMultiRecordPicker = ({
               onVariableSelect={handleVariableTagInsert}
               shouldDisplayRecordObjects={true}
               shouldDisplayRecordFields={true}
+              objectNameSingularsToSelect={[objectNameSingular]}
             />
           </StyledVariablePickerContainer>
         )}

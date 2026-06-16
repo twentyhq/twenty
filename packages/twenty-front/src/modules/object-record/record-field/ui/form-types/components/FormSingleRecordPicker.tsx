@@ -3,6 +3,10 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormSingleRecordFieldChip } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip';
+import {
+  type RecordId,
+  type Variable,
+} from '@/object-record/record-field/ui/form-types/types/RecordPickerValue';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
@@ -48,8 +52,7 @@ const StyledVariablePickerContainer = styled.div`
   flex-shrink: 0;
 `;
 
-export type RecordId = string;
-export type Variable = string;
+export type { RecordId, Variable };
 
 type FormSingleRecordPickerValue =
   | {

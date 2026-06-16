@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import {
+  convertRecordInputsToToolSchema,
   DEFAULT_TOOL_INPUT_SCHEMA,
   stripCustomInputJsonSchemaKeywords,
 } from 'twenty-shared/logic-function';
@@ -49,13 +50,17 @@ export class LogicFunctionToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
 
-    const { flatLogicFunctionMaps } =
+    const { flatLogicFunctionMaps, flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: context.workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatObjectMetadataMaps'],
         },
       );
+
+    const resolveObjectLabel = (objectUniversalIdentifier: string) =>
+      flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier]
+        ?.labelSingular;
 
     const logicFunctionsWithSchema = Object.values(
       flatLogicFunctionMaps.byUniversalIdentifier,
@@ -88,7 +93,10 @@ export class LogicFunctionToolProvider implements ToolProvider {
           ...base,
           inputSchema: isDefined(logicFunction.toolTriggerSettings?.inputSchema)
             ? (stripCustomInputJsonSchemaKeywords(
-                logicFunction.toolTriggerSettings.inputSchema,
+                convertRecordInputsToToolSchema(
+                  logicFunction.toolTriggerSettings.inputSchema,
+                  resolveObjectLabel,
+                ),
               ) as object)
             : DEFAULT_TOOL_INPUT_SCHEMA,
         });
