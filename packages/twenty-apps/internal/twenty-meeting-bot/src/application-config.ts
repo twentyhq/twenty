@@ -9,6 +9,7 @@ import { DEFAULT_RECALL_REGION } from 'src/logic-functions/constants/default-rec
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
 import { RECALL_BOT_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-name-env-var-name';
 import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
+import { RECALL_WEBHOOK_SECRET_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-webhook-secret-env-var-name';
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -31,8 +32,14 @@ export default defineApplication({
       isRequired: true,
     },
     [RECALL_REGION_ENV_VAR_NAME]: {
-      description: `Recall.ai region used for API requests. Defaults to ${DEFAULT_RECALL_REGION} when unset. Asia Pacific Tokyo is ap-northeast-1.`,
+      description: `Recall.ai region used for API requests. Defaults to ${DEFAULT_RECALL_REGION} when unset. Europe Frankfurt is eu-central-1.`,
       isSecret: false,
+    },
+    [RECALL_WEBHOOK_SECRET_ENV_VAR_NAME]: {
+      description:
+        'Recall.ai webhook signing secret (whsec_...). Set by the server admin from the Recall webhook endpoint settings; used to verify the Svix signature of incoming Recall webhook deliveries.',
+      isSecret: true,
+      isRequired: true,
     },
   },
 });
