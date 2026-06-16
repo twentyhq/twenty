@@ -75,19 +75,14 @@ const LogosCell = styled(Cell)`
 `;
 
 const CountCell = styled(Cell)`
+  /* The glyph and label both read as the muted chip: the people-group mark
+     paints in currentColor, so it inherits this ink and tracks the scheme
+     instead of rendering its intrinsic brand blue. */
   color: ${semanticColor.inkMuted};
   gap: ${spacing(2)};
 
   ${mediaUp('md')} {
     padding-left: ${spacing(6)};
-  }
-
-  /* The authored icon is intrinsically blue (#4A38F5); the chip reads
-     muted like the logo wall, so it is neutralized the way the old site
-     does it. */
-  img {
-    filter: grayscale(1);
-    opacity: 0.72;
   }
 `;
 

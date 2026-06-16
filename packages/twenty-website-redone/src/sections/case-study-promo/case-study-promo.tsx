@@ -110,6 +110,13 @@ const CountLabel = styled.span`
   text-transform: uppercase;
 `;
 
+// The label text reads black, but the glyph stays brand blue on this white
+// chip; scope the ink to the mark the way every currentColor icon is tinted.
+const GlyphInk = styled.span`
+  color: ${color('blue')};
+  display: inline-flex;
+`;
+
 const TextColumn = styled.div`
   max-width: 520px;
   min-width: 0;
@@ -149,7 +156,9 @@ export function CaseStudyPromo() {
             <PromoMic />
             <CountChip aria-hidden>
               <CountLabel>
-                <PeopleGroupMark ink="blue" sizePx={12} />
+                <GlyphInk>
+                  <PeopleGroupMark sizePx={12} />
+                </GlyphInk>
                 {i18n._(msg`${count} Case Studies`)}
               </CountLabel>
             </CountChip>
