@@ -185,7 +185,8 @@ export const WorkflowEditActionLogicFunction = ({
 
   const isLogicFunctionFromApp = isDefined(logicFunction?.applicationId);
 
-  const isTestTabActive = !isLogicFunctionFromApp && activeTabId === TEST_TAB_ID;
+  const isTestTabActive =
+    !isLogicFunctionFromApp && activeTabId === TEST_TAB_ID;
 
   const tabs = [
     {
