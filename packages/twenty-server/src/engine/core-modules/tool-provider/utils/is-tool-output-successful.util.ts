@@ -1,11 +1,8 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isObject } from '@sniptt/guards';
 
 export const isToolOutputSuccessful = (output: unknown): boolean => {
   const isFailure =
-    isDefined(output) &&
-    typeof output === 'object' &&
-    'success' in output &&
-    output.success === false;
+    isObject(output) && 'success' in output && output.success === false;
 
   return !isFailure;
 };
