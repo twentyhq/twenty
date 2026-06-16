@@ -10486,39 +10486,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@linaria/core@npm:^6.2.0, @linaria/core@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "@linaria/core@npm:6.3.0"
-  dependencies:
-    "@wyw-in-js/processor-utils": "npm:^0.6.0"
-  checksum: 10c0/4a3c7a1b3ae486e27540bcafe377498c22770e4e2914084b495a6aae65b77611308505d11108d3d999bfd9e40e443f6deb3120dbabbdaa8fc922de1db320b515
-  languageName: node
-  linkType: hard
-
 "@linaria/core@npm:^7.0.0":
   version: 7.0.0
   resolution: "@linaria/core@npm:7.0.0"
   dependencies:
     "@wyw-in-js/processor-utils": "npm:^1.0.4"
   checksum: 10c0/10d760409dc07e5f023eb1cf7207a93ab9be187e82b2117d3bff592598ecef01cc74598c767ca93c2912a1527ff73033c2719b4a9992705c26c58759296741d4
-  languageName: node
-  linkType: hard
-
-"@linaria/react@npm:^6.2.1":
-  version: 6.3.0
-  resolution: "@linaria/react@npm:6.3.0"
-  dependencies:
-    "@emotion/is-prop-valid": "npm:^1.2.0"
-    "@linaria/core": "npm:^6.3.0"
-    "@wyw-in-js/processor-utils": "npm:^0.6.0"
-    "@wyw-in-js/shared": "npm:^0.6.0"
-    minimatch: "npm:^9.0.3"
-    react-html-attributes: "npm:^1.4.6"
-    resolve: "npm:^1.22.8"
-    ts-invariant: "npm:^0.10.3"
-  peerDependencies:
-    react: ">=16"
-  checksum: 10c0/e5a0aed9b7a7df78f6a3293a7de92d808eef196fb04c895a66197bb86f4e1b5ed69d94656a8b4cc472449fa92e67554cfb62754119e688f369b270cc58f366a0
   languageName: node
   linkType: hard
 
@@ -24916,16 +24889,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wyw-in-js/processor-utils@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "@wyw-in-js/processor-utils@npm:0.6.0"
-  dependencies:
-    "@babel/generator": "npm:^7.23.5"
-    "@wyw-in-js/shared": "npm:0.6.0"
-  checksum: 10c0/e7338afb71aa1eccf7646447df9d20c2ac895dc1d5a5ad8c26931997fa31595ece5890e8ada39b3c1fda28439c7598de950980dded714dbe003b232f95d22d9e
-  languageName: node
-  linkType: hard
-
 "@wyw-in-js/processor-utils@npm:^1.0.4":
   version: 1.0.4
   resolution: "@wyw-in-js/processor-utils@npm:1.0.4"
@@ -24933,17 +24896,6 @@ __metadata:
     "@babel/generator": "npm:^7.23.5"
     "@wyw-in-js/shared": "npm:1.0.4"
   checksum: 10c0/b4847df9dcc45fb969d275dda22c13b29a71f645f072fdbb97f0e552c275ee2811f3e0e0082bcef4be6aec35a9534bf4a7aec142c486f303e4b780f9882ef480
-  languageName: node
-  linkType: hard
-
-"@wyw-in-js/shared@npm:0.6.0, @wyw-in-js/shared@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "@wyw-in-js/shared@npm:0.6.0"
-  dependencies:
-    debug: "npm:^4.3.4"
-    find-up: "npm:^5.0.0"
-    minimatch: "npm:^9.0.3"
-  checksum: 10c0/a7bab831ebdf9172c8b7a117525550b57c6b338bb6579f186b0f54a3cae5cde75dd245e375b93766fe1f1fc1d42f804353622594115727a2a8c4eb4de84aaaab
   languageName: node
   linkType: hard
 
@@ -53341,8 +53293,8 @@ __metadata:
     "@graphql-codegen/typescript-operations": "npm:^5.1.0"
     "@hello-pangea/dnd": "npm:^18.0.1"
     "@hookform/resolvers": "npm:^5.2.2"
-    "@linaria/core": "npm:^6.2.0"
-    "@linaria/react": "npm:^6.2.1"
+    "@linaria/core": "npm:^7.0.0"
+    "@linaria/react": "npm:^7.0.1"
     "@lingui/cli": "npm:^5.9.5"
     "@lingui/core": "npm:^5.9.5"
     "@lingui/detect-locale": "npm:^5.9.5"
