@@ -1,7 +1,9 @@
 import { type JSX } from 'react';
 import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLayout = styled.div<{ width?: number }>`
+  border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: 5px;
 
   display: flex;
