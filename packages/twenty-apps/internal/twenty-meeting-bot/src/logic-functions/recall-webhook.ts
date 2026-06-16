@@ -75,6 +75,19 @@ export default defineLogicFunction({
     path: '/webhook/recall',
     httpMethod: 'POST',
     isAuthRequired: false,
+    sharedWebhookIngress: {
+      tenantIdPaths: [
+        'bot.metadata.twentyWorkspaceId',
+        'data.bot.metadata.twentyWorkspaceId',
+        'data.recording.metadata.twentyWorkspaceId',
+        'data.metadata.twentyWorkspaceId',
+      ],
+      signatureVerification: {
+        type: 'svix',
+        secretApplicationRegistrationVariableName:
+          RECALL_WEBHOOK_SECRET_ENV_VAR_NAME,
+      },
+    },
     forwardedRequestHeaders: [
       'webhook-id',
       'webhook-timestamp',

@@ -334,6 +334,7 @@ export class LogicFunctionExecutorService {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
+      WORKSPACE_ID: workspaceId,
       APPLICATION_ID: flatApplication.id,
       ...serverVariables,
       ...workspaceVariables,

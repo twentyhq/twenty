@@ -27,9 +27,18 @@ export type DatabaseEventTriggerSettings = {
   updatedFields?: string[];
 };
 
+export type SharedWebhookIngressSettings = {
+  tenantIdPaths: string[];
+  signatureVerification: {
+    type: 'svix';
+    secretApplicationRegistrationVariableName: string;
+  };
+};
+
 export type HttpRouteTriggerSettings = {
   path: string;
   httpMethod: HTTPMethod | `${HTTPMethod}`;
   isAuthRequired: boolean;
+  sharedWebhookIngress?: SharedWebhookIngressSettings;
   forwardedRequestHeaders?: string[];
 };

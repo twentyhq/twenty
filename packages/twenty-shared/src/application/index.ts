@@ -42,6 +42,7 @@ export type {
   LogicFunctionManifest,
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
+  SharedWebhookIngressSettings,
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { Manifest } from './manifestType';
