@@ -290,7 +290,7 @@ export class BillingSubscriptionService {
     await this.billingUsageCacheService.flushAvailableCredits(workspace.id);
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
-      'billingSubscription',
+      'currentBillingSubscription',
     ]);
 
     return {

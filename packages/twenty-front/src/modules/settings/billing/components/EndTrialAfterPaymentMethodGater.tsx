@@ -4,7 +4,6 @@ import { EndTrialAfterPaymentMethodEffect } from '@/settings/billing/effect-comp
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSearchParams } from 'react-router-dom';
 
-
 export const EndTrialAfterPaymentMethodGater = () => {
   const billing = useAtomStateValue(billingState);
   const [searchParams] = useSearchParams();

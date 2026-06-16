@@ -4,6 +4,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSwitchAgentChatThreadWithDraft = () => {
   const [currentAiChatThread, setCurrentAiChatThread] = useAtomState(
@@ -18,7 +19,7 @@ export const useSwitchAgentChatThreadWithDraft = () => {
   const switchThreadWithDraft = (toThreadId: string) => {
     const isSameThread = toThreadId === currentAiChatThread;
 
-    if (currentAiChatThread !== null) {
+    if (isDefined(currentAiChatThread)) {
       setAgentChatDraftsByThreadId((prev) => ({
         ...prev,
         [currentAiChatThread]: store.get(agentChatInputState.atom),

@@ -36,7 +36,7 @@ export const InformationBannerEndTrialPeriod = () => {
         }
         buttonTitle={
           hasPermissionToEndTrialPeriod
-            ? hasPaymentMethod === false
+            ? billingHasPaymentMethod === false
               ? t`Add Credit Card`
               : t`End Trial Period`
             : undefined
@@ -49,7 +49,7 @@ export const InformationBannerEndTrialPeriod = () => {
       {hasPermissionToEndTrialPeriod && (
         <StartSubscriptionConfirmationModal
           modalInstanceId={INFORMATION_BANNER_END_TRIAL_PERIOD_MODAL_ID}
-          hasPaymentMethod={hasPaymentMethod}
+          hasPaymentMethod={billingHasPaymentMethod}
           onConfirmClick={async () => {
             await endTrialPeriod();
           }}
