@@ -1,361 +1,234 @@
-'use client';
-
 import { styled } from '@linaria/react';
 import {
-  type PointerEvent as ReactPointerEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+  IconCalendar,
+  IconCalendarEvent,
+  IconCheckbox,
+  IconFileText,
+  IconMail,
+  IconNotes,
+  IconPaperclip,
+  IconPhoto,
+  IconTable,
+  IconTimelineEvent,
+} from '@tabler/icons-react';
 
-import { PRODUCT_FEATURE_SCENE } from '@/tokens/feature-scenes/product-feature-scene';
+import { PRODUCT_FEATURE_PALETTE } from '@/tokens/feature-scenes/product-feature-palette';
 
-const card = PRODUCT_FEATURE_SCENE.card;
-const filesScene = PRODUCT_FEATURE_SCENE.files;
+const palette = PRODUCT_FEATURE_PALETTE;
+
+// The product's six record tabs. Only Files is active here — the others are
+// context (this visual owns its own tab content, nothing else).
+const RECORD_TABS = [
+  { icon: IconTimelineEvent, label: 'Timeline' },
+  { icon: IconCheckbox, label: 'Tasks' },
+  { icon: IconNotes, label: 'Notes' },
+  { icon: IconPaperclip, label: 'Files' },
+  { icon: IconMail, label: 'Emails' },
+  { icon: IconCalendarEvent, label: 'Calendar' },
+];
+
+const ACTIVE_TAB = 'Files';
+
+type FileKind = 'document' | 'spreadsheet' | 'image';
+
+// twenty-front's file-type icon + colour (document -> blue, spreadsheet -> teal,
+// image -> amber), the tone's strong colour as a solid box with a white glyph.
+const FILE_KINDS: Record<
+  FileKind,
+  { color: string; icon: typeof IconFileText }
+> = {
+  document: { color: palette.tones.blue.text, icon: IconFileText },
+  spreadsheet: { color: palette.tones.teal.text, icon: IconTable },
+  image: { color: palette.tones.amber.text, icon: IconPhoto },
+};
+
+const FILES: { date: string; kind: FileKind; name: string }[] = [
+  { date: 'Jul 1', kind: 'document', name: 'NDA - Anthropic.pdf' },
+  { date: 'Jul 12', kind: 'spreadsheet', name: 'Pricing Q4.xlsx' },
+  { date: 'Jul 18', kind: 'document', name: 'Onboarding deck.pdf' },
+  { date: 'Jul 20', kind: 'image', name: 'Brand assets.png' },
+  { date: 'Jul 24', kind: 'document', name: 'Security review.docx' },
+];
 
 const Root = styled.div`
-  background: ${card.background};
-  border: 1.5px dashed ${filesScene.dashedBorder};
+  background-color: ${palette.background};
   display: flex;
   flex-direction: column;
-  font-family: ${card.font};
+  font-family: ${palette.font};
   height: 100%;
   overflow: hidden;
   width: 100%;
 `;
 
-const Header = styled.div`
+const TabBar = styled.div`
   align-items: center;
+  border-bottom: 1px solid ${palette.borderLight};
   display: flex;
-  justify-content: space-between;
-  padding: 12px 14px;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 0 12px;
 `;
 
-const HeaderLeft = styled.div`
+const Tab = styled.span`
   align-items: center;
+  color: ${palette.textSecondary};
   display: flex;
-  gap: 6px;
-`;
-
-const HeaderLabel = styled.span`
-  color: ${card.text};
   font-size: 12px;
   font-weight: 500;
+  gap: 5px;
+  padding: 11px 8px;
+  white-space: nowrap;
+
+  svg {
+    height: 15px;
+    width: 15px;
+  }
+
+  &[data-active] {
+    box-shadow: inset 0 -1px 0 ${palette.textPrimary};
+    color: ${palette.textPrimary};
+  }
 `;
 
-const HeaderCount = styled.span`
-  color: ${card.textTertiary};
-  font-size: 12px;
-`;
-
-const AddButton = styled.span`
-  color: ${card.textSecondary};
-  font-size: 11px;
-  font-weight: 500;
-`;
-
-const FileList = styled.div`
+const Body = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 2px;
   min-height: 0;
-  padding: 0 10px;
 `;
 
-const FileRow = styled.div`
-  align-items: center;
-  border-radius: 6px;
-  cursor: grab;
-  display: flex;
-  gap: 10px;
-  padding: 6px 8px;
-  touch-action: none;
-  transition: background-color 0.1s ease;
-  user-select: none;
-
-  &:hover {
-    background-color: ${filesScene.rowHoverWash};
-  }
-
-  &:active {
-    cursor: grabbing;
-  }
-
-  &[data-dragging] {
-    opacity: 0.4;
-  }
-`;
-
-const FileIcon = styled.div<{ $ink: string; $wash: string }>`
-  align-items: center;
-  background: ${({ $wash }) => $wash};
-  border-radius: 6px;
-  color: ${({ $ink }) => $ink};
+const Head = styled.div`
+  align-items: baseline;
   display: flex;
   flex-shrink: 0;
-  font-size: 8px;
-  font-weight: 700;
-  height: 28px;
+  gap: 6px;
+  padding: 14px 16px 12px;
+`;
+
+const HeadTitle = styled.span`
+  color: ${palette.textPrimary};
+  font-size: 13px;
+  font-weight: 600;
+`;
+
+const HeadCount = styled.span`
+  color: ${palette.textLight};
+  font-size: 13px;
+`;
+
+const List = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 8px;
+`;
+
+const Row = styled.div`
+  align-items: center;
+  border-radius: 4px;
+  display: flex;
+  gap: 8px;
+  height: 44px;
+  padding: 0 8px;
+
+  &:hover {
+    background-color: ${palette.rowHoverBackground};
+  }
+`;
+
+const Left = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 12px;
+  min-width: 0;
+`;
+
+const FileIconBox = styled.span`
+  align-items: center;
+  border-radius: 4px;
+  color: ${palette.background};
+  display: flex;
+  flex-shrink: 0;
   justify-content: center;
-  letter-spacing: 0.02em;
-  width: 28px;
+  padding: 4px;
+
+  svg {
+    height: 13px;
+    width: 13px;
+  }
 `;
 
 const FileName = styled.span`
-  color: ${card.text};
-  flex: 1;
+  color: ${palette.textPrimary};
   font-size: 12px;
-  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const UploadArea = styled.div`
+const Meta = styled.span`
   align-items: center;
+  color: ${palette.textLight};
   display: flex;
-  flex-direction: column;
+  flex-shrink: 0;
+  font-size: 11px;
   gap: 4px;
-  justify-content: center;
-  margin: auto 14px 14px;
-  padding: 20px;
 
-  &[data-over] {
-    background-color: ${filesScene.uploadOverWash};
+  svg {
+    height: 13px;
+    width: 13px;
   }
 `;
 
-const UploadIcon = styled.div`
-  color: ${card.textTertiary};
-  margin-bottom: 4px;
-`;
-
-const UploadTitle = styled.span`
-  color: ${card.textSecondary};
-  font-size: 11px;
-  font-weight: 500;
-`;
-
-const UploadHint = styled.span`
-  color: ${card.textTertiary};
-  font-size: 10px;
-`;
-
-const FloatingFile = styled.div`
-  box-shadow: ${filesScene.ghostShadow};
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  z-index: 100;
-`;
-
-const FloatingFileInner = styled.div`
-  align-items: center;
-  background: ${filesScene.ghostBackground};
-  border: 1px solid ${filesScene.ghostBorder};
-  border-radius: 6px;
-  display: flex;
-  gap: 10px;
-  padding: 6px 12px;
-`;
-
-type FileTone = keyof typeof filesScene.tones;
-
-type FileData = {
-  ext: string;
-  name: string;
-  tone: FileTone;
-};
-
-const FILES: FileData[] = [
-  { name: 'meeting_record.mp3', ext: 'MP3', tone: 'audio' },
-  { name: 'invoice2023_04_02(2).pdf', ext: 'PDF', tone: 'document' },
-  { name: 'mapping01.xls', ext: 'XLS', tone: 'sheet' },
-];
-
-// A picked-up row dims while its ghost follows the pointer; release snaps
-// back (the rows never reorder — the old site's order state was dead).
-// The ghost transform writes straight to the element per frame; React
-// renders only on pick-up/release.
-export function FilesVisual({ active: _active }: { active: boolean }) {
-  const [isDragOver, setIsDragOver] = useState(false);
-  const [draggedNumber, setDraggedNumber] = useState<number | null>(null);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const ghostRef = useRef<HTMLDivElement>(null);
-  const activePointerRef = useRef<number | null>(null);
-  const dragStateRef = useRef<{
-    originX: number;
-    originY: number;
-    pointerX: number;
-    pointerY: number;
-  } | null>(null);
-
-  const moveGhost = (x: number, y: number) => {
-    ghostRef.current?.style.setProperty(
-      'transform',
-      `translate3d(${x}px, ${y}px, 0)`,
-    );
-  };
-
-  const handlePointerDown = (
-    event: ReactPointerEvent<HTMLDivElement>,
-    fileNumber: number,
-  ) => {
-    event.preventDefault();
-    const rootRect = rootRef.current?.getBoundingClientRect();
-    const rowRect = event.currentTarget.getBoundingClientRect();
-
-    if (!rootRect || dragStateRef.current) {
-      return;
-    }
-
-    dragStateRef.current = {
-      originX: rowRect.left - rootRect.left,
-      originY: rowRect.top - rootRect.top,
-      pointerX: event.clientX,
-      pointerY: event.clientY,
-    };
-    setDraggedNumber(fileNumber);
-    activePointerRef.current = event.pointerId;
-    rootRef.current?.setPointerCapture(event.pointerId);
-  };
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerId !== activePointerRef.current) {
-      return;
-    }
-    event.preventDefault();
-    const state = dragStateRef.current;
-
-    if (!state) {
-      return;
-    }
-
-    moveGhost(
-      state.originX + event.clientX - state.pointerX,
-      state.originY + event.clientY - state.pointerY,
-    );
-  };
-
-  const releasePointer = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerId !== activePointerRef.current) {
-      return;
-    }
-    dragStateRef.current = null;
-    setDraggedNumber(null);
-    activePointerRef.current = null;
-    if (rootRef.current?.hasPointerCapture(event.pointerId)) {
-      rootRef.current.releasePointerCapture(event.pointerId);
-    }
-  };
-
-  // A stolen capture settles the drag; unmounting mid-drag releases it.
-  const handleLostCapture = () => {
-    dragStateRef.current = null;
-    setDraggedNumber(null);
-    activePointerRef.current = null;
-  };
-
-  useEffect(() => {
-    const root = rootRef.current;
-    return () => {
-      if (activePointerRef.current !== null && root) {
-        try {
-          root.releasePointerCapture(activePointerRef.current);
-        } catch {
-          // The pointer was already released by the browser.
-        }
-      }
-    };
-  }, []);
-
-  const files = FILES.map((file, fileNumber) => ({ file, fileNumber }));
-  const draggedFile = draggedNumber === null ? null : FILES[draggedNumber];
-  const dragOrigin = dragStateRef.current;
-
+// A record's Files tab — the tab bar (Files active) over the product's file
+// list with type-coloured icons.
+export function FilesVisual() {
   return (
-    <Root
-      ref={rootRef}
-      onLostPointerCapture={handleLostCapture}
-      onPointerCancel={releasePointer}
-      onPointerMove={handlePointerMove}
-      onPointerUp={(event) => {
-        event.preventDefault();
-        releasePointer(event);
-      }}
-    >
-      <Header>
-        <HeaderLeft>
-          <HeaderLabel>All</HeaderLabel>
-          <HeaderCount>{FILES.length}</HeaderCount>
-        </HeaderLeft>
-        <AddButton>+ Add file</AddButton>
-      </Header>
-
-      <FileList>
-        {files.map(({ file, fileNumber }) => (
-          <FileRow
-            data-dragging={draggedNumber === fileNumber ? '' : undefined}
-            key={fileNumber}
-            onPointerDown={(event) => handlePointerDown(event, fileNumber)}
-          >
-            <FileIcon
-              $ink={filesScene.tones[file.tone].ink}
-              $wash={filesScene.tones[file.tone].wash}
+    <Root>
+      <TabBar>
+        {RECORD_TABS.map((recordTab) => {
+          const TabIcon = recordTab.icon;
+          return (
+            <Tab
+              data-active={recordTab.label === ACTIVE_TAB ? '' : undefined}
+              key={recordTab.label}
             >
-              {file.ext}
-            </FileIcon>
-            <FileName>{file.name}</FileName>
-          </FileRow>
-        ))}
-      </FileList>
-
-      <UploadArea
-        data-over={isDragOver ? '' : undefined}
-        onDragEnter={() => setIsDragOver(true)}
-        onDragLeave={() => setIsDragOver(false)}
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={() => setIsDragOver(false)}
-      >
-        <UploadIcon>
-          <svg
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-            viewBox="0 0 24 24"
-            width="20"
-          >
-            <path d="M12 15V3m0 0l-4 4m4-4l4 4" />
-            <path d="M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17" />
-          </svg>
-        </UploadIcon>
-        <UploadTitle>Upload a file</UploadTitle>
-        <UploadHint>Drag and Drop Here</UploadHint>
-      </UploadArea>
-
-      {draggedFile && dragOrigin ? (
-        <FloatingFile
-          ref={ghostRef}
-          style={{
-            transform: `translate3d(${dragOrigin.originX}px, ${dragOrigin.originY}px, 0)`,
-          }}
-        >
-          <FloatingFileInner>
-            <FileIcon
-              $ink={filesScene.tones[draggedFile.tone].ink}
-              $wash={filesScene.tones[draggedFile.tone].wash}
-            >
-              {draggedFile.ext}
-            </FileIcon>
-            <FileName>{draggedFile.name}</FileName>
-          </FloatingFileInner>
-        </FloatingFile>
-      ) : null}
+              <TabIcon />
+              {recordTab.label}
+            </Tab>
+          );
+        })}
+      </TabBar>
+      <Body>
+        <Head>
+          <HeadTitle>All</HeadTitle>
+          <HeadCount>{FILES.length}</HeadCount>
+        </Head>
+        <List>
+          {FILES.map((file) => {
+            const FileIcon = FILE_KINDS[file.kind].icon;
+            return (
+              <Row key={file.name}>
+                <Left>
+                  <FileIconBox
+                    style={{ backgroundColor: FILE_KINDS[file.kind].color }}
+                  >
+                    <FileIcon />
+                  </FileIconBox>
+                  <FileName>{file.name}</FileName>
+                </Left>
+                <Meta>
+                  <IconCalendar />
+                  {file.date}
+                </Meta>
+              </Row>
+            );
+          })}
+        </List>
+      </Body>
     </Root>
   );
 }
