@@ -150,6 +150,8 @@ export const SidePanelWorkflowStepInfo = ({
 
   const headerType = isTrigger ? t`Trigger` : t`Action`;
 
+  const label = isThirdPartyApplication ? applicationChipData.name : headerType;
+
   const Icon = getIcon(headerIcon ?? 'IconDefault');
 
   const saveTitle = async () => {
@@ -219,13 +221,7 @@ export const SidePanelWorkflowStepInfo = ({
           onShiftTab={saveTitle}
         />
       }
-      label={
-        isThirdPartyApplication
-          ? applicationChipData.name
-          : isTrigger
-            ? t`Trigger`
-            : t`Action`
-      }
+      label={label}
     />
   );
 };
