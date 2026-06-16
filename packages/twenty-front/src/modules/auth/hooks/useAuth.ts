@@ -370,6 +370,7 @@ export const useAuth = () => {
           await navigateAfterMultiWorkspaceSignInUp(
             user.availableWorkspaces,
             user.email,
+            { newTab: false },
           );
         },
         onError: (error) => {

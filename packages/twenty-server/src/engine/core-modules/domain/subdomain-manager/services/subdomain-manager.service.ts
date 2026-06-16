@@ -104,13 +104,12 @@ export class SubdomainManagerService {
     const isValid = isSubdomainValid(subdomain);
     const available = isValid && (await this.isSubdomainFreeToUse(subdomain));
 
-    // Only spend the extra DB lookups deriving an alternative when the input is
-    // a valid-but-taken subdomain; for an available or invalid input there is
-    // nothing useful to suggest (the client surfaces the validation error).
-    const suggestedSubdomain =
-      isValid && !available
-        ? await this.findAvailableSubdomain(subdomain)
-        : subdomain;
+    // Always resolve to a valid, available suggestion: the autofill flow adopts
+    // this value directly, so echoing an invalid input (e.g. an "api-"-prefixed
+    // slug) would let the form mark an invalid subdomain as available.
+    const suggestedSubdomain = available
+      ? subdomain
+      : await this.findAvailableSubdomain(subdomain);
 
     return { isValid, available, suggestedSubdomain };
   }
