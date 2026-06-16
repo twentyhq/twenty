@@ -250,7 +250,7 @@ export const CurrencyFilterSchema = z
         is: NullCheckEnum.optional(),
       })
       .describe(
-        'Currency value stored in micros. Divide by 1000000 to display to users.',
+        'Currency amount in micros (1 unit = 1,000,000 micros). Multiply the user-provided amount by 1,000,000 to build this filter.',
       )
       .optional(),
     currencyCode: z

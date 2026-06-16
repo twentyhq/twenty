@@ -17,16 +17,23 @@ export const LinksValueSchema = z.object({
 });
 export const LinksValueOptionalSchema = LinksValueSchema.optional();
 
+const CURRENCY_WRITE_DESCRIPTION =
+  'Currency amount in micros (1 unit = 1,000,000 micros). Multiply the user-provided amount by 1,000,000 before writing.';
+const CURRENCY_READ_DESCRIPTION =
+  'Currency amount in micros (1 unit = 1,000,000 micros). Divide by 1,000,000 to display to users.';
+
 export const CurrencyValueSchema = z.object({
-  amountMicros: z
-    .number()
-    .optional()
-    .describe(
-      'Currency value stored in micros. Divide by 1000000 to display to users.',
-    ),
+  amountMicros: z.number().optional().describe(CURRENCY_WRITE_DESCRIPTION),
   currencyCode: z.string().optional(),
 });
 export const CurrencyValueOptionalSchema = CurrencyValueSchema.optional();
+
+export const CurrencyResponseValueSchema = z.object({
+  amountMicros: z.number().optional().describe(CURRENCY_READ_DESCRIPTION),
+  currencyCode: z.string().optional(),
+});
+export const CurrencyResponseValueOptionalSchema =
+  CurrencyResponseValueSchema.optional();
 
 export const FullNameValueSchema = z.object({
   firstName: z.string().optional(),
