@@ -1,0 +1,42 @@
+packages/twenty-server/src/modules/onboarding-invite-suggestions/services/onboarding-invite-suggestions.service.ts
+  s_29f7431eb5a394::t_ad3414379d0d15 19
+  s_29f7431eb5a394::t_25af2c5c6ba7b6 46,48,69,81,151,155
+  s_29f7431eb5a394::t_7108d47b0c55f6 100
+packages/twenty-server/src/modules/onboarding-invite-suggestions/types/calendar-attendee.type.ts
+  s_29f7431eb5a394::t_a7f018c15976f4 1
+packages/twenty-server/src/engine/core-modules/onboarding/onboarding.service.ts
+  s_29f7431eb5a394::t_830351105eac82 97-99,101-102
+  s_29f7431eb5a394::t_2b5145851fd475 160-161,163
+packages/twenty-server/src/modules/onboarding-invite-suggestions/services/google-calendar-attendees.service.ts
+  s_29f7431eb5a394::t_eaa2309becfa61 11
+  s_29f7431eb5a394::t_c7639332c63aaf 23,48
+packages/twenty-server/src/modules/onboarding-invite-suggestions/services/calendar-attendees.service.ts
+  s_29f7431eb5a394::t_e8f155eae1a316 19
+  s_29f7431eb5a394::t_736e428aea129d 8
+packages/twenty-front/src/modules/onboarding/hooks/useSetNextOnboardingStatus.ts
+  s_29f7431eb5a394::t_60c38e886b9674 35,45,50,55
+  s_29f7431eb5a394::t_2754cc5f56ad1d 36-38,41,46-48
+packages/twenty-front/src/modules/onboarding/hooks/__tests__/useSetNextOnboardingStatus.test.ts
+  s_29f7431eb5a394::t_df4c67e3835924 86,88,95,97,99-100,102,105,107,111,114,116,123,125
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_29f7431eb5a394::t_2754cc5f56ad1d 1400,8986
+packages/twenty-server/src/modules/onboarding-invite-suggestions/services/microsoft-calendar-attendees.service.ts
+  s_29f7431eb5a394::t_3eebaf4ff38207 9
+  s_29f7431eb5a394::t_65c3502152393e 38,59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "907c5c9e59f07ad08ff06041aa18985bcd3088c3",
+  "prompts": {},
+  "sessions": {
+    "s_29f7431eb5a394": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0af0f266-b47e-45c9-bd13-575076da339d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
