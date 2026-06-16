@@ -28,6 +28,7 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
+import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -37,6 +38,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 @Injectable()
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
@@ -62,10 +64,18 @@ export class BillingSubscriptionService {
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     private readonly enterprisePlanService: EnterprisePlanService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly billingUsageCacheService: BillingUsageCacheService,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
     return await this.billingSubscriptionRepository.find(workspaceId);
+  }
+
+  async getBillingCustomer(
+    workspaceId: string,
+  ): Promise<BillingCustomerEntity | null> {
+    return await this.billingCustomerRepository.findOneBy(workspaceId, {});
   }
 
   async getCurrentBillingSubscription(criteria: {
@@ -267,10 +277,21 @@ export class BillingSubscriptionService {
         },
       );
 
+    await this.syncSubscriptionToDatabase(
+      billingSubscription.workspaceId,
+      updatedSubscription.id,
+    );
+
     await this.billingSubscriptionItemRepository.update(
       { stripeSubscriptionId: updatedSubscription.id },
       { hasReachedCurrentPeriodCap: false },
     );
+
+    await this.billingUsageCacheService.flushAvailableCredits(workspace.id);
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
+      'billingSubscription',
+    ]);
 
     return {
       status: getSubscriptionStatus(updatedSubscription.status),

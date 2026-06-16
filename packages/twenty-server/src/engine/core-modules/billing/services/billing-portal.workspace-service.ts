@@ -183,6 +183,7 @@ export class BillingPortalWorkspaceService {
   async computeBillingPortalSessionURLOrThrow(
     workspace: WorkspaceEntity,
     returnUrlPath?: string,
+    forPaymentMethodUpdate?: boolean,
   ) {
     const lastSubscription = await this.billingSubscriptionRepository.findOne(
       workspace.id,
@@ -202,20 +203,17 @@ export class BillingPortalWorkspaceService {
       throw new Error('Error: missing stripeCustomerId');
     }
 
-    const frontBaseUrl = this.workspaceDomainsService.buildWorkspaceURL({
-      workspace,
-    });
+    const returnUrl = this.buildReturnUrl(workspace, returnUrlPath);
 
-    if (returnUrlPath) {
-      frontBaseUrl.pathname = returnUrlPath;
-    }
-    const returnUrl = frontBaseUrl.toString();
-
-    const session =
-      await this.stripeBillingPortalService.createBillingPortalSession(
-        stripeCustomerId,
-        returnUrl,
-      );
+    const session = forPaymentMethodUpdate
+      ? await this.stripeBillingPortalService.createBillingPortalSessionForPaymentMethodUpdate(
+          stripeCustomerId,
+          returnUrl,
+        )
+      : await this.stripeBillingPortalService.createBillingPortalSession(
+          stripeCustomerId,
+          returnUrl,
+        );
 
     assertIsDefinedOrThrow(
       session.url,
@@ -233,14 +231,7 @@ export class BillingPortalWorkspaceService {
     stripeCustomerId: string,
     returnUrlPath?: string,
   ) {
-    const frontBaseUrl = this.workspaceDomainsService.buildWorkspaceURL({
-      workspace,
-    });
-
-    if (returnUrlPath) {
-      frontBaseUrl.pathname = returnUrlPath;
-    }
-    const returnUrl = frontBaseUrl.toString();
+    const returnUrl = this.buildReturnUrl(workspace, returnUrlPath);
 
     const session =
       await this.stripeBillingPortalService.createBillingPortalSessionForPaymentMethodUpdate(
@@ -257,6 +248,20 @@ export class BillingPortalWorkspaceService {
     );
 
     return session.url;
+  }
+
+  // Resolves returnUrlPath against the workspace base URL so query strings are
+  // preserved (assigning to URL.pathname would percent-encode the `?` separator).
+  private buildReturnUrl(workspace: WorkspaceEntity, returnUrlPath?: string) {
+    const frontBaseUrl = this.workspaceDomainsService.buildWorkspaceURL({
+      workspace,
+    });
+
+    if (!returnUrlPath) {
+      return frontBaseUrl.toString();
+    }
+
+    return new URL(returnUrlPath, frontBaseUrl).toString();
   }
 
   private getDefaultResourceCreditPrice(

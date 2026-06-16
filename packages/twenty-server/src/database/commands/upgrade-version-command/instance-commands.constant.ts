@@ -61,6 +61,7 @@ import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/data
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 import { DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1780579070012-drop-is-custom-from-object-and-field-metadata';
 import { DropEmailingDomainDriverColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-11/2-11-instance-command-fast-1780926908000-drop-emailing-domain-driver-column';
+import { AddHasPaymentMethodToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1781280240009-add-has-payment-method-to-billing-customer';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -124,4 +125,5 @@ export const INSTANCE_COMMANDS = [
   EncryptNonSecretApplicationVariableSlowInstanceCommand,
   DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand,
   DropEmailingDomainDriverColumnFastInstanceCommand,
+  AddHasPaymentMethodToBillingCustomerFastInstanceCommand,
 ];

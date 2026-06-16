@@ -954,6 +954,7 @@ type Workspace {
   billingSubscriptions: [BillingSubscription!]!
   installedApplications: [Application!]!
   currentBillingSubscription: BillingSubscription
+  billingCustomer: BillingCustomer
   billingEntitlements: [BillingEntitlement!]!
   hasValidSignedEnterpriseKey: Boolean!
   hasValidEnterpriseValidityToken: Boolean!
@@ -1563,6 +1564,11 @@ type BillingSubscriptionItem {
   quantity: Float
   stripePriceId: String!
   billingProduct: BillingProductDTO!
+}
+
+type BillingCustomer {
+  id: UUID!
+  hasPaymentMethod: Boolean
 }
 
 type BillingSubscription {
@@ -2952,7 +2958,7 @@ type Query {
   getViewFieldGroup(id: String!): ViewFieldGroup
   apiKeys: [ApiKey!]!
   apiKey(input: GetApiKeyInput!): ApiKey
-  billingPortalSession(returnUrlPath: String): BillingSession!
+  billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!

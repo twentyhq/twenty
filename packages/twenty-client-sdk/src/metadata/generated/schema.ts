@@ -675,6 +675,7 @@ export interface Workspace {
     billingSubscriptions: BillingSubscription[]
     installedApplications: Application[]
     currentBillingSubscription?: BillingSubscription
+    billingCustomer?: BillingCustomer
     billingEntitlements: BillingEntitlement[]
     hasValidSignedEnterpriseKey: Scalars['Boolean']
     hasValidEnterpriseValidityToken: Scalars['Boolean']
@@ -1224,6 +1225,12 @@ export interface BillingSubscriptionItem {
     stripePriceId: Scalars['String']
     billingProduct: BillingProductDTO
     __typename: 'BillingSubscriptionItem'
+}
+
+export interface BillingCustomer {
+    id: Scalars['UUID']
+    hasPaymentMethod?: Scalars['Boolean']
+    __typename: 'BillingCustomer'
 }
 
 export interface BillingSubscription {
@@ -3603,6 +3610,7 @@ export interface WorkspaceGenqlSelection{
     billingSubscriptions?: BillingSubscriptionGenqlSelection
     installedApplications?: ApplicationGenqlSelection
     currentBillingSubscription?: BillingSubscriptionGenqlSelection
+    billingCustomer?: BillingCustomerGenqlSelection
     billingEntitlements?: BillingEntitlementGenqlSelection
     hasValidSignedEnterpriseKey?: boolean | number
     hasValidEnterpriseValidityToken?: boolean | number
@@ -4180,6 +4188,13 @@ export interface BillingSubscriptionItemGenqlSelection{
     quantity?: boolean | number
     stripePriceId?: boolean | number
     billingProduct?: BillingProductDTOGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface BillingCustomerGenqlSelection{
+    id?: boolean | number
+    hasPaymentMethod?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5630,7 +5645,7 @@ export interface QueryGenqlSelection{
     getViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {id: Scalars['String']} })
     apiKeys?: ApiKeyGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
-    billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null)} })
+    billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null), forPaymentMethodUpdate?: (Scalars['Boolean'] | null)} })
     listPlans?: BillingPlanGenqlSelection
     getResourceCreditUsage?: BillingResourceCreditUsageGenqlSelection
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
@@ -7119,6 +7134,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isBillingSubscriptionItem = (obj?: { __typename?: any } | null): obj is BillingSubscriptionItem => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionItem"')
       return BillingSubscriptionItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingCustomer_possibleTypes: string[] = ['BillingCustomer']
+    export const isBillingCustomer = (obj?: { __typename?: any } | null): obj is BillingCustomer => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingCustomer"')
+      return BillingCustomer_possibleTypes.includes(obj.__typename)
     }
     
 
