@@ -147,7 +147,10 @@ describe('Object metadata update - search vector side effect', () => {
     jestExpectToBeDefined(settings);
     expect(settings.asExpression).toBeDefined();
     expect(settings.asExpression).toContain(NEW_LABEL_IDENTIFIER_FIELD_NAME);
-    expect(settings.asExpression).not.toContain('name');
+    // The searchVector now derives from the object's searchFieldMetadata rows
+    // rather than just the label identifier field. A label-identifier change must
+    // not clobber existing rows, so the provisioned `name` row is preserved.
+    expect(settings.asExpression).toContain('name');
 
     const searchResult = await search({
       searchInput: RECORD_FIELD_VALUE,
