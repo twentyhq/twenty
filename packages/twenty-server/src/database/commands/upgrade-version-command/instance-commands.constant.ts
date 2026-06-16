@@ -70,7 +70,7 @@ import { RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand } from 'src/databas
 import { BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-slow-1781277480000-backfill-non-ui-creatable-standard-system-objects';
 import { CommandMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781253016028-command-menu-item-overridable-entity';
 import { SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-instance-command-slow-1781515653781-set-table-widget-views-visibility-to-workspace';
-import { AddIsSystemSideEffectFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-instance-command-fast-1781600000000-add-is-system-side-effect';
+import { AddIsSystemSideEffectFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1781600000000-add-is-system-side-effect';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

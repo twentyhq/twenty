@@ -14,7 +14,7 @@ const TABLES_WITH_IS_SYSTEM_SIDE_EFFECT = [
   'fieldMetadata',
 ] as const;
 
-@RegisteredInstanceCommand('2.14.0', 1781600000000)
+@RegisteredInstanceCommand('2.15.0', 1781600000000)
 export class AddIsSystemSideEffectFastInstanceCommand
   implements FastInstanceCommand
 {
