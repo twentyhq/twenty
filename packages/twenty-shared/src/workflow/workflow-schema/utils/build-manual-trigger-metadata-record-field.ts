@@ -3,9 +3,15 @@ import { WORKFLOW_TRIGGER_METADATA_KEY } from '@/workflow/constants/WorkflowTrig
 import { WORKFLOW_TRIGGER_METADATA_LABEL } from '@/workflow/constants/WorkflowTriggerMetadataLabel';
 import { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY } from '@/workflow/constants/WorkflowTriggerMetadataWorkspaceMemberIdKey';
 import { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_LABEL } from '@/workflow/constants/WorkflowTriggerMetadataWorkspaceMemberIdLabel';
-import { type RecordFieldNode } from '@/workflow/workflow-schema/types/output-schema.type';
+import {
+  type RecordFieldLeaf,
+  type RecordFieldNode,
+} from '@/workflow/workflow-schema/types/output-schema.type';
 
-export const buildManualTriggerMetadataRecordField = (): RecordFieldNode => ({
+export const buildManualTriggerMetadataRecordField = (): Omit<
+  RecordFieldNode,
+  'value'
+> & { value: Record<string, RecordFieldLeaf> } => ({
   isLeaf: false,
   type: FieldMetadataType.RAW_JSON,
   label: WORKFLOW_TRIGGER_METADATA_LABEL,

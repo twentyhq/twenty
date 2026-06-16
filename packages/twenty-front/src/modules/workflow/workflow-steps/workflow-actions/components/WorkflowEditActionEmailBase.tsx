@@ -201,6 +201,7 @@ export const WorkflowEditActionEmailBase = ({
           <FormSelectFieldInput
             key={`connected-account-${formData.connectedAccountId ?? 'none'}`}
             label={t`Account`}
+            hint={t`Pick a connected account or set a workspace member as variable`}
             defaultValue={formData.connectedAccountId}
             options={connectedAccountOptions}
             onChange={handleConnectedAccountChange}
