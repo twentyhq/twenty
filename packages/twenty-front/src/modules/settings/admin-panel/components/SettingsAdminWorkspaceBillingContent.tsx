@@ -78,10 +78,6 @@ const StyledItemValue = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledProgressBarContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[3]};
-`;
-
 const STATUS_COLORS: Record<SubscriptionStatus, ThemeColor> = {
   [SubscriptionStatus.Active]: 'green',
   [SubscriptionStatus.Trialing]: 'blue',
@@ -146,7 +142,6 @@ export const SettingsAdminWorkspaceBillingContent = ({
 }: SettingsAdminWorkspaceBillingContentProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { theme } = useContext(ThemeContext);
   const apolloAdminClient = useApolloAdminClient();
 
   const { data, loading } = useQuery<WorkspaceBillingAdminPanelQuery>(

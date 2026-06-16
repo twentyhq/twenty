@@ -157,7 +157,9 @@ export class AdminPanelBillingService {
         grantedCredits,
         rolloverCredits,
         totalGrantedCredits,
-        remainingCredits: totalGrantedCredits - usedCredits,
+        remainingCredits: toDisplayCredits(
+          usage.totalGrantedCredits - usage.usedCredits,
+        ),
       };
     } catch (error) {
       this.logger.warn(
@@ -165,8 +167,7 @@ export class AdminPanelBillingService {
           error instanceof Error ? error.message : String(error)
         }`,
       );
-
-      return null;
+      throw error;
     }
   }
 }
