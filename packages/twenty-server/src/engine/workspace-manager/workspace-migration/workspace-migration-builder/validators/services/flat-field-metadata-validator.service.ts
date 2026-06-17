@@ -191,6 +191,7 @@ export class FlatFieldMetadataValidatorService {
     }
 
     if (
+      !isMorphOrRelationUniversalFlatFieldMetadata(flatFieldMetadataToValidate) &&
       flatFieldMetadataToValidate.isNullable === false &&
       flatFieldMetadataToValidate.defaultValue === null
     ) {
