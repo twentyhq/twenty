@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import {
+  IconApi,
   IconBuildingFactory2,
   IconBuildingSkyscraper,
   IconCheck,
@@ -11,6 +12,8 @@ import {
   IconMapPin,
   IconMoneybag,
   IconPlus,
+  IconRobot,
+  IconSettingsAutomation,
   IconTarget,
   IconUser,
   IconUserCircle,
@@ -19,6 +22,7 @@ import {
 import { useState } from 'react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
+import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
 import { Chip } from '@/app-preview/primitives/chip';
 import { FaviconLogo } from '@/app-preview/primitives/favicon-logo';
 import { PersonAvatar } from '@/app-preview/primitives/person-avatar';
@@ -200,13 +204,13 @@ const CellText = styled.span`
 
 const BooleanRow = styled.span`
   align-items: center;
-  color: ${THEME_LIGHT.font.color.secondary};
+  color: ${THEME_LIGHT.font.color.primary};
   display: inline-flex;
   gap: 4px;
 `;
 
 const BooleanText = styled.span`
-  color: ${THEME_LIGHT.font.color.secondary};
+  color: ${THEME_LIGHT.font.color.primary};
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
 `;
 
@@ -244,16 +248,20 @@ const CheckboxBox = styled.div`
 
 type ContactTone = 'amber' | 'blue' | 'gray' | 'pink' | 'purple' | 'turquoise';
 
-type ContactPerson = {
+type ActorSource = 'api' | 'system' | 'workflow';
+
+type ContactActor = {
+  avatarUrl?: string;
   name: string;
-  tone: ContactTone;
+  source?: ActorSource;
+  tone?: ContactTone;
 };
 
 type ContactCompany = {
-  accountOwner: ContactPerson;
+  accountOwner: ContactActor;
   address: string;
   arr: string;
-  createdBy: ContactPerson;
+  createdBy: ContactActor;
   domain: string;
   icp: boolean;
   industry: string;
@@ -288,14 +296,26 @@ const COLUMNS: ContactColumn[] = [
   { id: 'industry', label: 'Industry', width: 140 },
 ];
 
-// Mock fiction company rows (product-screenshot copy, English).
+const PEOPLE = sharedAssetUrls.peopleAvatars;
+
+// Mock fiction company rows (product-screenshot copy, English). createdBy is
+// an Actor: members render their avatar, the API/workflow rows render their
+// source icon, mirroring twenty-front's ActorDisplay.
 const COMPANIES: ContactCompany[] = [
   {
     name: 'Anthropic',
     domain: 'anthropic.com',
-    createdBy: { name: 'Dario Amodei', tone: 'gray' },
+    createdBy: {
+      name: 'Dario Amodei',
+      tone: 'gray',
+      avatarUrl: PEOPLE.darioAmodei,
+    },
     address: '18 Rue De Navarin',
-    accountOwner: { name: 'Dario Amodei', tone: 'gray' },
+    accountOwner: {
+      name: 'Dario Amodei',
+      tone: 'gray',
+      avatarUrl: PEOPLE.darioAmodei,
+    },
     icp: true,
     arr: '$500,000',
     industry: 'AI Research',
@@ -303,9 +323,17 @@ const COMPANIES: ContactCompany[] = [
   {
     name: 'Linkedin',
     domain: 'linkedin.com',
-    createdBy: { name: 'Reid Hoffman', tone: 'purple' },
+    createdBy: {
+      name: 'Reid Hoffman',
+      tone: 'purple',
+      avatarUrl: PEOPLE.reidHoffman,
+    },
     address: '1226 Moises Causeway',
-    accountOwner: { name: 'Ryan Roslansky', tone: 'turquoise' },
+    accountOwner: {
+      name: 'Ryan Roslansky',
+      tone: 'turquoise',
+      avatarUrl: PEOPLE.ryanRoslansky,
+    },
     icp: false,
     arr: '$1,000,000',
     industry: 'Professional Networking',
@@ -313,9 +341,17 @@ const COMPANIES: ContactCompany[] = [
   {
     name: 'Slack',
     domain: 'slack.com',
-    createdBy: { name: 'Stewart Butterfield', tone: 'turquoise' },
+    createdBy: {
+      name: 'Stewart Butterfield',
+      tone: 'turquoise',
+      avatarUrl: PEOPLE.stewartButterfield,
+    },
     address: '1316 Dameon Mountain',
-    accountOwner: { name: 'Stewart Butterfield', tone: 'turquoise' },
+    accountOwner: {
+      name: 'Stewart Butterfield',
+      tone: 'turquoise',
+      avatarUrl: PEOPLE.stewartButterfield,
+    },
     icp: true,
     arr: '$2,300,000',
     industry: 'Collaboration Software',
@@ -323,9 +359,13 @@ const COMPANIES: ContactCompany[] = [
   {
     name: 'Notion',
     domain: 'notion.com',
-    createdBy: { name: 'API - Key name', tone: 'gray' },
+    createdBy: { name: 'API - Key name', source: 'api' },
     address: '1162 Sammy Creek',
-    accountOwner: { name: 'Ivan Zhao', tone: 'gray' },
+    accountOwner: {
+      name: 'Ivan Zhao',
+      tone: 'gray',
+      avatarUrl: PEOPLE.ivanZhao,
+    },
     icp: false,
     arr: '$750,000',
     industry: 'Productivity Software',
@@ -333,9 +373,13 @@ const COMPANIES: ContactCompany[] = [
   {
     name: 'Figma',
     domain: 'figma.com',
-    createdBy: { name: 'Workflow name', tone: 'gray' },
+    createdBy: { name: 'Workflow name', source: 'workflow' },
     address: '110 Oswald Junction',
-    accountOwner: { name: 'Dylan Field', tone: 'purple' },
+    accountOwner: {
+      name: 'Dylan Field',
+      tone: 'purple',
+      avatarUrl: PEOPLE.dylanField,
+    },
     icp: true,
     arr: '$3,500,000',
     industry: 'Design Tools',
@@ -343,9 +387,17 @@ const COMPANIES: ContactCompany[] = [
   {
     name: 'Github',
     domain: 'github.com',
-    createdBy: { name: 'Chris Wanstrath', tone: 'gray' },
+    createdBy: {
+      name: 'Chris Wanstrath',
+      tone: 'gray',
+      avatarUrl: PEOPLE.chrisWanstrath,
+    },
     address: '3891 Ranchview Drive',
-    accountOwner: { name: 'Thomas Dohmke', tone: 'gray' },
+    accountOwner: {
+      name: 'Thomas Dohmke',
+      tone: 'gray',
+      avatarUrl: PEOPLE.thomasDohmke,
+    },
     icp: true,
     arr: '$900,000',
     industry: 'Developer Platform',
@@ -353,9 +405,17 @@ const COMPANIES: ContactCompany[] = [
   {
     name: 'Airbnb',
     domain: 'airbnb.com',
-    createdBy: { name: 'Brian Chesky', tone: 'pink' },
+    createdBy: {
+      name: 'Brian Chesky',
+      tone: 'pink',
+      avatarUrl: PEOPLE.brianChesky,
+    },
     address: '888 Brannan Street',
-    accountOwner: { name: 'Brian Chesky', tone: 'pink' },
+    accountOwner: {
+      name: 'Brian Chesky',
+      tone: 'pink',
+      avatarUrl: PEOPLE.brianChesky,
+    },
     icp: false,
     arr: '$1,800,000',
     industry: 'Travel & Hospitality',
@@ -363,9 +423,17 @@ const COMPANIES: ContactCompany[] = [
   {
     name: 'Stripe',
     domain: 'stripe.com',
-    createdBy: { name: 'Patrick Collison', tone: 'blue' },
+    createdBy: {
+      name: 'Patrick Collison',
+      tone: 'blue',
+      avatarUrl: PEOPLE.patrickCollison,
+    },
     address: '354 Oyster Point Blvd',
-    accountOwner: { name: 'Patrick Collison', tone: 'blue' },
+    accountOwner: {
+      name: 'Patrick Collison',
+      tone: 'blue',
+      avatarUrl: PEOPLE.patrickCollison,
+    },
     icp: true,
     arr: '$4,200,000',
     industry: 'Fintech',
@@ -403,6 +471,31 @@ const GRIP_CELLS = Array.from(
   (_, gripNumber) => gripNumber,
 );
 
+const ACTOR_SOURCE_ICONS = {
+  api: IconApi,
+  system: IconRobot,
+  workflow: IconSettingsAutomation,
+};
+
+// A member shows their rounded avatar; a non-person actor (API/workflow/system)
+// shows its bare source icon, inheriting the chip's text color.
+function ActorAvatar({ actor }: { actor: ContactActor }) {
+  if (actor.source) {
+    const SourceIcon = ACTOR_SOURCE_ICONS[actor.source];
+    return <SourceIcon size={14} stroke={1.6} />;
+  }
+
+  return (
+    <PersonAvatar
+      person={{
+        avatarUrl: actor.avatarUrl,
+        name: actor.name,
+        tone: actor.tone,
+      }}
+    />
+  );
+}
+
 function CellValue({
   columnId,
   company,
@@ -428,7 +521,8 @@ function CellValue({
       return (
         <Chip
           label={company.createdBy.name}
-          leftComponent={<PersonAvatar person={company.createdBy} />}
+          leftComponent={<ActorAvatar actor={company.createdBy} />}
+          variant="transparent"
         />
       );
     case 'address':
@@ -437,17 +531,14 @@ function CellValue({
       return (
         <Chip
           label={company.accountOwner.name}
-          leftComponent={<PersonAvatar person={company.accountOwner} />}
+          leftComponent={<ActorAvatar actor={company.accountOwner} />}
+          variant="transparent"
         />
       );
     case 'icp':
       return (
         <BooleanRow>
-          {company.icp ? (
-            <IconCheck size={11} stroke={2} />
-          ) : (
-            <IconX size={11} stroke={2} />
-          )}
+          {company.icp ? <IconCheck size={14} /> : <IconX size={14} />}
           <BooleanText>{company.icp ? 'True' : 'False'}</BooleanText>
         </BooleanRow>
       );
