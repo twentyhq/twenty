@@ -390,6 +390,16 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       ];
     }
 
+    if (universalIdentifier !== universalIdentifier.toLowerCase()) {
+      return [
+        {
+          code: FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
+          message: `Invalid universalIdentifier: "${universalIdentifier}" must be lowercase`,
+          value: universalIdentifier,
+        },
+      ];
+    }
+
     return [];
   }
 
