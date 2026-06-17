@@ -7,8 +7,9 @@ import {
   type PointerEvent,
   type ReactNode,
 } from 'react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { previewFontSize } from '../preview-font-size';
 
 export type ChipVariant =
   | 'highlighted'
@@ -28,80 +29,84 @@ type ChipProps = {
   variant?: ChipVariant;
 };
 
-const theme = APP_PREVIEW_THEME;
-
-const StyledContainer = styled.div<
-  Pick<ChipProps, 'clickable' | 'isBold' | 'maxWidth' | 'variant'>
->`
-  --chip-horizontal-padding: ${theme.spacingBasePx}px;
-  --chip-vertical-padding: 3px;
+// Variant styling lives in data-attribute selectors (not prop functions) so
+// every value bakes at build — twenty-ui's theme is tree-shaken out of the
+// runtime bundle. Sized against the content box like twenty-front's chip:
+// 12px content + 4px padding = 20px.
+const StyledContainer = styled.div<{ $maxWidth?: number }>`
+  --chip-horizontal-padding: ${THEME_LIGHT.spacing(1)};
+  --chip-vertical-padding: ${THEME_LIGHT.spacing(1)};
   align-items: center;
-  background-color: ${({ variant }) =>
-    variant === 'static'
-      ? theme.background.transparent.lighter
-      : variant === 'highlighted'
-        ? theme.background.transparent.light
-        : 'inherit'};
-  border: ${({ variant }) =>
-    variant === 'static' ? `1px solid ${theme.border.color.strong}` : 'none'};
-  border-radius: ${({ variant }) =>
-    variant === 'rounded' || variant === 'static'
-      ? theme.border.radius.pill
-      : theme.border.radius.sm};
-  color: ${theme.font.color.primary};
-  cursor: ${({ clickable, variant }) =>
-    variant === 'transparent' ? 'inherit' : clickable ? 'pointer' : 'inherit'};
+  background-color: inherit;
+  border: none;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  box-sizing: content-box;
+  color: ${THEME_LIGHT.font.color.primary};
+  cursor: inherit;
   display: inline-flex;
-  gap: ${theme.spacingBasePx}px;
-  height: 20px;
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
+  gap: ${THEME_LIGHT.spacing(1)};
+  height: ${THEME_LIGHT.spacing(3)};
   justify-content: flex-start;
-  max-width: ${({ maxWidth }) =>
-    maxWidth
-      ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
+  line-height: 1.4;
+  max-width: ${({ $maxWidth }) =>
+    $maxWidth
+      ? `calc(${$maxWidth}px - 2 * var(--chip-horizontal-padding))`
       : '100%'};
   overflow: hidden;
   padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
-  padding-left: ${({ variant }) =>
-    variant === 'transparent'
-      ? '0'
-      : variant === 'static'
-        ? `${theme.spacingBasePx * 2}px`
-        : 'var(--chip-horizontal-padding)'};
-  padding-right: ${({ variant }) =>
-    variant === 'static'
-      ? `${theme.spacingBasePx * 2}px`
-      : 'var(--chip-horizontal-padding)'};
   user-select: none;
-  font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
-  line-height: 1.4;
-  font-weight: ${({ isBold }) =>
-    isBold ? theme.font.weight.medium : theme.font.weight.regular};
-
-  &:hover {
-    background-color: ${({ variant }) =>
-      variant === 'regular'
-        ? theme.background.transparent.light
-        : variant === 'highlighted'
-          ? theme.background.transparent.medium
-          : variant === 'static'
-            ? theme.background.transparent.lighter
-            : 'inherit'};
-  }
-
-  &:active {
-    background-color: ${({ variant }) =>
-      variant === 'regular'
-        ? theme.background.transparent.medium
-        : variant === 'highlighted'
-          ? theme.background.transparent.strong
-          : variant === 'static'
-            ? theme.background.transparent.lighter
-            : 'inherit'};
-  }
 
   & > svg {
     flex-shrink: 0;
+  }
+
+  &[data-bold] {
+    font-weight: ${THEME_LIGHT.font.weight.medium};
+  }
+
+  &[data-clickable] {
+    cursor: pointer;
+  }
+
+  &[data-variant='highlighted'] {
+    background-color: ${THEME_LIGHT.background.transparent.light};
+  }
+  &[data-variant='highlighted']:hover {
+    background-color: ${THEME_LIGHT.background.transparent.medium};
+  }
+  &[data-variant='highlighted']:active {
+    background-color: ${THEME_LIGHT.background.transparent.strong};
+  }
+
+  &[data-variant='rounded'] {
+    border-radius: ${THEME_LIGHT.border.radius.pill};
+  }
+
+  &[data-variant='static'] {
+    background-color: ${THEME_LIGHT.background.transparent.lighter};
+    border: 1px solid ${THEME_LIGHT.border.color.strong};
+    border-radius: ${THEME_LIGHT.border.radius.pill};
+    padding-left: ${THEME_LIGHT.spacing(2)};
+    padding-right: ${THEME_LIGHT.spacing(2)};
+  }
+  &[data-variant='static']:hover,
+  &[data-variant='static']:active {
+    background-color: ${THEME_LIGHT.background.transparent.lighter};
+  }
+
+  &[data-variant='transparent'] {
+    cursor: inherit;
+    padding-left: 0;
+  }
+
+  &[data-clickable][data-variant='regular']:hover {
+    background-color: ${THEME_LIGHT.background.transparent.light};
+  }
+  &[data-clickable][data-variant='regular']:active {
+    background-color: ${THEME_LIGHT.background.transparent.medium};
   }
 `;
 
@@ -154,16 +159,16 @@ export function Chip({
 
   return (
     <StyledContainer
+      $maxWidth={maxWidth}
       className={className}
-      clickable={clickable}
-      isBold={isBold}
-      maxWidth={maxWidth}
+      data-bold={isBold ? '' : undefined}
+      data-clickable={isInteractive ? '' : undefined}
+      data-variant={variant}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       onPointerDown={handlePointerDown}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
-      variant={variant}
     >
       {leftComponent}
       <StyledLabel>{label}</StyledLabel>
