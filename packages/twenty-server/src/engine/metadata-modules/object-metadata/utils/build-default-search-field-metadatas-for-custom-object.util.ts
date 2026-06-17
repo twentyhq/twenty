@@ -5,10 +5,8 @@ import { type DefaultFlatFieldForCustomObjectMaps } from 'src/engine/metadata-mo
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 
-// The custom object searchVector asExpression is built from the name field only
-// (see build-default-flat-field-metadatas-for-custom-object.util.ts). Mirror that
-// here by creating a single searchFieldMetadata row for the name field. Junction
-// objects created with skipNameField have no name field and therefore no row.
+// Mirrors the custom-object searchVector, which indexes the name field only. Junction
+// objects (skipNameField) have no name field and therefore get no row.
 export const buildDefaultSearchFieldMetadatasForCustomObject = ({
   flatObjectMetadata,
   defaultFlatFieldForCustomObjectMaps,

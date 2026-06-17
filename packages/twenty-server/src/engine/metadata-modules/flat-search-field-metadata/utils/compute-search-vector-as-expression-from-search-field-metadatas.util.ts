@@ -10,8 +10,8 @@ export type SearchVectorTargetField = {
   name: string;
   type: FieldMetadataType;
   createdAt: string;
-  // Deterministic tie-break for fields sharing a createdAt (field metadata id when
-  // resolved from the maps, universalIdentifier for fields not yet persisted).
+  // Tie-break for fields sharing a createdAt (field id, or universalIdentifier when
+  // not yet persisted).
   sortKey: string;
 };
 
@@ -25,15 +25,10 @@ export const buildSearchVectorTargetField = (
   sortKey,
 });
 
-// Builds the searchVector to_tsvector asExpression from the fields targeted by an
-// object's searchFieldMetadata rows. Callers MUST pass the POST-change field set
-// (i.e. account for any row being added/removed in the same operation) rather than
-// re-reading possibly-stale flat maps.
-//
-// Fields are filtered to searchable types and ordered deterministically by field
-// metadata createdAt then sortKey. tsvector matching is order-insensitive so
-// correctness never depends on order; the deterministic order only minimizes
-// asExpression churn (standard objects keep their SEARCH_FIELDS_FOR_* row order).
+// Builds the searchVector to_tsvector asExpression from an object's targeted fields.
+// Callers MUST pass the POST-change field set (account for rows added/removed in the
+// same operation), not re-read stale maps. Ordering is deterministic only to minimize
+// asExpression churn — tsvector matching is order-insensitive.
 export const computeSearchVectorAsExpressionFromSearchFieldMetadatas = (
   targetSearchableFields: SearchVectorTargetField[],
 ): string => {

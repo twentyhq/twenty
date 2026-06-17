@@ -16,16 +16,13 @@ type SearchFieldMetadataBackfillOperationsArgs = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatSearchFieldMetadataMaps: FlatEntityMaps<FlatSearchFieldMetadata>;
-  // searchFieldMetadata maps freshly built from the twenty-standard application
-  // definition for this workspace (SEARCH_FIELDS_FOR_* via the standard builders).
-  // This is the deterministic source of truth for standard objects' search field
-  // set — no asExpression parsing.
+  // Deterministic standard-object search set (SEARCH_FIELDS_FOR_*), avoiding any
+  // searchVector expression parsing.
   standardFlatSearchFieldMetadataMaps: FlatEntityMaps<FlatSearchFieldMetadata>;
 };
 
-// Groups searchFieldMetadata rows to create by their object's application so each
-// group is run through the migration runner with the matching application
-// universalIdentifier (the runner assigns applicationId from that single app).
+// Groups rows by application so each group runs through the migration runner under
+// the matching application (the runner assigns applicationId from that single app).
 export const buildSearchFieldMetadataBackfillOperations = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -48,8 +45,7 @@ export const buildSearchFieldMetadataBackfillOperations = ({
 
   const flatSearchFieldMetadatasToCreate: UniversalFlatSearchFieldMetadata[] =
     [];
-  // Avoids emitting the same (object, field) row twice within a single run when
-  // both the standard and custom derivation would target it.
+  // Dedupe (object, field) within a run: standard and custom derivations can overlap.
   const candidateSearchFieldMetadataKeys = new Set<string>();
 
   const pushCandidateIfMissing = ({
@@ -68,9 +64,8 @@ export const buildSearchFieldMetadataBackfillOperations = ({
         fieldMetadataUniversalIdentifier
       ];
 
-    // The object or field does not exist in this workspace yet (e.g. a standard
-    // object a separate sync has not provisioned). Creating its searchFieldMetadata
-    // is that sync's responsibility, so skip here.
+    // Skip rows whose object/field isn't provisioned in this workspace yet (keeps
+    // the backfill idempotent and lets each sync own its own rows).
     if (!isDefined(flatObjectMetadata) || !isDefined(flatFieldMetadata)) {
       return;
     }
@@ -115,14 +110,9 @@ export const buildSearchFieldMetadataBackfillOperations = ({
       ),
   );
 
-  // Custom objects: pre-2.15 builds the searchVector from a single field, the one
-  // named DEFAULT_LABEL_IDENTIFIER_FIELD_NAME ('name') — see SEARCH_FIELDS_FOR_CUSTOM_OBJECT
-  // and buildDefaultFlatFieldMetadatasForCustomObject (provisioning). It resolves
-  // that field by its exact name, not by the label identifier: junction objects
-  // (created with skipNameField) have no name field and an empty searchVector, yet
-  // their label identifier falls back to a non-name field such as the UUID `id`,
-  // which would otherwise produce a spurious row. Exact-name matching also means a
-  // field whose name is a prefix of another's can never mis-bind.
+  // Custom objects index only the field named 'name' (SEARCH_FIELDS_FOR_CUSTOM_OBJECT).
+  // Resolve it by exact name, not the label identifier: junction objects (skipNameField)
+  // have no name field and must stay unsearchable — their label identifier is the UUID id.
   for (const flatObjectMetadata of Object.values(
     flatObjectMetadataMaps.byUniversalIdentifier,
   ).filter(isDefined)) {
@@ -130,7 +120,6 @@ export const buildSearchFieldMetadataBackfillOperations = ({
       continue;
     }
 
-    // Skip objects already covered by the standard derivation above.
     if (
       standardObjectUniversalIdentifiers.has(
         flatObjectMetadata.universalIdentifier,
@@ -152,8 +141,7 @@ export const buildSearchFieldMetadataBackfillOperations = ({
           flatFieldMetadata.name === DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
       );
 
-    // The default name field is TEXT (searchable); this guard keeps backfill aligned
-    // with the recompute, which filters out non-searchable-type fields.
+    // Aligns with the recompute, which drops non-searchable-type fields.
     if (
       !isDefined(nameFieldMetadata) ||
       !isSearchableFieldType(nameFieldMetadata.type)

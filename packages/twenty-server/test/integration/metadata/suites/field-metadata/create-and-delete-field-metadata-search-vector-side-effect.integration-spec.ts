@@ -12,9 +12,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
-// Behavioral gate for chunk 2b: a searchable field added to an object is auto-included
-// in global search (searchVector derives from searchFieldMetadata rows); when the field
-// is removed, it is excluded again.
+// A searchable field added to an object is auto-included in global search (searchVector
+// derives from searchFieldMetadata rows); removing the field excludes it again.
 describe('Field metadata create/delete - search vector side effect', () => {
   let testObjectMetadataId: string;
   let labelFieldMetadataId: string;

@@ -19,11 +19,10 @@ import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-me
 
 type RecomputeSearchVectorFieldFromSearchFieldMetadatasArgs = {
   flatObjectMetadata: FlatObjectMetadata;
-  // Post-change field metadata ids targeted by the object's searchFieldMetadata rows.
+  // Post-change field ids targeted by the object's searchFieldMetadata rows.
   searchFieldMetadataFieldIds: string[];
-  // Field metadatas that should take precedence over the flat maps when resolving an
-  // id (e.g. a field being created in the same migration is not yet in the maps, or a
-  // renamed field whose maps entry still holds the old name).
+  // Takes precedence over the flat maps when resolving an id — for a field created or
+  // renamed in the same migration, whose maps entry is absent or stale.
   overrideFlatFieldMetadataById?: Map<string, FlatFieldMetadata>;
 } & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'>;
 
