@@ -233,4 +233,28 @@ describe('AiChatAssistantMessageRenderer', () => {
     );
     expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
   });
+
+  it('should group a dynamic-tool part (native web search) into ThinkingStepsDisplay', () => {
+    const messageParts = [
+      {
+        type: 'dynamic-tool',
+        toolName: 'web_search',
+        toolCallId: 'dyn-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+        providerExecuted: true,
+      },
+      {
+        type: 'text',
+        text: 'Final answer',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts);
+
+    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
+      'thinking-1-answer-started',
+    );
+  });
 });
