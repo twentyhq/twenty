@@ -71,23 +71,59 @@ export const PARTNER_SCOPE_OPTIONS: ReadonlyArray<{
   },
 ];
 
-// Shown as ghost chips by default — a short, mixed (technical + PLM) starter set.
+// Shown as ghost chips by default — a short set that leads with the partnership
+// value (data modeling, CRM strategy, migration) rather than raw tech. No
+// competitor CRMs: a migration off any tool is just "CRM migration".
 export const PARTNER_SKILL_SUGGESTIONS: ReadonlyArray<string> = [
-  'Data migration',
-  'Workflows',
-  'Integrations',
-  'Custom development',
-  'Self-hosting',
   'Data modeling',
-  'CRM strategy',
+  'CRM strategy & discovery',
+  'CRM migration',
+  'Workflows & automation',
+  'Integrations',
   'Change management',
   'Training & onboarding',
-  'AI / agents',
+  'Custom development',
+  'Self-hosting',
+  'AI agents',
 ];
 
-// Searchable-only (autocomplete) — broad coverage incl. non-technical / PLM.
-// Not rendered as chips; surfaced when the applicant types a match.
+// Searchable-only (autocomplete) — depth across data/advisory/ops first, then
+// engineering and verticals. Surfaced when the applicant types a match; not
+// shown as chips. Deliberately excludes competitor CRMs (Salesforce, HubSpot,
+// Attio, Pipedrive, …) — we don't showcase another CRM.
 export const PARTNER_SKILL_POOL: ReadonlyArray<string> = [
+  // Data & CRM model
+  'Data architecture',
+  'Data migration',
+  'Data quality',
+  'Data enrichment',
+  'Reporting & BI',
+  'Forecasting',
+  'Pipeline design',
+  'Lead routing',
+  'Deduplication',
+  // Advisory / RevOps / process
+  'RevOps',
+  'Sales ops',
+  'Requirements gathering',
+  'Process mapping',
+  'Vendor selection',
+  'CRM audit',
+  'Solution architecture',
+  'Quote-to-cash',
+  'Territory management',
+  'Deal desk',
+  // Automation & integration (non-CRM)
+  'No-code automation',
+  'n8n',
+  'Zapier',
+  'Make',
+  'API integration',
+  'Webhooks',
+  'SSO / SCIM',
+  'Multi-language',
+  'WhatsApp',
+  // Engineering & infrastructure
   'React',
   'TypeScript',
   'Node.js',
@@ -98,40 +134,33 @@ export const PARTNER_SKILL_POOL: ReadonlyArray<string> = [
   'Kubernetes',
   'AWS',
   'GCP',
-  'n8n',
-  'Zapier',
-  'Make',
-  'Salesforce',
-  'HubSpot',
-  'Salesforce migration',
-  'HubSpot migration',
+  'Azure',
+  'DevOps',
+  'Security',
+  'Cyber security',
+  // Platforms (non-CRM)
   'SAP',
   'Shopify',
   'Stripe',
-  'SSO / SCIM',
-  'Dashboards & reporting',
-  'Pipelines',
-  'Multi-language',
-  'RevOps',
-  'Sales ops',
-  'Requirements gathering',
-  'Process mapping',
-  'Vendor selection',
-  'CRM audit',
-  'Solution architecture',
+  // Support & adoption
   'Managed services',
   'L1/L2 support',
   'Documentation',
   'Onboarding',
   'Adoption',
+  'Enterprise support',
+  // Compliance
   'GDPR / data privacy',
   'Compliance',
-  'Enterprise support',
-  'Scaling',
-  'Monitoring',
-  'Security',
+  // AI
+  'AI automations',
+  // Verticals
   'Real estate',
+  'E-commerce',
   'B2B SaaS',
+  'Fintech',
+  'Non-profit / NGO',
+  'Tax & accounting',
 ];
 
 export const PARTNER_COUNTRY_VALUES = [

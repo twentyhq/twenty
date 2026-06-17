@@ -30,12 +30,18 @@ describe('partner-fields.data', () => {
 
   it('ships a non-empty starter skills suggestion pool', () => {
     expect(PARTNER_SKILL_SUGGESTIONS.length).toBeGreaterThan(0);
-    expect(PARTNER_SKILL_SUGGESTIONS).toContain('Data migration');
+    expect(PARTNER_SKILL_SUGGESTIONS).toContain('CRM migration');
   });
 
   it('ships a non-empty searchable skill pool containing technical entries', () => {
     expect(PARTNER_SKILL_POOL.length).toBeGreaterThan(0);
     expect(PARTNER_SKILL_POOL).toContain('React');
+  });
+
+  it('never suggests a competitor CRM as a skill', () => {
+    const all = [...PARTNER_SKILL_SUGGESTIONS, ...PARTNER_SKILL_POOL];
+    const competitor = /salesforce|hubspot|attio|pipedrive|zoho/i;
+    expect(all.filter((skill) => competitor.test(skill))).toEqual([]);
   });
 
   it('requires country, typeOfTeam, and city on profile, partnerScope on expertise', () => {
