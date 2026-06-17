@@ -135,7 +135,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
     expect(variable.value).toBe(plaintext);
   });
 
-  describe('legacy CTR fallback', () => {
+  describe('legacy CTR values (fallback removed)', () => {
     let legacyVariableId: string;
 
     beforeAll(async () => {
@@ -156,7 +156,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
       );
     });
 
-    it('decrypts a legacy CTR-encrypted value through the live API', async () => {
+    it('no longer decrypts a legacy CTR-encrypted value and surfaces an error through the live API', async () => {
       legacyVariableId = crypto.randomUUID();
       const plaintext = 'legacy-ctr-registration-variable-secret';
 
@@ -189,16 +189,10 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
         variables: { applicationRegistrationId },
       });
 
-      expect(findResponse.body.errors).toBeUndefined();
-
-      const variable =
-        findResponse.body.data.findApplicationRegistrationVariables.find(
-          (v: { id: string }) => v.id === legacyVariableId,
-        );
-
-      expect(variable).toBeDefined();
-      expect(variable.isSecret).toBe(false);
-      expect(variable.value).toBe(plaintext);
+      expect(findResponse.body.errors).toBeDefined();
+      expect(findResponse.body.errors[0].message).toContain(
+        'enc:v2 ciphertext envelope',
+      );
     });
   });
 });

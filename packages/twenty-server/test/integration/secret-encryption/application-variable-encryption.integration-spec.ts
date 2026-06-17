@@ -243,7 +243,7 @@ describe('ApplicationVariable encryption (integration)', () => {
     expect(variable.value).toBe(plaintext);
   });
 
-  describe('legacy CTR fallback', () => {
+  describe('legacy CTR values (fallback removed)', () => {
     beforeAll(async () => {
       await dataSource.query(
         `ALTER TABLE core."applicationVariable"
@@ -264,7 +264,7 @@ describe('ApplicationVariable encryption (integration)', () => {
       );
     });
 
-    it('decrypts a legacy CTR-encrypted value through the live API read path', async () => {
+    it('no longer decrypts a legacy CTR-encrypted value and surfaces an error through the live API read path', async () => {
       const plaintext = 'legacy-ctr-application-variable-secret-value-here';
 
       await dataSource.query(
@@ -293,16 +293,10 @@ describe('ApplicationVariable encryption (integration)', () => {
         variables: { id: applicationId },
       });
 
-      expect(findResponse.body.errors).toBeUndefined();
-
-      const variable =
-        findResponse.body.data.findOneApplication.applicationVariables.find(
-          (v: { key: string }) => v.key === LEGACY_VARIABLE_KEY,
-        );
-
-      expect(variable).toBeDefined();
-      expect(variable.isSecret).toBe(true);
-      expect(variable.value).toBe(buildExpectedMask(plaintext));
+      expect(findResponse.body.errors).toBeDefined();
+      expect(findResponse.body.errors[0].message).toContain(
+        'enc:v2 ciphertext envelope',
+      );
     });
   });
 });
