@@ -5,7 +5,7 @@ exports[`Workspace-level impersonation - authorization denials (integration) rej
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "Only administrators can impersonate users with admin privileges.",
   },
   "message": "Cannot impersonate a user with admin privileges. Only administrators can impersonate other administrators.",
   "name": "ForbiddenError",

@@ -20,8 +20,7 @@ import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type PlaygroundTokenJwtPayload } from 'src/engine/core-modules/auth/types/playground-token-jwt-payload.type';
 import { type WorkspaceAgnosticTokenJwtPayload } from 'src/engine/core-modules/auth/types/workspace-agnostic-token-jwt-payload.type';
-import { IMPERSONATION_DENIAL_EXCEPTION_CODE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-code-by-reason.constant';
-import { IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-message-by-reason.constant';
+import { IMPERSONATION_DENIAL_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { JWT_SUPPORTED_VERIFY_ALGORITHMS } from 'src/engine/core-modules/jwt/constants/jwt-algorithm.constant';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -299,14 +298,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
 
     if (!authorizationResult.allowed) {
-      throw new AuthException(
-        IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON[
-          authorizationResult.reason
-        ],
-        IMPERSONATION_DENIAL_EXCEPTION_CODE_BY_REASON[
-          authorizationResult.reason
-        ],
-      );
+      const { message, exceptionCode, userFriendlyMessage } =
+        IMPERSONATION_DENIAL_BY_REASON[authorizationResult.reason];
+
+      throw new AuthException(message, exceptionCode, { userFriendlyMessage });
     }
 
     return {

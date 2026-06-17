@@ -5,7 +5,7 @@ exports[`Server-level impersonation - authorization denials (integration) reject
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "Server-level impersonation is not enabled for this user or workspace.",
   },
   "message": "Server level impersonation not allowed",
   "name": "ForbiddenError",
@@ -17,7 +17,7 @@ exports[`Server-level impersonation - authorization denials (integration) reject
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "Set up two-factor authentication before impersonating users in another workspace.",
   },
   "message": "Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.",
   "name": "ForbiddenError",

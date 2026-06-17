@@ -7,7 +7,7 @@ exports[`Impersonation - access token validation denial (integration) rejects an
     "subCode": "FORBIDDEN_EXCEPTION",
     "userFriendlyMessage": {
       "id": Any<String>,
-      "message": "You do not have permission to perform this action.",
+      "message": "You do not have permission to impersonate users in this workspace.",
     },
   },
   "message": "Impersonation not allowed",

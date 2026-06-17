@@ -12,8 +12,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
-import { IMPERSONATION_DENIAL_EXCEPTION_CODE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-code-by-reason.constant';
-import { IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-message-by-reason.constant';
+import { IMPERSONATION_DENIAL_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -75,14 +74,10 @@ export class ImpersonationService {
       );
 
     if (!authorizationResult.allowed) {
-      throw new AuthException(
-        IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON[
-          authorizationResult.reason
-        ],
-        IMPERSONATION_DENIAL_EXCEPTION_CODE_BY_REASON[
-          authorizationResult.reason
-        ],
-      );
+      const { message, exceptionCode, userFriendlyMessage } =
+        IMPERSONATION_DENIAL_BY_REASON[authorizationResult.reason];
+
+      throw new AuthException(message, exceptionCode, { userFriendlyMessage });
     }
 
     return this.generateImpersonationLoginToken(
