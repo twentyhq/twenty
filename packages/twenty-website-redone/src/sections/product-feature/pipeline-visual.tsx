@@ -207,7 +207,6 @@ const DealCard = styled.div`
   background: ${THEME_LIGHT.background.secondary};
   border: 1px solid ${THEME_LIGHT.border.color.medium};
   border-radius: ${THEME_LIGHT.border.radius.sm};
-  box-shadow: ${THEME_LIGHT.boxShadow.light};
   cursor: grab;
   display: flex;
   flex-direction: column;
