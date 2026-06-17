@@ -34,12 +34,10 @@ export const useSignUpInNewWorkspace = () => {
     displayName,
     subdomain,
     logo,
-    newTab = true,
   }: {
     displayName?: string;
     subdomain?: string;
     logo?: File;
-    newTab?: boolean;
   } = {}) => {
     try {
       const { data } = await signUpInNewWorkspaceMutation({
@@ -78,7 +76,7 @@ export const useSignUpInNewWorkspace = () => {
         getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
         AppPath.Verify,
         { loginToken },
-        newTab ? '_blank' : '_self',
+        '_self',
       );
     } catch (error) {
       enqueueErrorSnackBar(

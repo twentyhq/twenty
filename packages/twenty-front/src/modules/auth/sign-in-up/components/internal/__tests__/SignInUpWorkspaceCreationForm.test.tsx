@@ -104,7 +104,6 @@ describe('SignInUpWorkspaceCreationForm', () => {
         displayName: 'Apple',
         subdomain: 'apple',
         logo: undefined,
-        newTab: false,
       });
     });
 
@@ -130,7 +129,6 @@ describe('SignInUpWorkspaceCreationForm', () => {
         displayName: 'Apple',
         subdomain: 'apple',
         logo: logoFile,
-        newTab: false,
       });
     });
 
@@ -211,7 +209,6 @@ describe('SignInUpWorkspaceCreationForm', () => {
       expect(createWorkspaceMock).toHaveBeenCalledWith({
         displayName: 'Apple',
         logo: undefined,
-        newTab: false,
       });
       expect(createWorkspaceMock.mock.calls[0][0]).not.toHaveProperty(
         'subdomain',

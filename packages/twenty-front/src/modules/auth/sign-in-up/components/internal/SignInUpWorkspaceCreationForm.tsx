@@ -113,7 +113,6 @@ export const SignInUpWorkspaceCreationForm = () => {
         displayName: workspaceName.trim(),
         ...(isMultiWorkspaceEnabled ? { subdomain } : {}),
         logo,
-        newTab: false,
       });
     } finally {
       setIsSubmitting(false);
