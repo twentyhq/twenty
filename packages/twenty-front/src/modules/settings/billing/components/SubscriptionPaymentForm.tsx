@@ -1,9 +1,6 @@
-import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
-import { CHECKOUT_SESSION_WITH_PAYMENT_METHOD } from '@/settings/billing/graphql/mutations/checkoutSessionWithPaymentMethod';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -13,7 +10,8 @@ import {
   useElements,
   useStripe,
 } from '@stripe/react-stripe-js';
-import { useState } from 'react';
+import { type StripeElementsOptions } from '@stripe/stripe-js';
+import { useMemo, useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
@@ -22,7 +20,17 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type BillingPlanKey,
   type SubscriptionInterval,
+  CreateSubscriptionPaymentIntentDocument,
 } from '~/generated-metadata/graphql';
+
+type SubscriptionPaymentFormContentProps = {
+  plan: BillingPlanKey;
+  recurringInterval: SubscriptionInterval;
+};
+
+type SubscriptionPaymentFormProps = SubscriptionPaymentFormContentProps & {
+  amount: number;
+};
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -37,86 +45,86 @@ const StyledButtonContainer = styled.div`
   justify-content: center;
 `;
 
-type CheckoutSessionWithPaymentMethodMutation = {
-  checkoutSession: { clientSecret?: string | null };
-};
-
-type CheckoutSessionWithPaymentMethodMutationVariables = {
-  recurringInterval: SubscriptionInterval;
-  plan: BillingPlanKey;
-  requirePaymentMethod: boolean;
-  successUrlPath?: string;
-};
-
-const SubscriptionPaymentFormContent = () => {
+const SubscriptionPaymentFormContent = ({
+  plan,
+  recurringInterval,
+}: SubscriptionPaymentFormContentProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [checkoutSession] = useMutation<
-    CheckoutSessionWithPaymentMethodMutation,
-    CheckoutSessionWithPaymentMethodMutationVariables
-  >(CHECKOUT_SESSION_WITH_PAYMENT_METHOD);
+  const [createSubscriptionPaymentIntent] = useMutation(
+    CreateSubscriptionPaymentIntentDocument,
+  );
+
+  const isStripeReady = isDefined(stripe) && isDefined(elements);
 
   const handleSubmit = async () => {
-    if (!isDefined(stripe) || !isDefined(elements)) {
+    if (!isStripeReady) {
       return;
     }
 
     setIsSubmitting(true);
 
-    // Validate and collect the payment details before creating the subscription.
-    const { error: submitError } = await elements.submit();
-    if (isDefined(submitError)) {
-      enqueueErrorSnackBar({
-        message:
-          submitError.message ??
-          t`Your payment details are incomplete. Please review and retry.`,
+    try {
+      const { error: submitError } = await elements.submit();
+      if (isDefined(submitError)) {
+        enqueueErrorSnackBar({
+          message:
+            submitError.message ??
+            t`Your payment details are incomplete. Please review and retry.`,
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      const { data } = await createSubscriptionPaymentIntent({
+        variables: { recurringInterval, plan },
       });
-      setIsSubmitting(false);
-      return;
-    }
 
-    const { data } = await checkoutSession({
-      variables: {
-        recurringInterval: billingCheckoutSession.interval,
-        plan: billingCheckoutSession.plan,
-        requirePaymentMethod: true,
-        successUrlPath: AppPath.PlanRequiredSuccess,
-      },
-    });
+      const paymentIntent = data?.createSubscriptionPaymentIntent;
+      if (!isDefined(paymentIntent?.clientSecret)) {
+        enqueueErrorSnackBar({
+          message: t`Subscription error. Please retry or contact Twenty team`,
+        });
+        setIsSubmitting(false);
+        return;
+      }
 
-    const clientSecret = data?.checkoutSession.clientSecret;
-    if (!isDefined(clientSecret)) {
+      const returnUrl = new URL(
+        AppPath.PlanRequiredSuccess,
+        window.location.origin,
+      ).toString();
+
+      // A free trial yields a SetupIntent (no upfront charge); otherwise the
+      // first invoice yields a PaymentIntent.
+      const { error } =
+        paymentIntent.paymentIntentType === 'setup'
+          ? await stripe.confirmSetup({
+              elements,
+              clientSecret: paymentIntent.clientSecret,
+              confirmParams: { return_url: returnUrl },
+            })
+          : await stripe.confirmPayment({
+              elements,
+              clientSecret: paymentIntent.clientSecret,
+              confirmParams: { return_url: returnUrl },
+            });
+
+      // Only reached on an immediate error; otherwise Stripe redirects to
+      // `return_url`.
+      if (isDefined(error)) {
+        enqueueErrorSnackBar({
+          message:
+            error.message ??
+            t`We couldn't confirm your payment method. Please retry.`,
+        });
+        setIsSubmitting(false);
+      }
+    } catch {
       enqueueErrorSnackBar({
         message: t`Subscription error. Please retry or contact Twenty team`,
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    const returnUrl = new URL(
-      AppPath.PlanRequiredSuccess,
-      window.location.origin,
-    ).toString();
-
-    const { error } = await stripe.confirmSetup({
-      elements,
-      clientSecret,
-      confirmParams: {
-        return_url: returnUrl,
-      },
-    });
-
-    // Only reached on an immediate confirmation error; otherwise Stripe handles
-    // any required authentication and redirects the user to `return_url`.
-    if (isDefined(error)) {
-      enqueueErrorSnackBar({
-        message:
-          error.message ??
-          t`We couldn't confirm your payment method. Please retry.`,
       });
       setIsSubmitting(false);
     }
@@ -133,27 +141,36 @@ const SubscriptionPaymentFormContent = () => {
           onClick={handleSubmit}
           width={200}
           Icon={() => (isSubmitting ? <Loader /> : null)}
-          disabled={!isDefined(stripe) || isSubmitting}
+          disabled={!isStripeReady || isSubmitting}
         />
       </StyledButtonContainer>
     </StyledFormContainer>
   );
 };
 
-export const SubscriptionPaymentForm = () => {
+export const SubscriptionPaymentForm = ({
+  plan,
+  recurringInterval,
+  amount,
+}: SubscriptionPaymentFormProps) => {
   const stripePromise = useStripePromise();
   const appearance = useStripeAppearance();
+
+  const options = useMemo<StripeElementsOptions>(
+    () => ({ mode: 'subscription', amount, currency: 'usd', appearance }),
+    [amount, appearance],
+  );
 
   if (!isDefined(stripePromise)) {
     return null;
   }
 
   return (
-    <Elements
-      stripe={stripePromise}
-      options={{ mode: 'setup', currency: 'usd', appearance }}
-    >
-      <SubscriptionPaymentFormContent />
+    <Elements stripe={stripePromise} options={options}>
+      <SubscriptionPaymentFormContent
+        plan={plan}
+        recurringInterval={recurringInterval}
+      />
     </Elements>
   );
 };

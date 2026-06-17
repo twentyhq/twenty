@@ -31,6 +31,63 @@ export class StripeCheckoutService {
     );
   }
 
+  async createCheckoutSession({
+    user,
+    workspace,
+    stripeSubscriptionLineItems,
+    successUrl,
+    cancelUrl,
+    stripeCustomerId,
+    plan = BillingPlanKey.PRO,
+    requirePaymentMethod = true,
+    withTrialPeriod,
+  }: {
+    user: AuthContextUser;
+    workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
+    stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
+    successUrl?: string;
+    cancelUrl?: string;
+    stripeCustomerId?: string;
+    plan?: BillingPlanKey;
+    requirePaymentMethod?: boolean;
+    withTrialPeriod: boolean;
+  }): Promise<Stripe.Checkout.Session> {
+    if (!isDefined(stripeCustomerId)) {
+      const stripeCustomer =
+        await this.stripeCustomerService.createStripeCustomer(
+          user.email,
+          workspace.id,
+          workspace.displayName,
+        );
+
+      stripeCustomerId = stripeCustomer.id;
+    }
+
+    return await this.stripe.checkout.sessions.create({
+      line_items: stripeSubscriptionLineItems,
+      mode: 'subscription',
+      subscription_data: {
+        metadata: {
+          workspaceId: workspace.id,
+          plan,
+        },
+        ...this.getStripeSubscriptionTrialPeriodConfig(
+          withTrialPeriod,
+          requirePaymentMethod,
+        ),
+      },
+      automatic_tax: { enabled: !!requirePaymentMethod },
+      tax_id_collection: { enabled: !!requirePaymentMethod },
+      customer: stripeCustomerId,
+      customer_update: { name: 'auto', address: 'auto' },
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      payment_method_collection: requirePaymentMethod
+        ? 'always'
+        : 'if_required',
+    });
+  }
+
   async createDirectSubscription({
     user,
     workspace,
@@ -83,14 +140,9 @@ export class StripeCheckoutService {
     return await this.stripe.subscriptions.create(subscriptionParams);
   }
 
-  // Creates the subscription server-side while deferring payment method
-  // collection to the Stripe Payment Element on the frontend.
-  // `default_incomplete` + a free trial means there is no upfront charge, so
-  // Stripe attaches a `pending_setup_intent` whose client secret is confirmed
-  // client-side via stripe.confirmSetup().
-  // Automatic tax stays disabled because we don't collect a billing address
-  // during onboarding (to maximize conversion); an address must be collected
-  // before the first real charge to enable tax.
+  // Creates the subscription with the payment method deferred to the Stripe
+  // Payment Element. With a trial there is no upfront charge, so Stripe attaches
+  // a pending SetupIntent; without one, the first invoice yields a PaymentIntent.
   async createSubscriptionWithPaymentMethodCollection({
     user,
     workspace,
@@ -106,16 +158,11 @@ export class StripeCheckoutService {
     plan?: BillingPlanKey;
     withTrialPeriod: boolean;
   }): Promise<Stripe.Subscription> {
-    if (!isDefined(stripeCustomerId)) {
-      const stripeCustomer =
-        await this.stripeCustomerService.createStripeCustomer(
-          user.email,
-          workspace.id,
-          workspace.displayName,
-        );
-
-      stripeCustomerId = stripeCustomer.id;
-    }
+    const customerId = await this.getOrCreateStripeCustomerId({
+      user,
+      workspace,
+      stripeCustomerId,
+    });
 
     const subscriptionItems: Stripe.SubscriptionCreateParams.Item[] =
       stripeSubscriptionLineItems.map((lineItem) => ({
@@ -124,7 +171,7 @@ export class StripeCheckoutService {
       }));
 
     return await this.stripe.subscriptions.create({
-      customer: stripeCustomerId,
+      customer: customerId,
       items: subscriptionItems,
       metadata: {
         workspaceId: workspace.id,
@@ -135,9 +182,34 @@ export class StripeCheckoutService {
         save_default_payment_method: 'on_subscription',
       },
       ...this.getStripeSubscriptionTrialPeriodConfig(withTrialPeriod, true),
+      // Tax needs a billing address, which we don't collect inline to keep
+      // onboarding friction low; enable it once an address is gathered.
       automatic_tax: { enabled: false },
-      expand: ['pending_setup_intent'],
+      expand: ['pending_setup_intent', 'latest_invoice.confirmation_secret'],
     });
+  }
+
+  private async getOrCreateStripeCustomerId({
+    user,
+    workspace,
+    stripeCustomerId,
+  }: {
+    user: AuthContextUser;
+    workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
+    stripeCustomerId?: string;
+  }): Promise<string> {
+    if (isDefined(stripeCustomerId)) {
+      return stripeCustomerId;
+    }
+
+    const stripeCustomer =
+      await this.stripeCustomerService.createStripeCustomer(
+        user.email,
+        workspace.id,
+        workspace.displayName,
+      );
+
+    return stripeCustomer.id;
   }
 
   private getStripeSubscriptionTrialPeriodConfig(

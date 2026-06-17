@@ -1,32 +1,26 @@
-import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
-import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type Appearance } from '@stripe/stripe-js';
+import { useContext, useMemo } from 'react';
 import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
-// Themes the Stripe Elements (rendered in a Stripe-owned iframe) with concrete
-// color values from the active Twenty theme. CSS variables can't cross the
-// iframe boundary, so the resolved theme object is used instead.
+// Themes the Stripe iframe with concrete theme values, since CSS variables can't
+// cross the iframe boundary.
 export const useStripeAppearance = (): Appearance => {
-  const persistedColorScheme = useAtomStateValue(persistedColorSchemeState);
-  const systemColorScheme = useSystemColorScheme();
-
-  const effectiveColorScheme =
-    persistedColorScheme === 'System'
-      ? systemColorScheme
-      : persistedColorScheme;
-
-  const isDark = effectiveColorScheme === 'Dark';
+  const { colorScheme } = useContext(ThemeContext);
+  const isDark = colorScheme === 'dark';
   const theme = isDark ? THEME_DARK : THEME_LIGHT;
 
-  return {
-    theme: isDark ? 'night' : 'stripe',
-    variables: {
-      colorPrimary: theme.color.blue,
-      colorBackground: theme.background.primary,
-      colorText: theme.font.color.primary,
-      colorDanger: theme.font.color.danger,
-      borderRadius: '8px',
-    },
-  };
+  return useMemo(
+    () => ({
+      theme: isDark ? 'night' : 'stripe',
+      variables: {
+        colorPrimary: theme.color.blue,
+        colorBackground: theme.background.primary,
+        colorText: theme.font.color.primary,
+        colorDanger: theme.font.color.danger,
+        borderRadius: '8px',
+      },
+    }),
+    [isDark, theme],
+  );
 };

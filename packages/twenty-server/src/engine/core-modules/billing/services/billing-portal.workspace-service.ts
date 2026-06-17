@@ -47,6 +47,46 @@ export class BillingPortalWorkspaceService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
+  async computeCheckoutSessionURL({
+    user,
+    workspace,
+    billingPricesPerPlan,
+    successUrlPath,
+    plan,
+    requirePaymentMethod,
+  }: BillingPortalCheckoutSessionParameters): Promise<string> {
+    const { successUrl, cancelUrl, customer, stripeSubscriptionLineItems } =
+      await this.prepareSubscriptionParameters({
+        workspace,
+        billingPricesPerPlan,
+        successUrlPath,
+      });
+
+    const checkoutSession =
+      await this.stripeCheckoutService.createCheckoutSession({
+        user,
+        workspace,
+        stripeSubscriptionLineItems,
+        successUrl,
+        cancelUrl,
+        stripeCustomerId: customer?.stripeCustomerId,
+        plan,
+        requirePaymentMethod,
+        withTrialPeriod:
+          !isDefined(customer) || customer.billingSubscriptions.length === 0,
+      });
+
+    assertIsDefinedOrThrow(
+      checkoutSession.url,
+      new BillingException(
+        'Error: missing checkout.session.url',
+        BillingExceptionCode.BILLING_STRIPE_ERROR,
+      ),
+    );
+
+    return checkoutSession.url;
+  }
+
   async createDirectSubscription({
     user,
     workspace,
@@ -62,17 +102,7 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
-    if (
-      isNonEmptyArray(customer?.billingSubscriptions) &&
-      customer.billingSubscriptions.some(
-        (subscription) => subscription.status !== SubscriptionStatus.Canceled,
-      )
-    ) {
-      throw new BillingException(
-        'Customer already has a non-canceled billing subscription',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
-      );
-    }
+    this.assertNoActiveSubscription(customer);
 
     const stripeSubscription =
       await this.stripeCheckoutService.createDirectSubscription({
@@ -94,32 +124,24 @@ export class BillingPortalWorkspaceService {
     return successUrl;
   }
 
-  // Used by the inline onboarding flow: creates the trialing subscription and
-  // returns the client secret of its pending SetupIntent so the frontend can
-  // confirm the payment method with the Stripe Payment Element.
-  async createSubscriptionWithPaymentMethod({
+  // Creates the onboarding subscription and returns the client secret needed to
+  // confirm the payment method inline with the Stripe Payment Element.
+  async createSubscriptionPaymentIntent({
     user,
     workspace,
     billingPricesPerPlan,
     plan,
-  }: BillingPortalCheckoutSessionParameters): Promise<string> {
+  }: BillingPortalCheckoutSessionParameters): Promise<{
+    clientSecret: string;
+    paymentIntentType: string;
+  }> {
     const { customer, stripeSubscriptionLineItems } =
       await this.prepareSubscriptionParameters({
         workspace,
         billingPricesPerPlan,
       });
 
-    if (
-      isNonEmptyArray(customer?.billingSubscriptions) &&
-      customer.billingSubscriptions.some(
-        (subscription) => subscription.status !== SubscriptionStatus.Canceled,
-      )
-    ) {
-      throw new BillingException(
-        'Customer already has a non-canceled billing subscription',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
-      );
-    }
+    this.assertNoActiveSubscription(customer);
 
     const stripeSubscription =
       await this.stripeCheckoutService.createSubscriptionWithPaymentMethodCollection(
@@ -139,21 +161,62 @@ export class BillingPortalWorkspaceService {
       stripeSubscription.id,
     );
 
-    const pendingSetupIntent = stripeSubscription.pending_setup_intent;
-    const clientSecret =
-      isDefined(pendingSetupIntent) && typeof pendingSetupIntent !== 'string'
-        ? pendingSetupIntent.client_secret
+    return this.extractSubscriptionClientSecret(stripeSubscription);
+  }
+
+  private assertNoActiveSubscription(
+    customer: BillingCustomerEntity | null,
+  ): void {
+    if (
+      isNonEmptyArray(customer?.billingSubscriptions) &&
+      customer.billingSubscriptions.some(
+        (subscription) => subscription.status !== SubscriptionStatus.Canceled,
+      )
+    ) {
+      throw new BillingException(
+        'Customer already has a non-canceled billing subscription',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+      );
+    }
+  }
+
+  private extractSubscriptionClientSecret(subscription: Stripe.Subscription): {
+    clientSecret: string;
+    paymentIntentType: string;
+  } {
+    const pendingSetupIntent = subscription.pending_setup_intent;
+
+    if (
+      isDefined(pendingSetupIntent) &&
+      typeof pendingSetupIntent !== 'string' &&
+      isDefined(pendingSetupIntent.client_secret)
+    ) {
+      return {
+        clientSecret: pendingSetupIntent.client_secret,
+        paymentIntentType: 'setup',
+      };
+    }
+
+    const latestInvoice = subscription.latest_invoice;
+    const confirmationSecret =
+      isDefined(latestInvoice) && typeof latestInvoice !== 'string'
+        ? latestInvoice.confirmation_secret
         : undefined;
 
-    assertIsDefinedOrThrow(
-      clientSecret,
-      new BillingException(
-        'Error: missing pending setup intent client secret',
-        BillingExceptionCode.BILLING_STRIPE_ERROR,
-      ),
-    );
+    if (
+      isDefined(confirmationSecret) &&
+      isDefined(confirmationSecret.client_secret)
+    ) {
+      return {
+        clientSecret: confirmationSecret.client_secret,
+        paymentIntentType: 'payment',
+      };
+    }
 
-    return clientSecret;
+    throw new BillingException(
+      'Error: missing subscription client secret',
+      BillingExceptionCode.BILLING_STRIPE_ERROR,
+    );
   }
 
   private async prepareSubscriptionParameters({

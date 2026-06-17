@@ -257,7 +257,11 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
         </StyledChooseTrialContainer>
       )}
       {billingCheckoutSession.requirePaymentMethod ? (
-        <SubscriptionPaymentForm />
+        <SubscriptionPaymentForm
+          plan={billingCheckoutSession.plan}
+          recurringInterval={billingCheckoutSession.interval}
+          amount={baseProductPrice.unitAmount}
+        />
       ) : (
         <MainButton
           title={t`Continue`}

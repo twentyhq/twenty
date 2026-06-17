@@ -12,6 +12,7 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { BillingEndTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-end-trial-period.dto';
 import { BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
+import { BillingPaymentIntentDTO } from 'src/engine/core-modules/billing/dtos/billing-payment-intent.dto';
 import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-session.dto';
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
@@ -118,11 +119,8 @@ export class BillingResolver {
         interval: recurringInterval,
       });
 
-    // For trials without a payment method, create the subscription directly and
-    // return the success URL to navigate to.
-    // For trials that collect a card, create the subscription server-side and
-    // return the SetupIntent client secret so the frontend can confirm the
-    // payment method inline with the Stripe Payment Element.
+    // For 7-day trials (no payment method required), create subscription directly
+    // For 30-day trials (payment method required), use checkout session flow
     if (!requirePaymentMethod) {
       const successUrl =
         await this.billingPortalWorkspaceService.createDirectSubscription({
@@ -134,18 +132,50 @@ export class BillingResolver {
         url: successUrl,
       };
     } else {
-      const clientSecret =
-        await this.billingPortalWorkspaceService.createSubscriptionWithPaymentMethod(
-          {
-            ...checkoutSessionParams,
-            billingPricesPerPlan,
-          },
-        );
+      const checkoutSessionURL =
+        await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
+          ...checkoutSessionParams,
+          billingPricesPerPlan,
+        });
 
       return {
-        clientSecret,
+        url: checkoutSessionURL,
       };
     }
+  }
+
+  // Onboarding inline flow: creates the subscription server-side and returns the
+  // client secret so the frontend can collect the card with the Payment Element.
+  @Mutation(() => BillingPaymentIntentDTO)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
+  async createSubscriptionPaymentIntent(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args() { recurringInterval, plan }: BillingCheckoutSessionInput,
+    @AuthApiKey() apiKey?: ApiKeyEntity,
+  ): Promise<BillingPaymentIntentDTO> {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      apiKeyId: apiKey?.id,
+      workspaceActivationStatus: workspace.activationStatus,
+    });
+
+    const resolvedPlan = plan ?? BillingPlanKey.PRO;
+
+    const billingPricesPerPlan =
+      await this.billingPlanService.getPricesPerPlanByInterval({
+        planKey: resolvedPlan,
+        interval: recurringInterval,
+      });
+
+    return this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
+      user,
+      workspace,
+      plan: resolvedPlan,
+      billingPricesPerPlan,
+    });
   }
 
   @Mutation(() => BillingUpdateDTO)
