@@ -11,6 +11,7 @@ Verwenden Sie `yarn twenty docker:*`, um den lokalen Twenty-Container zu steuern
 | Befehl                                 | Was es tut                                          |
 | -------------------------------------- | --------------------------------------------------- |
 | `yarn twenty docker:start`             | Server starten (lädt das Image bei Bedarf herunter) |
+| `yarn twenty docker:start 2.2.0`       | Eine bestimmte Serverversion starten                |
 | `yarn twenty docker:start --port 3030` | Auf einem benutzerdefinierten Port starten          |
 | `yarn twenty docker:stop`              | Server stoppen (Daten bleiben erhalten)             |
 | `yarn twenty docker:status`            | URL, Version und Anmeldedaten anzeigen              |
@@ -20,6 +21,20 @@ Verwenden Sie `yarn twenty docker:*`, um den lokalen Twenty-Container zu steuern
 | `yarn twenty docker:upgrade 2.2.0`     | Auf eine bestimmte Version aktualisieren            |
 
 Daten bleiben über Neustarts hinweg in zwei Docker-Volumes bestehen (`twenty-app-dev-data` für PostgreSQL, `twenty-app-dev-storage` für Dateien). Verwenden Sie `reset`, um alles zu löschen.
+
+## Serverversion fixieren
+
+Wenn keine Version übergeben wird, ermittelt `docker:start` die Version aus dem `engines.twenty`-Bereich deiner App in der `package.json` – derselbe Bereich, gegen den der Server beim Installieren deiner App validiert. Es startet das neueste veröffentlichte `twenty-app-dev`-Image, das den Bereich erfüllt, und greift auf `latest` zurück, wenn das Feld fehlt oder keine veröffentlichte Version übereinstimmt:
+
+```json filename="package.json"
+{
+  "engines": {
+    "twenty": ">=2.2.0"
+  }
+}
+```
+
+Gib eine Version explizit an, um den Bereich für einen einzelnen Lauf zu überschreiben: `yarn twenty docker:start 2.3.0`. Wenn bereits ein Container mit einer anderen Version existiert, aktualisiert `docker:start` ihn direkt (der Container wird neu erstellt, während deine Daten-Volumes erhalten bleiben).
 
 ## Aktualisieren des Server-Images
 
