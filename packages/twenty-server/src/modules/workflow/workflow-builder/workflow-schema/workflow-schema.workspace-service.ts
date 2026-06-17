@@ -16,10 +16,12 @@ import {
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
 import {
+  type BaseOutputSchema,
   Leaf,
   Node,
   type OutputSchema,
@@ -123,14 +125,10 @@ export class WorkflowSchemaWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        return {
-          response: {
-            label: 'Response',
-            isLeaf: true,
-            type: 'string',
-            value: 'Response of the agent',
-          },
-        };
+        return this.computeAiAgentActionOutputSchema({
+          agentId: step.settings.input.agentId,
+          workspaceId,
+        });
       }
       case WorkflowActionType.CODE: // StepOutput schema is computed on logicFunction draft execution
       default:
@@ -256,6 +254,63 @@ export class WorkflowSchemaWorkspaceService {
 
   private computeSendEmailActionOutputSchema(): OutputSchema {
     return { success: { isLeaf: true, type: 'boolean', value: true } };
+  }
+
+  private async computeAiAgentActionOutputSchema({
+    agentId,
+    workspaceId,
+  }: {
+    agentId?: string;
+    workspaceId: string;
+  }): Promise<OutputSchema> {
+    const textResponseOutputSchema: OutputSchema = {
+      response: {
+        label: 'Response',
+        isLeaf: true,
+        type: 'string',
+        value: 'Response of the agent',
+      },
+    };
+
+    if (!isDefined(agentId)) {
+      return textResponseOutputSchema;
+    }
+
+    const { flatAgentMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatAgentMaps'],
+        },
+      );
+
+    const flatAgent = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: agentId,
+      flatEntityMaps: flatAgentMaps,
+    });
+
+    const responseFormat = flatAgent?.responseFormat;
+
+    if (responseFormat?.type !== 'json') {
+      return textResponseOutputSchema;
+    }
+
+    return Object.entries(responseFormat.schema.properties).reduce(
+      (outputSchema, [propertyName, property]) => {
+        outputSchema[propertyName] = {
+          isLeaf: true,
+          type: property.type,
+          label: propertyName,
+          ...(isDefined(property.description)
+            ? { description: property.description }
+            : {}),
+          value: generateFakeValue(property.type),
+        };
+
+        return outputSchema;
+      },
+      {} as BaseOutputSchema,
+    );
   }
 
   private async computeFormActionOutputSchema({
