@@ -14,19 +14,19 @@ export const IsMinimalMetadataReadyEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const metadataStore = useAtomFamilyStateValue(
+  const metadataStoreObjectMetadataItems = useAtomFamilyStateValue(
     metadataStoreState,
     'objectMetadataItems',
   );
-  // oxlint-disable-next-line twenty/matching-state-variable
-  const fieldMetadataItemsStore = useAtomFamilyStateValue(
+  const metadataStoreFieldMetadataItems = useAtomFamilyStateValue(
     metadataStoreState,
     'fieldMetadataItems',
   );
-  // oxlint-disable-next-line twenty/matching-state-variable
-  const viewsStore = useAtomFamilyStateValue(metadataStoreState, 'views');
-  // oxlint-disable-next-line twenty/matching-state-variable
-  const viewFieldsStore = useAtomFamilyStateValue(
+  const metadataStoreViews = useAtomFamilyStateValue(
+    metadataStoreState,
+    'views',
+  );
+  const metadataStoreViewFields = useAtomFamilyStateValue(
     metadataStoreState,
     'viewFields',
   );
@@ -48,11 +48,11 @@ export const IsMinimalMetadataReadyEffect = () => {
     // loaded with empty viewFields, RecordIndexLoadBaseOnContextStoreEffect
     // pins loadedViewId, and the record fetch is permanently skipped.
     const areObjectsLoaded =
-      metadataStore.status === 'up-to-date' &&
-      fieldMetadataItemsStore.status === 'up-to-date';
+      metadataStoreObjectMetadataItems.status === 'up-to-date' &&
+      metadataStoreFieldMetadataItems.status === 'up-to-date';
     const areViewsLoaded =
-      viewsStore.status === 'up-to-date' &&
-      viewFieldsStore.status === 'up-to-date';
+      metadataStoreViews.status === 'up-to-date' &&
+      metadataStoreViewFields.status === 'up-to-date';
 
     if (!areObjectsLoaded) {
       setIsMinimalMetadataReady(false);
@@ -69,10 +69,10 @@ export const IsMinimalMetadataReadyEffect = () => {
     hasAccessTokenPair,
     currentUser,
     currentWorkspace,
-    metadataStore.status,
-    fieldMetadataItemsStore.status,
-    viewsStore.status,
-    viewFieldsStore.status,
+    metadataStoreObjectMetadataItems.status,
+    metadataStoreFieldMetadataItems.status,
+    metadataStoreViews.status,
+    metadataStoreViewFields.status,
     setIsMinimalMetadataReady,
   ]);
 
