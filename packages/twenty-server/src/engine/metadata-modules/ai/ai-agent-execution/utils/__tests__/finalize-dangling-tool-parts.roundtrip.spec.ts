@@ -68,9 +68,8 @@ const unresolvedToolCallIds = async (
   return [...pending];
 };
 
-// The Anthropic API rejects a tool_use block whose `input` field is missing.
-// convertToModelMessages omits the field when a tool part's input is nullish,
-// so every reconstructed tool-call must carry a defined input.
+// convertToModelMessages drops the `input` field when a tool part's input is
+// nullish, so every reconstructed tool-call must carry a defined input.
 const toolCallInputs = async (messages: UIMessage[]): Promise<unknown[]> => {
   const modelMessages = await convertToModelMessages(messages);
   const inputs: unknown[] = [];
@@ -150,9 +149,8 @@ describe('finalizeDanglingToolParts round-trip', () => {
     );
   });
 
-  // A tool call that fails input validation is persisted in 'output-error'
-  // state with a null input. Without finalization it would replay into a
-  // tool_use block with no `input` field, bricking the thread (issue #21695).
+  // A tool call that failed input validation: persisted as output-error with
+  // a null input (issue #21695).
   const validationErroredPart: ExtendedUIMessagePart = {
     type: 'tool-execute_tool',
     toolCallId: 'validation_failed_1',

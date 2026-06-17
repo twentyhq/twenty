@@ -82,9 +82,7 @@ export const mapUIMessagePartsToDBParts = (
               ...basePart,
               toolName: getToolName(part),
               toolCallId: part.toolCallId,
-              // Never persist a null input: a tool part with a missing input
-              // serializes to a tool_use block the Anthropic API rejects, which
-              // bricks the thread on replay (see issue #21695).
+              // A nullish input yields an invalid tool_use block (#21695).
               toolInput: part.input ?? {},
               toolOutput: part.output,
               errorMessage: part.errorText,
