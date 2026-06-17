@@ -57,7 +57,8 @@ export const SettingsProfile = () => {
             title={t`Name`}
             description={t`Your name as it will be displayed`}
           />
-          <NameFields />
+          {/* Reset the inputs when the workspace member identity changes (e.g. impersonation) */}
+          <NameFields key={currentWorkspaceMember.id} />
         </Section>
         <Section>
           <H2Title

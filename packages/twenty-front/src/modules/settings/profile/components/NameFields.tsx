@@ -38,19 +38,6 @@ export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
     currentWorkspaceMember?.name?.lastName ?? '',
   );
 
-  // Re-seed the inputs when the current workspace member changes identity (for
-  // example when impersonation starts or stops and swaps the member in place).
-  // Otherwise the auto-save effect below reads the previous member's values as a
-  // pending edit and persists them onto the now-current member.
-  const [seededWorkspaceMemberId, setSeededWorkspaceMemberId] = useState(
-    currentWorkspaceMember?.id,
-  );
-  if (currentWorkspaceMember?.id !== seededWorkspaceMemberId) {
-    setSeededWorkspaceMemberId(currentWorkspaceMember?.id);
-    setFirstName(currentWorkspaceMember?.name?.firstName ?? '');
-    setLastName(currentWorkspaceMember?.name?.lastName ?? '');
-  }
-
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
