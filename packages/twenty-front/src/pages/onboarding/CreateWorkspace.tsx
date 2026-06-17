@@ -55,8 +55,6 @@ export const CreateWorkspace = () => {
   const [hasFailed, setHasFailed] = useState(false);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const displayName = currentWorkspace?.displayName;
-
   const activate = useCallback(async () => {
     setHasFailed(false);
 
@@ -77,11 +75,11 @@ export const CreateWorkspace = () => {
     };
 
     try {
+      // The workspace is already named at creation, so activation only
+      // provisions it — no input needed.
       const result = await activateWorkspace({
         variables: {
-          input: {
-            displayName,
-          },
+          input: {},
         },
       });
 
@@ -104,7 +102,6 @@ export const CreateWorkspace = () => {
     }
   }, [
     activateWorkspace,
-    displayName,
     enqueueErrorSnackBar,
     loadCurrentUser,
     setNextOnboardingStatus,

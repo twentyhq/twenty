@@ -516,6 +516,20 @@ export class SignInUpService {
 
     await this.assertWorkspaceCreationAllowed(userData);
 
+    // A workspace is always created with a name. Only the user can supply one
+    // (unlike the subdomain, which we can generate), so it is required here.
+    const displayName = options?.displayName?.trim();
+
+    if (!displayName) {
+      throw new AuthException(
+        'Workspace name is required',
+        AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Workspace name is required`,
+        },
+      );
+    }
+
     const requestedSubdomain = options?.subdomain;
 
     if (isDefined(requestedSubdomain)) {
@@ -544,7 +558,7 @@ export class SignInUpService {
                   isWorkEmailFound ? { userEmail: email } : {},
                 ),
             workspaceCustomApplicationId,
-            displayName: options?.displayName ?? '',
+            displayName,
             inviteHash: v4(),
             activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
           });

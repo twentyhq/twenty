@@ -964,11 +964,7 @@ export class AuthService {
 
     // Route SSO sign-ins through the same create-or-select flow as credentials
     // instead of landing straight on a workspace subdomain.
-    if (
-      !workspaceId &&
-      !workspaceInviteHash &&
-      action === 'list-available-workspaces'
-    ) {
+    if (!workspaceId && !workspaceInviteHash) {
       const user =
         existingUser ??
         (await this.signInUpService.signUpWithoutWorkspace(

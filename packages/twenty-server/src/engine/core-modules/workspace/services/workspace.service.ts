@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
@@ -329,10 +329,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     workspace: WorkspaceEntity,
     data: ActivateWorkspaceInput,
   ) {
-    if (!data.displayName || !data.displayName.length) {
-      throw new BadRequestException("'displayName' not provided");
-    }
-
     if (
       workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
     ) {
@@ -403,7 +399,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     workspaceId,
   }: {
     workspaceId: string;
-    displayName: string;
+    // Optional rename at activation; the workspace is normally already named.
+    displayName?: string;
   }): Promise<void> {
     const lastAttemptedInstanceCommand =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
@@ -423,7 +420,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
     try {
       await queryRunner.manager.update(WorkspaceEntity, workspaceId, {
-        displayName,
+        ...(displayName ? { displayName } : {}),
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
 
