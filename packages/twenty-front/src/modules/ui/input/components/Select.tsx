@@ -26,7 +26,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectSizeVariant = 'small' | 'default';
 
-type CallToActionButton = {
+export type CallToActionButton = {
   text: string;
   onClick: (event: MouseEvent<HTMLDivElement>) => void;
   Icon?: IconComponent;
