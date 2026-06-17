@@ -12,7 +12,7 @@ import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-module
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata.constants';
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 
-export type SearchFieldMetadataBackfillOperationsArgs = {
+type SearchFieldMetadataBackfillOperationsArgs = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatSearchFieldMetadataMaps: FlatEntityMaps<FlatSearchFieldMetadata>;
