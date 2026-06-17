@@ -1,6 +1,7 @@
 import { billingState } from '@/client-config/states/billingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { loadStripe, type Stripe } from '@stripe/stripe-js';
+import { type Stripe } from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js/pure';
 import { isDefined } from 'twenty-shared/utils';
 
 // Cache the Stripe.js instance per publishable key at module scope so the SDK

@@ -62,6 +62,8 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
+    this.assertNoActiveSubscription(customer);
+
     const checkoutSession =
       await this.stripeCheckoutService.createCheckoutSession({
         user,

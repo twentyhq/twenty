@@ -52,16 +52,11 @@ export class StripeCheckoutService {
     requirePaymentMethod?: boolean;
     withTrialPeriod: boolean;
   }): Promise<Stripe.Checkout.Session> {
-    if (!isDefined(stripeCustomerId)) {
-      const stripeCustomer =
-        await this.stripeCustomerService.createStripeCustomer(
-          user.email,
-          workspace.id,
-          workspace.displayName,
-        );
-
-      stripeCustomerId = stripeCustomer.id;
-    }
+    stripeCustomerId = await this.getOrCreateStripeCustomerId({
+      user,
+      workspace,
+      stripeCustomerId,
+    });
 
     return await this.stripe.checkout.sessions.create({
       line_items: stripeSubscriptionLineItems,
@@ -105,18 +100,12 @@ export class StripeCheckoutService {
     requirePaymentMethod?: boolean;
     withTrialPeriod: boolean;
   }): Promise<Stripe.Subscription> {
-    if (!isDefined(stripeCustomerId)) {
-      const stripeCustomer =
-        await this.stripeCustomerService.createStripeCustomer(
-          user.email,
-          workspace.id,
-          workspace.displayName,
-        );
+    stripeCustomerId = await this.getOrCreateStripeCustomerId({
+      user,
+      workspace,
+      stripeCustomerId,
+    });
 
-      stripeCustomerId = stripeCustomer.id;
-    }
-
-    // Convert checkout session line items to subscription items format
     const subscriptionItems: Stripe.SubscriptionCreateParams.Item[] =
       stripeSubscriptionLineItems.map((lineItem) => ({
         price: lineItem.price as string,
