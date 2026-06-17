@@ -2704,7 +2704,7 @@ type LineChartDataPoint {
 }
 
 type LineChartSeries {
-  id: String!
+  key: String!
   label: String!
   data: [LineChartDataPoint!]!
 }
@@ -2720,7 +2720,7 @@ type LineChartData {
 }
 
 type PieChartDataItem {
-  id: String!
+  key: String!
   value: Float!
 }
 
