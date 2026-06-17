@@ -5,7 +5,6 @@ import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-r
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
-import { completeAndChargeCallRecording } from 'src/logic-functions/flows/complete-and-charge-call-recording.util';
 import {
   extractRecallBotConvergence,
   type RecallBotConvergence,
@@ -15,6 +14,7 @@ import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util
 import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
 import { requestTranscript } from 'src/logic-functions/flows/request-transcript.util';
 import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
 import {
@@ -281,31 +281,11 @@ const convergeCallRecording = async ({
     return;
   }
 
-  if (completesIngestion) {
-    const updateDataBeforeCompletionClaim: CallRecordingUpdateFields = {
-      ...updateData,
-    };
-
-    delete updateDataBeforeCompletionClaim.status;
-
-    if (Object.keys(updateDataBeforeCompletionClaim).length > 0) {
-      await updateCallRecording(client, {
-        id: candidate.id,
-        data: updateDataBeforeCompletionClaim,
-      });
-    }
-
-    await completeAndChargeCallRecording(client, {
-      id: candidate.id,
-      startedAt: updateData.startedAt ?? candidate.startedAt,
-      endedAt: updateData.endedAt ?? candidate.endedAt,
-    });
-  } else {
-    await updateCallRecording(client, {
-      id: candidate.id,
-      data: updateData,
-    });
-  }
+  await persistCallRecordingProgress(client, {
+    id: candidate.id,
+    current: candidate,
+    updateData,
+  });
 
   result.updatedCallRecordingIds.push(candidate.id);
 };

@@ -4,7 +4,6 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
-import { completeAndChargeCallRecording } from 'src/logic-functions/flows/complete-and-charge-call-recording.util';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
 import { extractRecallBotConvergence } from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
@@ -19,8 +18,8 @@ import {
   type RecallWebhookEvent,
 } from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
+import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
 import { requestTranscript } from 'src/logic-functions/flows/request-transcript.util';
-import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
 import {
   updateCallRecording,
   type CallRecordingUpdateFields,
@@ -160,36 +159,11 @@ const handleRecallStatusEvent = async ({
     );
   }
 
-  const completesIngestion = shouldCompleteCallRecordingIngestion({
+  const { completesIngestion } = await persistCallRecordingProgress(client, {
+    id: callRecording.id,
     current: callRecording,
     updateData,
   });
-
-  if (completesIngestion) {
-    const updateDataBeforeCompletionClaim: CallRecordingUpdateFields = {
-      ...updateData,
-    };
-
-    delete updateDataBeforeCompletionClaim.status;
-
-    if (Object.keys(updateDataBeforeCompletionClaim).length > 0) {
-      await updateCallRecording(client, {
-        id: callRecording.id,
-        data: updateDataBeforeCompletionClaim,
-      });
-    }
-
-    await completeAndChargeCallRecording(client, {
-      id: callRecording.id,
-      startedAt: updateData.startedAt ?? callRecording.startedAt,
-      endedAt: updateData.endedAt ?? callRecording.endedAt,
-    });
-  } else {
-    await updateCallRecording(client, {
-      id: callRecording.id,
-      data: updateData,
-    });
-  }
 
   return {
     status: 'updated',
@@ -477,27 +451,12 @@ const handleRecallTranscriptEvent = async ({
           ? buildExternalRecordingIdUpdate(webhookEvent)
           : {}),
       };
-      const completesIngestion = shouldCompleteCallRecordingIngestion({
+
+      await persistCallRecordingProgress(client, {
+        id: callRecording.id,
         current: callRecording,
         updateData,
       });
-
-      if (completesIngestion) {
-        await updateCallRecording(client, {
-          id: callRecording.id,
-          data: updateData,
-        });
-        await completeAndChargeCallRecording(client, {
-          id: callRecording.id,
-          startedAt: callRecording.startedAt,
-          endedAt: callRecording.endedAt,
-        });
-      } else {
-        await updateCallRecording(client, {
-          id: callRecording.id,
-          data: updateData,
-        });
-      }
 
       return {
         status: 'updated',

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/create-async-recall-transcript.util';
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
@@ -231,6 +232,31 @@ describe('recall bot api', () => {
     );
   });
 
+  it('fails the scheduled bot list when the pagination cap would truncate results', async () => {
+    for (let pageIndex = 1; pageIndex <= 10; pageIndex++) {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          next: `https://ap-northeast-1.recall.ai/api/v1/bot/?cursor=page-${pageIndex + 1}`,
+          results: [{ id: `bot-${pageIndex}` }],
+        }),
+      });
+    }
+
+    const result = await listScheduledRecallBots({
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
+      joinAtBefore: '2026-01-02T12:00:00.000Z',
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      status: null,
+      errorMessage: 'Recall bot list exceeded 10 pages',
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(10);
+  });
+
   it('stops paginating when the next link points outside the configured region', async () => {
     fetchMock.mockResolvedValue({
       ok: true,
@@ -251,6 +277,24 @@ describe('recall bot api', () => {
       bots: [{ id: 'bot-1', metadata: {} }],
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancels a scheduled Recall bot request', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 204,
+      json: async () => ({}),
+    });
+
+    const result = await cancelRecallBot({
+      externalBotId: 'recall-bot-id',
+    });
+
+    expect(result).toEqual({ ok: true });
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://ap-northeast-1.recall.ai/api/v1/bot/recall-bot-id/',
+      expect.objectContaining({ method: 'DELETE' }),
+    );
   });
 
   it('ejects a bot through the leave_call endpoint', async () => {
@@ -497,6 +541,21 @@ describe('recall bot api', () => {
     });
 
     it('does not retry an allowed 404 on cancel', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 404,
+        json: async () => ({ detail: 'not found' }),
+      });
+
+      const result = await cancelRecallBot({
+        externalBotId: 'recall-bot-id',
+      });
+
+      expect(result).toEqual({ ok: true });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not retry an allowed 404 on eject', async () => {
       fetchMock.mockResolvedValue({
         ok: false,
         status: 404,

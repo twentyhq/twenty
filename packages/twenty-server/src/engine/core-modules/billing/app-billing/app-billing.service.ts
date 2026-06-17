@@ -13,6 +13,8 @@ import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
+// Each operation type has one canonical counting unit — matches how
+// `ai-billing.service.ts` emits native usage events.
 const USAGE_UNIT_BY_OPERATION_TYPE: Record<UsageOperationType, UsageUnit> = {
   [UsageOperationType.AI_CHAT_TOKEN]: UsageUnit.TOKEN,
   [UsageOperationType.AI_WORKFLOW_TOKEN]: UsageUnit.TOKEN,
@@ -22,6 +24,9 @@ const USAGE_UNIT_BY_OPERATION_TYPE: Record<UsageOperationType, UsageUnit> = {
   [UsageOperationType.CALL_RECORDING]: UsageUnit.MINUTE,
 };
 
+// `workspaceId` + `applicationId` come from the application-access token,
+// never from the body — an app can't charge a different workspace or
+// masquerade as a different app.
 @Injectable()
 export class AppBillingService {
   private readonly logger = new Logger(AppBillingService.name);

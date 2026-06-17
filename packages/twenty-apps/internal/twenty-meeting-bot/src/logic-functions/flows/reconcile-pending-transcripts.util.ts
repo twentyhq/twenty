@@ -6,12 +6,11 @@ import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { type TranscriptMarker } from 'src/logic-functions/types/transcript-marker.type';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
-import { completeAndChargeCallRecording } from 'src/logic-functions/flows/complete-and-charge-call-recording.util';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
 import { fetchAllNodes } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
-import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
+import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
 import {
   updateCallRecording,
   type CallRecordingUpdateFields,
@@ -83,21 +82,12 @@ export const reconcilePendingTranscripts = async ({
       const updateData: CallRecordingUpdateFields = {
         transcript: downloadResult.content as Record<string, unknown>,
       };
-      const completesIngestion = shouldCompleteCallRecordingIngestion({
+
+      await persistCallRecordingProgress(client, {
+        id,
         current: pendingCallRecording,
         updateData,
       });
-
-      if (completesIngestion) {
-        await updateCallRecording(client, { id, data: updateData });
-        await completeAndChargeCallRecording(client, {
-          id,
-          startedAt: pendingCallRecording.startedAt,
-          endedAt: pendingCallRecording.endedAt,
-        });
-      } else {
-        await updateCallRecording(client, { id, data: updateData });
-      }
 
       result.filledCallRecordingIds.push(id);
       continue;
