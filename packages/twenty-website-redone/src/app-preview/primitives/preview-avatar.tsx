@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
@@ -9,22 +8,26 @@ const AvatarFrame = styled.div<{
   $background: string;
   $color: string;
   $size: number;
-  $square?: boolean;
 }>`
   align-items: center;
   background: ${({ $background }) => $background};
-  border-radius: ${({ $square }) => ($square ? '4px' : '999px')};
+  border-radius: 50%;
   color: ${({ $color }) => $color};
   display: flex;
   flex: 0 0 auto;
-  font-family: ${APP_PREVIEW_THEME.font.family};
-  font-size: 10px;
-  font-weight: ${APP_PREVIEW_THEME.font.weight.medium};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${({ $size }) =>
+    $size <= 12 ? '8px' : $size <= 14 ? '10px' : '12px'};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   height: ${({ $size }) => `${$size}px`};
   justify-content: center;
   line-height: 1;
   overflow: hidden;
   width: ${({ $size }) => `${$size}px`};
+
+  &[data-square] {
+    border-radius: ${THEME_LIGHT.border.radius.xs};
+  }
 `;
 
 export function PreviewAvatar({
@@ -45,7 +48,7 @@ export function PreviewAvatar({
       $background={resolvedTone.background}
       $color={resolvedTone.color}
       $size={size}
-      $square={square}
+      data-square={square ? '' : undefined}
     >
       {children}
     </AvatarFrame>
