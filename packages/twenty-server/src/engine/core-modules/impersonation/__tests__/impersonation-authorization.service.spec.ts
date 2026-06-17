@@ -133,7 +133,7 @@ describe('ImpersonationAuthorizationService', () => {
       expect(userHasWorkspaceSettingPermissionMock).not.toHaveBeenCalled();
     });
 
-    it('should deny when impersonator can impersonate but has no verified 2FA (production)', async () => {
+    it('should deny with provisioning reason when impersonator has no 2FA method (production)', async () => {
       const impersonator = buildUserWorkspace({
         userId: 'impersonator',
         workspaceId: 'workspace-1',
@@ -154,7 +154,34 @@ describe('ImpersonationAuthorizationService', () => {
       expect(result).toEqual({
         allowed: false,
         level: 'server',
-        reason: 'SERVER_LEVEL_2FA_REQUIRED',
+        reason: 'SERVER_LEVEL_2FA_PROVISION_REQUIRED',
+      });
+    });
+
+    it('should deny with verification reason when impersonator has an unverified 2FA method (production)', async () => {
+      const impersonator = buildUserWorkspace({
+        userId: 'impersonator',
+        workspaceId: 'workspace-1',
+        canImpersonate: true,
+        twoFactorAuthenticationMethods: [
+          { status: OTPStatus.PENDING },
+        ] as unknown as UserWorkspaceEntity['twoFactorAuthenticationMethods'],
+      });
+      const target = buildUserWorkspace({
+        userId: 'target',
+        workspaceId: 'workspace-2',
+        allowImpersonation: true,
+      });
+
+      const result = await service.checkImpersonationAuthorization(
+        impersonator,
+        target,
+      );
+
+      expect(result).toEqual({
+        allowed: false,
+        level: 'server',
+        reason: 'SERVER_LEVEL_2FA_VERIFICATION_REQUIRED',
       });
     });
 

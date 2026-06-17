@@ -25,7 +25,7 @@ describe('Impersonation - access token validation denial (integration)', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toContain(
-      'Impersonation not allowed',
+      'cannot find impersonator or impersonated user workspace',
     );
   });
 });

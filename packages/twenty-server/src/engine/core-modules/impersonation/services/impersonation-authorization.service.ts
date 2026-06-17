@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/utils/user-has-admin-privileges.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -13,7 +14,8 @@ export type ImpersonationLevel = 'server' | 'workspace';
 
 export type ImpersonationDenialReason =
   | 'SERVER_LEVEL_NOT_ALLOWED'
-  | 'SERVER_LEVEL_2FA_REQUIRED'
+  | 'SERVER_LEVEL_2FA_PROVISION_REQUIRED'
+  | 'SERVER_LEVEL_2FA_VERIFICATION_REQUIRED'
   | 'WORKSPACE_LEVEL_NOT_ALLOWED'
   | 'TARGET_HAS_ADMIN_PRIVILEGES';
 
@@ -60,11 +62,14 @@ export class ImpersonationAuthorizationService {
         return { allowed: false, level, reason: 'SERVER_LEVEL_NOT_ALLOWED' };
       }
 
-      if (
-        this.isTwoFactorRequiredForServerLevelImpersonation() &&
-        !this.hasVerifiedTwoFactorAuthentication(impersonatorUserWorkspace)
-      ) {
-        return { allowed: false, level, reason: 'SERVER_LEVEL_2FA_REQUIRED' };
+      if (this.isTwoFactorRequiredForServerLevelImpersonation()) {
+        const twoFactorDenialReason = this.getServerLevelTwoFactorDenialReason(
+          impersonatorUserWorkspace,
+        );
+
+        if (isDefined(twoFactorDenialReason)) {
+          return { allowed: false, level, reason: twoFactorDenialReason };
+        }
       }
 
       return { allowed: true, level };
@@ -97,16 +102,28 @@ export class ImpersonationAuthorizationService {
     );
   }
 
-  private hasVerifiedTwoFactorAuthentication(
+  private getServerLevelTwoFactorDenialReason(
     impersonatorUserWorkspace: UserWorkspaceEntity,
-  ): boolean {
-    return (
-      twoFactorAuthenticationMethodsValidator.areDefined(
-        impersonatorUserWorkspace.twoFactorAuthenticationMethods,
-      ) &&
-      twoFactorAuthenticationMethodsValidator.areVerified(
-        impersonatorUserWorkspace.twoFactorAuthenticationMethods,
+  ): ImpersonationDenialReason | undefined {
+    const twoFactorAuthenticationMethods =
+      impersonatorUserWorkspace.twoFactorAuthenticationMethods;
+
+    if (
+      !twoFactorAuthenticationMethodsValidator.areDefined(
+        twoFactorAuthenticationMethods,
       )
-    );
+    ) {
+      return 'SERVER_LEVEL_2FA_PROVISION_REQUIRED';
+    }
+
+    if (
+      !twoFactorAuthenticationMethodsValidator.areVerified(
+        twoFactorAuthenticationMethods,
+      )
+    ) {
+      return 'SERVER_LEVEL_2FA_VERIFICATION_REQUIRED';
+    }
+
+    return undefined;
   }
 }
