@@ -4,10 +4,6 @@ import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-a
 import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartToUIMessagePart';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
 
-// Reported in https://github.com/twentyhq/twenty/issues/20558:
-// the AI SDK emits `dynamic-tool` parts for tools the model invokes that
-// aren't part of the bound schema. The mapper used to throw on them.
-
 const dynamicToolPart = (
   overrides: Record<string, unknown> = {},
 ): ExtendedUIMessagePart =>
@@ -96,9 +92,6 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
   });
 
   it('round-trips callProviderMetadata for provider-executed tools', () => {
-    // Native tools (e.g. Anthropic web search) are providerExecuted and carry
-    // metadata that convertToModelMessages replays — dropping it on reload
-    // would desync the conversation prefix and miss the prompt cache.
     const original = dynamicToolPart({
       providerExecuted: true,
       callProviderMetadata: { anthropic: { encryptedContent: 'abc123' } },

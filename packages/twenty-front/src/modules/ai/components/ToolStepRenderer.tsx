@@ -141,8 +141,6 @@ export const ToolStepRenderer = ({
   const [activeTab, setActiveTab] = useState<TabType>('output');
 
   const { input, output, errorText } = toolPart;
-  // getToolName handles both `tool-<name>` and dynamic-tool parts (whose name
-  // lives on `toolName`); splitting the type yields 'tool' for dynamic tools.
   const rawToolName = getToolName(toolPart);
 
   const { resolvedInput: toolInput, resolvedToolName: toolName } =

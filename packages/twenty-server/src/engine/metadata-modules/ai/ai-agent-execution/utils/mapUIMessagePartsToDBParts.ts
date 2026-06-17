@@ -87,10 +87,6 @@ export const mapUIMessagePartsToDBParts = (
               errorMessage: part.errorText,
               state: part.state,
               providerExecuted: part.providerExecuted ?? null,
-              // Provider-executed tools (e.g. Anthropic web search) carry
-              // metadata that convertToModelMessages replays as providerOptions
-              // on the tool-call/result. Persist it so reloaded history stays
-              // byte-identical — otherwise the next turn misses the prompt cache.
               providerMetadata: part.callProviderMetadata ?? null,
             };
           }

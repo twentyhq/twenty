@@ -263,9 +263,6 @@ const ThinkingToolStepRow = ({
 }) => {
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
-  // Static tools encode the name in `tool-<name>`; dynamic tools (native
-  // provider tools like web search) carry it on `toolName`. getToolName
-  // handles both — splitting the type yields 'tool' for 'dynamic-tool'.
   const rawToolName = getToolName(part);
   const { resolvedInput: toolInput, resolvedToolName } = resolveToolInput(
     part.input,
