@@ -1,0 +1,19 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service.ts
+  s_12aa84da069766::t_32b3aef4011826 322-328,330
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "a00ea952e30497acc101b18447c97e27e92d1112",
+  "prompts": {},
+  "sessions": {
+    "s_12aa84da069766": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e1ec289-c505-418c-bd18-6b7be4f5e776",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
