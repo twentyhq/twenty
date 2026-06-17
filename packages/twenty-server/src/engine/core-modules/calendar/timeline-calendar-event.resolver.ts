@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, ArgsType, Field, Int, Query } from '@nestjs/graphql';
 
 import { Max } from 'class-validator';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
@@ -30,6 +31,45 @@ class GetTimelineCalendarEventsFromObjectRecordArgs {
   pageSize: number;
 }
 
+@ArgsType()
+class GetTimelineCalendarEventsFromPersonIdArgs {
+  @Field(() => UUIDScalarType)
+  personId: string;
+
+  @Field(() => Int)
+  page: number;
+
+  @Field(() => Int)
+  @Max(TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE)
+  pageSize: number;
+}
+
+@ArgsType()
+class GetTimelineCalendarEventsFromCompanyIdArgs {
+  @Field(() => UUIDScalarType)
+  companyId: string;
+
+  @Field(() => Int)
+  page: number;
+
+  @Field(() => Int)
+  @Max(TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE)
+  pageSize: number;
+}
+
+@ArgsType()
+class GetTimelineCalendarEventsFromOpportunityIdArgs {
+  @Field(() => UUIDScalarType)
+  opportunityId: string;
+
+  @Field(() => Int)
+  page: number;
+
+  @Field(() => Int)
+  @Max(TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE)
+  pageSize: number;
+}
+
 @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
 @CoreResolver(() => TimelineCalendarEventsWithTotalDTO)
 export class TimelineCalendarEventResolver {
@@ -49,18 +89,74 @@ export class TimelineCalendarEventResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    const timelineCalendarEvents =
-      await this.timelineCalendarEventService.getCalendarEventsFromObjectRecord(
-        {
-          currentWorkspaceMemberId: workspaceMemberId,
-          objectNameSingular,
-          recordId,
-          workspaceId: workspace.id,
-          page,
-          pageSize,
-        },
-      );
+    return this.timelineCalendarEventService.getCalendarEventsFromObjectRecord({
+      currentWorkspaceMemberId: workspaceMemberId,
+      objectNameSingular,
+      recordId,
+      workspaceId: workspace.id,
+      page,
+      pageSize,
+    });
+  }
 
-    return timelineCalendarEvents;
+  @Query(() => TimelineCalendarEventsWithTotalDTO, {
+    deprecationReason: 'Use getTimelineCalendarEventsFromObjectRecord instead',
+  })
+  async getTimelineCalendarEventsFromPersonId(
+    @Args()
+    { personId, page, pageSize }: GetTimelineCalendarEventsFromPersonIdArgs,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    return this.timelineCalendarEventService.getCalendarEventsFromObjectRecord({
+      currentWorkspaceMemberId: workspaceMemberId,
+      objectNameSingular: CoreObjectNameSingular.Person,
+      recordId: personId,
+      workspaceId: workspace.id,
+      page,
+      pageSize,
+    });
+  }
+
+  @Query(() => TimelineCalendarEventsWithTotalDTO, {
+    deprecationReason: 'Use getTimelineCalendarEventsFromObjectRecord instead',
+  })
+  async getTimelineCalendarEventsFromCompanyId(
+    @Args()
+    { companyId, page, pageSize }: GetTimelineCalendarEventsFromCompanyIdArgs,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    return this.timelineCalendarEventService.getCalendarEventsFromObjectRecord({
+      currentWorkspaceMemberId: workspaceMemberId,
+      objectNameSingular: CoreObjectNameSingular.Company,
+      recordId: companyId,
+      workspaceId: workspace.id,
+      page,
+      pageSize,
+    });
+  }
+
+  @Query(() => TimelineCalendarEventsWithTotalDTO, {
+    deprecationReason: 'Use getTimelineCalendarEventsFromObjectRecord instead',
+  })
+  async getTimelineCalendarEventsFromOpportunityId(
+    @Args()
+    {
+      opportunityId,
+      page,
+      pageSize,
+    }: GetTimelineCalendarEventsFromOpportunityIdArgs,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    return this.timelineCalendarEventService.getCalendarEventsFromObjectRecord({
+      currentWorkspaceMemberId: workspaceMemberId,
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
+      recordId: opportunityId,
+      workspaceId: workspace.id,
+      page,
+      pageSize,
+    });
   }
 }
