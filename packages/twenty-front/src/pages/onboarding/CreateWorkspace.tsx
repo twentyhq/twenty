@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
@@ -9,24 +8,23 @@ import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import {
+  PendingCreationLoaderStep,
+  useActivateWorkspaceOnboarding,
+} from '@/onboarding/hooks/useActivateWorkspaceOnboarding';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ModalContent } from 'twenty-ui-deprecated/layout';
-import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { isOnboardingV2EnabledState } from '@/client-config/states/isOnboardingV2EnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui-deprecated/display';
 import { Loader } from 'twenty-ui-deprecated/feedback';
 import { MainButton } from 'twenty-ui-deprecated/input';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
-import { useMutation } from '@apollo/client/react';
-import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
+import { CreateWorkspaceV2 } from './CreateWorkspaceV2';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -50,13 +48,6 @@ const StyledLoaderContainer = styled.div`
   width: 100%;
 `;
 
-enum PendingCreationLoaderStep {
-  None = 'none',
-  Step1 = 'step-1',
-  Step2 = 'step-2',
-  Step3 = 'step-3',
-}
-
 const StyledPendingCreationLoader = styled.div`
   align-items: center;
   display: flex;
@@ -64,15 +55,10 @@ const StyledPendingCreationLoader = styled.div`
   width: 100%;
 `;
 
-export const CreateWorkspace = () => {
+const CreateWorkspaceV1 = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
-  const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const { loadCurrentUser } = useLoadCurrentUser();
-  const [activateWorkspace] = useMutation(ActivateWorkspaceDocument);
-  const [pendingCreationLoaderStep, setPendingCreationLoaderStep] = useState(
-    PendingCreationLoaderStep.None,
-  );
+  const { pendingCreationLoaderStep, activateWorkspace } =
+    useActivateWorkspaceOnboarding();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const validationSchema = z
@@ -96,49 +82,9 @@ export const CreateWorkspace = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  const onSubmit: SubmitHandler<Form> = useCallback(
-    async (data) => {
-      try {
-        setTimeout(() => {
-          setPendingCreationLoaderStep(PendingCreationLoaderStep.Step1);
-        }, 500);
-        setTimeout(() => {
-          setPendingCreationLoaderStep(PendingCreationLoaderStep.Step2);
-        }, 2000);
-        setTimeout(() => {
-          setPendingCreationLoaderStep(PendingCreationLoaderStep.Step3);
-        }, 5000);
-
-        const result = await activateWorkspace({
-          variables: {
-            input: {
-              displayName: data.name,
-            },
-          },
-        });
-
-        if (isDefined(result.error)) {
-          throw result.error ?? new Error(t`Unknown error`);
-        }
-
-        await loadCurrentUser();
-        setNextOnboardingStatus();
-      } catch (error: any) {
-        setPendingCreationLoaderStep(PendingCreationLoaderStep.None);
-
-        enqueueErrorSnackBar({
-          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-        });
-      }
-    },
-    [
-      activateWorkspace,
-      enqueueErrorSnackBar,
-      loadCurrentUser,
-      setNextOnboardingStatus,
-      t,
-    ],
-  );
+  const onSubmit: SubmitHandler<Form> = async (data) => {
+    await activateWorkspace({ displayName: data.name });
+  };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.nativeEvent.isComposing || event.keyCode === 229) {
@@ -242,4 +188,10 @@ export const CreateWorkspace = () => {
       )}
     </ModalContent>
   );
+};
+
+export const CreateWorkspace = () => {
+  const isOnboardingV2Enabled = useAtomStateValue(isOnboardingV2EnabledState);
+
+  return isOnboardingV2Enabled ? <CreateWorkspaceV2 /> : <CreateWorkspaceV1 />;
 };

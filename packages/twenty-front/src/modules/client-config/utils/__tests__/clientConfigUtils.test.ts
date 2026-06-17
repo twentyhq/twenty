@@ -38,6 +38,7 @@ const mockClientConfig = {
     mutationMaximumAffectedRecords: 100,
   },
   isAttachmentPreviewEnabled: true,
+  isOnboardingV2Enabled: false,
   analyticsEnabled: false,
   canManageFeatureFlags: true,
   publicFeatureFlags: [],

@@ -1,33 +1,28 @@
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
+import { isOnboardingV2EnabledState } from '@/client-config/states/isOnboardingV2EnabledState';
+import { useCreateProfileOnboarding } from '@/onboarding/hooks/useCreateProfileOnboarding';
 import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
 import { PageFocusId } from '@/types/PageFocusId';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui-deprecated/display';
 import { MainButton } from 'twenty-ui-deprecated/input';
 import { ModalContent } from 'twenty-ui-deprecated/layout';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { CreateProfileV2 } from './CreateProfileV2';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -66,16 +61,10 @@ const validationSchema = z
 
 type Form = z.infer<typeof validationSchema>;
 
-export const CreateProfile = () => {
+const CreateProfileV1 = () => {
   const { t } = useLingui();
-  const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const setCurrentUser = useSetAtomState(currentUserState);
-  const setCurrentWorkspaceMembers = useSetAtomState(
-    currentWorkspaceMembersState,
-  );
-  const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
+  const { createProfile } = useCreateProfileOnboarding();
 
   // Form
   const {
@@ -92,69 +81,12 @@ export const CreateProfile = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  const onSubmit: SubmitHandler<Form> = useCallback(
-    async (data) => {
-      try {
-        if (!currentWorkspaceMember?.id) {
-          throw new Error('User is not logged in');
-        }
-        if (!data.firstName || !data.lastName) {
-          throw new Error('First name or last name is missing');
-        }
-
-        await updateWorkspaceMemberSettings({
-          workspaceMemberId: currentWorkspaceMember.id,
-          update: {
-            name: {
-              firstName: data.firstName,
-              lastName: data.lastName,
-            },
-            colorScheme: 'System',
-          },
-        });
-
-        setCurrentWorkspaceMembers((members) =>
-          members.map((member) =>
-            member.id === currentWorkspaceMember?.id
-              ? {
-                  ...member,
-                  name: {
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                  },
-                  colorScheme: 'System',
-                }
-              : member,
-          ),
-        );
-
-        setCurrentUser((current) => {
-          if (isDefined(current)) {
-            return {
-              ...current,
-              firstName: data.firstName,
-              lastName: data.lastName,
-            };
-          }
-          return current;
-        });
-
-        setNextOnboardingStatus();
-      } catch (error: any) {
-        enqueueErrorSnackBar({
-          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-        });
-      }
-    },
-    [
-      currentWorkspaceMember?.id,
-      setNextOnboardingStatus,
-      enqueueErrorSnackBar,
-      setCurrentWorkspaceMembers,
-      setCurrentUser,
-      updateWorkspaceMemberSettings,
-    ],
-  );
+  const onSubmit: SubmitHandler<Form> = async (data) => {
+    await createProfile({
+      firstName: data.firstName,
+      lastName: data.lastName,
+    });
+  };
 
   const [isEditingMode, setIsEditingMode] = useState(false);
 
@@ -253,4 +185,10 @@ export const CreateProfile = () => {
       </StyledButtonContainer>
     </ModalContent>
   );
+};
+
+export const CreateProfile = () => {
+  const isOnboardingV2Enabled = useAtomStateValue(isOnboardingV2EnabledState);
+
+  return isOnboardingV2Enabled ? <CreateProfileV2 /> : <CreateProfileV1 />;
 };

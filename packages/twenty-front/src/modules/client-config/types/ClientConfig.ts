@@ -23,6 +23,7 @@ export type ClientConfig = {
   defaultSubdomain?: string;
   frontDomain: string;
   isAttachmentPreviewEnabled: boolean;
+  isOnboardingV2Enabled: boolean;
   isConfigVariablesInDbEnabled: boolean;
   isEmailVerificationRequired: boolean;
   isGoogleCalendarEnabled: boolean;

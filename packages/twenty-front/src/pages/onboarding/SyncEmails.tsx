@@ -1,39 +1,27 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { isOnboardingV2EnabledState } from '@/client-config/states/isOnboardingV2EnabledState';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
-import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { useSyncEmailsOnboarding } from '@/onboarding/hooks/useSyncEmailsOnboarding';
 
-import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
-import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
-import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
-import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
-import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { PageFocusId } from '@/types/PageFocusId';
-import { ModalContent } from 'twenty-ui-deprecated/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui-deprecated/display';
 import { MainButton } from 'twenty-ui-deprecated/input';
+import { ModalContent } from 'twenty-ui-deprecated/layout';
 import { ClickToActionLink } from 'twenty-ui-deprecated/navigation';
 import {
   ThemeContext,
   themeCssVariables,
 } from 'twenty-ui-deprecated/theme-constants';
-import { useMutation } from '@apollo/client/react';
-import {
-  CalendarChannelVisibility,
-  MessageChannelVisibility,
-} from '~/generated/graphql';
-import { SkipSyncEmailOnboardingStepDocument } from '~/generated-metadata/graphql';
-import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
-import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
+import { SyncEmailsV2 } from './SyncEmailsV2';
 
 const StyledSyncEmailsContainer = styled.div`
   display: flex;
@@ -56,59 +44,17 @@ const StyledProviderContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-export const SyncEmails = () => {
+const SyncEmailsV1 = () => {
   const { theme } = useContext(ThemeContext);
-  const { triggerApisOAuth } = useTriggerApisOAuth();
-  const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const [visibility, setVisibility] = useState<MessageChannelVisibility>(
-    MessageChannelVisibility.SHARE_EVERYTHING,
-  );
-  const [lastAuthenticatedMethod] = useAtomState(lastAuthenticatedMethodState);
-  const [skipSyncEmailOnboardingStatusMutation] = useMutation(
-    SkipSyncEmailOnboardingStepDocument,
-  );
-
-  const handleButtonClick = async (provider: ConnectedAccountProvider) => {
-    const calendarChannelVisibility =
-      visibility === MessageChannelVisibility.SHARE_EVERYTHING
-        ? CalendarChannelVisibility.SHARE_EVERYTHING
-        : CalendarChannelVisibility.METADATA;
-
-    await triggerApisOAuth(provider, {
-      redirectLocation: AppPath.Index,
-      messageVisibility: visibility,
-      calendarVisibility: calendarChannelVisibility,
-      skipMessageChannelConfiguration: true,
-    });
-  };
-
-  const continueWithoutSync = async () => {
-    await skipSyncEmailOnboardingStatusMutation();
-    setNextOnboardingStatus();
-  };
-
-  const userAuthenticatedWithSSO =
-    lastAuthenticatedMethod === AuthenticatedMethod.SSO;
-
-  const isGoogleMessagingEnabled = useAtomStateValue(
-    isGoogleMessagingEnabledState,
-  );
-  const isMicrosoftMessagingEnabled = useAtomStateValue(
-    isMicrosoftMessagingEnabledState,
-  );
-
-  const isGoogleCalendarEnabled = useAtomStateValue(
-    isGoogleCalendarEnabledState,
-  );
-
-  const isMicrosoftCalendarEnabled = useAtomStateValue(
-    isMicrosoftCalendarEnabledState,
-  );
-
-  const isGoogleProviderEnabled =
-    isGoogleMessagingEnabled || isGoogleCalendarEnabled;
-  const isMicrosoftProviderEnabled =
-    isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled;
+  const {
+    visibility,
+    setVisibility,
+    userAuthenticatedWithSSO,
+    isGoogleProviderEnabled,
+    isMicrosoftProviderEnabled,
+    syncWithProvider,
+    continueWithoutSync,
+  } = useSyncEmailsOnboarding();
 
   useHotkeysOnFocusedElement({
     keys: Key.Enter,
@@ -135,7 +81,7 @@ export const SyncEmails = () => {
         {!userAuthenticatedWithSSO && isGoogleProviderEnabled && (
           <MainButton
             title={t`Sync with Google`}
-            onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
+            onClick={() => syncWithProvider(ConnectedAccountProvider.GOOGLE)}
             width={200}
             Icon={() => <IconGoogle size={theme.icon.size.sm} />}
           />
@@ -143,9 +89,7 @@ export const SyncEmails = () => {
         {!userAuthenticatedWithSSO && isMicrosoftProviderEnabled && (
           <MainButton
             title={t`Sync with Outlook`}
-            onClick={() =>
-              handleButtonClick(ConnectedAccountProvider.MICROSOFT)
-            }
+            onClick={() => syncWithProvider(ConnectedAccountProvider.MICROSOFT)}
             width={200}
             Icon={() => <IconMicrosoft size={theme.icon.size.sm} />}
           />
@@ -160,16 +104,14 @@ export const SyncEmails = () => {
         {userAuthenticatedWithSSO && isMicrosoftProviderEnabled && (
           <MainButton
             title={t`Continue`}
-            onClick={() =>
-              handleButtonClick(ConnectedAccountProvider.MICROSOFT)
-            }
+            onClick={() => syncWithProvider(ConnectedAccountProvider.MICROSOFT)}
             width={144}
           />
         )}
         {userAuthenticatedWithSSO && isGoogleProviderEnabled && (
           <MainButton
             title={t`Continue`}
-            onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
+            onClick={() => syncWithProvider(ConnectedAccountProvider.GOOGLE)}
             width={144}
           />
         )}
@@ -181,4 +123,10 @@ export const SyncEmails = () => {
       </StyledActionLinkContainer>
     </ModalContent>
   );
+};
+
+export const SyncEmails = () => {
+  const isOnboardingV2Enabled = useAtomStateValue(isOnboardingV2EnabledState);
+
+  return isOnboardingV2Enabled ? <SyncEmailsV2 /> : <SyncEmailsV1 />;
 };

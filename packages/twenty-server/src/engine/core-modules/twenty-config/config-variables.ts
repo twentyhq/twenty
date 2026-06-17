@@ -1653,6 +1653,14 @@ export class ConfigVariables {
   IS_ATTACHMENT_PREVIEW_ENABLED = true;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description: 'Enable or disable the onboarding v2 flow',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_ONBOARDING_V2_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Twenty server version',
     type: ConfigVariableType.STRING,

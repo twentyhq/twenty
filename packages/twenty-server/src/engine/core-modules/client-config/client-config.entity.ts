@@ -276,6 +276,9 @@ export class ClientConfig {
   @Field(() => Boolean)
   isAttachmentPreviewEnabled: boolean;
 
+  @Field(() => Boolean)
+  isOnboardingV2Enabled: boolean;
+
   @Field(() => Sentry)
   sentry: Sentry;
 
