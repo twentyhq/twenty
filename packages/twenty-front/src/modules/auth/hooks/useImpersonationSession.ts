@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { clearSessionLocalStorageKeys } from '@/auth/utils/clearSessionLocalStorageKeys';
 import { type AuthTokenPair } from '~/generated-metadata/graphql';
 
 const IMPERSONATION_SESSION_KEY = 'impersonation_original_session';
@@ -47,6 +48,12 @@ export const useImpersonationSession = () => {
         throw error;
       }
 
+      // Drop the admin's cached identity (currentUser, currentWorkspaceMember,
+      // permissions...) so the reload re-bootstraps as the impersonated user
+      // instead of briefly rendering the admin's stale identity. The admin
+      // session is preserved in sessionStorage and restored on stopImpersonating.
+      clearSessionLocalStorageKeys();
+
       reloadWithSession(targetPath);
     },
     [store, getAuthTokensFromLoginToken],
@@ -75,6 +82,11 @@ export const useImpersonationSession = () => {
 
     sessionStorage.removeItem(IMPERSONATION_SESSION_KEY);
     store.set(tokenPairState.atom, session.tokenPair);
+
+    // Drop the impersonated user's cached identity so the reload re-bootstraps
+    // as the admin instead of briefly rendering the impersonated stale identity.
+    clearSessionLocalStorageKeys();
+
     reloadWithSession(session.returnPath);
   }, [store, signOut]);
 
