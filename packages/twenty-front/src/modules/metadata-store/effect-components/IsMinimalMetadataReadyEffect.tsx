@@ -14,14 +14,22 @@ export const IsMinimalMetadataReadyEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const metadataStore = useAtomFamilyStateValue(
+  // oxlint-disable-next-line twenty/matching-state-variable
+  const objectMetadataItemsStore = useAtomFamilyStateValue(
     metadataStoreState,
     'objectMetadataItems',
   );
   // oxlint-disable-next-line twenty/matching-state-variable
-  const metadataStoreViews = useAtomFamilyStateValue(
+  const fieldMetadataItemsStore = useAtomFamilyStateValue(
     metadataStoreState,
-    'views',
+    'fieldMetadataItems',
+  );
+  // oxlint-disable-next-line twenty/matching-state-variable
+  const viewsStore = useAtomFamilyStateValue(metadataStoreState, 'views');
+  // oxlint-disable-next-line twenty/matching-state-variable
+  const viewFieldsStore = useAtomFamilyStateValue(
+    metadataStoreState,
+    'viewFields',
   );
   const setIsMinimalMetadataReady = useSetAtomState(
     isMinimalMetadataReadyState,
@@ -35,8 +43,17 @@ export const IsMinimalMetadataReadyEffect = () => {
 
     const hasActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
 
-    const areObjectsLoaded = metadataStore.status === 'up-to-date';
-    const areViewsLoaded = metadataStoreViews.status === 'up-to-date';
+    // The record-index page needs the joined view (view + viewFields) and the
+    // joined object (object + fieldMetadataItems) to compute its columns. If
+    // the gate opens before viewFields/fieldMetadataItems land, the view is
+    // loaded with empty viewFields, RecordIndexLoadBaseOnContextStoreEffect
+    // pins loadedViewId, and the record fetch is permanently skipped.
+    const areObjectsLoaded =
+      objectMetadataItemsStore.status === 'up-to-date' &&
+      fieldMetadataItemsStore.status === 'up-to-date';
+    const areViewsLoaded =
+      viewsStore.status === 'up-to-date' &&
+      viewFieldsStore.status === 'up-to-date';
 
     if (!areObjectsLoaded) {
       setIsMinimalMetadataReady(false);
@@ -53,8 +70,10 @@ export const IsMinimalMetadataReadyEffect = () => {
     hasAccessTokenPair,
     currentUser,
     currentWorkspace,
-    metadataStore.status,
-    metadataStoreViews.status,
+    objectMetadataItemsStore.status,
+    fieldMetadataItemsStore.status,
+    viewsStore.status,
+    viewFieldsStore.status,
     setIsMinimalMetadataReady,
   ]);
 
