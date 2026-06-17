@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
@@ -26,6 +27,6 @@ describe('Impersonation - unauthenticated request denial (integration)', () => {
       })
       .expect(200);
 
-    expect(response.body.errors).toBeDefined();
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   });
 });

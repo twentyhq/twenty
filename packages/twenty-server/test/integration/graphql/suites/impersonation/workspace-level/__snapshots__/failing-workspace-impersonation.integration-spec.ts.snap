@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Workspace-level impersonation - authorization denials (integration) rejects a non-admin with the impersonate permission impersonating an admin 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "Cannot impersonate a user with admin privileges. Only administrators can impersonate other administrators.",
+  "name": "ForbiddenError",
+}
+`;

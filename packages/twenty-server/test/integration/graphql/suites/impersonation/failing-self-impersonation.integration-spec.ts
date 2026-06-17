@@ -1,3 +1,4 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -12,7 +13,6 @@ describe('Impersonation - self-impersonation denial (integration)', () => {
       expectToFail: true,
     });
 
-    expect(errors).toBeDefined();
-    expect(errors[0].message).toContain('User cannot impersonate themselves');
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });

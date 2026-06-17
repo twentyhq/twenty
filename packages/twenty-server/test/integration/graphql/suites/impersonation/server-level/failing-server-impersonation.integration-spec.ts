@@ -1,3 +1,4 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { getAccessTokenForCredentials } from 'test/integration/graphql/utils/get-access-token-for-credentials.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
 
@@ -19,10 +20,7 @@ describe('Server-level impersonation - authorization denials (integration)', () 
       expectToFail: true,
     });
 
-    expect(errors).toBeDefined();
-    expect(errors[0].message).toContain(
-      'Two-factor authentication is required for server-level impersonation',
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
   it('rejects a non-admin with only the workspace impersonate permission from impersonating across workspaces', async () => {
@@ -37,9 +35,6 @@ describe('Server-level impersonation - authorization denials (integration)', () 
       expectToFail: true,
     });
 
-    expect(errors).toBeDefined();
-    expect(errors[0].message).toContain(
-      'Server level impersonation not allowed',
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });

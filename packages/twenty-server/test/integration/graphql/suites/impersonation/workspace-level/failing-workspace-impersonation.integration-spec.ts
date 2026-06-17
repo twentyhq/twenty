@@ -1,3 +1,4 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { getAccessTokenForCredentials } from 'test/integration/graphql/utils/get-access-token-for-credentials.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
 import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
@@ -19,8 +20,7 @@ describe('Workspace-level impersonation - authorization denials (integration)', 
       expectToFail: true,
     });
 
-    expect(errors).toBeDefined();
-    expect(errors[0].message).toMatch(/permission/i);
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
   // Scott is a seeded non-admin Apple member (canImpersonate /
@@ -39,9 +39,6 @@ describe('Workspace-level impersonation - authorization denials (integration)', 
       expectToFail: true,
     });
 
-    expect(errors).toBeDefined();
-    expect(errors[0].message).toContain(
-      'Cannot impersonate a user with admin privileges',
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });

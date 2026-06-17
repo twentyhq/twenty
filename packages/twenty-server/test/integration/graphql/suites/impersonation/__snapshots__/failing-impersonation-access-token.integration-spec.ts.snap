@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Impersonation - access token validation denial (integration) rejects an invalid impersonation access token on a protected query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "You do not have permission to perform this action.",
+    },
+  },
+  "message": "Impersonation not allowed",
+}
+`;

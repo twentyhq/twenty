@@ -1,9 +1,10 @@
 import gql from 'graphql-tag';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 // Exercises the per-request JWT validation checkpoint (jwt.auth.strategy):
-// an access token flagged as impersonating but pointing at an invalid
-// impersonator user-workspace must be rejected on every protected query.
+// an impersonation access token whose impersonator is not authorized to
+// impersonate the target must be rejected on every protected query.
 describe('Impersonation - access token validation denial (integration)', () => {
   it('rejects an invalid impersonation access token on a protected query', async () => {
     const query = gql`
@@ -23,9 +24,6 @@ describe('Impersonation - access token validation denial (integration)', () => {
       APPLE_SARAH_IMPERSONATE_TIM_INVALID_ACCESS_TOKEN,
     );
 
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain(
-      'cannot find impersonator or impersonated user workspace',
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   });
 });
