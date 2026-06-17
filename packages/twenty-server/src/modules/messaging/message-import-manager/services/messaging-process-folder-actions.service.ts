@@ -80,7 +80,6 @@ export class MessagingProcessFolderActionsService {
               await this.messagingImportFolderMessagesService.getFolderMessageIdsToImport(
                 messageChannel,
                 folder,
-                workspaceId,
               );
 
             messageExternalIdsToImport.push(
