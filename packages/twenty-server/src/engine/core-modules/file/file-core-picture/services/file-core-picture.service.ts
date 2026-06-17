@@ -145,17 +145,15 @@ export class FileCorePictureService {
     };
   }
 
-  async uploadWorkspaceLogoForPendingWorkspace({
+  // Authorization for setting a logo on a not-yet-activated workspace. Kept
+  // separate from the upload so callers can reject before buffering the file.
+  async getPendingWorkspaceForLogoUploadOrThrow({
     userId,
     workspaceId,
-    file,
-    filename,
   }: {
     userId: string;
     workspaceId: string;
-    file: Buffer;
-    filename: string;
-  }): Promise<FileWithSignedUrlDTO> {
+  }): Promise<WorkspaceEntity> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
@@ -175,7 +173,7 @@ export class FileCorePictureService {
       );
     }
 
-    return this.uploadWorkspacePicture({ file, filename, workspace });
+    return workspace;
   }
 
   async uploadWorkspaceMemberProfilePicture({

@@ -113,18 +113,18 @@ export const CreateWorkspace = () => {
     setNextOnboardingStatus,
   ]);
 
-  // The workspace name is always set by the time we reach this step, so we
-  // activate unconditionally on mount. Activation is an imperative one-time
-  // action, so a mount effect is the right tool here.
+  // Activation sends the workspace name to the backend, so we wait for the
+  // workspace to load and then activate exactly once. Activation is an
+  // imperative one-time action, so a mount effect is the right tool here.
   const [hasTriggered, setHasTriggered] = useState(false);
   useEffect(() => {
-    if (hasTriggered) {
+    if (hasTriggered || !isDefined(currentWorkspace)) {
       return;
     }
 
     setHasTriggered(true);
     void activate();
-  }, [activate, hasTriggered]);
+  }, [activate, hasTriggered, currentWorkspace]);
 
   return (
     <ModalContent isVerticallyCentered isHorizontallyCentered>

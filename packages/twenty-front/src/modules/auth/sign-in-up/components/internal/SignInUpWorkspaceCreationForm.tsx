@@ -70,7 +70,9 @@ export const SignInUpWorkspaceCreationForm = () => {
     handleWorkspaceNameChange,
     handleSubdomainChange,
     applySuggestion,
-  } = useWorkspaceSubdomainField();
+  } = useWorkspaceSubdomainField({
+    isSubdomainEnabled: isMultiWorkspaceEnabled,
+  });
 
   // Single-workspace self-host has a fixed address, so we only collect the name
   // and let the backend keep its default subdomain.
