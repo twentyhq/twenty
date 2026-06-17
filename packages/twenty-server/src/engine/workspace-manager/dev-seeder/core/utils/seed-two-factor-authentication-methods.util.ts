@@ -13,18 +13,22 @@ type SeedTwoFactorAuthenticationMethodsArgs = {
   queryRunner: QueryRunner;
   schemaName: string;
   workspaceId: string;
+  // Real enc:v2 envelope encrypted for this workspace so the value survives the
+  // secret-encryption rotation command (which decrypts/re-encrypts every
+  // `totp-secret` row); a malformed placeholder would break that rotation.
+  encryptedSecret: string;
 };
 
 // Seeds a verified TOTP method for Jane so the server-level impersonation flow
 // (which requires verified 2FA outside development) can be tested end to end.
-// Gated to the test environment and Apple workspace: the secret is a dummy
-// enc:v2 placeholder (only its VERIFIED status is read by the impersonation
-// check) and would otherwise make Jane unable to complete a real 2FA login in
-// the dev/demo workspace.
+// Gated to the test environment and Apple workspace: only the VERIFIED status
+// is read by the impersonation check, and seeding it in the dev/demo workspace
+// would otherwise make Jane unable to complete a real 2FA login.
 export const seedTwoFactorAuthenticationMethods = async ({
   queryRunner,
   schemaName,
   workspaceId,
+  encryptedSecret,
 }: SeedTwoFactorAuthenticationMethodsArgs) => {
   if (
     process.env.NODE_ENV !== 'test' ||
@@ -50,7 +54,7 @@ export const seedTwoFactorAuthenticationMethods = async ({
         id: TWO_FACTOR_AUTHENTICATION_METHOD_DATA_SEED_IDS.JANE,
         workspaceId,
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-        secret: 'enc:v2:seed-totp-secret-test-fixture',
+        secret: encryptedSecret,
         status: 'VERIFIED',
         strategy: 'TOTP',
       },

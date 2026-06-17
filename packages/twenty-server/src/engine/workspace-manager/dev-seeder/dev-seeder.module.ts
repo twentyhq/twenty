@@ -7,6 +7,7 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
+import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
@@ -57,6 +58,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     TwentyStandardApplicationModule,
     SdkClientModule,
+    SecretEncryptionModule,
     UpgradeModule,
   ],
   exports: [DevSeederService],
