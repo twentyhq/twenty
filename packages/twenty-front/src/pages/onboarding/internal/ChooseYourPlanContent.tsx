@@ -5,6 +5,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
+import { SubscriptionPaymentForm } from '@/settings/billing/components/SubscriptionPaymentForm';
 import { SubscriptionPrice } from '@/settings/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/settings/billing/components/TrialCard';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
@@ -255,13 +256,17 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
           ))}
         </StyledChooseTrialContainer>
       )}
-      <MainButton
-        title={t`Continue`}
-        onClick={handleCheckoutSession}
-        width={200}
-        Icon={() => isSubmitting && <Loader />}
-        disabled={isSubmitting}
-      />
+      {billingCheckoutSession.requirePaymentMethod ? (
+        <SubscriptionPaymentForm />
+      ) : (
+        <MainButton
+          title={t`Continue`}
+          onClick={handleCheckoutSession}
+          width={200}
+          Icon={() => isSubmitting && <Loader />}
+          disabled={isSubmitting}
+        />
+      )}
       <StyledLinkGroup>
         <ClickToActionLink onClick={signOut}>
           <Trans>Log out</Trans>

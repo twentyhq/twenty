@@ -565,6 +565,7 @@ export type Billing = {
   __typename?: 'Billing';
   billingUrl?: Maybe<Scalars['String']['output']>;
   isBillingEnabled: Scalars['Boolean']['output'];
+  stripePublishableKey?: Maybe<Scalars['String']['output']>;
   trialPeriods: Array<BillingTrialPeriod>;
 };
 

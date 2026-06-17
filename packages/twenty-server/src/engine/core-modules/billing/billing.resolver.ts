@@ -118,8 +118,11 @@ export class BillingResolver {
         interval: recurringInterval,
       });
 
-    // For 7-day trials (no payment method required), create subscription directly
-    // For 30-day trials (payment method required), use checkout session flow
+    // For trials without a payment method, create the subscription directly and
+    // return the success URL to navigate to.
+    // For trials that collect a card, create the subscription server-side and
+    // return the SetupIntent client secret so the frontend can confirm the
+    // payment method inline with the Stripe Payment Element.
     if (!requirePaymentMethod) {
       const successUrl =
         await this.billingPortalWorkspaceService.createDirectSubscription({
@@ -131,14 +134,16 @@ export class BillingResolver {
         url: successUrl,
       };
     } else {
-      const checkoutSessionURL =
-        await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
-          ...checkoutSessionParams,
-          billingPricesPerPlan,
-        });
+      const clientSecret =
+        await this.billingPortalWorkspaceService.createSubscriptionWithPaymentMethod(
+          {
+            ...checkoutSessionParams,
+            billingPricesPerPlan,
+          },
+        );
 
       return {
-        url: checkoutSessionURL,
+        clientSecret,
       };
     }
   }
