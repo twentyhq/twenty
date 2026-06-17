@@ -770,7 +770,28 @@ export class AuthResolver {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
+// SECURITY FIX (GHSA-q7fm-83gr-cqg5): Workspace-level impersonators must not
+    // be able to obtain tokens for admin users. Mirror the check from
+    // impersonation.service.ts to prevent privilege escalation at token-exchange time.
+    const targetHasAdminPrivileges =
+      toImpersonateUserWorkspace.user.canImpersonate === true ||
+      toImpersonateUserWorkspace.user.canAccessFullAdminPanel === true;
 
+    const impersonatorHasAdminPrivileges =
+      impersonatorUserWorkspace.user.canImpersonate === true ||
+      impersonatorUserWorkspace.user.canAccessFullAdminPanel === true;
+
+    if (targetHasAdminPrivileges && !impersonatorHasAdminPrivileges) {
+      void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+        level: 'workspace',
+        action: 'token_exchange_failed',
+        message: `Impersonation of admin user ${targetUserEmail} denied for non-admin userId ${impersonatorUserWorkspace.user.id}`,
+      });
+      throw new AuthException(
+        'Cannot impersonate a user with admin privileges. Only administrators can impersonate other administrators.',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
     void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
       level: 'workspace',
       action: 'token_exchange_success',
