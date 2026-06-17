@@ -1,26 +1,27 @@
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 // The mockup's semantic color names (the shape the ported components were
-// authored against), resolved from the product-derived theme. Single source:
-// nothing in app-preview/ reaches past this and the stage tokens.
+// authored against), resolved straight from twenty-ui's live theme — the
+// single source of truth. Nothing in app-preview/ reaches past this and the
+// stage tokens for color.
 export const PREVIEW_COLORS: Record<string, string> = {
-  accent: APP_PREVIEW_THEME.accent.accent9,
-  accentBorder: APP_PREVIEW_THEME.border.color.blue,
-  accentSurface: APP_PREVIEW_THEME.accent.primary,
-  accentSurfaceSoft: APP_PREVIEW_THEME.background.transparent.blue,
-  background: APP_PREVIEW_THEME.background.primary,
-  backgroundSecondary: APP_PREVIEW_THEME.background.secondary,
-  border: APP_PREVIEW_THEME.border.color.medium,
-  borderLight: APP_PREVIEW_THEME.border.color.light,
-  borderStrong: APP_PREVIEW_THEME.border.color.strong,
-  text: APP_PREVIEW_THEME.font.color.primary,
-  textLight: APP_PREVIEW_THEME.font.color.light,
-  textSecondary: APP_PREVIEW_THEME.font.color.secondary,
-  textTertiary: APP_PREVIEW_THEME.font.color.tertiary,
-  textExtraLight: APP_PREVIEW_THEME.font.color.extraLight,
-  transparentLight: APP_PREVIEW_THEME.background.transparent.light,
-  transparentLighter: APP_PREVIEW_THEME.background.transparent.lighter,
-  transparentMedium: APP_PREVIEW_THEME.background.transparent.medium,
-  transparentStrong: APP_PREVIEW_THEME.background.transparent.strong,
-  transparentPrimary: APP_PREVIEW_THEME.background.transparent.primary,
+  accent: THEME_LIGHT.accent.accent9,
+  accentBorder: THEME_LIGHT.border.color.blue,
+  accentSurface: THEME_LIGHT.accent.primary,
+  accentSurfaceSoft: THEME_LIGHT.background.transparent.blue,
+  background: THEME_LIGHT.background.primary,
+  backgroundSecondary: THEME_LIGHT.background.secondary,
+  border: THEME_LIGHT.border.color.medium,
+  borderLight: THEME_LIGHT.border.color.light,
+  borderStrong: THEME_LIGHT.border.color.strong,
+  text: THEME_LIGHT.font.color.primary,
+  textLight: THEME_LIGHT.font.color.light,
+  textSecondary: THEME_LIGHT.font.color.secondary,
+  textTertiary: THEME_LIGHT.font.color.tertiary,
+  textExtraLight: THEME_LIGHT.font.color.extraLight,
+  transparentLight: THEME_LIGHT.background.transparent.light,
+  transparentLighter: THEME_LIGHT.background.transparent.lighter,
+  transparentMedium: THEME_LIGHT.background.transparent.medium,
+  transparentStrong: THEME_LIGHT.background.transparent.strong,
+  transparentPrimary: THEME_LIGHT.background.transparent.primary,
 };
