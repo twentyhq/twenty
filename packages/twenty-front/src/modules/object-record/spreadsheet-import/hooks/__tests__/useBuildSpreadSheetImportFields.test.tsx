@@ -20,7 +20,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   );
 };
 
-jest.mock('twenty-ui/display', () => ({
+jest.mock('twenty-ui/icon', () => ({
   useIcons: jest.fn(),
 }));
 
