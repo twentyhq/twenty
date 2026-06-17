@@ -6,6 +6,7 @@ import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
+import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import {
@@ -66,6 +67,7 @@ export class AgentChatService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    private readonly codeInterpreterService: CodeInterpreterService,
   ) {}
 
   async createThread({
@@ -512,6 +514,8 @@ export class AgentChatService {
 
     await this.broadcastThreadUpdated(thread, ['deletedAt'], userWorkspaceId);
 
+    this.releaseThreadSandboxBestEffort(workspaceId, threadId);
+
     return thread;
   }
 
@@ -598,6 +602,23 @@ export class AgentChatService {
         },
       ],
     });
+
+    this.releaseThreadSandboxBestEffort(workspaceId, threadId);
+  }
+
+  private releaseThreadSandboxBestEffort(
+    workspaceId: string,
+    threadId: string,
+  ): void {
+    void this.codeInterpreterService
+      .releaseThreadSandbox(workspaceId, threadId)
+      .catch((error) =>
+        this.logger.warn(
+          `Failed to release code interpreter sandbox for thread ${threadId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        ),
+      );
   }
 
   async notifyThreadActivityUpdated({

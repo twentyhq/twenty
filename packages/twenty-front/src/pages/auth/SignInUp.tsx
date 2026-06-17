@@ -80,6 +80,7 @@ const StandardContent = ({
         SignInUpStep.TwoFactorAuthenticationProvision,
         SignInUpStep.TwoFactorAuthenticationVerification,
         SignInUpStep.WorkspaceSelection,
+        SignInUpStep.WorkspaceCreation,
       ].includes(signInUpStep) && <FooterNote />}
     </ModalContent>
   );
@@ -119,6 +120,10 @@ export const SignInUp = () => {
 
     if (signInUpStep === SignInUpStep.WorkspaceSelection) {
       return t`Choose a Workspace`;
+    }
+
+    if (signInUpStep === SignInUpStep.WorkspaceCreation) {
+      return t`Create your workspace`;
     }
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {

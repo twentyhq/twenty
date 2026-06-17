@@ -1,10 +1,8 @@
-import { useStore } from 'jotai';
 import { type ReactNode, useEffect } from 'react';
 
 import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListHotKeys';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { SelectableListContextProvider } from '@/ui/layout/selectable-list/states/contexts/SelectableListContext';
-import { isSelectableListGridFocusedState } from '@/ui/layout/selectable-list/states/isSelectableListGridFocusedState';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,7 +27,6 @@ export const SelectableList = ({
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListInstanceId, focusId, onSelect);
 
-  const store = useStore();
   const setSelectableItemIds = useSetAtomComponentState(
     selectableItemIdsComponentState,
     selectableListInstanceId,
@@ -50,12 +47,6 @@ export const SelectableList = ({
       setSelectableItemIds(arrayToChunks(selectableItemIdArray, 1));
     }
   }, [selectableItemIdArray, selectableItemIdMatrix, setSelectableItemIds]);
-
-  useEffect(() => {
-    return () => {
-      store.set(isSelectableListGridFocusedState.atom, false);
-    };
-  }, [store]);
 
   return (
     <SelectableListComponentInstanceContext.Provider

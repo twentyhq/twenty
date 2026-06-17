@@ -68,6 +68,7 @@ import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
   userWorkspaceId: string;
+  threadId?: string;
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
@@ -105,6 +106,7 @@ export class ChatExecutionService {
   async streamChat({
     workspace,
     userWorkspaceId,
+    threadId,
     messages,
     browsingContext,
     onCodeExecutionUpdate,
@@ -125,6 +127,7 @@ export class ChatExecutionService {
       actorContext,
       userId,
       userWorkspaceId,
+      threadId,
       onCodeExecutionUpdate,
     };
 
