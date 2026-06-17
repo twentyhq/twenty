@@ -86,7 +86,7 @@ const SearchChip = styled.span`
 `;
 
 const Body = styled.div`
-  background-color: ${THEME_LIGHT.background.tertiary};
+  background-color: ${THEME_LIGHT.background.primary};
   display: grid;
   flex: 1;
   gap: 8px;

@@ -102,6 +102,7 @@ const SpotlightContent = styled.div`
 `;
 
 const SpotlightVisual = styled.div`
+  border: 1px solid ${color('black-20')};
   margin: ${spacing(4)};
   min-height: 260px;
   overflow: hidden;
@@ -120,6 +121,7 @@ const CardInner = styled.div`
 `;
 
 const CardVisualFrame = styled.div`
+  border: 1px solid ${color('black-20')};
   height: 300px;
   margin: ${spacing(4)} ${spacing(4)} 0;
   overflow: hidden;
