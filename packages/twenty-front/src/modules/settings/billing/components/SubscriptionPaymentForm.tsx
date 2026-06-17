@@ -124,7 +124,9 @@ const SubscriptionPaymentFormContent = () => {
 
   return (
     <StyledFormContainer>
-      <PaymentElement />
+      <PaymentElement
+        options={{ fields: { billingDetails: { address: 'never' } } }}
+      />
       <StyledButtonContainer>
         <MainButton
           title={t`Continue`}

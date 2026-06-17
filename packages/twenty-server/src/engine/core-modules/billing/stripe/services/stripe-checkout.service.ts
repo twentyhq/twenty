@@ -88,6 +88,9 @@ export class StripeCheckoutService {
   // `default_incomplete` + a free trial means there is no upfront charge, so
   // Stripe attaches a `pending_setup_intent` whose client secret is confirmed
   // client-side via stripe.confirmSetup().
+  // Automatic tax stays disabled because we don't collect a billing address
+  // during onboarding (to maximize conversion); an address must be collected
+  // before the first real charge to enable tax.
   async createSubscriptionWithPaymentMethodCollection({
     user,
     workspace,
@@ -132,7 +135,7 @@ export class StripeCheckoutService {
         save_default_payment_method: 'on_subscription',
       },
       ...this.getStripeSubscriptionTrialPeriodConfig(withTrialPeriod, true),
-      automatic_tax: { enabled: true },
+      automatic_tax: { enabled: false },
       expand: ['pending_setup_intent'],
     });
   }
