@@ -1,8 +1,8 @@
 import * as crypto from 'crypto';
 
 import { signEnterpriseKey } from '@/lib/enterprise/enterprise-jwt';
-import { getLicenseeFromStripeCustomer } from '@/lib/enterprise/stripe-customer-helpers';
 import { getStripeClient } from '@/lib/enterprise/stripe-client';
+import { getLicenseeFromStripeCustomer } from '@/lib/enterprise/stripe-customer-helpers';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
@@ -14,26 +14,37 @@ const isSecretValid = (providedSecret: string): boolean => {
     return false;
   }
 
-  const expectedBuffer = Buffer.from(expectedSecret);
-  const providedBuffer = Buffer.from(providedSecret);
+  const comparisonKey = crypto.randomBytes(32);
+  const expectedDigest = crypto
+    .createHmac('sha256', comparisonKey)
+    .update(expectedSecret)
+    .digest();
+  const providedDigest = crypto
+    .createHmac('sha256', comparisonKey)
+    .update(providedSecret)
+    .digest();
 
-  if (expectedBuffer.length !== providedBuffer.length) {
-    return false;
-  }
-
-  return crypto.timingSafeEqual(expectedBuffer, providedBuffer);
+  return crypto.timingSafeEqual(expectedDigest, providedDigest);
 };
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ subscriptionId: string; secret: string }> },
-) {
+export async function POST(request: Request) {
   try {
-    const { subscriptionId, secret } = await params;
+    let body: { subscriptionId?: unknown; secret?: unknown } = {};
+
+    try {
+      body = await request.json();
+    } catch {
+      body = {};
+    }
+
+    const secret = typeof body.secret === 'string' ? body.secret : '';
 
     if (!isSecretValid(secret)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const subscriptionId =
+      typeof body.subscriptionId === 'string' ? body.subscriptionId : '';
 
     if (!subscriptionId) {
       return NextResponse.json(
