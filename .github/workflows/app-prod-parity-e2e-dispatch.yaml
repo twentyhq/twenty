@@ -1,7 +1,10 @@
 name: App Prod-Parity E2E Dispatch
 
 on:
-  merge_group:
+  push:
+    branches: [main]
+  pull_request:
+    types: [labeled, synchronize, opened, reopened]
   workflow_dispatch:
 
 permissions: {}
@@ -12,70 +15,30 @@ concurrency:
 
 jobs:
   dispatch:
+    # main push + manual always run; PR events only when the label is present.
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       contains(github.event.pull_request.labels.*.name, 'run-e2e-apps-prod-parity-tests'))
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
-      contents: read
       statuses: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          fetch-depth: 0
-
       - name: Resolve target SHA
         id: sha
         env:
-          MERGE_GROUP_HEAD_SHA: ${{ github.event.merge_group.head_sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           EVENT_SHA: ${{ github.sha }}
         run: |
-          if [ -n "$MERGE_GROUP_HEAD_SHA" ]; then
-            echo "head_sha=$MERGE_GROUP_HEAD_SHA" >> "$GITHUB_OUTPUT"
+          if [ -n "$PR_HEAD_SHA" ]; then
+            echo "head_sha=$PR_HEAD_SHA" >> "$GITHUB_OUTPUT"
           else
             echo "head_sha=$EVENT_SHA" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Detect relevant changes
-        id: changes
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          BASE_SHA: ${{ github.event.merge_group.base_sha }}
-          HEAD_SHA: ${{ steps.sha.outputs.head_sha }}
-        run: |
-          # Manual runs are always intentional.
-          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
-            echo "relevant=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          # Fail safe: if we cannot compute the diff, run the test rather than
-          # silently passing a required check.
-          if [ -z "$BASE_SHA" ] || ! git cat-file -e "$BASE_SHA" 2>/dev/null; then
-            echo "relevant=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
-          if echo "$CHANGED" | grep -qE '^(packages/twenty-sdk/|packages/twenty-client-sdk/|packages/twenty-apps/examples/postcard/|packages/twenty-server/|packages/twenty-front/|\.github/workflows/app-prod-parity-e2e-dispatch\.yaml)'; then
-            echo "relevant=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "relevant=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Post skip-but-pass status
-        if: steps.changes.outputs.relevant == 'false'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          HEAD_SHA: ${{ steps.sha.outputs.head_sha }}
-        run: |
-          gh api "repos/$REPO/statuses/$HEAD_SHA" \
-            -f state=success \
-            -f context=app-prod-parity-e2e \
-            -f description="No prod-parity-relevant changes"
-
       - name: Post pending status
-        if: steps.changes.outputs.relevant == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -87,7 +50,6 @@ jobs:
             -f description="Dispatching prod-parity e2e to ci-privileged"
 
       - name: Mint ci-privileged dispatch token
-        if: steps.changes.outputs.relevant == 'true'
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
@@ -98,7 +60,6 @@ jobs:
           permission-actions: write
 
       - name: Dispatch to ci-privileged
-        if: steps.changes.outputs.relevant == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           HEAD_SHA: ${{ steps.sha.outputs.head_sha }}
@@ -109,7 +70,7 @@ jobs:
             -f head_sha="$HEAD_SHA"
 
       - name: Post dispatch-failed status
-        if: failure() && steps.changes.outputs.relevant == 'true'
+        if: failure()
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
