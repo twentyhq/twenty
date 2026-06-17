@@ -3,11 +3,13 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { z } from 'zod';
 
 import { slugify } from '../scripts/slugify';
+import { deriveDeploymentExpertise } from './derive-deployment-expertise';
+import { deriveRegion } from './derive-region';
 
 export const SUBMIT_PARTNER_APPLICATION_LOGIC_FUNCTION_ID =
   '7b1e2c5f-3a14-4f7d-8e91-0b5e2a3c4d76';
 
-const PARTNER_COUNTRY_VALUES = [
+export const PARTNER_COUNTRY_VALUES = [
   'AFGHANISTAN','ALBANIA','ALGERIA','ANDORRA','ANGOLA','ANTIGUA_AND_BARBUDA','ARGENTINA','ARMENIA','AUSTRALIA','AUSTRIA','AZERBAIJAN','BAHAMAS','BAHRAIN','BANGLADESH','BARBADOS','BELARUS','BELGIUM','BELIZE','BENIN','BHUTAN','BOLIVIA','BOSNIA_AND_HERZEGOVINA','BOTSWANA','BRAZIL','BRUNEI','BULGARIA','BURKINA_FASO','BURUNDI','CAMBODIA','CAMEROON','CANADA','CAPE_VERDE','CENTRAL_AFRICAN_REPUBLIC','CHAD','CHILE','CHINA','COLOMBIA','COMOROS','CONGO','DR_CONGO','COSTA_RICA','CROATIA','CUBA','CYPRUS','CZECH_REPUBLIC','DENMARK','DJIBOUTI','DOMINICA','DOMINICAN_REPUBLIC','ECUADOR','EGYPT','EL_SALVADOR','EQUATORIAL_GUINEA','ERITREA','ESTONIA','ESWATINI','ETHIOPIA','FIJI','FINLAND','FRANCE','GABON','GAMBIA','GEORGIA','GERMANY','GHANA','GREECE','GRENADA','GUATEMALA','GUINEA','GUINEA_BISSAU','GUYANA','HAITI','HONDURAS','HUNGARY','ICELAND','INDIA','INDONESIA','IRAN','IRAQ','IRELAND','ISRAEL','ITALY','IVORY_COAST','JAMAICA','JAPAN','JORDAN','KAZAKHSTAN','KENYA','KIRIBATI','KOSOVO','KUWAIT','KYRGYZSTAN','LAOS','LATVIA','LEBANON','LESOTHO','LIBERIA','LIBYA','LIECHTENSTEIN','LITHUANIA','LUXEMBOURG','MADAGASCAR','MALAWI','MALAYSIA','MALDIVES','MALI','MALTA','MARSHALL_ISLANDS','MAURITANIA','MAURITIUS','MEXICO','MICRONESIA','MOLDOVA','MONACO','MONGOLIA','MONTENEGRO','MOROCCO','MOZAMBIQUE','MYANMAR','NAMIBIA','NAURU','NEPAL','NETHERLANDS','NEW_ZEALAND','NICARAGUA','NIGER','NIGERIA','NORTH_KOREA','NORTH_MACEDONIA','NORWAY','OMAN','PAKISTAN','PALAU','PALESTINE','PANAMA','PAPUA_NEW_GUINEA','PARAGUAY','PERU','PHILIPPINES','POLAND','PORTUGAL','QATAR','ROMANIA','RUSSIA','RWANDA','SAINT_KITTS_AND_NEVIS','SAINT_LUCIA','SAINT_VINCENT','SAMOA','SAN_MARINO','SAO_TOME_AND_PRINCIPE','SAUDI_ARABIA','SENEGAL','SERBIA','SEYCHELLES','SIERRA_LEONE','SINGAPORE','SLOVAKIA','SLOVENIA','SOLOMON_ISLANDS','SOMALIA','SOUTH_AFRICA','SOUTH_KOREA','SOUTH_SUDAN','SPAIN','SRI_LANKA','SUDAN','SURINAME','SWEDEN','SWITZERLAND','SYRIA','TAIWAN','TAJIKISTAN','TANZANIA','THAILAND','TIMOR_LESTE','TOGO','TONGA','TRINIDAD_AND_TOBAGO','TUNISIA','TURKEY','TURKMENISTAN','TUVALU','UGANDA','UKRAINE','UNITED_ARAB_EMIRATES','UNITED_KINGDOM','UNITED_STATES','URUGUAY','UZBEKISTAN','VANUATU','VATICAN','VENEZUELA','VIETNAM','YEMEN','ZAMBIA','ZIMBABWE',
 ] as const;
 
@@ -69,6 +71,7 @@ function buildApplicationNotes(input: SubmitPartnerApplicationInput): string | n
 type PartnerFieldsForUpsert = {
   name: string;
   linkedin?: { primaryLinkUrl: string };
+  website?: { primaryLinkUrl: string };
   city?: string;
   country?: CoreSchema.PartnerCountryEnum;
   languagesSpoken?: CoreSchema.PartnerLanguagesSpokenEnum[];
@@ -86,6 +89,7 @@ function buildPartnerFields(input: SubmitPartnerApplicationInput): PartnerFields
     name: input.companyName.trim(),
   };
   if (isNonEmptyString(input.linkedin)) fields.linkedin = { primaryLinkUrl: input.linkedin.trim() };
+  if (isNonEmptyString(input.domainName)) fields.website = { primaryLinkUrl: input.domainName.trim() };
   if (isNonEmptyString(input.city)) fields.city = input.city.trim();
   // validate() has already checked these against the allowed value sets, so
   // narrowing the validated strings to their enum types here is sound.
@@ -260,6 +264,7 @@ export const handler = async (
 
     const companyId = await findOrCreateCompanyId(client, input);
 
+    const region = deriveRegion(input.country);
     const partnerResult = await client.mutation({
       createPartner: {
         __args: {
@@ -270,6 +275,8 @@ export const handler = async (
             reviewed: false,
             partnerTier: 'NEW',
             companyId,
+            deploymentExpertise: deriveDeploymentExpertise(input.partnerScope) as CoreSchema.PartnerDeploymentExpertiseEnum[],
+            ...(region ? { region: [region] as CoreSchema.PartnerRegionEnum[] } : {}),
           },
         },
         id: true,
