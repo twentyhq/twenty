@@ -298,10 +298,6 @@ const updatePolicyManagedCallRecording = async ({
     callRecording: existingCallRecording,
     calendarEvent: representativeCalendarEvent,
   });
-  await ensureMeetingBot(client, {
-    callRecording: existingCallRecording,
-    calendarEvent: representativeCalendarEvent,
-  });
 
   return {
     action: 'UPDATED',

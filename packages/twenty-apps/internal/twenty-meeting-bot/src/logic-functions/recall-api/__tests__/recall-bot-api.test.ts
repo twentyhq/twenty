@@ -1,6 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
+import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
+import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
+import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 
@@ -101,24 +104,6 @@ describe('recall bot api', () => {
     );
   });
 
-  it('cancels a scheduled Recall bot request', async () => {
-    fetchMock.mockResolvedValue({
-      ok: true,
-      status: 204,
-      json: async () => ({}),
-    });
-
-    const result = await cancelRecallBot({
-      externalBotId: 'recall-bot-id',
-    });
-
-    expect(result).toEqual({ ok: true });
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://ap-northeast-1.recall.ai/api/v1/bot/recall-bot-id/',
-      expect.objectContaining({ method: 'DELETE' }),
-    );
-  });
-
   it('fails when the create response does not include a bot id', async () => {
     fetchMock.mockResolvedValue({
       ok: true,
@@ -200,6 +185,189 @@ describe('recall bot api', () => {
     );
   });
 
+  it('lists scheduled bots in a join-at window and follows pagination', async () => {
+    fetchMock
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          next: 'https://ap-northeast-1.recall.ai/api/v1/bot/?cursor=page-2',
+          results: [
+            { id: 'bot-1', metadata: { twentyCallRecordingId: 'recording-1' } },
+          ],
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          next: null,
+          results: [{ id: 'bot-2' }],
+        }),
+      });
+
+    const result = await listScheduledRecallBots({
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
+      joinAtBefore: '2026-01-02T12:00:00.000Z',
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      bots: [
+        { id: 'bot-1', metadata: { twentyCallRecordingId: 'recording-1' } },
+        { id: 'bot-2', metadata: {} },
+      ],
+    });
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      'https://ap-northeast-1.recall.ai/api/v1/bot/?join_at_after=2026-01-01T08%3A00%3A00.000Z&join_at_before=2026-01-02T12%3A00%3A00.000Z',
+      expect.objectContaining({ method: 'GET' }),
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      'https://ap-northeast-1.recall.ai/api/v1/bot/?cursor=page-2',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
+  it('fails the scheduled bot list when the pagination cap would truncate results', async () => {
+    for (let pageIndex = 1; pageIndex <= 10; pageIndex++) {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          next: `https://ap-northeast-1.recall.ai/api/v1/bot/?cursor=page-${pageIndex + 1}`,
+          results: [{ id: `bot-${pageIndex}` }],
+        }),
+      });
+    }
+
+    const result = await listScheduledRecallBots({
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
+      joinAtBefore: '2026-01-02T12:00:00.000Z',
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      status: null,
+      errorMessage: 'Recall bot list exceeded 10 pages',
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(10);
+  });
+
+  it('stops paginating when the next link points outside the configured region', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        next: 'https://evil.example.com/api/v1/bot/?cursor=page-2',
+        results: [{ id: 'bot-1' }],
+      }),
+    });
+
+    const result = await listScheduledRecallBots({
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
+      joinAtBefore: '2026-01-02T12:00:00.000Z',
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      bots: [{ id: 'bot-1', metadata: {} }],
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancels a scheduled Recall bot request', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 204,
+      json: async () => ({}),
+    });
+
+    const result = await cancelRecallBot({
+      externalBotId: 'recall-bot-id',
+    });
+
+    expect(result).toEqual({ ok: true });
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://ap-northeast-1.recall.ai/api/v1/bot/recall-bot-id/',
+      expect.objectContaining({ method: 'DELETE' }),
+    );
+  });
+
+  it('ejects a bot through the leave_call endpoint', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ id: 'recall-bot-id' }),
+    });
+
+    const result = await ejectRecallBot({
+      externalBotId: 'recall-bot-id',
+    });
+
+    expect(result).toEqual({ ok: true });
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://ap-northeast-1.recall.ai/api/v1/bot/recall-bot-id/leave_call/',
+      expect.objectContaining({ method: 'POST' }),
+    );
+  });
+
+  it('fetches a single bot and returns the raw response', async () => {
+    const botResponse = {
+      id: 'recall-bot-id',
+      status_changes: [{ code: 'done' }],
+      recordings: [{ id: 'recall-recording-id' }],
+    };
+
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => botResponse,
+    });
+
+    const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+    expect(result).toEqual({ ok: true, bot: botResponse });
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://ap-northeast-1.recall.ai/api/v1/bot/recall-bot-id/',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
+  it('fails when fetching a bot returns an empty response payload', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => null,
+    });
+
+    const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+    expect(result).toEqual({
+      ok: false,
+      status: 200,
+      errorMessage: 'Recall API returned an empty bot response',
+    });
+  });
+
+  it('reports the HTTP status when fetching a bot that no longer exists', async () => {
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: async () => ({ detail: 'Not found.' }),
+    });
+
+    const result = await getRecallBot({ externalBotId: 'recall-bot-gone' });
+
+    expect(result).toEqual({
+      ok: false,
+      status: 404,
+      errorMessage:
+        'Recall API responded with HTTP 404: {"detail":"Not found."}',
+    });
+  });
+
   describe('transient failure retries', () => {
     beforeEach(() => {
       vi.useFakeTimers();
@@ -217,22 +385,36 @@ describe('recall bot api', () => {
         json: async () => ({ id: 'recall-bot-id' }),
       });
 
-      const resultPromise = rescheduleRecallBot({
-        externalBotId: 'recall-bot-id',
-        meetingUrl: 'https://meet.google.com/abc-defg-hij',
-        joinAt: '2026-01-01T13:00:00.000Z',
-        metadata: {
-          twentyCallRecordingId: 'call-recording-id',
-          twentyCalendarEventId: 'calendar-event-id',
-          twentyRealMeetingKey: 'meeting-key',
-        },
-      });
+      const resultPromise = getRecallBot({ externalBotId: 'recall-bot-id' });
 
       await vi.runAllTimersAsync();
 
       expect(await resultPromise).toEqual({
         ok: true,
-        externalBotId: 'recall-bot-id',
+        bot: { id: 'recall-bot-id' },
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it('retries a 503 response and succeeds on the next attempt', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        json: async () => ({ detail: 'service unavailable' }),
+      });
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ id: 'recall-bot-id' }),
+      });
+
+      const resultPromise = getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      await vi.runAllTimersAsync();
+
+      expect(await resultPromise).toEqual({
+        ok: true,
+        bot: { id: 'recall-bot-id' },
       });
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
@@ -244,16 +426,7 @@ describe('recall bot api', () => {
         json: async () => ({ detail: 'server error' }),
       });
 
-      const resultPromise = rescheduleRecallBot({
-        externalBotId: 'recall-bot-id',
-        meetingUrl: 'https://meet.google.com/abc-defg-hij',
-        joinAt: '2026-01-01T13:00:00.000Z',
-        metadata: {
-          twentyCallRecordingId: 'call-recording-id',
-          twentyCalendarEventId: 'calendar-event-id',
-          twentyRealMeetingKey: 'meeting-key',
-        },
-      });
+      const resultPromise = getRecallBot({ externalBotId: 'recall-bot-id' });
 
       await vi.runAllTimersAsync();
 
@@ -266,6 +439,24 @@ describe('recall bot api', () => {
       expect(fetchMock).toHaveBeenCalledTimes(3);
     });
 
+    it('does not retry client errors', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 400,
+        json: async () => ({ detail: 'bad request' }),
+      });
+
+      const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      expect(result).toEqual({
+        ok: false,
+        status: 400,
+        errorMessage:
+          'Recall API responded with HTTP 400: {"detail":"bad request"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
     it('does not retry an allowed 404 on cancel', async () => {
       fetchMock.mockResolvedValue({
         ok: false,
@@ -274,6 +465,21 @@ describe('recall bot api', () => {
       });
 
       const result = await cancelRecallBot({
+        externalBotId: 'recall-bot-id',
+      });
+
+      expect(result).toEqual({ ok: true });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not retry an allowed 404 on eject', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 404,
+        json: async () => ({ detail: 'not found' }),
+      });
+
+      const result = await ejectRecallBot({
         externalBotId: 'recall-bot-id',
       });
 
