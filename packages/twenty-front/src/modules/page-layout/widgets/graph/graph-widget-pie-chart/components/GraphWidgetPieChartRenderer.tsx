@@ -65,7 +65,7 @@ export const GraphWidgetPieChartRenderer = () => {
     isFilteredViewRedirectionSupported(groupByField);
 
   const handleSliceClick = (datum: PieChartDataItemWithColor) => {
-    const rawValue = formattedToRawLookup.get(datum.id) ?? null;
+    const rawValue = formattedToRawLookup.get(datum.key) ?? null;
 
     const drilldownQueryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,
