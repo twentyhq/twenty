@@ -250,11 +250,24 @@ function walk(directory) {
           `src/${relativePath}: ${sharedLayer} may import only tokens/icons/ui/platform, found @/${forbiddenLayer}.`,
         );
       }
-      if (/from 'twenty-ui/.test(content)) {
-        failures.push(
-          `src/${relativePath}: twenty-ui is dev-only (React 18) — consume APP_PREVIEW_THEME from @/tokens instead.`,
-        );
-      }
+    }
+
+    // twenty-ui's theme is pure data, baked by Linaria at build time — consume
+    // it directly so the mockups can't drift from the product. Its components
+    // are React runtime (+ react-tooltip): importing them would weigh down the
+    // marketing bundle, so the mockups stay on lean primitives built against
+    // the theme.
+    const badTwentyUiSubpath = [
+      ...content.matchAll(/from 'twenty-ui(\/[a-z-]+)?'/g),
+    ]
+      .map((match) => match[1] ?? '')
+      .find(
+        (subpath) => subpath !== '/theme' && subpath !== '/theme-constants',
+      );
+    if (badTwentyUiSubpath !== undefined) {
+      failures.push(
+        `src/${relativePath}: only twenty-ui/theme is importable (pure data, baked at build); twenty-ui${badTwentyUiSubpath} pulls React runtime into the bundle — build a lean primitive instead.`,
+      );
     }
 
     // three is heavy (~150KB gz): only the visuals heavy zones may value-

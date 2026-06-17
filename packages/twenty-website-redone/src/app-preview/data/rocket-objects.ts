@@ -372,7 +372,7 @@ const PAYLOAD_PAGE: TablePageDefinition = {
           shortLabel: 'P',
           tone: 'purple',
         },
-        payloadType: { type: 'select', color: 'teal', value: 'Probe' },
+        payloadType: { type: 'select', color: 'turquoise', value: 'Probe' },
         status: { type: 'select', color: 'green', value: 'Deployed' },
         customer: {
           type: 'relation',

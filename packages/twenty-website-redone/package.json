@@ -26,6 +26,7 @@
     "stripe": "^20.3.1",
     "three": "^0.184.0",
     "twenty-shared": "workspace:*",
+    "twenty-ui": "workspace:*",
     "zod": "^4.1.11"
   },
   "devDependencies": {
@@ -36,7 +37,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/three": "^0.184.1",
-    "twenty-ui": "workspace:*"
+    "@types/three": "^0.184.1"
   }
 }

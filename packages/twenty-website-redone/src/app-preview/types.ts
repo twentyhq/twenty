@@ -25,7 +25,7 @@ export type CellSelectColor =
   | 'pink'
   | 'purple'
   | 'red'
-  | 'teal';
+  | 'turquoise';
 export type CellSelect = {
   type: 'select';
   color?: CellSelectColor;
