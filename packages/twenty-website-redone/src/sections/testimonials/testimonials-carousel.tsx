@@ -17,7 +17,7 @@ import {
   typeRampDeclarations,
 } from '@/tokens';
 import { HalftoneModel } from '@/platform/visuals/rigs/halftone-model';
-import { Body, Eyebrow, Heading, IconButton, MarkedDivider } from '@/ui';
+import { Body, Eyebrow, IconButton, MarkedDivider } from '@/ui';
 
 import { HOURGLASS_VISUAL } from './hourglass-config';
 
@@ -122,6 +122,15 @@ const QuoteSlide = styled.div`
   }
 `;
 
+// Testimonials are quotes, not section titles — rendered as a paragraph that
+// borrows the headingMd display ramp rather than carrying a heading tag.
+const QuoteText = styled.p`
+  ${typeRampDeclarations('headingMd')}
+  font-family: ${fontFamily('sans')};
+  font-weight: ${FONT_WEIGHT.light};
+  text-wrap: balance;
+`;
+
 const FooterRow = styled.div`
   align-items: flex-start;
   align-self: end;
@@ -217,15 +226,7 @@ export function TestimonialsCarousel({
               data-active={testimonialIndex === index ? '' : undefined}
               key={testimonial.author.name.id}
             >
-              <Heading
-                as="h2"
-                family="sans"
-                size="md"
-                tracking="normal"
-                weight="light"
-              >
-                {i18n._(testimonial.quote)}
-              </Heading>
+              <QuoteText>{i18n._(testimonial.quote)}</QuoteText>
             </QuoteSlide>
           ))}
         </QuoteStack>

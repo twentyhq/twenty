@@ -17,7 +17,7 @@ import {
   spacing,
   typeRampDeclarations,
 } from '@/tokens';
-import { Body, Eyebrow, Heading, IconButton, MarkedDivider } from '@/ui';
+import { Body, Eyebrow, IconButton, MarkedDivider } from '@/ui';
 
 import { PartnerPortrait } from './partner-portrait';
 import { PartnerQuoteVisual } from './partner-quote-visual';
@@ -146,6 +146,15 @@ const QuoteSlide = styled.div`
   }
 `;
 
+// Testimonials are quotes, not section titles — rendered as a paragraph that
+// borrows the headingMd display ramp rather than carrying a heading tag.
+const QuoteText = styled.p`
+  ${typeRampDeclarations('headingMd')}
+  font-family: ${fontFamily('sans')};
+  font-weight: ${FONT_WEIGHT.light};
+  text-wrap: balance;
+`;
+
 const QuoteArea = styled.div`
   isolation: isolate;
   min-width: 0;
@@ -253,15 +262,7 @@ export function PartnerTestimonialsCarousel({
                 data-active={testimonialIndex === index ? '' : undefined}
                 key={testimonial.author.name.id}
               >
-                <Heading
-                  as="h2"
-                  family="sans"
-                  size="md"
-                  tracking="normal"
-                  weight="light"
-                >
-                  {i18n._(testimonial.quote)}
-                </Heading>
+                <QuoteText>{i18n._(testimonial.quote)}</QuoteText>
               </QuoteSlide>
             ))}
           </QuoteStack>

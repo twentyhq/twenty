@@ -1,5 +1,5 @@
-import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { msg } from '@lingui/core/macro';
 import { Fragment } from 'react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
@@ -13,8 +13,8 @@ import {
 } from '@/tokens';
 import { Body, Eyebrow, Heading, SectionIntro, SectionShell } from '@/ui';
 
-import { PROBLEM_POINTS } from './problem.data';
 import { ProblemVisual } from './problem-visual';
+import { PROBLEM_POINTS } from './problem.data';
 
 const SplitLayout = styled.div`
   display: grid;

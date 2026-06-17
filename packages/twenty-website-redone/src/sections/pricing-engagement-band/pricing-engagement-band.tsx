@@ -1,6 +1,6 @@
-import { msg } from '@lingui/core/macro';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { msg } from '@lingui/core/macro';
 import NextImage from 'next/image';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';

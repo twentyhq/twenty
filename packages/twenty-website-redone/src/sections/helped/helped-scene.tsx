@@ -160,7 +160,7 @@ export function HelpedScene() {
             <Eyebrow>{i18n._(msg`In production.`)}</Eyebrow>
           </EyebrowExitTarget>
           <div className={headlineMeasureClassName}>
-            <Heading as="h2" size="xl" weight="light">
+            <Heading as="h2" size="lg" weight="light">
               {i18n._(msg`Dev teams power company-wide *change with Twenty*`)}
             </Heading>
           </div>
