@@ -9,7 +9,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFilterOff } from 'twenty-ui-deprecated/display';
+import { IconFilterOff } from 'twenty-ui/display';
 
 export const RecordTableEmptyStateSoftDelete = () => {
   const { t } = useLingui();

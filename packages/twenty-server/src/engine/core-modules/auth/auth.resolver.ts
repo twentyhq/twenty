@@ -50,6 +50,9 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-t
 import { LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
+import { SubdomainAvailabilityDTO } from 'src/engine/core-modules/domain/subdomain-manager/dtos/subdomain-availability.dto';
+import { WorkspaceCreationDefaultsDTO } from 'src/engine/core-modules/domain/subdomain-manager/dtos/workspace-creation-defaults.dto';
+import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
@@ -66,6 +69,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { WorkspaceGraphqlApiExceptionFilter } from 'src/engine/core-modules/workspace/filters/workspace-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -84,6 +88,7 @@ import { AuthToken } from './dto/auth-token.dto';
 import { AuthTokens } from './dto/auth-tokens.dto';
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginTokenDTO } from './dto/login-token.dto';
+import { SignUpInNewWorkspaceInput } from './dto/sign-up-in-new-workspace.input';
 import { SignUpInput } from './dto/sign-up.input';
 import { UserCredentialsInput } from './dto/user-credentials.input';
 import { CheckUserExistDTO } from './dto/user-exists.dto';
@@ -100,6 +105,7 @@ import { AuthService } from './services/auth.service';
   PermissionsGraphqlApiExceptionFilter,
   EmailVerificationExceptionFilter,
   TwoFactorAuthenticationExceptionFilter,
+  WorkspaceGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class AuthResolver {
@@ -127,6 +133,7 @@ export class AuthResolver {
     private ssoService: SSOService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly permissionsService: PermissionsService,
+    private readonly subdomainManagerService: SubdomainManagerService,
   ) {}
 
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
@@ -499,16 +506,38 @@ export class AuthResolver {
     };
   }
 
+  @Query(() => SubdomainAvailabilityDTO)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  async checkWorkspaceSubdomainAvailability(
+    @Args('subdomain') subdomain: string,
+  ): Promise<SubdomainAvailabilityDTO> {
+    return this.subdomainManagerService.getSubdomainAvailability(subdomain);
+  }
+
+  @Query(() => WorkspaceCreationDefaultsDTO)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  async getWorkspaceCreationDefaults(
+    @AuthUser() currentUser: AuthContextUser,
+  ): Promise<WorkspaceCreationDefaultsDTO> {
+    const user = await this.userService.findUserByIdOrThrow(currentUser.id);
+
+    return this.subdomainManagerService.getWorkspaceCreationDefaults(
+      user.email,
+    );
+  }
+
   @Mutation(() => SignUpDTO)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async signUpInNewWorkspace(
     @AuthUser() currentUser: AuthContextUser,
     @AuthProvider() authProvider: AuthProviderEnum,
+    @Args('input', { nullable: true }) input?: SignUpInNewWorkspaceInput,
   ): Promise<SignUpDTO> {
     const fullUser = await this.userService.findUserByIdOrThrow(currentUser.id);
 
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: fullUser },
+      { displayName: input?.displayName, subdomain: input?.subdomain },
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(

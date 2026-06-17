@@ -20,13 +20,13 @@ export const GET_MY_CONNECTED_ACCOUNTS = gql`
         IMAP {
           host
           port
-          secure
+          connectionSecurity
           username
         }
         SMTP {
           host
           port
-          secure
+          connectionSecurity
           username
         }
         CALDAV {

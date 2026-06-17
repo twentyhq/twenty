@@ -6,8 +6,10 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { v4 as uuidv4 } from 'uuid';
 
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 const TEST_APP_ID = uuidv4();
-const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 const STORAGE_LOCAL_PATH = join(process.cwd(), '.local-storage');
 
 const MALICIOUS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" onload="alert(1)">

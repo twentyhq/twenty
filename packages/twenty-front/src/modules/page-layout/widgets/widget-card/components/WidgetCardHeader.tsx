@@ -5,20 +5,14 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext } from 'react';
-import {
-  IconTrash,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
-import { IconButton } from 'twenty-ui-deprecated/input';
+import { IconTrash, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
 import { AnimatePresence, motion } from 'framer-motion';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import {
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 export type WidgetCardHeaderProps = {
   variant: WidgetCardVariant;
   widgetId: string;

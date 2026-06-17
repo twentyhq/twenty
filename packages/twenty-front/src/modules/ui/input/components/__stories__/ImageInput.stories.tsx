@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { workspaceLogoUrl } from '~/testing/mock-data/users';
 
 import { ImageInput } from '@/ui/input/components/ImageInput';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof ImageInput> = {
   title: 'UI/Input/ImageInput/ImageInput',

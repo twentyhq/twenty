@@ -9,6 +9,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
@@ -82,6 +83,7 @@ export const createStandardFieldFlatMetadata = <
     icon,
     isActive: true,
     isSystem,
+    isSystemSideEffect: name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
     isNullable,
     isUnique,
     isUIEditable,

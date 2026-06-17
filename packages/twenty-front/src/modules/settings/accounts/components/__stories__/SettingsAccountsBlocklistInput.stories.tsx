@@ -6,7 +6,7 @@ import {
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const updateBlockedEmailListJestFn = fn();
 

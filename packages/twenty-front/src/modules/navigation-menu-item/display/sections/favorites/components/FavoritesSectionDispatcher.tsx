@@ -4,7 +4,7 @@ import { NavigationMenuItemDndKitProvider } from '@/navigation-menu-item/display
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { FavoritesSection } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { AnimatedEaseInOut } from 'twenty-ui-deprecated/utilities';
+import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
 export const FavoritesSectionDispatcher = () => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(

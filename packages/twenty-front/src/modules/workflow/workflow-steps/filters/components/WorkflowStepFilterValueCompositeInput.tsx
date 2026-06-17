@@ -16,7 +16,7 @@ import {
   FieldActorSource,
   type StepFilter,
 } from 'twenty-shared/types';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 
 const ACTOR_SOURCE_OPTIONS: SelectOption[] = Object.values(

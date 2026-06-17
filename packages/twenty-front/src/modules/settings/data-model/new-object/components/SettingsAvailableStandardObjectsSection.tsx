@@ -4,8 +4,8 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
   AVAILABLE_STANDARD_OBJECTS_GRID_TEMPLATE_COLUMNS,

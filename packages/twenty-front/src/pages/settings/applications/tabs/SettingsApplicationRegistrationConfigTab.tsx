@@ -2,8 +2,8 @@ import type { ApplicationRegistrationData } from '~/pages/settings/applications/
 import { useQuery } from '@apollo/client/react';
 import { FindApplicationRegistrationVariablesDocument } from '~/generated-metadata/graphql';
 import { FindAdminApplicationRegistrationVariablesDocument } from '~/generated-admin/graphql';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { H2Title, Status } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui/layout';
+import { H2Title, Status } from 'twenty-ui/display';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';

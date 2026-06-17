@@ -1,5 +1,5 @@
 import { type WorkflowVersionStatus } from '@/workflow/types/Workflow';
-import { type TagColor } from 'twenty-ui-deprecated/components';
+import { type TagColor } from 'twenty-ui/components';
 
 export const getWorkflowVersionStatusTagProps = ({
   workflowVersionStatus,

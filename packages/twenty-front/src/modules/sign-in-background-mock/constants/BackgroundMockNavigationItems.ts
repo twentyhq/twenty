@@ -12,8 +12,8 @@ import {
   IconTargetArrow,
   IconUser,
   IconUserCircle,
-} from 'twenty-ui-deprecated/display';
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
+} from 'twenty-ui/display';
+import { type ThemeColor } from 'twenty-ui/theme';
 
 export type BackgroundMockNavigationItem = {
   label: string;

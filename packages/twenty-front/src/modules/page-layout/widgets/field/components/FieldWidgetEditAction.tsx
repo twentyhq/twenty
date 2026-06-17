@@ -5,9 +5,9 @@ import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlin
 import { useOpenFieldWidgetFieldInputEditMode } from '@/page-layout/widgets/field/hooks/useOpenFieldWidgetFieldInputEditMode';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
-import { IconPencil } from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconPencil } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditButtonWrapper = styled.div<{ isMobile: boolean }>`
   opacity: ${({ isMobile }) => (isMobile ? '1' : '0')};

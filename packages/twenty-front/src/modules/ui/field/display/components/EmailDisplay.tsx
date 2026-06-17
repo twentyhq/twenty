@@ -1,7 +1,7 @@
 import { type MouseEvent } from 'react';
 import { EllipsisDisplay } from './EllipsisDisplay';
 import { isDefined } from 'twenty-shared/utils';
-import { ContactLink } from 'twenty-ui-deprecated/navigation';
+import { ContactLink } from 'twenty-ui/navigation';
 
 const validateEmail = (email: string) => {
   // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

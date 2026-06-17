@@ -4,10 +4,7 @@ import { ExpandedFieldDisplay } from '@/ui/layout/expandable-list/components/Exp
 import { t } from '@lingui/core/macro';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  isTwoFirstDepths,
-  JsonTree,
-} from 'twenty-ui-deprecated/json-visualizer';
+import { isTwoFirstDepths, JsonTree } from 'twenty-ui/json-visualizer';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const JsonFieldDisplay = () => {

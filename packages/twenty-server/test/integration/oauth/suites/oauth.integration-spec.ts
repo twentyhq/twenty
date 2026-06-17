@@ -6,9 +6,11 @@ import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
-const TEST_USER_ID = '20202020-e6b5-4680-8a32-b8209737156b';
+const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
+const TEST_USER_ID = USER_DATA_SEED_IDS.JANE;
 
 type TestRegistration = {
   id: string;

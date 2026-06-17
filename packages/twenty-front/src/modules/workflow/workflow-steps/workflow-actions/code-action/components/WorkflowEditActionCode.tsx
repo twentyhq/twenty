@@ -44,10 +44,10 @@ import {
 } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
-import { IconCode, IconPlayerPlay } from 'twenty-ui-deprecated/display';
-import { CodeEditor } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
+import { CodeEditor } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledCodeEditorContainer = styled.div`

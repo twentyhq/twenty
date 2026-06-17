@@ -35,7 +35,7 @@ import {
   IconSparkles,
   IconUserCircle,
   IconUsers,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type SettingsNavigationSection = {

@@ -55,7 +55,7 @@ import {
   IconCurrencyYuan,
   IconCurrencyZloty,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   CurrencyCode,
   { label: string; Icon: IconComponent }

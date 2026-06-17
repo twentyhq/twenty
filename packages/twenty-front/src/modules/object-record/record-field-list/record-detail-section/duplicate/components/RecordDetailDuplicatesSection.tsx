@@ -8,8 +8,8 @@ import { RecordDetailSectionContainer } from '@/object-record/record-field-list/
 
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArrowMerge } from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { IconArrowMerge } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 export const RecordDetailDuplicatesSection = ({
   objectRecordId,
