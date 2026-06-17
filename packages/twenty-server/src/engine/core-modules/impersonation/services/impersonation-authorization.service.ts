@@ -3,6 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/utils/user-has-admin-privileges.util';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
@@ -10,6 +13,7 @@ export type ImpersonationLevel = 'server' | 'workspace';
 
 export type ImpersonationDenialReason =
   | 'SERVER_LEVEL_NOT_ALLOWED'
+  | 'SERVER_LEVEL_2FA_REQUIRED'
   | 'WORKSPACE_LEVEL_NOT_ALLOWED'
   | 'TARGET_HAS_ADMIN_PRIVILEGES';
 
@@ -23,7 +27,10 @@ export type ImpersonationAuthorizationResult =
 
 @Injectable()
 export class ImpersonationAuthorizationService {
-  constructor(private readonly permissionsService: PermissionsService) {}
+  constructor(
+    private readonly permissionsService: PermissionsService,
+    private readonly twentyConfigService: TwentyConfigService,
+  ) {}
 
   getImpersonationLevel(
     impersonatorUserWorkspace: UserWorkspaceEntity,
@@ -53,6 +60,13 @@ export class ImpersonationAuthorizationService {
         return { allowed: false, level, reason: 'SERVER_LEVEL_NOT_ALLOWED' };
       }
 
+      if (
+        this.isTwoFactorRequiredForServerLevelImpersonation() &&
+        !this.hasVerifiedTwoFactorAuthentication(impersonatorUserWorkspace)
+      ) {
+        return { allowed: false, level, reason: 'SERVER_LEVEL_2FA_REQUIRED' };
+      }
+
       return { allowed: true, level };
     }
 
@@ -75,5 +89,24 @@ export class ImpersonationAuthorizationService {
     }
 
     return { allowed: true, level };
+  }
+
+  private isTwoFactorRequiredForServerLevelImpersonation(): boolean {
+    return (
+      this.twentyConfigService.get('NODE_ENV') !== NodeEnvironment.DEVELOPMENT
+    );
+  }
+
+  private hasVerifiedTwoFactorAuthentication(
+    impersonatorUserWorkspace: UserWorkspaceEntity,
+  ): boolean {
+    return (
+      twoFactorAuthenticationMethodsValidator.areDefined(
+        impersonatorUserWorkspace.twoFactorAuthenticationMethods,
+      ) &&
+      twoFactorAuthenticationMethodsValidator.areVerified(
+        impersonatorUserWorkspace.twoFactorAuthenticationMethods,
+      )
+    );
   }
 }

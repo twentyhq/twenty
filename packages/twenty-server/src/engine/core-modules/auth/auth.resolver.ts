@@ -60,6 +60,7 @@ import { EmailVerificationService } from 'src/engine/core-modules/email-verifica
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { IMPERSONATION_DENIAL_EXCEPTION_CODE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-code-by-reason.constant';
 import { IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-message-by-reason.constant';
 import { IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-log-message-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
@@ -704,7 +705,7 @@ export class AuthResolver {
     const impersonatorUserWorkspace =
       await this.userWorkspaceRepository.findOne({
         where: { id: impersonatorUserWorkspaceId },
-        relations: ['user', 'workspace'],
+        relations: ['user', 'workspace', 'twoFactorAuthenticationMethods'],
       });
 
     const toImpersonateUserWorkspace =
@@ -774,7 +775,9 @@ export class AuthResolver {
         IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON[
           authorizationResult.reason
         ],
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        IMPERSONATION_DENIAL_EXCEPTION_CODE_BY_REASON[
+          authorizationResult.reason
+        ],
       );
     }
 

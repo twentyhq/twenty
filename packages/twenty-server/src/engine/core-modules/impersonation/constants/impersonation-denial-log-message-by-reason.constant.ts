@@ -6,6 +6,8 @@ export const IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON: Record<
 > = {
   SERVER_LEVEL_NOT_ALLOWED: ({ targetUserEmail, impersonatorUserId }) =>
     `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserId}`,
+  SERVER_LEVEL_2FA_REQUIRED: ({ targetUserEmail, impersonatorUserId }) =>
+    `Server level impersonation denied (2FA required) for ${targetUserEmail} by userId ${impersonatorUserId}`,
   WORKSPACE_LEVEL_NOT_ALLOWED: ({ targetUserEmail, impersonatorUserId }) =>
     `Impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserId}`,
   TARGET_HAS_ADMIN_PRIVILEGES: ({ targetUserEmail, impersonatorUserId }) =>

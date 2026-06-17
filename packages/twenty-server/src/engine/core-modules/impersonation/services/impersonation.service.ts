@@ -4,8 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-
 import {
   AuthException,
   AuthExceptionCode,
@@ -14,10 +12,9 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
+import { IMPERSONATION_DENIAL_EXCEPTION_CODE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-code-by-reason.constant';
 import { IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-message-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
@@ -27,7 +24,6 @@ export class ImpersonationService {
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
-    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
@@ -83,49 +79,16 @@ export class ImpersonationService {
         IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON[
           authorizationResult.reason
         ],
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    if (authorizationResult.level === 'server') {
-      const isDevelopment =
-        this.twentyConfigService.get('NODE_ENV') ===
-        NodeEnvironment.DEVELOPMENT;
-
-      if (isDevelopment) {
-        return this.generateImpersonationLoginToken(
-          impersonatorUserWorkspace,
-          toImpersonateUserWorkspace,
-          'server',
-        );
-      }
-
-      const has2FAEnabled =
-        twoFactorAuthenticationMethodsValidator.areDefined(
-          impersonatorUserWorkspace.twoFactorAuthenticationMethods,
-        ) &&
-        twoFactorAuthenticationMethodsValidator.areVerified(
-          impersonatorUserWorkspace.twoFactorAuthenticationMethods,
-        );
-
-      if (!has2FAEnabled) {
-        throw new AuthException(
-          'Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.',
-          AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
-        );
-      }
-
-      return this.generateImpersonationLoginToken(
-        impersonatorUserWorkspace,
-        toImpersonateUserWorkspace,
-        'server',
+        IMPERSONATION_DENIAL_EXCEPTION_CODE_BY_REASON[
+          authorizationResult.reason
+        ],
       );
     }
 
     return this.generateImpersonationLoginToken(
       impersonatorUserWorkspace,
       toImpersonateUserWorkspace,
-      'workspace',
+      authorizationResult.level,
     );
   }
 
