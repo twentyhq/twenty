@@ -3,12 +3,12 @@ import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmai
 import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { Select } from '@/ui/input/components/Select';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -19,6 +19,7 @@ import { WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE } from '@/workflow/graphql/queri
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowEmailAction } from '@/workflow/types/WorkflowEmailAction';
+import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useEmailForm';
@@ -113,10 +114,18 @@ export const WorkflowEditActionEmailBase = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
+  const navigate = useNavigateSettings();
+
+  const { closeSidePanelMenu } = useSidePanelMenu();
+
   const { accounts: myAccounts, loading: myAccountsLoading } =
     useMyConnectedAccounts();
 
+  // Sender variables are only enabled for DRAFT_EMAIL for now; SEND_EMAIL keeps a plain account select.
+  const isSenderVariableEnabled = action.type === 'DRAFT_EMAIL';
+
   const configuredAccountId = formData.connectedAccountId;
+  const isSenderVariable = isStandaloneVariableString(configuredAccountId);
   const isConfiguredAccountMine = myAccounts.some(
     (account) => account.id === configuredAccountId,
   );
@@ -132,6 +141,7 @@ export const WorkflowEditActionEmailBase = ({
     skip:
       !isDefined(configuredAccountId) ||
       configuredAccountId === '' ||
+      isSenderVariable ||
       isConfiguredAccountMine,
   });
 
@@ -159,11 +169,7 @@ export const WorkflowEditActionEmailBase = ({
         }
       : null;
 
-  let emptyOption: SelectOption<string | null> = {
-    label: t`None`,
-    value: null,
-  };
-  const connectedAccountOptions: SelectOption<string | null>[] = [];
+  const connectedAccountOptions: SelectOption<string>[] = [];
 
   myAccounts.forEach((account) => {
     if (
@@ -180,15 +186,11 @@ export const WorkflowEditActionEmailBase = ({
   });
 
   if (isDefined(otherAccount)) {
-    emptyOption = {
+    connectedAccountOptions.push({
       label: otherAccount.handle,
       value: otherAccount.id,
-    };
+    });
   }
-
-  const navigate = useNavigateSettings();
-
-  const { closeSidePanelMenu } = useSidePanelMenu();
 
   useEffect(() => {
     return () => {
@@ -200,13 +202,21 @@ export const WorkflowEditActionEmailBase = ({
     !loading && (
       <>
         <WorkflowStepBody>
-          <Select
-            dropdownId="select-connected-account-id"
+          <FormSelectFieldInput
+            key={`connected-account-${formData.connectedAccountId ?? 'none'}`}
             label={t`Account`}
-            fullWidth
-            emptyOption={emptyOption}
-            value={formData.connectedAccountId}
+            hint={
+              isSenderVariableEnabled
+                ? t`Pick a connected account or set a workspace member as variable`
+                : undefined
+            }
+            defaultValue={formData.connectedAccountId}
             options={connectedAccountOptions}
+            onChange={handleConnectedAccountChange}
+            VariablePicker={
+              isSenderVariableEnabled ? WorkflowVariablePicker : undefined
+            }
+            readonly={actionOptions.readonly}
             callToActionButton={{
               onClick: () => {
                 closeSidePanelMenu();
@@ -215,12 +225,6 @@ export const WorkflowEditActionEmailBase = ({
               Icon: IconPlus,
               text: t`Add account`,
             }}
-            onChange={(connectedAccountId) => {
-              handleConnectedAccountChange(connectedAccountId);
-            }}
-            disabled={actionOptions.readonly}
-            dropdownOffset={{ y: 4 }}
-            dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
           {isDefined(missingScopes) && (
             <>

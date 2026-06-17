@@ -11,6 +11,7 @@ Yerel Twenty konteynerini kontrol etmek için `yarn twenty docker:*` kullanın:
 | Komut                                  | Ne yapar                                                  |
 | -------------------------------------- | --------------------------------------------------------- |
 | `yarn twenty docker:start`             | Sunucuyu başlatır (gerekirse imajı çeker)                 |
+| `yarn twenty docker:start 2.2.0`       | Belirli bir sunucu sürümünü başlatın                      |
 | `yarn twenty docker:start --port 3030` | Özel bir portta başlatır                                  |
 | `yarn twenty docker:stop`              | Sunucuyu durdurur (verileri korur)                        |
 | `yarn twenty docker:status`            | URL'yi, sürümü ve oturum açma kimlik bilgilerini gösterir |
@@ -20,6 +21,20 @@ Yerel Twenty konteynerini kontrol etmek için `yarn twenty docker:*` kullanın:
 | `yarn twenty docker:upgrade 2.2.0`     | Belirli bir sürüme yükseltir                              |
 
 Veriler, yeniden başlatmalar arasında iki Docker biriminde kalıcıdır (PostgreSQL için `twenty-app-dev-data`, dosyalar için `twenty-app-dev-storage`). Her şeyi silmek için `reset` kullanın.
+
+## Sunucu sürümünü sabitleme
+
+Herhangi bir sürüm iletilmediğinde, `docker:start` sürümü uygulamanızın `package.json` içindeki `engines.twenty` aralığından çözümler — bu, uygulamanız yüklendiğinde sunucunun doğruladığı aralıkla aynıdır. Bu komut, aralığı karşılayan en yeni yayımlanmış `twenty-app-dev` imajını başlatır; alan yoksa veya hiçbir yayımlanmış sürüm eşleşmiyorsa `latest` değerine geri döner:
+
+```json filename="package.json"
+{
+  "engines": {
+    "twenty": ">=2.2.0"
+  }
+}
+```
+
+Aralığı tek bir çalıştırma için geçersiz kılmak amacıyla sürümü açıkça iletin: `yarn twenty docker:start 2.3.0`. Bir kapsayıcı zaten farklı bir sürümde mevcutsa, `docker:start` onu yerinde yükseltir (veri birimlerinizi korurken kapsayıcıyı yeniden oluşturarak).
 
 ## Sunucu imajını yükseltme
 

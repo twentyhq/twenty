@@ -1,3 +1,4 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -72,6 +73,8 @@ export const buildStandardFlatCommandMenuItemMaps = ({
       objectMetadata: flatObject,
       commandMenuItemId: v4(),
       applicationId: twentyStandardApplicationId,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       workspaceId,
       position,
       now,

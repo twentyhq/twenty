@@ -4737,6 +4737,7 @@ export type RecordIdentifier = {
 export type RecordTableConfiguration = {
   __typename?: 'RecordTableConfiguration';
   configurationType: WidgetConfigurationType;
+  recordLimit?: Maybe<Scalars['Int']['output']>;
   viewId?: Maybe<Scalars['String']['output']>;
 };
 
