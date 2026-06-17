@@ -448,10 +448,22 @@ export default defineObject({
       isNullable: true,
     },
     {
+      // Legacy URL picture, kept as LINKS. Twenty treats field type as
+      // immutable, so we cannot flip this to FILES in place on an installed
+      // workspace — the change is silently ignored on upgrade. Existing
+      // partners keep their URL here; new uploads go to profilePictureFile.
       universalIdentifier: '40d730e3-2785-45c8-aa5f-cc724b1b08e0',
-      type: FieldType.FILES,
+      type: FieldType.LINKS,
       name: 'profilePicture',
       label: 'Profile Picture',
+      icon: 'IconPhoto',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: '076b81f2-2398-4ece-a352-d7a6f6a89cae',
+      type: FieldType.FILES,
+      name: 'profilePictureFile',
+      label: 'Profile Picture File',
       icon: 'IconPhoto',
       isNullable: true,
       universalSettings: { maxNumberOfValues: 1 },
