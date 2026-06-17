@@ -1,0 +1,37 @@
+packages/twenty-front/src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
+  s_12aa84da069766::t_af0c1a8d004f92 11-12
+  s_12aa84da069766::t_ca32199f5187ef 180-181,183-184
+packages/twenty-front/src/modules/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus.ts
+  s_12aa84da069766::t_21b3bda9e0d5a7 5
+  s_12aa84da069766::t_f2ad4da02690e4 37-39
+packages/twenty-front/src/modules/settings/accounts/graphql/queries/getMyMessageFolders.ts
+  s_12aa84da069766::t_1bfa459f94325a 12
+packages/twenty-server/src/engine/metadata-modules/message-folder/message-folder-metadata.service.ts
+  s_12aa84da069766::t_b85402f5bedca9 226-236
+packages/twenty-front/src/modules/settings/accounts/components/message-folders/utils/__tests__/computeMessageFolderTree.test.ts
+  s_12aa84da069766::t_5d8b4c77da172c 3
+  s_12aa84da069766::t_d1233a16fe91d4 19
+packages/twenty-front/src/modules/settings/accounts/graphql/mutations/updateMessageFolders.ts
+  s_12aa84da069766::t_b0a23a03c298f8 8
+packages/twenty-front/src/modules/accounts/types/MessageFolder.ts
+  s_12aa84da069766::t_af915208506f1e 1-2,10
+packages/twenty-front/src/modules/settings/accounts/components/message-folders/utils/__tests__/computeFolderIdsForSyncToggle.test.ts
+  s_12aa84da069766::t_c611153d22e236 3
+  s_12aa84da069766::t_45ea5cc53b0688 26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "200dcc4971cc1f9b0d698c90810f6fd85a4ba522",
+  "prompts": {},
+  "sessions": {
+    "s_12aa84da069766": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e1ec289-c505-418c-bd18-6b7be4f5e776",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
