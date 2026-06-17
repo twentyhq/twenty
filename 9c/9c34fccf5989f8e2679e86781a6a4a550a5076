@@ -1,0 +1,38 @@
+packages/twenty-server/src/engine/core-modules/calendar/timeline-calendar-event.resolver.ts
+  s_42715868b491cc::t_b92d5fad493ebb 5,34-72,92-160
+packages/twenty-server/src/engine/core-modules/messaging/timeline-messaging.resolver.ts
+  s_42715868b491cc::t_49b474a2103fb2 147-149
+  s_42715868b491cc::t_54a88efa45172c 120-122
+  s_42715868b491cc::t_0d32357ab15980 174-176
+  s_42715868b491cc::t_437b739f99e4a3 6,41-79,110-119,123-146,150-173,177-199
+packages/twenty-server/test/integration/graphql/suites/timeline-from-object-record.integration-spec.ts
+  s_42715868b491cc::t_df8b90c77f07c4 3,5,11-13,15-20,22-25,27,48-51,55-57,61-62,127-132,136-147,164-166,168,170,179-192,195,197,204,206-207,209-210,213,220,222-223,225-227
+  s_42715868b491cc::t_2787c3ffb752c7 2,14,78-80,84-85,91-92,94-100,102-125,148-163,171-178,198-199,201-202,214-215,217-218,229-230,238-239,249-258,264,266-276
+  s_42715868b491cc::t_c887d362935789 1,6,10,28-47,169,196,203,205,208,211-212,219,221,224,362
+  s_42715868b491cc::t_edc36b56b43274 133-135
+  s_42715868b491cc::t_48561dcfe19b77 231-237,240-248,259-263,265
+  s_42715868b491cc::t_7fd8eb74ace9b2 69-77,81,86-90,93
+  s_42715868b491cc::t_5f95657d21a8c5 216
+  s_42715868b491cc::t_a29d466b669f1a 277-361
+  s_42715868b491cc::t_c3a7909a9cc0a7 4,7-9
+  s_42715868b491cc::t_9247b74ec64bf2 200
+  s_42715868b491cc::t_2301fb24c54a63 21,26,126,167,193-194
+  s_42715868b491cc::t_243099540af2e0 228
+  s_42715868b491cc::t_6749090dbdaa1f 52-54,58-60,63-68,82-83,101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "9c9c34fccf5989f8e2679e86781a6a4a550a5076",
+  "prompts": {},
+  "sessions": {
+    "s_42715868b491cc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "54397ad0-f1d2-4221-90d1-7d0e1f9e2668",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}

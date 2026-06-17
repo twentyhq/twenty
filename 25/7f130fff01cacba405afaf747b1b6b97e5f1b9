@@ -1,0 +1,22 @@
+packages/twenty-server/src/engine/core-modules/related-person-ids/utils/find-relation-paths-to-person.util.ts
+  s_42715868b491cc::t_2ac6b76a9dabba 50
+  s_42715868b491cc::t_3607515aac1a31 124
+packages/twenty-server/src/engine/core-modules/related-person-ids/utils/__tests__/find-relation-paths-to-person.util.spec.ts
+  s_42715868b491cc::t_3d5a5d4611f1cf 207-263
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "257f130fff01cacba405afaf747b1b6b97e5f1b9",
+  "prompts": {},
+  "sessions": {
+    "s_42715868b491cc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "54397ad0-f1d2-4221-90d1-7d0e1f9e2668",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
