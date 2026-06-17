@@ -1,8 +1,9 @@
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
+import { COMMAND_MENU_SIDE_PANEL_PAGES } from '@/side-panel/constants/CommandMenuSidePanelPages';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { SidePanelPages } from 'twenty-shared/types';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
@@ -123,9 +124,12 @@ const AnimatedIcon = ({
 };
 
 export const SidePanelToggleButton = () => {
-  const { toggleSidePanelMenu } = useSidePanelMenu();
+  const { openSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelNavigationStack = useAtomStateValue(
+    sidePanelNavigationStackState,
+  );
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -133,23 +137,25 @@ export const SidePanelToggleButton = () => {
   const isMobile = useIsMobile();
 
   const isCommandMenuOpened =
-    isSidePanelOpened &&
-    [
-      SidePanelPages.CommandMenuDisplay,
-      SidePanelPages.CommandMenuEdit,
-      SidePanelPages.SearchRecords,
-    ].includes(sidePanelPage);
+    isSidePanelOpened && COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage);
 
-  const showAsOpen = isSidePanelOpened && !isCommandMenuOpened;
+  const { theme } = useContext(ThemeContext);
+
+  const showAsOpen = false;
 
   const alignWithSidePanelTopBar =
     isMobile && isLayoutCustomizationModeEnabled && isSidePanelOpened;
 
-  const ariaLabel = isSidePanelOpened
-    ? t`Close side panel`
-    : t`Open side panel`;
+  const shouldHideButton =
+    isCommandMenuOpened ||
+    (isSidePanelOpened && sidePanelNavigationStack.length > 1);
 
-  const { theme } = useContext(ThemeContext);
+  if (shouldHideButton) {
+    return null;
+  }
+
+  const ariaLabel = t`Command Menu`;
+
   return (
     <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>
       <div id="toggle-side-panel-button">
@@ -162,7 +168,7 @@ export const SidePanelToggleButton = () => {
           variant="secondary"
           accent="default"
           ariaLabel={ariaLabel}
-          onClick={toggleSidePanelMenu}
+          onClick={openSidePanelMenu}
           animate={{
             rotate: showAsOpen ? 90 : 0,
           }}

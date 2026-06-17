@@ -60,6 +60,9 @@ export const useSidePanelMenu = () => {
   const openSidePanelMenu = useCallback(() => {
     emitSidePanelOpenEvent();
     closeAnyOpenDropdown();
+    store.set(sidePanelSearchState.atom, '');
+    store.set(sidePanelSearchObjectFilterState.atom, null);
+
     const isLayoutCustomizationModeEnabled = store.get(
       isLayoutCustomizationModeEnabledState.atom,
     );
