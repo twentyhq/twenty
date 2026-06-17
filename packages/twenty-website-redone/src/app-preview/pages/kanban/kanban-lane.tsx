@@ -3,7 +3,6 @@ import { IconPlus } from '@tabler/icons-react';
 
 import { EASING } from '@/tokens';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { KanbanCard } from './kanban-card';
 import { MiniIcon } from '../../primitives/mini-icon';
@@ -43,19 +42,40 @@ const LaneHeader = styled.div`
   padding: 8px;
 `;
 
-const LaneTag = styled.span<{ $background: string; $color: string }>`
+// A kanban column groups a Select field, so the product renders each column's
+// stage as a Tag — color3 surface, color11 text, regular weight — keyed by the
+// option color. The values bake from the generated theme (gray is the base and
+// the unknown-tone fallback the old hand-mixed table carried).
+const LaneTag = styled.span`
   align-items: center;
-  background: ${({ $background }) => $background};
+  background: ${theme.tag.background.gray};
   border-radius: 4px;
-  color: ${({ $color }) => $color};
+  color: ${theme.tag.text.gray};
   display: inline-flex;
   font-family: ${theme.font.family};
   font-size: ${theme.font.sizePx.md}px;
-  font-weight: ${theme.font.weight.medium};
+  font-weight: ${theme.font.weight.regular};
   height: 20px;
   line-height: 1.4;
   padding: 0 8px;
   white-space: nowrap;
+
+  &[data-tone='blue'] {
+    background: ${theme.tag.background.blue};
+    color: ${theme.tag.text.blue};
+  }
+  &[data-tone='green'] {
+    background: ${theme.tag.background.green};
+    color: ${theme.tag.text.green};
+  }
+  &[data-tone='pink'] {
+    background: ${theme.tag.background.pink};
+    color: ${theme.tag.text.pink};
+  }
+  &[data-tone='purple'] {
+    background: ${theme.tag.background.purple};
+    color: ${theme.tag.text.purple};
+  }
 `;
 
 const LaneCount = styled.span`
@@ -148,16 +168,11 @@ export function KanbanLane({
   isLast: boolean;
   lane: KanbanLaneData;
 }) {
-  const tone =
-    APP_PREVIEW_TONES.kanbanLane[lane.tone] ??
-    APP_PREVIEW_TONES.kanbanLane.gray;
   const skeletonCardCount = 2 + (index % 2);
   return (
     <Lane $index={index} $last={isLast}>
       <LaneHeader>
-        <LaneTag $background={tone.background} $color={tone.color}>
-          {lane.label}
-        </LaneTag>
+        <LaneTag data-tone={lane.tone}>{lane.label}</LaneTag>
         {generating ? null : <LaneCount>{lane.cards.length}</LaneCount>}
       </LaneHeader>
       <LaneBody>

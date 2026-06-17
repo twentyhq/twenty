@@ -1,7 +1,9 @@
-// The mockup's tone tables, ported verbatim (single module — the old site
-// scattered four copies). LEDGERED UPGRADE PENDING: derive from the
-// product's TAG_LIGHT (color11 text on color3 background) as its own
-// commit so the visual A/B judges the change in isolation.
+// The mockup's tone tables (single module — the old site scattered four
+// copies). The kanban column chip now derives from the product's tag system
+// directly (baked in kanban-lane's LaneTag, color3 surface / color11 text).
+// STILL HAND-MIXED, each pending its own derivation against live twenty-front:
+// TAG (a tag → color3/color11), PERSON (avatars use a color4/color5 surface
+// with color12 text — NOT the tag ramp), and SIDEBAR (object-icon tones).
 type ToneSurface = { background: string; border: string; color: string };
 type TonePair = { background: string; color: string };
 
@@ -16,18 +18,6 @@ const SIDEBAR: Record<string, ToneSurface> = {
   red: { background: '#fdd8d8', border: '#f9c6c6', color: '#DC3D43' },
   teal: { background: '#c7ebe5', border: '#afdfd7', color: '#0E9888' },
   violet: { background: '#ebe5ff', border: '#d8cbff', color: '#5b3fd1' },
-};
-
-const PERSON: Record<string, TonePair> = {
-  amber: { background: '#f6e6d7', color: '#7a4f2a' },
-  blue: { background: '#dbeafe', color: '#1d4ed8' },
-  gray: { background: '#e5e7eb', color: '#4b5563' },
-  green: { background: '#dcfce7', color: '#15803d' },
-  orange: { background: '#ffdcc3', color: '#ED5F00' },
-  pink: { background: '#ffe4e6', color: '#be123c' },
-  purple: { background: '#ede9fe', color: '#6d28d9' },
-  red: { background: '#fee2e2', color: '#b91c1c' },
-  teal: { background: '#ccfbf1', color: '#0f766e' },
 };
 
 const TAG: Record<string, TonePair> = {
@@ -54,14 +44,6 @@ function hexToRgbTuple(hex: string): string {
   const value = Number.parseInt(expanded, 16);
   return [(value >> 16) & 255, (value >> 8) & 255, value & 255].join(', ');
 }
-
-const KANBAN_LANE: Record<string, TonePair> = {
-  blue: { background: '#def4ff', color: '#007bb8' },
-  gray: { background: '#f3f1ef', color: '#666666' },
-  green: { background: '#dcf7ed', color: '#1a7f50' },
-  pink: { background: '#fce5f3', color: '#d6409f' },
-  purple: { background: '#ede9fe', color: '#8e4ec6' },
-};
 
 // The product hero's Ask-AI panel inks (authored chrome washes + the
 // Claude brand mark).
@@ -261,12 +243,10 @@ export const APP_PREVIEW_TONES = {
   dashboardChart: DASHBOARD_CHART,
   workflowCanvas: WORKFLOW_CANVAS,
   workflowAvatarInk: WORKFLOW_AVATAR_INK,
-  kanbanLane: KANBAN_LANE,
   productVisual: PRODUCT_VISUAL,
   recordFileSheetInk: RECORD_FILE_SHEET_INK,
   recordNoteHighlightShadow: RECORD_NOTE_HIGHLIGHT_SHADOW,
   sidebar: SIDEBAR,
-  person: PERSON,
   tag: TAG,
   // The reveal pulse reads the tone as an `r, g, b` tuple string.
   sidebarToneRgb: (tone: string): string =>
