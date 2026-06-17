@@ -1,5 +1,5 @@
-import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { msg } from '@lingui/core/macro';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { color, mediaUp, radius, spacing } from '@/tokens';
@@ -103,6 +103,7 @@ const SpotlightContent = styled.div`
 
 const SpotlightVisual = styled.div`
   border: 1px solid ${color('black-20')};
+  border-radius: ${radius(2)};
   margin: ${spacing(4)};
   min-height: 260px;
   overflow: hidden;
@@ -122,6 +123,7 @@ const CardInner = styled.div`
 
 const CardVisualFrame = styled.div`
   border: 1px solid ${color('black-20')};
+  border-radius: ${radius(2)};
   height: 300px;
   margin: ${spacing(4)} ${spacing(4)} 0;
   overflow: hidden;
