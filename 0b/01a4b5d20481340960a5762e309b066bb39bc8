@@ -1,0 +1,37 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-import-folder-messages.service.ts
+  s_12aa84da069766::t_f74e57f796bcb7 2,8,20-21,26
+  s_12aa84da069766::t_5b434284c1851a 9,55,62
+  s_12aa84da069766::t_a46290c13a9ebf 1
+  s_12aa84da069766::t_f95db04df08678 14-17,28-31,33-36,39-41,43-50,53
+  s_12aa84da069766::t_b7a1d1243ea029 3,11-13,18,23,54,56-61,63-70
+packages/twenty-server/src/modules/messaging/message-import-manager/jobs/messaging-add-messages-to-cache-for-import.job.ts
+  s_12aa84da069766::t_bee065ed94a190 8-9,15,21,23,25,29
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service.ts
+  s_12aa84da069766::t_acbc8a69c03427 13
+  s_12aa84da069766::t_00f906208b0461 74-77
+  s_12aa84da069766::t_88f370391e7377 26
+  s_12aa84da069766::t_ee1d278b2b3cf6 58-64,66,68-73,78-84
+packages/twenty-server/src/modules/messaging/message-import-manager/messaging-import-manager.module.ts
+  s_12aa84da069766::t_5cff1d5ef450e9 47
+  s_12aa84da069766::t_602e9d8d5b4985 36
+  s_12aa84da069766::t_d28be757173fa2 105
+  s_12aa84da069766::t_6b81c0007586c0 120
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-gmail-folder-backfill.service.ts
+  s_12aa84da069766::t_2982407d056546 3,6,21,24-25,29-31,33-40,42,45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "0b01a4b5d20481340960a5762e309b066bb39bc8",
+  "prompts": {},
+  "sessions": {
+    "s_12aa84da069766": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e1ec289-c505-418c-bd18-6b7be4f5e776",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
