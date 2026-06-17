@@ -10,6 +10,7 @@ import {
   type FindRecordsOutputSchema,
   type FormOutputSchema,
   type IteratorOutputSchema,
+  type ManualTriggerOutputSchema,
   type RecordFieldLeaf,
   type RecordFieldNodeValue,
   type RecordOutputSchemaV2,
@@ -586,67 +587,59 @@ const searchThroughManualTriggerOutputSchema = ({
   isFullRecord,
 }: {
   stepName: string;
-  manualTriggerOutputSchema: unknown;
+  manualTriggerOutputSchema: ManualTriggerOutputSchema;
   rawVariableName: string;
   isFullRecord: boolean;
 }): VariableSearchResult => {
-  // Legacy/edge: a bare record schema at the root (before payload nesting).
-  if (isRecordOutputSchemaV2(manualTriggerOutputSchema)) {
-    return searchThroughRecordOutputSchema({
-      stepName,
-      recordOutputSchema: manualTriggerOutputSchema,
-      rawVariableName,
-      isFullRecord,
-    });
-  }
-
-  if (!isObject(manualTriggerOutputSchema)) {
+  if (!isDefined(manualTriggerOutputSchema)) {
     return EMPTY_RESULT;
   }
 
   const parts = parseVariablePath(stripBrackets(rawVariableName));
   const stepId = parts[0];
   const nodeKey = parts[1];
-
-  if (!isDefined(stepId) || !isDefined(nodeKey)) {
-    return EMPTY_RESULT;
-  }
-
-  // The trigger exposes `payload` (the triggering record(s)) and `metadata`
-  // as nested nodes, so descend into the matching node's value — which is a
-  // record schema for single-record triggers and a plain map otherwise —
-  // before searching, the same way find-records descends into `first`.
-  const node = (manualTriggerOutputSchema as BaseOutputSchemaV2)[nodeKey];
-
-  if (!isDefined(node) || node.isLeaf === true || !isDefined(node.value)) {
-    return EMPTY_RESULT;
-  }
-
-  const innerSchema: unknown = node.value;
   const remainingParts = parts.slice(2);
   const fieldName = remainingParts[remainingParts.length - 1];
   const pathSegments = remainingParts.slice(0, -1);
 
-  if (!isDefined(fieldName)) {
+  if (!isDefined(stepId) || !isDefined(nodeKey) || !isDefined(fieldName)) {
     return EMPTY_RESULT;
   }
 
-  const nestedStepName = `${stepName} > ${node.label}`;
+  if (nodeKey === 'payload') {
+    const { payload } = manualTriggerOutputSchema;
 
-  if (isRecordOutputSchemaV2(innerSchema)) {
-    return searchRecordOutputSchema({
-      stepName: nestedStepName,
-      recordOutputSchema: innerSchema,
-      selectedField: fieldName,
+    if (!isDefined(payload)) {
+      return EMPTY_RESULT;
+    }
+
+    const payloadStepName = `${stepName} > ${payload.label}`;
+
+    // Single-record triggers nest a record schema, bulk triggers a plain map.
+    if (isRecordOutputSchemaV2(payload.value)) {
+      return searchRecordOutputSchema({
+        stepName: payloadStepName,
+        recordOutputSchema: payload.value,
+        selectedField: fieldName,
+        path: pathSegments,
+        isFullRecord,
+      });
+    }
+
+    return searchBaseOutputSchema({
+      stepName: payloadStepName,
+      baseOutputSchema: payload.value,
       path: pathSegments,
-      isFullRecord,
+      selectedField: fieldName,
     });
   }
 
-  if (isBaseOutputSchemaV2Shape(innerSchema)) {
+  if (nodeKey === 'metadata') {
+    const { metadata } = manualTriggerOutputSchema;
+
     return searchBaseOutputSchema({
-      stepName: nestedStepName,
-      baseOutputSchema: innerSchema as BaseOutputSchemaV2,
+      stepName: `${stepName} > ${metadata.label}`,
+      baseOutputSchema: metadata.value,
       path: pathSegments,
       selectedField: fieldName,
     });
@@ -684,7 +677,7 @@ export const searchVariableInOutputSchema = ({
   if (stepType === 'MANUAL') {
     return searchThroughManualTriggerOutputSchema({
       stepName,
-      manualTriggerOutputSchema: schema,
+      manualTriggerOutputSchema: schema as ManualTriggerOutputSchema,
       rawVariableName,
       isFullRecord,
     });

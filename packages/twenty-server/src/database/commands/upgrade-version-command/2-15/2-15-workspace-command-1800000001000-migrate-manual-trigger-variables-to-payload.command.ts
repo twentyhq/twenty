@@ -68,9 +68,6 @@ export class MigrateManualTriggerVariablesToPayloadCommand extends ActiveOrSuspe
     let updatedVersionCount = 0;
 
     for (const version of allVersions) {
-      // Only manual record triggers moved their fields under `payload`.
-      // Database-event/webhook/cron triggers keep the flat schema, so their
-      // {{trigger.<field>}} references must be left as-is.
       if (!this.isManualRecordTrigger(version.trigger)) {
         continue;
       }
