@@ -4,7 +4,6 @@ import { IsOptional, IsString, MaxLength } from 'class-validator';
 
 @InputType()
 export class SignUpInNewWorkspaceInput {
-  // Bounded to guard against persisting an unbounded user-supplied name.
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()

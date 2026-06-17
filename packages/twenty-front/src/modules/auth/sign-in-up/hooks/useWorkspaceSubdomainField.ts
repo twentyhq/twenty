@@ -21,11 +21,6 @@ export type SubdomainFieldStatus =
 
 const AVAILABILITY_CHECK_DEBOUNCE_MS = 400;
 
-// Powers the onboarding workspace-creation step. The name and address are
-// derived from the user's work email by the backend and preloaded into the
-// Apollo cache after sign-in, so this hook seeds both fields synchronously
-// without a flash. Editing the name keeps refreshing an available address
-// until the user takes manual control of the address field.
 export const useWorkspaceSubdomainField = () => {
   const apolloClient = useApolloClient();
   const subdomainSchema = useMemo(() => getSubdomainValidationSchema(), []);
@@ -45,7 +40,6 @@ export const useWorkspaceSubdomainField = () => {
   );
   const [subdomain, setSubdomain] = useState(seededSubdomain);
   const [isManuallyEdited, setIsManuallyEdited] = useState(false);
-  // The seeded address was already vetted as available by the backend.
   const [status, setStatus] = useState<SubdomainFieldStatus>(
     seededSubdomain !== '' ? 'available' : 'idle',
   );
@@ -73,7 +67,6 @@ export const useWorkspaceSubdomainField = () => {
         return;
       }
 
-      // Autofill always lands on an address the backend confirmed is free.
       if (adoptSuggestion) {
         setSubdomain(result.suggestedSubdomain);
         setStatus('available');
@@ -135,7 +128,6 @@ export const useWorkspaceSubdomainField = () => {
   const handleSubdomainChange = (value: string) => {
     const normalized = value.trim().toLowerCase();
 
-    // Clearing the field hands control back to name-based autofill.
     if (normalized === '') {
       setIsManuallyEdited(false);
       setSubdomain('');

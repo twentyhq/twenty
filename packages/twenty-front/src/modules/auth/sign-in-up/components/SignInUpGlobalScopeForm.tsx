@@ -145,8 +145,6 @@ export const SignInUpGlobalScopeForm = () => {
   const { handleResetPassword } = useHandleResetPassword();
   const returnToPath = useAtomStateValue(returnToPathState);
 
-  // Preload the email-derived workspace name and address while the user is on
-  // the selection screen so the creation step opens pre-filled, with no flash.
   useQuery(GetWorkspaceCreationDefaultsDocument, {
     skip: signInUpStep !== SignInUpStep.WorkspaceSelection,
   });

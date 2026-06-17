@@ -962,10 +962,8 @@ export class AuthService {
     const existingUser =
       await this.userService.findUserByEmailWithWorkspaces(email);
 
-    // On the central sign-up domain (multi-workspace), bounce SSO users back
-    // with a workspace-agnostic token so the frontend runs the same
-    // create-or-select decision as credentials, instead of redirecting
-    // straight onto a workspace subdomain (which skips the onboarding step).
+    // Route SSO sign-ins through the same create-or-select flow as credentials
+    // instead of landing straight on a workspace subdomain.
     if (
       !workspaceId &&
       !workspaceInviteHash &&

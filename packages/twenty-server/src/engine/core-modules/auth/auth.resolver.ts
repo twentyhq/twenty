@@ -514,7 +514,6 @@ export class AuthResolver {
     return this.subdomainManagerService.getSubdomainAvailability(subdomain);
   }
 
-  // Preloaded after sign-in so the workspace-creation step opens pre-filled.
   @Query(() => WorkspaceCreationDefaultsDTO)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async getWorkspaceCreationDefaults(

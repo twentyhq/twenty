@@ -46,8 +46,6 @@ export class SubdomainManagerService {
     return this.findAvailableSubdomain(extractedSubdomain ?? '');
   }
 
-  // Suggests workspace creation defaults from a work email (e.g. jane@acme.com
-  // -> { displayName: 'Acme', subdomain: 'acme' }); empty for personal emails.
   async getWorkspaceCreationDefaults(
     email?: string,
   ): Promise<WorkspaceCreationDefaultsDTO> {
@@ -102,9 +100,7 @@ export class SubdomainManagerService {
     const isValid = isSubdomainValid(subdomain);
     const available = isValid && (await this.isSubdomainFreeToUse(subdomain));
 
-    // Always resolve to a valid, available suggestion: the autofill flow adopts
-    // this value directly, so echoing an invalid input (e.g. an "api-"-prefixed
-    // slug) would let the form mark an invalid subdomain as available.
+    // Autofill adopts this directly, so never echo an invalid input back.
     const suggestedSubdomain = available
       ? subdomain
       : await this.findAvailableSubdomain(subdomain);

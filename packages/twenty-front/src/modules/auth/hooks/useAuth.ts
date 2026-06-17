@@ -141,8 +141,6 @@ export const useAuth = () => {
           return await createWorkspace({ newTab });
         }
 
-        // Warm the email-derived defaults so the creation step opens
-        // pre-filled (the form seeds synchronously from the Apollo cache).
         await apolloClient.query({
           query: GetWorkspaceCreationDefaultsDocument,
         });

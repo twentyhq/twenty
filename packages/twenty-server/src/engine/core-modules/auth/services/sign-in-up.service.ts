@@ -636,8 +636,6 @@ export class SignInUpService {
 
       return { user, workspace };
     } catch (error) {
-      // Translate a concurrent unique-constraint violation on the chosen
-      // subdomain into the same error the upfront check throws.
       const isSubdomainConflict =
         error instanceof QueryFailedError &&
         (error as QueryFailedErrorWithCode).code ===
