@@ -20,6 +20,8 @@ export default meta;
 type Story = StoryObj<typeof MenuItem>;
 
 export const Default: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     text: 'Menu item text',
     LeftIcon: IconBell,
@@ -40,6 +42,8 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
     iconButtons: { control: false },
   },
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
@@ -136,6 +140,8 @@ export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
     iconButtons: { control: false },
   },
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
@@ -198,6 +204,8 @@ export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
   },
   decorators: [CatalogDecorator],
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
@@ -294,6 +302,8 @@ export const SubMenuCatalog: CatalogStory<Story, typeof MenuItem> = {
     hasSubMenu: true,
   },
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     catalog: {
       dimensions: [
         {

@@ -18,8 +18,10 @@ const SETTLE_DELAY_MS = 80;
 
 const DevUI = ({
   uiStateManager,
+  verbose,
 }: {
   uiStateManager: DevUiStateManager;
+  verbose: boolean;
 }): React.ReactElement => {
   const { Box, Static } = useInk();
 
@@ -85,8 +87,8 @@ const DevUI = ({
       </Static>
 
       <Box marginTop={1} flexDirection="column">
-        <DevUiApplicationPanel state={state} />
-        <DevUiEntityLegend />
+        <DevUiApplicationPanel state={state} verbose={verbose} />
+        {verbose && <DevUiEntityLegend />}
       </Box>
     </>
   );
@@ -94,15 +96,15 @@ const DevUI = ({
 
 export const renderDevUI = async (
   uiStateManager: DevUiStateManager,
+  verbose = false,
 ): Promise<{ unmount: () => void }> => {
   const ink = await import('ink');
   const { render, Box, Text, Static } = ink;
 
   const { unmount } = render(
     <InkProvider value={{ Box, Text, Static }}>
-      <DevUI uiStateManager={uiStateManager} />
+      <DevUI uiStateManager={uiStateManager} verbose={verbose} />
     </InkProvider>,
-    { incrementalRendering: true },
   );
 
   return { unmount };

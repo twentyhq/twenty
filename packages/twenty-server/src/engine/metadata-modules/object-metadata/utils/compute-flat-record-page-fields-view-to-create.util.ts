@@ -42,6 +42,8 @@ export const computeFlatRecordPageFieldsViewToCreate = ({
     universalIdentifier: v4(),
     visibility: ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: null,
+    isActive: true,
+    universalOverrides: null,
     viewFieldUniversalIdentifiers: [],
     viewFieldGroupUniversalIdentifiers: [],
     viewFilterUniversalIdentifiers: [],

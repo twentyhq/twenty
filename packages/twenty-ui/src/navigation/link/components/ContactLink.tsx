@@ -1,25 +1,8 @@
-import { styled } from '@linaria/react';
 import * as React from 'react';
 
-import { themeCssVariables } from '@ui/theme-constants';
+import { getSafeUrl } from '@ui/utilities/utils/getSafeUrl';
 
-const StyledClickableLink = styled.a<{
-  maxWidth?: number;
-}>`
-  color: inherit;
-  overflow: hidden;
-  text-decoration: underline;
-  text-decoration-color: ${themeCssVariables.border.color.strong};
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-
-  max-width: ${({ maxWidth }) => maxWidth ?? '100%'};
-
-  &:hover {
-    text-decoration-color: ${themeCssVariables.font.color.primary};
-  }
-`;
+import styles from './ContactLink.module.scss';
 
 type ContactLinkProps = {
   href: string;
@@ -35,13 +18,18 @@ export const ContactLink = ({
   maxWidth,
 }: ContactLinkProps) => {
   return (
-    <StyledClickableLink
-      maxWidth={maxWidth}
+    <a
+      className={styles.root}
+      style={
+        {
+          '--contact-link-max-width': maxWidth ?? '100%',
+        } as React.CSSProperties
+      }
       target="_blank"
       onClick={onClick}
-      href={href}
+      href={getSafeUrl(href)}
     >
       {children}
-    </StyledClickableLink>
+    </a>
   );
 };

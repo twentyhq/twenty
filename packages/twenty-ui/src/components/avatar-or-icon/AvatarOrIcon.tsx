@@ -1,30 +1,12 @@
-import { styled } from '@linaria/react';
 import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme-constants';
-import { useContext } from 'react';
 import { type Nullable } from '@ui/utilities';
-import { isDefined } from 'twenty-shared/utils';
+import { useContext } from 'react';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
-const StyledIconWithBackgroundContainer = styled.div<{
-  backgroundColor: string;
-}>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
-  background-color: ${({ backgroundColor }) => backgroundColor};
-`;
-
-const StyledAvatarOrIconWrapper = styled.div<{
-  isClickable: boolean;
-}>`
-  cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'inherit')};
-  display: flex;
-`;
+import styles from './AvatarOrIcon.module.scss';
 
 export type AvatarOrIconProps = {
   placeholder?: string;
@@ -68,10 +50,19 @@ export const AvatarOrIcon = ({
 
   if (isIconInverted || isDefined(IconBackgroundColor)) {
     return (
-      <StyledAvatarOrIconWrapper isClickable={isClickable} onClick={onClick}>
-        <StyledIconWithBackgroundContainer
-          backgroundColor={
-            IconBackgroundColor ?? theme.background.invertedSecondary
+      <div
+        className={styles.wrapper}
+        data-clickable={isClickable || undefined}
+        onClick={onClick}
+      >
+        <div
+          className={styles.iconWithBackgroundContainer}
+          style={
+            isDefined(IconBackgroundColor)
+              ? ({
+                  '--avatar-or-icon-background': IconBackgroundColor,
+                } as React.CSSProperties)
+              : undefined
           }
         >
           <Icon
@@ -79,18 +70,22 @@ export const AvatarOrIcon = ({
             size={theme.icon.size.sm}
             stroke={theme.icon.stroke.sm}
           />
-        </StyledIconWithBackgroundContainer>
-      </StyledAvatarOrIconWrapper>
+        </div>
+      </div>
     );
   }
 
   return (
-    <StyledAvatarOrIconWrapper isClickable={isClickable} onClick={onClick}>
+    <div
+      className={styles.wrapper}
+      data-clickable={isClickable || undefined}
+      onClick={onClick}
+    >
       <Icon
         size={theme.icon.size.sm}
         stroke={theme.icon.stroke.sm}
         color={IconColor || 'currentColor'}
       />
-    </StyledAvatarOrIconWrapper>
+    </div>
   );
 };

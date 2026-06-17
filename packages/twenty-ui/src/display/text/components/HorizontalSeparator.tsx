@@ -1,7 +1,8 @@
-import { styled } from '@linaria/react';
 import { type JSX } from 'react';
+
 import { Label } from '@ui/display';
-import { themeCssVariables } from '@ui/theme-constants';
+
+import styles from './HorizontalSeparator.module.scss';
 
 type HorizontalSeparatorProps = {
   visible?: boolean;
@@ -10,67 +11,36 @@ type HorizontalSeparatorProps = {
   color?: string;
 };
 
-const StyledSeparator = styled.div<{
-  visible: boolean;
-  noMargin: boolean;
-  backgroundColor: string;
-}>`
-  background-color: ${({ backgroundColor }) => backgroundColor};
-  height: ${({ visible }) => (visible ? '1px' : '0')};
-  flex-shrink: 0;
-  margin-bottom: ${({ noMargin }) =>
-    noMargin ? '0' : themeCssVariables.spacing[3]};
-  margin-top: ${({ noMargin }) =>
-    noMargin ? '0' : themeCssVariables.spacing[3]};
-  width: 100%;
-`;
-
-const StyledSeparatorContainer = styled.div<{ noMargin: boolean }>`
-  align-items: center;
-  display: flex;
-  margin-bottom: ${({ noMargin }) =>
-    noMargin ? '0' : themeCssVariables.spacing[3]};
-  margin-top: ${({ noMargin }) =>
-    noMargin ? '0' : themeCssVariables.spacing[3]};
-  width: 100%;
-`;
-
-const StyledLine = styled.div<{
-  visible: boolean;
-  backgroundColor: string;
-}>`
-  background-color: ${({ backgroundColor }) => backgroundColor};
-  height: ${({ visible }) => (visible ? '1px' : '0')};
-  flex-grow: 1;
-`;
-
-const StyledText = styled.span`
-  margin: 0 ${themeCssVariables.spacing[2]};
-`;
-
 export const HorizontalSeparator = ({
   visible = true,
   text = '',
   noMargin = false,
   color,
 }: HorizontalSeparatorProps): JSX.Element => {
-  const borderColor = color ?? themeCssVariables.border.color.medium;
+  const colorStyle = color
+    ? ({ '--horizontal-separator-color': color } as React.CSSProperties)
+    : undefined;
 
   return (
     <>
       {text ? (
-        <StyledSeparatorContainer noMargin={noMargin}>
-          <StyledLine visible={visible} backgroundColor={borderColor} />
+        <div
+          className={styles.separatorContainer}
+          data-no-margin={noMargin || undefined}
+          style={colorStyle}
+        >
+          <div className={styles.line} data-visible={visible || undefined} />
           <Label>
-            <StyledText>{text}</StyledText>
+            <span className={styles.text}>{text}</span>
           </Label>
-          <StyledLine visible={visible} backgroundColor={borderColor} />
-        </StyledSeparatorContainer>
+          <div className={styles.line} data-visible={visible || undefined} />
+        </div>
       ) : (
-        <StyledSeparator
-          visible={visible}
-          noMargin={noMargin}
-          backgroundColor={borderColor}
+        <div
+          className={styles.separator}
+          data-visible={visible || undefined}
+          data-no-margin={noMargin || undefined}
+          style={colorStyle}
         />
       )}
     </>

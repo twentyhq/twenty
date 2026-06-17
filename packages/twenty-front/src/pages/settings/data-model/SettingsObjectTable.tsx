@@ -5,8 +5,10 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
+import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { SettingsObjectMetadataItemTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import {
   SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SETTINGS_OBJECT_TABLE_ROW_MOBILE_MIN_WIDTH,
@@ -232,56 +234,62 @@ export const SettingsObjectTable = ({
               )}
               <TableHeader></TableHeader>
             </TableRow>
-            {filteredObjectSettingsItems.map((objectSettingsItem) => {
-              const isActive = objectSettingsItem.objectMetadataItem.isActive;
+            <StyledSettingsDataModelTableBodyContainer>
+              <TableBody>
+                {filteredObjectSettingsItems.map((objectSettingsItem) => {
+                  const isActive =
+                    objectSettingsItem.objectMetadataItem.isActive;
 
-              return (
-                <SettingsObjectMetadataItemTableRow
-                  key={objectSettingsItem.objectMetadataItem.namePlural}
-                  objectMetadataItem={objectSettingsItem.objectMetadataItem}
-                  totalObjectCount={objectSettingsItem.totalObjectCount}
-                  action={
-                    isActive ? (
-                      <StyledIconChevronRightContainer>
-                        <IconChevronRight
-                          size={theme.icon.size.md}
-                          stroke={theme.icon.stroke.sm}
-                        />
-                      </StyledIconChevronRightContainer>
-                    ) : isDDLLocked ? null : (
-                      <SettingsObjectInactiveMenuDropDown
-                        isCustomObject={
-                          objectSettingsItem.objectMetadataItem.isCustom
-                        }
-                        objectMetadataItemNamePlural={
-                          objectSettingsItem.objectMetadataItem.namePlural
-                        }
-                        onActivate={() =>
-                          updateOneObjectMetadataItem({
-                            idToUpdate:
-                              objectSettingsItem.objectMetadataItem.id,
-                            updatePayload: { isActive: true },
-                          })
-                        }
-                        onDelete={() =>
-                          deleteOneObjectMetadataItem(
-                            objectSettingsItem.objectMetadataItem.id,
-                          )
-                        }
-                      />
-                    )
-                  }
-                  link={
-                    isActive
-                      ? getSettingsPath(SettingsPath.ObjectDetail, {
-                          objectNamePlural:
-                            objectSettingsItem.objectMetadataItem.namePlural,
-                        })
-                      : undefined
-                  }
-                />
-              );
-            })}
+                  return (
+                    <SettingsObjectMetadataItemTableRow
+                      key={objectSettingsItem.objectMetadataItem.namePlural}
+                      objectMetadataItem={objectSettingsItem.objectMetadataItem}
+                      totalObjectCount={objectSettingsItem.totalObjectCount}
+                      action={
+                        isActive ? (
+                          <StyledIconChevronRightContainer>
+                            <IconChevronRight
+                              size={theme.icon.size.md}
+                              stroke={theme.icon.stroke.sm}
+                            />
+                          </StyledIconChevronRightContainer>
+                        ) : isDDLLocked ? null : (
+                          <SettingsObjectInactiveMenuDropDown
+                            isCustomObject={
+                              objectSettingsItem.objectMetadataItem.isCustom
+                            }
+                            objectMetadataItemNamePlural={
+                              objectSettingsItem.objectMetadataItem.namePlural
+                            }
+                            onActivate={() =>
+                              updateOneObjectMetadataItem({
+                                idToUpdate:
+                                  objectSettingsItem.objectMetadataItem.id,
+                                updatePayload: { isActive: true },
+                              })
+                            }
+                            onDelete={() =>
+                              deleteOneObjectMetadataItem(
+                                objectSettingsItem.objectMetadataItem.id,
+                              )
+                            }
+                          />
+                        )
+                      }
+                      link={
+                        isActive
+                          ? getSettingsPath(SettingsPath.ObjectDetail, {
+                              objectNamePlural:
+                                objectSettingsItem.objectMetadataItem
+                                  .namePlural,
+                            })
+                          : undefined
+                      }
+                    />
+                  );
+                })}
+              </TableBody>
+            </StyledSettingsDataModelTableBodyContainer>
           </Table>
         </StyledScrollableContent>
       </StyledScrollWrapper>

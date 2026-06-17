@@ -115,6 +115,9 @@ describe('ResetPasswordService', () => {
       jest
         .spyOn(userService, 'findUserByEmailOrThrow')
         .mockResolvedValue(mockUser as UserEntity);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
       jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
       jest
         .spyOn(appTokenRepository, 'save')
@@ -133,6 +136,45 @@ describe('ResetPasswordService', () => {
           userId: '1',
           workspaceId: 'workspace-id',
           type: AppTokenType.PasswordResetToken,
+        }),
+      );
+      expect(workspaceRepository.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            id: 'workspace-id',
+            isPasswordAuthEnabled: true,
+          }),
+        }),
+      );
+    });
+
+    it('falls back to the user own workspace when the provided workspaceId is not one they belong to', async () => {
+      const mockUser = { id: '1', email: 'test@example.com' };
+
+      jest
+        .spyOn(userService, 'findUserByEmailOrThrow')
+        .mockResolvedValue(mockUser as UserEntity);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce({
+          id: 'fallback-workspace-id',
+        } as WorkspaceEntity);
+      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(appTokenRepository, 'save')
+        .mockResolvedValue({} as AppTokenEntity);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
+
+      const result = await service.generatePasswordResetToken(
+        'test@example.com',
+        'foreign-workspace-id',
+      );
+
+      expect(result.workspaceId).toBe('fallback-workspace-id');
+      expect(appTokenRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId: 'fallback-workspace-id',
         }),
       );
     });
@@ -205,6 +247,9 @@ describe('ResetPasswordService', () => {
       jest
         .spyOn(userService, 'findUserByEmailOrThrow')
         .mockResolvedValue(mockUser as UserEntity);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
       jest
         .spyOn(appTokenRepository, 'findOne')
         .mockResolvedValue(mockExistingToken as AppTokenEntity);

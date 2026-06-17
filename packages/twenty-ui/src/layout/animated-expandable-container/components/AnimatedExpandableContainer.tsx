@@ -7,7 +7,7 @@ import { getExpandableAnimationConfig } from '@ui/layout/animated-expandable-con
 import { ThemeContext } from '@ui/theme-constants';
 import { AnimatePresence, motion } from 'framer-motion';
 import { type ReactNode, useContext, useRef, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 type AnimatedExpandableContainerProps = {
   children: ReactNode;

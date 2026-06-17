@@ -20,5 +20,6 @@ export const WORKFLOW_PAGE_COLORS = {
   nodeSurface: VISUAL_TOKENS.background.secondary,
   nodeIconSurface: VISUAL_TOKENS.background.transparent.light,
   textPrimary: VISUAL_TOKENS.font.color.primary,
+  textLight: VISUAL_TOKENS.font.color.light,
   textTertiary: VISUAL_TOKENS.font.color.tertiary,
 } as const;

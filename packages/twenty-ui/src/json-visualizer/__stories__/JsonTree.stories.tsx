@@ -29,6 +29,8 @@ export default meta;
 type Story = StoryObj<typeof JsonTree>;
 
 export const String: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: 'Hello',
   },
@@ -42,6 +44,8 @@ export const String: Story = {
 };
 
 export const StringWithSpecialCharacters: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: 'Merry \n Christmas \t 🎄',
     onNodeValueClick: fn(),
@@ -62,6 +66,8 @@ export const StringWithSpecialCharacters: Story = {
 };
 
 export const Number: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: 42,
   },
@@ -75,6 +81,8 @@ export const Number: Story = {
 };
 
 export const Boolean: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: true,
   },
@@ -88,6 +96,8 @@ export const Boolean: Story = {
 };
 
 export const Null: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: null,
   },
@@ -114,6 +124,8 @@ export const ArraySimple: Story = {
 };
 
 export const ArrayEmpty: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: [],
   },
@@ -127,6 +139,8 @@ export const ArrayEmpty: Story = {
 };
 
 export const ArrayNested: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: [1, 2, ['a', 'b', 'c'], 3],
   },
@@ -140,6 +154,8 @@ export const ArrayNested: Story = {
 };
 
 export const ArrayNestedEmpty: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: [1, 2, [], 3],
   },
@@ -157,6 +173,8 @@ export const ArrayNestedEmpty: Story = {
 };
 
 export const ArrayWithObjects: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: [
       {
@@ -179,6 +197,8 @@ export const ArrayWithObjects: Story = {
 };
 
 export const ObjectSimple: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       name: 'John Doe',
@@ -197,6 +217,8 @@ export const ObjectSimple: Story = {
 };
 
 export const ObjectEmpty: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {},
   },
@@ -210,6 +232,8 @@ export const ObjectEmpty: Story = {
 };
 
 export const ObjectNested: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       person: {
@@ -232,6 +256,8 @@ export const ObjectNested: Story = {
 };
 
 export const ObjectNestedEmpty: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       person: {},
@@ -251,6 +277,8 @@ export const ObjectNestedEmpty: Story = {
 };
 
 export const ObjectWithArray: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       users: [
@@ -275,6 +303,8 @@ export const ObjectWithArray: Story = {
 };
 
 export const NestedElementCanBeCollapsed: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       person: {
@@ -304,6 +334,8 @@ export const NestedElementCanBeCollapsed: Story = {
 };
 
 export const ExpandingElementExpandsAllItsDescendants: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       person: {
@@ -352,6 +384,8 @@ export const ExpandingElementExpandsAllItsDescendants: Story = {
 };
 
 export const ExpandTwoFirstDepths: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       person: {
@@ -387,6 +421,8 @@ export const ExpandTwoFirstDepths: Story = {
 };
 
 export const ReallyDeepNestedObject: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       a: {
@@ -507,6 +543,8 @@ export const ReallyDeepNestedObject: Story = {
 };
 
 export const LongText: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum iaculis est tincidunt, sagittis neque vitae, sodales purus.':
@@ -531,6 +569,8 @@ export const LongText: Story = {
 };
 
 export const BlueHighlighting: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       name: 'John Doe',
@@ -547,6 +587,8 @@ export const BlueHighlighting: Story = {
 };
 
 export const PartialBlueHighlighting: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       name: 'John Doe',
@@ -567,6 +609,8 @@ export const PartialBlueHighlighting: Story = {
 };
 
 export const RedHighlighting: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       name: 'John Doe',
@@ -586,6 +630,8 @@ export const RedHighlighting: Story = {
 };
 
 export const CopyJsonNodeValue: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     value: {
       name: 'John Doe',

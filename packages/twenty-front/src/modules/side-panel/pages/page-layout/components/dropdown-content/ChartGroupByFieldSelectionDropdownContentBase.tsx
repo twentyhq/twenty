@@ -1,15 +1,17 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { ChartGroupByFieldSelectionCompositeFieldView } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionCompositeFieldView';
+import { ChartGroupByFieldSelectionMorphRelationFieldView } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionMorphRelationFieldView';
 import { ChartGroupByFieldSelectionRelationFieldView } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { buildChartGroupByFieldConfigUpdate } from '@/side-panel/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -22,7 +24,10 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataSupportedInGroupBy,
+} from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -47,6 +52,9 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     useState<FieldMetadataItem | null>(null);
 
   const [selectedRelationField, setSelectedRelationField] =
+    useState<FieldMetadataItem | null>(null);
+
+  const [selectedMorphField, setSelectedMorphField] =
     useState<FieldMetadataItem | null>(null);
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -90,7 +98,12 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         if (isFieldRelation(field)) {
           return field.relation?.type === RelationType.MANY_TO_ONE;
         }
-        return true;
+        return isFieldMetadataSupportedInGroupBy({
+          type: field.type,
+          name: field.name,
+          isSystem: field.isSystem ?? false,
+          relationType: field.settings?.relationType ?? null,
+        });
       }),
     [sourceObjectMetadataItem?.fields, searchQuery],
   );
@@ -114,6 +127,11 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
   }
 
   const handleSelectField = (fieldMetadataItem: FieldMetadataItem) => {
+    if (isFieldMorphRelation(fieldMetadataItem)) {
+      setSelectedMorphField(fieldMetadataItem);
+      return;
+    }
+
     if (isFieldRelation(fieldMetadataItem)) {
       setSelectedRelationField(fieldMetadataItem);
       return;
@@ -161,6 +179,31 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     setSelectedRelationField(null);
   };
 
+  const handleBackFromMorph = () => {
+    setSelectedMorphField(null);
+  };
+
+  const handleSelectMorphTargetSubField = ({
+    perTargetFieldId,
+    subFieldName,
+  }: {
+    perTargetFieldId: string;
+    subFieldName: string;
+  }) => {
+    updateCurrentWidgetConfig({
+      configToUpdate: buildChartGroupByFieldConfigUpdate({
+        configuration,
+        fieldMetadataIdKey,
+        subFieldNameKey,
+        fieldId: perTargetFieldId,
+        subFieldName,
+        objectMetadataItem: sourceObjectMetadataItem,
+        objectMetadataItems,
+      }),
+    });
+    closeDropdown();
+  };
+
   const handleSelectCompositeSubField = (subFieldName: string) => {
     if (!isDefined(selectedCompositeField)) {
       return;
@@ -198,6 +241,18 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     });
     closeDropdown();
   };
+
+  if (isDefined(selectedMorphField)) {
+    return (
+      <ChartGroupByFieldSelectionMorphRelationFieldView
+        morphField={selectedMorphField}
+        currentFieldMetadataId={currentGroupByFieldMetadataId}
+        currentSubFieldName={currentSubFieldName}
+        onBack={handleBackFromMorph}
+        onSelectTargetSubField={handleSelectMorphTargetSubField}
+      />
+    );
+  }
 
   if (isDefined(selectedRelationField)) {
     return (
@@ -261,13 +316,15 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
                 selected={
                   !isCompositeFieldType(fieldMetadataItem.type) &&
                   !isFieldRelation(fieldMetadataItem) &&
+                  !isFieldMorphRelation(fieldMetadataItem) &&
                   currentGroupByFieldMetadataId === fieldMetadataItem.id
                 }
                 focused={selectedItemId === fieldMetadataItem.id}
                 LeftIcon={getIcon(fieldMetadataItem.icon)}
                 hasSubMenu={
                   isCompositeFieldType(fieldMetadataItem.type) ||
-                  isFieldRelation(fieldMetadataItem)
+                  isFieldRelation(fieldMetadataItem) ||
+                  isFieldMorphRelation(fieldMetadataItem)
                 }
                 onClick={() => {
                   handleSelectField(fieldMetadataItem);

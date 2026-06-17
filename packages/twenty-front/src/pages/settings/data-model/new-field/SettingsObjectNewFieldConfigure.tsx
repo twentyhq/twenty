@@ -1,10 +1,10 @@
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
+import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
+import { SettingsObjectNewFieldHeaderIcon } from '@/settings/data-model/fields/components/SettingsObjectNewFieldHeaderIcon';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
@@ -23,7 +23,9 @@ import {
 } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -181,7 +183,13 @@ export const SettingsObjectNewFieldConfigure = () => {
       {...formConfig}
     >
       <SettingsPageLayout
-        title={t`2. Configure field`}
+        title={activeObjectMetadataItem.labelPlural}
+        icon={
+          <SettingsObjectNewFieldHeaderIcon
+            objectMetadataItem={activeObjectMetadataItem}
+          />
+        }
+        titleColor={themeCssVariables.font.color.tertiary}
         links={[
           {
             children: t`Workspace`,
@@ -197,26 +205,28 @@ export const SettingsObjectNewFieldConfigure = () => {
               objectNamePlural,
             }),
           },
-
-          { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
+          { children: t`New field` },
         ]}
-        actionButton={
-          <SaveAndCancelButtons
-            isLoading={isSaving}
-            isSaveDisabled={!canSave}
-            isCancelDisabled={isSubmitting}
-            onCancel={() =>
+        secondaryBar={
+          <SettingsWizardStepBar
+            label={t`2. Configure field`}
+            onBack={() =>
               navigate(
                 SettingsPath.ObjectNewFieldSelect,
-                {
-                  objectNamePlural,
-                },
-                {
-                  fieldType,
-                },
+                { objectNamePlural },
+                { fieldType },
               )
             }
-            onSave={formConfig.handleSubmit(handleSave)}
+            trailing={
+              <Button
+                title={t`Save`}
+                variant="primary"
+                size="small"
+                accent="blue"
+                onClick={formConfig.handleSubmit(handleSave)}
+                disabled={!canSave || isSaving}
+              />
+            }
           />
         }
       >

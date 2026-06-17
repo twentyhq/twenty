@@ -29,7 +29,7 @@ describe('validatePackageJsonDependencies', () => {
 
   it('should warn when twenty-sdk is listed under dependencies', async () => {
     appPath = await writeTempPackageJson({
-      dependencies: { 'twenty-sdk': '^2.8.0', 'twenty-client-sdk': '^2.8.0' },
+      dependencies: { 'twenty-sdk': '^2.8.0' },
     });
 
     const warnings = await validatePackageJsonDependencies(appPath);
@@ -39,10 +39,40 @@ describe('validatePackageJsonDependencies', () => {
     expect(warnings[0]).toContain('devDependencies');
   });
 
-  it('should not warn when twenty-sdk is listed under devDependencies', async () => {
+  it('should warn when twenty-client-sdk is listed under dependencies', async () => {
     appPath = await writeTempPackageJson({
       dependencies: { 'twenty-client-sdk': '^2.8.0' },
-      devDependencies: { 'twenty-sdk': '^2.8.0' },
+    });
+
+    const warnings = await validatePackageJsonDependencies(appPath);
+
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toContain('twenty-client-sdk');
+    expect(warnings[0]).toContain('devDependencies');
+  });
+
+  it('should warn for both SDK packages when both are listed under dependencies', async () => {
+    appPath = await writeTempPackageJson({
+      dependencies: { 'twenty-sdk': '^2.8.0', 'twenty-client-sdk': '^2.8.0' },
+    });
+
+    const warnings = await validatePackageJsonDependencies(appPath);
+
+    expect(warnings).toHaveLength(2);
+    expect(warnings.some((warning) => warning.includes('twenty-sdk'))).toBe(
+      true,
+    );
+    expect(
+      warnings.some((warning) => warning.includes('twenty-client-sdk')),
+    ).toBe(true);
+  });
+
+  it('should not warn when both SDK packages are listed under devDependencies', async () => {
+    appPath = await writeTempPackageJson({
+      devDependencies: {
+        'twenty-sdk': '^2.8.0',
+        'twenty-client-sdk': '^2.8.0',
+      },
     });
 
     const warnings = await validatePackageJsonDependencies(appPath);
@@ -50,9 +80,9 @@ describe('validatePackageJsonDependencies', () => {
     expect(warnings).toEqual([]);
   });
 
-  it('should not warn when twenty-sdk is absent from dependencies', async () => {
+  it('should not warn when the SDK packages are absent from dependencies', async () => {
     appPath = await writeTempPackageJson({
-      dependencies: { 'twenty-client-sdk': '^2.8.0' },
+      dependencies: { 'some-other-package': '^1.0.0' },
     });
 
     const warnings = await validatePackageJsonDependencies(appPath);

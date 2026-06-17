@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlRawPayload',
   label: 'PDL Raw Payload',
   description: 'Full People Data Labs company enrichment response.',
+  icon: 'IconBraces',
   isNullable: true,
 });

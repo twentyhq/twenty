@@ -1,7 +1,10 @@
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { type FallbackProps } from 'react-error-boundary';
 import { AppTooltip, Status } from 'twenty-ui/display';
+
+type PageLayoutWidgetInvalidConfigDisplayProps = FallbackProps;
 
 const StyledInvalidConfigContainer = styled.div`
   align-items: center;
@@ -9,12 +12,15 @@ const StyledInvalidConfigContainer = styled.div`
   justify-content: center;
 `;
 
-export const PageLayoutWidgetInvalidConfigDisplay = () => {
+export const PageLayoutWidgetInvalidConfigDisplay = ({
+  error,
+}: PageLayoutWidgetInvalidConfigDisplayProps) => {
   const widget = useCurrentWidget();
   const tooltipId = `widget-invalid-config-tooltip-${widget.id}`;
 
   const text = t`Invalid Configuration`;
-  const tooltipContent = t`Invalid configuration. Click edit to configure this widget.`;
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  const tooltipContent = t`Invalid configuration: ${errorMessage}`;
 
   return (
     <StyledInvalidConfigContainer>

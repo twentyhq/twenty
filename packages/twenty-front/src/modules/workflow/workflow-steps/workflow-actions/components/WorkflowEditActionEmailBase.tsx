@@ -385,9 +385,11 @@ export const WorkflowEditActionEmailBase = ({
           <WorkflowSendEmailAttachments
             label={t`Attachments`}
             files={formData.files}
+            readonly={actionOptions.readonly}
             onChange={(files) => {
               handleFieldChange('files', files);
             }}
+            VariablePicker={WorkflowVariablePicker}
           />
         </WorkflowStepBody>
         {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}

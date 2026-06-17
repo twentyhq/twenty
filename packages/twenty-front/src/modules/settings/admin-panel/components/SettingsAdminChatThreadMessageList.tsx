@@ -113,7 +113,7 @@ export const SettingsAdminChatThreadMessageList = ({
             )}
             {toolParts.map((part, index) => (
               <StyledMessageContent key={index} isUser={false}>
-                {t`Tool call: ${part.toolName}`}
+                {t`Tool call: ${part.toolName ?? ''}`}
               </StyledMessageContent>
             ))}
             <StyledTimestamp>

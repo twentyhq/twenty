@@ -6,7 +6,6 @@ import {
   CreateTenantCommand,
   CreateTenantResourceAssociationCommand,
   DeleteConfigurationSetCommand,
-  DeleteContactListCommand,
   DeleteEmailIdentityCommand,
   DeleteTenantCommand,
   DeleteTenantResourceAssociationCommand,
@@ -21,10 +20,8 @@ import {
   type EmailingDomainResourceInput,
   type EmailingDomainVerificationResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
-import {
-  type EmailingDomainSendEmailInput,
-  type EmailingDomainSendEmailResult,
-} from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
+import { type EmailingDomainSendEmailInput } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
+import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 
 import { AWS_SES_RESOURCE_NAME_PREFIX } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-resource-name-prefix.constant';
 import { type AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
@@ -120,7 +117,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       {
         tenantName,
         configurationSetName: this.buildConfigurationSetName(workspaceId),
-        contactListName: this.buildContactListName(workspaceId),
       },
       this.config,
     );
@@ -136,7 +132,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     return this.awsSesSendEmailService.sendEmail(input, {
       tenantName: this.buildTenantName(input.workspaceId),
       configurationSetName: this.buildConfigurationSetName(input.workspaceId),
-      contactListName: this.buildContactListName(input.workspaceId),
     });
   }
 
@@ -167,7 +162,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     const sesClient = this.awsSesClientProvider.getSESClient();
     const tenantName = this.buildTenantName(workspaceId);
     const configurationSetName = this.buildConfigurationSetName(workspaceId);
-    const contactListName = this.buildContactListName(workspaceId);
     const configurationSetArn = `arn:aws:ses:${this.config.region}:${this.config.accountId}:configuration-set/${configurationSetName}`;
 
     await sesClient
@@ -192,12 +186,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       });
 
     await sesClient
-      .send(new DeleteContactListCommand({ ContactListName: contactListName }))
-      .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
-      });
-
-    await sesClient
       .send(new DeleteTenantCommand({ TenantName: tenantName }))
       .catch((error) => {
         if (!(error instanceof NotFoundException)) throw error;
@@ -209,10 +197,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   }
 
   private buildConfigurationSetName(workspaceId: string): string {
-    return `${AWS_SES_RESOURCE_NAME_PREFIX}-${workspaceId}`;
-  }
-
-  private buildContactListName(workspaceId: string): string {
     return `${AWS_SES_RESOURCE_NAME_PREFIX}-${workspaceId}`;
   }
 

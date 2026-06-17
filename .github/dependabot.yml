@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     exclude-paths:
-      - "packages/twenty-apps/community/**"
+      - "packages/twenty-apps/**"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 3
@@ -15,3 +15,6 @@ updates:
       - dependency-name: "@nestjs/graphql"
       - dependency-name: "@ptc-org/nestjs-query-graphql"
       - dependency-name: "typeorm"
+      # chokidar is pinned to v3 via a resolution: v4+ dropped native macOS
+      # FSEvents and hits EMFILE on a repo this size (see #20316)
+      - dependency-name: "chokidar"

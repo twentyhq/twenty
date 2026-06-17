@@ -1,36 +1,20 @@
-import { styled } from '@linaria/react';
-import { type IconComponent } from '@ui/display';
+import { clsx } from 'clsx';
 import { type MouseEvent } from 'react';
 
+import { type IconComponent } from '@ui/display';
 import { InsideButton } from '@ui/input/button/components/InsideButton';
-import { themeCssVariables } from '@ui/theme-constants';
+
+import styles from './IconButtonGroup.module.scss';
 
 export type IconButtonGroupProps = {
   disabled?: boolean;
   iconButtons: {
     Icon: IconComponent;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onClick?: (event: MouseEvent<any>) => void;
   }[];
   className?: string;
 };
-
-const StyledIconButtonGroupContainer = styled.div<
-  Pick<IconButtonGroupProps, 'disabled'>
->`
-  display: inline-flex;
-  align-items: flex-start;
-  background-color: ${({ disabled }) =>
-    disabled ? 'inherit' : themeCssVariables.background.transparent.lighter};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  border: 1px solid ${themeCssVariables.border.color.strong};
-  gap: 2px;
-  padding: 2px;
-  backdrop-filter: blur(20px);
-
-  &:hover {
-    box-shadow: ${themeCssVariables.boxShadow.light};
-  }
-`;
 
 export const IconButtonGroup = ({
   iconButtons,
@@ -38,7 +22,10 @@ export const IconButtonGroup = ({
   className,
 }: IconButtonGroupProps) => {
   return (
-    <StyledIconButtonGroupContainer className={className} disabled={disabled}>
+    <div
+      className={clsx(styles.container, className)}
+      data-disabled={disabled || undefined}
+    >
       {iconButtons.map(({ Icon, onClick }, index) => {
         return (
           <InsideButton
@@ -49,6 +36,6 @@ export const IconButtonGroup = ({
           />
         );
       })}
-    </StyledIconButtonGroupContainer>
+    </div>
   );
 };

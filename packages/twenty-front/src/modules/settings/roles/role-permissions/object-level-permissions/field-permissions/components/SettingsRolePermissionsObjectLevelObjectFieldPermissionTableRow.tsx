@@ -192,7 +192,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
             <TableCell>
               <OverridableCheckbox
                 disabled={
-                  (fieldMetadataItem.isUIReadOnly || isLabelIdentifier) ?? false
+                  !(fieldMetadataItem.isUIEditable ?? true) || isLabelIdentifier
                 }
                 checked={true}
                 onChange={handleSeeChange}
@@ -203,7 +203,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
           {shouldShowUpdateTableHeader && (
             <TableCell align="left">
               <OverridableCheckbox
-                disabled={fieldMetadataItem.isUIReadOnly ?? false}
+                disabled={!(fieldMetadataItem.isUIEditable ?? true)}
                 checked={true}
                 onChange={handleUpdateChange}
                 type={isUpdateRestricted ? 'override' : 'default'}

@@ -1,4 +1,7 @@
-import { SHARED_PEOPLE_AVATAR_URLS } from '@/content/site/asset-paths';
+import {
+  SHARED_COMPANY_LOGO_URLS,
+  SHARED_PEOPLE_AVATAR_URLS,
+} from '@/content/site/asset-paths';
 import type {
   RecordPageDefinition,
   RowDef,
@@ -27,7 +30,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Anthropic',
         domain: 'anthropic.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -52,7 +55,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Slack',
         domain: 'slack.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -77,7 +80,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Figma',
         domain: 'figma.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -102,7 +105,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Notion',
         domain: 'notion.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -127,7 +130,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Github',
         domain: 'github.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -152,7 +155,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Airbnb',
         domain: 'airbnb.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -177,7 +180,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Stripe',
         domain: 'stripe.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -202,7 +205,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Sequoia',
         domain: 'sequoia.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -227,7 +230,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Accel',
         domain: 'accel.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -252,225 +255,270 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Google',
         domain: 'google.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
 ];
 
-export const NEW_COMPANY_ROW: RowDef = {
-  id: 'openai',
-  cells: {
-    company: { type: 'entity', name: 'OpenAI', domain: 'openai.com' },
-    url: { type: 'link', value: 'openai.com' },
-    createdBy: {
-      type: 'person',
-      name: 'AI Agent',
-      tone: 'gray',
-      kind: 'system',
-      shortLabel: 'AI',
-    },
-    address: { type: 'text', value: '3180 18th St' },
-    accountOwner: {
-      type: 'person',
-      name: 'Sam Altman',
-      tone: 'amber',
-      kind: 'person',
-      avatarUrl: SHARED_PEOPLE_AVATAR_URLS.samAltman,
-    },
-    icp: { type: 'boolean', value: true },
-    arr: { type: 'number', value: '$2,000,000' },
-    linkedin: { type: 'link', value: 'openai' },
-    industry: { type: 'tag', value: 'AI Research' },
-    mainContact: {
-      type: 'person',
-      name: 'Sam Altman',
-      shortLabel: 'S',
-      tone: 'amber',
-      kind: 'person',
-      avatarUrl: SHARED_PEOPLE_AVATAR_URLS.samAltman,
-    },
-    employees: { type: 'number', value: '3,500' },
-    opportunities: { type: 'relation', items: [] },
-    added: { type: 'text', value: 'Just now' },
-  },
+export type ResponseChip = {
+  logoUrl: string;
+  name: string;
 };
 
-export const NEW_PERSON_ROW: RowDef = {
-  id: 'sam-altman',
-  cells: {
-    name: {
-      type: 'person',
-      name: 'Sam Altman',
-      tone: 'amber',
-      kind: 'person',
-      avatarUrl: SHARED_PEOPLE_AVATAR_URLS.samAltman,
-    },
-    company: { type: 'entity', name: 'OpenAI', domain: 'openai.com' },
-    email: { type: 'link', value: 'sam@openai.com' },
-    phone: { type: 'text', value: '+1 415 555 0199' },
-    jobTitle: { type: 'text', value: 'CEO' },
-    city: { type: 'text', value: 'San Francisco' },
-    linkedin: { type: 'link', value: 'sama' },
-    added: { type: 'text', value: 'Just now' },
-  },
+export type ProductVisualSceneKind =
+  | 'leadCreation'
+  | 'opportunityReview'
+  | 'taskCreation'
+  | 'dashboardCreation'
+  | 'workflowCreation';
+
+export type AgentToolIcon =
+  | 'search'
+  | 'filter'
+  | 'notes'
+  | 'tasks'
+  | 'record'
+  | 'workflow'
+  | 'mail';
+
+export type AgentStep =
+  | { kind: 'thinking'; durationMs: number }
+  | {
+      kind: 'tool';
+      icon: AgentToolIcon;
+      running: string;
+      done: string;
+      durationMs: number;
+    };
+
+export type ProductVisualSceneDefinition = {
+  initialPageItemId: string;
+  kind: ProductVisualSceneKind;
+  label: string;
+  responseChips: ResponseChip[];
+  responseText: string[];
+  sidebarMode?: 'collapsed' | 'expanded';
+  followUpPageItemId?: string;
+  steps?: AgentStep[];
 };
 
-export const PROMPT_OPTIONS = [
+export const COMPANIES_PAGE_ITEM_ID = 'companies';
+export const PEOPLE_PAGE_ITEM_ID = 'people';
+export const OPPORTUNITIES_PAGE_ITEM_ID = 'opportunities';
+export const TASKS_PAGE_ITEM_ID = 'tasks';
+export const WORKFLOW_EMAIL_SEQUENCE_PAGE_ITEM_ID =
+  'workflow-send-email-sequence';
+export const SALES_DASHBOARD_PAGE_ITEM_ID = 'sales-dashboard';
+
+export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
   {
-    icon: (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <line x1="12" y1="5" x2="12" y2="19" />
-        <line x1="5" y1="12" x2="19" y2="12" />
-      </svg>
-    ),
+    initialPageItemId: COMPANIES_PAGE_ITEM_ID,
+    kind: 'leadCreation',
     label: 'Add a new lead',
-    navSteps: [
-      { at: 0.25, target: 'Companies' },
-      { at: 0.65, target: 'People' },
+    responseText: [],
+    responseChips: [],
+    sidebarMode: 'expanded',
+  },
+  {
+    initialPageItemId: OPPORTUNITIES_PAGE_ITEM_ID,
+    kind: 'opportunityReview',
+    label: 'Build a pipeline board grouped by stage',
+    responseText: [
+      'Organized your open deals into a **pipeline board** grouped by stage — **New**, **Screening**, **Meeting**, **Proposal**, and **Customer**.',
+      'Drag a card to move a deal forward, or open one to see the full history.',
     ],
-    response:
-      'Adding OpenAI as a new company. Setting domain to openai.com, industry to AI Research, and ARR to $2,000,000. Account owner assigned to Sam Altman. Company record is live in your CRM.\n\nNow creating the contact — adding Sam Altman as CEO at OpenAI, based in San Francisco. Person record linked to the company.',
+    responseChips: [
+      { name: 'Anthropic', logoUrl: SHARED_COMPANY_LOGO_URLS.anthropic },
+      { name: 'Notion', logoUrl: SHARED_COMPANY_LOGO_URLS.notion },
+      { name: 'Github', logoUrl: SHARED_COMPANY_LOGO_URLS.github },
+      { name: 'Airbnb', logoUrl: SHARED_COMPANY_LOGO_URLS.airbnb },
+      { name: 'Figma', logoUrl: SHARED_COMPANY_LOGO_URLS.figma },
+      { name: 'Stripe', logoUrl: SHARED_COMPANY_LOGO_URLS.stripe },
+      { name: 'Mailchimp', logoUrl: SHARED_COMPANY_LOGO_URLS.mailchimp },
+    ],
+    sidebarMode: 'collapsed',
+    steps: [
+      { kind: 'thinking', durationMs: 1200 },
+      {
+        kind: 'tool',
+        icon: 'search',
+        running: 'Reading your open deals',
+        done: 'Read 24 deals',
+        durationMs: 1000,
+      },
+      {
+        kind: 'tool',
+        icon: 'record',
+        running: 'Building the pipeline board',
+        done: 'Built the board',
+        durationMs: 800,
+      },
+    ],
   },
   {
-    icon: (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="11" cy="11" r="8" />
-        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-      </svg>
-    ),
-    label: 'Show me all deals closing this month',
-    navSteps: [{ at: 0.3, target: 'Opportunities' }],
-    response:
-      'Filtering your pipeline to deals closing this month. Found 7 opportunities worth $12.9M total across Identified, Qualified, and Engaged stages. The biggest: Host Ops with Airbnb at $4,200,000, followed by AI Prototyping with Figma at $3,500,000.',
+    initialPageItemId: TASKS_PAGE_ITEM_ID,
+    kind: 'taskCreation',
+    label:
+      'Generate follow-up tasks for my top 10 accounts using notes to gather context',
+    responseText: [
+      'Created **10 follow-up tasks** dated **Nov 1 through Nov 8**.',
+      'The first rows cover Anthropic, Slack, Figma, Notion, and Github, followed by Airbnb, Stripe, Sequoia, Accel, and Google.',
+    ],
+    responseChips: [
+      { name: 'Anthropic', logoUrl: SHARED_COMPANY_LOGO_URLS.anthropic },
+      { name: 'Slack', logoUrl: SHARED_COMPANY_LOGO_URLS.slack },
+      { name: 'Figma', logoUrl: SHARED_COMPANY_LOGO_URLS.figma },
+      { name: 'Notion', logoUrl: SHARED_COMPANY_LOGO_URLS.notion },
+      { name: 'Github', logoUrl: SHARED_COMPANY_LOGO_URLS.github },
+      { name: 'Airbnb', logoUrl: SHARED_COMPANY_LOGO_URLS.airbnb },
+      { name: 'Stripe', logoUrl: SHARED_COMPANY_LOGO_URLS.stripe },
+      { name: 'Sequoia', logoUrl: SHARED_COMPANY_LOGO_URLS.sequoia },
+      { name: 'Accel', logoUrl: SHARED_COMPANY_LOGO_URLS.accel },
+      { name: 'Google', logoUrl: SHARED_COMPANY_LOGO_URLS.google },
+    ],
+    sidebarMode: 'collapsed',
+    steps: [
+      { kind: 'thinking', durationMs: 1200 },
+      {
+        kind: 'tool',
+        icon: 'notes',
+        running: 'Reading notes on your top 10 accounts',
+        done: 'Read 10 accounts',
+        durationMs: 1100,
+      },
+      {
+        kind: 'tool',
+        icon: 'tasks',
+        running: 'Creating 10 follow-up tasks',
+        done: 'Created 10 tasks',
+        durationMs: 900,
+      },
+    ],
   },
   {
-    icon: (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <polyline points="9 11 12 14 22 4" />
-        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-      </svg>
-    ),
-    label: 'Create follow-up tasks for my top 10 accounts',
-    navSteps: [{ at: 0.3, target: 'Tasks' }],
-    response:
-      'Creating follow-up tasks for your top 10 accounts by ARR. Done — added 10 tasks:\n\n• "Follow up on Enterprise Expansion" → Anthropic (Nov 1)\n• "Schedule renewal call" → Slack (Nov 2)\n• "Send proposal to Dylan" → Figma (Nov 3)\n• "Review consolidation timeline" → Notion (Nov 4)\n• "Check in on Copilot Rollout" → Github (Nov 5)\n• "Review Host Ops proposal" → Airbnb (Nov 6)\n• "Send billing expansion contract" → Stripe (Nov 6)\n• "Schedule quarterly review" → Sequoia (Nov 7)\n• "Follow up on Portfolio Sync" → Accel (Nov 7)\n• "Prep AI Solutions deck" → Google (Nov 8)\n\nAll assigned to account owners with 7-day deadlines.',
+    initialPageItemId: SALES_DASHBOARD_PAGE_ITEM_ID,
+    kind: 'dashboardCreation',
+    label: 'Build a dashboard of pipeline by stage and ARR',
+    responseText: [
+      'Built a **Sales dashboard** with live KPIs — **$12.9M pipeline**, **$2.4M won this quarter**, and a **38% win rate** — plus charts for deals by stage and ARR over time.',
+      'It refreshes automatically as your data changes.',
+    ],
+    responseChips: [],
+    sidebarMode: 'collapsed',
+    steps: [
+      { kind: 'thinking', durationMs: 1200 },
+      {
+        kind: 'tool',
+        icon: 'search',
+        running: 'Aggregating pipeline and revenue',
+        done: 'Aggregated 24 deals',
+        durationMs: 1000,
+      },
+      {
+        kind: 'tool',
+        icon: 'record',
+        running: 'Assembling the dashboard',
+        done: 'Built the dashboard',
+        durationMs: 900,
+      },
+    ],
   },
   {
-    icon: (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-        <polyline points="14 2 14 8 20 8" />
-        <line x1="16" y1="13" x2="8" y2="13" />
-        <line x1="16" y1="17" x2="8" y2="17" />
-      </svg>
-    ),
-    label: "Summarize this customer's history",
-    navSteps: [{ at: 0.3, target: 'Companies' }],
-    response:
-      "Here's the history for Qonto:\n\nLogged a call between Phil Schiller and Steve Anavi — focused on selling through benefits rather than features. Strategy: emphasize how our CRM streamlines operations and improves customer service.\n\nFollow-up with Alexandre Prot to understand their pain points and position our tool as the solution.\n\n3 notes total, 12 people associated, with Q Global Holdings as parent company. Active opportunity in pipeline.",
-  },
-  {
-    icon: (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="12" cy="12" r="3" />
-        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15 1.65 1.65 0 003 14.08V14a2 2 0 014 0v.09" />
-      </svg>
-    ),
-    label: 'Create a workflow that sends an email sequence',
-    navSteps: [{ at: 0.4, target: 'Send email sequence when deal is engaged' }],
-    response:
-      "I built and activated a workflow that sends an email sequence to each one of the selected People.\n\nThis will only send if the Person has emails.primaryEmail filled in. If some People don't have an email, I'll add a filter step to skip sending when the email is empty (to avoid failures).\n\nIf you want to customize the email subject/body (branding, links, etc.), paste your desired text and I'll update the workflow.",
+    initialPageItemId: WORKFLOW_EMAIL_SEQUENCE_PAGE_ITEM_ID,
+    kind: 'workflowCreation',
+    label: 'Draft a workflow that sends an email sequence',
+    responseText: [
+      'Created and activated a sequence with a **Manual trigger**, an **Iterator**, and a **Send Email** step.',
+      'It is ready to run now, and filters or email copy can be refined next.',
+    ],
+    responseChips: [],
+    sidebarMode: 'collapsed',
+    steps: [
+      { kind: 'thinking', durationMs: 1200 },
+      {
+        kind: 'tool',
+        icon: 'workflow',
+        running: 'Designing the workflow',
+        done: 'Designed 3 steps',
+        durationMs: 1000,
+      },
+      {
+        kind: 'tool',
+        icon: 'mail',
+        running: 'Activating the sequence',
+        done: 'Activated sequence',
+        durationMs: 800,
+      },
+    ],
   },
 ];
 
-export const QONTO_RECORD_PAGE: RecordPageDefinition = {
+export const ANTHROPIC_RECORD_PAGE: RecordPageDefinition = {
   type: 'record',
   header: {
-    title: 'Qonto',
+    title: 'Anthropic',
     count: 12,
   },
   record: {
-    logoDomain: 'qonto.com',
-    name: 'Qonto',
+    logoDomain: 'anthropic.com',
+    name: 'Anthropic',
     createdAt: 'Created 4 hours ago',
     fields: [
-      { icon: 'link', label: 'URL', value: 'qonto.com' },
+      {
+        icon: 'link',
+        label: 'URL',
+        value: { type: 'link', kind: 'url', value: 'anthropic.com' },
+      },
       {
         icon: 'user',
-        label: 'Account O...',
-        value: 'Phil Schiller',
-        avatarUrl: SHARED_PEOPLE_AVATAR_URLS.philSchiller,
+        label: 'Account Owner',
+        value: {
+          type: 'person',
+          name: 'Dario Amodei',
+          avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+          kind: 'person',
+          tone: 'gray',
+        },
       },
       {
         icon: 'mapPin',
         label: 'Address',
-        value: '18 Rue De Navarin, 75009 Paris',
+        value: { type: 'text', value: '18 Rue De Navarin' },
       },
-      { icon: 'check', label: 'ICP', value: '✓ True' },
-      { icon: 'currency', label: 'Revenue', value: '$500,000' },
+      {
+        icon: 'check',
+        label: 'ICP',
+        value: { type: 'boolean', value: true },
+      },
+      {
+        icon: 'currency',
+        label: 'ARR',
+        value: { type: 'currency', value: '$500,000' },
+      },
       {
         icon: 'linkedin',
-        label: 'Linkedin',
-        value: 'linkedin.com/company/q...',
+        label: 'LinkedIn',
+        value: {
+          type: 'link',
+          kind: 'social',
+          label: 'linkedin.com/company/a...',
+          value: 'anthropic',
+        },
       },
-      { icon: 'twitter', label: 'Twitter', value: '@qonto' },
     ],
     moreCount: 12,
     relations: [
       {
-        title: 'Holdings',
-        items: [{ name: 'Q Global Holdings', domain: 'qonto.com' }],
-      },
-      {
         title: 'Opportunities',
-        items: [{ name: 'Qonto', domain: 'qonto.com' }],
+        items: [{ name: 'Enterprise Expansion', domain: 'anthropic.com' }],
       },
       {
         title: 'People',
         count: 12,
         items: [
           {
-            name: 'Alexandre',
-            avatarUrl: SHARED_PEOPLE_AVATAR_URLS.alexandreProt,
-          },
-          {
-            name: 'Steve Anavi',
-            avatarUrl: SHARED_PEOPLE_AVATAR_URLS.steveAnavi,
+            name: 'Dario Amodei',
+            avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
           },
         ],
       },
@@ -478,23 +526,206 @@ export const QONTO_RECORD_PAGE: RecordPageDefinition = {
   },
   notes: [
     {
-      id: 'logged-call',
-      title: 'Logged call (Phil Schiller ↔ Steve Anavi)',
-      body: 'Apple sells its products by focusing on the benefits users gain from their products, rather than solely highlighting the features. The same approach should be used for selling to Qonto. Understand their pain points and how your product can alleviate those issues. Emphasize how our CRM tool can help streamline their operations, improve customer service, and ultimately, grow their business.',
+      id: 'kickoff',
+      title: 'Kickoff with Dario',
+      body: 'Walked through the enterprise expansion plan and the security review timeline. Anthropic wants SSO, audit logs, and a dedicated environment before rolling out to the wider research org.',
       relation: {
-        name: 'Alexandre',
-        avatarUrl: SHARED_PEOPLE_AVATAR_URLS.alexandreProt,
+        name: 'Dario Amodei',
+        avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
       },
     },
     {
-      id: 'follow-up',
-      title: 'Follow-up with Alexandre',
-      body: 'Understand their pain points and how your product can alleviate those issues. Emphasize how our CRM tool can help streamline their operations, improve customer service, and ultimately, grow their business.',
+      id: 'pricing-follow-up',
+      title: 'Follow-up on pricing',
+      body: 'Shared updated seat pricing and the annual commitment options. Next step is a procurement intro and a technical deep-dive with their platform team.',
+    },
+  ],
+  timeline: [
+    {
+      kind: 'calendar',
+      id: 'calendar-security-review',
+      actor: 'Alice',
+      title: 'Security review',
+      detail: 'Tomorrow · 10:00 – 10:45 AM · Dario Amodei, Alice',
+      time: '1 hour ago',
     },
     {
-      id: 'third-note',
-      title: 'Third note',
-      body: 'Apple sells its products by focusing on the benefits users gain from their products, rather than solely highlighting the features. The same approach should be used for selling to Qonto. Understand their pain points and how your product can alleviate those issues. Emphasize how our CRM tool can help streamline their operations, improve customer service, and ultimately, grow their business.',
+      kind: 'note',
+      id: 'note-kickoff',
+      actor: 'Alice',
+      title: 'Kickoff with Dario',
+      time: '2 hours ago',
+    },
+    {
+      kind: 'updated',
+      id: 'update-multi',
+      actor: 'Alice',
+      record: 'Anthropic',
+      time: '3 hours ago',
+      diffs: [
+        { label: 'Industry', value: { type: 'select', value: 'AI Research' } },
+        { label: 'Employees', value: { type: 'text', value: '612' } },
+        { label: 'ICP', value: { type: 'boolean', value: true } },
+      ],
+    },
+    {
+      kind: 'updated',
+      id: 'update-arr',
+      actor: 'Alice',
+      record: 'Anthropic',
+      time: '3 hours ago',
+      diffs: [{ label: 'ARR', value: { type: 'currency', value: '$500,000' } }],
+    },
+    {
+      kind: 'created',
+      id: 'record-created',
+      subject: 'Anthropic',
+      actor: 'Dario Amodei',
+      time: '4 hours ago',
+    },
+  ],
+  tasks: [
+    {
+      id: 'task-agreement',
+      title: 'Send enterprise agreement',
+      body: 'Final redlines from legal',
+      due: 'Tomorrow',
+      target: {
+        name: 'Dario Amodei',
+        avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+        tone: 'gray',
+      },
+    },
+    {
+      id: 'task-security',
+      title: 'Complete security review',
+      body: 'SOC 2 and DPA sign-off',
+      due: 'Friday',
+      done: true,
+      target: { name: 'Enterprise Expansion', domain: 'anthropic.com' },
+    },
+    {
+      id: 'task-procurement',
+      title: 'Schedule procurement intro',
+      body: 'Loop in their procurement lead',
+      due: 'Next week',
+      target: { name: 'Alice', tone: 'amber' },
+    },
+  ],
+  files: [
+    {
+      id: 'file-agreement',
+      name: 'Enterprise Agreement.pdf',
+      category: 'pdf',
+      date: '2 hours ago',
+    },
+    {
+      id: 'file-security',
+      name: 'Security Review.xlsx',
+      category: 'sheet',
+      date: '1 day ago',
+    },
+    {
+      id: 'file-pricing',
+      name: 'Pricing Proposal.pdf',
+      category: 'pdf',
+      date: '3 days ago',
+    },
+  ],
+  emails: [
+    {
+      id: 'email-expansion',
+      participants: [
+        {
+          name: 'Dario Amodei',
+          avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+          tone: 'gray',
+        },
+        { name: 'Alice', tone: 'amber' },
+      ],
+      count: 3,
+      subject: 'Re: Enterprise expansion',
+      body: 'Thanks for the detailed proposal — looping in our platform team.',
+      date: '2 hours ago',
+    },
+    {
+      id: 'email-compliance',
+      participants: [
+        { name: 'Alice', tone: 'amber' },
+        {
+          name: 'Dario Amodei',
+          avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+          tone: 'gray',
+        },
+      ],
+      count: 2,
+      subject: 'Security & compliance docs',
+      body: 'Attaching the SOC 2 report and our DPA for review.',
+      date: '1 day ago',
+    },
+    {
+      id: 'email-procurement',
+      participants: [
+        {
+          name: 'Dario Amodei',
+          avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+          tone: 'gray',
+        },
+      ],
+      count: 1,
+      subject: 'Intro to procurement',
+      body: 'Connecting you with our procurement lead to move the contract forward.',
+      date: '2 days ago',
+    },
+  ],
+  calendar: [
+    {
+      id: 'cal-day-wed',
+      weekday: 'Wed',
+      day: '12',
+      events: [
+        {
+          id: 'cal-security',
+          start: '10:00',
+          end: '10:45',
+          title: 'Security review',
+          attending: true,
+          participants: [
+            {
+              name: 'Dario Amodei',
+              avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+              tone: 'gray',
+            },
+            { name: 'Alice', tone: 'amber' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'cal-day-fri',
+      weekday: 'Fri',
+      day: '14',
+      events: [
+        {
+          id: 'cal-qbr',
+          start: '14:00',
+          end: '15:00',
+          title: 'Quarterly business review',
+          participants: [
+            {
+              name: 'Dario Amodei',
+              avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+              tone: 'gray',
+            },
+            { name: 'Alice', tone: 'amber' },
+            {
+              name: 'Marcus Lee',
+              avatarUrl: SHARED_PEOPLE_AVATAR_URLS.anonymousMike,
+              tone: 'amber',
+            },
+          ],
+        },
+      ],
     },
   ],
 };

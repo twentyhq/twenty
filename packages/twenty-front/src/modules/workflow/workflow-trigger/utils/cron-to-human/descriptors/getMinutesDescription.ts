@@ -52,7 +52,7 @@ export const getMinutesDescription = (
     }
     const lastValue = values.pop();
     const remainingValues = values.join(', ');
-    return t`at minutes ${remainingValues} and ${lastValue}`;
+    return t`at minutes ${remainingValues} and ${lastValue ?? ''}`;
   }
 
   const minuteNum = parseInt(minutes, 10);

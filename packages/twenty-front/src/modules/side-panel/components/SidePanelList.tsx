@@ -26,7 +26,7 @@ const StyledInnerList = styled.div`
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
-  width: calc(100% - ${themeCssVariables.spacing[4]});
+  width: 100%;
 
   @media (min-width: ${MOBILE_VIEWPORT}px) {
     max-height: calc(

@@ -186,25 +186,10 @@ export class MessageChannelResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<MessageChannelDTO> {
-    const messageChannel =
-      await this.messageChannelMetadataService.verifyOwnership({
-        id,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-      });
-
-    if (messageChannel.type !== MessageChannelType.EMAIL_GROUP) {
-      throw new MessageChannelException(
-        `Message channel ${id} is not an email group`,
-        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
-      );
-    }
-
-    await this.connectedAccountMetadataService.delete({
-      id: messageChannel.connectedAccountId,
+    return this.messageChannelMetadataService.deleteEmailGroupChannel({
+      id,
+      userWorkspaceId,
       workspaceId: workspace.id,
     });
-
-    return messageChannel;
   }
 }

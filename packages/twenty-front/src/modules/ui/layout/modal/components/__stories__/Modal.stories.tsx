@@ -90,7 +90,7 @@ export const CloseClosableModalOnClickOutside: Story = {
     ),
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
     await canvas.findByText('Click Outside Test');
 
@@ -121,7 +121,7 @@ export const CloseClosableModalOnEscape: Story = {
     ),
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
     await canvas.findByText('Escape Key Test');
 

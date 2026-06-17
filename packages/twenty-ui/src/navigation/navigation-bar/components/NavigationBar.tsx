@@ -1,17 +1,8 @@
-import { styled } from '@linaria/react';
-
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { themeCssVariables } from '@ui/theme-constants';
 
 import { NavigationBarItem } from './NavigationBarItem';
 
-const StyledContainer = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[4]};
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[3]};
-  z-index: 1001;
-`;
+import styles from './NavigationBar.module.scss';
 
 type NavigationBarProps = {
   activeItemName: string;
@@ -23,7 +14,7 @@ export const NavigationBar = ({
   items,
 }: NavigationBarProps) => {
   return (
-    <StyledContainer>
+    <div className={styles.container}>
       {items.map(({ Icon, name, onClick }) => (
         <NavigationBarItem
           key={name}
@@ -32,6 +23,6 @@ export const NavigationBar = ({
           onClick={onClick}
         />
       ))}
-    </StyledContainer>
+    </div>
   );
 };

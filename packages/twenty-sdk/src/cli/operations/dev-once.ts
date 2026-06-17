@@ -1,5 +1,5 @@
 import path from 'path';
-import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { type SyncAction } from 'twenty-shared/metadata';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
@@ -7,6 +7,7 @@ import {
   ensureAppAccessTokenIsValidOrRefresh,
   ensureAppRegistration,
 } from '@/cli/utilities/auth';
+import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
@@ -16,10 +17,12 @@ import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
+import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
+import chalk from 'chalk';
 
 export type AppDevOnceOptions = {
   appPath: string;
@@ -42,6 +45,15 @@ const reportMetadataChanges = (
   for (const event of formatSyncActionsSummary(data.actions)) {
     onProgress?.(event.message);
   }
+};
+
+const appendRecoveryHint = (
+  message: string,
+  errorMessage: string | undefined,
+): string => {
+  const hint = getSyncErrorRecoveryHint(errorMessage);
+
+  return hint ? `${message}\n\n${hint}` : message;
 };
 
 const innerAppDevOnce = async (
@@ -70,14 +82,20 @@ const innerAppDevOnce = async (
   }
 
   if (!validateAuth.authValid) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.SYNC_FAILED,
-        message:
-          'Authentication failed. Run `yarn twenty remote:add --local` to authenticate.',
-      },
-    };
+    const outcome = await promptForReauthentication(
+      ConfigService.getActiveRemote(),
+    );
+
+    if (outcome !== 'reauthenticated') {
+      return {
+        success: false,
+        error: {
+          code: APP_ERROR_CODES.SYNC_FAILED,
+          message:
+            'Authentication failed. Run `yarn twenty remote:add` to authenticate.',
+        },
+      };
+    }
   }
 
   onProgress?.('Building manifest...');
@@ -95,7 +113,7 @@ const innerAppDevOnce = async (
   }
 
   for (const warning of manifestResult.warnings) {
-    onProgress?.(`⚠ ${warning}`);
+    onProgress?.(chalk.yellow(`⚠ ${warning}`));
   }
 
   onProgress?.('Building application files...');
@@ -148,13 +166,13 @@ const innerAppDevOnce = async (
 
       const message = errorEvents
         ? errorEvents.map((event) => event.message).join('\n')
-        : `Dry run failed with error: ${serializeError(dryRunResult.error)}`;
+        : `Dry run failed with error: ${dryRunResult.message ?? 'Unknown error'}`;
 
       return {
         success: false,
         error: {
           code: APP_ERROR_CODES.SYNC_FAILED,
-          message,
+          message: appendRecoveryHint(message, dryRunResult.message),
         },
       };
     }
@@ -254,13 +272,13 @@ const innerAppDevOnce = async (
 
     const message = errorEvents
       ? errorEvents.map((event) => event.message).join('\n')
-      : `Sync failed with error: ${serializeError(syncResult.error)}`;
+      : `Sync failed with error: ${syncResult.message ?? 'Unknown error'}`;
 
     return {
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message,
+        message: appendRecoveryHint(message, syncResult.message),
       },
     };
   }
