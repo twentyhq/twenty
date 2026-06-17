@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { color, mediaUp, radius, REDUCED_MOTION, spacing } from '@/tokens';
+import { color, mediaUp, radius, spacing } from '@/tokens';
 import {
   Eyebrow,
   Heading,
@@ -105,23 +105,6 @@ const SpotlightVisual = styled.div`
   margin: ${spacing(4)};
   min-height: 260px;
   overflow: hidden;
-  transform-origin: center;
-  transition:
-    transform 0.3s ease,
-    filter 0.25s ease;
-
-  &:hover {
-    filter: brightness(1.06);
-    transform: scale(1.01);
-  }
-
-  ${REDUCED_MOTION} {
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
-  }
 
   ${mediaUp('md')} {
     margin: ${spacing(5)};
@@ -141,23 +124,6 @@ const CardVisualFrame = styled.div`
   margin: ${spacing(4)} ${spacing(4)} 0;
   overflow: hidden;
   position: relative;
-  transform-origin: center;
-  transition:
-    transform 0.3s ease,
-    filter 0.25s ease;
-
-  &:hover {
-    filter: brightness(1.06);
-    transform: scale(1.018);
-  }
-
-  ${REDUCED_MOTION} {
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
-  }
 
   ${mediaUp('md')} {
     height: 340px;
