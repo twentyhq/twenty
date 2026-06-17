@@ -9,11 +9,13 @@ import { useSetRecordIndexAggregateDisplayValueForRecordGroupValue } from '@/obj
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue } from '@/object-record/record-index/utils/turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { reportInvalidRecordIndexGroupAggregateConfig } from '@/object-record/record-index/utils/reportInvalidRecordIndexGroupAggregateConfig';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { AggregateOperations } from '~/generated-metadata/graphql';
 
 export const RecordIndexGroupAggregateQueryEffect = ({
   recordIndexGroupFieldMetadataItem,
@@ -24,7 +26,7 @@ export const RecordIndexGroupAggregateQueryEffect = ({
   recordIndexGroupAggregateFieldMetadataItem: Nullable<FieldMetadataItem>;
   recordIndexGroupAggregateOperation: ExtendedAggregateOperations;
 }) => {
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
   const { data, loading, error } = useRecordIndexGroupsAggregatesGroupBy({
     objectMetadataItem,
@@ -32,6 +34,8 @@ export const RecordIndexGroupAggregateQueryEffect = ({
     recordIndexGroupAggregateFieldMetadataItem,
     recordIndexGroupAggregateOperation,
   });
+
+  const invalidAggregateConfigKeyRef = useRef<string | null>(null);
 
   const { recordAggregateGqlField } =
     useAggregateGqlFieldsFromRecordIndexGroupAggregates({
@@ -53,6 +57,38 @@ export const RecordIndexGroupAggregateQueryEffect = ({
   const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
   );
+
+  useEffect(() => {
+    const isInvalidAggregateConfig =
+      recordIndexGroupAggregateOperation !== AggregateOperations.COUNT &&
+      !isDefined(recordIndexGroupAggregateFieldMetadataItem);
+
+    if (!isInvalidAggregateConfig) {
+      invalidAggregateConfigKeyRef.current = null;
+
+      return;
+    }
+
+    const invalidAggregateConfigKey = `${objectMetadataItem.id}-${recordIndexGroupAggregateOperation}`;
+
+    if (invalidAggregateConfigKeyRef.current === invalidAggregateConfigKey) {
+      return;
+    }
+
+    invalidAggregateConfigKeyRef.current = invalidAggregateConfigKey;
+
+    void reportInvalidRecordIndexGroupAggregateConfig({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      recordIndexId,
+      recordIndexGroupAggregateOperation,
+    });
+  }, [
+    objectMetadataItem.id,
+    objectMetadataItem.nameSingular,
+    recordIndexId,
+    recordIndexGroupAggregateFieldMetadataItem,
+    recordIndexGroupAggregateOperation,
+  ]);
 
   useEffect(() => {
     if (
