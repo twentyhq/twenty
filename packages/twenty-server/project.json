@@ -234,6 +234,15 @@
         "parallel": false
       }
     },
+    "database:seed:e2e-token": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "cache": false,
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "node dist/command/command.js workspace:seed:e2e-token"
+      }
+    },
     "database:reset": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
