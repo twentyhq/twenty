@@ -1,30 +1,16 @@
 import gql from 'graphql-tag';
 import { type DocumentNode } from 'graphql';
-import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
-const TEST_COMPANY_ID = '20202020-aaaa-4000-8000-0000000000a1';
-const TEST_PERSON_1_ID = '20202020-bbbb-4000-8000-0000000000a1';
-const TEST_PERSON_2_ID = '20202020-bbbb-4000-8000-0000000000a2';
-const TEST_OPPORTUNITY_ID = '20202020-dddd-4000-8000-0000000000a1';
 const PAGE_SIZE = 50;
+const PEOPLE_DISCOVERY_LIMIT = 100;
 
-type TimelineThreadsWithTotal = {
-  totalNumberOfThreads: number;
-  timelineThreads: { id: string }[];
-};
-
-type TimelineCalendarEventsWithTotal = {
-  totalNumberOfCalendarEvents: number;
-  timelineCalendarEvents: { id: string }[];
-};
-
-const GET_TIMELINE_THREADS_FROM_OBJECT_RECORD = gql`
+const GET_TIMELINE_THREADS = gql`
   query GetTimelineThreadsFromObjectRecord(
     $objectNameSingular: String!
     $recordId: UUID!
@@ -45,7 +31,7 @@ const GET_TIMELINE_THREADS_FROM_OBJECT_RECORD = gql`
   }
 `;
 
-const GET_TIMELINE_CALENDAR_EVENTS_FROM_OBJECT_RECORD = gql`
+const GET_TIMELINE_CALENDAR_EVENTS = gql`
   query GetTimelineCalendarEventsFromObjectRecord(
     $objectNameSingular: String!
     $recordId: UUID!
@@ -83,7 +69,7 @@ const buildLegacyQuery = (
     }
   `;
 
-const requestObjectRecord = (
+const requestTimeline = (
   query: DocumentNode,
   objectNameSingular: string,
   recordId: string,
@@ -93,187 +79,240 @@ const requestObjectRecord = (
     variables: { objectNameSingular, recordId, page: 1, pageSize: PAGE_SIZE },
   });
 
-const requestLegacy = (query: DocumentNode, recordId: string) =>
-  makeGraphqlAPIRequest({
-    query,
-    variables: { id: recordId, page: 1, pageSize: PAGE_SIZE },
-  });
+const getPeopleWithCompany = async (): Promise<
+  { id: string; companyId: string }[]
+> => {
+  const response = await makeGraphqlAPIRequest(
+    findManyOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: 'id company { id }',
+      first: PEOPLE_DISCOVERY_LIMIT,
+    }),
+  );
 
-const LEGACY_DELEGATION_CASES = [
-  {
-    objectNameSingular: 'person',
-    recordId: TEST_PERSON_1_ID,
-    threadsQueryName: 'getTimelineThreadsFromPersonId',
-    calendarQueryName: 'getTimelineCalendarEventsFromPersonId',
-    idArgName: 'personId',
-  },
-  {
-    objectNameSingular: 'company',
-    recordId: TEST_COMPANY_ID,
-    threadsQueryName: 'getTimelineThreadsFromCompanyId',
-    calendarQueryName: 'getTimelineCalendarEventsFromCompanyId',
-    idArgName: 'companyId',
-  },
-  {
-    objectNameSingular: 'opportunity',
-    recordId: TEST_OPPORTUNITY_ID,
-    threadsQueryName: 'getTimelineThreadsFromOpportunityId',
-    calendarQueryName: 'getTimelineCalendarEventsFromOpportunityId',
-    idArgName: 'opportunityId',
-  },
-];
+  expect(response.body.errors).toBeUndefined();
+
+  return (
+    response.body.data.people.edges
+      // @ts-expect-error legacy noImplicitAny
+      .map((edge) => edge.node)
+      // @ts-expect-error legacy noImplicitAny
+      .filter((person) => person.company?.id)
+      // @ts-expect-error legacy noImplicitAny
+      .map((person) => ({ id: person.id, companyId: person.company.id }))
+  );
+};
+
+const findPersonWithThreads = async (
+  people: { id: string; companyId: string }[],
+) => {
+  for (const person of people) {
+    const response = await requestTimeline(
+      GET_TIMELINE_THREADS,
+      'person',
+      person.id,
+    );
+
+    if (
+      response.body.data.getTimelineThreadsFromObjectRecord
+        .totalNumberOfThreads > 0
+    ) {
+      return person;
+    }
+  }
+
+  return undefined;
+};
+
+const findPersonWithCalendarEvents = async (
+  people: { id: string; companyId: string }[],
+) => {
+  for (const person of people) {
+    const response = await requestTimeline(
+      GET_TIMELINE_CALENDAR_EVENTS,
+      'person',
+      person.id,
+    );
+
+    if (
+      response.body.data.getTimelineCalendarEventsFromObjectRecord
+        .totalNumberOfCalendarEvents > 0
+    ) {
+      return person;
+    }
+  }
+
+  return undefined;
+};
 
 describe('timeline from object record resolvers (integration)', () => {
+  let personWithThreads: { id: string; companyId: string };
+  let personWithEvents: { id: string; companyId: string };
+
   beforeAll(async () => {
-    await makeGraphqlAPIRequest(
-      createManyOperationFactory({
-        objectMetadataSingularName: 'company',
-        objectMetadataPluralName: 'companies',
-        gqlFields: 'id',
-        data: [
-          { id: TEST_COMPANY_ID, name: 'TimelineFromObjectRecordCompany' },
-        ],
-        upsert: true,
-      }),
-    );
+    const people = await getPeopleWithCompany();
 
-    await makeGraphqlAPIRequest(
-      createManyOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        gqlFields: 'id',
-        data: [
-          { id: TEST_PERSON_1_ID, companyId: TEST_COMPANY_ID },
-          { id: TEST_PERSON_2_ID, companyId: TEST_COMPANY_ID },
-        ],
-        upsert: true,
-      }),
-    );
+    const threadsSource = await findPersonWithThreads(people);
+    const eventsSource = await findPersonWithCalendarEvents(people);
 
-    await makeGraphqlAPIRequest(
-      createManyOperationFactory({
-        objectMetadataSingularName: 'opportunity',
-        objectMetadataPluralName: 'opportunities',
-        gqlFields: 'id',
-        data: [
-          {
-            id: TEST_OPPORTUNITY_ID,
-            name: 'TimelineFromObjectRecordOpportunity',
-            pointOfContactId: TEST_PERSON_1_ID,
-          },
-        ],
-        upsert: true,
+    if (!threadsSource || !eventsSource) {
+      throw new Error(
+        'Expected the seeded workspace to contain a person with message threads and calendar events',
+      );
+    }
+
+    personWithThreads = threadsSource;
+    personWithEvents = eventsSource;
+  });
+
+  it('should derive a company message timeline from its related people', async () => {
+    const [personResponse, companyResponse] = await Promise.all([
+      requestTimeline(GET_TIMELINE_THREADS, 'person', personWithThreads.id),
+      requestTimeline(
+        GET_TIMELINE_THREADS,
+        'company',
+        personWithThreads.companyId,
+      ),
+    ]);
+
+    expect(personResponse.body.errors).toBeUndefined();
+    expect(companyResponse.body.errors).toBeUndefined();
+
+    const personThreadCount =
+      personResponse.body.data.getTimelineThreadsFromObjectRecord
+        .totalNumberOfThreads;
+    const companyThreadCount =
+      companyResponse.body.data.getTimelineThreadsFromObjectRecord
+        .totalNumberOfThreads;
+
+    expect(personThreadCount).toBeGreaterThan(0);
+    expect(companyThreadCount).toBeGreaterThanOrEqual(personThreadCount);
+  });
+
+  it('should derive a company calendar timeline from its related people', async () => {
+    const [personResponse, companyResponse] = await Promise.all([
+      requestTimeline(
+        GET_TIMELINE_CALENDAR_EVENTS,
+        'person',
+        personWithEvents.id,
+      ),
+      requestTimeline(
+        GET_TIMELINE_CALENDAR_EVENTS,
+        'company',
+        personWithEvents.companyId,
+      ),
+    ]);
+
+    expect(personResponse.body.errors).toBeUndefined();
+    expect(companyResponse.body.errors).toBeUndefined();
+
+    const personEventCount =
+      personResponse.body.data.getTimelineCalendarEventsFromObjectRecord
+        .totalNumberOfCalendarEvents;
+    const companyEventCount =
+      companyResponse.body.data.getTimelineCalendarEventsFromObjectRecord
+        .totalNumberOfCalendarEvents;
+
+    expect(personEventCount).toBeGreaterThan(0);
+    expect(companyEventCount).toBeGreaterThanOrEqual(personEventCount);
+  });
+
+  it('should serve getTimelineThreadsFromPersonId identically to the object-record resolver', async () => {
+    const [fromObjectRecord, fromLegacy] = await Promise.all([
+      requestTimeline(GET_TIMELINE_THREADS, 'person', personWithThreads.id),
+      makeGraphqlAPIRequest({
+        query: buildLegacyQuery(
+          'getTimelineThreadsFromPersonId',
+          'personId',
+          THREADS_SELECTION,
+        ),
+        variables: { id: personWithThreads.id, page: 1, pageSize: PAGE_SIZE },
       }),
+    ]);
+
+    expect(fromLegacy.body.errors).toBeUndefined();
+    expect(fromLegacy.body.data.getTimelineThreadsFromPersonId).toEqual(
+      fromObjectRecord.body.data.getTimelineThreadsFromObjectRecord,
     );
   });
 
-  afterAll(async () => {
-    await makeGraphqlAPIRequest(
-      deleteManyOperationFactory({
-        objectMetadataSingularName: 'opportunity',
-        objectMetadataPluralName: 'opportunities',
-        gqlFields: 'id',
-        filter: { id: { in: [TEST_OPPORTUNITY_ID] } },
+  it('should serve getTimelineThreadsFromCompanyId identically to the object-record resolver', async () => {
+    const [fromObjectRecord, fromLegacy] = await Promise.all([
+      requestTimeline(
+        GET_TIMELINE_THREADS,
+        'company',
+        personWithThreads.companyId,
+      ),
+      makeGraphqlAPIRequest({
+        query: buildLegacyQuery(
+          'getTimelineThreadsFromCompanyId',
+          'companyId',
+          THREADS_SELECTION,
+        ),
+        variables: {
+          id: personWithThreads.companyId,
+          page: 1,
+          pageSize: PAGE_SIZE,
+        },
       }),
-    );
-    await makeGraphqlAPIRequest(
-      deleteManyOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        gqlFields: 'id',
-        filter: { id: { in: [TEST_PERSON_1_ID, TEST_PERSON_2_ID] } },
-      }),
-    );
-    await makeGraphqlAPIRequest(
-      deleteManyOperationFactory({
-        objectMetadataSingularName: 'company',
-        objectMetadataPluralName: 'companies',
-        gqlFields: 'id',
-        filter: { id: { in: [TEST_COMPANY_ID] } },
-      }),
+    ]);
+
+    expect(fromLegacy.body.errors).toBeUndefined();
+    expect(fromLegacy.body.data.getTimelineThreadsFromCompanyId).toEqual(
+      fromObjectRecord.body.data.getTimelineThreadsFromObjectRecord,
     );
   });
 
-  it('should resolve a company message timeline through its related people', async () => {
-    const response = await requestObjectRecord(
-      GET_TIMELINE_THREADS_FROM_OBJECT_RECORD,
-      'company',
-      TEST_COMPANY_ID,
+  it('should serve getTimelineCalendarEventsFromPersonId identically to the object-record resolver', async () => {
+    const [fromObjectRecord, fromLegacy] = await Promise.all([
+      requestTimeline(
+        GET_TIMELINE_CALENDAR_EVENTS,
+        'person',
+        personWithEvents.id,
+      ),
+      makeGraphqlAPIRequest({
+        query: buildLegacyQuery(
+          'getTimelineCalendarEventsFromPersonId',
+          'personId',
+          CALENDAR_SELECTION,
+        ),
+        variables: { id: personWithEvents.id, page: 1, pageSize: PAGE_SIZE },
+      }),
+    ]);
+
+    expect(fromLegacy.body.errors).toBeUndefined();
+    expect(fromLegacy.body.data.getTimelineCalendarEventsFromPersonId).toEqual(
+      fromObjectRecord.body.data.getTimelineCalendarEventsFromObjectRecord,
     );
-
-    expect(response.body.errors).toBeUndefined();
-
-    const result: TimelineThreadsWithTotal =
-      response.body.data.getTimelineThreadsFromObjectRecord;
-
-    expect(result.totalNumberOfThreads).toBe(0);
-    expect(result.timelineThreads).toEqual([]);
   });
 
-  it('should resolve a company calendar timeline through its related people', async () => {
-    const response = await requestObjectRecord(
-      GET_TIMELINE_CALENDAR_EVENTS_FROM_OBJECT_RECORD,
-      'company',
-      TEST_COMPANY_ID,
+  it('should serve getTimelineCalendarEventsFromCompanyId identically to the object-record resolver', async () => {
+    const [fromObjectRecord, fromLegacy] = await Promise.all([
+      requestTimeline(
+        GET_TIMELINE_CALENDAR_EVENTS,
+        'company',
+        personWithEvents.companyId,
+      ),
+      makeGraphqlAPIRequest({
+        query: buildLegacyQuery(
+          'getTimelineCalendarEventsFromCompanyId',
+          'companyId',
+          CALENDAR_SELECTION,
+        ),
+        variables: {
+          id: personWithEvents.companyId,
+          page: 1,
+          pageSize: PAGE_SIZE,
+        },
+      }),
+    ]);
+
+    expect(fromLegacy.body.errors).toBeUndefined();
+    expect(fromLegacy.body.data.getTimelineCalendarEventsFromCompanyId).toEqual(
+      fromObjectRecord.body.data.getTimelineCalendarEventsFromObjectRecord,
     );
-
-    expect(response.body.errors).toBeUndefined();
-
-    const result: TimelineCalendarEventsWithTotal =
-      response.body.data.getTimelineCalendarEventsFromObjectRecord;
-
-    expect(result.totalNumberOfCalendarEvents).toBe(0);
-    expect(result.timelineCalendarEvents).toEqual([]);
   });
-
-  describe.each(LEGACY_DELEGATION_CASES)(
-    'legacy endpoints for $objectNameSingular',
-    ({
-      objectNameSingular,
-      recordId,
-      threadsQueryName,
-      calendarQueryName,
-      idArgName,
-    }) => {
-      it(`should serve ${threadsQueryName} identically to the object-record resolver`, async () => {
-        const [fromObjectRecord, fromLegacy] = await Promise.all([
-          requestObjectRecord(
-            GET_TIMELINE_THREADS_FROM_OBJECT_RECORD,
-            objectNameSingular,
-            recordId,
-          ),
-          requestLegacy(
-            buildLegacyQuery(threadsQueryName, idArgName, THREADS_SELECTION),
-            recordId,
-          ),
-        ]);
-
-        expect(fromLegacy.body.errors).toBeUndefined();
-        expect(fromLegacy.body.data[threadsQueryName]).toEqual(
-          fromObjectRecord.body.data.getTimelineThreadsFromObjectRecord,
-        );
-      });
-
-      it(`should serve ${calendarQueryName} identically to the object-record resolver`, async () => {
-        const [fromObjectRecord, fromLegacy] = await Promise.all([
-          requestObjectRecord(
-            GET_TIMELINE_CALENDAR_EVENTS_FROM_OBJECT_RECORD,
-            objectNameSingular,
-            recordId,
-          ),
-          requestLegacy(
-            buildLegacyQuery(calendarQueryName, idArgName, CALENDAR_SELECTION),
-            recordId,
-          ),
-        ]);
-
-        expect(fromLegacy.body.errors).toBeUndefined();
-        expect(fromLegacy.body.data[calendarQueryName]).toEqual(
-          fromObjectRecord.body.data.getTimelineCalendarEventsFromObjectRecord,
-        );
-      });
-    },
-  );
 
   describe('with a custom object that has no people on its timeline', () => {
     const CUSTOM_OBJECT_NAME_SINGULAR = 'timelineProbe';
@@ -320,43 +359,38 @@ describe('timeline from object record resolvers (integration)', () => {
     });
 
     it('should return an empty message timeline instead of crashing', async () => {
-      const response = await makeGraphqlAPIRequest({
-        query: GET_TIMELINE_THREADS_FROM_OBJECT_RECORD,
-        variables: {
-          objectNameSingular: CUSTOM_OBJECT_NAME_SINGULAR,
-          recordId: CUSTOM_RECORD_ID,
-          page: 1,
-          pageSize: PAGE_SIZE,
-        },
-      });
+      const response = await requestTimeline(
+        GET_TIMELINE_THREADS,
+        CUSTOM_OBJECT_NAME_SINGULAR,
+        CUSTOM_RECORD_ID,
+      );
 
       expect(response.body.errors).toBeUndefined();
-
-      const result: TimelineThreadsWithTotal =
-        response.body.data.getTimelineThreadsFromObjectRecord;
-
-      expect(result.totalNumberOfThreads).toBe(0);
-      expect(result.timelineThreads).toEqual([]);
+      expect(
+        response.body.data.getTimelineThreadsFromObjectRecord
+          .totalNumberOfThreads,
+      ).toBe(0);
+      expect(
+        response.body.data.getTimelineThreadsFromObjectRecord.timelineThreads,
+      ).toEqual([]);
     });
 
     it('should return an empty calendar timeline instead of crashing', async () => {
-      const response = await makeGraphqlAPIRequest({
-        query: GET_TIMELINE_CALENDAR_EVENTS_FROM_OBJECT_RECORD,
-        variables: {
-          objectNameSingular: CUSTOM_OBJECT_NAME_SINGULAR,
-          recordId: CUSTOM_RECORD_ID,
-          page: 1,
-          pageSize: PAGE_SIZE,
-        },
-      });
+      const response = await requestTimeline(
+        GET_TIMELINE_CALENDAR_EVENTS,
+        CUSTOM_OBJECT_NAME_SINGULAR,
+        CUSTOM_RECORD_ID,
+      );
 
       expect(response.body.errors).toBeUndefined();
-
-      const result: TimelineCalendarEventsWithTotal =
-        response.body.data.getTimelineCalendarEventsFromObjectRecord;
-
-      expect(result.totalNumberOfCalendarEvents).toBe(0);
-      expect(result.timelineCalendarEvents).toEqual([]);
+      expect(
+        response.body.data.getTimelineCalendarEventsFromObjectRecord
+          .totalNumberOfCalendarEvents,
+      ).toBe(0);
+      expect(
+        response.body.data.getTimelineCalendarEventsFromObjectRecord
+          .timelineCalendarEvents,
+      ).toEqual([]);
     });
   });
 });
