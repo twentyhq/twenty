@@ -44,6 +44,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
+import { ImpersonationAuthorizationModule } from 'src/engine/core-modules/impersonation/impersonation-authorization.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -109,6 +110,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     WorkspaceInvitationModule,
     EmailVerificationModule,
     GuardRedirectModule,
+    ImpersonationAuthorizationModule,
     MetricsModule,
     PermissionsModule,
     TwoFactorAuthenticationModule,

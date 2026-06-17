@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { type SecretOrKeyProvider, Strategy } from 'passport-jwt';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
@@ -23,12 +22,13 @@ import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type PlaygroundTokenJwtPayload } from 'src/engine/core-modules/auth/types/playground-token-jwt-payload.type';
 import { type WorkspaceAgnosticTokenJwtPayload } from 'src/engine/core-modules/auth/types/workspace-agnostic-token-jwt-payload.type';
+import { IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-message-by-reason.constant';
+import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { JWT_SUPPORTED_VERIFY_ALGORITHMS } from 'src/engine/core-modules/jwt/constants/jwt-algorithm.constant';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -37,9 +37,9 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly jwtWrapperService: JwtWrapperService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly permissionsService: PermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
   ) {
     const secretOrKeyProvider: SecretOrKeyProvider = (
       _request,
@@ -291,52 +291,17 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    const isServerLevelImpersonation =
-      impersonatorUserWorkspace.workspace.id !==
-      impersonatedUserWorkspace.workspace.id;
-
-    const hasServerLevelImpersonatePermission =
-      impersonatorUserWorkspace.user.canImpersonate === true &&
-      impersonatedUserWorkspace.workspace.allowImpersonation === true;
-
-    if (isServerLevelImpersonation) {
-      if (!hasServerLevelImpersonatePermission)
-        throw new AuthException(
-          'Server level impersonation not allowed',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-
-      return {
-        impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
-      };
-    }
-
-    const hasWorkspaceLevelImpersonatePermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId: impersonatorUserWorkspace.id,
-        setting: PermissionFlagType.IMPERSONATE,
-        workspaceId: impersonatedUserWorkspace.workspace.id,
-      });
-
-    if (!hasWorkspaceLevelImpersonatePermission) {
-      throw new AuthException(
-        'Impersonation not allowed',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+    const authorizationResult =
+      await this.impersonationAuthorizationService.checkImpersonationAuthorization(
+        impersonatorUserWorkspace,
+        impersonatedUserWorkspace,
       );
-    }
 
-    const targetHasAdminPrivileges =
-      impersonatedUserWorkspace.user.canImpersonate === true ||
-      impersonatedUserWorkspace.user.canAccessFullAdminPanel === true;
-
-    const impersonatorHasAdminPrivileges =
-      impersonatorUserWorkspace.user.canImpersonate === true ||
-      impersonatorUserWorkspace.user.canAccessFullAdminPanel === true;
-
-    if (targetHasAdminPrivileges && !impersonatorHasAdminPrivileges) {
+    if (!authorizationResult.allowed) {
       throw new AuthException(
-        'Cannot impersonate a user with admin privileges',
+        IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON[
+          authorizationResult.reason
+        ],
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }

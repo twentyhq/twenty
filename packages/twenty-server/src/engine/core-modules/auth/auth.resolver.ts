@@ -60,6 +60,11 @@ import { EmailVerificationService } from 'src/engine/core-modules/email-verifica
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-message-by-reason.constant';
+import {
+  type ImpersonationDenialReason,
+  ImpersonationAuthorizationService,
+} from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
@@ -80,7 +85,6 @@ import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { ApiKeyToken } from './dto/api-key-token.dto';
@@ -96,6 +100,22 @@ import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValidDTO } from './dto/workspace-invite-hash-valid.dto';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
+
+// Event-log wording for a failed token exchange. Kept local to the resolver
+// because it embeds runtime data and the resolver is the only call site that
+// emits impersonation events; the user-facing exception message is shared via
+// IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON.
+const IMPERSONATION_TOKEN_EXCHANGE_FAILURE_LOG_BY_REASON: Record<
+  ImpersonationDenialReason,
+  (params: { targetUserEmail: string; impersonatorUserId: string }) => string
+> = {
+  SERVER_LEVEL_NOT_ALLOWED: ({ targetUserEmail, impersonatorUserId }) =>
+    `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserId}`,
+  WORKSPACE_LEVEL_NOT_ALLOWED: ({ targetUserEmail, impersonatorUserId }) =>
+    `Impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserId}`,
+  TARGET_HAS_ADMIN_PRIVILEGES: ({ targetUserEmail, impersonatorUserId }) =>
+    `Impersonation of admin user ${targetUserEmail} denied for non-admin userId ${impersonatorUserId}`,
+};
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -132,7 +152,7 @@ export class AuthResolver {
     private emailVerificationTokenService: EmailVerificationTokenService,
     private ssoService: SSOService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly permissionsService: PermissionsService,
+    private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
     private readonly subdomainManagerService: SubdomainManagerService,
   ) {}
 
@@ -733,75 +753,51 @@ export class AuthResolver {
       );
     }
 
-    const isServerLevelImpersonation =
-      toImpersonateUserWorkspace.workspace.id !==
-      impersonatorUserWorkspace.workspace.id;
-
     const eventLogContext = this.eventLogEmitterService.createContext({
       workspaceId: workspace.id,
       userId: impersonatorUserWorkspace.user.id,
     });
 
+    const impersonationLevel =
+      this.impersonationAuthorizationService.getImpersonationLevel(
+        impersonatorUserWorkspace,
+        toImpersonateUserWorkspace,
+      );
+
     void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: isServerLevelImpersonation ? 'server' : 'workspace',
+      level: impersonationLevel,
       action: 'token_exchange_attempt',
       message: `Impersonation token exchange attempt for ${targetUserEmail} by ${impersonatorUserWorkspace.user.id}`,
     });
 
-    const hasServerLevelImpersonatePermission =
-      impersonatorUserWorkspace.user.canImpersonate === true &&
-      toImpersonateUserWorkspace.workspace.allowImpersonation === true;
+    const authorizationResult =
+      await this.impersonationAuthorizationService.checkImpersonationAuthorization(
+        impersonatorUserWorkspace,
+        toImpersonateUserWorkspace,
+      );
 
-    if (isServerLevelImpersonation) {
-      if (!hasServerLevelImpersonatePermission) {
-        void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-          level: 'server',
-          action: 'token_exchange_failed',
-          message: `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
-        });
-
-        throw new AuthException(
-          'Server level impersonation not allowed on this workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
+    if (!authorizationResult.allowed) {
       void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-        level: 'server',
-        action: 'token_exchange_success',
-        message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
-      });
-
-      return {
-        workspaceId: workspace.id,
-        impersonatorUserWorkspaceId: impersonatorUserWorkspace.id,
-        impersonatedUserWorkspaceId: toImpersonateUserWorkspace.id,
-        impersonatorUserId: impersonatorUserWorkspace.user.id,
-        impersonatedUserId: toImpersonateUserWorkspace.user.id,
-      };
-    }
-
-    const hasWorkspaceLevelImpersonatePermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId: impersonatorUserWorkspace.id,
-        setting: PermissionFlagType.IMPERSONATE,
-        workspaceId: workspace.id,
-      });
-
-    if (!hasWorkspaceLevelImpersonatePermission) {
-      void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-        level: 'workspace',
+        level: authorizationResult.level,
         action: 'token_exchange_failed',
-        message: `Impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
+        message: IMPERSONATION_TOKEN_EXCHANGE_FAILURE_LOG_BY_REASON[
+          authorizationResult.reason
+        ]({
+          targetUserEmail,
+          impersonatorUserId: impersonatorUserWorkspace.user.id,
+        }),
       });
+
       throw new AuthException(
-        'Impersonation not allowed',
+        IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON[
+          authorizationResult.reason
+        ],
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
     void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: 'workspace',
+      level: authorizationResult.level,
       action: 'token_exchange_success',
       message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
     });

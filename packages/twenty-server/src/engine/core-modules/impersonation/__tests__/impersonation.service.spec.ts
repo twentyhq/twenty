@@ -10,6 +10,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
@@ -36,6 +37,7 @@ describe('ImpersonationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ImpersonationService,
+        ImpersonationAuthorizationService,
         {
           provide: getRepositoryToken(UserEntity),
           useValue: {
@@ -366,7 +368,7 @@ describe('ImpersonationService', () => {
       ),
     ).rejects.toThrow(
       new AuthException(
-        'Impersonation not enabled for the impersonator user or the target workspace',
+        'Server level impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
@@ -409,7 +411,7 @@ describe('ImpersonationService', () => {
       ),
     ).rejects.toThrow(
       new AuthException(
-        'Impersonation not enabled for the impersonator user or the target workspace',
+        'Server level impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );

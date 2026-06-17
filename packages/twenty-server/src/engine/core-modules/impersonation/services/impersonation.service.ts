@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -15,11 +14,12 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-message-by-reason.constant';
+import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 export class ImpersonationService {
@@ -30,7 +30,7 @@ export class ImpersonationService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly permissionsService: PermissionsService,
+    private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
   ) {}
 
   async impersonate(
@@ -72,22 +72,22 @@ export class ImpersonationService {
       );
     }
 
-    const isServerLevelImpersonation =
-      toImpersonateUserWorkspace.workspace.id !==
-      impersonatorUserWorkspace.workspace.id;
+    const authorizationResult =
+      await this.impersonationAuthorizationService.checkImpersonationAuthorization(
+        impersonatorUserWorkspace,
+        toImpersonateUserWorkspace,
+      );
 
-    const hasServerLevelImpersonatePermission =
-      impersonatorUserWorkspace.user.canImpersonate === true &&
-      toImpersonateUserWorkspace.workspace.allowImpersonation === true;
+    if (!authorizationResult.allowed) {
+      throw new AuthException(
+        IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON[
+          authorizationResult.reason
+        ],
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
-    if (isServerLevelImpersonation) {
-      if (!hasServerLevelImpersonatePermission) {
-        throw new AuthException(
-          'Impersonation not enabled for the impersonator user or the target workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
+    if (authorizationResult.level === 'server') {
       const isDevelopment =
         this.twentyConfigService.get('NODE_ENV') ===
         NodeEnvironment.DEVELOPMENT;
@@ -119,35 +119,6 @@ export class ImpersonationService {
         impersonatorUserWorkspace,
         toImpersonateUserWorkspace,
         'server',
-      );
-    }
-
-    const hasWorkspaceLevelImpersonatePermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId: impersonatorUserWorkspace.id,
-        setting: PermissionFlagType.IMPERSONATE,
-        workspaceId: workspaceId,
-      });
-
-    if (!hasWorkspaceLevelImpersonatePermission) {
-      throw new AuthException(
-        'Impersonation not enabled for this workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const targetHasAdminPrivileges =
-      toImpersonateUserWorkspace.user.canImpersonate === true ||
-      toImpersonateUserWorkspace.user.canAccessFullAdminPanel === true;
-
-    const impersonatorHasAdminPrivileges =
-      impersonatorUserWorkspace.user.canImpersonate === true ||
-      impersonatorUserWorkspace.user.canAccessFullAdminPanel === true;
-
-    if (targetHasAdminPrivileges && !impersonatorHasAdminPrivileges) {
-      throw new AuthException(
-        'Cannot impersonate a user with admin privileges. Only administrators can impersonate other administrators.',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 

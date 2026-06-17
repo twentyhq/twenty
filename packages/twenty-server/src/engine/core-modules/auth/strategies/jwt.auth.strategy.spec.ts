@@ -8,6 +8,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
@@ -118,9 +119,9 @@ describe('JwtAuthStrategy', () => {
     new JwtAuthStrategy(
       jwtWrapperService,
       userWorkspaceRepository,
-      permissionsService,
       workspaceCacheService,
       coreEntityCacheService,
+      new ImpersonationAuthorizationService(permissionsService),
     );
 
   describe('API_KEY validation', () => {
