@@ -14,8 +14,8 @@ import {
 } from '@tabler/icons-react';
 import {
   type ComponentType,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
+  type PointerEvent as ReactPointerEvent,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -24,11 +24,11 @@ import {
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
+import { previewFontSize } from '@/app-preview/preview-font-size';
 import { Chip } from '@/app-preview/primitives/chip';
 import { FaviconLogo } from '@/app-preview/primitives/favicon-logo';
 import { PersonAvatar } from '@/app-preview/primitives/person-avatar';
 import { PreviewTag } from '@/app-preview/primitives/preview-tag';
-import { previewFontSize } from '@/app-preview/preview-font-size';
 import { type CellSelectColor } from '@/app-preview/types';
 import { RatingStar } from '@/icons';
 import { clampToRange } from '@/platform/motion';
@@ -707,7 +707,7 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
     <Root>
       <BoardHeader>
         <IconLayoutKanban size={14} stroke={1.6} />
-        <BoardTitle>All opportunities</BoardTitle>
+        <BoardTitle>All Opportunities</BoardTitle>
         <BoardCount>· 4</BoardCount>
       </BoardHeader>
 
