@@ -8,6 +8,7 @@ import {
 import gql from 'graphql-tag';
 
 import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-created';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
@@ -20,7 +21,7 @@ import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 describe('Object event write (integration)', () => {
   let clickHouseClient: ClickHouseClient;
   let personObjectMetadataId: string;
-  const testWorkspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+  const testWorkspaceId = SEED_APPLE_WORKSPACE_ID;
 
   beforeAll(async () => {
     jest.useRealTimers();

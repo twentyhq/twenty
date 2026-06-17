@@ -14,7 +14,8 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-const DEFAULT_E2E_ACCESS_TOKEN_OUTPUT_PATH = join(tmpdir(), 'e2e-access-token');
+const getDefaultE2eAccessTokenOutputPath = (workspaceId: string): string =>
+  join(tmpdir(), `e2e-access-token-${workspaceId}`);
 
 @Command({
   name: 'workspace:seed:e2e-token',
@@ -50,7 +51,7 @@ export class GenerateE2eAccessTokenCommand extends CommandRunner {
 
     const outputPath =
       process.env.E2E_ACCESS_TOKEN_OUTPUT_PATH ??
-      DEFAULT_E2E_ACCESS_TOKEN_OUTPUT_PATH;
+      getDefaultE2eAccessTokenOutputPath(workspaceId);
 
     fs.writeFileSync(outputPath, token, 'utf8');
 
