@@ -17,6 +17,18 @@ describe('extractRecallBotConvergence', () => {
     expect(convergence.status).toBe('PROCESSING');
   });
 
+  it('uses created_at to find the latest status when Recall returns status changes out of order', () => {
+    const convergence = extractRecallBotConvergence({
+      status_changes: [
+        { code: 'done', created_at: '2026-01-01T14:05:00.000Z' },
+        { code: 'joining_call', created_at: '2026-01-01T12:58:00.000Z' },
+        { code: 'in_call_recording', created_at: '2026-01-01T13:02:00.000Z' },
+      ],
+    });
+
+    expect(convergence.status).toBe('PROCESSING');
+  });
+
   it('prefers recording-object timestamps over status change entries', () => {
     const convergence = extractRecallBotConvergence({
       status_changes: [

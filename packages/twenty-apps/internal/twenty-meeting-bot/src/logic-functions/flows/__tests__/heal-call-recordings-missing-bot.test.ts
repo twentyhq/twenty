@@ -150,6 +150,27 @@ describe('healCallRecordingsMissingBot', () => {
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 
+  it('does not report a recording as scheduled when Recall scheduling fails', async () => {
+    scheduleRecallBotMock.mockResolvedValue({
+      ok: false,
+      status: 500,
+      errorMessage: 'Recall API responded with HTTP 500',
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildBotlessCallRecording()],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await healCallRecordingsMissingBot({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.scheduledCallRecordingIds).toEqual([]);
+    expect(scheduleRecallBotMock).toHaveBeenCalledTimes(1);
+    expect(client.callRecordings[0].externalBotId).toBeNull();
+  });
+
   it('skips a recording whose meeting has already ended', async () => {
     const client = new FakeCoreApiClient({
       callRecordings: [buildBotlessCallRecording()],

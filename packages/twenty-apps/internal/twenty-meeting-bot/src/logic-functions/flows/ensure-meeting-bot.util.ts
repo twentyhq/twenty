@@ -12,12 +12,12 @@ import { updateCallRecording } from 'src/logic-functions/data/update-call-record
 export const ensureMeetingBot = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
-): Promise<void> => {
+): Promise<boolean> => {
   const meetingUrl = calendarEvent.conferenceLinkUrl;
   const joinAt = calendarEvent.startsAt;
 
   if (isUndefined(meetingUrl) || isUndefined(joinAt)) {
-    return;
+    return false;
   }
 
   const freshCallRecording = (
@@ -30,7 +30,7 @@ export const ensureMeetingBot = async (
       CallRecordingRequestStatus.REQUESTED ||
     !isUndefined(freshCallRecording.externalBotId)
   ) {
-    return;
+    return false;
   }
 
   const scheduleResult = await scheduleRecallBot({
@@ -44,11 +44,13 @@ export const ensureMeetingBot = async (
       `[twenty-meeting-bot] failed to schedule Recall bot for callRecording ${callRecording.id}: ${scheduleResult.errorMessage}`,
     );
 
-    return;
+    return false;
   }
 
   await updateCallRecording(client, {
     id: callRecording.id,
     data: { externalBotId: scheduleResult.externalBotId },
   });
+
+  return true;
 };

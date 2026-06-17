@@ -23,7 +23,7 @@ export const extractRecallBotConvergence = (
   bot: Record<string, unknown>,
 ): RecallBotConvergence => {
   const statusChanges = extractStatusChanges(bot);
-  const latestStatusChange = statusChanges[statusChanges.length - 1];
+  const latestStatusChange = getLatestStatusChange(statusChanges);
   const recording = extractFirstRecording(bot);
 
   return {
@@ -56,6 +56,52 @@ const extractStatusChanges = (
 
     return [{ code, createdAt: getString(asRecord(statusChange)?.created_at) }];
   });
+};
+
+const getLatestStatusChange = (
+  statusChanges: RecallBotStatusChange[],
+): RecallBotStatusChange | undefined =>
+  statusChanges.reduce<RecallBotStatusChange | undefined>(
+    (latestStatusChange, statusChange) => {
+      if (isUndefined(latestStatusChange)) {
+        return statusChange;
+      }
+
+      const statusChangeTime = getStatusChangeTime(statusChange);
+      const latestStatusChangeTime = getStatusChangeTime(latestStatusChange);
+
+      if (
+        isUndefined(statusChangeTime) &&
+        isUndefined(latestStatusChangeTime)
+      ) {
+        return statusChange;
+      }
+
+      if (isUndefined(statusChangeTime)) {
+        return latestStatusChange;
+      }
+
+      if (isUndefined(latestStatusChangeTime)) {
+        return statusChange;
+      }
+
+      return statusChangeTime >= latestStatusChangeTime
+        ? statusChange
+        : latestStatusChange;
+    },
+    undefined,
+  );
+
+const getStatusChangeTime = (
+  statusChange: RecallBotStatusChange,
+): number | undefined => {
+  const normalizedTimestamp = normalizeRecallTimestamp(statusChange.createdAt);
+
+  if (isUndefined(normalizedTimestamp)) {
+    return undefined;
+  }
+
+  return new Date(normalizedTimestamp).getTime();
 };
 
 const extractFirstRecording = (

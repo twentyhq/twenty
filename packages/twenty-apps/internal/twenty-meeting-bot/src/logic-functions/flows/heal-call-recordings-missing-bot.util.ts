@@ -50,8 +50,14 @@ export const healCallRecordingsMissingBot = async ({
       continue;
     }
 
-    await ensureMeetingBot(client, { callRecording, calendarEvent });
-    scheduledCallRecordingIds.push(callRecording.id);
+    const didScheduleMeetingBot = await ensureMeetingBot(client, {
+      callRecording,
+      calendarEvent,
+    });
+
+    if (didScheduleMeetingBot) {
+      scheduledCallRecordingIds.push(callRecording.id);
+    }
   }
 
   return { scheduledCallRecordingIds };

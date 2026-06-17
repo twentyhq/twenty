@@ -58,6 +58,14 @@ export const listScheduledRecallBots = async ({
     path = extractNextPath(result.data, configResult.config.baseUrl);
   }
 
+  if (!isUndefined(path)) {
+    return {
+      ok: false,
+      status: null,
+      errorMessage: `Recall bot list exceeded ${RECALL_BOT_LIST_MAX_PAGES} pages`,
+    };
+  }
+
   return { ok: true, bots };
 };
 

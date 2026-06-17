@@ -230,6 +230,31 @@ describe('recall bot api', () => {
     );
   });
 
+  it('fails the scheduled bot list when the pagination cap would truncate results', async () => {
+    for (let pageIndex = 1; pageIndex <= 10; pageIndex++) {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          next: `https://ap-northeast-1.recall.ai/api/v1/bot/?cursor=page-${pageIndex + 1}`,
+          results: [{ id: `bot-${pageIndex}` }],
+        }),
+      });
+    }
+
+    const result = await listScheduledRecallBots({
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
+      joinAtBefore: '2026-01-02T12:00:00.000Z',
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      status: null,
+      errorMessage: 'Recall bot list exceeded 10 pages',
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(10);
+  });
+
   it('stops paginating when the next link points outside the configured region', async () => {
     fetchMock.mockResolvedValue({
       ok: true,
@@ -308,6 +333,22 @@ describe('recall bot api', () => {
       'https://ap-northeast-1.recall.ai/api/v1/bot/recall-bot-id/',
       expect.objectContaining({ method: 'GET' }),
     );
+  });
+
+  it('fails when fetching a bot returns an empty response payload', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => null,
+    });
+
+    const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+    expect(result).toEqual({
+      ok: false,
+      status: 200,
+      errorMessage: 'Recall API returned an empty bot response',
+    });
   });
 
   it('reports the HTTP status when fetching a bot that no longer exists', async () => {

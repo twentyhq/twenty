@@ -126,7 +126,7 @@ const isCurrentApplicationManagedBot = ({
   const claimedApplicationId = getClaimedApplicationId(bot);
 
   return (
-    isUndefined(claimedApplicationId) ||
+    !isUndefined(currentApplicationId) &&
     claimedApplicationId === currentApplicationId
   );
 };

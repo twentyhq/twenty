@@ -1,4 +1,5 @@
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 
@@ -27,5 +28,15 @@ export const getRecallBot = async ({
     return result;
   }
 
-  return { ok: true, bot: result.data ?? {} };
+  const bot = asRecord(result.data);
+
+  if (bot === undefined) {
+    return {
+      ok: false,
+      status: result.status,
+      errorMessage: 'Recall API returned an empty bot response',
+    };
+  }
+
+  return { ok: true, bot };
 };

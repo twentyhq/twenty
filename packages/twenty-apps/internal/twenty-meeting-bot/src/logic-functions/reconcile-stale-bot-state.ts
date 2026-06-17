@@ -22,7 +22,7 @@ const REAPER_JOIN_AT_LOOKAHEAD_HOURS = 24;
 
 type StepFailure = { error: string };
 
-const handler = async (): Promise<object> => {
+export const reconcileStaleBotStateHandler = async (): Promise<object> => {
   const now = new Date();
   const client = new CoreApiClient();
 
@@ -90,9 +90,11 @@ const convergeDivergedCallRecordingsSafely = async (
 const buildStepFailure = (stepLabel: string, error: unknown): StepFailure => {
   const errorMessage = error instanceof Error ? error.message : String(error);
 
-  console.error(`[twenty-meeting-bot] ${stepLabel} failed: ${errorMessage}`);
+  if (process.env.NODE_ENV !== 'test') {
+    console.error(`[twenty-meeting-bot] ${stepLabel} failed: ${errorMessage}`);
+  }
 
-  return { error: errorMessage };
+  return { error: `${stepLabel} failed` };
 };
 
 export default defineLogicFunction({
@@ -102,7 +104,7 @@ export default defineLogicFunction({
     'Converges call recordings with Recall on a schedule: pulls stale bot statuses, finishes failed cancellations, schedules bots for recordings still missing one, and reaps unclaimed bots. Reads calendar events only to heal already-decided recordings, never to discover meetings.',
   // Pulling bot statuses for many recordings is the dominant cost.
   timeoutSeconds: 300,
-  handler,
+  handler: reconcileStaleBotStateHandler,
   cronTriggerSettings: {
     pattern: STALE_BOT_STATE_CRON_PATTERN,
   },
