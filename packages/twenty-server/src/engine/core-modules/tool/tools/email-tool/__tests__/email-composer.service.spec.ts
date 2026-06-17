@@ -59,7 +59,6 @@ describe('EmailComposerService connected account resolution', () => {
     const result = await service.composeEmail(
       { ...baseParams, connectedAccountId: CONNECTED_ACCOUNT_ID },
       context,
-      { attachmentsFileFolder: 'Workflow' as never },
     );
 
     expect(result.success).toBe(true);
@@ -78,7 +77,6 @@ describe('EmailComposerService connected account resolution', () => {
       service.composeEmail(
         { ...baseParams, connectedAccountId: 'not-a-uuid' },
         context,
-        { attachmentsFileFolder: 'Workflow' as never },
       ),
     ).rejects.toThrow('Connected account id is not a valid UUID');
   });
@@ -90,7 +88,6 @@ describe('EmailComposerService connected account resolution', () => {
       service.composeEmail(
         { ...baseParams, connectedAccountId: CONNECTED_ACCOUNT_ID },
         context,
-        { attachmentsFileFolder: 'Workflow' as never },
       ),
     ).rejects.toThrow(`No connected account found for id`);
   });
