@@ -48,10 +48,7 @@ export const useImpersonationSession = () => {
         throw error;
       }
 
-      // Clear the cached (getOnInit) identity so the reload bootstraps as the
-      // impersonated user, not the admin. The admin token stays in sessionStorage.
       clearSessionLocalStorageKeys();
-
       reloadWithSession(targetPath);
     },
     [store, getAuthTokensFromLoginToken],
@@ -80,10 +77,7 @@ export const useImpersonationSession = () => {
 
     sessionStorage.removeItem(IMPERSONATION_SESSION_KEY);
     store.set(tokenPairState.atom, session.tokenPair);
-
-    // Clear the cached identity so the reload bootstraps as the admin again.
     clearSessionLocalStorageKeys();
-
     reloadWithSession(session.returnPath);
   }, [store, signOut]);
 
