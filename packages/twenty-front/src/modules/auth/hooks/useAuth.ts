@@ -140,9 +140,6 @@ export const useAuth = () => {
         'create-new-workspace';
 
       if (availableWorkspacesCount === 0 || wantsToCreateNewWorkspace) {
-        // Both multi-workspace and single-workspace self-host now go through the
-        // same creation form. We pre-warm the defaults query so the form can
-        // seed the workspace name (and subdomain in multi-workspace mode).
         await apolloClient.query({
           query: GetWorkspaceCreationDefaultsDocument,
         });
