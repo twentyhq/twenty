@@ -160,6 +160,7 @@ export const WorkflowEditTriggerWebhookForm = ({
                     ...trigger.settings,
                     httpMethod: 'POST',
                     expectedBody: parsingResult.data,
+                    expectedOutputSchema: parsingResult.data,
                     outputSchema,
                   } satisfies WorkflowWebhookTrigger['settings'],
                 },
