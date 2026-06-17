@@ -1,4 +1,4 @@
-import { type ToolUIPart } from 'ai';
+import { isToolUIPart } from 'ai';
 import {
   isExtendedFileUIPart,
   type ExtendedUIMessagePart,
@@ -6,9 +6,16 @@ import {
 
 import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 
-const isToolPart = (part: ExtendedUIMessagePart): part is ToolUIPart => {
-  return part.type.includes('tool-') && 'toolCallId' in part;
-};
+// Static tool parts use `tool-<name>` as their type; dynamic tool parts
+// (tools the model invokes that aren't part of the bound schema) use the
+// literal type `dynamic-tool` and carry the name on a `toolName` field.
+const getToolNameFromPart = (part: {
+  type: string;
+  toolName?: string;
+}): string =>
+  part.type === 'dynamic-tool'
+    ? (part.toolName ?? '')
+    : part.type.slice('tool-'.length);
 
 export const mapUIMessagePartsToDBParts = (
   uiMessageParts: ExtendedUIMessagePart[],
@@ -80,23 +87,24 @@ export const mapUIMessagePartsToDBParts = (
         case 'data-thread-title':
           // Thread title is a transient notification for the client
           return null;
-        default:
-          {
-            if (isToolPart(part)) {
-              const { toolCallId, input, output, errorText, state } = part;
-
-              return {
-                ...basePart,
-                toolCallId: toolCallId,
-                toolInput: input,
-                toolOutput: output,
-                errorMessage: errorText,
-                state,
-                providerExecuted: part.providerExecuted ?? null,
-              };
-            }
+        default: {
+          if (isToolUIPart(part)) {
+            return {
+              ...basePart,
+              toolName: getToolNameFromPart(part),
+              toolCallId: part.toolCallId,
+              toolInput: part.input,
+              toolOutput: part.output,
+              errorMessage: part.errorText,
+              state: part.state,
+              providerExecuted: part.providerExecuted ?? null,
+            };
           }
-          throw new Error(`Unsupported part type: ${part.type}`);
+
+          throw new Error(
+            `Unsupported part type: ${(part as { type: string }).type}`,
+          );
+        }
       }
     })
     .filter((part): part is Partial<AgentMessagePartEntity> => part !== null);
