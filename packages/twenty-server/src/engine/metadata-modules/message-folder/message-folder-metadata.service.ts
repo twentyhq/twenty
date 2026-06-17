@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, Repository } from 'typeorm';
 
-import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  MessageFolderPendingSyncAction,
+} from 'twenty-shared/types';
 
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
@@ -192,10 +195,33 @@ export class MessageFolderMetadataService {
     workspaceId: string;
     data: Partial<MessageFolderEntity>;
   }): Promise<MessageFolderDTO[]> {
+    const foldersToImport =
+      data.isSynced === true
+        ? await this.repository.find({
+            where: { id: In(ids), workspaceId, isSynced: false },
+            relations: { messageChannel: { connectedAccount: true } },
+          })
+        : [];
+
     await this.repository.update(
       { id: In(ids), workspaceId },
       data as Record<string, unknown>,
     );
+
+    const folderIdsToImport = foldersToImport
+      .filter(
+        (folder) =>
+          folder.messageChannel?.connectedAccount?.provider ===
+          ConnectedAccountProvider.GOOGLE,
+      )
+      .map((folder) => folder.id);
+
+    if (folderIdsToImport.length > 0) {
+      await this.repository.update(
+        { id: In(folderIdsToImport), workspaceId },
+        { pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_IMPORT },
+      );
+    }
 
     return this.repository.find({ where: { id: In(ids), workspaceId } });
   }
