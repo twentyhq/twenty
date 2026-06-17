@@ -1,251 +1,190 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
+import { previewFontSize } from '@/app-preview/preview-font-size';
 import { EASING } from '@/tokens';
-import { PRODUCT_FEATURE_PALETTE } from '@/tokens/feature-scenes/product-feature-palette';
 
-const palette = PRODUCT_FEATURE_PALETTE;
+import {
+  type DashboardMonth,
+  type DashboardStage,
+} from './dashboard-visual-data';
 
-const Panel = styled.div`
-  background-color: ${palette.background};
-  border: 1px solid ${palette.border};
-  border-radius: 10px;
-  box-shadow: ${palette.shadow.light};
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  height: 100%;
-  min-width: 0;
-  padding: 14px 16px;
-`;
+const Y_TICK_COUNT = 5;
+const X_LABEL_ROW_HEIGHT = 18;
 
-const PanelTitle = styled.span`
-  color: ${palette.textSecondary};
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-`;
-
-const ChartWrapper = styled.div`
+const Root = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   min-height: 0;
 `;
 
-const ChartBody = styled.div`
+const Plot = styled.div`
   display: flex;
   flex: 1;
   min-height: 0;
-`;
-
-const YAxisTitle = styled.span`
-  align-self: center;
-  color: ${palette.textTertiary};
-  font-size: 9px;
-  letter-spacing: 0.03em;
-  margin-right: 12px;
-  white-space: nowrap;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
 `;
 
 const YAxis = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  justify-content: flex-end;
-  padding-bottom: 20px;
-  padding-right: 6px;
+  justify-content: space-between;
+  padding-bottom: ${X_LABEL_ROW_HEIGHT}px;
+  padding-right: 8px;
 `;
 
 const YLabel = styled.span`
-  color: ${palette.textTertiary};
-  font-size: 9px;
+  color: ${THEME_LIGHT.font.color.light};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.xs)};
   font-variant-numeric: tabular-nums;
   line-height: 1;
   text-align: right;
 `;
 
-const BarsContainer = styled.div`
+const Bars = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   min-width: 0;
 `;
 
-const BarsArea = styled.div`
+const BarsRow = styled.div`
   align-items: flex-end;
   display: flex;
   flex: 1;
-  gap: 4px;
+  gap: 6px;
   min-height: 0;
 `;
 
 const BarColumn = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 4px;
-  height: 100%;
-  justify-content: flex-end;
-`;
-
-const BarPair = styled.div`
   align-items: flex-end;
   display: flex;
   flex: 1;
-  gap: 2px;
-  justify-content: center;
-  min-height: 0;
-  width: 100%;
-`;
-
-const BarWithLabel = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
   height: 100%;
-  justify-content: flex-end;
-  width: 40%;
+  justify-content: center;
 `;
 
-const Bar = styled.div`
+// New at the bottom, Won at the top (column-reverse keeps the data order while
+// stacking upward). Grows from the baseline when the tile becomes active.
+const Stack = styled.div`
   border-radius: 3px 3px 0 0;
-  cursor: pointer;
+  display: flex;
+  flex-direction: column-reverse;
   min-height: 2px;
+  overflow: hidden;
+  transform-origin: bottom;
   transition:
-    height 0.8s ${EASING.standard},
+    transform 0.8s ${EASING.standard},
     filter 0.15s ease;
+  width: 68%;
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+`;
+
+const Segment = styled.div`
+  flex-shrink: 0;
   width: 100%;
+
+  &[data-tone='blue'] {
+    background-color: ${THEME_LIGHT.color.blue8};
+  }
+  &[data-tone='purple'] {
+    background-color: ${THEME_LIGHT.color.purple8};
+  }
+  &[data-tone='turquoise'] {
+    background-color: ${THEME_LIGHT.color.turquoise8};
+  }
+  &[data-tone='orange'] {
+    background-color: ${THEME_LIGHT.color.orange8};
+  }
 `;
 
-const BarValue = styled.span`
-  color: ${palette.textSecondary};
-  font-size: 8px;
-  font-variant-numeric: tabular-nums;
-  font-weight: 500;
-  line-height: 1;
+const XLabels = styled.div`
+  display: flex;
+  gap: 6px;
+  height: ${X_LABEL_ROW_HEIGHT}px;
 `;
 
-const BarLabel = styled.span`
-  color: ${palette.textTertiary};
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-`;
-
-const XAxisTitle = styled.div`
-  color: ${palette.textTertiary};
-  font-size: 9px;
-  letter-spacing: 0.03em;
+const XLabel = styled.span`
+  color: ${THEME_LIGHT.font.color.light};
+  flex: 1;
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.xs)};
   padding-top: 6px;
   text-align: center;
 `;
 
-export type BarDatum = {
-  label: string;
-  value: number;
-  value2: number;
-};
-
-const Y_TICK_COUNT = 5;
-
-// Bars grow in staggered (50ms per column, 25ms between the pair) when
-// the tile becomes active; hovering a column brightens it.
+// Deals by stage, stacked per month, in the same colours as the donut (blue =
+// New … orange = Won). Bars are scaled to the top tick so they read against the
+// axis; stacks grow in staggered (50ms per column) when the tile is active.
 export function BarChart({
   active,
-  data,
+  months,
+  stages,
 }: {
   active: boolean;
-  data: BarDatum[];
+  months: DashboardMonth[];
+  stages: DashboardStage[];
 }) {
-  const [hoveredNumber, setHoveredNumber] = useState<number | null>(null);
-  const allValues = data.flatMap((datum) => [datum.value, datum.value2]);
-  const maxValue = Math.max(...allValues) * 1.05;
-  const tickStep = Math.ceil(maxValue / Y_TICK_COUNT);
+  const monthlyTotals = months.map((month) =>
+    month.values.reduce((sum, value) => sum + value, 0),
+  );
+  const tickStep = Math.ceil(
+    (Math.max(...monthlyTotals) * 1.05) / Y_TICK_COUNT,
+  );
+  const topTick = tickStep * Y_TICK_COUNT;
   const yTicks = Array.from(
     { length: Y_TICK_COUNT + 1 },
     (_, tickNumber) => tickNumber * tickStep,
   );
-  const columns = data.map((datum, columnNumber) => ({
-    columnNumber,
-    datum,
-  }));
 
   return (
-    <Panel>
-      <PanelTitle>Widget name</PanelTitle>
-      <ChartWrapper>
-        <ChartBody>
-          <YAxisTitle>Values</YAxisTitle>
-          <YAxis>
-            {yTicks.toReversed().map((tick) => (
-              <YLabel key={tick}>{tick === 0 ? '0' : `${tick}K`}</YLabel>
-            ))}
-          </YAxis>
-          <BarsContainer>
-            <BarsArea>
-              {columns.map(({ columnNumber, datum }) => {
-                const firstHeight = (datum.value / maxValue) * 100;
-                const secondHeight = (datum.value2 / maxValue) * 100;
-                const isHovered = hoveredNumber === columnNumber;
-
-                return (
-                  <BarColumn
-                    key={columnNumber}
-                    onPointerEnter={() => setHoveredNumber(columnNumber)}
-                    onPointerLeave={() => setHoveredNumber(null)}
+    <Root>
+      <Plot>
+        <YAxis>
+          {yTicks.toReversed().map((tick) => (
+            <YLabel key={tick}>{tick}</YLabel>
+          ))}
+        </YAxis>
+        <Bars>
+          <BarsRow>
+            {months.map((month, columnNumber) => {
+              const total = monthlyTotals[columnNumber];
+              return (
+                <BarColumn key={month.label}>
+                  <Stack
+                    style={{
+                      height: `${(total / topTick) * 100}%`,
+                      transform: active ? 'scaleY(1)' : 'scaleY(0)',
+                      transitionDelay: active
+                        ? `${columnNumber * 50}ms`
+                        : '0ms',
+                    }}
                   >
-                    <BarPair>
-                      <BarWithLabel>
-                        {active ? (
-                          <BarValue style={{ opacity: isHovered ? 1 : 0.7 }}>
-                            {datum.value}
-                          </BarValue>
-                        ) : null}
-                        <Bar
-                          style={{
-                            backgroundColor: palette.chart.primary,
-                            filter: isHovered ? 'brightness(1.2)' : 'none',
-                            height: active ? `${firstHeight}%` : '0%',
-                            transitionDelay: active
-                              ? `${columnNumber * 50}ms`
-                              : '0ms',
-                          }}
-                        />
-                      </BarWithLabel>
-                      <BarWithLabel>
-                        {active ? (
-                          <BarValue style={{ opacity: isHovered ? 1 : 0.7 }}>
-                            {datum.value2}
-                          </BarValue>
-                        ) : null}
-                        <Bar
-                          style={{
-                            backgroundColor: palette.chart.secondary,
-                            filter: isHovered ? 'brightness(1.2)' : 'none',
-                            height: active ? `${secondHeight}%` : '0%',
-                            transitionDelay: active
-                              ? `${columnNumber * 50 + 25}ms`
-                              : '0ms',
-                          }}
-                        />
-                      </BarWithLabel>
-                    </BarPair>
-                    <BarLabel>{datum.label}</BarLabel>
-                  </BarColumn>
-                );
-              })}
-            </BarsArea>
-            <XAxisTitle>Months</XAxisTitle>
-          </BarsContainer>
-        </ChartBody>
-      </ChartWrapper>
-    </Panel>
+                    {stages.map((stage, stageNumber) => (
+                      <Segment
+                        key={stage.label}
+                        data-tone={stage.tone}
+                        style={{
+                          height: `${(month.values[stageNumber] / total) * 100}%`,
+                        }}
+                      />
+                    ))}
+                  </Stack>
+                </BarColumn>
+              );
+            })}
+          </BarsRow>
+          <XLabels>
+            {months.map((month) => (
+              <XLabel key={month.label}>{month.label}</XLabel>
+            ))}
+          </XLabels>
+        </Bars>
+      </Plot>
+    </Root>
   );
 }

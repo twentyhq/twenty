@@ -1,136 +1,196 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
+import { previewFontSize } from '@/app-preview/preview-font-size';
 import { EASING } from '@/tokens';
-import { PRODUCT_FEATURE_PALETTE } from '@/tokens/feature-scenes/product-feature-palette';
 
-const palette = PRODUCT_FEATURE_PALETTE;
+import { type DashboardStage } from './dashboard-visual-data';
 
-const RADIUS = 46;
-const STROKE_WIDTH = 14;
-const SIZE = 130;
+const SIZE = 96;
+const STROKE = 16;
+const RADIUS = (SIZE - STROKE) / 2;
+const CENTER = SIZE / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-const Panel = styled.div`
-  background-color: ${palette.background};
-  border: 1px solid ${palette.border};
-  border-radius: 10px;
-  box-shadow: ${palette.shadow.light};
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 18px 16px;
-`;
-
-const PanelTitle = styled.span`
-  color: ${palette.textSecondary};
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-`;
-
-const ChartArea = styled.div`
+const Root = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: 14px;
   justify-content: center;
+  min-height: 0;
+`;
+
+const ChartArea = styled.div`
+  flex-shrink: 0;
   position: relative;
 `;
 
-const CenterLabel = styled.div`
+const Ring = styled.svg`
+  display: block;
+  transform-origin: center;
+  transition:
+    opacity 0.5s ${EASING.standard},
+    transform 0.5s ${EASING.standard};
+`;
+
+const Slice = styled.circle`
+  fill: none;
+  stroke-linecap: butt;
+  transition: filter 0.15s ease;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+
+  &[data-tone='blue'] {
+    stroke: ${THEME_LIGHT.color.blue8};
+  }
+  &[data-tone='purple'] {
+    stroke: ${THEME_LIGHT.color.purple8};
+  }
+  &[data-tone='turquoise'] {
+    stroke: ${THEME_LIGHT.color.turquoise8};
+  }
+  &[data-tone='orange'] {
+    stroke: ${THEME_LIGHT.color.orange8};
+  }
+`;
+
+const Center = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  left: 50%;
+  inset: 0;
+  justify-content: center;
   position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
 `;
 
 const CenterValue = styled.span`
-  color: ${palette.textPrimary};
-  font-size: 26px;
+  color: ${THEME_LIGHT.font.color.primary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.xl)};
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: ${THEME_LIGHT.font.weight.semiBold};
   line-height: 1;
 `;
 
+const CenterLabel = styled.span`
+  color: ${THEME_LIGHT.font.color.light};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.xs)};
+  margin-top: 2px;
+`;
+
 const Legend = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+`;
+
+const LegendRow = styled.div`
   align-items: center;
   display: flex;
   gap: 6px;
 `;
 
 const LegendDot = styled.span`
-  background-color: ${palette.chart.primary};
-  border-radius: 50%;
-  height: 7px;
-  width: 7px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  height: 8px;
+  width: 8px;
+
+  &[data-tone='blue'] {
+    background-color: ${THEME_LIGHT.color.blue8};
+  }
+  &[data-tone='purple'] {
+    background-color: ${THEME_LIGHT.color.purple8};
+  }
+  &[data-tone='turquoise'] {
+    background-color: ${THEME_LIGHT.color.turquoise8};
+  }
+  &[data-tone='orange'] {
+    background-color: ${THEME_LIGHT.color.orange8};
+  }
 `;
 
 const LegendLabel = styled.span`
-  color: ${palette.textTertiary};
-  font-size: 10px;
-  letter-spacing: 0.02em;
+  color: ${THEME_LIGHT.font.color.secondary};
+  flex: 1;
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
 `;
 
-// The ring sweeps in when the tile becomes active; hovering brightens it.
+const LegendValue = styled.span`
+  color: ${THEME_LIGHT.font.color.tertiary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-variant-numeric: tabular-nums;
+`;
+
+// Multi-colour donut (twenty-front pie-chart scheme: blue → purple → turquoise
+// → orange). The ring fades + scales in when the tile becomes active; each
+// slice is rotated to its cumulative start angle and draws its arc clockwise.
+// The legend doubles as the colour key for the stacked bars beside it.
 export function DonutChart({
   active,
-  value,
+  stages,
+  values,
 }: {
   active: boolean;
-  value: number;
+  stages: DashboardStage[];
+  values: number[];
 }) {
-  const [hovered, setHovered] = useState(false);
-  const filled = (value / 100) * CIRCUMFERENCE;
-  const gap = CIRCUMFERENCE - filled;
+  const total = values.reduce((sum, value) => sum + value, 0);
+
+  let cumulative = 0;
+  const slices = stages.map((stage, stageNumber) => {
+    const value = values[stageNumber];
+    const arc = (value / total) * CIRCUMFERENCE;
+    const startAngle = -90 + (cumulative / total) * 360;
+    cumulative += value;
+    return { arc, stage, startAngle, value };
+  });
 
   return (
-    <Panel>
-      <PanelTitle>Widget name</PanelTitle>
+    <Root>
       <ChartArea>
-        <svg height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} width={SIZE}>
-          <circle
-            cx={SIZE / 2}
-            cy={SIZE / 2}
-            fill="none"
-            r={RADIUS}
-            stroke={palette.chart.track}
-            strokeWidth={STROKE_WIDTH}
-          />
-          <circle
-            cx={SIZE / 2}
-            cy={SIZE / 2}
-            fill="none"
-            onPointerEnter={() => setHovered(true)}
-            onPointerLeave={() => setHovered(false)}
-            r={RADIUS}
-            stroke={palette.chart.primary}
-            strokeDasharray={`${filled} ${gap}`}
-            strokeDashoffset={active ? CIRCUMFERENCE * 0.25 : CIRCUMFERENCE}
-            strokeLinecap="round"
-            strokeWidth={STROKE_WIDTH}
-            style={{
-              cursor: 'pointer',
-              filter: hovered ? 'brightness(1.2)' : 'none',
-              transform: 'rotate(-90deg)',
-              transformOrigin: 'center',
-              transition: `stroke-dashoffset 1.2s ${EASING.standard}, filter 0.2s ease`,
-            }}
-          />
-        </svg>
-        <CenterLabel>
-          <CenterValue>{active ? `${value}%` : '0%'}</CenterValue>
-        </CenterLabel>
+        <Ring
+          height={SIZE}
+          style={{
+            opacity: active ? 1 : 0,
+            transform: active ? 'scale(1)' : 'scale(0.85)',
+          }}
+          viewBox={`0 0 ${SIZE} ${SIZE}`}
+          width={SIZE}
+        >
+          {slices.map(({ arc, stage, startAngle }) => (
+            <Slice
+              key={stage.label}
+              cx={CENTER}
+              cy={CENTER}
+              data-tone={stage.tone}
+              r={RADIUS}
+              strokeDasharray={`${arc} ${CIRCUMFERENCE - arc}`}
+              strokeWidth={STROKE}
+              transform={`rotate(${startAngle} ${CENTER} ${CENTER})`}
+            />
+          ))}
+        </Ring>
+        <Center>
+          <CenterValue>{total}</CenterValue>
+          <CenterLabel>Deals</CenterLabel>
+        </Center>
       </ChartArea>
       <Legend>
-        <LegendDot />
-        <LegendLabel>Conversion rate</LegendLabel>
+        {slices.map(({ stage, value }) => (
+          <LegendRow key={stage.label}>
+            <LegendDot data-tone={stage.tone} />
+            <LegendLabel>{stage.label}</LegendLabel>
+            <LegendValue>{value}</LegendValue>
+          </LegendRow>
+        ))}
       </Legend>
-    </Panel>
+    </Root>
   );
 }
