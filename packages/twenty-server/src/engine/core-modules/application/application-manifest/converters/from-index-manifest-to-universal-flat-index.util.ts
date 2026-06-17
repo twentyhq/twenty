@@ -129,6 +129,7 @@ export const fromIndexManifestToUniversalFlatIndex = ({
       indexWhereClause: null,
       isCustom: false,
       isUnique: indexManifest.isUnique ?? false,
+      isSystemSideEffect: false,
       universalFlatIndexFieldMetadatas,
     },
   });
