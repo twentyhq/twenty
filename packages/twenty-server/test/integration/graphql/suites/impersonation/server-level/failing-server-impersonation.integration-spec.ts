@@ -1,3 +1,4 @@
+import { getAccessTokenForCredentials } from 'test/integration/graphql/utils/get-access-token-for-credentials.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
 
 import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -9,7 +10,7 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 // workspace must be denied at the token-generation checkpoint.
 const IMPERSONATOR_WITHOUT_2FA_ACCESS_TOKEN = APPLE_JONY_MEMBER_ACCESS_TOKEN;
 
-describe('Server-level impersonation - 2FA denial (integration)', () => {
+describe('Server-level impersonation - authorization denials (integration)', () => {
   it('rejects cross-workspace impersonation when the impersonator has no verified 2FA', async () => {
     const { errors } = await impersonate({
       userId: USER_DATA_SEED_IDS.TIM,
@@ -21,6 +22,24 @@ describe('Server-level impersonation - 2FA denial (integration)', () => {
     expect(errors).toBeDefined();
     expect(errors[0].message).toContain(
       'Two-factor authentication is required for server-level impersonation',
+    );
+  });
+
+  it('rejects a non-admin with only the workspace impersonate permission from impersonating across workspaces', async () => {
+    const scottAccessToken = await getAccessTokenForCredentials({
+      email: 'scott.forstall@apple.dev',
+    });
+
+    const { errors } = await impersonate({
+      userId: USER_DATA_SEED_IDS.JONY,
+      workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      accessToken: scottAccessToken,
+      expectToFail: true,
+    });
+
+    expect(errors).toBeDefined();
+    expect(errors[0].message).toContain(
+      'Server level impersonation not allowed',
     );
   });
 });
