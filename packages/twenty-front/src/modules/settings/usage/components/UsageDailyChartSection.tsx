@@ -63,7 +63,7 @@ export const UsageDailyChartSection = ({
 
   const lineData: LineChartSeriesWithColor[] = [
     {
-      id: chartId,
+      key: chartId,
       label: chartLabel,
       data: timeSeries.map((point) => ({
         x: formatDate(point.date, 'MMM d'),

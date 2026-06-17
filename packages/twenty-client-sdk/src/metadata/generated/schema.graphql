@@ -964,6 +964,7 @@ type Workspace {
   billingSubscriptions: [BillingSubscription!]!
   installedApplications: [Application!]!
   currentBillingSubscription: BillingSubscription
+  billingCustomer: BillingCustomer
   billingEntitlements: [BillingEntitlement!]!
   hasValidSignedEnterpriseKey: Boolean!
   hasValidEnterpriseValidityToken: Boolean!
@@ -1367,6 +1368,7 @@ type ViewConfiguration {
 type RecordTableConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
+  recordLimit: Int
 }
 
 type WorkflowConfiguration {
@@ -1551,6 +1553,11 @@ type BillingSubscriptionItem {
   quantity: Float
   stripePriceId: String!
   billingProduct: BillingProductDTO!
+}
+
+type BillingCustomer {
+  id: UUID!
+  hasPaymentMethod: Boolean
 }
 
 type BillingSubscription {
@@ -2715,7 +2722,7 @@ type LineChartDataPoint {
 }
 
 type LineChartSeries {
-  id: String!
+  key: String!
   label: String!
   data: [LineChartDataPoint!]!
 }
@@ -2731,7 +2738,7 @@ type LineChartData {
 }
 
 type PieChartDataItem {
-  id: String!
+  key: String!
   value: Float!
 }
 
@@ -3028,7 +3035,7 @@ type Query {
   apiKey(input: GetApiKeyInput!): ApiKey
   getInviteSuggestions: [InviteSuggestion!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
-  billingPortalSession(returnUrlPath: String): BillingSession!
+  billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
