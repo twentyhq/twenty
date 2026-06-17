@@ -61,10 +61,8 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-exception-message-by-reason.constant';
-import {
-  type ImpersonationDenialReason,
-  ImpersonationAuthorizationService,
-} from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
+import { IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-log-message-by-reason.constant';
+import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
@@ -100,22 +98,6 @@ import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValidDTO } from './dto/workspace-invite-hash-valid.dto';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
-
-// Event-log wording for a failed token exchange. Kept local to the resolver
-// because it embeds runtime data and the resolver is the only call site that
-// emits impersonation events; the user-facing exception message is shared via
-// IMPERSONATION_DENIAL_EXCEPTION_MESSAGE_BY_REASON.
-const IMPERSONATION_TOKEN_EXCHANGE_FAILURE_LOG_BY_REASON: Record<
-  ImpersonationDenialReason,
-  (params: { targetUserEmail: string; impersonatorUserId: string }) => string
-> = {
-  SERVER_LEVEL_NOT_ALLOWED: ({ targetUserEmail, impersonatorUserId }) =>
-    `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserId}`,
-  WORKSPACE_LEVEL_NOT_ALLOWED: ({ targetUserEmail, impersonatorUserId }) =>
-    `Impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserId}`,
-  TARGET_HAS_ADMIN_PRIVILEGES: ({ targetUserEmail, impersonatorUserId }) =>
-    `Impersonation of admin user ${targetUserEmail} denied for non-admin userId ${impersonatorUserId}`,
-};
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -780,7 +762,7 @@ export class AuthResolver {
       void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
         level: authorizationResult.level,
         action: 'token_exchange_failed',
-        message: IMPERSONATION_TOKEN_EXCHANGE_FAILURE_LOG_BY_REASON[
+        message: IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON[
           authorizationResult.reason
         ]({
           targetUserEmail,
