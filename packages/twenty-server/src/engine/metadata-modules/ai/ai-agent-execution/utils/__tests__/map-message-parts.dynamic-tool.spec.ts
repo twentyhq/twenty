@@ -95,6 +95,34 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
     });
   });
 
+  it('round-trips callProviderMetadata for provider-executed tools', () => {
+    // Native tools (e.g. Anthropic web search) are providerExecuted and carry
+    // metadata that convertToModelMessages replays — dropping it on reload
+    // would desync the conversation prefix and miss the prompt cache.
+    const original = dynamicToolPart({
+      providerExecuted: true,
+      callProviderMetadata: { anthropic: { encryptedContent: 'abc123' } },
+    });
+
+    const [row] = mapUIMessagePartsToDBParts(
+      [original],
+      'message-1',
+      'workspace-1',
+    );
+
+    expect(row).toMatchObject({
+      providerExecuted: true,
+      providerMetadata: { anthropic: { encryptedContent: 'abc123' } },
+    });
+
+    const reloaded = mapDBPartToUIMessagePart(row as AgentMessagePartEntity);
+
+    expect(reloaded).toMatchObject({
+      providerExecuted: true,
+      callProviderMetadata: { anthropic: { encryptedContent: 'abc123' } },
+    });
+  });
+
   it('round-trips a static tool part through DB and back', () => {
     const original = staticToolPart();
 

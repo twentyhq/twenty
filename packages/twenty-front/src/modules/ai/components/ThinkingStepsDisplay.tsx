@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { type ToolUIPart } from 'ai';
+import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
@@ -258,12 +258,15 @@ const ThinkingToolStepRow = ({
   rowIndex,
 }: {
   isActive: boolean;
-  part: ToolUIPart;
+  part: ToolUIPart | DynamicToolUIPart;
   rowIndex: number;
 }) => {
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
-  const rawToolName = part.type.split('-')[1];
+  // Static tools encode the name in `tool-<name>`; dynamic tools (native
+  // provider tools like web search) carry it on `toolName`. getToolName
+  // handles both — splitting the type yields 'tool' for 'dynamic-tool'.
+  const rawToolName = getToolName(part);
   const { resolvedInput: toolInput, resolvedToolName } = resolveToolInput(
     part.input,
     rawToolName,

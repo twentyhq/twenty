@@ -73,6 +73,9 @@ export const mapDBPartToUIMessagePart = (
           ...(part.providerExecuted != null && {
             providerExecuted: part.providerExecuted,
           }),
+          ...(part.providerMetadata != null && {
+            callProviderMetadata: part.providerMetadata,
+          }),
         } as ExtendedUIMessagePart;
       }
 
