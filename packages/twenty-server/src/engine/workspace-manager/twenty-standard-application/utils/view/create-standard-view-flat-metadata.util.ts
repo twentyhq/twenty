@@ -2,8 +2,8 @@ import { isDefined } from 'class-validator';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type AggregateOperations,
-  type ViewType,
-  type ViewKey,
+  ViewType,
+  ViewKey,
   ViewOpenRecordIn,
   ViewVisibility,
 } from 'twenty-shared/types';
@@ -143,6 +143,8 @@ export const createStandardViewFlatMetadata = <
     visibility: ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: null,
     isActive: true,
+    isSystemSideEffect:
+      key === ViewKey.INDEX || type === ViewType.FIELDS_WIDGET,
     overrides: null,
     universalOverrides: null,
     viewFieldIds: [],

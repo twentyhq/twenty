@@ -8,17 +8,16 @@ import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-reco
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
-// The sole place a Recall bot is created. The deterministic-create winner and active update path call it in this split.
-// TODO: Add the convergence cron in the next split so botless REQUESTED rows are healed by the same writer.
+// The sole place a Recall bot is created. Only the deterministic-create winner and the stale-state cron call it, so one writer per meeting POSTs exactly one bot.
 export const ensureMeetingBot = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
-): Promise<void> => {
+): Promise<boolean> => {
   const meetingUrl = calendarEvent.conferenceLinkUrl;
   const joinAt = calendarEvent.startsAt;
 
   if (isUndefined(meetingUrl) || isUndefined(joinAt)) {
-    return;
+    return false;
   }
 
   const freshCallRecording = (
@@ -31,7 +30,7 @@ export const ensureMeetingBot = async (
       CallRecordingRequestStatus.REQUESTED ||
     !isUndefined(freshCallRecording.externalBotId)
   ) {
-    return;
+    return false;
   }
 
   const scheduleResult = await scheduleRecallBot({
@@ -45,11 +44,13 @@ export const ensureMeetingBot = async (
       `[twenty-meeting-bot] failed to schedule Recall bot for callRecording ${callRecording.id}: ${scheduleResult.errorMessage}`,
     );
 
-    return;
+    return false;
   }
 
   await updateCallRecording(client, {
     id: callRecording.id,
     data: { externalBotId: scheduleResult.externalBotId },
   });
+
+  return true;
 };

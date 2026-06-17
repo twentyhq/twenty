@@ -1,7 +1,8 @@
-name: CI Merge Queue
+name: CI E2E Main
 
 on:
-  merge_group:
+  push:
+    branches: [main]
 
   pull_request:
     types: [labeled, synchronize, opened, reopened]
@@ -16,7 +17,7 @@ concurrency:
 jobs:
   e2e-test:
     if: >
-      github.event_name == 'merge_group' ||
+      github.event_name == 'push' ||
       (github.event_name == 'pull_request' &&
        contains(github.event.pull_request.labels.*.name, 'run-merge-queue'))
     runs-on: ubuntu-latest-8-cores
@@ -127,7 +128,7 @@ jobs:
             packages/twenty-e2e-testing/test-results/
           retention-days: 7
 
-  ci-merge-queue-status-check:
+  ci-e2e-main-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
@@ -136,3 +137,19 @@ jobs:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
         run: exit 1
+
+  notify-main-ci-failure:
+    if: always() && github.event_name == 'push' && contains(needs.*.result, 'failure')
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [e2e-test]
+    steps:
+      - name: Ping engineering on main CI failure
+        run: |
+          curl -fsS -X POST https://engineering.twenty.com/s/main-ci-failing \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "commit": "${{ github.sha }}",
+              "actor": "${{ github.actor }}",
+              "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }'

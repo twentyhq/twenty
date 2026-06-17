@@ -75,6 +75,8 @@ export type BuildStandardFlatViewFieldMetadataMapsArgs = Omit<
 export const buildStandardFlatViewFieldMetadataMaps = (
   args: BuildStandardFlatViewFieldMetadataMapsArgs,
 ): FlatEntityMaps<FlatViewField> => {
+  const { flatViewMaps } = args.dependencyFlatEntityMaps;
+
   const allViewFieldMetadatas: FlatViewField[] = (
     Object.keys(
       STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME,
@@ -94,8 +96,16 @@ export const buildStandardFlatViewFieldMetadataMaps = (
   let flatViewFieldMaps = createEmptyFlatEntityMaps();
 
   for (const viewFieldMetadata of allViewFieldMetadatas) {
+    const parentView =
+      flatViewMaps.byUniversalIdentifier[
+        viewFieldMetadata.viewUniversalIdentifier
+      ];
+
     flatViewFieldMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: viewFieldMetadata,
+      flatEntity: {
+        ...viewFieldMetadata,
+        isSystemSideEffect: parentView?.isSystemSideEffect ?? false,
+      },
       flatEntityMaps: flatViewFieldMaps,
     });
   }

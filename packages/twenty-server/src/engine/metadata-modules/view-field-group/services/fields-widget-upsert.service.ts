@@ -250,6 +250,7 @@ export class FieldsWidgetUpsertService {
             existingGroup.applicationUniversalIdentifier,
           workspaceCustomApplicationUniversalIdentifier:
             applicationUniversalIdentifier,
+          isSystemSideEffect: false,
         });
 
         const { overrides, updatedEditableProperties: sanitizedGroupProps } =
@@ -349,6 +350,7 @@ export class FieldsWidgetUpsertService {
           existingField.applicationUniversalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:
           applicationUniversalIdentifier,
+        isSystemSideEffect: existingField.isSystemSideEffect,
       });
 
       const { overrides, updatedEditableProperties: sanitizedFieldProps } =
@@ -435,6 +437,7 @@ export class FieldsWidgetUpsertService {
               existingField.applicationUniversalIdentifier,
             workspaceCustomApplicationUniversalIdentifier:
               applicationUniversalIdentifier,
+            isSystemSideEffect: existingField.isSystemSideEffect,
           });
 
           const { overrides, updatedEditableProperties: sanitizedFieldProps } =
@@ -530,6 +533,7 @@ export class FieldsWidgetUpsertService {
           overrides: null,
           universalOverrides: null,
           isActive: true,
+          isSystemSideEffect: false,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,
@@ -641,6 +645,7 @@ export class FieldsWidgetUpsertService {
           existingField.applicationUniversalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:
           applicationUniversalIdentifier,
+        isSystemSideEffect: existingField.isSystemSideEffect,
       });
 
       const { overrides, updatedEditableProperties: sanitizedFieldProps } =
@@ -700,6 +705,7 @@ export class FieldsWidgetUpsertService {
             existingField.applicationUniversalIdentifier,
           workspaceCustomApplicationUniversalIdentifier:
             applicationUniversalIdentifier,
+          isSystemSideEffect: existingField.isSystemSideEffect,
         });
 
         const { overrides, updatedEditableProperties: sanitizedFieldProps } =
@@ -788,6 +794,7 @@ export class FieldsWidgetUpsertService {
         overrides: null,
         universalOverrides: null,
         isActive: true,
+        isSystemSideEffect: false,
         createdAt: now,
         updatedAt: now,
         deletedAt: null,

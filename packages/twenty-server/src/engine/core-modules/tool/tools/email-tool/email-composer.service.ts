@@ -52,13 +52,13 @@ export class EmailComposerService {
     private readonly fileService: FileService,
   ) {}
 
-  private async getConnectedAccount(
+  private async getConnectedAccountOrThrow(
     connectedAccountId: string,
     workspaceId: string,
-  ) {
+  ): Promise<ConnectedAccountEntity> {
     if (!isValidUuid(connectedAccountId)) {
       throw new EmailToolException(
-        `Connected Account ID is not a valid UUID`,
+        `Connected account id is not a valid UUID`,
         EmailToolExceptionCode.INVALID_CONNECTED_ACCOUNT_ID,
       );
     }
@@ -78,7 +78,7 @@ export class EmailComposerService {
 
         if (!isDefined(connectedAccount)) {
           throw new EmailToolException(
-            `Connected Account '${connectedAccountId}' not found`,
+            `No connected account found for id '${connectedAccountId}'`,
             EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
           );
         }
@@ -355,7 +355,7 @@ export class EmailComposerService {
         await this.getOrThrowFirstConnectedAccountId(workspaceId);
     }
 
-    const connectedAccount = await this.getConnectedAccount(
+    const connectedAccount = await this.getConnectedAccountOrThrow(
       connectedAccountId,
       workspaceId,
     );

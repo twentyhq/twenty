@@ -64,6 +64,7 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
       widgetIds: [widgetId],
       widgetUniversalIdentifiers: [widgetUniversalIdentifier],
       isActive: true,
+      isSystemSideEffect: true,
       createdAt: now,
       updatedAt: now,
       deletedAt: null,
@@ -119,6 +120,7 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
       objectMetadataId: objectMetadata.id,
       objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
       isActive: true,
+      isSystemSideEffect: true,
       createdAt: now,
       updatedAt: now,
       deletedAt: null,
@@ -141,6 +143,7 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
     tabUniversalIdentifiers: pageLayoutTabs.map(
       (tab) => tab.universalIdentifier,
     ),
+    isSystemSideEffect: true,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

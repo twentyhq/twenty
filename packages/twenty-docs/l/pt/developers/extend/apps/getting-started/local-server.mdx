@@ -11,6 +11,7 @@ Use `yarn twenty docker:*` para controlar o contêiner Twenty local:
 | Comando                                | O que faz                                        |
 | -------------------------------------- | ------------------------------------------------ |
 | `yarn twenty docker:start`             | Inicia o servidor (baixa a imagem se necessário) |
+| `yarn twenty docker:start 2.2.0`       | Iniciar uma versão específica do servidor        |
 | `yarn twenty docker:start --port 3030` | Inicia em uma porta personalizada                |
 | `yarn twenty docker:stop`              | Interrompe o servidor (preserva os dados)        |
 | `yarn twenty docker:status`            | Mostra a URL, a versão e as credenciais de login |
@@ -20,6 +21,20 @@ Use `yarn twenty docker:*` para controlar o contêiner Twenty local:
 | `yarn twenty docker:upgrade 2.2.0`     | Atualiza para uma versão específica              |
 
 Os dados são persistidos entre reinicializações em dois volumes do Docker (`twenty-app-dev-data` para PostgreSQL, `twenty-app-dev-storage` para arquivos). Use `reset` para apagar tudo.
+
+## Fixando a versão do servidor
+
+Quando nenhuma versão é passada, `docker:start` resolve a versão a partir do intervalo `engines.twenty` do seu app em `package.json` — o mesmo intervalo que o servidor valida quando o seu app é instalado. Ele inicia a imagem mais recente publicada de `twenty-app-dev` que satisfaz o intervalo, recorrendo a `latest` quando o campo está ausente ou nenhuma versão publicada corresponde:
+
+```json filename="package.json"
+{
+  "engines": {
+    "twenty": ">=2.2.0"
+  }
+}
+```
+
+Passe uma versão explicitamente para substituir o intervalo em uma única execução: `yarn twenty docker:start 2.3.0`. Se já existir um contêiner em uma versão diferente, `docker:start` faz o upgrade dele no lugar (recriando o contêiner enquanto preserva seus volumes de dados).
 
 ## Atualizando a imagem do servidor
 
