@@ -6,7 +6,6 @@ import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { isViewFieldInLowestPosition } from 'src/engine/metadata-modules/flat-view-field/utils/is-view-field-in-lowest-position.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -100,17 +99,25 @@ export class FlatViewFieldValidatorService {
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
         updatedFlatViewField.fieldMetadataUniversalIdentifier
     ) {
-      const otherFlatViewFields =
-        findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
-          {
-            universalIdentifiers: flatView.viewFieldUniversalIdentifiers.filter(
-              (viewFieldUniversalIdentifier) =>
-                viewFieldUniversalIdentifier !==
-                updatedFlatViewField.universalIdentifier,
-            ),
+      // Propel: tolerate USER-owned view fields on app-managed views. The live
+      // view can carry view fields a user added in the UI (stamped with the
+      // workspace-custom application, not this app), whose universalIdentifiers
+      // are absent from the app-scoped optimistic maps. Resolve leniently and
+      // skip the ones we don't own instead of throwing — the label-identifier
+      // uniqueness/position check below only needs this app's sibling view fields.
+      const otherFlatViewFields = flatView.viewFieldUniversalIdentifiers
+        .filter(
+          (viewFieldUniversalIdentifier) =>
+            viewFieldUniversalIdentifier !==
+            updatedFlatViewField.universalIdentifier,
+        )
+        .map((viewFieldUniversalIdentifier) =>
+          findFlatEntityByUniversalIdentifier({
+            universalIdentifier: viewFieldUniversalIdentifier,
             flatEntityMaps: optimisticFlatViewFieldMaps,
-          },
-        );
+          }),
+        )
+        .filter(isDefined);
 
       validationResult.errors.push(
         ...validateLabelIdentifierFieldMetadataIdFlatViewField({
@@ -222,11 +229,17 @@ export class FlatViewFieldValidatorService {
       return validationResult;
     }
 
-    const otherFlatViewFields =
-      findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
-        universalIdentifiers: flatView.viewFieldUniversalIdentifiers,
-        flatEntityMaps: optimisticFlatViewFieldMaps,
-      });
+    // Propel: tolerate USER-owned view fields on app-managed views (see
+    // validateFlatViewFieldUpdate) — resolve leniently, skip ids this app
+    // does not own instead of throwing.
+    const otherFlatViewFields = flatView.viewFieldUniversalIdentifiers
+      .map((viewFieldUniversalIdentifier) =>
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier: viewFieldUniversalIdentifier,
+          flatEntityMaps: optimisticFlatViewFieldMaps,
+        }),
+      )
+      .filter(isDefined);
     const equivalentExistingFlatViewFieldExists = otherFlatViewFields.some(
       (flatViewField) =>
         flatViewField.viewUniversalIdentifier ===

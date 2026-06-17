@@ -11,7 +11,6 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { ViewSortDirection } from 'twenty-shared/types';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 
 @Injectable()
 export class FlatViewSortValidatorService {
@@ -80,11 +79,17 @@ export class FlatViewSortValidatorService {
       return validationResult;
     }
 
-    const otherFlatViewSorts =
-      findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
-        universalIdentifiers: flatView.viewSortUniversalIdentifiers,
-        flatEntityMaps: optimisticFlatViewSortMaps,
-      });
+    // Propel: tolerate USER-owned view sorts on app-managed views (same as the
+    // viewField validator) — resolve leniently, skip ids this app does not own
+    // instead of throwing.
+    const otherFlatViewSorts = flatView.viewSortUniversalIdentifiers
+      .map((viewSortUniversalIdentifier) =>
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier: viewSortUniversalIdentifier,
+          flatEntityMaps: optimisticFlatViewSortMaps,
+        }),
+      )
+      .filter(isDefined);
 
     const equivalentExistingFlatViewSortExists = otherFlatViewSorts.some(
       (flatViewSort) =>
