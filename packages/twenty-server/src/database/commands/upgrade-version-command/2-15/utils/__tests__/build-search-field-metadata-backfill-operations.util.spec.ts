@@ -102,32 +102,33 @@ const buildSearchFieldMetadata = ({
   };
 };
 
-// Custom object with two TEXT fields whose names overlap by prefix (tag / tagline).
-// The label identifier is the `tag` field. Only the `tag` field should produce a row;
-// the deterministic id-based selection makes the prefix overlap irrelevant.
+// Custom object with a searchable `name` field plus a TEXT field whose name
+// overlaps it by prefix (name / nameDescription). Only the `name` field should
+// produce a row; the exact-name match makes the prefix overlap irrelevant. This
+// mirrors pre-2.15 provisioning, which indexes the custom object's `name` field only.
 const buildCustomObjectFixture = () => {
-  const tagFieldId = 'tag-field-id';
-  const taglineFieldId = 'tagline-field-id';
+  const nameFieldId = 'name-field-id';
+  const nameDescriptionFieldId = 'name-description-field-id';
   const customObjectUniversalIdentifier = 'custom-object-uid';
   const customObjectId = 'custom-object-id';
 
-  const tagField = getFlatFieldMetadataMock({
-    id: tagFieldId,
-    universalIdentifier: 'tag-field-uid',
+  const nameField = getFlatFieldMetadataMock({
+    id: nameFieldId,
+    universalIdentifier: 'name-field-uid',
     objectMetadataId: customObjectId,
     objectMetadataUniversalIdentifier: customObjectUniversalIdentifier,
     type: FieldMetadataType.TEXT,
-    name: 'tag',
+    name: 'name',
     applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
   });
 
-  const taglineField = getFlatFieldMetadataMock({
-    id: taglineFieldId,
-    universalIdentifier: 'tagline-field-uid',
+  const nameDescriptionField = getFlatFieldMetadataMock({
+    id: nameDescriptionFieldId,
+    universalIdentifier: 'name-description-field-uid',
     objectMetadataId: customObjectId,
     objectMetadataUniversalIdentifier: customObjectUniversalIdentifier,
     type: FieldMetadataType.TEXT,
-    name: 'tagline',
+    name: 'nameDescription',
     applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
   });
 
@@ -135,26 +136,28 @@ const buildCustomObjectFixture = () => {
     id: customObjectId,
     universalIdentifier: customObjectUniversalIdentifier,
     isSearchable: true,
-    isCustom: true,
     applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-    labelIdentifierFieldMetadataId: tagFieldId,
-    fieldIds: [tagFieldId, taglineFieldId],
+    labelIdentifierFieldMetadataId: nameFieldId,
+    fieldUniversalIdentifiers: [
+      nameField.universalIdentifier,
+      nameDescriptionField.universalIdentifier,
+    ],
   });
 
-  return { customObject, tagField, taglineField };
+  return { customObject, nameField, nameDescriptionField };
 };
 
 describe('buildSearchFieldMetadataBackfillOperations', () => {
-  it('selects only the label-identifier field for a custom object, ignoring a prefix-overlapping field name', () => {
-    const { customObject, tagField, taglineField } =
+  it('selects only the name field for a custom object, ignoring a prefix-overlapping field name', () => {
+    const { customObject, nameField, nameDescriptionField } =
       buildCustomObjectFixture();
 
     const { flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier } =
       buildSearchFieldMetadataBackfillOperations({
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps([customObject]),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
-          tagField,
-          taglineField,
+          nameField,
+          nameDescriptionField,
         ]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
         standardFlatSearchFieldMetadataMaps:
@@ -168,23 +171,67 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
 
     expect(customApplicationRows).toHaveLength(1);
     expect(customApplicationRows?.[0].fieldMetadataUniversalIdentifier).toBe(
-      tagField.universalIdentifier,
+      nameField.universalIdentifier,
     );
     expect(customApplicationRows?.[0].objectMetadataUniversalIdentifier).toBe(
       customObject.universalIdentifier,
     );
-    // No spurious row for the prefix-overlapping `tagline` field.
+    // No spurious row for the prefix-overlapping `nameDescription` field.
     expect(
       customApplicationRows?.some(
         (row) =>
           row.fieldMetadataUniversalIdentifier ===
-          taglineField.universalIdentifier,
+          nameDescriptionField.universalIdentifier,
       ),
     ).toBe(false);
   });
 
+  it('creates no row for a searchable custom object that has no name field (junction object whose label identifier is a UUID id field)', () => {
+    const junctionObjectId = 'junction-object-id';
+    const junctionObjectUniversalIdentifier = 'junction-object-uid';
+    const idFieldId = 'junction-id-field-id';
+
+    // No name field: the label identifier falls back to the UUID `id` field.
+    // UUID is a searchable type, so a label-identifier-based derivation would
+    // wrongly emit a row — but pre-2.15 indexes nothing here, so backfill must
+    // skip it. Regression guard for the junction-object over-creation bug.
+    const idField = getFlatFieldMetadataMock({
+      id: idFieldId,
+      universalIdentifier: 'junction-id-field-uid',
+      objectMetadataId: junctionObjectId,
+      objectMetadataUniversalIdentifier: junctionObjectUniversalIdentifier,
+      type: FieldMetadataType.UUID,
+      name: 'id',
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    const junctionObject = getFlatObjectMetadataMock({
+      id: junctionObjectId,
+      universalIdentifier: junctionObjectUniversalIdentifier,
+      isSearchable: true,
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      labelIdentifierFieldMetadataId: idFieldId,
+      fieldUniversalIdentifiers: [idField.universalIdentifier],
+    });
+
+    const { flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier } =
+      buildSearchFieldMetadataBackfillOperations({
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([junctionObject]),
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([idField]),
+        flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
+        standardFlatSearchFieldMetadataMaps:
+          buildFlatSearchFieldMetadataMaps([]),
+      });
+
+    expect(
+      Object.keys(
+        flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
+      ),
+    ).toHaveLength(0);
+  });
+
   it('groups rows per application: standard-object rows under the standard application, custom-object rows under the custom application', () => {
-    const { customObject, tagField, taglineField } =
+    const { customObject, nameField, nameDescriptionField } =
       buildCustomObjectFixture();
 
     const standardObjectId = 'standard-object-id';
@@ -229,8 +276,8 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
           standardObject,
         ]),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
-          tagField,
-          taglineField,
+          nameField,
+          nameDescriptionField,
           standardField,
         ]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
@@ -267,21 +314,107 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
 
     expect(customApplicationRows).toHaveLength(1);
     expect(customApplicationRows?.[0].fieldMetadataUniversalIdentifier).toBe(
-      tagField.universalIdentifier,
+      nameField.universalIdentifier,
     );
   });
 
+  it('selects only the standard-set field on a standard object, never a prefix-overlapping sibling (phone vs phoneNumber)', () => {
+    const standardObjectId = 'standard-object-id';
+    const standardObjectUniversalIdentifier = 'standard-object-uid';
+
+    // Two fields whose names overlap by prefix. Only `phone` is part of the
+    // standard search set; `phoneNumber` must never be pulled in. The old
+    // asExpression-token heuristic could mis-bind these by name; the id-based
+    // derivation cannot.
+    const phoneFieldId = 'phone-field-id';
+    const phoneFieldUniversalIdentifier = 'phone-field-uid';
+    const phoneNumberFieldId = 'phone-number-field-id';
+    const phoneNumberFieldUniversalIdentifier = 'phone-number-field-uid';
+
+    const phoneField = getFlatFieldMetadataMock({
+      id: phoneFieldId,
+      universalIdentifier: phoneFieldUniversalIdentifier,
+      objectMetadataId: standardObjectId,
+      objectMetadataUniversalIdentifier: standardObjectUniversalIdentifier,
+      type: FieldMetadataType.TEXT,
+      name: 'phone',
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    const phoneNumberField = getFlatFieldMetadataMock({
+      id: phoneNumberFieldId,
+      universalIdentifier: phoneNumberFieldUniversalIdentifier,
+      objectMetadataId: standardObjectId,
+      objectMetadataUniversalIdentifier: standardObjectUniversalIdentifier,
+      type: FieldMetadataType.TEXT,
+      name: 'phoneNumber',
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    const standardObject = getStandardFlatObjectMetadataMock({
+      id: standardObjectId,
+      universalIdentifier: standardObjectUniversalIdentifier,
+      isSearchable: true,
+      labelIdentifierFieldMetadataId: phoneFieldId,
+      fieldIds: [phoneFieldId, phoneNumberFieldId],
+    });
+
+    const phoneSearchFieldMetadata = buildSearchFieldMetadata({
+      id: 'phone-search-field-id',
+      universalIdentifier: 'phone-search-field-uid',
+      objectMetadataId: standardObjectId,
+      fieldMetadataId: phoneFieldId,
+      objectMetadataUniversalIdentifier: standardObjectUniversalIdentifier,
+      fieldMetadataUniversalIdentifier: phoneFieldUniversalIdentifier,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    const { flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier } =
+      buildSearchFieldMetadataBackfillOperations({
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([standardObject]),
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+          phoneField,
+          phoneNumberField,
+        ]),
+        flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
+        standardFlatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([
+          phoneSearchFieldMetadata,
+        ]),
+      });
+
+    const standardApplicationRows =
+      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier[
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+      ];
+
+    expect(standardApplicationRows).toHaveLength(1);
+    expect(standardApplicationRows?.[0].fieldMetadataUniversalIdentifier).toBe(
+      phoneFieldUniversalIdentifier,
+    );
+    // The prefix-overlapping `phoneNumber` field is never selected.
+    expect(
+      standardApplicationRows?.some(
+        (row) =>
+          row.fieldMetadataUniversalIdentifier ===
+          phoneNumberFieldUniversalIdentifier,
+      ),
+    ).toBe(false);
+  });
+
   it('is a no-op when the searchFieldMetadata rows already exist (idempotent)', () => {
-    const { customObject, tagField, taglineField } =
+    const { customObject, nameField, nameDescriptionField } =
       buildCustomObjectFixture();
 
     const existingSearchFieldMetadata = buildSearchFieldMetadata({
       id: 'existing-search-field-id',
       universalIdentifier: 'existing-search-field-uid',
       objectMetadataId: customObject.id,
-      fieldMetadataId: tagField.id,
+      fieldMetadataId: nameField.id,
       objectMetadataUniversalIdentifier: customObject.universalIdentifier,
-      fieldMetadataUniversalIdentifier: tagField.universalIdentifier,
+      fieldMetadataUniversalIdentifier: nameField.universalIdentifier,
       applicationUniversalIdentifier:
         CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
@@ -290,8 +423,8 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
       buildSearchFieldMetadataBackfillOperations({
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps([customObject]),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
-          tagField,
-          taglineField,
+          nameField,
+          nameDescriptionField,
         ]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([
           existingSearchFieldMetadata,
@@ -307,37 +440,36 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
     ).toHaveLength(0);
   });
 
-  it('skips a custom object whose label-identifier field is not a searchable type', () => {
-    const { customObject, tagField, taglineField } =
-      buildCustomObjectFixture();
+  it('skips a custom object whose name field is not a searchable type', () => {
+    const customObjectId = 'relation-name-object-id';
+    const customObjectUniversalIdentifier = 'relation-name-object-uid';
+    const relationNameFieldId = 'relation-name-field-id';
 
-    const relationLabelIdentifierFieldId = 'relation-label-field-id';
-
-    const relationLabelIdentifierField = getFlatFieldMetadataMock({
-      id: relationLabelIdentifierFieldId,
-      universalIdentifier: 'relation-label-field-uid',
-      objectMetadataId: customObject.id,
-      objectMetadataUniversalIdentifier: customObject.universalIdentifier,
+    // A `name` field that is a RELATION (non-searchable) type: pre-2.15 would not
+    // include it in the tsvector and the recompute filters it out, so no row.
+    const relationNameField = getFlatFieldMetadataMock({
+      id: relationNameFieldId,
+      universalIdentifier: 'relation-name-field-uid',
+      objectMetadataId: customObjectId,
+      objectMetadataUniversalIdentifier: customObjectUniversalIdentifier,
       type: FieldMetadataType.RELATION,
-      name: 'relationLabel',
+      name: 'name',
       applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
 
-    const customObjectWithRelationLabelIdentifier: FlatObjectMetadata = {
-      ...customObject,
-      labelIdentifierFieldMetadataId: relationLabelIdentifierFieldId,
-    };
+    const customObject = getFlatObjectMetadataMock({
+      id: customObjectId,
+      universalIdentifier: customObjectUniversalIdentifier,
+      isSearchable: true,
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      labelIdentifierFieldMetadataId: relationNameFieldId,
+      fieldUniversalIdentifiers: [relationNameField.universalIdentifier],
+    });
 
     const { flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier } =
       buildSearchFieldMetadataBackfillOperations({
-        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([
-          customObjectWithRelationLabelIdentifier,
-        ]),
-        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
-          tagField,
-          taglineField,
-          relationLabelIdentifierField,
-        ]),
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([customObject]),
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([relationNameField]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
         standardFlatSearchFieldMetadataMaps:
           buildFlatSearchFieldMetadataMaps([]),
@@ -351,7 +483,7 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
   });
 
   it('skips non-searchable objects', () => {
-    const { customObject, tagField, taglineField } =
+    const { customObject, nameField, nameDescriptionField } =
       buildCustomObjectFixture();
 
     const nonSearchableObject: FlatObjectMetadata = {
@@ -365,8 +497,8 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
           nonSearchableObject,
         ]),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
-          tagField,
-          taglineField,
+          nameField,
+          nameDescriptionField,
         ]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
         standardFlatSearchFieldMetadataMaps:

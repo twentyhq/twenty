@@ -9,6 +9,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
+import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata.constants';
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 
 export type SearchFieldMetadataBackfillOperationsArgs = {
@@ -114,10 +115,14 @@ export const buildSearchFieldMetadataBackfillOperations = ({
       ),
   );
 
-  // Custom objects: the search field set is exactly the current label-identifier
-  // field (mirrors buildDefaultSearchFieldMetadatasForCustomObject, whose name
-  // field is the custom object's label identifier). Matched by id, never by name,
-  // so a field whose name is a prefix of another's can never mis-bind.
+  // Custom objects: pre-2.15 builds the searchVector from a single field, the one
+  // named DEFAULT_LABEL_IDENTIFIER_FIELD_NAME ('name') — see SEARCH_FIELDS_FOR_CUSTOM_OBJECT
+  // and buildDefaultFlatFieldMetadatasForCustomObject (provisioning). It resolves
+  // that field by its exact name, not by the label identifier: junction objects
+  // (created with skipNameField) have no name field and an empty searchVector, yet
+  // their label identifier falls back to a non-name field such as the UUID `id`,
+  // which would otherwise produce a spurious row. Exact-name matching also means a
+  // field whose name is a prefix of another's can never mis-bind.
   for (const flatObjectMetadata of Object.values(
     flatObjectMetadataMaps.byUniversalIdentifier,
   ).filter(isDefined)) {
@@ -134,26 +139,24 @@ export const buildSearchFieldMetadataBackfillOperations = ({
       continue;
     }
 
-    const labelIdentifierFieldMetadataId =
-      flatObjectMetadata.labelIdentifierFieldMetadataId;
+    const nameFieldMetadata = flatObjectMetadata.fieldUniversalIdentifiers
+      .map(
+        (fieldUniversalIdentifier) =>
+          flatFieldMetadataMaps.byUniversalIdentifier[
+            fieldUniversalIdentifier
+          ],
+      )
+      .find(
+        (flatFieldMetadata) =>
+          isDefined(flatFieldMetadata) &&
+          flatFieldMetadata.name === DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
+      );
 
-    if (!isDefined(labelIdentifierFieldMetadataId)) {
-      continue;
-    }
-
-    const labelIdentifierFieldMetadata =
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        flatFieldMetadataMaps.universalIdentifierById[
-          labelIdentifierFieldMetadataId
-        ] ?? ''
-      ];
-
-    // Mirror provisioning, which only includes searchable-type fields in the
-    // searchVector: a non-searchable label identifier (e.g. a relation) would be
-    // filtered out of the recomputed expression, so it gets no row.
+    // The default name field is TEXT (searchable); this guard keeps backfill aligned
+    // with the recompute, which filters out non-searchable-type fields.
     if (
-      !isDefined(labelIdentifierFieldMetadata) ||
-      !isSearchableFieldType(labelIdentifierFieldMetadata.type)
+      !isDefined(nameFieldMetadata) ||
+      !isSearchableFieldType(nameFieldMetadata.type)
     ) {
       continue;
     }
@@ -161,8 +164,7 @@ export const buildSearchFieldMetadataBackfillOperations = ({
     pushCandidateIfMissing({
       objectMetadataUniversalIdentifier:
         flatObjectMetadata.universalIdentifier,
-      fieldMetadataUniversalIdentifier:
-        labelIdentifierFieldMetadata.universalIdentifier,
+      fieldMetadataUniversalIdentifier: nameFieldMetadata.universalIdentifier,
     });
   }
 
