@@ -25,6 +25,14 @@ export function generateFrontConfig(): void {
       process.env.REACT_APP_DIALER_DOCK_URL;
   }
 
+  // Propel Marketing Hub (P3 graduated heroes) — runtime toggle. The FE reads
+  // Boolean(window._env_.REACT_APP_PROPEL_MARKETING_HUB), so any non-empty value
+  // enables it; leave the env var unset to disable.
+  if (process.env.REACT_APP_PROPEL_MARKETING_HUB) {
+    envForFront.REACT_APP_PROPEL_MARKETING_HUB =
+      process.env.REACT_APP_PROPEL_MARKETING_HUB;
+  }
+
   const configString = `<!-- BEGIN: Twenty Config -->
     <script id="twenty-env-config">
       window._env_ = ${JSON.stringify(envForFront, null, 2)};
