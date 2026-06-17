@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { type SidePanelPages } from 'twenty-shared/types';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 
 export type SidePanelNavigationStackItem = {
   page: SidePanelPages;

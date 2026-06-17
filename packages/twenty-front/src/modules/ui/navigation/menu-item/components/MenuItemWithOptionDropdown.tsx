@@ -7,11 +7,7 @@ import {
   type ReactNode,
   useContext,
 } from 'react';
-import {
-  IconChevronRight,
-  type IconComponent,
-  IconDotsVertical,
-} from 'twenty-ui/display';
+import { IconChevronRight, type IconComponent, IconDotsVertical } from 'twenty-ui/icon';
 import { LightIconButton, type LightIconButtonProps } from 'twenty-ui/input';
 import {
   type MenuItemAccent,

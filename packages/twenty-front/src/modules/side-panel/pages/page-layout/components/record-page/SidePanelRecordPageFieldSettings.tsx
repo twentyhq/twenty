@@ -20,11 +20,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconLayoutSidebarRight,
-  IconList,
-  IconListDetails,
-} from 'twenty-ui/display';
+import { IconLayoutSidebarRight, IconList, IconListDetails } from 'twenty-ui/icon';
 import {
   FieldDisplayMode,
   type FieldConfiguration,

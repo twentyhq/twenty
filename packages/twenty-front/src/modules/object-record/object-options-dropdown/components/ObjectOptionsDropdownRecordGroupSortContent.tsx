@@ -16,12 +16,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import {
-  IconChevronLeft,
-  IconHandMove,
-  IconSortAZ,
-  IconSortZA,
-} from 'twenty-ui/display';
+import { IconChevronLeft, IconHandMove, IconSortAZ, IconSortZA } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {

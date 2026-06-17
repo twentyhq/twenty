@@ -3,13 +3,8 @@ import { informationBannerIsOpenComponentState } from '@/information-banner/stat
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import {
-  Banner,
-  type BannerColor,
-  type BannerVariant,
-  type IconComponent,
-  IconX,
-} from 'twenty-ui/display';
+import { Banner, type BannerColor, type BannerVariant } from 'twenty-ui/feedback';
+import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { Button, IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

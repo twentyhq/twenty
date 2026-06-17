@@ -8,15 +8,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconAppWindow,
-  IconCommand,
-  IconLayoutDashboard,
-  IconLayoutSidebarLeftExpand,
-  IconPencil,
-  IconTable,
-} from 'twenty-ui/display';
+import { IconAppWindow, IconCommand, IconLayoutDashboard, IconLayoutSidebarLeftExpand, IconPencil, IconTable } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import coverDark from '~/pages/settings/layout/assets/cover-dark.png';

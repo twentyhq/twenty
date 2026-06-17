@@ -8,14 +8,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  HorizontalSeparator,
-  IconCheck,
-  IconCopy,
-  IconDownload,
-  IconUpload,
-} from 'twenty-ui/display';
+import { IconCheck, IconCopy, IconDownload, IconUpload } from 'twenty-ui/icon';
+import { HorizontalSeparator } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

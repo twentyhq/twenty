@@ -3,12 +3,7 @@ import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/Tex
 import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
-import {
-  IconAlignCenter,
-  IconAlignLeft,
-  IconAlignRight,
-  IconTrash,
-} from 'twenty-ui/display';
+import { IconAlignCenter, IconAlignLeft, IconAlignRight, IconTrash } from 'twenty-ui/icon';
 
 type ImageBubbleMenuProps = {
   editor: Editor;

@@ -18,23 +18,8 @@ import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestE
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconAt,
-  IconBell,
-  IconBuildingSkyscraper,
-  IconCalendarEvent,
-  IconCheckbox,
-  IconColorSwatch,
-  IconMail,
-  IconSearch,
-  IconServer,
-  IconSettings,
-  IconTargetArrow,
-  IconUser,
-  IconUserCircle,
-  IconUsers,
-} from 'twenty-ui/display';
-import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
+import { IconAt, IconBell, IconBuildingSkyscraper, IconCalendarEvent, IconCheckbox, IconColorSwatch, IconMail, IconSearch, IconServer, IconSettings, IconTargetArrow, IconUser, IconUserCircle, IconUsers } from 'twenty-ui/icon';
+import { AdvancedSettingsToggle } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';

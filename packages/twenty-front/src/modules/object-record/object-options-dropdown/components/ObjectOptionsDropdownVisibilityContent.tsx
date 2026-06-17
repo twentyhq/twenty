@@ -16,13 +16,8 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useLingui } from '@lingui/react/macro';
 import { createPortal } from 'react-dom';
-import {
-  AppTooltip,
-  IconChevronLeft,
-  IconCircle,
-  IconCircleDashed,
-  IconCopy,
-} from 'twenty-ui/display';
+import { IconChevronLeft, IconCircle, IconCircleDashed, IconCopy } from 'twenty-ui/icon';
+import { AppTooltip } from 'twenty-ui/surfaces';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import {
   ViewVisibility,

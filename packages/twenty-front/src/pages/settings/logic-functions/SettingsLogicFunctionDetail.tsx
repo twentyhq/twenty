@@ -13,12 +13,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  IconBolt,
-  IconCode,
-  IconPlayerPlay,
-  IconSettings,
-} from 'twenty-ui/display';
+import { IconBolt, IconCode, IconPlayerPlay, IconSettings } from 'twenty-ui/icon';
 import { useQuery } from '@apollo/client/react';
 import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';

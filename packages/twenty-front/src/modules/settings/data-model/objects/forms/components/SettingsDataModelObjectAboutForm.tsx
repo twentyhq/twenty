@@ -13,15 +13,10 @@ import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  IconInfoCircle,
-  IconLink,
-  IconRefresh,
-  TooltipDelay,
-  InlineBanner,
-} from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
+import { InlineBanner } from 'twenty-ui/feedback';
+import { IconInfoCircle, IconLink, IconRefresh } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { parseThemeColor } from 'twenty-ui/utilities';
 import { type StringKeyOf } from 'type-fest';

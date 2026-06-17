@@ -1,13 +1,9 @@
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import {
-  IconLoader,
-  IconSquareRoundedCheck,
-  IconSquareRoundedX,
-} from 'twenty-ui/display';
+import { IconLoader, IconSquareRoundedCheck, IconSquareRoundedX } from 'twenty-ui/icon';
 import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
-import { AnimatedCircleLoading } from 'twenty-ui/utilities';
+import { AnimatedCircleLoading } from 'twenty-ui/layout';
 import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 const StyledContainer = styled.div`

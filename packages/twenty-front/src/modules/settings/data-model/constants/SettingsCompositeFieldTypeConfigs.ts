@@ -16,16 +16,7 @@ import {
   CurrencyCode,
 } from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import {
-  IllustrationIconCurrency,
-  IllustrationIconLink,
-  IllustrationIconMail,
-  IllustrationIconMap,
-  IllustrationIconPhone,
-  IllustrationIconSetting,
-  IllustrationIconText,
-  IllustrationIconUser,
-} from 'twenty-ui/display';
+import { IllustrationIconCurrency, IllustrationIconLink, IllustrationIconMail, IllustrationIconMap, IllustrationIconPhone, IllustrationIconSetting, IllustrationIconText, IllustrationIconUser } from 'twenty-ui/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 //TODO : isIncludedInUniqueConstraint refactor - https://github.com/twentyhq/core-team-issues/issues/1097

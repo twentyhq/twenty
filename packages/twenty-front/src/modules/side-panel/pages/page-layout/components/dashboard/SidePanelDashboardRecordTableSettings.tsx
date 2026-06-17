@@ -17,13 +17,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconArrowsSort,
-  IconBox,
-  IconFilter,
-  IconListDetails,
-  IconTable,
-} from 'twenty-ui/display';
+import { IconArrowsSort, IconBox, IconFilter, IconListDetails, IconTable } from 'twenty-ui/icon';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`

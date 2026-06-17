@@ -3,14 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type AiAgentStepLogDetails } from 'twenty-shared/workflow';
-import {
-  IconBrain,
-  IconClock,
-  IconCoins,
-  IconCpu,
-  IconTool,
-  IconWorld,
-} from 'twenty-ui/display';
+import { IconBrain, IconClock, IconCoins, IconCpu, IconTool, IconWorld } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { formatDuration } from '@/workflow/workflow-run/observability/workflowRunStepLogsFormatters';

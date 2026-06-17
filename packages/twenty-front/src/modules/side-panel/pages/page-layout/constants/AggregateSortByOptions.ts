@@ -1,8 +1,4 @@
-import {
-  IconHandMove,
-  IconSortAscending,
-  IconSortDescending,
-} from 'twenty-ui/display';
+import { IconHandMove, IconSortAscending, IconSortDescending } from 'twenty-ui/icon';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 export const AGGREGATE_SORT_BY_OPTIONS = [

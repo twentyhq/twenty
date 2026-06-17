@@ -13,17 +13,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type JSX, type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/components';
-import {
-  AppTooltip,
-  type IconComponent,
-  Label,
-  OverflowingTextWithTooltip,
-  type TablerIconsProps,
-  TintedIconTile,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/display';
+import { Pill } from 'twenty-ui/data-display';
+import { TintedIconTile } from 'twenty-ui/data-display';
+import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
+import { AppTooltip, OverflowingTextWithTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import { Label } from 'twenty-ui/typography';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,

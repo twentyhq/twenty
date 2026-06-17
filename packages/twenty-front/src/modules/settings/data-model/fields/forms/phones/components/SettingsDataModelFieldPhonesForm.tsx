@@ -11,11 +11,7 @@ import { Select } from '@/ui/input/components/Select';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { useLingui } from '@lingui/react/macro';
 import type { CountryCode } from 'libphonenumber-js';
-import {
-  IconCircleOff,
-  IconMap,
-  type IconComponentProps,
-} from 'twenty-ui/display';
+import { IconCircleOff, IconMap, type IconComponentProps } from 'twenty-ui/icon';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';

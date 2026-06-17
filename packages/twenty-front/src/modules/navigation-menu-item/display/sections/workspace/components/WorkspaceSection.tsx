@@ -2,13 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
-import {
-  IconColumnInsertRight,
-  IconLink,
-  IconPlus,
-  IconTool,
-  useIcons,
-} from 'twenty-ui/display';
+import { IconColumnInsertRight, IconLink, IconPlus, IconTool, useIcons } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -1,11 +1,7 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  type IconComponent,
-  IconAlertTriangle,
-  IconInfoCircle,
-} from 'twenty-ui/display';
+import { type IconComponent, IconAlertTriangle, IconInfoCircle } from 'twenty-ui/icon';
+import { AppTooltip } from 'twenty-ui/surfaces';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

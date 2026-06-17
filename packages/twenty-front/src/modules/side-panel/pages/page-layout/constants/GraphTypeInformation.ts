@@ -6,14 +6,7 @@ import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { getBarChartSettings } from '@/side-panel/pages/page-layout/utils/getBarChartSettings';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import {
-  IconChartBar,
-  IconChartBarHorizontal,
-  IconChartLine,
-  IconChartPie,
-  type IconComponent,
-  IconSum,
-} from 'twenty-ui/display';
+import { IconChartBar, IconChartBarHorizontal, IconChartLine, IconChartPie, type IconComponent, IconSum } from 'twenty-ui/icon';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export const GRAPH_TYPE_INFORMATION: Record<

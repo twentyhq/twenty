@@ -1,4 +1,4 @@
-import { type IconComponent } from '@ui/display';
+import { type IconComponent } from '@ui/icon';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 import { ThemeContext } from '@ui/theme-constants';
 import { clsx } from 'clsx';

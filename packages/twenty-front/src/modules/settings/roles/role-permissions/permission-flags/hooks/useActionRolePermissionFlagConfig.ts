@@ -1,19 +1,7 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import {
-  IconApi,
-  IconAt,
-  IconCode,
-  IconDownload,
-  IconFileExport,
-  IconFileImport,
-  IconFileUpload,
-  IconMail,
-  IconSparkles,
-  IconTable,
-  IconUser,
-} from 'twenty-ui/display';
+import { IconApi, IconAt, IconCode, IconDownload, IconFileExport, IconFileImport, IconFileUpload, IconMail, IconSparkles, IconTable, IconUser } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type UseActionRolePermissionFlagConfigParams = {

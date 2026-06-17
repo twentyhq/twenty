@@ -12,13 +12,7 @@ import { Select } from '@/ui/input/components/Select';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
-import {
-  IconCircleOff,
-  IconList,
-  IconMap,
-  IconRefresh,
-  type IconComponentProps,
-} from 'twenty-ui/display';
+import { IconCircleOff, IconList, IconMap, IconRefresh, type IconComponentProps } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';

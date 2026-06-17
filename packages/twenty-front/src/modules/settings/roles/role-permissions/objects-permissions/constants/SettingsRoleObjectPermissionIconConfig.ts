@@ -1,14 +1,4 @@
-import {
-  type IconComponent,
-  IconEye,
-  IconEyeOff,
-  IconPencil,
-  IconPencilOff,
-  IconTrash,
-  IconTrashOff,
-  IconTrashX,
-  IconTrashXOff,
-} from 'twenty-ui/display';
+import { type IconComponent, IconEye, IconEyeOff, IconPencil, IconPencilOff, IconTrash, IconTrashOff, IconTrashX, IconTrashXOff } from 'twenty-ui/icon';
 
 type SettingsRoleObjectPermissionIconConfig = {
   Icon: IconComponent;

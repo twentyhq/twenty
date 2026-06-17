@@ -1,12 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { type Editor, useEditorState } from '@tiptap/react';
-import {
-  type IconComponent,
-  IconH1,
-  IconH2,
-  IconH3,
-  IconPilcrow,
-} from 'twenty-ui/display';
+import { type IconComponent, IconH1, IconH2, IconH3, IconPilcrow } from 'twenty-ui/icon';
 
 export type TurnIntoBlockOptions = {
   title: string;

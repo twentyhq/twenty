@@ -9,13 +9,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
-import {
-  IconGoogle,
-  IconLink,
-  IconMicrosoft,
-  IconPassword,
-} from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
+import { IconGoogle, IconLink, IconMicrosoft, IconPassword } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import {

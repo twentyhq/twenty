@@ -7,15 +7,7 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconAppWindow,
-  IconFrame,
-  IconList,
-  IconPlus,
-  IconTable,
-  type IconComponent,
-  useIcons,
-} from 'twenty-ui/display';
+import { IconAppWindow, IconFrame, IconList, IconPlus, IconTable, type IconComponent, useIcons } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 

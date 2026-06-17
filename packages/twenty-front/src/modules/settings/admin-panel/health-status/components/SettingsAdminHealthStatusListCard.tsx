@@ -1,14 +1,7 @@
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconAppWindow,
-  type IconComponent,
-  IconDatabase,
-  IconServer2,
-  IconTool,
-  IconUserCircle,
-} from 'twenty-ui/display';
+import { IconAppWindow, type IconComponent, IconDatabase, IconServer2, IconTool, IconUserCircle } from 'twenty-ui/icon';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import {

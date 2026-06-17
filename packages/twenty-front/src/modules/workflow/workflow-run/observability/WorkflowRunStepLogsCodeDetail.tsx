@@ -2,12 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
-import {
-  IconAlertTriangle,
-  IconCheck,
-  IconClock,
-  IconTerminal,
-} from 'twenty-ui/display';
+import { IconAlertTriangle, IconCheck, IconClock, IconTerminal } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';

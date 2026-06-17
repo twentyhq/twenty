@@ -19,12 +19,7 @@ import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconEyeOff,
-  IconSettings,
-} from 'twenty-ui/display';
+import { IconArrowLeft, IconArrowRight, IconEyeOff, IconSettings } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

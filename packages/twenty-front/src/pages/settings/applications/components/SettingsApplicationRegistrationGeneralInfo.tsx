@@ -1,11 +1,5 @@
-import {
-  H2Title,
-  IconBox,
-  IconDownload,
-  IconGitBranch,
-  IconTag,
-  IconWorld,
-} from 'twenty-ui/display';
+import { IconBox, IconDownload, IconGitBranch, IconTag, IconWorld } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   SettingsTableCard,
@@ -22,13 +16,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
-import {
-  AvatarOrIcon,
-  Chip,
-  ChipSize,
-  ChipVariant,
-  Tag,
-} from 'twenty-ui/components';
+import { AvatarOrIcon, Chip, ChipSize, ChipVariant, Tag } from 'twenty-ui/data-display';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';

@@ -5,12 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useQuery } from '@apollo/client/react';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconArrowUpRight,
-  IconCopy,
-  IconDownload,
-  IconInfoCircle,
-} from 'twenty-ui/display';
+import { IconArrowUpRight, IconCopy, IconDownload, IconInfoCircle } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';

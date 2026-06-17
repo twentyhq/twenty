@@ -3,13 +3,8 @@ import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronRight,
-  IconCpu,
-  OverflowingTextWithTooltip,
-  ThinkingOrbitLoaderIcon,
-  TooltipDelay,
-} from 'twenty-ui/display';
+import { IconChevronRight, IconCpu, ThinkingOrbitLoaderIcon } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

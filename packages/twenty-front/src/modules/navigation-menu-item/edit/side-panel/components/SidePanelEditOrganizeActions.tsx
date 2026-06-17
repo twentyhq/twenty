@@ -1,12 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconFolderSymlink,
-  IconRowInsertBottom,
-  IconRowInsertTop,
-  IconTrash,
-} from 'twenty-ui/display';
+import { IconChevronDown, IconChevronUp, IconFolderSymlink, IconRowInsertBottom, IconRowInsertTop, IconTrash } from 'twenty-ui/icon';
 
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';

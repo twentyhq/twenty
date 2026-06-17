@@ -36,16 +36,10 @@ import {
   computeMorphRelationGqlFieldName,
   CustomError,
 } from 'twenty-shared/utils';
-import {
-  IconChevronDown,
-  IconDotsVertical,
-  IconTrash,
-  IconUnlink,
-  type IconComponent,
-} from 'twenty-ui/display';
+import { IconChevronDown, IconDotsVertical, IconTrash, IconUnlink, type IconComponent } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { AnimatedEaseInOut } from 'twenty-ui/utilities';
+import { AnimatedEaseInOut } from 'twenty-ui/layout';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const StyledClickableZone = styled.div`

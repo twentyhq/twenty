@@ -5,15 +5,10 @@ import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/components';
-import {
-  H2Title,
-  IconRefresh,
-  IconTrash,
-  IconUser,
-  IconUsers,
-  Status,
-} from 'twenty-ui/display';
+import { Tag } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/data-display';
+import { IconRefresh, IconTrash, IconUser, IconUsers } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

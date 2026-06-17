@@ -2,13 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
-import {
-  IconAlertTriangle,
-  IconCheck,
-  IconClock,
-  IconMail,
-  IconPaperclip,
-} from 'twenty-ui/display';
+import { IconAlertTriangle, IconCheck, IconClock, IconMail, IconPaperclip } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {

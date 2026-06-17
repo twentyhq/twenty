@@ -15,19 +15,8 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  IconBook,
-  IconBox,
-  IconCommand,
-  IconEyeOff,
-  IconGraph,
-  IconInfoCircle,
-  IconLego,
-  IconListDetails,
-  IconLock,
-  IconShield,
-  InlineBanner,
-} from 'twenty-ui/display';
+import { InlineBanner } from 'twenty-ui/feedback';
+import { IconBook, IconBox, IconCommand, IconEyeOff, IconGraph, IconInfoCircle, IconLego, IconListDetails, IconLock, IconShield } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,

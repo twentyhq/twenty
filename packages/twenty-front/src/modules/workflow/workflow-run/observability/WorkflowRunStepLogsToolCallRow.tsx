@@ -6,12 +6,7 @@ import { getToolDisplayMessage } from '@/ai/utils/getToolDisplayMessage';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { useLingui } from '@lingui/react/macro';
 import { type JsonValue } from 'type-fest';
-import {
-  IconCheck,
-  IconChevronDown,
-  IconChevronUp,
-  IconCircleX,
-} from 'twenty-ui/display';
+import { IconCheck, IconChevronDown, IconChevronUp, IconCircleX } from 'twenty-ui/icon';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

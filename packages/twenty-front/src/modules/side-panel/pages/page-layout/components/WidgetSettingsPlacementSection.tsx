@@ -19,13 +19,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconArrowsVertical,
-  IconChevronDown,
-  IconChevronUp,
-  IconRowInsertBottom,
-  IconRowInsertTop,
-} from 'twenty-ui/display';
+import { IconArrowsVertical, IconChevronDown, IconChevronUp, IconRowInsertBottom, IconRowInsertTop } from 'twenty-ui/icon';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 type WidgetSettingsPlacementSectionProps = {

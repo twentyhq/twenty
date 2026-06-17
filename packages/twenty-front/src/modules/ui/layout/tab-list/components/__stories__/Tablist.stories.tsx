@@ -1,15 +1,7 @@
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import {
-  IconCalendar,
-  IconCheckbox,
-  IconHeart,
-  IconHome,
-  IconMail,
-  IconPhone,
-  IconUser,
-} from 'twenty-ui/display';
+import { IconCalendar, IconCheckbox, IconHeart, IconHome, IconMail, IconPhone, IconUser } from 'twenty-ui/icon';
 import {
   AVATAR_URL_MOCK,
   ComponentWithRouterDecorator,

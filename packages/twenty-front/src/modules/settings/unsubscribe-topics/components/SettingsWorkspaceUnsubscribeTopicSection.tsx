@@ -10,7 +10,8 @@ import {
   type UnsubscribeTopicsQuery,
   UnsubscribeTopicVisibility,
 } from '~/generated-metadata/graphql';
-import { IconExternalLink, Status } from 'twenty-ui/display';
+import { Status } from 'twenty-ui/data-display';
+import { IconExternalLink } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

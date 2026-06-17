@@ -15,13 +15,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type IconComponent,
-  IconFileText,
-  IconLayoutKanban,
-  IconListDetails,
-  IconTable,
-} from 'twenty-ui/display';
+import { type IconComponent, IconFileText, IconLayoutKanban, IconListDetails, IconTable } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
   FieldDisplayMode,

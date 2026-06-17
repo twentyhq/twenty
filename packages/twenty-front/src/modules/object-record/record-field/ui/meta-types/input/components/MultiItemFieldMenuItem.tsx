@@ -6,13 +6,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import React, { useState } from 'react';
-import {
-  IconBookmark,
-  IconBookmarkPlus,
-  IconCopy,
-  IconPencil,
-  IconTrash,
-} from 'twenty-ui/display';
+import { IconBookmark, IconBookmarkPlus, IconCopy, IconPencil, IconTrash } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type MultiItemFieldMenuItemProps<T> = {

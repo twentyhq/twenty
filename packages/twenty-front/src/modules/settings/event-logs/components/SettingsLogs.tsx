@@ -16,14 +16,9 @@ import { type EventLogFiltersState } from '@/settings/event-logs/types/EventLogF
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconArrowUp,
-  IconLock,
-  IconPlayerPause,
-  IconPlayerPlay,
-} from 'twenty-ui/display';
+import { IconArrowUp, IconLock, IconPlayerPause, IconPlayerPlay } from 'twenty-ui/icon';
 import { Button, IconButton } from 'twenty-ui/input';
-import { Card } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {

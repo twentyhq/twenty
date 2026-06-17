@@ -7,14 +7,8 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconEye,
-  IconHierarchy2,
-  IconLink,
-  IconList,
-  IconPlus,
-} from 'twenty-ui/display';
+import { IconEye, IconHierarchy2, IconLink, IconList, IconPlus } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';

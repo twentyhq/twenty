@@ -13,13 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  IconHeart,
-  IconLock,
-  IconPencil,
-  IconTrash,
-  useIcons,
-} from 'twenty-ui/display';
+import { IconHeart, IconLock, IconPencil, IconTrash, useIcons } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import {
   PermissionFlagType,

@@ -5,12 +5,7 @@ import { useCallback } from 'react';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import {
-  type IconComponent,
-  IconMoon,
-  IconSun,
-  IconSunMoon,
-} from 'twenty-ui/display';
+import { type IconComponent, IconMoon, IconSun, IconSunMoon } from 'twenty-ui/icon';
 
 export const useColorScheme = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(

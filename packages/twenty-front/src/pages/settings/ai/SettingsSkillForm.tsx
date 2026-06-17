@@ -17,18 +17,12 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  H2Title,
-  IconArchive,
-  IconArchiveOff,
-  IconInfoCircle,
-  IconRefresh,
-  IconTrash,
-  TooltipDelay,
-} from 'twenty-ui/display';
+import { IconArchive, IconArchiveOff, IconInfoCircle, IconRefresh, IconTrash } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {

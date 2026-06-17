@@ -20,13 +20,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  IconEyeX,
-  IconRefreshDot,
-  IconSwitchHorizontal,
-  IconTrash,
-} from 'twenty-ui/display';
+import { IconEyeX, IconRefreshDot, IconSwitchHorizontal, IconTrash } from 'twenty-ui/icon';
+import { AppTooltip } from 'twenty-ui/surfaces';
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 const RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID =

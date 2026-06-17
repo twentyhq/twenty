@@ -20,16 +20,10 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  Avatar,
-  H2Title,
-  IconArrowUpRight,
-  IconChevronRight,
-  IconHierarchy2,
-  IconListDetails,
-  TooltipDelay,
-} from 'twenty-ui/display';
+import { Avatar } from 'twenty-ui/data-display';
+import { IconArrowUpRight, IconChevronRight, IconHierarchy2, IconListDetails } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';

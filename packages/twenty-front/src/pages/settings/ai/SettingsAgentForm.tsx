@@ -17,12 +17,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  IconList,
-  IconListCheck,
-  IconLock,
-  IconSettings,
-} from 'twenty-ui/display';
+import { IconList, IconListCheck, IconLock, IconSettings } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';

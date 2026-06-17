@@ -24,11 +24,8 @@ import { useMemo } from 'react';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
-import {
-  Callout,
-  IconPlayerPlay,
-  IconSettingsAutomation,
-} from 'twenty-ui/display';
+import { Callout } from 'twenty-ui/feedback';
+import { IconPlayerPlay, IconSettingsAutomation } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 

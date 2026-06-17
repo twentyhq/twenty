@@ -16,15 +16,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconBox,
-  IconChevronDown,
-  IconCode,
-  IconEye,
-  IconNorthStar,
-  IconSettings,
-  IconTable,
-} from 'twenty-ui/display';
+import { IconBox, IconChevronDown, IconCode, IconEye, IconNorthStar, IconSettings, IconTable } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

@@ -24,17 +24,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconBaselineDensitySmall,
-  IconCalendar,
-  IconCalendarWeek,
-  IconChevronLeft,
-  IconLayoutList,
-  IconLayoutNavbar,
-  IconLayoutSidebarRight,
-  IconTable,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { IconBaselineDensitySmall, IconCalendar, IconCalendarWeek, IconChevronLeft, IconLayoutList, IconLayoutNavbar, IconLayoutSidebarRight, IconTable } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
 import {
   ViewCalendarLayout,

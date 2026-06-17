@@ -6,14 +6,7 @@ import { isTextSelected } from '@/advanced-text-editor/utils/isTextSelected';
 import { styled } from '@linaria/react';
 import { type Editor } from '@tiptap/core';
 import { BubbleMenu } from '@tiptap/react/menus';
-import {
-  IconBold,
-  IconItalic,
-  IconList,
-  IconListNumbers,
-  IconStrikethrough,
-  IconUnderline,
-} from 'twenty-ui/display';
+import { IconBold, IconItalic, IconList, IconListNumbers, IconStrikethrough, IconUnderline } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledBubbleMenuContainer = styled.div`

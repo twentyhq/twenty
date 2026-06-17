@@ -4,14 +4,7 @@ import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import {
-  IconLanguage,
-  IconLayoutKanban,
-  IconList,
-  IconNotes,
-  IconTable,
-  IconUsers,
-} from 'twenty-ui/display';
+import { IconLanguage, IconLayoutKanban, IconList, IconNotes, IconTable, IconUsers } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const StyledContainer = styled.div`

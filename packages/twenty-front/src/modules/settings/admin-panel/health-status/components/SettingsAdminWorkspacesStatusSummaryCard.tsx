@@ -6,13 +6,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { UserContext } from '@/users/contexts/UserContext';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import {
-  IconAlertTriangle,
-  IconClock,
-  IconStatusChange,
-  IconX,
-  Status,
-} from 'twenty-ui/display';
+import { Status } from 'twenty-ui/data-display';
+import { IconAlertTriangle, IconClock, IconStatusChange, IconX } from 'twenty-ui/icon';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 

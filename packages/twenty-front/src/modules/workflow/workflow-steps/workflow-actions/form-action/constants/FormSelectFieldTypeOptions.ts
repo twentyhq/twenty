@@ -1,14 +1,7 @@
 import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  IllustrationIconCalendarEvent,
-  IllustrationIconNumbers,
-  IllustrationIconOneToMany,
-  IllustrationIconTag,
-  IllustrationIconTags,
-  IllustrationIconText,
-} from 'twenty-ui/display';
+import { IllustrationIconCalendarEvent, IllustrationIconNumbers, IllustrationIconOneToMany, IllustrationIconTag, IllustrationIconTags, IllustrationIconText } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 
 export const FORM_SELECT_FIELD_TYPE_OPTIONS: SelectOption<WorkflowFormFieldType>[] =

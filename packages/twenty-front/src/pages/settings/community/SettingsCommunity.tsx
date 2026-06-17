@@ -6,14 +6,8 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import {
-  H2Title,
-  IconBrandX,
-  IconBriefcase,
-  IconTransform,
-  type IconComponent,
-  useIcons,
-} from 'twenty-ui/display';
+import { IconBrandX, IconBriefcase, IconTransform, type IconComponent, useIcons } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';

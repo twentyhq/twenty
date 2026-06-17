@@ -6,16 +6,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import {
-  IconBolt,
-  IconBrandGoogle,
-  IconBrandLinkedin,
-  IconCheck,
-  IconHeart,
-  IconRocket,
-  IconTag,
-  IconTarget,
-} from 'twenty-ui/display';
+import { IconBolt, IconBrandGoogle, IconBrandLinkedin, IconCheck, IconHeart, IconRocket, IconTag, IconTarget } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 

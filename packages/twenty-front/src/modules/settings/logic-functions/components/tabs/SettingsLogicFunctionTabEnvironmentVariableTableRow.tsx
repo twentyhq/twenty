@@ -7,14 +7,8 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
 import React, { useState } from 'react';
-import {
-  IconCheck,
-  IconDotsVertical,
-  IconPencil,
-  IconTrash,
-  IconX,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { IconCheck, IconDotsVertical, IconPencil, IconTrash, IconX } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import type { ApplicationVariable } from '~/generated-metadata/graphql';

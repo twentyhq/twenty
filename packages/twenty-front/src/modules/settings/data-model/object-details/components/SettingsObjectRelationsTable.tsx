@@ -19,12 +19,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  IconArchive,
-  IconFilter,
-  IconSearch,
-  IconSettings,
-} from 'twenty-ui/display';
+import { IconArchive, IconFilter, IconSearch, IconSettings } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

@@ -2,17 +2,7 @@ import { TerminalOutput } from '@/ai/components/TerminalOutput';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconCode,
-  IconCopy,
-  IconDownload,
-  IconFile,
-  IconPlayerPlay,
-  IconSquareRoundedCheck,
-  IconSquareRoundedX,
-} from 'twenty-ui/display';
+import { IconChevronDown, IconChevronUp, IconCode, IconCopy, IconDownload, IconFile, IconPlayerPlay, IconSquareRoundedCheck, IconSquareRoundedX } from 'twenty-ui/icon';
 import { CodeEditor, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

@@ -12,15 +12,8 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  IconChevronLeft,
-  IconChevronRight,
-  IconEyeX,
-  IconPinned,
-  IconRefreshDot,
-  IconTrash,
-} from 'twenty-ui/display';
+import { IconChevronLeft, IconChevronRight, IconEyeX, IconPinned, IconRefreshDot, IconTrash } from 'twenty-ui/icon';
+import { AppTooltip } from 'twenty-ui/surfaces';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID = 'reset-canvas-tab-to-default-modal';
 const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =

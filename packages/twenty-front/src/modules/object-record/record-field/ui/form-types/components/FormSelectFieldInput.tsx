@@ -14,7 +14,7 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { useContext, useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCircleOff } from 'twenty-ui/display';
+import { IconCircleOff } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 

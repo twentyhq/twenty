@@ -15,13 +15,7 @@ import { useId } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import {
-  IconCopyPlus,
-  IconPencil,
-  IconRobot,
-  IconTrash,
-  IconUsers,
-} from 'twenty-ui/display';
+import { IconCopyPlus, IconPencil, IconRobot, IconTrash, IconUsers } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

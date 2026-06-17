@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomValue } from 'jotai';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconPaint } from 'twenty-ui/display';
+import { IconCheck, IconPaint } from 'twenty-ui/icon';
 import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

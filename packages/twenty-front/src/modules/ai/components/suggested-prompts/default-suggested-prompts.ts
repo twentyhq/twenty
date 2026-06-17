@@ -1,10 +1,6 @@
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import {
-  type IconComponent,
-  IconPlus,
-  IconSettingsAutomation,
-} from 'twenty-ui/display';
+import { type IconComponent, IconPlus, IconSettingsAutomation } from 'twenty-ui/icon';
 
 export type SuggestedPrompt = {
   id: string;

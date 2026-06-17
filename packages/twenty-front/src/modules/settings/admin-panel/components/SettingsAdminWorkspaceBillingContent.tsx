@@ -3,22 +3,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/components';
-import {
-  H2Title,
-  IconBox,
-  IconCalendarEvent,
-  IconCalendarRepeat,
-  IconChartBar,
-  IconCircleX,
-  IconCoins,
-  IconCreditCard,
-  IconExternalLink,
-  IconId,
-  IconStatusChange,
-  IconTag,
-  IconUsers,
-} from 'twenty-ui/display';
+import { Tag } from 'twenty-ui/data-display';
+import { IconBox, IconCalendarEvent, IconCalendarRepeat, IconChartBar, IconCircleX, IconCoins, IconCreditCard, IconExternalLink, IconId, IconStatusChange, IconTag, IconUsers } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
