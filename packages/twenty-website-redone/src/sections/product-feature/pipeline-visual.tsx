@@ -9,22 +9,30 @@ import {
   IconLayoutKanban,
   IconPlus,
   IconStar,
-  IconStarFilled,
   IconUser,
   IconUserCircle,
 } from '@tabler/icons-react';
 import {
+  type ComponentType,
   type PointerEvent as ReactPointerEvent,
+  type ReactNode,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
+import { Chip } from '@/app-preview/primitives/chip';
+import { FaviconLogo } from '@/app-preview/primitives/favicon-logo';
+import { PersonAvatar } from '@/app-preview/primitives/person-avatar';
+import { PreviewTag } from '@/app-preview/primitives/preview-tag';
+import { previewFontSize } from '@/app-preview/preview-font-size';
+import { type CellSelectColor } from '@/app-preview/types';
+import { RatingStar } from '@/icons';
 import { clampToRange } from '@/platform/motion';
 import { EASING } from '@/tokens';
-import { PRODUCT_FEATURE_PALETTE } from '@/tokens/feature-scenes/product-feature-palette';
 
 import {
   movePipelineCard,
@@ -33,137 +41,75 @@ import {
   type PipelineLanes,
 } from './pipeline-move-card';
 
-const palette = PRODUCT_FEATURE_PALETTE;
-
 const CARD_DROP_MS = 300;
 
-type PersonData = {
+const STAR_POSITIONS = [1, 2, 3, 4, 5];
+
+type DealPerson = {
   avatarUrl: string;
-  initials: string;
   name: string;
 };
 
-type CompanyData = {
-  initials: string;
-  logoSrc: string;
+type DealCompany = {
+  domain: string;
   name: string;
 };
 
 type DealData = {
   amount: string;
-  company: CompanyData;
-  contact: PersonData;
+  company: DealCompany;
+  contact: DealPerson;
   date: string;
   id: PipelineCardId;
-  owner: PersonData;
+  owner: DealPerson;
   rating: number;
   recordId: string;
   title: string;
 };
 
-const PEOPLE_AVATARS = sharedAssetUrls.peopleAvatars;
+const PEOPLE = sharedAssetUrls.peopleAvatars;
 
-const companyLogo = (domain: string): string => {
-  const logoUrl = sharedAssetUrls.companyLogoForDomain(domain);
-
-  if (logoUrl === undefined) {
-    throw new Error(`Missing shared company logo for ${domain}`);
-  }
-
-  return logoUrl;
-};
-
-// Mock fiction deal cards (product-screenshot copy, English). Each company's
-// contact is its real founder; owners are the workspace's account owners.
 const CARDS: Record<PipelineCardId, DealData> = {
   github: {
     amount: '$6,562.04',
-    company: {
-      initials: 'G',
-      logoSrc: companyLogo('github.com'),
-      name: 'Github',
-    },
-    contact: {
-      avatarUrl: PEOPLE_AVATARS.chrisWanstrath,
-      initials: 'C',
-      name: 'Chris Wanstrath',
-    },
+    company: { domain: 'github.com', name: 'Github' },
+    contact: { avatarUrl: PEOPLE.chrisWanstrath, name: 'Chris Wanstrath' },
     date: 'Jun 16, 2023',
     id: 'github',
-    owner: {
-      avatarUrl: PEOPLE_AVATARS.eddyCue,
-      initials: 'E',
-      name: 'Eddy Cue',
-    },
+    owner: { avatarUrl: PEOPLE.eddyCue, name: 'Eddy Cue' },
     rating: 2,
     recordId: 'OPP-1',
     title: 'Platform Expansion',
   },
   figma: {
     amount: '$8,250.00',
-    company: {
-      initials: 'F',
-      logoSrc: companyLogo('figma.com'),
-      name: 'Figma',
-    },
-    contact: {
-      avatarUrl: PEOPLE_AVATARS.dylanField,
-      initials: 'D',
-      name: 'Dylan Field',
-    },
+    company: { domain: 'figma.com', name: 'Figma' },
+    contact: { avatarUrl: PEOPLE.dylanField, name: 'Dylan Field' },
     date: 'Jun 21, 2023',
     id: 'figma',
-    owner: {
-      avatarUrl: PEOPLE_AVATARS.jeffWilliams,
-      initials: 'J',
-      name: 'Jeff Williams',
-    },
+    owner: { avatarUrl: PEOPLE.jeffWilliams, name: 'Jeff Williams' },
     rating: 2,
     recordId: 'OPP-2',
     title: 'Design Tooling',
   },
   airbnb: {
     amount: '$2,433.89',
-    company: {
-      initials: 'A',
-      logoSrc: companyLogo('airbnb.com'),
-      name: 'Airbnb',
-    },
-    contact: {
-      avatarUrl: PEOPLE_AVATARS.brianChesky,
-      initials: 'B',
-      name: 'Brian Chesky',
-    },
+    company: { domain: 'airbnb.com', name: 'Airbnb' },
+    contact: { avatarUrl: PEOPLE.brianChesky, name: 'Brian Chesky' },
     date: 'Jun 6, 2023',
     id: 'airbnb',
-    owner: {
-      avatarUrl: PEOPLE_AVATARS.katherineAdams,
-      initials: 'K',
-      name: 'Katherine Adams',
-    },
+    owner: { avatarUrl: PEOPLE.katherineAdams, name: 'Katherine Adams' },
     rating: 3,
     recordId: 'OPP-8',
     title: 'Travel Partnership',
   },
   notion: {
     amount: '$2,650',
-    company: {
-      initials: 'N',
-      logoSrc: companyLogo('notion.com'),
-      name: 'Notion',
-    },
-    contact: {
-      avatarUrl: PEOPLE_AVATARS.ivanZhao,
-      initials: 'I',
-      name: 'Ivan Zhao',
-    },
+    company: { domain: 'notion.com', name: 'Notion' },
+    contact: { avatarUrl: PEOPLE.ivanZhao, name: 'Ivan Zhao' },
     date: 'Jun 28, 2023',
     id: 'notion',
-    owner: {
-      avatarUrl: PEOPLE_AVATARS.sundarPichai,
-      initials: 'S',
-      name: 'Sundar Pichai',
-    },
+    owner: { avatarUrl: PEOPLE.sundarPichai, name: 'Sundar Pichai' },
     rating: 2,
     recordId: 'OPP-6',
     title: 'Workspace Rollout',
@@ -172,29 +118,21 @@ const CARDS: Record<PipelineCardId, DealData> = {
 
 const INITIAL_LANES: PipelineLanes = [
   ['github', 'figma'],
-  ['airbnb', 'notion'],
+  ['airbnb'],
+  ['notion'],
 ];
 
-const LANES_META: { label: string; tone: 'pink' | 'purple' }[] = [
-  { label: 'Identified', tone: 'pink' },
-  { label: 'Qualified', tone: 'purple' },
+const LANES_META: { color: CellSelectColor; label: string }[] = [
+  { color: 'pink', label: 'Identified' },
+  { color: 'purple', label: 'Qualified' },
+  { color: 'blue', label: 'Proposal' },
 ];
-
-const STAR_COUNT = 5;
-
-const STAR_NUMBERS = Array.from(
-  { length: STAR_COUNT },
-  (_, starNumber) => starNumber,
-);
-
-const STAR_FILLED = palette.tones.yellow.text;
-const STAR_EMPTY = palette.borderStrong;
 
 const Root = styled.div`
-  background-color: ${palette.background};
+  background: ${THEME_LIGHT.background.primary};
   display: flex;
   flex-direction: column;
-  font-family: ${palette.font};
+  font-family: ${THEME_LIGHT.font.family};
   height: 100%;
   overflow: hidden;
   position: relative;
@@ -203,30 +141,31 @@ const Root = styled.div`
 
 const BoardHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${palette.borderLight};
+  border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
-  gap: 4px;
+  gap: 6px;
   height: 34px;
   padding: 0 14px;
 `;
 
 const BoardTitle = styled.span`
-  color: ${palette.textPrimary};
-  font-size: 13px;
-  font-weight: 500;
+  color: ${THEME_LIGHT.font.color.primary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
 `;
 
 const BoardCount = styled.span`
-  color: ${palette.textTertiary};
-  font-size: 13px;
+  color: ${THEME_LIGHT.font.color.tertiary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
 `;
 
 const ColumnsHeaderGrid = styled.div`
-  border-bottom: 1px solid ${palette.borderLight};
+  border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
   display: grid;
   flex-shrink: 0;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
 `;
 
 const LaneHeader = styled.div`
@@ -236,37 +175,26 @@ const LaneHeader = styled.div`
   padding: 8px 12px;
 `;
 
-const LanePill = styled.span<{ $ink: string; $wash: string }>`
-  align-items: center;
-  background-color: ${({ $wash }) => $wash};
-  border-radius: 4px;
-  color: ${({ $ink }) => $ink};
-  display: inline-flex;
-  font-size: 12px;
-  font-weight: 500;
-  height: 22px;
-  padding: 0 8px;
-`;
-
 const LaneCount = styled.span`
-  color: ${palette.textTertiary};
-  font-size: 12px;
+  color: ${THEME_LIGHT.font.color.tertiary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
 `;
 
 const ColumnsGrid = styled.div`
   display: grid;
   flex: 1;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   min-height: 0;
   overflow: hidden;
 `;
 
 const LaneBody = styled.div`
-  border-right: 1px solid ${palette.borderLight};
+  border-right: 1px solid ${THEME_LIGHT.border.color.light};
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   min-height: 40px;
+  min-width: 0;
   overflow-y: auto;
   padding: 8px;
 
@@ -275,11 +203,11 @@ const LaneBody = styled.div`
   }
 `;
 
-const DealCardShell = styled.div`
-  background-color: ${palette.background};
-  border: 1px solid ${palette.border};
-  border-radius: 8px;
-  box-shadow: ${palette.shadow.light};
+const DealCard = styled.div`
+  background: ${THEME_LIGHT.background.secondary};
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  box-shadow: ${THEME_LIGHT.boxShadow.light};
   cursor: grab;
   display: flex;
   flex-direction: column;
@@ -299,116 +227,107 @@ const DealCardShell = styled.div`
 const CardHeader = styled.div`
   align-items: center;
   display: flex;
+  gap: 8px;
+  justify-content: space-between;
   padding: 8px 8px 4px;
 `;
 
 const CardTitle = styled.span`
-  color: ${palette.textPrimary};
-  flex: 1;
-  font-size: 13px;
-  font-weight: 500;
+  color: ${THEME_LIGHT.font.color.primary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
+  line-height: 1.4;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const CheckboxContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 0 0 24px;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+`;
+
+const CheckboxBox = styled.div`
+  border: 1px solid ${THEME_LIGHT.border.color.strong};
+  border-radius: 3px;
+  height: 14px;
+  width: 14px;
 `;
 
 const CardFields = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 8px 8px;
+  gap: 2px;
+  padding: 0 8px 4px 10px;
 `;
 
-const FieldRow = styled.div`
+const FieldRowShell = styled.div`
   align-items: center;
   display: flex;
-  gap: 6px;
-  min-height: 22px;
+  gap: 4px;
+  min-height: 24px;
+  width: 100%;
 `;
 
 const FieldIconBox = styled.div`
   align-items: center;
-  color: ${palette.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
-  flex: 0 0 14px;
-  height: 14px;
+  flex: 0 0 16px;
+  height: 16px;
   justify-content: center;
-  width: 14px;
+  width: 16px;
 `;
 
-const FieldValue = styled.div`
+const FieldValueWrap = styled.div`
   align-items: center;
   display: flex;
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
+  overflow: hidden;
 `;
 
-const ValueText = styled.span`
-  color: ${palette.textPrimary};
-  font-size: 11.5px;
+const FieldText = styled.span`
+  color: ${THEME_LIGHT.font.color.primary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
   line-height: 1.4;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const TokenChip = styled.span`
+const StarsRow = styled.div`
   align-items: center;
-  background-color: ${palette.rowHoverBackground};
-  border-radius: 4px;
   display: inline-flex;
-  gap: 4px;
-  height: 18px;
-  max-width: 100%;
-  overflow: hidden;
-  padding: 2px 4px;
+  gap: 2px;
+  padding: 0 4px;
 `;
 
-const TokenMark = styled.span`
+const StarGlyph = styled.span`
   align-items: center;
-  background-color: ${palette.sunkenBackground};
-  border-radius: 3px;
-  color: ${palette.textSecondary};
+  color: ${THEME_LIGHT.background.quaternary};
   display: inline-flex;
-  flex: 0 0 14px;
-  font-size: 8px;
-  font-weight: 600;
-  height: 14px;
+  height: 12px;
   justify-content: center;
-  overflow: hidden;
-  width: 14px;
+  width: 12px;
 
-  &[data-round] {
-    border-radius: 999px;
+  &[data-filled] {
+    color: ${THEME_LIGHT.font.color.secondary};
   }
-`;
-
-const TokenImage = styled.img`
-  display: block;
-  height: 100%;
-  object-fit: contain;
-  width: 100%;
-`;
-
-const TokenLabel = styled.span`
-  color: ${palette.textPrimary};
-  font-size: 11.5px;
-  line-height: 1.4;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const RatingRow = styled.div`
-  display: inline-flex;
-  gap: 1px;
 `;
 
 const AddCardRow = styled.div`
   align-items: center;
-  color: ${palette.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
-  font-size: 11px;
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   gap: 4px;
   padding: 4px 8px;
 `;
@@ -420,138 +339,108 @@ const InteractionLayer = styled.div`
 `;
 
 const FloatingCardShell = styled.div`
-  box-shadow: ${palette.shadow.strong};
+  box-shadow: ${THEME_LIGHT.boxShadow.strong};
   left: 0;
   pointer-events: none;
   position: absolute;
   top: 0;
   transform-origin: center center;
-  width: calc(50% - 20px);
+  width: calc(100% / 3 - 16px);
   z-index: 100;
 `;
 
-function CompanyMark({ data }: { data: CompanyData }) {
-  const [failed, setFailed] = useState(false);
+type FieldIconComponent = ComponentType<{
+  'aria-hidden'?: boolean;
+  size?: number;
+  stroke?: number;
+}>;
 
+function FieldRow({
+  children,
+  icon: Icon,
+}: {
+  children: ReactNode;
+  icon: FieldIconComponent;
+}) {
   return (
-    <TokenMark>
-      {failed ? (
-        data.initials
-      ) : (
-        <TokenImage alt="" src={data.logoSrc} onError={() => setFailed(true)} />
-      )}
-    </TokenMark>
+    <FieldRowShell>
+      <FieldIconBox>
+        <Icon aria-hidden size={16} stroke={1.6} />
+      </FieldIconBox>
+      <FieldValueWrap>{children}</FieldValueWrap>
+    </FieldRowShell>
   );
 }
 
-function PersonMark({ data }: { data: PersonData }) {
-  const [failed, setFailed] = useState(false);
-
+function CompanyChip({ company }: { company: DealCompany }) {
   return (
-    <TokenMark data-round="">
-      {failed ? (
-        data.initials
-      ) : (
-        <TokenImage
-          alt=""
-          src={data.avatarUrl}
-          onError={() => setFailed(true)}
+    <Chip
+      clickable={false}
+      label={company.name}
+      leftComponent={
+        <FaviconLogo domain={company.domain} label={company.name} />
+      }
+      maxWidth={152}
+      variant="highlighted"
+    />
+  );
+}
+
+function DealPersonChip({ person }: { person: DealPerson }) {
+  return (
+    <Chip
+      clickable={false}
+      label={person.name}
+      leftComponent={
+        <PersonAvatar
+          person={{ avatarUrl: person.avatarUrl, name: person.name }}
         />
-      )}
-    </TokenMark>
+      }
+      maxWidth={152}
+      variant="highlighted"
+    />
   );
 }
 
-// The deal card's body, shared by lane cards and the drag ghost. The deal
-// title heads the card; the fields mirror the product's opportunity record.
 function OpportunityCard({ data }: { data: DealData }) {
   return (
     <>
       <CardHeader>
         <CardTitle>{data.title}</CardTitle>
+        <CheckboxContainer>
+          <CheckboxBox />
+        </CheckboxContainer>
       </CardHeader>
       <CardFields>
-        <FieldRow>
-          <FieldIconBox>
-            <IconCurrencyDollar size={14} stroke={1.6} />
-          </FieldIconBox>
-          <FieldValue>
-            <ValueText>{data.amount}</ValueText>
-          </FieldValue>
+        <FieldRow icon={IconCurrencyDollar}>
+          <FieldText>{data.amount}</FieldText>
         </FieldRow>
-        <FieldRow>
-          <FieldIconBox>
-            <IconBuildingSkyscraper size={14} stroke={1.6} />
-          </FieldIconBox>
-          <FieldValue>
-            <TokenChip>
-              <CompanyMark data={data.company} />
-              <TokenLabel>{data.company.name}</TokenLabel>
-            </TokenChip>
-          </FieldValue>
+        <FieldRow icon={IconBuildingSkyscraper}>
+          <CompanyChip company={data.company} />
         </FieldRow>
-        <FieldRow>
-          <FieldIconBox>
-            <IconUserCircle size={14} stroke={1.6} />
-          </FieldIconBox>
-          <FieldValue>
-            <TokenChip>
-              <PersonMark data={data.owner} />
-              <TokenLabel>{data.owner.name}</TokenLabel>
-            </TokenChip>
-          </FieldValue>
+        <FieldRow icon={IconUserCircle}>
+          <DealPersonChip person={data.owner} />
         </FieldRow>
-        <FieldRow>
-          <FieldIconBox>
-            <IconStar size={14} stroke={1.6} />
-          </FieldIconBox>
-          <FieldValue>
-            <RatingRow>
-              {STAR_NUMBERS.map((starNumber) =>
-                starNumber < data.rating ? (
-                  <IconStarFilled
-                    color={STAR_FILLED}
-                    key={starNumber}
-                    size={12}
-                  />
-                ) : (
-                  <IconStar
-                    color={STAR_EMPTY}
-                    key={starNumber}
-                    size={12}
-                    stroke={1.5}
-                  />
-                ),
-              )}
-            </RatingRow>
-          </FieldValue>
+        <FieldRow icon={IconStar}>
+          <StarsRow>
+            {STAR_POSITIONS.map((position) => (
+              <StarGlyph
+                data-filled={position <= data.rating ? '' : undefined}
+                key={position}
+              >
+                <RatingStar fillColor="currentColor" />
+              </StarGlyph>
+            ))}
+          </StarsRow>
         </FieldRow>
-        <FieldRow>
-          <FieldIconBox>
-            <IconCalendarEvent size={14} stroke={1.6} />
-          </FieldIconBox>
-          <FieldValue>
-            <ValueText>{data.date}</ValueText>
-          </FieldValue>
+        <FieldRow icon={IconCalendarEvent}>
+          <FieldText>{data.date}</FieldText>
         </FieldRow>
-        <FieldRow>
-          <FieldIconBox>
-            <IconUser size={14} stroke={1.6} />
-          </FieldIconBox>
-          <FieldValue>
-            <TokenChip>
-              <PersonMark data={data.contact} />
-              <TokenLabel>{data.contact.name}</TokenLabel>
-            </TokenChip>
-          </FieldValue>
+        <FieldRow icon={IconUser}>
+          <DealPersonChip person={data.contact} />
         </FieldRow>
-        <FieldRow>
-          <FieldIconBox>
-            <IconId size={14} stroke={1.6} />
-          </FieldIconBox>
-          <FieldValue>
-            <ValueText>{data.recordId}</ValueText>
-          </FieldValue>
+        <FieldRow icon={IconId}>
+          <FieldText>{data.recordId}</FieldText>
         </FieldRow>
       </CardFields>
     </>
@@ -570,10 +459,6 @@ type DragState = {
   pointerY: number;
 };
 
-// A picked-up card hides in its lane while a floating ghost follows the
-// pointer; dropping splices it where the pointer sits and every displaced
-// card FLIPs into place via WAAPI. The ghost transform writes straight to
-// the element per frame; React renders only on pick-up, drop and reorder.
 export function PipelineVisual({ active: _active }: { active: boolean }) {
   const [lanes, setLanes] = useState<PipelineLanes>(INITIAL_LANES);
   const [draggedCardId, setDraggedCardId] = useState<PipelineCardId | null>(
@@ -657,7 +542,7 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
       );
     });
 
-    if (matchedLane !== 0 && matchedLane !== 1) {
+    if (matchedLane < 0 || matchedLane > 2) {
       return null;
     }
     const laneIndex = matchedLane as PipelineLaneIndex;
@@ -822,24 +707,18 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
   return (
     <Root>
       <BoardHeader>
-        <IconLayoutKanban color={palette.textTertiary} size={14} stroke={1.6} />
+        <IconLayoutKanban size={14} stroke={1.6} />
         <BoardTitle>All opportunities</BoardTitle>
         <BoardCount>· 4</BoardCount>
       </BoardHeader>
 
       <ColumnsHeaderGrid>
-        {laneHeaders.map(({ laneNumber, meta }) => {
-          const tone = palette.tones[meta.tone];
-
-          return (
-            <LaneHeader key={meta.tone}>
-              <LanePill $ink={tone.text} $wash={tone.background}>
-                {meta.label}
-              </LanePill>
-              <LaneCount>{lanes[laneNumber].length}</LaneCount>
-            </LaneHeader>
-          );
-        })}
+        {laneHeaders.map(({ laneNumber, meta }) => (
+          <LaneHeader key={meta.label}>
+            <PreviewTag color={meta.color} label={meta.label} />
+            <LaneCount>{lanes[laneNumber].length}</LaneCount>
+          </LaneHeader>
+        ))}
       </ColumnsHeaderGrid>
 
       <ColumnsGrid>
@@ -851,7 +730,7 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
             }}
           >
             {laneCardIds.map((cardId) => (
-              <DealCardShell
+              <DealCard
                 data-dragging={draggedCardId === cardId ? '' : undefined}
                 key={cardId}
                 onPointerDown={(event) => handlePointerDown(event, cardId)}
@@ -860,7 +739,7 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
                 }}
               >
                 <OpportunityCard data={CARDS[cardId]} />
-              </DealCardShell>
+              </DealCard>
             ))}
             <AddCardRow>
               <IconPlus size={12} stroke={1.6} />
@@ -885,9 +764,9 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
               transform: `translate3d(${dragOrigin.originX}px, ${dragOrigin.originY}px, 0)`,
             }}
           >
-            <DealCardShell>
+            <DealCard>
               <OpportunityCard data={CARDS[draggedCardId]} />
-            </DealCardShell>
+            </DealCard>
           </FloatingCardShell>
         ) : null}
       </InteractionLayer>
