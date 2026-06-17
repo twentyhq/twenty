@@ -14,8 +14,7 @@ export const IsMinimalMetadataReadyEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  // oxlint-disable-next-line twenty/matching-state-variable
-  const objectMetadataItemsStore = useAtomFamilyStateValue(
+  const metadataStore = useAtomFamilyStateValue(
     metadataStoreState,
     'objectMetadataItems',
   );
@@ -49,7 +48,7 @@ export const IsMinimalMetadataReadyEffect = () => {
     // loaded with empty viewFields, RecordIndexLoadBaseOnContextStoreEffect
     // pins loadedViewId, and the record fetch is permanently skipped.
     const areObjectsLoaded =
-      objectMetadataItemsStore.status === 'up-to-date' &&
+      metadataStore.status === 'up-to-date' &&
       fieldMetadataItemsStore.status === 'up-to-date';
     const areViewsLoaded =
       viewsStore.status === 'up-to-date' &&
@@ -70,7 +69,7 @@ export const IsMinimalMetadataReadyEffect = () => {
     hasAccessTokenPair,
     currentUser,
     currentWorkspace,
-    objectMetadataItemsStore.status,
+    metadataStore.status,
     fieldMetadataItemsStore.status,
     viewsStore.status,
     viewFieldsStore.status,
