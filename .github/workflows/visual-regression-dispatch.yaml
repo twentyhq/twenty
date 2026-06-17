@@ -39,7 +39,7 @@ jobs:
           script: |
             const name = context.payload.workflow_run.name;
             const projectByWorkflow = {
-              'CI New UI': 'twenty-new-ui',
+              'CI New UI': 'twenty-ui',
               'CI Front': 'twenty-front',
             };
             const project = projectByWorkflow[name] ?? 'twenty-front';
