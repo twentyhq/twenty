@@ -29,9 +29,9 @@ import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout, IconPlus } from 'twenty-ui-deprecated/display';
-import { Button, type SelectOption } from 'twenty-ui-deprecated/input';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { Callout, IconPlus } from 'twenty-ui/display';
+import { Button, type SelectOption } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const EMAIL_EDITOR_MIN_HEIGHT = 340;
@@ -389,9 +389,11 @@ export const WorkflowEditActionEmailBase = ({
           <WorkflowSendEmailAttachments
             label={t`Attachments`}
             files={formData.files}
+            readonly={actionOptions.readonly}
             onChange={(files) => {
               handleFieldChange('files', files);
             }}
+            VariablePicker={WorkflowVariablePicker}
           />
         </WorkflowStepBody>
         {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}

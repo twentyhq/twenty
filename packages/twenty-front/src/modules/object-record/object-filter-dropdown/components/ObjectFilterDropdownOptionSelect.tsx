@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
+import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -19,11 +20,12 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined, parseJson } from 'twenty-shared/utils';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui-deprecated/navigation';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '';
@@ -76,9 +78,21 @@ export const ObjectFilterDropdownOptionSelect = ({
     componentInstanceId,
   );
 
+  const { foundFieldMetadataItem: relationTargetFieldMetadataItem } =
+    useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
+      fieldMetadataItemId:
+        objectFilterDropdownCurrentRecordFilter?.relationTargetFieldMetadataId ??
+        '',
+    });
+
   const fieldMetaDataId = fieldMetadataItemUsedInDropdown?.id ?? '';
 
-  const { selectOptions } = useOptionsForSelect(fieldMetaDataId);
+  const { selectOptions: sourceFieldSelectOptions } =
+    useOptionsForSelect(fieldMetaDataId);
+
+  const selectOptions = isDefined(relationTargetFieldMetadataItem)
+    ? relationTargetFieldMetadataItem.options
+    : sourceFieldSelectOptions;
 
   const [selectableOptions, setSelectableOptions] = useState<
     SelectOptionForFilter[]

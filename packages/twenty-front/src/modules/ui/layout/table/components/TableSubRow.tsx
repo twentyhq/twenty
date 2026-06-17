@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 

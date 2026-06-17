@@ -2,7 +2,7 @@ import { Draggable } from '@hello-pangea/dnd';
 import { isFunction } from '@sniptt/guards';
 import { type JSX, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type DraggableItemProps = {
   draggableId: string;

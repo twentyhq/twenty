@@ -1,3 +1,5 @@
+import { type Locale } from 'date-fns';
+
 import { type DateFormat } from '@/localization/constants/DateFormat';
 import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';

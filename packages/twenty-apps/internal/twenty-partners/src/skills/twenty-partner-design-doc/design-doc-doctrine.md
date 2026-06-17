@@ -29,19 +29,18 @@ After the table, one **"What this is"** callout framing the doc as a partner-sco
 
 **Flag legend (emoji + short text label, used together so they're scannable and unambiguous):**
 
-- `🔮 inf.` modelling inference (yours; the partner should confirm with the client). Used inline, often, unbolded.
 - **❓ open** open question to resolve before quoting.
 - **⚠️ heavy** product-constrained or needs special design / has a real cost.
 - **🛑 blocker** dealbreaker-grade. Doesn't quote without resolution.
 
-Use these four pairings only. Don't invent new flags, swap the emoji (🟥 / 🚩 / 🚨 / ✅), or drop the text label and use the emoji alone.
+Use these three pairings only by default. Don't invent new flags, swap the emoji (🟥 / 🚩 / 🚨 / ✅), or drop the text label and use the emoji alone. In `--full` mode a fourth flag is added: `🔮 inf.` — see Full mode section.
 
 ### Required sections (always present)
 
 Number sequentially in the final doc, with no gaps:
 
 - **Context**: the 30-second read: who they are, what they want, deployment requirement, scale, language/region.
-- **Data model in Twenty terms**: the core. Present objects as a **table, one row per object**: `Object | Std/Custom | Source | Represents | Key fields | Core relations`. The **Source** column is `client` (object/concept grounded in client speech) or `inf.` (you coined it). Inline, tag inferred field names and relations `🔮 inf.`. Spell out SELECT option sets. **Model the relationships, not just the fields**: who introduced/sourced a record (e.g. an ambassador to Opportunity `sourcedBy` link), parent/child, ownership carry as much scoping signal as the attributes. State product constraints **only when they change the build or quote**, and inline (no formula fields → reporting ratios need a logic-function-maintained stored field; custom objects auto-get attachments/notes/tasks/timeline → relationship tracking is free). Where a customer term collides with a Twenty term (their "partner" = a donor), note the mapping inline as a small "term collisions" bullet list above the table; do **not** add a glossary section for it.
+- **Data model in Twenty terms**: the core. Present objects as a **table, one row per object**: `Object | Std/Custom | Represents | Key fields | Core relations`. Include only objects the client explicitly named; include only fields the client explicitly named. If a cell has no grounded content, write `—`. Spell out SELECT option sets. **Model the relationships, not just the fields**: who introduced/sourced a record (e.g. an ambassador to Opportunity `sourcedBy` link), parent/child, ownership carry as much scoping signal as the attributes. State product constraints **only when they change the build or quote**, and inline (no formula fields → reporting ratios need a logic-function-maintained stored field; custom objects auto-get attachments/notes/tasks/timeline → relationship tracking is free). Where a customer term collides with a Twenty term (their "partner" = a donor), note the mapping inline as a small "term collisions" bullet list above the table; do **not** add a glossary section for it. In `--full` mode, add a `Source` column (`client` / `inf.`) and tag inferred field names and relations `🔮 inf.`.
 - **Roles, permissions & RLS**: map named roles to Twenty's object / field / row-level model; answer "do we need RLS?" against verified, plan-gated capability.
 - **Hosting & compliance**: cloud vs self-host, data-residency requirement (verify), GDPR. Flag contradictions.
 - **Suggested phasing**: "(the partner's call, not Twenty's)" layers, labelled a suggestion.
@@ -61,12 +60,48 @@ Number whatever you include sequentially. A doc with Context, Data model, Integr
 
 Scale each section to its content. **Coverage of surface area matters more than depth per item.**
 
+## Default behavior: zero inference
+
+The default output is a **zero-inference partner brief**: sharp, small, and strictly grounded in what the client said.
+
+- **Nothing is inferred.** If the client didn't say it, it doesn't appear in the doc.
+- **Required sections with no grounded content** get exactly one placeholder line: `> ⬜ Not discussed on call — needs input before this section can be filled.`
+- **Conditional sections** (Automations, Integrations, Reporting, Views) with nothing grounded are **omitted entirely** — same rule as always; the placeholder applies only to required sections.
+- **Data-model table cells** with no grounded content get `—`, not an invented value.
+- **`🔮 inf.` never appears.** If you find yourself wanting to use it, that line should not exist in the doc.
+- **Target length:** 1 page. Each section is 1–5 lines max.
+- **Verification** is run only for sections that have grounded content — no need to verify empty sections.
+- **Save as** `YYYY-MM-DD-<lead>-partner-brief.md`.
+
+### Self-check (zero-inference additions)
+
+After the standard self-check:
+- `🔮 inf.` anywhere is a hard failure — remove the entire inference, not just the tag.
+- Source column in the data-model table is a failure — remove it.
+- Doc longer than 2 pages is a warning — cut until only grounded content remains.
+
+## Full mode (`--full`)
+
+Pass `--full` to produce a **full inference design doc** instead of the default zero-inference brief. Use when: discovery is complete, the lead is well-documented, and inferences are needed to give the partner a richer starting model.
+
+| Dimension | Default (zero-inference) | `--full` |
+|---|---|---|
+| Inferences | Never | Allowed; tagged `🔮 inf.` |
+| Empty section | Placeholder line | Fill with inferences + `🔮 inf.` tags |
+| Data-model Source column | Omitted | `client` / `inf.` |
+| Inferred field names / relations | Not included | Tagged `🔮 inf.` |
+| Length | 1 page target | As long as content requires |
+| Verification | Grounded sections only | All load-bearing claims |
+| Filename | `YYYY-MM-DD-<lead>-partner-brief.md` | `YYYY-MM-DD-<lead>-design-doc.md` |
+
+In `--full` mode the fourth canonical flag is active: `🔮 inf.` (modelling inference; yours; the partner should confirm with the client). Used inline, often, unbolded.
+
 ## Rules (and why each matters)
 
 - **Be concise: maximum signal per word.** Say a lot in few words. Cut throat-clearing, scene-setting, hedges, and feature-tour prose; prefer a table or a tight clause to a paragraph. Length is not coverage: a short doc that names every requirement beats a long one that pads each. A hesitant buyer reads a focused doc; a bloated one reads as cost.
 - **Bullets and tables over paragraphs, with one exception.** Default to bullets; reach for a table whenever rows share structure (objects, views, plans, paths). Use prose only for a nuance no bullet or table cell can carry. The Open questions section is the deliberate exception: always a numbered list, so the partner can read item 1, 2, 3 aloud.
 - **Business decisions over technical mechanics.** Scope is what the partner *builds* and what the client *receives*: data sensitivity, who-sees-what, plan choice, hosting choice, integration surface, cost drivers. Cut SDK / runtime / build-tool internals that don't change the quote (Docker version, OAuth flavour, auto-system relations, env-var names, version-control workflow). The partner reads References for the docs that cover those.
-- **Fact vs inference is the primary visibility split.** Plain prose = stated by the client. `🔮 inf.` tag inline = your modelling guess, every time it appears. The Data-model table carries a **Source** column (`client` / `inf.`). A partner skimming the doc must be able to see at a glance which lines they need to confirm with the client.
+- **Grounded content only (default).** Every line in the doc must trace back to something the client said. If it wasn't stated, it doesn't appear — use the placeholder or `—` for empty cells. In `--full` mode, inferences are allowed and tagged `🔮 inf.`; the Data-model table gains a `Source` column (`client` / `inf.`) so the partner can see at a glance which lines to confirm with the client.
 - **Section cross-references are functional anchor links.** Every `§N` reference must be a markdown anchor link: `[§N](#n-section-slug)`. The slug follows GitHub Flavored Markdown auto-anchoring (lowercase; spaces → hyphens; punctuation dropped; `&` removed leaving a double hyphen). A bare `§N` is unreadable to a partner skimming the doc, who just sees numbers with no way to jump.
 - **No "left out" / "not named" placeholders.** The doc speaks only about content grounded in the source. A bullet that says *"sessions/programmes/schools left out on purpose"* or a section that says *"no reporting was named"* is filler: cut it. If you want to flag the absence, write it as a question in Open questions ("Are sessions/programmes first-class objects?") that gates a specific decision; otherwise, silence.
 - **Never repeat yourself.** State each fact, constraint, or claim once, in its home section; elsewhere link to it (functional `[§N](...)`) rather than restate. Open questions and References are deliberate roll-ups: there, give the pointer and the decision the item gates, not a re-explanation of the body. Repetition is the main source of bloat, and two copies of a claim drift out of sync.
@@ -87,7 +122,7 @@ Scale each section to its content. **Coverage of surface area matters more than 
 - One line per paragraph: **no mid-sentence hard wraps** (they render as broken lines).
 - **Never use em dashes (the long dash).** Restructure the sentence, or use a colon, comma, parentheses, or a period instead.
 - **Never a bare `~`** for "approximately": GitHub markdown pairs `~...~` into strikethrough. Write "around" / "about".
-- **Flags are the four emoji + text pairs only** (`🔮 inf.`, `**❓ open**`, `**⚠️ heavy**`, `**🛑 blocker**`). Don't swap the emoji or drop the text label.
+- **Flags in default mode: three emoji + text pairs** (`**❓ open**`, `**⚠️ heavy**`, `**🛑 blocker**`). In `--full` mode a fourth is added: `🔮 inf.`. Don't swap the emoji or drop the text label.
 - **Section cross-references are functional anchor links** (`[§N](#n-section-slug)`), never bare `§N`.
 - Mark unverified capability claims `**❓ open**`, never as fact.
 
@@ -136,7 +171,7 @@ If a `.md` 404s, drop the suffix or re-derive from the docs index: the map can g
 |---|---|
 | "Twenty isn't a BI tool" / "can't do row-level" | Stale training. Twenty has Dashboards; row-level is on the Organization plan. **Verify live.** |
 | Checked only the app-SDK doc for a product capability | Row-level lives in the product/pricing layer. **Verify the right layer.** |
-| Added fields not in the source | Scope growth, wrong quote. Ground every field; tag inferences `🔮 inf.`. |
+| Added fields not in the source | Scope growth, wrong quote. Only include what the client explicitly named; leave the cell `—` otherwise. |
 | Made a human actor (e.g. ambassador) its own object by default | A human is a Person + role flag first; an object only if it needs its own pipeline/reporting. |
 | Flagged an automation as "Workflow" | Prescribes the build, penalizes app-builders. Present both. |
 | Flagged a limit with no fix | Dead-end flag. Pair every problem with a path. |
@@ -151,7 +186,7 @@ If a `.md` 404s, drop the suffix or re-derive from the docs index: the map can g
 | Used an emoji other than the four canonical (🟥 / 🚩 / 🚨 / ✅), or used the emoji without the text label | Stick to `🔮 inf.`, `**❓ open**`, `**⚠️ heavy**`, `**🛑 blocker**`. The text label disambiguates. |
 | Section is mostly paragraphs | Default to bullets and tables; prose only when a nuance can't fit a list. Exception: Open questions stays a numbered list. |
 | Included build / runtime / SDK mechanics that don't move the quote | Wrong altitude. Business decisions, scope consequences, and References only; mechanics belong in the later technical phase. |
-| Data-model table missing a Source column | Partner can't see at a glance which rows the client confirmed vs which are your inferences. Add `client` / `inf.`. |
+| Data-model table has a Source column (default mode) | In the default zero-inference mode, the Source column is unnecessary noise — every row is `client`. Omit it; only add it in `--full` mode. |
 | Cross-references are bare `§N` instead of functional links | The partner sees disconnected numbers and can't navigate. Use `[§N](#n-section-slug)` everywhere. |
 | Included a section that just says "X was not named" / "no automations named" / a "left out on purpose" list | Cut the whole section / bullet. Unknowns go in Open questions; the doc speaks only about grounded content. |
 | Renumbered with gaps (e.g. cut Reporting but kept §5-§11 numbering as §5, §6, §8) | Renumber sequentially, no gaps. A partner doesn't know which sections were omitted. |

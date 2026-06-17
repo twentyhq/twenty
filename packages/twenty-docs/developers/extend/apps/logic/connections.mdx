@@ -82,7 +82,7 @@ Key points:
 The OAuth callback URL your provider needs to whitelist is:
 
 ```
-https://<your-twenty-server>/apps/oauth/callback
+https://<your-twenty-server>/auth/apps/callback
 ```
 
 </Accordion>
@@ -182,7 +182,7 @@ Multiple connections per (user, provider) are allowed, so the same user can hold
 For each connection provider, the server admin needs to register an OAuth app at the third party first.
 
 1. Go to the provider's developer settings (e.g. https://linear.app/settings/api/applications/new).
-2. Set the **Redirect URI** to `<SERVER_URL>/apps/oauth/callback`.
+2. Set the **Redirect URI** to `<SERVER_URL>/auth/apps/callback`.
 3. Copy the generated **Client ID** and **Client Secret**.
 4. Open the installed app in Twenty as a server admin → set the values on the corresponding `serverVariables`.
 5. Workspace members can then add connections from the per-app **Connections** section.

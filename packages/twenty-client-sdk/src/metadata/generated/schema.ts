@@ -1267,6 +1267,12 @@ export interface BillingUpdate {
     __typename: 'BillingUpdate'
 }
 
+export interface InviteSuggestion {
+    email: Scalars['String']
+    displayName?: Scalars['String']
+    __typename: 'InviteSuggestion'
+}
+
 export interface OnboardingStepSuccess {
     /** Boolean that confirms query was dispatched */
     success: Scalars['Boolean']
@@ -1872,9 +1878,11 @@ export interface PublicConnectionParametersOutput {
     host: Scalars['String']
     port: Scalars['Float']
     username?: Scalars['String']
-    secure?: Scalars['Boolean']
+    connectionSecurity?: EmailConnectionSecurity
     __typename: 'PublicConnectionParametersOutput'
 }
+
+export type EmailConnectionSecurity = 'NONE' | 'STARTTLS' | 'SSL_TLS'
 
 export interface PublicImapSmtpCaldavConnectionParameters {
     IMAP?: PublicConnectionParametersOutput
@@ -1984,6 +1992,19 @@ export interface VerifyEmailAndGetLoginToken {
     loginToken: AuthToken
     workspaceUrls: WorkspaceUrls
     __typename: 'VerifyEmailAndGetLoginToken'
+}
+
+export interface SubdomainAvailabilityDTO {
+    isValid: Scalars['Boolean']
+    available: Scalars['Boolean']
+    suggestedSubdomain: Scalars['String']
+    __typename: 'SubdomainAvailabilityDTO'
+}
+
+export interface WorkspaceCreationDefaultsDTO {
+    displayName: Scalars['String']
+    subdomain: Scalars['String']
+    __typename: 'WorkspaceCreationDefaultsDTO'
 }
 
 export interface ApiKeyToken {
@@ -2229,7 +2250,7 @@ export interface ImapSmtpCaldavPublicConnectionParams {
     host: Scalars['String']
     port: Scalars['Float']
     username?: Scalars['String']
-    secure?: Scalars['Boolean']
+    connectionSecurity?: EmailConnectionSecurity
     __typename: 'ImapSmtpCaldavPublicConnectionParams'
 }
 
@@ -2631,6 +2652,8 @@ export interface Query {
     getViewFieldGroup?: ViewFieldGroup
     apiKeys: ApiKey[]
     apiKey?: ApiKey
+    getInviteSuggestions: InviteSuggestion[]
+    applicationConnectionProviders: ApplicationConnectionProvider[]
     billingPortalSession: BillingSession
     listPlans: BillingPlan[]
     getResourceCreditUsage: BillingResourceCreditUsage[]
@@ -2640,7 +2663,6 @@ export interface Query {
     getPageLayoutTab: PageLayoutTab
     getPageLayouts: PageLayout[]
     getPageLayout?: PageLayout
-    applicationConnectionProviders: ApplicationConnectionProvider[]
     getPageLayoutWidgets: PageLayoutWidget[]
     getPageLayoutWidget: PageLayoutWidget
     findOneLogicFunction: LogicFunction
@@ -2690,6 +2712,8 @@ export interface Query {
     checkUserExists: CheckUserExist
     checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid
     findWorkspaceFromInviteHash: Workspace
+    checkWorkspaceSubdomainAvailability: SubdomainAvailabilityDTO
+    getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO
     validatePasswordResetToken: ValidatePasswordResetToken
     findApplicationRegistrationByClientId?: PublicApplicationRegistration
     findApplicationRegistrationByUniversalIdentifier?: ApplicationRegistration
@@ -2775,6 +2799,7 @@ export interface Mutation {
     assignRoleToApiKey: Scalars['Boolean']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     skipBookOnboardingStep: OnboardingStepSuccess
+    updateOneApplicationVariable: Scalars['Boolean']
     checkoutSession: BillingSession
     switchSubscriptionInterval: BillingUpdate
     switchBillingPlan: BillingUpdate
@@ -2799,7 +2824,6 @@ export interface Mutation {
     resetPageLayoutToDefault: PageLayout
     resetPageLayoutWidgetToDefault: PageLayoutWidget
     resetPageLayoutTabToDefault: PageLayoutTab
-    updateOneApplicationVariable: Scalars['Boolean']
     createPageLayoutWidget: PageLayoutWidget
     updatePageLayoutWidget: PageLayoutWidget
     destroyPageLayoutWidget: Scalars['Boolean']
@@ -2809,6 +2833,7 @@ export interface Mutation {
     updateOneLogicFunction: Scalars['Boolean']
     createCommandMenuItem: CommandMenuItem
     updateCommandMenuItem: CommandMenuItem
+    resetCommandMenuItem: CommandMenuItem
     deleteCommandMenuItem: CommandMenuItem
     createFrontComponent: FrontComponent
     updateFrontComponent: FrontComponent
@@ -4279,6 +4304,13 @@ export interface BillingUpdateGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface InviteSuggestionGenqlSelection{
+    email?: boolean | number
+    displayName?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface OnboardingStepSuccessGenqlSelection{
     /** Boolean that confirms query was dispatched */
     success?: boolean | number
@@ -4919,7 +4951,7 @@ export interface PublicConnectionParametersOutputGenqlSelection{
     host?: boolean | number
     port?: boolean | number
     username?: boolean | number
-    secure?: boolean | number
+    connectionSecurity?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5046,6 +5078,21 @@ export interface ValidatePasswordResetTokenGenqlSelection{
 export interface VerifyEmailAndGetLoginTokenGenqlSelection{
     loginToken?: AuthTokenGenqlSelection
     workspaceUrls?: WorkspaceUrlsGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface SubdomainAvailabilityDTOGenqlSelection{
+    isValid?: boolean | number
+    available?: boolean | number
+    suggestedSubdomain?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface WorkspaceCreationDefaultsDTOGenqlSelection{
+    displayName?: boolean | number
+    subdomain?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5302,7 +5349,7 @@ export interface ImapSmtpCaldavPublicConnectionParamsGenqlSelection{
     host?: boolean | number
     port?: boolean | number
     username?: boolean | number
-    secure?: boolean | number
+    connectionSecurity?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5731,6 +5778,8 @@ export interface QueryGenqlSelection{
     getViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {id: Scalars['String']} })
     apiKeys?: ApiKeyGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
+    getInviteSuggestions?: InviteSuggestionGenqlSelection
+    applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null)} })
     listPlans?: BillingPlanGenqlSelection
     getResourceCreditUsage?: BillingResourceCreditUsageGenqlSelection
@@ -5740,7 +5789,6 @@ export interface QueryGenqlSelection{
     getPageLayoutTab?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String']} })
     getPageLayouts?: (PageLayoutGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), pageLayoutType?: (PageLayoutType | null)} })
     getPageLayout?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String']} })
-    applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     getPageLayoutWidgets?: (PageLayoutWidgetGenqlSelection & { __args: {pageLayoutTabId: Scalars['String']} })
     getPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String']} })
     findOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
@@ -5808,6 +5856,8 @@ export interface QueryGenqlSelection{
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     checkWorkspaceInviteHashIsValid?: (WorkspaceInviteHashValidGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
+    checkWorkspaceSubdomainAvailability?: (SubdomainAvailabilityDTOGenqlSelection & { __args: {subdomain: Scalars['String']} })
+    getWorkspaceCreationDefaults?: WorkspaceCreationDefaultsDTOGenqlSelection
     validatePasswordResetToken?: (ValidatePasswordResetTokenGenqlSelection & { __args: {passwordResetToken: Scalars['String']} })
     findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
     findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
@@ -5918,6 +5968,7 @@ export interface MutationGenqlSelection{
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
     skipSyncEmailOnboardingStep?: OnboardingStepSuccessGenqlSelection
     skipBookOnboardingStep?: OnboardingStepSuccessGenqlSelection
+    updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
     switchBillingPlan?: BillingUpdateGenqlSelection
@@ -5942,7 +5993,6 @@ export interface MutationGenqlSelection{
     resetPageLayoutToDefault?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String']} })
     resetPageLayoutWidgetToDefault?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String']} })
     resetPageLayoutTabToDefault?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String']} })
-    updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })
     updatePageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWidgetInput} })
     destroyPageLayoutWidget?: { __args: {id: Scalars['String']} }
@@ -5952,6 +6002,7 @@ export interface MutationGenqlSelection{
     updateOneLogicFunction?: { __args: {input: UpdateLogicFunctionFromSourceInput} }
     createCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: CreateCommandMenuItemInput} })
     updateCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: UpdateCommandMenuItemInput} })
+    resetCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     createFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: CreateFrontComponentInput} })
     updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })
@@ -6025,7 +6076,7 @@ export interface MutationGenqlSelection{
     getAuthTokensFromOTP?: (AuthTokensGenqlSelection & { __args: {otp: Scalars['String'], loginToken: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
     signUp?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInWorkspace?: (SignUpGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], workspaceId?: (Scalars['UUID'] | null), workspaceInviteHash?: (Scalars['String'] | null), workspacePersonalInviteToken?: (Scalars['String'] | null), captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
-    signUpInNewWorkspace?: SignUpGenqlSelection
+    signUpInNewWorkspace?: (SignUpGenqlSelection & { __args?: {input?: (SignUpInNewWorkspaceInput | null)} })
     generateTransientToken?: TransientTokenGenqlSelection
     getAuthTokensFromLoginToken?: (AuthTokensGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
     authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), redirectUrl: Scalars['String'], state?: (Scalars['String'] | null), scope?: (Scalars['String'] | null)} })
@@ -6423,6 +6474,8 @@ export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String']
 
 export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
 
+export interface SignUpInNewWorkspaceInput {displayName?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null)}
+
 export interface CreateApplicationRegistrationInput {name: Scalars['String'],universalIdentifier?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null)}
 
 export interface UpdateApplicationRegistrationInput {id: Scalars['String'],update: UpdateApplicationRegistrationPayload}
@@ -6459,7 +6512,7 @@ export interface SendEmailAttachmentInput {id: Scalars['String'],name: Scalars['
 
 export interface EmailAccountConnectionParameters {IMAP?: (ConnectionParametersInput | null),SMTP?: (ConnectionParametersInput | null),CALDAV?: (ConnectionParametersInput | null)}
 
-export interface ConnectionParametersInput {host: Scalars['String'],port: Scalars['Float'],username?: (Scalars['String'] | null),password?: (Scalars['String'] | null),secure?: (Scalars['Boolean'] | null)}
+export interface ConnectionParametersInput {host: Scalars['String'],port: Scalars['Float'],username?: (Scalars['String'] | null),password?: (Scalars['String'] | null),connectionSecurity?: (EmailConnectionSecurity | null)}
 
 export interface UpdateLabPublicFeatureFlagInput {publicFeatureFlag: Scalars['String'],value: Scalars['Boolean']}
 
@@ -7265,6 +7318,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const InviteSuggestion_possibleTypes: string[] = ['InviteSuggestion']
+    export const isInviteSuggestion = (obj?: { __typename?: any } | null): obj is InviteSuggestion => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isInviteSuggestion"')
+      return InviteSuggestion_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const OnboardingStepSuccess_possibleTypes: string[] = ['OnboardingStepSuccess']
     export const isOnboardingStepSuccess = (obj?: { __typename?: any } | null): obj is OnboardingStepSuccess => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepSuccess"')
@@ -7933,6 +7994,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isVerifyEmailAndGetLoginToken = (obj?: { __typename?: any } | null): obj is VerifyEmailAndGetLoginToken => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isVerifyEmailAndGetLoginToken"')
       return VerifyEmailAndGetLoginToken_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SubdomainAvailabilityDTO_possibleTypes: string[] = ['SubdomainAvailabilityDTO']
+    export const isSubdomainAvailabilityDTO = (obj?: { __typename?: any } | null): obj is SubdomainAvailabilityDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSubdomainAvailabilityDTO"')
+      return SubdomainAvailabilityDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceCreationDefaultsDTO_possibleTypes: string[] = ['WorkspaceCreationDefaultsDTO']
+    export const isWorkspaceCreationDefaultsDTO = (obj?: { __typename?: any } | null): obj is WorkspaceCreationDefaultsDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCreationDefaultsDTO"')
+      return WorkspaceCreationDefaultsDTO_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9000,6 +9077,12 @@ export const enumBillingEntitlementKey = {
    CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
    RLS: 'RLS' as const,
    AUDIT_LOGS: 'AUDIT_LOGS' as const
+}
+
+export const enumEmailConnectionSecurity = {
+   NONE: 'NONE' as const,
+   STARTTLS: 'STARTTLS' as const,
+   SSL_TLS: 'SSL_TLS' as const
 }
 
 export const enumEmailingDomainStatus = {

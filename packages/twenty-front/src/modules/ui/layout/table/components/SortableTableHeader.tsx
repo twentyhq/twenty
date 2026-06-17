@@ -8,7 +8,7 @@ import {
   IconArrowDown,
   IconArrowUp,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 export const SortableTableHeader = ({
   tableId,

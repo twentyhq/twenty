@@ -5,7 +5,7 @@ import {
   type DraggableStateSnapshot,
   Droppable,
 } from '@hello-pangea/dnd';
-import { TabButton } from 'twenty-ui-deprecated/input';
+import { TabButton } from 'twenty-ui/input';
 
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';

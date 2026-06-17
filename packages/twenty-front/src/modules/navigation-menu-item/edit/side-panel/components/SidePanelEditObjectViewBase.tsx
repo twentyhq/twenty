@@ -15,7 +15,7 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { parseThemeColor } from 'twenty-ui-deprecated/utilities';
+import { parseThemeColor } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type SidePanelEditObjectViewBaseProps = OrganizeActionsProps & {

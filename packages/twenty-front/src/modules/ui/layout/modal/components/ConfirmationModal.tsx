@@ -8,15 +8,15 @@ import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStateful
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { H1Title, H1TitleFontColor } from 'twenty-ui-deprecated/display';
-import { Button, type ButtonAccent } from 'twenty-ui-deprecated/input';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+import { Button, type ButtonAccent } from 'twenty-ui/input';
 import {
   Section,
   SectionAlignment,
   SectionFontColor,
   type ModalOverlay,
-} from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ConfirmationModalProps = {
   modalInstanceId: string;

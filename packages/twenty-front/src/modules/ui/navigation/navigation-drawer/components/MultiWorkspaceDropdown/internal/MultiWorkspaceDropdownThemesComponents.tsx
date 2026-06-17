@@ -6,8 +6,8 @@ import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/s
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
-import { IconCheck, IconChevronLeft } from 'twenty-ui-deprecated/display';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { IconCheck, IconChevronLeft } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const MultiWorkspaceDropdownThemesComponents = () => {
   const { t } = useLingui();

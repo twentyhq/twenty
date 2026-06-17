@@ -1,14 +1,14 @@
 import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import { t } from '@lingui/core/macro';
-import { IconRefresh } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
+import { IconRefresh } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/layout';
 
 export const AppErrorDisplay = ({
   resetErrorBoundary,

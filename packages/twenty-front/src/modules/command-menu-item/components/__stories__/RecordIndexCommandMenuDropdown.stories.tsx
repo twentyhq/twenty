@@ -11,7 +11,7 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { RouterDecorator } from 'twenty-ui-deprecated/testing';
+import { RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';

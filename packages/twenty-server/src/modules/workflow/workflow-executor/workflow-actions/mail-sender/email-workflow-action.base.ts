@@ -18,6 +18,7 @@ import {
   type EmailStepLogMode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
 import { resolveEmailBody } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-body.util';
+import { resolveEmailFiles } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-files.util';
 import { ToolBackedWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-backed/tool-backed.workflow-action';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -39,13 +40,13 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     rawInput: WorkflowSendEmailActionInput,
     context: Record<string, unknown>,
   ): Promise<WorkflowSendEmailActionInput> {
-    if (!isDefined(rawInput.body)) {
-      return rawInput;
-    }
+    const files = resolveEmailFiles(rawInput.files, context);
 
-    const renderedBody = await resolveEmailBody(rawInput.body, context);
+    const body = isDefined(rawInput.body)
+      ? await resolveEmailBody(rawInput.body, context)
+      : rawInput.body;
 
-    return { ...rawInput, body: renderedBody };
+    return { ...rawInput, body, files };
   }
 
   protected override async postprocessInput(

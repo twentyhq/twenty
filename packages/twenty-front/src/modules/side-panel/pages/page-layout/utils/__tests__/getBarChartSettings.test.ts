@@ -18,7 +18,7 @@ import { SHOW_LEGEND_SETTING } from '@/side-panel/pages/page-layout/constants/se
 import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/side-panel/pages/page-layout/constants/settings/SortByGroupByFieldSetting';
 import { STACKED_BARS_SETTING } from '@/side-panel/pages/page-layout/constants/settings/StackedBarsSetting';
 import { getBarChartSettings } from '@/side-panel/pages/page-layout/utils/getBarChartSettings';
-import { IconAxisX, IconAxisY } from 'twenty-ui-deprecated/display';
+import { IconAxisX, IconAxisY } from 'twenty-ui/display';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 describe('getBarChartSettings', () => {

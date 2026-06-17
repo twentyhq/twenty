@@ -16,7 +16,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useEffect } from 'react';
-import { IconPlayerPlay, IconSettings } from 'twenty-ui-deprecated/display';
+import { IconPlayerPlay, IconSettings } from 'twenty-ui/display';
 import {
   HTTP_METHODS,
   JSON_RESPONSE_PLACEHOLDER,
@@ -30,10 +30,7 @@ import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
-import {
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
   actionOptions: {

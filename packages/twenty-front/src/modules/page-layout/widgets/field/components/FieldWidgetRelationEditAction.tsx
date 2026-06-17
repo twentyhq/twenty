@@ -20,8 +20,8 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { IconPencil, IconPlus } from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { IconPencil, IconPlus } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type FieldWidgetRelationEditActionProps = {

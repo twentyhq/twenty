@@ -4,9 +4,9 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import React, { useRef } from 'react';
-import { IconPaperclip } from 'twenty-ui-deprecated/display';
-import { IconButton } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconPaperclip } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFileUploadContainer = styled.div`
   display: flex;

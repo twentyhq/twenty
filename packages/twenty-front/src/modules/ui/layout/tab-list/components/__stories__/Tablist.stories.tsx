@@ -9,11 +9,14 @@ import {
   IconMail,
   IconPhone,
   IconUser,
-} from 'twenty-ui-deprecated/display';
-import { ComponentWithRouterDecorator } from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/display';
+import {
+  AVATAR_URL_MOCK,
+  ComponentWithRouterDecorator,
+} from 'twenty-ui/testing';
 
 const tabs = [
-  { id: 'general', title: 'General', logo: 'https://picsum.photos/200' },
+  { id: 'general', title: 'General', logo: AVATAR_URL_MOCK },
   { id: 'contacts', title: 'Contacts', Icon: IconUser },
   { id: 'messages', title: 'Messages', Icon: IconMail },
   { id: 'calls', title: 'Calls', Icon: IconPhone },
@@ -23,7 +26,7 @@ const tabs = [
   {
     id: 'time',
     title: 'Time Tracking',
-    logo: 'https://picsum.photos/192/192',
+    logo: AVATAR_URL_MOCK,
   },
   {
     id: 'activity',
@@ -35,7 +38,7 @@ const tabs = [
   { id: 'reports', title: 'Reports', Icon: IconCheckbox },
 ];
 
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInteractiveContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.strong};

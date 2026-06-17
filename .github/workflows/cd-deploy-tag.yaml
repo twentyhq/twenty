@@ -7,7 +7,6 @@ on:
   push:
     tags:
       - 'twenty/v*'
-      - 'sdk/v*'
 
 defaults:
   run:
@@ -18,31 +17,19 @@ jobs:
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
-      - name: Resolve dispatch event from tag family
-        id: target
-        env:
-          REF_NAME: ${{ github.ref_name }}
-        run: |
-          case "$REF_NAME" in
-            twenty/v*)
-              event_type=auto-deploy-twenty
-              ;;
-            sdk/v*)
-              event_type=auto-publish-npm
-              ;;
-            *)
-              echo "Unsupported tag '$REF_NAME', expected 'twenty/v*' or 'sdk/v*'." >&2
-              exit 1
-              ;;
-          esac
-          printf 'event_type=%s\n' "$event_type" >> "$GITHUB_OUTPUT"
+      - name: Mint twenty-infra dispatch token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty-infra
+          permission-actions: write
 
-      - name: Repository Dispatch
+      - name: Trigger staging CD
         env:
-          GH_TOKEN: ${{ secrets.TWENTY_INFRA_TOKEN }}
-          EVENT_TYPE: ${{ steps.target.outputs.event_type }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           REF_NAME: ${{ github.ref_name }}
         run: |
-          gh api repos/twentyhq/twenty-infra/dispatches \
-            -f "event_type=$EVENT_TYPE" \
-            -f "client_payload[github][ref_name]=$REF_NAME"
+          gh workflow run staging-ci.yaml --repo twentyhq/twenty-infra --ref main -f tag="$REF_NAME"

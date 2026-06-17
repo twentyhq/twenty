@@ -11,7 +11,7 @@ import {
   FieldMetadataSettingsOnClickAction,
   FieldMetadataType,
 } from 'twenty-shared/types';
-import { IconClick } from 'twenty-ui-deprecated/display';
+import { IconClick } from 'twenty-ui/display';
 
 type SettingsDataModelFieldOnClickActionFormProps = {
   disabled?: boolean;

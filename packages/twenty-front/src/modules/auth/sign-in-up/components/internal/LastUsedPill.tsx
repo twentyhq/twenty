@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Pill } from 'twenty-ui-deprecated/components';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Pill } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPillContainer = styled.span`
   position: absolute;

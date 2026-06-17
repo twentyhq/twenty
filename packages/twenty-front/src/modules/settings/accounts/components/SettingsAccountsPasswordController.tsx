@@ -6,8 +6,8 @@ import { type AccountType } from 'twenty-shared/constants';
 
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ClickToActionLink } from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { ClickToActionLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPasswordFieldContainer = styled.div`
   display: flex;

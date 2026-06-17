@@ -11,7 +11,7 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { t } from '@lingui/core/macro';
-import { Button } from 'twenty-ui-deprecated/input';
+import { Button } from 'twenty-ui/input';
 
 export const ViewPickerEditButton = () => {
   const { availableFieldsForGrouping, navigateToSelectSettings } =

@@ -10,12 +10,9 @@ import {
   type IconComponent,
   OverflowingTextWithTooltip,
   TintedIconTile,
-} from 'twenty-ui-deprecated/display';
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { type ThemeColor } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconChevronDownWrapper = styled.div<{
   disabled?: boolean;

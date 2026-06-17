@@ -2,15 +2,9 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronRight,
-  type IconComponent,
-} from 'twenty-ui-deprecated/display';
-import { CardContent } from 'twenty-ui-deprecated/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconChevronRight, type IconComponent } from 'twenty-ui/display';
+import { CardContent } from 'twenty-ui/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowContainer = styled.div`
   > * {
@@ -48,6 +42,7 @@ const StyledLabel = styled.span`
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   padding-left: ${themeCssVariables.spacing[1]};
 `;
 
