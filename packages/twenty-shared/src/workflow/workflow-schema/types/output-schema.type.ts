@@ -84,9 +84,10 @@ export type LinkOutputSchema = {
 
 export type CodeOutputSchema = LinkOutputSchema | BaseOutputSchemaV2;
 
-export type ManualTriggerOutputSchema =
-  | BaseOutputSchemaV2
-  | RecordOutputSchemaV2;
+export type ManualTriggerOutputSchema = {
+  payload?: RecordNode | Node;
+  metadata: Node;
+};
 
 export type OutputSchemaV2 =
   | BaseOutputSchemaV2
