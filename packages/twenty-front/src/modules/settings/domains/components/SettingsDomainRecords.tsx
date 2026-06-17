@@ -2,9 +2,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { type ThemeColor } from 'twenty-ui/theme';
 import {
   type DomainRecord,
   type DomainValidRecords,

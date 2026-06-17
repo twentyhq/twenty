@@ -9,9 +9,9 @@ import {
   IconRelationManyToMany,
   IconSparkles,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
-import { Card } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { Card } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCardGrid = styled.div`

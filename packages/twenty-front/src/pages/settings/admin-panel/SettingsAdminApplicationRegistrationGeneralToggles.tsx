@@ -1,12 +1,12 @@
-import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { Card, Section } from 'twenty-ui/layout';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { IconArrowBarToDown } from 'twenty-ui-deprecated/display';
+import { IconArrowBarToDown } from 'twenty-ui/display';
 import {
   type ApplicationRegistration,
   UpdateApplicationRegistrationDocument,
 } from '~/generated-metadata/graphql';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 

@@ -6,7 +6,7 @@ import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
 import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
 import { getTextByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusText';
 import { isDefined } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui-deprecated/display';
+import { Status } from 'twenty-ui/display';
 
 type SettingsWorkspaceEmailChannelDomainStatusCellProps = {
   item: MessageChannel;

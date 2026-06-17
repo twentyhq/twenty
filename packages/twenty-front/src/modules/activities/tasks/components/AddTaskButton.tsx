@@ -4,8 +4,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
+import { IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 
 export const AddTaskButton = ({
   activityTargetableObject,

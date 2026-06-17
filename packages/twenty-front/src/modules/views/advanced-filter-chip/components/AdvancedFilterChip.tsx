@@ -17,7 +17,7 @@ import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdow
 import { plural } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFilter } from 'twenty-ui-deprecated/display';
+import { IconFilter } from 'twenty-ui/display';
 
 export const AdvancedFilterChip = () => {
   const { closeDropdown } = useCloseDropdown();

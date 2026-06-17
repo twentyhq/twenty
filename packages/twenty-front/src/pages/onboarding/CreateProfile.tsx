@@ -25,10 +25,10 @@ import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { MainButton } from 'twenty-ui-deprecated/input';
-import { ModalContent } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { H2Title } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
+import { ModalContent } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContentContainer = styled.div`
   width: 100%;

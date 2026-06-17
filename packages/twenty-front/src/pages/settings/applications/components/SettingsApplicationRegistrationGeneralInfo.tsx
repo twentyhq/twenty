@@ -5,7 +5,7 @@ import {
   IconGitBranch,
   IconTag,
   IconWorld,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   SettingsTableCard,
@@ -20,7 +20,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import {
   AvatarOrIcon,
@@ -28,9 +28,9 @@ import {
   ChipSize,
   ChipVariant,
   Tag,
-} from 'twenty-ui-deprecated/components';
+} from 'twenty-ui/components';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
 

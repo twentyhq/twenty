@@ -3,7 +3,7 @@ import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/i
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Temporal } from 'temporal-polyfill';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTimezoneAbbreviation = styled.span<{ hasError?: boolean }>`
   background: transparent;

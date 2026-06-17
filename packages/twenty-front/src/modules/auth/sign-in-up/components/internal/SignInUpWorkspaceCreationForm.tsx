@@ -12,10 +12,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { Loader } from 'twenty-ui-deprecated/feedback';
-import { MainButton } from 'twenty-ui-deprecated/input';
-import { ClickToActionLink } from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Loader } from 'twenty-ui/feedback';
+import { MainButton } from 'twenty-ui/input';
+import { ClickToActionLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSection = styled.div`
   margin-top: ${themeCssVariables.spacing[4]};

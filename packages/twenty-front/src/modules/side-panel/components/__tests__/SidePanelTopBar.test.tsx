@@ -16,7 +16,7 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconDotsVertical } from 'twenty-ui-deprecated/display';
+import { IconDotsVertical } from 'twenty-ui/display';
 
 jest.mock('@/side-panel/components/SidePanelTopBarInputFocusEffect', () => ({
   SidePanelTopBarInputFocusEffect: () => null,
@@ -36,7 +36,7 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   }),
 }));
 
-jest.mock('twenty-ui-deprecated/utilities', () => ({
+jest.mock('twenty-ui/utilities', () => ({
   useIsMobile: () => true,
 }));
 

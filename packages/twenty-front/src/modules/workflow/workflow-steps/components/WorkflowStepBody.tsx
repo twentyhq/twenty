@@ -2,7 +2,7 @@ import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppErrorDisplay } from '@/error-handler/components/internal/AppErrorDisplay';
 import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledWorkflowStepBody = styled.div<{
   rowGap?: string;

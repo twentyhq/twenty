@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { ResizeHandle, useResizeHandle } from 'twenty-ui-deprecated/layout';
+import { ResizeHandle, useResizeHandle } from 'twenty-ui/layout';
 import { TextArea } from '@/ui/input/components/TextArea';
 
 type LogicFunctionLogsProps = {

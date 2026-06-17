@@ -19,7 +19,7 @@ import {
   IconCheckbox,
   IconCurrencyDollar,
   IconDecimal,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 

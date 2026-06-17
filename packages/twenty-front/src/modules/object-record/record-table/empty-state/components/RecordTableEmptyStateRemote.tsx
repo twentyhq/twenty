@@ -2,7 +2,7 @@
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { IconSettings } from 'twenty-ui-deprecated/display';
+import { IconSettings } from 'twenty-ui/display';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const RecordTableEmptyStateRemote = () => {

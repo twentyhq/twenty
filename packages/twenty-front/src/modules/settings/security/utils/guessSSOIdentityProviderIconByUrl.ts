@@ -3,7 +3,7 @@ import {
   IconGoogle,
   IconKey,
   IconMicrosoftOutlook,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 export const guessSSOIdentityProviderIconByUrl = (
   url: string,
 ): IconComponent => {

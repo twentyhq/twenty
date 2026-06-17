@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditableBooleanFieldContainer = styled.div<{ readonly?: boolean }>`
   align-items: center;

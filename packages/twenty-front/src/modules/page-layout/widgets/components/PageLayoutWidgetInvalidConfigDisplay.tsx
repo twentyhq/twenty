@@ -2,7 +2,7 @@ import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type FallbackProps } from 'react-error-boundary';
-import { AppTooltip, Status } from 'twenty-ui-deprecated/display';
+import { AppTooltip, Status } from 'twenty-ui/display';
 
 type PageLayoutWidgetInvalidConfigDisplayProps = FallbackProps;
 

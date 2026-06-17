@@ -10,8 +10,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsAccountsBlocklistSection = () => {
   const { t } = useLingui();

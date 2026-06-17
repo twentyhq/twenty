@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { Extension, type Editor, type Range } from '@tiptap/core';
 import Suggestion, { type SuggestionOptions } from '@tiptap/suggestion';
-import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { type IconComponent } from 'twenty-ui/display';
 
 import {
   DEFAULT_SLASH_COMMANDS,

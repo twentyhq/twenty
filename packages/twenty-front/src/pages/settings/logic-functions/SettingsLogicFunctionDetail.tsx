@@ -18,7 +18,7 @@ import {
   IconCode,
   IconPlayerPlay,
   IconSettings,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { useQuery } from '@apollo/client/react';
 import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';

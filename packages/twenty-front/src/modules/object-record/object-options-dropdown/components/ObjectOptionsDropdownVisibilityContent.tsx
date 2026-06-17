@@ -22,8 +22,8 @@ import {
   IconCircle,
   IconCircleDashed,
   IconCopy,
-} from 'twenty-ui-deprecated/display';
-import { MenuItem, MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import {
   ViewVisibility,
   PermissionFlagType,

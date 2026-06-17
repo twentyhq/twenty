@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { IconButton } from 'twenty-ui-deprecated/input';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconButton } from 'twenty-ui/input';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventCardToggleButtonProps = {
   isOpen: boolean;

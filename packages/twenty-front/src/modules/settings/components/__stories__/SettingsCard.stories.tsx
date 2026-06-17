@@ -1,8 +1,8 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import React from 'react';
-import { IconMailCog } from 'twenty-ui-deprecated/display';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { IconMailCog } from 'twenty-ui/display';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof SettingsCard> = {
   title: 'Modules/Settings/SettingsCard',

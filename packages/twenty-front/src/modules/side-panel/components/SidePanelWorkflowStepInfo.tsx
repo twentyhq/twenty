@@ -24,9 +24,9 @@ import { useContext, useState } from 'react';
 import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { useIcons } from 'twenty-ui-deprecated/display';
+import { useIcons } from 'twenty-ui/display';
 import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SidePanelWorkflowStepInfo = ({
   sidePanelPageInstanceId,

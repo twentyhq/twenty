@@ -6,7 +6,7 @@ import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPage
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconSparkles } from 'twenty-ui-deprecated/display';
+import { IconSparkles } from 'twenty-ui/display';
 
 const navigateSidePanelMenuMock = jest.fn();
 

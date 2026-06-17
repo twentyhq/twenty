@@ -3,7 +3,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined, normalizeUrl } from 'twenty-shared/utils';
-import { IconFolder, IconLink, useIcons } from 'twenty-ui-deprecated/display';
+import { IconFolder, IconLink, useIcons } from 'twenty-ui/display';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
