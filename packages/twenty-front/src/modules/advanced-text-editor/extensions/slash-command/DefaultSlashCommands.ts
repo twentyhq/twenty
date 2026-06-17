@@ -1,7 +1,15 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { type Editor, type Range } from '@tiptap/core';
-import { type IconComponent, IconH1, IconH2, IconH3, IconList, IconListNumbers, IconPilcrow } from 'twenty-ui/icon';
+import {
+  type IconComponent,
+  IconH1,
+  IconH2,
+  IconH3,
+  IconList,
+  IconListNumbers,
+  IconPilcrow,
+} from 'twenty-ui/icon';
 
 export type SlashCommandConfig = {
   id: string;

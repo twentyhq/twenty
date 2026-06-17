@@ -21,7 +21,17 @@ import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconApps, IconBox, IconCommand, IconGraph, IconInfoCircle, IconLego, IconListDetails, IconLock, IconSettings } from 'twenty-ui/icon';
+import {
+  IconApps,
+  IconBox,
+  IconCommand,
+  IconGraph,
+  IconInfoCircle,
+  IconLego,
+  IconListDetails,
+  IconLock,
+  IconSettings,
+} from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,

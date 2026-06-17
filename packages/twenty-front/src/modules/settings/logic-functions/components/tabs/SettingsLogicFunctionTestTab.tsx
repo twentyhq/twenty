@@ -11,7 +11,14 @@ import {
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconClock, IconDatabase, IconPlayerPlay, IconTool, IconWebhook, type IconComponent } from 'twenty-ui/icon';
+import {
+  IconClock,
+  IconDatabase,
+  IconPlayerPlay,
+  IconTool,
+  IconWebhook,
+  type IconComponent,
+} from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

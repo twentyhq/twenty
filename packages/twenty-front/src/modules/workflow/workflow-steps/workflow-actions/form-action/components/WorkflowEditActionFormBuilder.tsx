@@ -22,7 +22,13 @@ import { useContext, useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/feedback';
-import { IconAlertTriangle, IconChevronDown, IconGripVertical, IconPlus, IconTrash } from 'twenty-ui/icon';
+import {
+  IconAlertTriangle,
+  IconChevronDown,
+  IconGripVertical,
+  IconPlus,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';

@@ -16,7 +16,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
-import { IconChevronLeft, IconLayoutNavbar, IconLayoutSidebarRight } from 'twenty-ui/icon';
+import {
+  IconChevronLeft,
+  IconLayoutNavbar,
+  IconLayoutSidebarRight,
+} from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownLayoutOpenInContent = () => {

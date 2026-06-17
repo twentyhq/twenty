@@ -3,7 +3,15 @@ import {
   isFieldMetadataNumericKind,
   isFieldMetadataTextKind,
 } from 'twenty-shared/utils';
-import { type IconComponent, IconSortAscending, IconSortAscendingLetters, IconSortAscendingNumbers, IconSortDescending, IconSortDescendingLetters, IconSortDescendingNumbers } from 'twenty-ui/icon';
+import {
+  type IconComponent,
+  IconSortAscending,
+  IconSortAscendingLetters,
+  IconSortAscendingNumbers,
+  IconSortDescending,
+  IconSortDescendingLetters,
+  IconSortDescendingNumbers,
+} from 'twenty-ui/icon';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 export const getSortIconForFieldType = ({

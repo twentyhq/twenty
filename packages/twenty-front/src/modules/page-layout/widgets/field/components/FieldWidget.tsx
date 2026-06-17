@@ -27,7 +27,14 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { AnimatedPlaceholder, AnimatedPlaceholderEmptyContainer, AnimatedPlaceholderEmptySubTitle, AnimatedPlaceholderEmptyTextContainer, AnimatedPlaceholderEmptyTitle, EMPTY_PLACEHOLDER_TRANSITION_PROPS } from 'twenty-ui/feedback';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+} from 'twenty-ui/feedback';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`

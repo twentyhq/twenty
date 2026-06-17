@@ -14,7 +14,14 @@ import groupBy from 'lodash.groupby';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { AnimatedPlaceholder, AnimatedPlaceholderEmptyContainer, AnimatedPlaceholderEmptySubTitle, AnimatedPlaceholderEmptyTextContainer, AnimatedPlaceholderEmptyTitle, EMPTY_PLACEHOLDER_TRANSITION_PROPS } from 'twenty-ui/feedback';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+} from 'twenty-ui/feedback';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 

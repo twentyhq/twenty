@@ -16,7 +16,22 @@ import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateV
 import { type SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
 import { type SettingsNonCompositeFieldType } from '@/settings/data-model/types/SettingsNonCompositeFieldType';
 import { FILE_CATEGORIES, type FieldRatingValue } from 'twenty-shared/types';
-import { IllustrationIconArray, IllustrationIconCalendarEvent, IllustrationIconCalendarTime, IllustrationIconFile, IllustrationIconJson, IllustrationIconNumbers, IllustrationIconOneToMany, IllustrationIconStar, IllustrationIconTag, IllustrationIconTags, IllustrationIconText, IllustrationIconToggle, IllustrationIconUid, type IconComponent } from 'twenty-ui/icon';
+import {
+  IllustrationIconArray,
+  IllustrationIconCalendarEvent,
+  IllustrationIconCalendarTime,
+  IllustrationIconFile,
+  IllustrationIconJson,
+  IllustrationIconNumbers,
+  IllustrationIconOneToMany,
+  IllustrationIconStar,
+  IllustrationIconTag,
+  IllustrationIconTags,
+  IllustrationIconText,
+  IllustrationIconToggle,
+  IllustrationIconUid,
+  type IconComponent,
+} from 'twenty-ui/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);

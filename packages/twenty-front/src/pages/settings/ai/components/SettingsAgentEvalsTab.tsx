@@ -17,7 +17,13 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconDotsVertical, IconMessage, IconPlayerPlay, IconPlus, IconTrash } from 'twenty-ui/icon';
+import {
+  IconDotsVertical,
+  IconMessage,
+  IconPlayerPlay,
+  IconPlus,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';

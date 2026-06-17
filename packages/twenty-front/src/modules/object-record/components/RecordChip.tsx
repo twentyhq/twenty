@@ -10,7 +10,13 @@ import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarOrIcon, Chip, type ChipSize, ChipVariant, LinkChip } from 'twenty-ui/data-display';
+import {
+  AvatarOrIcon,
+  Chip,
+  type ChipSize,
+  ChipVariant,
+  LinkChip,
+} from 'twenty-ui/data-display';
 import { type TriggerEventType } from 'twenty-ui/utilities';
 
 export type RecordChipProps = {

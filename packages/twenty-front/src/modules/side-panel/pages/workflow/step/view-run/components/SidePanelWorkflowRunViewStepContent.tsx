@@ -27,7 +27,12 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLogin2, IconLogout, IconStepInto, IconTerminal } from 'twenty-ui/icon';
+import {
+  IconLogin2,
+  IconLogout,
+  IconStepInto,
+  IconTerminal,
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`

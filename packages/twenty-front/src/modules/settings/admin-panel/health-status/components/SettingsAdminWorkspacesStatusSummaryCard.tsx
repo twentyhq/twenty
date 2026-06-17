@@ -7,7 +7,12 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { Status } from 'twenty-ui/data-display';
-import { IconAlertTriangle, IconClock, IconStatusChange, IconX } from 'twenty-ui/icon';
+import {
+  IconAlertTriangle,
+  IconClock,
+  IconStatusChange,
+  IconX,
+} from 'twenty-ui/icon';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 

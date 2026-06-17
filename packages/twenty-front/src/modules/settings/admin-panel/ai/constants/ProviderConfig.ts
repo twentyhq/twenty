@@ -1,4 +1,12 @@
-import { IconBrandAnthropic, IconBrandMistral, IconBrandXai, IconGoogle, IconProviderOpenai, IconRobot, type IconComponent } from 'twenty-ui/icon';
+import {
+  IconBrandAnthropic,
+  IconBrandMistral,
+  IconBrandXai,
+  IconGoogle,
+  IconProviderOpenai,
+  IconRobot,
+  type IconComponent,
+} from 'twenty-ui/icon';
 
 export const PROVIDER_ICON_CONFIG: Record<string, { Icon: IconComponent }> = {
   openai: { Icon: IconProviderOpenai },

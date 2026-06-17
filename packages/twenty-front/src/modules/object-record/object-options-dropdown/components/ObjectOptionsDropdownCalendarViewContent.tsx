@@ -14,7 +14,12 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { t } from '@lingui/core/macro';
 import { Pill } from 'twenty-ui/data-display';
-import { IconCalendarMonth, IconCalendarWeek, IconChevronLeft, IconTimelineEvent } from 'twenty-ui/icon';
+import {
+  IconCalendarMonth,
+  IconCalendarWeek,
+  IconChevronLeft,
+  IconTimelineEvent,
+} from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 

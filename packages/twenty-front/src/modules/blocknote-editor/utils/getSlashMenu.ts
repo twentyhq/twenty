@@ -3,7 +3,29 @@ import { getDefaultReactSlashMenuItems } from '@blocknote/react';
 import { type SuggestionItem } from '@/blocknote-editor/types/types';
 
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
-import { IconBlockquote, IconCode, type IconComponent, IconFile, IconH1, IconH2, IconH3, IconH4, IconH5, IconH6, IconHeadphones, IconList, IconListCheck, IconListDetails, IconListNumbers, IconMinus, IconMoodSmile, IconPhoto, IconPilcrow, IconTable, IconVideo } from 'twenty-ui/icon';
+import {
+  IconBlockquote,
+  IconCode,
+  type IconComponent,
+  IconFile,
+  IconH1,
+  IconH2,
+  IconH3,
+  IconH4,
+  IconH5,
+  IconH6,
+  IconHeadphones,
+  IconList,
+  IconListCheck,
+  IconListDetails,
+  IconListNumbers,
+  IconMinus,
+  IconMoodSmile,
+  IconPhoto,
+  IconPilcrow,
+  IconTable,
+  IconVideo,
+} from 'twenty-ui/icon';
 
 const Icons: Record<string, IconComponent> = {
   'Heading 1': IconH1,

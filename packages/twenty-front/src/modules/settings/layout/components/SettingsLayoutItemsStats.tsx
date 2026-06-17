@@ -6,7 +6,13 @@ import { SettingsStatsGrid } from '@/settings/components/SettingsStatsGrid';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useLingui } from '@lingui/react/macro';
-import { IconAppWindow, IconCommand, IconLayoutSidebarLeftExpand, IconPuzzle, IconTable } from 'twenty-ui/icon';
+import {
+  IconAppWindow,
+  IconCommand,
+  IconLayoutSidebarLeftExpand,
+  IconPuzzle,
+  IconTable,
+} from 'twenty-ui/icon';
 
 export const SettingsLayoutItemsStats = () => {
   const { t } = useLingui();

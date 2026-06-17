@@ -1,5 +1,10 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { IconFolder, IconFolderRoot, IconInbox, IconSend } from 'twenty-ui/icon';
+import {
+  IconFolder,
+  IconFolderRoot,
+  IconInbox,
+  IconSend,
+} from 'twenty-ui/icon';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 type SettingsAccountsMessageFolderIconProps = {

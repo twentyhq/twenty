@@ -1,4 +1,10 @@
-import { IconClockPlay, type IconComponent, IconHours24, IconTimeDuration60, IconBrandDaysCounter } from 'twenty-ui/icon';
+import {
+  IconClockPlay,
+  type IconComponent,
+  IconHours24,
+  IconTimeDuration60,
+  IconBrandDaysCounter,
+} from 'twenty-ui/icon';
 export type CronTriggerInterval = 'DAYS' | 'HOURS' | 'MINUTES' | 'CUSTOM';
 
 export const CRON_TRIGGER_INTERVAL_OPTIONS: Array<{

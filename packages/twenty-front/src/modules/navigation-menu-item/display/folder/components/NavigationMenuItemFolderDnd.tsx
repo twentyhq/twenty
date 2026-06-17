@@ -3,7 +3,14 @@ import { useLingui } from '@lingui/react/macro';
 import React, { Fragment, useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconChevronRight, IconFolder, IconHeartOff, IconPlus, useIcons } from 'twenty-ui/icon';
+import {
+  IconChevronDown,
+  IconChevronRight,
+  IconFolder,
+  IconHeartOff,
+  IconPlus,
+  useIcons,
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';

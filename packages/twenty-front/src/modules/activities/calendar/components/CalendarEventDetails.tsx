@@ -30,7 +30,13 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarOrIcon, Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/data-display';
+import {
+  AvatarOrIcon,
+  Chip,
+  ChipAccent,
+  ChipSize,
+  ChipVariant,
+} from 'twenty-ui/data-display';
 import { IconCalendarEvent } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';

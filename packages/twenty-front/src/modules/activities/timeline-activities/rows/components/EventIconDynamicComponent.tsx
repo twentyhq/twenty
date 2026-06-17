@@ -1,7 +1,12 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { IconCirclePlus, IconEditCircle, IconRestore, IconTrash } from 'twenty-ui/icon';
+import {
+  IconCirclePlus,
+  IconEditCircle,
+  IconRestore,
+  IconTrash,
+} from 'twenty-ui/icon';
 
 export const EventIconDynamicComponent = ({
   event,

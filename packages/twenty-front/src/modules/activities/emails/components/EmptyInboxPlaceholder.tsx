@@ -2,7 +2,14 @@ import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useCom
 import { Trans, useLingui } from '@lingui/react/macro';
 import { IconMail } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { AnimatedPlaceholder, AnimatedPlaceholderEmptyContainer, AnimatedPlaceholderEmptySubTitle, AnimatedPlaceholderEmptyTextContainer, AnimatedPlaceholderEmptyTitle, EMPTY_PLACEHOLDER_TRANSITION_PROPS } from 'twenty-ui/feedback';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+} from 'twenty-ui/feedback';
 
 export const EmptyInboxPlaceholder = () => {
   const { t } = useLingui();

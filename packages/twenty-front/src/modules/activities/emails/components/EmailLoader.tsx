@@ -1,6 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { AnimatedPlaceholder, AnimatedPlaceholderEmptyContainer, AnimatedPlaceholderEmptyTextContainer, AnimatedPlaceholderEmptyTitle } from 'twenty-ui/feedback';
-import { Loader } from 'twenty-ui/feedback';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  Loader,
+} from 'twenty-ui/feedback';
 
 export const EmailLoader = ({ loadingText }: { loadingText?: string }) => (
   <AnimatedPlaceholderEmptyContainer>

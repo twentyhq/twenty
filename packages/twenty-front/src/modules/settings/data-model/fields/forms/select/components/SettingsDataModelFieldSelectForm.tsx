@@ -33,7 +33,13 @@ import { t } from '@lingui/core/macro';
 import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDotsVertical, IconPencil, IconPlus, IconPoint, IconTrash } from 'twenty-ui/icon';
+import {
+  IconDotsVertical,
+  IconPencil,
+  IconPlus,
+  IconPoint,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { LightButton, LightIconButton } from 'twenty-ui/input';
 import { CardContent, CardFooter } from 'twenty-ui/surfaces';
 import { MenuItem } from 'twenty-ui/navigation';

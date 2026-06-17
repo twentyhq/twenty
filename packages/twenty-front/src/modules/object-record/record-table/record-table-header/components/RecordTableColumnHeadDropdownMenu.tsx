@@ -16,7 +16,13 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { IconArrowLeft, IconArrowRight, IconEyeOff, IconFilter, IconSortDescending } from 'twenty-ui/icon';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconEyeOff,
+  IconFilter,
+  IconSortDescending,
+} from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
 export type RecordTableColumnHeadDropdownMenuProps = {

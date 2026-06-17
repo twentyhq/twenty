@@ -32,12 +32,18 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Avatar } from 'twenty-ui/data-display';
-import { IconCreditCard, IconEyeShare, IconFlag, IconMessage, IconSettings2, IconUsers } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import {
+  IconCreditCard,
+  IconEyeShare,
+  IconFlag,
+  IconMessage,
+  IconSettings2,
+  IconUsers,
+} from 'twenty-ui/icon';
+import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
 import { Button, Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type FeatureFlagKey,

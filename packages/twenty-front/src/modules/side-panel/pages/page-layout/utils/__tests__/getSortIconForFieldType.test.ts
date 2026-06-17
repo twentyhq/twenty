@@ -1,5 +1,12 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { IconSortAscending, IconSortAscendingLetters, IconSortAscendingNumbers, IconSortDescending, IconSortDescendingLetters, IconSortDescendingNumbers } from 'twenty-ui/icon';
+import {
+  IconSortAscending,
+  IconSortAscendingLetters,
+  IconSortAscendingNumbers,
+  IconSortDescending,
+  IconSortDescendingLetters,
+  IconSortDescendingNumbers,
+} from 'twenty-ui/icon';
 
 import { getSortIconForFieldType } from '@/side-panel/pages/page-layout/utils/getSortIconForFieldType';
 import { GraphOrderBy } from '~/generated-metadata/graphql';

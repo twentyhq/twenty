@@ -12,7 +12,13 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { IconFilter, IconKey, IconPlus, IconRobot, IconSearch } from 'twenty-ui/icon';
+import {
+  IconFilter,
+  IconKey,
+  IconPlus,
+  IconRobot,
+  IconSearch,
+} from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

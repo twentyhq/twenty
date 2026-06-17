@@ -1,4 +1,12 @@
-import { IconBrandGemini, IconBrandMistral, IconBrandXai, IconModelClaude, IconProviderOpenai, IconRobot, type IconComponent } from 'twenty-ui/icon';
+import {
+  IconBrandGemini,
+  IconBrandMistral,
+  IconBrandXai,
+  IconModelClaude,
+  IconProviderOpenai,
+  IconRobot,
+  type IconComponent,
+} from 'twenty-ui/icon';
 
 import { ModelFamily } from '~/generated-admin/graphql';
 

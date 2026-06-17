@@ -26,7 +26,13 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconAlignBoxLeftTop, IconApps, IconChartPie, IconFrame, IconTable } from 'twenty-ui/icon';
+import {
+  IconAlignBoxLeftTop,
+  IconApps,
+  IconChartPie,
+  IconFrame,
+  IconTable,
+} from 'twenty-ui/icon';
 import { type FrontComponent, WidgetType } from '~/generated-metadata/graphql';
 
 export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {

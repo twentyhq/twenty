@@ -16,8 +16,7 @@ import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconRefresh } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { Card } from 'twenty-ui/surfaces';
+import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 

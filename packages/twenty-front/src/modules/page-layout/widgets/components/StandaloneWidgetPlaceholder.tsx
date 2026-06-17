@@ -1,7 +1,14 @@
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedPlaceholder, AnimatedPlaceholderEmptyContainer, AnimatedPlaceholderEmptySubTitle, AnimatedPlaceholderEmptyTextContainer, AnimatedPlaceholderEmptyTitle, EMPTY_PLACEHOLDER_TRANSITION_PROPS } from 'twenty-ui/feedback';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+} from 'twenty-ui/feedback';
 
 const StyledPlaceholderContainer = styled.div`
   background: ${themeCssVariables.background.secondary};

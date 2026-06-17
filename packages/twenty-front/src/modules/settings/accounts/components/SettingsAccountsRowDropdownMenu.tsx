@@ -15,7 +15,15 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { IconAt, IconCalendarEvent, IconDotsVertical, IconMail, IconPlayerPlay, IconRefresh, IconTrash } from 'twenty-ui/icon';
+import {
+  IconAt,
+  IconCalendarEvent,
+  IconDotsVertical,
+  IconMail,
+  IconPlayerPlay,
+  IconRefresh,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

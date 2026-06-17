@@ -7,7 +7,14 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { t } from '@lingui/core/macro';
-import { IconChartBar, IconCpu, IconLayoutDashboard, IconPlus, IconSparkles, IconTool } from 'twenty-ui/icon';
+import {
+  IconChartBar,
+  IconCpu,
+  IconLayoutDashboard,
+  IconPlus,
+  IconSparkles,
+  IconTool,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';

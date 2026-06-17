@@ -4,7 +4,12 @@ import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreW
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { IconListDetails, IconListSearch, IconPlus, IconSquarePlus } from 'twenty-ui/icon';
+import {
+  IconListDetails,
+  IconListSearch,
+  IconPlus,
+  IconSquarePlus,
+} from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -1,5 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconClock, IconLayoutList, IconStatusChange, IconTrash } from 'twenty-ui/icon';
+import {
+  IconClock,
+  IconLayoutList,
+  IconStatusChange,
+  IconTrash,
+} from 'twenty-ui/icon';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';

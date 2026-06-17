@@ -23,7 +23,13 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
-import { IconChevronLeft, IconCircleOff, IconEyeOff, IconLayoutList, IconSortDescending } from 'twenty-ui/icon';
+import {
+  IconChevronLeft,
+  IconCircleOff,
+  IconEyeOff,
+  IconLayoutList,
+  IconSortDescending,
+} from 'twenty-ui/icon';
 import {
   MenuItem,
   MenuItemNavigate,

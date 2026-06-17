@@ -1,7 +1,16 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconAt, IconCalendarEvent, type IconComponent, type IconComponentProps, IconGoogle, IconMail, IconMicrosoft, IconSend } from 'twenty-ui/icon';
+import {
+  IconAt,
+  IconCalendarEvent,
+  type IconComponent,
+  type IconComponentProps,
+  IconGoogle,
+  IconMail,
+  IconMicrosoft,
+  IconSend,
+} from 'twenty-ui/icon';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 

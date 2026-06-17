@@ -1,4 +1,9 @@
-import { IconCalendar, type IconComponent, IconLayoutKanban, IconTable } from 'twenty-ui/icon';
+import {
+  IconCalendar,
+  type IconComponent,
+  IconLayoutKanban,
+  IconTable,
+} from 'twenty-ui/icon';
 
 export { ViewType } from '~/generated-metadata/graphql';
 import { ViewType } from '~/generated-metadata/graphql';

@@ -13,7 +13,13 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
 import { useLingui } from '@lingui/react/macro';
-import { IconCopy, IconLayout, IconListDetails, IconLock, useIcons } from 'twenty-ui/icon';
+import {
+  IconCopy,
+  IconLayout,
+  IconListDetails,
+  IconLock,
+  useIcons,
+} from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

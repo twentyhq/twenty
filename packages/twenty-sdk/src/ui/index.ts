@@ -468,9 +468,7 @@ export {
   IllustrationIconWrapper,
   ThinkingOrbitLoaderIcon,
 } from 'twenty-ui/icon';
-export {
-  HorizontalSeparator,
-} from 'twenty-ui/layout';
+export { HorizontalSeparator } from 'twenty-ui/layout';
 export {
   AppTooltip,
   OverflowingTextWithTooltip,
@@ -503,12 +501,8 @@ export type {
   IconProps,
   TablerIconsProps,
 } from 'twenty-ui/icon';
-export type {
-  AppTooltipProps,
-} from 'twenty-ui/surfaces';
-export type {
-  LabelVariant,
-} from 'twenty-ui/typography';
+export type { AppTooltipProps } from 'twenty-ui/surfaces';
+export type { LabelVariant } from 'twenty-ui/typography';
 
 export * from 'twenty-ui/feedback';
 export * from 'twenty-ui/input';

@@ -12,7 +12,13 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/input';
-import { AnimatedPlaceholder, AnimatedPlaceholderEmptyContainer, AnimatedPlaceholderEmptySubTitle, AnimatedPlaceholderEmptyTextContainer, AnimatedPlaceholderEmptyTitle } from 'twenty-ui/feedback';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+} from 'twenty-ui/feedback';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';

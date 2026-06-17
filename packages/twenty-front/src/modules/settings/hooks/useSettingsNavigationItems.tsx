@@ -15,7 +15,26 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconApi, IconAt, IconCalendarEvent, IconColorSwatch, type IconComponent, IconCurrencyDollar, IconDoorEnter, IconHelpCircle, IconHierarchy2, IconLayout, IconMail, IconMessage, IconPlug, IconServer, IconSettings, IconSparkles, IconUserCircle, IconUsers } from 'twenty-ui/icon';
+import {
+  IconApi,
+  IconAt,
+  IconCalendarEvent,
+  IconColorSwatch,
+  type IconComponent,
+  IconCurrencyDollar,
+  IconDoorEnter,
+  IconHelpCircle,
+  IconHierarchy2,
+  IconLayout,
+  IconMail,
+  IconMessage,
+  IconPlug,
+  IconServer,
+  IconSettings,
+  IconSparkles,
+  IconUserCircle,
+  IconUsers,
+} from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type SettingsNavigationSection = {

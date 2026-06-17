@@ -6,7 +6,14 @@ import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/Setting
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { IconApps, IconHeart, IconKey, IconSettings2, IconSparkles, IconVariable } from 'twenty-ui/icon';
+import {
+  IconApps,
+  IconHeart,
+  IconKey,
+  IconSettings2,
+  IconSparkles,
+  IconVariable,
+} from 'twenty-ui/icon';
 
 export const SettingsAdminContent = () => {
   const currentUser = useAtomStateValue(currentUserState);

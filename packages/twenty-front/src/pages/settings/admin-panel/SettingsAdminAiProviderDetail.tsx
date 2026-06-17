@@ -8,7 +8,17 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
-import { type IconComponent, IconFlag, IconKey, IconPlug, IconPlus, IconServer, IconTag, IconTrash, IconWorld } from 'twenty-ui/icon';
+import {
+  type IconComponent,
+  IconFlag,
+  IconKey,
+  IconPlug,
+  IconPlus,
+  IconServer,
+  IconTag,
+  IconTrash,
+  IconWorld,
+} from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

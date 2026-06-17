@@ -3,7 +3,12 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconId, IconProgressCheck, IconStatusChange, type IconComponent } from 'twenty-ui/icon';
+import {
+  IconId,
+  IconProgressCheck,
+  IconStatusChange,
+  type IconComponent,
+} from 'twenty-ui/icon';
 import { type GetInstanceAndAllWorkspacesUpgradeStatusQuery } from '~/generated-admin/graphql';
 
 type InstanceAndAllWorkspacesUpgradeStatus =

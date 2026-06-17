@@ -10,7 +10,11 @@ import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBolt, type IconComponent, IconSettingsAutomation } from 'twenty-ui/icon';
+import {
+  IconBolt,
+  type IconComponent,
+  IconSettingsAutomation,
+} from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
 

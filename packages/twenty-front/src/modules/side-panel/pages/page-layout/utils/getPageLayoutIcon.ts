@@ -1,7 +1,14 @@
 import { type PageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/types/PageLayoutSidePanelPage';
 import { SidePanelPages } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { IconAppWindow, IconChartPie, IconFrame, IconList, IconPlus, IconTable } from 'twenty-ui/icon';
+import {
+  IconAppWindow,
+  IconChartPie,
+  IconFrame,
+  IconList,
+  IconPlus,
+  IconTable,
+} from 'twenty-ui/icon';
 
 export const getPageLayoutIcon = (page: PageLayoutSidePanelPage) => {
   switch (page) {

@@ -17,9 +17,15 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { type GetUpgradeStatusQuery } from '~/generated-admin/graphql';
-import { AvatarOrIcon, LinkChip } from 'twenty-ui/data-display';
-import { Status } from 'twenty-ui/data-display';
-import { IconCalendar, IconHome, IconId, IconLink, IconStatusChange, IconUser } from 'twenty-ui/icon';
+import { AvatarOrIcon, LinkChip, Status } from 'twenty-ui/data-display';
+import {
+  IconCalendar,
+  IconHome,
+  IconId,
+  IconLink,
+  IconStatusChange,
+  IconUser,
+} from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';

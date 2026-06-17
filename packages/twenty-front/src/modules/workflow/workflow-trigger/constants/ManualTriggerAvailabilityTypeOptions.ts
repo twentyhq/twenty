@@ -1,4 +1,9 @@
-import { IconCheckbox, type IconComponent, IconId, IconListDetails } from 'twenty-ui/icon';
+import {
+  IconCheckbox,
+  type IconComponent,
+  IconId,
+  IconListDetails,
+} from 'twenty-ui/icon';
 
 export const MANUAL_TRIGGER_AVAILABILITY_TYPE_OPTIONS: Array<{
   label: string;

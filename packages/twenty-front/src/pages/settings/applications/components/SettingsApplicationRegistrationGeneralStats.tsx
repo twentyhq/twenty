@@ -1,4 +1,8 @@
-import { IconBrandDocker, IconChartBar, IconStatusChange } from 'twenty-ui/icon';
+import {
+  IconBrandDocker,
+  IconChartBar,
+  IconStatusChange,
+} from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';

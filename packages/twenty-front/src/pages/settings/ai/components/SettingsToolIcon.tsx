@@ -5,7 +5,15 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
-import { IconCode, IconEdit, IconPlus, IconSearch, IconTrash, useIcons, type IconComponent } from 'twenty-ui/icon';
+import {
+  IconCode,
+  IconEdit,
+  IconPlus,
+  IconSearch,
+  IconTrash,
+  useIcons,
+  type IconComponent,
+} from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ApplicationInfo = {

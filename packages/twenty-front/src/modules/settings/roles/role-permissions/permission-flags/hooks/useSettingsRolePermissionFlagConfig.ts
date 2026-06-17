@@ -1,7 +1,21 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { IconApps, IconCode, IconCreditCard, IconHierarchy, IconKey, IconLayoutSidebarRightCollapse, IconLockOpen, IconSettings, IconSettingsAutomation, IconShield, IconSparkles, IconSpy, IconUsers } from 'twenty-ui/icon';
+import {
+  IconApps,
+  IconCode,
+  IconCreditCard,
+  IconHierarchy,
+  IconKey,
+  IconLayoutSidebarRightCollapse,
+  IconLockOpen,
+  IconSettings,
+  IconSettingsAutomation,
+  IconShield,
+  IconSparkles,
+  IconSpy,
+  IconUsers,
+} from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type UseSettingsRolePermissionFlagConfigParams = {

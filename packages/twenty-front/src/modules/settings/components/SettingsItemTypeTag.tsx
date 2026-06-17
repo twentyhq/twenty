@@ -1,8 +1,7 @@
 import { t } from '@lingui/core/macro';
 
 import { AppChip } from '@/applications/components/AppChip';
-import { Avatar } from 'twenty-ui/data-display';
-import { Chip, ChipAccent, ChipVariant } from 'twenty-ui/data-display';
+import { Avatar, Chip, ChipAccent, ChipVariant } from 'twenty-ui/data-display';
 import { isDefined } from 'twenty-shared/utils';
 
 type SettingsItemTypeTagProps = {

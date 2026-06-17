@@ -22,7 +22,14 @@ import {
 import { useCallback, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconLock, IconLockOpen, IconMaximize, IconMinus, IconPlus, IconX } from 'twenty-ui/icon';
+import {
+  IconLock,
+  IconLockOpen,
+  IconMaximize,
+  IconMinus,
+  IconPlus,
+  IconX,
+} from 'twenty-ui/icon';
 import { Button, IconButtonGroup } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

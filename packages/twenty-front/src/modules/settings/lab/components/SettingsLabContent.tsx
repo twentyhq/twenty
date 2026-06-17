@@ -5,7 +5,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { IconRelationManyToMany, IconSparkles, type IconComponent } from 'twenty-ui/icon';
+import {
+  IconRelationManyToMany,
+  IconSparkles,
+  type IconComponent,
+} from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';

@@ -5,11 +5,15 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { FindOneApplicationRegistrationDocument } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
-import { Tag } from 'twenty-ui/data-display';
+import { Avatar, Tag } from 'twenty-ui/data-display';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Avatar } from 'twenty-ui/data-display';
-import { IconInfoCircle, IconKey, IconSettings, IconWorld } from 'twenty-ui/icon';
+import {
+  IconInfoCircle,
+  IconKey,
+  IconSettings,
+  IconWorld,
+} from 'twenty-ui/icon';
 import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';

@@ -1,6 +1,18 @@
 import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCode, type IconComponent, IconCurrencyDollar, IconDatabase, IconHierarchy, IconKey, IconSettings, IconSettingsAutomation, IconSparkles, IconTool, IconUsers } from 'twenty-ui/icon';
+import {
+  IconCode,
+  type IconComponent,
+  IconCurrencyDollar,
+  IconDatabase,
+  IconHierarchy,
+  IconKey,
+  IconSettings,
+  IconSettingsAutomation,
+  IconSparkles,
+  IconTool,
+  IconUsers,
+} from 'twenty-ui/icon';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 export type PermissionSummaryItem = {

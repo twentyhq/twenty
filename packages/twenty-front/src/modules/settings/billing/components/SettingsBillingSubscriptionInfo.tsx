@@ -33,7 +33,16 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArrowDown, IconArrowUp, IconCalendarEvent, IconCalendarRepeat, IconCircleX, IconCoins, IconTag, IconUsers } from 'twenty-ui/icon';
+import {
+  IconArrowDown,
+  IconArrowUp,
+  IconCalendarEvent,
+  IconCalendarRepeat,
+  IconCircleX,
+  IconCoins,
+  IconTag,
+  IconUsers,
+} from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

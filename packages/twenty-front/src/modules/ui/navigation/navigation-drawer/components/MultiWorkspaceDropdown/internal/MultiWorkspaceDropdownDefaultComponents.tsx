@@ -29,7 +29,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
-import { IconDotsVertical, IconLogout, IconMessage, IconPlus, IconSettings, IconSwitchHorizontal, IconUserPlus } from 'twenty-ui/icon';
+import {
+  IconDotsVertical,
+  IconLogout,
+  IconMessage,
+  IconPlus,
+  IconSettings,
+  IconSwitchHorizontal,
+  IconUserPlus,
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import {
   MenuItem,

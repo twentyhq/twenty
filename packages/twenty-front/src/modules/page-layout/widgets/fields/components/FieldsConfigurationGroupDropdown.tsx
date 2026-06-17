@@ -1,5 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconDotsVertical, IconNewSection, IconPencil, IconTrash } from 'twenty-ui/icon';
+import {
+  IconDotsVertical,
+  IconNewSection,
+  IconPencil,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 

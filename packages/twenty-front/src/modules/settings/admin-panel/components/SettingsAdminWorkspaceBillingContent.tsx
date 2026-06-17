@@ -4,7 +4,20 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/data-display';
-import { IconBox, IconCalendarEvent, IconCalendarRepeat, IconChartBar, IconCircleX, IconCoins, IconCreditCard, IconExternalLink, IconId, IconStatusChange, IconTag, IconUsers } from 'twenty-ui/icon';
+import {
+  IconBox,
+  IconCalendarEvent,
+  IconCalendarRepeat,
+  IconChartBar,
+  IconCircleX,
+  IconCoins,
+  IconCreditCard,
+  IconExternalLink,
+  IconId,
+  IconStatusChange,
+  IconTag,
+  IconUsers,
+} from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';

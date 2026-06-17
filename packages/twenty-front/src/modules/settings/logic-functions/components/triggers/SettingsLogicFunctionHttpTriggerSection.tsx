@@ -10,7 +10,15 @@ import { useContext } from 'react';
 import { type HttpRouteTriggerSettings } from 'twenty-shared/application';
 import { HTTPMethod } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCopy, IconHttpDelete, IconHttpGet, IconHttpPatch, IconHttpPost, IconHttpPut, type IconComponent } from 'twenty-ui/icon';
+import {
+  IconCopy,
+  IconHttpDelete,
+  IconHttpGet,
+  IconHttpPatch,
+  IconHttpPost,
+  IconHttpPut,
+  type IconComponent,
+} from 'twenty-ui/icon';
 import { Toggle } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';

@@ -14,7 +14,13 @@ import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLock, IconSend, IconUser, useIcons, type IconComponent } from 'twenty-ui/icon';
+import {
+  IconLock,
+  IconSend,
+  IconUser,
+  useIcons,
+  type IconComponent,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 

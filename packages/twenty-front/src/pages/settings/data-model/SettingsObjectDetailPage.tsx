@@ -24,7 +24,13 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconArrowUpRight, IconLayout, IconListDetails, IconPlus, IconSettings } from 'twenty-ui/icon';
+import {
+  IconArrowUpRight,
+  IconLayout,
+  IconListDetails,
+  IconPlus,
+  IconSettings,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';

@@ -13,7 +13,13 @@ import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedPlaceholder, AnimatedPlaceholderEmptyTextContainer, AnimatedPlaceholderErrorContainer, AnimatedPlaceholderErrorSubTitle, AnimatedPlaceholderErrorTitle } from 'twenty-ui/feedback';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderErrorContainer,
+  AnimatedPlaceholderErrorSubTitle,
+  AnimatedPlaceholderErrorTitle,
+} from 'twenty-ui/feedback';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 
 const StyledBackDrop = styled.div`

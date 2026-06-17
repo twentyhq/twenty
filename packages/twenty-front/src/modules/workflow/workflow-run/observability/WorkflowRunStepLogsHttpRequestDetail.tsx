@@ -3,7 +3,13 @@ import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
-import { IconAlertTriangle, IconArrowDown, IconArrowUp, IconClock, IconWorld } from 'twenty-ui/icon';
+import {
+  IconAlertTriangle,
+  IconArrowDown,
+  IconArrowUp,
+  IconClock,
+  IconWorld,
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';

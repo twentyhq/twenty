@@ -1,4 +1,9 @@
-import { type IconComponent, IconGoogle, IconKey, IconMicrosoftOutlook } from 'twenty-ui/icon';
+import {
+  type IconComponent,
+  IconGoogle,
+  IconKey,
+  IconMicrosoftOutlook,
+} from 'twenty-ui/icon';
 export const guessSSOIdentityProviderIconByUrl = (
   url: string,
 ): IconComponent => {

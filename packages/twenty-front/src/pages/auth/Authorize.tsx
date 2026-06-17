@@ -11,7 +11,11 @@ import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent, IconDatabase, IconUserCircle } from 'twenty-ui/icon';
+import {
+  type IconComponent,
+  IconDatabase,
+  IconUserCircle,
+} from 'twenty-ui/icon';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
 import { ModalContent } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

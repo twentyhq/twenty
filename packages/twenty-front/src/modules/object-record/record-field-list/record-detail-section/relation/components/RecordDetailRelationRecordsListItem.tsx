@@ -36,7 +36,13 @@ import {
   computeMorphRelationGqlFieldName,
   CustomError,
 } from 'twenty-shared/utils';
-import { IconChevronDown, IconDotsVertical, IconTrash, IconUnlink, type IconComponent } from 'twenty-ui/icon';
+import {
+  IconChevronDown,
+  IconDotsVertical,
+  IconTrash,
+  IconUnlink,
+  type IconComponent,
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/layout';

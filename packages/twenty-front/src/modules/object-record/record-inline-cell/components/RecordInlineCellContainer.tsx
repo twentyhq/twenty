@@ -9,7 +9,11 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
-import { AppTooltip, OverflowingTextWithTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import {
+  AppTooltip,
+  OverflowingTextWithTooltip,
+  TooltipDelay,
+} from 'twenty-ui/surfaces';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
 

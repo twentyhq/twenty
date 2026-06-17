@@ -2,7 +2,13 @@ import { type FieldNumberVariant } from '@/object-record/record-field/ui/types/F
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { type ForwardRefExoticComponent, type RefAttributes } from 'react';
-import { IconLetterK, IconNumber9, IconPercentage, type IconComponent, type IconComponentProps } from 'twenty-ui/icon';
+import {
+  IconLetterK,
+  IconNumber9,
+  IconPercentage,
+  type IconComponent,
+  type IconComponentProps,
+} from 'twenty-ui/icon';
 
 type NumberDataModelSelectOptions = {
   Icon: ForwardRefExoticComponent<

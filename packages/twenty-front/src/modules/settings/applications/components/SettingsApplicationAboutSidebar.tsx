@@ -4,7 +4,14 @@ import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/data-display';
-import { IconAlertTriangle, IconBrandNpm, type IconComponent, IconLink, IconMail, IconWorld } from 'twenty-ui/icon';
+import {
+  IconAlertTriangle,
+  IconBrandNpm,
+  type IconComponent,
+  IconLink,
+  IconMail,
+  IconWorld,
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ContentEntry = {

@@ -1,5 +1,15 @@
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
-import { type IconComponent, IconFile, IconFileText, IconFileZip, IconHeadphones, IconPhoto, IconPresentation, IconTable, IconVideo } from 'twenty-ui/icon';
+import {
+  type IconComponent,
+  IconFile,
+  IconFileText,
+  IconFileZip,
+  IconHeadphones,
+  IconPhoto,
+  IconPresentation,
+  IconTable,
+  IconVideo,
+} from 'twenty-ui/icon';
 
 export const IconMapping: {
   [key in AttachmentFileCategory]: IconComponent;

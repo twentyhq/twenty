@@ -9,7 +9,14 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { AnimatedPlaceholder, AnimatedPlaceholderEmptyContainer, AnimatedPlaceholderEmptySubTitle, AnimatedPlaceholderEmptyTextContainer, AnimatedPlaceholderEmptyTitle, type AnimatedPlaceholderType } from 'twenty-ui/feedback';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  type AnimatedPlaceholderType,
+} from 'twenty-ui/feedback';
 
 const StyledEmptyPlaceholderOuterContainer = styled.div`
   height: 100%;
