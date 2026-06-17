@@ -702,6 +702,26 @@ export class ConfigVariables {
   CODE_INTERPRETER_TIMEOUT_MS = 300_000;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'Idle lifetime in milliseconds for a reused code interpreter sandbox; refreshed on each execution and reclaimed after this period of inactivity (default: 300000)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  @CastToPositiveNumber()
+  CODE_INTERPRETER_IDLE_TIMEOUT_MS = 300_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'Maximum age in milliseconds a reused code interpreter sandbox is kept before garbage collection reclaims it; abandoned conversations are reclaimed after this period (default: 86400000)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  @CastToPositiveNumber()
+  CODE_INTERPRETER_SESSION_MAX_AGE_MS = 86_400_000;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ANALYTICS_CONFIG,
     description: 'Enable or disable analytics for telemetry',
     type: ConfigVariableType.BOOLEAN,
