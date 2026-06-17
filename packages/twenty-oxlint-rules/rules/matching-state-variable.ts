@@ -41,10 +41,8 @@ const getExpectedBaseName = (stateArgName: string): string =>
 const getExpectedSetterName = (baseName: string): string =>
   `set${baseName.charAt(0).toUpperCase()}${baseName.slice(1)}`;
 
-// For family hooks, a string-literal family key may be appended to the base
-// name to disambiguate reads of the same family in the same scope. e.g.
-// `useAtomFamilyStateValue(metadataStoreState, 'views')` accepts either
-// `metadataStore` or `metadataStoreViews` as the variable name.
+// Family hooks may suffix the string-literal key to disambiguate multiple
+// reads of the same family in one scope (e.g. metadataStore / metadataStoreViews).
 const getFamilyKeyVariants = (
   hookName: string,
   args: ReadonlyArray<any> | undefined,

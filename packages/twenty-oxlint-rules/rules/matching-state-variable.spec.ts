@@ -26,8 +26,6 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: 'const [variable, setVariable] = useAtomComponentFamilyState(variableComponentFamilyState, key);',
     },
-    // String-literal family keys may be appended to the base name so that
-    // multiple reads of the same family can co-exist in the same scope.
     {
       code: "const variableViews = useAtomFamilyStateValue(variableFamilyState, 'views');",
     },
@@ -128,8 +126,6 @@ ruleTester.run(RULE_NAME, rule, {
       output: 'const setVariable = useSetAtomComponentFamilyState(variableComponentFamilyState, key);',
       errors: [{ messageId: 'invalidSetterName' }],
     },
-    // A family key suffix is only accepted when it matches the actual
-    // string-literal key — arbitrary suffixes are still rejected.
     {
       code: "const variableSorts = useAtomFamilyStateValue(variableFamilyState, 'views');",
       output: "const variable = useAtomFamilyStateValue(variableFamilyState, 'views');",

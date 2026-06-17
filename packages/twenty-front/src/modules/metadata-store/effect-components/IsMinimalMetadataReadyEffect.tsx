@@ -42,11 +42,6 @@ export const IsMinimalMetadataReadyEffect = () => {
 
     const hasActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
 
-    // The record-index page needs the joined view (view + viewFields) and the
-    // joined object (object + fieldMetadataItems) to compute its columns. If
-    // the gate opens before viewFields/fieldMetadataItems land, the view is
-    // loaded with empty viewFields, RecordIndexLoadBaseOnContextStoreEffect
-    // pins loadedViewId, and the record fetch is permanently skipped.
     const areObjectsLoaded =
       metadataStoreObjectMetadataItems.status === 'up-to-date' &&
       metadataStoreFieldMetadataItems.status === 'up-to-date';
