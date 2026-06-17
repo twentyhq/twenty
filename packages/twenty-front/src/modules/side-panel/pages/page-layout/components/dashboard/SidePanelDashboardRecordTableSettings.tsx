@@ -81,7 +81,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
   const handleLimitChange = (value: number | null) => {
-    const nextLimit = !isDefined(value) || value < 1 ? undefined : value;
+    const nextLimit = !isDefined(value) || value < 1 ? undefined : Math.floor(value);
 
     updateCurrentWidgetConfig({
       configToUpdate: { limit: nextLimit },
