@@ -22,8 +22,6 @@ export type SubdomainFieldStatus =
 const AVAILABILITY_CHECK_DEBOUNCE_MS = 400;
 
 export const useWorkspaceSubdomainField = ({
-  // Single-workspace self-host has no subdomain field, so the caller can disable
-  // the availability lookups that would otherwise fire on every keystroke.
   isSubdomainEnabled = true,
 }: { isSubdomainEnabled?: boolean } = {}) => {
   const apolloClient = useApolloClient();

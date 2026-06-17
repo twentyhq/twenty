@@ -145,8 +145,6 @@ export class FileCorePictureService {
     };
   }
 
-  // Authorization for setting a logo on a not-yet-activated workspace. Kept
-  // separate from the upload so callers can reject before buffering the file.
   async getPendingWorkspaceForLogoUploadOrThrow({
     userId,
     workspaceId,

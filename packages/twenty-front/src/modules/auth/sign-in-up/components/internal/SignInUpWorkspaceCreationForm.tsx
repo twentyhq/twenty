@@ -74,14 +74,11 @@ export const SignInUpWorkspaceCreationForm = () => {
     isSubdomainEnabled: isMultiWorkspaceEnabled,
   });
 
-  // Single-workspace self-host has a fixed address, so we only collect the name
-  // and let the backend keep its default subdomain.
-  const isContinueDisabled = isMultiWorkspaceEnabled
-    ? workspaceName.trim() === '' || !isAvailable || isSubmitting
-    : workspaceName.trim() === '' || isSubmitting;
+  const isContinueDisabled =
+    workspaceName.trim() === '' ||
+    isSubmitting ||
+    (isMultiWorkspaceEnabled && !isAvailable);
 
-  // The workspace does not exist yet, so we hold the picked file locally and
-  // only upload it once the workspace is created.
   const handleLogoUpload = (file: File) => {
     if (!isDefined(file)) {
       return;
@@ -95,8 +92,6 @@ export const SignInUpWorkspaceCreationForm = () => {
     setLogoPreviewUrl(undefined);
   };
 
-  // Revoke the active object URL whenever it is replaced and on unmount, so the
-  // picked logo preview never leaks (including if the user navigates away).
   useEffect(() => {
     if (!isDefined(logoPreviewUrl)) {
       return;
@@ -116,7 +111,6 @@ export const SignInUpWorkspaceCreationForm = () => {
     try {
       await createWorkspace({
         displayName: workspaceName.trim(),
-        // Single-workspace self-host keeps the backend default subdomain.
         ...(isMultiWorkspaceEnabled ? { subdomain } : {}),
         logo,
         newTab: false,

@@ -572,8 +572,6 @@ export class AuthResolver {
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename }: FileUpload,
   ): Promise<FileWithSignedUrlDTO> {
-    // Authorize before reading the untrusted upload stream, so a rejected
-    // request never buffers the file into memory.
     const workspace =
       await this.fileCorePictureService.getPendingWorkspaceForLogoUploadOrThrow(
         {
@@ -582,8 +580,6 @@ export class AuthResolver {
         },
       );
 
-    // The upload is buffered in memory, so cap it to the configured max file
-    // size to avoid an unbounded read from an untrusted stream.
     const buffer = await streamToBuffer(
       createReadStream(),
       bytes(settings.storage.maxFileSize) ?? undefined,

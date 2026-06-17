@@ -399,7 +399,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     workspaceId,
   }: {
     workspaceId: string;
-    // Optional rename at activation; the workspace is normally already named.
     displayName?: string;
   }): Promise<void> {
     const lastAttemptedInstanceCommand =

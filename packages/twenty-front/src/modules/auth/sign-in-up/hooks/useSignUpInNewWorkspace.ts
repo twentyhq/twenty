@@ -50,7 +50,6 @@ export const useSignUpInNewWorkspace = () => {
       const workspaceId = data.signUpInNewWorkspace.workspace.id;
 
       if (isDefined(logo)) {
-        // A logo upload failure should not block workspace creation.
         try {
           await uploadNewWorkspaceLogoMutation({
             variables: { workspaceId, file: logo },
@@ -71,8 +70,6 @@ export const useSignUpInNewWorkspace = () => {
 
       const loginToken = data.signUpInNewWorkspace.loginToken.token;
 
-      // Single-workspace self-host has no subdomain to redirect to, so we
-      // authenticate in place and let onboarding take over on the same domain.
       if (!isMultiWorkspaceEnabled) {
         return await getAuthTokensFromLoginToken(loginToken);
       }

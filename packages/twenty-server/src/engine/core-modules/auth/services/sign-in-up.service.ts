@@ -516,8 +516,6 @@ export class SignInUpService {
 
     await this.assertWorkspaceCreationAllowed(userData);
 
-    // A workspace is always created with a name. Only the user can supply one
-    // (unlike the subdomain, which we can generate), so it is required here.
     const displayName = options?.displayName?.trim();
 
     if (!displayName) {

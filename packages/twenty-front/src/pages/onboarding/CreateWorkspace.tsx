@@ -75,8 +75,6 @@ export const CreateWorkspace = () => {
     };
 
     try {
-      // The workspace is already named at creation, so activation only
-      // provisions it — no input needed.
       const result = await activateWorkspace({
         variables: {
           input: {},
@@ -90,7 +88,6 @@ export const CreateWorkspace = () => {
       await loadCurrentUser();
       setNextOnboardingStatus();
     } catch (error) {
-      clearStepTimeouts();
       setActivationStep('pending');
       setHasFailed(true);
 
@@ -107,9 +104,6 @@ export const CreateWorkspace = () => {
     setNextOnboardingStatus,
   ]);
 
-  // Activation sends the workspace name to the backend, so we wait for the
-  // workspace to load and then activate exactly once. Activation is an
-  // imperative one-time action, so a mount effect is the right tool here.
   const [hasTriggered, setHasTriggered] = useState(false);
   useEffect(() => {
     if (hasTriggered || !isDefined(currentWorkspace)) {
