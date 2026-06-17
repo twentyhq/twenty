@@ -14,16 +14,16 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-const getDefaultE2eAccessTokenOutputPath = (workspaceId: string): string =>
-  join(tmpdir(), `e2e-access-token-${workspaceId}`);
+const getDefaultAccessTokenOutputPath = (workspaceId: string): string =>
+  join(tmpdir(), `access-token-${workspaceId}`);
 
 @Command({
-  name: 'workspace:seed:e2e-token',
+  name: 'workspace:generate-access-token',
   description:
-    'Mint and emit an ACCESS token for the seeded e2e workspace (stdout + file). Intended for the app prod-parity e2e workflow.',
+    'Mint and emit an ACCESS token for the seeded workspace (stdout + file). Development/test only.',
 })
-export class GenerateE2eAccessTokenCommand extends CommandRunner {
-  private readonly logger = new Logger(GenerateE2eAccessTokenCommand.name);
+export class GenerateAccessTokenCommand extends CommandRunner {
+  private readonly logger = new Logger(GenerateAccessTokenCommand.name);
 
   constructor(
     private readonly accessTokenService: AccessTokenService,
@@ -40,7 +40,7 @@ export class GenerateE2eAccessTokenCommand extends CommandRunner {
       nodeEnv !== NodeEnvironment.TEST
     ) {
       throw new Error(
-        'workspace:seed:e2e-token is only available in development or test environments',
+        'workspace:generate-access-token is only available in development or test environments',
       );
     }
 
@@ -50,16 +50,16 @@ export class GenerateE2eAccessTokenCommand extends CommandRunner {
     const token = await this.mintAccessToken({ userId, workspaceId });
 
     const outputPath =
-      process.env.E2E_ACCESS_TOKEN_OUTPUT_PATH ??
-      getDefaultE2eAccessTokenOutputPath(workspaceId);
+      process.env.ACCESS_TOKEN_OUTPUT_PATH ??
+      getDefaultAccessTokenOutputPath(workspaceId);
 
     fs.writeFileSync(outputPath, token, 'utf8');
 
     this.logger.log(
-      `E2E access token written to ${outputPath} (workspaceId=${workspaceId}, userId=${userId})`,
+      `Access token written to ${outputPath} (workspaceId=${workspaceId}, userId=${userId})`,
     );
 
-    process.stdout.write(`E2E_ACCESS_TOKEN_PATH=${outputPath}\n`);
+    process.stdout.write(`ACCESS_TOKEN_PATH=${outputPath}\n`);
   }
 
   private async mintAccessToken({
@@ -79,8 +79,8 @@ export class GenerateE2eAccessTokenCommand extends CommandRunner {
       return token;
     } catch (error) {
       throw new Error(
-        `Failed to mint e2e access token for userId=${userId} workspaceId=${workspaceId}. ` +
-          `Ensure the e2e workspace has been seeded first (e.g. nx run twenty-server:database:reset). ` +
+        `Failed to mint access token for userId=${userId} workspaceId=${workspaceId}. ` +
+          `Ensure the workspace has been seeded first (e.g. nx run twenty-server:database:reset). ` +
           `Cause: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
