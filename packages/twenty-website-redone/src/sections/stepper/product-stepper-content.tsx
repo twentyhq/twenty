@@ -163,7 +163,9 @@ export function ProductStepperContent({
           </StepIconBox>
           <StepHeading>{i18n._(step.heading)}</StepHeading>
         </StepRowHeader>
-        <Body size="sm">{i18n._(step.body)}</Body>
+        <Body muted size="sm">
+          {i18n._(step.body)}
+        </Body>
       </>
     );
   };
@@ -183,7 +185,7 @@ export function ProductStepperContent({
             <Heading as="h2" size="lg" weight="light">
               {i18n._(msg`Go the extra mile *with no-code*`)}
             </Heading>
-            <Body size="sm">
+            <Body muted size="sm">
               {i18n._(
                 msg`Need a quick change? Skip the engineering ticket. Customize your workspace in minutes.`,
               )}

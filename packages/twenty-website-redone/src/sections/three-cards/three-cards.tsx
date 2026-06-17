@@ -53,7 +53,7 @@ export function ThreeCards() {
               </Heading>
             </div>
             <BodyMeasure>
-              <Body size="sm">
+              <Body muted size="sm">
                 {i18n._(
                   msg`Compose your CRM and internal apps with a single extensibility toolkit.`,
                 )}
