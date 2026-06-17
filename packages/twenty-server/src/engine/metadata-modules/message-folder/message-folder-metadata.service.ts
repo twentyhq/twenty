@@ -223,6 +223,17 @@ export class MessageFolderMetadataService {
       );
     }
 
+    if (data.isSynced === false) {
+      await this.repository.update(
+        {
+          id: In(ids),
+          workspaceId,
+          pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_IMPORT,
+        },
+        { pendingSyncAction: MessageFolderPendingSyncAction.NONE },
+      );
+    }
+
     return this.repository.find({ where: { id: In(ids), workspaceId } });
   }
 
