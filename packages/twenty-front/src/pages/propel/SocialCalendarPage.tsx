@@ -10,12 +10,14 @@ import {
   CalendarError,
   CalendarLoading,
 } from '@/propel/components/calendar/CalendarStates';
+import { PostDetailDrawer } from '@/propel/components/calendar/PostDetailDrawer';
 import { SocialCalendar } from '@/propel/components/calendar/SocialCalendar';
 import { useSocialCalendarData } from '@/propel/hooks/useSocialCalendarData';
 import {
   type SocialCalendarEvent,
   type SocialCalendarFilters,
   type SocialCalendarView,
+  type SocialPost,
 } from '@/propel/types/socialCalendar';
 
 // The graduated Social Posting Calendar hero (P3 hero #5). Rides Twenty's
@@ -38,6 +40,8 @@ export const SocialCalendarPage = () => {
     networks: [],
     statuses: [],
   });
+  // S2: the post selected for the read drawer. null = drawer closed.
+  const [selectedPost, setSelectedPost] = useState<SocialPost | null>(null);
 
   // Apply channel + status filters. Empty selection on an axis = no filter.
   const filteredEvents = useMemo(() => {
@@ -55,9 +59,11 @@ export const SocialCalendarPage = () => {
   const hasChannels = accounts.length > 0;
   const hasAnyPosts = events.length > 0;
 
-  // S2 placeholder: pill click will open the post-detail drawer.
-  const handleSelectEvent = (_event: SocialCalendarEvent) => {
-    // intentionally a no-op until S2 (post-detail drawer) lands.
+  // S2: a pill click opens the post-detail read drawer. The event carries the
+  // originating SocialPost (set in useSocialCalendarData → toEvent), so no second
+  // lookup is needed; the drawer reads everything from this record + the payload.
+  const handleSelectEvent = (event: SocialCalendarEvent) => {
+    setSelectedPost(event.post);
   };
 
   const renderBody = () => {
@@ -124,6 +130,16 @@ export const SocialCalendarPage = () => {
           {renderBody()}
         </Box>
       </PageContainer>
+
+      {/* S2 post-detail read drawer. Overlays the whole page; AnimatePresence
+          inside handles enter/exit when selectedPost flips null↔record. Reads
+          listings + connectUrl off the same status payload (no new fetch). */}
+      <PostDetailDrawer
+        post={selectedPost}
+        listings={payload?.listings}
+        connectUrl={payload?.connectUrl}
+        onClose={() => setSelectedPost(null)}
+      />
     </PropelMantineProvider>
   );
 };

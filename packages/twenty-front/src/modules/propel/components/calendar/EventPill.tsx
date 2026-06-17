@@ -7,14 +7,11 @@ import {
   primaryChannelColor,
   STATUS_META,
 } from '@/propel/lib/socialCalendarConfig';
+import { countMedia } from '@/propel/lib/socialPostDetail';
 import {
   type SocialCalendarEvent,
   type SocialNetwork,
 } from '@/propel/types/socialCalendar';
-
-// Count attached media defensively — mediaRefs is JSON (array, or anything).
-const mediaCount = (mediaRefs: unknown): number =>
-  Array.isArray(mediaRefs) ? mediaRefs.length : 0;
 
 // react-big-calendar injects { event } into our custom event renderer; alias the
 // library generic to satisfy the named-props convention.
@@ -52,7 +49,7 @@ export const EventPill = ({ event }: EventPillProps) => {
   const networks = (post.networks ?? []).filter(
     (n): n is SocialNetwork => CHANNEL_META[n] !== undefined,
   );
-  const media = mediaCount(post.mediaRefs);
+  const media = countMedia(post.mediaRefs);
 
   const time =
     post.scheduledAt !== null && post.scheduledAt !== ''
