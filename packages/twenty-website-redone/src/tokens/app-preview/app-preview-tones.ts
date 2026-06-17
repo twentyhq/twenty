@@ -1,11 +1,18 @@
 // The mockup's tone tables (single module — the old site scattered four
-// copies). The kanban column chip now derives from the product's tag system
-// directly (baked in kanban-lane's LaneTag, color3 surface / color11 text).
-// STILL HAND-MIXED, each pending its own derivation against live twenty-front:
-// TAG (a tag → color3/color11), PERSON (avatars use a color4/color5 surface
-// with color12 text — NOT the tag ramp), and SIDEBAR (object-icon tones).
+// copies). TAG derives directly from the product's tag system (color3
+// surface / color11 text). STILL HAND-MIXED pending their own derivation:
+// SIDEBAR (object-icon tones — needs the sidebar-page trace).
+import { THEME_LIGHT } from 'twenty-ui/theme';
+
 type ToneSurface = { background: string; border: string; color: string };
 type TonePair = { background: string; color: string };
+
+// Our tone names map 1:1 onto twenty-ui's tag colors, except `teal` is the
+// product's `turquoise`.
+const tagTone = (name: keyof typeof THEME_LIGHT.tag.text): TonePair => ({
+  background: THEME_LIGHT.tag.background[name],
+  color: THEME_LIGHT.tag.text[name],
+});
 
 const SIDEBAR: Record<string, ToneSurface> = {
   amber: { background: '#FEF2A4', border: '#FEF2A4', color: '#35290F' },
@@ -21,15 +28,15 @@ const SIDEBAR: Record<string, ToneSurface> = {
 };
 
 const TAG: Record<string, TonePair> = {
-  amber: { background: '#FEF2A4', color: '#35290F' },
-  blue: { background: '#d9e2fc', color: '#3a5ccc' },
-  gray: { background: '#fafafa', color: '#666666' },
-  green: { background: '#ccebd7', color: '#299764' },
-  orange: { background: '#ffdcc3', color: '#ed5f00' },
-  pink: { background: '#fcdced', color: '#d6409f' },
-  purple: { background: '#eddbf9', color: '#8347b9' },
-  red: { background: '#fdd8d8', color: '#dc3d43' },
-  teal: { background: '#c7ebe5', color: '#0E9888' },
+  amber: tagTone('amber'),
+  blue: tagTone('blue'),
+  gray: tagTone('gray'),
+  green: tagTone('green'),
+  orange: tagTone('orange'),
+  pink: tagTone('pink'),
+  purple: tagTone('purple'),
+  red: tagTone('red'),
+  teal: tagTone('turquoise'),
 };
 
 function hexToRgbTuple(hex: string): string {
