@@ -18,6 +18,7 @@ import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
 import { Chip } from '../../primitives/chip';
 import { FaviconLogo } from '../../primitives/favicon-logo';
 import { PersonAvatar } from '../../primitives/person-avatar';
+import { PreviewAvatar } from '../../primitives/preview-avatar';
 import { PREVIEW_COLORS } from '../../preview-colors';
 import {
   type CellEntity,
@@ -27,12 +28,32 @@ import {
 
 const theme = APP_PREVIEW_THEME;
 
+// twenty-front hashes a record's identifier to its avatar tone; the mockup
+// does the same so each opportunity gets a stable, distinct color.
+const TITLE_AVATAR_TONES = [
+  'blue',
+  'green',
+  'purple',
+  'pink',
+  'orange',
+  'red',
+  'amber',
+  'teal',
+];
+
+function toneForTitle(title: string): string {
+  const hash = [...title].reduce(
+    (total, char) => total + char.charCodeAt(0),
+    0,
+  );
+  return TITLE_AVATAR_TONES[hash % TITLE_AVATAR_TONES.length];
+}
+
 const Card = styled.div`
   animation: kanbanCardAppear 320ms ${EASING.standard} both;
   background: ${PREVIEW_COLORS.backgroundSecondary};
   border: 1px solid ${PREVIEW_COLORS.border};
   border-radius: 4px;
-  box-shadow: ${theme.boxShadow.light};
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -53,20 +74,18 @@ const CardHeader = styled.div`
   align-items: center;
   display: flex;
   gap: 8px;
-  justify-content: space-between;
   padding: 8px 8px 4px;
 `;
 
-const CardTitle = styled.span`
-  color: ${PREVIEW_COLORS.text};
-  font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
-  font-weight: ${theme.font.weight.medium};
-  line-height: 1.4;
+// The identifier renders as twenty-front's RecordChip: a rounded initial
+// avatar (the record's hashed tone) + the name at regular weight in a
+// transparent chip. The slot flexes so the name ellipsizes and the selection
+// checkbox (only shown on selected cards) sits at the right.
+const TitleSlot = styled.div`
+  display: flex;
+  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const CheckboxContainer = styled.div`
@@ -97,7 +116,7 @@ const CardFields = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 0 8px 4px 10px;
+  padding: 0 8px 8px 10px;
 `;
 
 const FieldRowShell = styled.div`
@@ -208,19 +227,30 @@ export function KanbanCard({ card }: { card: KanbanCardData }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{card.title}</CardTitle>
-        <CheckboxContainer>
-          <CheckboxBox $checked={card.checked}>
-            {card.checked ? (
+        <TitleSlot>
+          <Chip
+            clickable={false}
+            label={card.title}
+            leftComponent={
+              <PreviewAvatar tone={toneForTitle(card.title)}>
+                {card.title.trim().charAt(0).toUpperCase()}
+              </PreviewAvatar>
+            }
+            variant="transparent"
+          />
+        </TitleSlot>
+        {card.checked ? (
+          <CheckboxContainer>
+            <CheckboxBox $checked>
               <IconCheck
                 aria-hidden
                 color={PREVIEW_COLORS.textSecondary}
                 size={10}
                 stroke={theme.icon.stroke.sm}
               />
-            ) : null}
-          </CheckboxBox>
-        </CheckboxContainer>
+            </CheckboxBox>
+          </CheckboxContainer>
+        ) : null}
       </CardHeader>
       <CardFields>
         <FieldRow icon={IconCurrencyDollar}>

@@ -116,7 +116,6 @@ const SkeletonCardShell = styled.div<{ $index: number }>`
   background: ${PREVIEW_COLORS.backgroundSecondary};
   border: 1px solid ${PREVIEW_COLORS.border};
   border-radius: 4px;
-  box-shadow: ${theme.boxShadow.light};
   display: flex;
   flex-direction: column;
   gap: 10px;

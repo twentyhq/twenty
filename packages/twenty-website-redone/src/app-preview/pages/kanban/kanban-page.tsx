@@ -3,8 +3,8 @@ import { styled } from '@linaria/react';
 import { KanbanLane } from './kanban-lane';
 import { type KanbanPageDefinition } from '../../types';
 
-// The lane width the board was authored at.
-const KANBAN_LANE_WIDTH_PX = 206.4;
+// The product's RECORD_BOARD_COLUMN_WIDTH.
+const KANBAN_LANE_WIDTH_PX = 200;
 
 const BoardShell = styled.div`
   flex: 1 1 auto;
