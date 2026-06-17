@@ -8434,6 +8434,19 @@ export default {
                     ]
                 }
             ],
+            "uploadNewWorkspaceLogo": [
+                131,
+                {
+                    "workspaceId": [
+                        1,
+                        "String!"
+                    ],
+                    "file": [
+                        356,
+                        "Upload!"
+                    ]
+                }
+            ],
             "generateTransientToken": [
                 249
             ],

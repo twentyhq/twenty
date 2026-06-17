@@ -1,18 +1,12 @@
 import { styled } from '@linaria/react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useState } from 'react';
-import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
-import { Key } from 'ts-key-enum';
-import { z } from 'zod';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { ModalContent } from 'twenty-ui/layout';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -21,20 +15,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
-
-const StyledContentContainer = styled.div`
-  width: 100%;
-`;
-
-const StyledSectionContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[8]};
-`;
 
 const StyledButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[8]};
@@ -50,194 +35,153 @@ const StyledLoaderContainer = styled.div`
   width: 100%;
 `;
 
-enum PendingCreationLoaderStep {
-  None = 'none',
-  Step1 = 'step-1',
-  Step2 = 'step-2',
-  Step3 = 'step-3',
-}
+type ActivationStep = 'pending' | 'database' | 'data-model' | 'prefill';
 
-const StyledPendingCreationLoader = styled.div`
+const StyledActivationStep = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
   width: 100%;
 `;
 
+// The workspace name (and optional logo) are already collected in the shared
+// creation form (Step 1). This onboarding step is now a pure activation loader:
+// it activates the pending workspace on mount and surfaces a retry on failure.
 export const CreateWorkspace = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { loadCurrentUser } = useLoadCurrentUser();
   const [activateWorkspace] = useMutation(ActivateWorkspaceDocument);
-  const [pendingCreationLoaderStep, setPendingCreationLoaderStep] = useState(
-    PendingCreationLoaderStep.None,
-  );
+  const [activationStep, setActivationStep] =
+    useState<ActivationStep>('pending');
+  const [hasFailed, setHasFailed] = useState(false);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const validationSchema = z
-    .object({
-      name: z.string().min(1, { message: t`Name can not be empty` }),
-    })
-    .required();
+  const displayName = currentWorkspace?.displayName;
 
-  type Form = z.infer<typeof validationSchema>;
+  const activate = useCallback(async () => {
+    setHasFailed(false);
 
-  // Form
-  const {
-    control,
-    handleSubmit,
-    formState: { isValid, isSubmitting },
-  } = useForm<Form>({
-    mode: 'onChange',
-    defaultValues: {
-      name: currentWorkspace?.displayName ?? '',
-    },
-    resolver: zodResolver(validationSchema),
-  });
+    const databaseTimeout = setTimeout(() => {
+      setActivationStep('database');
+    }, 500);
+    const dataModelTimeout = setTimeout(() => {
+      setActivationStep('data-model');
+    }, 2000);
+    const prefillTimeout = setTimeout(() => {
+      setActivationStep('prefill');
+    }, 5000);
 
-  const onSubmit: SubmitHandler<Form> = useCallback(
-    async (data) => {
-      try {
-        setTimeout(() => {
-          setPendingCreationLoaderStep(PendingCreationLoaderStep.Step1);
-        }, 500);
-        setTimeout(() => {
-          setPendingCreationLoaderStep(PendingCreationLoaderStep.Step2);
-        }, 2000);
-        setTimeout(() => {
-          setPendingCreationLoaderStep(PendingCreationLoaderStep.Step3);
-        }, 5000);
+    const clearStepTimeouts = () => {
+      clearTimeout(databaseTimeout);
+      clearTimeout(dataModelTimeout);
+      clearTimeout(prefillTimeout);
+    };
 
-        const result = await activateWorkspace({
-          variables: {
-            input: {
-              displayName: data.name,
-            },
+    try {
+      const result = await activateWorkspace({
+        variables: {
+          input: {
+            displayName,
           },
-        });
+        },
+      });
 
-        if (isDefined(result.error)) {
-          throw result.error ?? new Error(t`Unknown error`);
-        }
-
-        await loadCurrentUser();
-        setNextOnboardingStatus();
-      } catch (error: any) {
-        setPendingCreationLoaderStep(PendingCreationLoaderStep.None);
-
-        enqueueErrorSnackBar({
-          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-        });
+      if (isDefined(result.error)) {
+        throw result.error;
       }
-    },
-    [
-      activateWorkspace,
-      enqueueErrorSnackBar,
-      loadCurrentUser,
-      setNextOnboardingStatus,
-      t,
-    ],
-  );
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.nativeEvent.isComposing || event.keyCode === 229) {
+      await loadCurrentUser();
+      setNextOnboardingStatus();
+    } catch (error) {
+      clearStepTimeouts();
+      setActivationStep('pending');
+      setHasFailed(true);
+
+      enqueueErrorSnackBar({
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
+      });
+    } finally {
+      clearStepTimeouts();
+    }
+  }, [
+    activateWorkspace,
+    displayName,
+    enqueueErrorSnackBar,
+    loadCurrentUser,
+    setNextOnboardingStatus,
+  ]);
+
+  // The workspace name is always set by the time we reach this step, so we
+  // activate unconditionally on mount. Activation is an imperative one-time
+  // action, so a mount effect is the right tool here.
+  const [hasTriggered, setHasTriggered] = useState(false);
+  useEffect(() => {
+    if (hasTriggered) {
       return;
     }
-    if (event.key === Key.Enter) {
-      event.preventDefault();
-      handleSubmit(onSubmit)();
-    }
-  };
+
+    setHasTriggered(true);
+    void activate();
+  }, [activate, hasTriggered]);
 
   return (
     <ModalContent isVerticallyCentered isHorizontallyCentered>
-      {pendingCreationLoaderStep !== PendingCreationLoaderStep.None && (
+      <Logo
+        primaryLogo={
+          isNonEmptyString(currentWorkspace?.logo)
+            ? currentWorkspace?.logo
+            : undefined
+        }
+      />
+      <Title>
+        {hasFailed ? (
+          <Trans>Workspace creation failed</Trans>
+        ) : (
+          <Trans>Creating your workspace</Trans>
+        )}
+      </Title>
+      {hasFailed ? (
         <>
-          <Logo
-            primaryLogo={
-              isNonEmptyString(currentWorkspace?.logo)
-                ? currentWorkspace?.logo
-                : undefined
-            }
-          />
-          <Title>
-            <Trans>Creating your workspace</Trans>
-          </Title>
-          <StyledPendingCreationLoader>
-            {pendingCreationLoaderStep === PendingCreationLoaderStep.Step1 && (
+          <SubTitle>
+            <Trans>
+              Something went wrong while creating your workspace. Please try
+              again.
+            </Trans>
+          </SubTitle>
+          <StyledButtonContainer>
+            <MainButton
+              title={t`Retry`}
+              onClick={() => {
+                void activate();
+              }}
+              fullWidth
+            />
+          </StyledButtonContainer>
+        </>
+      ) : (
+        <>
+          <StyledActivationStep>
+            {activationStep === 'database' && (
               <SubTitle>
                 <Trans>Setting up your database...</Trans>
               </SubTitle>
             )}
-            {pendingCreationLoaderStep === PendingCreationLoaderStep.Step2 && (
+            {activationStep === 'data-model' && (
               <SubTitle>
                 <Trans>Creating your data model...</Trans>
               </SubTitle>
             )}
-            {pendingCreationLoaderStep === PendingCreationLoaderStep.Step3 && (
+            {activationStep === 'prefill' && (
               <SubTitle>
                 <Trans>Prefilling your workspace data...</Trans>
               </SubTitle>
             )}
-          </StyledPendingCreationLoader>
+          </StyledActivationStep>
           <StyledLoaderContainer>
             <Loader color="gray" />
           </StyledLoaderContainer>
-        </>
-      )}
-      {pendingCreationLoaderStep === PendingCreationLoaderStep.None && (
-        <>
-          <Title noMarginTop>
-            <Trans>Create your workspace</Trans>
-          </Title>
-          <SubTitle>
-            <Trans>
-              A shared environment where you will be able to manage your
-              customer relations with your team.
-            </Trans>
-          </SubTitle>
-
-          <StyledContentContainer>
-            <StyledSectionContainer>
-              <H2Title title={t`Workspace logo`} />
-              <WorkspaceLogoUploader />
-            </StyledSectionContainer>
-            <StyledSectionContainer>
-              <H2Title
-                title={t`Workspace name`}
-                description={t`The name of your organization`}
-              />
-              <Controller
-                name="name"
-                control={control}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <TextInput
-                    autoFocus
-                    value={value}
-                    placeholder={t`Apple`}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    error={error?.message}
-                    onKeyDown={handleKeyDown}
-                    fullWidth
-                  />
-                )}
-              />
-            </StyledSectionContainer>
-          </StyledContentContainer>
-          <StyledButtonContainer>
-            <MainButton
-              title={t`Continue`}
-              onClick={handleSubmit(onSubmit)}
-              disabled={!isValid || isSubmitting}
-              Icon={() => isSubmitting && <Loader />}
-              fullWidth
-            />
-          </StyledButtonContainer>
         </>
       )}
     </ModalContent>

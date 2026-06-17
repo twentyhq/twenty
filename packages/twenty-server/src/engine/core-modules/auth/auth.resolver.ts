@@ -2,6 +2,8 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import bytes from 'bytes';
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import omit from 'lodash.omit';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -9,7 +11,10 @@ import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import type { FileUpload } from 'graphql-upload/processRequest.mjs';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { settings } from 'src/engine/constants/settings';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -57,6 +62,8 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
+import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -82,6 +89,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { ApiKeyToken } from './dto/api-key-token.dto';
 import { AuthToken } from './dto/auth-token.dto';
@@ -134,6 +142,7 @@ export class AuthResolver {
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly permissionsService: PermissionsService,
     private readonly subdomainManagerService: SubdomainManagerService,
+    private readonly fileCorePictureService: FileCorePictureService,
   ) {}
 
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
@@ -553,6 +562,29 @@ export class AuthResolver {
         workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       },
     };
+  }
+
+  @Mutation(() => FileWithSignedUrlDTO)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  async uploadNewWorkspaceLogo(
+    @AuthUser() currentUser: AuthContextUser,
+    @Args('workspaceId') workspaceId: string,
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename }: FileUpload,
+  ): Promise<FileWithSignedUrlDTO> {
+    // The upload is buffered in memory, so cap it to the configured max file
+    // size to avoid an unbounded read from an untrusted stream.
+    const buffer = await streamToBuffer(
+      createReadStream(),
+      bytes(settings.storage.maxFileSize) ?? undefined,
+    );
+
+    return this.fileCorePictureService.uploadWorkspaceLogoForPendingWorkspace({
+      userId: currentUser.id,
+      workspaceId,
+      file: buffer,
+      filename,
+    });
   }
 
   @Mutation(() => TransientTokenDTO)

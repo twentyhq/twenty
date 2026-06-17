@@ -78,7 +78,7 @@ export const Logo = ({
       {isUsingDefaultLogo ? (
         <UndecoratedLink
           to={AppPath.SignInUp}
-          onClick={redirectToDefaultDomain}
+          onClick={() => redirectToDefaultDomain()}
         >
           <StyledPrimaryLogo
             style={{ backgroundImage: `url(${primaryLogoUrl})` }}

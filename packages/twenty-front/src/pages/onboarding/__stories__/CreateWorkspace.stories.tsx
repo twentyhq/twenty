@@ -41,10 +41,12 @@ export default meta;
 
 export type Story = StoryObj<typeof CreateWorkspace>;
 
+// The name (and optional logo) are collected in the shared creation form, so
+// this onboarding step is now a pure activation loader.
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
-    await canvas.findByText('Create your workspace', undefined, {
+    await canvas.findByText('Creating your workspace', undefined, {
       timeout: 3000,
     });
   },

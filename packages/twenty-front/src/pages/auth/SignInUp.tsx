@@ -18,6 +18,7 @@ import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGl
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { WorkspaceSelectionFooter } from '@/auth/sign-in-up/components/WorkspaceSelectionFooter';
 import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
+import { SignInUpWorkspaceCreationForm } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
@@ -161,6 +162,13 @@ export const SignInUp = () => {
           <Loader color="gray" />
         </StyledLoaderContainer>
       );
+    }
+
+    // The workspace creation form is shared by both multi-workspace and
+    // single-workspace self-host, so it must render regardless of domain or
+    // workspace scope.
+    if (signInUpStep === SignInUpStep.WorkspaceCreation) {
+      return <SignInUpWorkspaceCreationForm />;
     }
 
     if (isDefaultDomain && isMultiWorkspaceEnabled) {
