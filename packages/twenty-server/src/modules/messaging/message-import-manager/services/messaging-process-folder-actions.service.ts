@@ -141,6 +141,6 @@ export class MessagingProcessFolderActionsService {
       );
     }
 
-    return { messageExternalIdsToImport };
+    return { messageExternalIdsToImport: [...new Set(messageExternalIdsToImport)] };
   }
 }

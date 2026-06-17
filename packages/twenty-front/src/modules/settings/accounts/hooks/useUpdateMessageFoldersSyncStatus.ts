@@ -34,9 +34,7 @@ export const useUpdateMessageFoldersSyncStatus = () => {
             __typename: 'MessageFolder',
             id,
             isSynced,
-            pendingSyncAction: isSynced
-              ? MessageFolderPendingSyncAction.FOLDER_IMPORT
-              : MessageFolderPendingSyncAction.NONE,
+            pendingSyncAction: MessageFolderPendingSyncAction.NONE,
           })),
         },
       });

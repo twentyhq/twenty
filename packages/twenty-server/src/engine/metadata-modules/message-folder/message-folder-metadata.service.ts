@@ -195,44 +195,49 @@ export class MessageFolderMetadataService {
     workspaceId: string;
     data: Partial<MessageFolderEntity>;
   }): Promise<MessageFolderDTO[]> {
-    const foldersToImport =
-      data.isSynced === true
-        ? await this.repository.find({
-            where: { id: In(ids), workspaceId, isSynced: false },
-            relations: { messageChannel: { connectedAccount: true } },
-          })
-        : [];
+    await this.repository.manager.transaction(async (transactionManager) => {
+      const foldersToImport =
+        data.isSynced === true
+          ? await transactionManager.find(MessageFolderEntity, {
+              where: { id: In(ids), workspaceId, isSynced: false },
+              relations: { messageChannel: { connectedAccount: true } },
+            })
+          : [];
 
-    await this.repository.update(
-      { id: In(ids), workspaceId },
-      data as Record<string, unknown>,
-    );
-
-    const folderIdsToImport = foldersToImport
-      .filter(
-        (folder) =>
-          folder.messageChannel?.connectedAccount?.provider ===
-          ConnectedAccountProvider.GOOGLE,
-      )
-      .map((folder) => folder.id);
-
-    if (folderIdsToImport.length > 0) {
-      await this.repository.update(
-        { id: In(folderIdsToImport), workspaceId },
-        { pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_IMPORT },
+      await transactionManager.update(
+        MessageFolderEntity,
+        { id: In(ids), workspaceId },
+        data as Record<string, unknown>,
       );
-    }
 
-    if (data.isSynced === false) {
-      await this.repository.update(
-        {
-          id: In(ids),
-          workspaceId,
-          pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_IMPORT,
-        },
-        { pendingSyncAction: MessageFolderPendingSyncAction.NONE },
-      );
-    }
+      const folderIdsToImport = foldersToImport
+        .filter(
+          (folder) =>
+            folder.messageChannel?.connectedAccount?.provider ===
+            ConnectedAccountProvider.GOOGLE,
+        )
+        .map((folder) => folder.id);
+
+      if (folderIdsToImport.length > 0) {
+        await transactionManager.update(
+          MessageFolderEntity,
+          { id: In(folderIdsToImport), workspaceId },
+          { pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_IMPORT },
+        );
+      }
+
+      if (data.isSynced === false) {
+        await transactionManager.update(
+          MessageFolderEntity,
+          {
+            id: In(ids),
+            workspaceId,
+            pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_IMPORT,
+          },
+          { pendingSyncAction: MessageFolderPendingSyncAction.NONE },
+        );
+      }
+    });
 
     return this.repository.find({ where: { id: In(ids), workspaceId } });
   }

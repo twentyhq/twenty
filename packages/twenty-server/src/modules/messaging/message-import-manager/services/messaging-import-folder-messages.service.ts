@@ -7,10 +7,6 @@ import {
 
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
-import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
 
 @Injectable()
@@ -47,10 +43,7 @@ export class MessagingImportFolderMessagesService {
         return messageList?.messageExternalIds ?? [];
       }
       default:
-        throw new MessageImportDriverException(
-          `Provider ${messageChannel.connectedAccount.provider} is not supported`,
-          MessageImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED,
-        );
+        return [];
     }
   }
 }

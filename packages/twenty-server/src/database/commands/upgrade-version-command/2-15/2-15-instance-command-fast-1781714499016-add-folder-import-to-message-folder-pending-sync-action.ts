@@ -17,7 +17,7 @@ export class AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('CREATE TYPE "core"."messageFolder_pendingsyncaction_enum_old" AS ENUM(\'FOLDER_DELETION\', \'NONE\')');
     await queryRunner.query('ALTER TABLE "core"."messageFolder" ALTER COLUMN "pendingSyncAction" DROP DEFAULT');
-    await queryRunner.query('ALTER TABLE "core"."messageFolder" ALTER COLUMN "pendingSyncAction" TYPE "core"."messageFolder_pendingsyncaction_enum_old" USING "pendingSyncAction"::"text"::"core"."messageFolder_pendingsyncaction_enum_old"');
+    await queryRunner.query('ALTER TABLE "core"."messageFolder" ALTER COLUMN "pendingSyncAction" TYPE "core"."messageFolder_pendingsyncaction_enum_old" USING (CASE WHEN "pendingSyncAction"::"text" = \'FOLDER_IMPORT\' THEN \'NONE\' ELSE "pendingSyncAction"::"text" END)::"core"."messageFolder_pendingsyncaction_enum_old"');
     await queryRunner.query('ALTER TABLE "core"."messageFolder" ALTER COLUMN "pendingSyncAction" SET DEFAULT \'NONE\'');
     await queryRunner.query('DROP TYPE "core"."messageFolder_pendingsyncaction_enum"');
     await queryRunner.query('ALTER TYPE "core"."messageFolder_pendingsyncaction_enum_old" RENAME TO "messageFolder_pendingsyncaction_enum"');
