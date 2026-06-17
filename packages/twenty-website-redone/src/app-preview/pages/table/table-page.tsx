@@ -18,7 +18,6 @@ import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
 import { useHorizontalDragScroll } from '@/platform/motion';
 import { type TablePageDefinition } from '../../types';
 
-const theme = THEME_LIGHT;
 const CELL_HORIZONTAL_PADDING = 8;
 
 const TableShell = styled.div`
@@ -175,9 +174,9 @@ const HeaderCellContent = styled.div`
 
 const HeaderLabel = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.medium};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
   min-width: 0;
   overflow: hidden;
@@ -187,9 +186,9 @@ const HeaderLabel = styled.span`
 
 const MutedText = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.regular};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
   line-height: 1.4;
   white-space: nowrap;
 `;

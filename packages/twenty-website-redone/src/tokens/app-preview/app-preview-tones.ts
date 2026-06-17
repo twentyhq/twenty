@@ -63,17 +63,14 @@ const TAG: Record<string, TonePair> = {
   teal: tagTone('turquoise'),
 };
 
-function hexToRgbTuple(hex: string): string {
-  const clean = hex.replace('#', '');
-  const expanded =
-    clean.length === 3
-      ? clean
-          .split('')
-          .map((char) => char + char)
-          .join('')
-      : clean;
-  const value = Number.parseInt(expanded, 16);
-  return [(value >> 16) & 255, (value >> 8) & 255, value & 255].join(', ');
+// twenty-ui colors are `color(display-p3 r g b)` strings with 0–1 channels;
+// the reveal pulse needs an `r, g, b` 0–255 tuple to feed rgba().
+function colorStringToRgbTuple(color: string): string {
+  const channels = color.match(/display-p3\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/);
+  return (channels ?? ['', '0', '0', '0'])
+    .slice(1, 4)
+    .map((channel) => Math.round(Number(channel) * 255))
+    .join(', ');
 }
 
 // The Ask-AI panel washes map onto twenty-ui's transparent ramp + primary
@@ -284,5 +281,5 @@ export const APP_PREVIEW_TONES = {
   tag: TAG,
   // The reveal pulse reads the tone as an `r, g, b` tuple string.
   sidebarToneRgb: (tone: string): string =>
-    hexToRgbTuple((SIDEBAR[tone] ?? SIDEBAR.gray).color),
+    colorStringToRgbTuple((SIDEBAR[tone] ?? SIDEBAR.gray).color),
 };

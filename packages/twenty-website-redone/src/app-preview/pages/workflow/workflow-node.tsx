@@ -19,7 +19,6 @@ import { WORKFLOW_THEME } from './workflow-theme';
 import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
 import { type WorkflowNodeDef } from '../../types';
 
-const theme = THEME_LIGHT;
 const colors = WORKFLOW_THEME.colors;
 
 const NODE_ICON_MAP: Record<string, typeof IconPlug> = {
@@ -46,7 +45,7 @@ const Node = styled.div<{ $index: number }>`
   animation-delay: ${({ $index }) => `${150 + $index * 120}ms`};
   background: ${colors.nodeSurface};
   border: 1px solid ${colors.nodeBorder};
-  border-radius: 8px;
+  border-radius: ${THEME_LIGHT.border.radius.md};
   box-sizing: border-box;
   display: flex;
   gap: 8px;
@@ -74,7 +73,7 @@ const NodeIconContainer = styled.div`
   animation: workflowNodeContentAppear 320ms ease both;
   animation-delay: 80ms;
   background: ${colors.nodeIconSurface};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   display: flex;
   flex: 0 0 auto;
   height: 32px;
@@ -115,17 +114,17 @@ const NodeContent = styled.div`
 
 const NodeLabel = styled.div`
   color: ${colors.textLight};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 11px;
-  font-weight: ${theme.font.weight.semiBold};
+  font-weight: ${THEME_LIGHT.font.weight.semiBold};
   line-height: 1;
 `;
 
 const NodeTitle = styled.div`
   color: ${colors.textPrimary};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.medium};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -133,7 +132,7 @@ const NodeTitle = styled.div`
 `;
 
 const SkeletonIcon = styled(PREVIEW_SKELETON.Block)`
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   flex: 0 0 auto;
   height: 32px;
   width: 32px;
@@ -170,7 +169,7 @@ export function WorkflowNode({
               aria-hidden
               color={iconColor}
               size={20}
-              stroke={theme.icon.stroke.sm}
+              stroke={THEME_LIGHT.icon.stroke.sm}
             />
           </NodeIconContainer>
           <NodeContent>

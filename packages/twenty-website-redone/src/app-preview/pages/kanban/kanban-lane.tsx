@@ -10,8 +10,6 @@ import { MiniIcon } from '../../primitives/mini-icon';
 import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
 import { type KanbanLane as KanbanLaneData } from '../../types';
 
-const theme = THEME_LIGHT;
-
 const Lane = styled.div<{ $index: number; $last?: boolean }>`
   animation: kanbanLaneAppear 420ms ${EASING.standard} both;
   animation-delay: ${({ $index }) => `${120 + $index * 80}ms`};
@@ -48,41 +46,41 @@ const LaneHeader = styled.div`
 // the unknown-tone fallback the old hand-mixed table carried).
 const LaneTag = styled.span`
   align-items: center;
-  background: ${theme.tag.background.gray};
-  border-radius: 4px;
-  color: ${theme.tag.text.gray};
+  background: ${THEME_LIGHT.tag.background.gray};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  color: ${THEME_LIGHT.tag.text.gray};
   display: inline-flex;
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.regular};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
   height: 20px;
   line-height: 1.4;
   padding: 0 8px;
   white-space: nowrap;
 
   &[data-tone='blue'] {
-    background: ${theme.tag.background.blue};
-    color: ${theme.tag.text.blue};
+    background: ${THEME_LIGHT.tag.background.blue};
+    color: ${THEME_LIGHT.tag.text.blue};
   }
   &[data-tone='green'] {
-    background: ${theme.tag.background.green};
-    color: ${theme.tag.text.green};
+    background: ${THEME_LIGHT.tag.background.green};
+    color: ${THEME_LIGHT.tag.text.green};
   }
   &[data-tone='pink'] {
-    background: ${theme.tag.background.pink};
-    color: ${theme.tag.text.pink};
+    background: ${THEME_LIGHT.tag.background.pink};
+    color: ${THEME_LIGHT.tag.text.pink};
   }
   &[data-tone='purple'] {
-    background: ${theme.tag.background.purple};
-    color: ${theme.tag.text.purple};
+    background: ${THEME_LIGHT.tag.background.purple};
+    color: ${THEME_LIGHT.tag.text.purple};
   }
 `;
 
 const LaneCount = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.regular};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
   line-height: 1.4;
   white-space: nowrap;
 `;
@@ -100,9 +98,9 @@ const AddCardButton = styled.div`
   align-items: center;
   color: ${THEME_LIGHT.font.color.tertiary};
   display: inline-flex;
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.regular};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
   gap: 4px;
   height: 24px;
   line-height: 1.4;
@@ -115,7 +113,7 @@ const SkeletonCardShell = styled.div<{ $index: number }>`
   animation-delay: ${({ $index }) => `${$index * 90}ms`};
   background: ${THEME_LIGHT.background.secondary};
   border: 1px solid ${THEME_LIGHT.border.color.medium};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   display: flex;
   flex-direction: column;
   gap: 10px;

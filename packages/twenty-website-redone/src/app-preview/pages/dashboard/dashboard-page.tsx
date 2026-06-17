@@ -10,8 +10,6 @@ import { DASHBOARD_CHARTS } from './dashboard-charts';
 import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
 import { type DashboardKpi, type DashboardPageDefinition } from '../../types';
 
-const theme = THEME_LIGHT;
-
 const DashboardGrid = styled.div`
   display: grid;
   gap: 8px;
@@ -41,7 +39,7 @@ const WidgetCard = styled.div`
   animation: dashboardWidgetAppear 360ms ${EASING.standard} both;
   background: ${THEME_LIGHT.background.secondary};
   border: 1px solid ${THEME_LIGHT.border.color.light};
-  border-radius: 8px;
+  border-radius: ${THEME_LIGHT.border.radius.md};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -69,9 +67,9 @@ const WidgetCard = styled.div`
 const WidgetTitle = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
   flex-shrink: 0;
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.medium};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
   overflow: hidden;
   padding: 0 2px;
@@ -104,9 +102,9 @@ const KpiValueRow = styled.div`
 
 const KpiValue = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 25px;
-  font-weight: ${theme.font.weight.semiBold};
+  font-weight: ${THEME_LIGHT.font.weight.semiBold};
   line-height: 1.1;
 `;
 
@@ -118,9 +116,9 @@ const KpiTrend = styled.span<{ $up: boolean }>`
       : APP_PREVIEW_TONES.dashboardChart.trendDown};
   display: inline-flex;
   flex-shrink: 0;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
-  font-weight: ${theme.font.weight.medium};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   gap: 2px;
 `;
 
@@ -146,9 +144,9 @@ function KpiWidget({ kpi }: { kpi: DashboardKpi }) {
         {kpi.trend ? (
           <KpiTrend $up={isUp}>
             {isUp ? (
-              <IconTrendingUp size={14} stroke={theme.icon.stroke.md} />
+              <IconTrendingUp size={14} stroke={THEME_LIGHT.icon.stroke.md} />
             ) : (
-              <IconTrendingDown size={14} stroke={theme.icon.stroke.md} />
+              <IconTrendingDown size={14} stroke={THEME_LIGHT.icon.stroke.md} />
             )}
             {kpi.trend.value}
           </KpiTrend>

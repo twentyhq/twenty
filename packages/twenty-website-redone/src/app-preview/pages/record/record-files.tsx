@@ -9,7 +9,6 @@ import {
   IconTable,
 } from '@tabler/icons-react';
 
-import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { type RecordFile } from '../../types';
@@ -28,8 +27,8 @@ const FILE_ICONS: Record<
 const FileIconChip = styled.span<{ $color: string }>`
   align-items: center;
   background: ${({ $color }) => $color};
-  border-radius: 4px;
-  color: ${theme.font.color.inverted};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  color: ${THEME_LIGHT.font.color.inverted};
   display: flex;
   flex-shrink: 0;
   justify-content: center;
@@ -39,7 +38,7 @@ const FileIconChip = styled.span<{ $color: string }>`
 const FileName = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
   flex: 1;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -57,7 +56,7 @@ const FileDate = styled.span`
 
 const FileDateText = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   white-space: nowrap;
 `;
@@ -100,15 +99,15 @@ export function RecordFiles({ files }: { files: RecordFile[] }) {
           return (
             <ActivityRowBox $index={index} key={file.id}>
               <FileIconChip $color={color}>
-                <Icon size={14} stroke={theme.icon.stroke.sm} />
+                <Icon size={14} stroke={THEME_LIGHT.icon.stroke.sm} />
               </FileIconChip>
               <FileName>{file.name}</FileName>
               <FileDate>
-                <IconCalendar size={16} stroke={theme.icon.stroke.sm} />
+                <IconCalendar size={16} stroke={THEME_LIGHT.icon.stroke.sm} />
                 <FileDateText>{file.date}</FileDateText>
               </FileDate>
               <FileDots>
-                <IconDots size={16} stroke={theme.icon.stroke.sm} />
+                <IconDots size={16} stroke={THEME_LIGHT.icon.stroke.sm} />
               </FileDots>
             </ActivityRowBox>
           );

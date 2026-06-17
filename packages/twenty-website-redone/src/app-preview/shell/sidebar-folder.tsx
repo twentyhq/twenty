@@ -12,15 +12,13 @@ import { MiniIcon } from '../primitives/mini-icon';
 import { renderPreviewIcon } from '../primitives/preview-icon';
 import { type SidebarFolderDef } from '../types';
 
-const theme = THEME_LIGHT;
-
 const FolderButton = styled.button<{ $expanded?: boolean }>`
   align-items: center;
   appearance: none;
   background: ${({ $expanded }) =>
-    $expanded ? theme.background.transparent.light : 'transparent'};
+    $expanded ? THEME_LIGHT.background.transparent.light : 'transparent'};
   border: 0;
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   cursor: pointer;
   display: flex;
   height: ${APP_PREVIEW_CHROME.navigationItemHeightPx}px;
@@ -32,7 +30,7 @@ const FolderButton = styled.button<{ $expanded?: boolean }>`
   width: 100%;
 
   &:hover {
-    background: ${theme.background.transparent.light};
+    background: ${THEME_LIGHT.background.transparent.light};
   }
 `;
 
@@ -46,9 +44,9 @@ const FolderRowMain = styled.div`
 
 const FolderText = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.medium};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
   min-width: 0;
   overflow: hidden;

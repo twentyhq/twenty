@@ -23,8 +23,6 @@ import {
   type CellValue,
 } from '../../types';
 
-const theme = THEME_LIGHT;
-
 // The floating row action sits over the cell's right padding.
 const CELL_HORIZONTAL_PADDING = 8;
 const HOVER_ACTION_EDGE_INSET = 4;
@@ -54,9 +52,9 @@ const CellHoverAnchor = styled.div`
 
 const InlineText = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.regular};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
   line-height: 1.4;
   min-width: 0;
   overflow: hidden;
@@ -77,12 +75,12 @@ const BooleanRow = styled.div`
 
 const HoverActions = styled.div<{ $visible: boolean }>`
   align-items: center;
-  background: ${theme.background.transparent.primary};
-  border: 1px solid ${theme.background.transparent.light};
-  border-radius: 4px;
+  background: ${THEME_LIGHT.background.transparent.primary};
+  border: 1px solid ${THEME_LIGHT.background.transparent.light};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   bottom: 4px;
   box-sizing: border-box;
-  box-shadow: ${theme.boxShadow.light};
+  box-shadow: ${THEME_LIGHT.boxShadow.light};
   display: flex;
   gap: 0;
   justify-content: center;
@@ -101,7 +99,7 @@ const HoverActions = styled.div<{ $visible: boolean }>`
 
 const MiniAction = styled.div`
   align-items: center;
-  border-radius: 2px;
+  border-radius: ${THEME_LIGHT.border.radius.xs};
   color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
   height: 16px;

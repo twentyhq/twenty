@@ -63,7 +63,7 @@ const SidebarIconSurface = styled.div<{
       : 'none'};
   background: ${({ $background }) => $background};
   border: 1px solid ${({ $border }) => $border};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${({ $color }) => $color};
   display: flex;
   flex: 0 0 auto;
@@ -114,7 +114,7 @@ const SidebarAvatar = styled.div<{
 const LinkOverlayFrame = styled.div`
   align-items: center;
   background: ${THEME_LIGHT.border.color.light};
-  border-radius: 2px;
+  border-radius: ${THEME_LIGHT.border.radius.xs};
   bottom: -1px;
   display: flex;
   height: 7px;

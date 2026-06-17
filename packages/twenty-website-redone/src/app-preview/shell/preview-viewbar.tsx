@@ -12,8 +12,6 @@ import { previewFontSize } from '@/app-preview/preview-font-size';
 import { MiniIcon } from '../primitives/mini-icon';
 import { type PageType } from '../types';
 
-const theme = THEME_LIGHT;
-
 const ViewbarBar = styled.div`
   align-items: center;
   background: ${THEME_LIGHT.background.primary};
@@ -42,25 +40,25 @@ const ViewSwitcher = styled.div<{ $tableAligned?: boolean }>`
 
 const ViewName = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.medium};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
   white-space: nowrap;
 `;
 
 const ViewCount = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.medium};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
   white-space: nowrap;
 `;
 
 const TinyDot = styled.div`
   background: ${THEME_LIGHT.border.color.strong};
-  border-radius: 999px;
+  border-radius: ${THEME_LIGHT.border.radius.pill};
   height: 2px;
   width: 2px;
 `;
@@ -81,12 +79,12 @@ const ViewActions = styled.div`
 
 const ViewAction = styled.span`
   align-items: center;
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.regular};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
   height: 24px;
   line-height: 1.4;
   padding: 4px 8px;

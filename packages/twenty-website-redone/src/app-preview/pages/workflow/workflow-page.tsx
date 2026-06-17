@@ -10,7 +10,6 @@ import { WorkflowNode } from './workflow-node';
 import { WORKFLOW_THEME } from './workflow-theme';
 import { type WorkflowPageDefinition } from '../../types';
 
-const theme = THEME_LIGHT;
 const colors = WORKFLOW_THEME.colors;
 
 const PageShell = styled.div`
@@ -76,12 +75,12 @@ const ActiveBadge = styled.div`
 const ActiveBadgeLabel = styled.span`
   align-items: center;
   background: ${colors.activeBadgeBackground};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${colors.activeBadgeText};
   display: inline-flex;
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.regular};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
   height: 20px;
   line-height: 1.4;
   padding: 0 8px;

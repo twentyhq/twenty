@@ -3,7 +3,6 @@ import { THEME_LIGHT } from 'twenty-ui/theme';
 import { IconArrowRight, IconPlus } from '@tabler/icons-react';
 
 import { EASING } from '@/tokens';
-import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 
 import { type RecordCalendarDay } from '../../types';
 import { AvatarGroup } from './avatar-group';
@@ -41,7 +40,7 @@ const DayBadge = styled.div`
 
 const WeekDay = styled.div`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -50,7 +49,7 @@ const WeekDay = styled.div`
 
 const MonthDay = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 14px;
   font-weight: 500;
 `;
@@ -73,7 +72,7 @@ const CalEventRow = styled.div`
 const AttendanceBar = styled.span<{ $active?: boolean }>`
   background: ${({ $active }) =>
     $active ? THEME_LIGHT.accent.accent9 : THEME_LIGHT.border.color.strong};
-  border-radius: 2px;
+  border-radius: ${THEME_LIGHT.border.radius.xs};
   flex-shrink: 0;
   height: 24px;
   width: 4px;
@@ -92,14 +91,14 @@ const CalTime = styled.div`
   color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   gap: 4px;
 `;
 
 const CalTitle = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 500;
   overflow: hidden;
@@ -150,7 +149,10 @@ export function RecordCalendar({
                   <CalLabels>
                     <CalTime>
                       {event.start}
-                      <IconArrowRight size={14} stroke={theme.icon.stroke.sm} />
+                      <IconArrowRight
+                        size={14}
+                        stroke={THEME_LIGHT.icon.stroke.sm}
+                      />
                       {event.end}
                     </CalTime>
                     <CalTitle>{event.title}</CalTitle>

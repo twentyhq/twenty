@@ -9,8 +9,6 @@ import { mediaUp } from '@/tokens';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 
-const theme = THEME_LIGHT;
-
 const Root = styled.div`
   display: flex;
   justify-content: center;
@@ -30,11 +28,11 @@ const SegmentedRail = styled.div`
     /* The old hand-mixed #fcfcfccc: the secondary surface at 80%. */
     background-color: color-mix(
       in srgb,
-      ${theme.background.secondary} 80%,
+      ${THEME_LIGHT.background.secondary} 80%,
       transparent
     );
     border: 1px solid ${THEME_LIGHT.border.color.medium};
-    border-radius: 999px;
+    border-radius: ${THEME_LIGHT.border.radius.pill};
     column-gap: 2px;
     height: 26px;
     padding: 3px;
@@ -44,8 +42,8 @@ const SegmentedRail = styled.div`
 const Segment = styled.div<{ $selected?: boolean }>`
   align-items: center;
   background: ${({ $selected }) =>
-    $selected ? theme.background.transparent.light : 'transparent'};
-  border-radius: 999px;
+    $selected ? THEME_LIGHT.background.transparent.light : 'transparent'};
+  border-radius: ${THEME_LIGHT.border.radius.pill};
   display: flex;
   height: 20px;
   justify-content: center;
@@ -54,9 +52,9 @@ const Segment = styled.div<{ $selected?: boolean }>`
 
 const NewChat = styled.div`
   align-items: center;
-  background-color: ${theme.background.secondary};
+  background-color: ${THEME_LIGHT.background.secondary};
   border: 1px solid ${THEME_LIGHT.border.color.medium};
-  border-radius: 999px;
+  border-radius: ${THEME_LIGHT.border.radius.pill};
   color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
   height: 32px;
@@ -76,9 +74,9 @@ const NewChatLabel = styled.span`
 
   ${mediaUp('md')} {
     display: block;
-    font-family: ${theme.font.family};
-    font-size: ${previewFontSize(theme.font.size.md)};
-    font-weight: ${theme.font.weight.medium};
+    font-family: ${THEME_LIGHT.font.family};
+    font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+    font-weight: ${THEME_LIGHT.font.weight.medium};
     line-height: 1.4;
   }
 `;
@@ -94,7 +92,7 @@ export function SidebarControls() {
             aria-hidden
             color={THEME_LIGHT.font.color.primary}
             size={16}
-            strokeWidth={theme.icon.stroke.md}
+            strokeWidth={THEME_LIGHT.icon.stroke.md}
           />
         </Segment>
         <Segment>
@@ -102,7 +100,7 @@ export function SidebarControls() {
             aria-hidden
             color={THEME_LIGHT.font.color.tertiary}
             size={16}
-            strokeWidth={theme.icon.stroke.md}
+            strokeWidth={THEME_LIGHT.icon.stroke.md}
           />
         </Segment>
       </SegmentedRail>
@@ -111,7 +109,7 @@ export function SidebarControls() {
           aria-hidden
           color={THEME_LIGHT.font.color.secondary}
           size={16}
-          strokeWidth={theme.icon.stroke.md}
+          strokeWidth={THEME_LIGHT.icon.stroke.md}
         />
         <NewChatLabel>New chat</NewChatLabel>
       </NewChat>

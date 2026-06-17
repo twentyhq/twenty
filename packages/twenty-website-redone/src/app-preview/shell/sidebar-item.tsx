@@ -11,8 +11,6 @@ import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 import { renderPreviewIcon } from '../primitives/preview-icon';
 import { type SidebarItemDef } from '../types';
 
-const theme = THEME_LIGHT;
-
 const ItemRow = styled.button<{
   $active?: boolean;
   $depth?: number;
@@ -20,7 +18,7 @@ const ItemRow = styled.button<{
   $highlightRgb?: string;
 }>`
   --highlight-rgb: ${({ $highlightRgb }) => $highlightRgb ?? '237, 95, 0'};
-  --highlight-rest-background: ${theme.background.transparent.light};
+  --highlight-rest-background: ${THEME_LIGHT.background.transparent.light};
   appearance: none;
   border: 0;
   text-align: left;
@@ -30,8 +28,8 @@ const ItemRow = styled.button<{
       ? `sidebarItemAppear 1800ms ${APP_PREVIEW_MOTION.revealPulseEase} both`
       : 'none'};
   background: ${({ $active }) =>
-    $active ? theme.background.transparent.light : 'transparent'};
-  border-radius: 4px;
+    $active ? THEME_LIGHT.background.transparent.light : 'transparent'};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   cursor: pointer;
   display: flex;
   height: ${APP_PREVIEW_CHROME.navigationItemHeightPx}px;
@@ -43,7 +41,7 @@ const ItemRow = styled.button<{
   width: 100%;
 
   &:hover {
-    background: ${theme.background.transparent.light};
+    background: ${THEME_LIGHT.background.transparent.light};
   }
 
   @keyframes sidebarItemAppear {
@@ -68,7 +66,7 @@ const BranchCell = styled.div<{ $isLastChild?: boolean }>`
   &::after {
     border-bottom: 1px solid ${THEME_LIGHT.border.color.strong};
     border-left: 1px solid ${THEME_LIGHT.border.color.strong};
-    border-radius: 0 0 0 4px;
+    border-radius: 0 0 0 ${THEME_LIGHT.border.radius.sm};
     content: '';
     inset: 0 0 12px 0;
     position: absolute;
@@ -96,9 +94,9 @@ const ItemLabel = styled.span<{ $active?: boolean }>`
     $active
       ? THEME_LIGHT.font.color.primary
       : THEME_LIGHT.font.color.secondary};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.medium};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
   min-width: 0;
   overflow: hidden;
@@ -108,9 +106,9 @@ const ItemLabel = styled.span<{ $active?: boolean }>`
 
 const ItemMeta = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.medium};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
   min-width: 0;
   overflow: hidden;

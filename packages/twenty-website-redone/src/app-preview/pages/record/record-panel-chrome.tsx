@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { EASING } from '@/tokens';
-import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 
 const TabSection = styled.div`
   display: flex;
@@ -30,14 +29,14 @@ const TabHeaderLabel = styled.span`
 
 const TabHeaderTitle = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 600;
 `;
 
 const TabHeaderCount = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   margin-left: 8px;
 `;
@@ -45,10 +44,10 @@ const TabHeaderCount = styled.span`
 const TabAddButton = styled.span`
   align-items: center;
   border: 1px solid ${THEME_LIGHT.border.color.medium};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.secondary};
   display: inline-flex;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   gap: 4px;
   height: 26px;
@@ -58,7 +57,7 @@ const TabAddButton = styled.span`
 const ListCard = styled.div`
   background: ${THEME_LIGHT.background.secondary};
   border: 1px solid ${THEME_LIGHT.border.color.medium};
-  border-radius: 8px;
+  border-radius: ${THEME_LIGHT.border.radius.md};
   overflow: hidden;
 `;
 

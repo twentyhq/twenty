@@ -14,7 +14,7 @@ const BranchLabelPill = styled.div<{ $centered?: boolean }>`
   animation-delay: 700ms;
   background: ${colors.nodeSurface};
   border: 1px solid ${colors.nodeBorder};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${colors.textLight};
   display: inline-flex;
   font-family: ${THEME_LIGHT.font.family};

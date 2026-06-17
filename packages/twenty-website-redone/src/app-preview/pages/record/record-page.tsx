@@ -6,7 +6,6 @@ import { IconChevronDown } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
 import { EASING } from '@/tokens';
-import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 
 import { FaviconLogo } from '../../primitives/favicon-logo';
 import { type RecordPageDefinition } from '../../types';
@@ -67,7 +66,7 @@ const RecordHeader = styled.div`
 `;
 
 const RecordName = styled.div`
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 20px;
   font-weight: 600;
   color: ${THEME_LIGHT.font.color.primary};
@@ -77,7 +76,7 @@ const RecordName = styled.div`
 
 const RecordMeta = styled.div`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   line-height: 1.4;
 `;
@@ -136,7 +135,7 @@ const FieldIcon = styled.span`
 
 const FieldLabel = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   line-height: 1.4;
   overflow: hidden;
@@ -150,7 +149,7 @@ const MoreToggle = styled.div`
   color: ${THEME_LIGHT.font.color.tertiary};
   cursor: default;
   display: flex;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
   gap: 4px;
   line-height: 1.4;
@@ -183,7 +182,7 @@ const RelationSection = styled.div`
 
 const RelationTitle = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
@@ -216,7 +215,7 @@ const RelationItem = styled.div<{ $highlighted?: boolean; $muted?: boolean }>`
 
 const RelationName = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
   line-height: 1.4;
   overflow: hidden;
@@ -291,13 +290,13 @@ const Tab = styled.div<{ $active?: boolean; $clickable?: boolean }>`
 
 const TabInner = styled.span`
   display: flex;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 500;
   gap: 4px;
   line-height: 1.4;
   padding: 4px 8px;
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: inherit;
 `;
 
@@ -375,7 +374,7 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
 
         {record.moreCount ? (
           <MoreToggle>
-            <IconChevronDown size={12} stroke={theme.icon.stroke.sm} />
+            <IconChevronDown size={12} stroke={THEME_LIGHT.icon.stroke.sm} />
             More ({record.moreCount})
           </MoreToggle>
         ) : null}
@@ -430,7 +429,7 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
                 onClick={() => handleTabClick(tab.label)}
               >
                 <TabInner>
-                  <tab.Icon size={16} stroke={theme.icon.stroke.sm} />
+                  <tab.Icon size={16} stroke={THEME_LIGHT.icon.stroke.sm} />
                   {tab.label}
                 </TabInner>
               </Tab>

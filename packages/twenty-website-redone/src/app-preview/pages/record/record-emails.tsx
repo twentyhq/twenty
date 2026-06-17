@@ -2,8 +2,6 @@ import { styled } from '@linaria/react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 import { IconPlus } from '@tabler/icons-react';
 
-import { THEME_LIGHT as theme } from 'twenty-ui/theme';
-
 import { type RecordEmail } from '../../types';
 import { AvatarGroup } from './avatar-group';
 import { RECORD_PANEL_CHROME } from './record-panel-chrome';
@@ -18,7 +16,7 @@ const EmailHeading = styled.div`
 
 const SenderNames = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   margin: 0 6px;
   overflow: hidden;
@@ -28,7 +26,7 @@ const SenderNames = styled.span`
 
 const ThreadCount = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
 `;
 
@@ -42,7 +40,7 @@ const SubjectBody = styled.div`
 
 const EmailSubject = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -52,7 +50,7 @@ const EmailSubject = styled.span`
 const EmailBody = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
   flex: 1;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -62,7 +60,7 @@ const EmailBody = styled.span`
 const ReceivedAt = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
   flex-shrink: 0;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   padding: 0 4px;
   white-space: nowrap;

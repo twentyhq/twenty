@@ -11,7 +11,6 @@ import {
 } from '@tabler/icons-react';
 import { Fragment, useEffect, useRef, type ReactNode } from 'react';
 
-import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { ClaudeMark } from '@/icons';
@@ -49,7 +48,7 @@ const PanelHeader = styled.div`
 
 const HeaderButton = styled.span`
   align-items: center;
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   height: 20px;
@@ -60,7 +59,7 @@ const HeaderButton = styled.span`
 const PanelTitle = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
   flex: 1;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 600;
   text-align: left;
@@ -78,9 +77,9 @@ const Messages = styled.div`
 const UserMessage = styled.div`
   align-self: flex-end;
   background: ${inks.userMessageBackground};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 500;
   line-height: 1.5;
@@ -90,7 +89,7 @@ const UserMessage = styled.div`
 
 const AnswerText = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 400;
   line-height: 1.5;
@@ -125,7 +124,7 @@ const EntityChips = styled.div`
 const EntityChip = styled.div`
   align-items: center;
   background: ${inks.entityChipBackground};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   display: flex;
   gap: 4px;
   max-width: 100%;
@@ -134,7 +133,7 @@ const EntityChip = styled.div`
 `;
 
 const EntityChipIcon = styled.img`
-  border-radius: 2px;
+  border-radius: ${THEME_LIGHT.border.radius.xs};
   height: 14px;
   object-fit: cover;
   width: 14px;
@@ -142,7 +141,7 @@ const EntityChipIcon = styled.img`
 
 const EntityChipName = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 400;
   line-height: 1.4;
@@ -152,10 +151,10 @@ const EntityChipName = styled.span`
 const EntityOverflowChip = styled.div`
   align-items: center;
   background: ${inks.entityChipBackground};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 500;
   line-height: 1.4;
@@ -164,7 +163,7 @@ const EntityOverflowChip = styled.div`
 
 const ThinkingText = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
   font-weight: 500;
 `;
@@ -179,7 +178,7 @@ const InputArea = styled.div`
 const InputBox = styled.div`
   background-color: ${inks.inputBoxBackground};
   border: 1px solid ${THEME_LIGHT.border.color.medium};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   display: flex;
   flex-direction: column;
   height: 80px;
@@ -191,7 +190,7 @@ const InputBox = styled.div`
 
 const InputPlaceholder = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 400;
   padding: 4px 0;
@@ -219,10 +218,10 @@ const InputRightButtons = styled.div`
 const ModelChip = styled.span`
   align-items: center;
   border: 1px solid ${THEME_LIGHT.border.color.medium};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.primary};
   display: flex;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
   gap: 4px;
   padding: 4px 8px;

@@ -9,7 +9,6 @@ import {
 } from '@tabler/icons-react';
 
 import { EASING } from '@/tokens';
-import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 
 import { PersonAvatar } from '../../primitives/person-avatar';
 import { PreviewTag } from '../../primitives/preview-tag';
@@ -31,7 +30,7 @@ const MonthSeparator = styled.div`
   align-items: center;
   color: ${THEME_LIGHT.font.color.light};
   display: flex;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
   font-weight: 600;
   gap: 16px;
@@ -53,7 +52,7 @@ const TimelineGroup = styled.div`
 const TimelineRail = styled.div`
   background: ${THEME_LIGHT.background.secondary};
   border: 1px solid ${THEME_LIGHT.border.color.light};
-  border-radius: 8px;
+  border-radius: ${THEME_LIGHT.border.radius.md};
   bottom: 0;
   left: 0;
   position: absolute;
@@ -136,7 +135,7 @@ const TimelineSummaryLeft = styled.div`
 
 const TimelineActor = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
@@ -144,14 +143,14 @@ const TimelineActor = styled.span`
 
 const TimelineAction = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   white-space: nowrap;
 `;
 
 const TimelineSubject = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
@@ -159,20 +158,20 @@ const TimelineSubject = styled.span`
 
 const TimelineDiffLabel = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   white-space: nowrap;
 `;
 
 const TimelineArrow = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
 `;
 
 const TimelineValueText = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   white-space: nowrap;
 `;
@@ -185,7 +184,7 @@ const TimelineDiffPerson = styled.span`
 
 const TimelineLinkedTitle = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   overflow: hidden;
   text-decoration: underline;
@@ -196,7 +195,7 @@ const TimelineLinkedTitle = styled.span`
 const TimelineTime = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
   flex-shrink: 0;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   padding-left: 8px;
   white-space: nowrap;
@@ -205,7 +204,7 @@ const TimelineTime = styled.span`
 const TimelineToggle = styled.span`
   align-items: center;
   border: 1px solid ${THEME_LIGHT.border.color.light};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.tertiary};
   display: inline-flex;
   flex-shrink: 0;
@@ -223,7 +222,7 @@ const TimelineCardOuter = styled.div`
 const TimelineCardInner = styled.div`
   background: ${THEME_LIGHT.background.secondary};
   border: 1px solid ${THEME_LIGHT.border.color.medium};
-  border-radius: 8px;
+  border-radius: ${THEME_LIGHT.border.radius.md};
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -239,20 +238,20 @@ const TimelineDiffRow = styled.div`
 
 const TimelineCardTitle = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 500;
 `;
 
 const TimelineCardText = styled.div`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   line-height: 1.4;
 `;
 
 function TimelineEventIcon({ kind }: { kind: TimelineEvent['kind'] }) {
-  const stroke = theme.icon.stroke.sm;
+  const stroke = THEME_LIGHT.icon.stroke.sm;
   switch (kind) {
     case 'created':
       return <IconCirclePlus size={16} stroke={stroke} />;
@@ -295,7 +294,7 @@ function TimelineDiffValue({ value }: { value: RecordFieldValue }) {
 }
 
 function TimelineEventSummary({ event }: { event: TimelineEvent }) {
-  const stroke = theme.icon.stroke.sm;
+  const stroke = THEME_LIGHT.icon.stroke.sm;
   switch (event.kind) {
     case 'created':
       return (

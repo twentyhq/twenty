@@ -26,8 +26,6 @@ import {
   type KanbanCard as KanbanCardData,
 } from '../../types';
 
-const theme = THEME_LIGHT;
-
 // twenty-front hashes a record's identifier to its avatar tone; the mockup
 // does the same so each opportunity gets a stable, distinct color.
 const TITLE_AVATAR_TONES = [
@@ -53,7 +51,7 @@ const Card = styled.div`
   animation: kanbanCardAppear 320ms ${EASING.standard} both;
   background: ${THEME_LIGHT.background.secondary};
   border: 1px solid ${THEME_LIGHT.border.color.medium};
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -149,9 +147,9 @@ const FieldValueWrap = styled.div`
 
 const FieldText = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.regular};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
   line-height: 1.4;
   min-width: 0;
   overflow: hidden;
@@ -217,7 +215,7 @@ function FieldRow({
           aria-hidden
           color={THEME_LIGHT.font.color.tertiary}
           size={16}
-          stroke={theme.icon.stroke.sm}
+          stroke={THEME_LIGHT.icon.stroke.sm}
         />
       </FieldIcon>
       <FieldValueWrap>{children}</FieldValueWrap>
@@ -248,7 +246,7 @@ export function KanbanCard({ card }: { card: KanbanCardData }) {
                 aria-hidden
                 color={THEME_LIGHT.font.color.secondary}
                 size={10}
-                stroke={theme.icon.stroke.sm}
+                stroke={THEME_LIGHT.icon.stroke.sm}
               />
             </CheckboxBox>
           </CheckboxContainer>

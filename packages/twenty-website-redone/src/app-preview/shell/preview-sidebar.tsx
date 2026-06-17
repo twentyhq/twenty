@@ -20,8 +20,6 @@ import { renderPreviewIcon } from '../primitives/preview-icon';
 import { isSidebarFolder } from './is-sidebar-folder';
 import { type SidebarEntry, type SidebarItemDef } from '../types';
 
-const theme = THEME_LIGHT;
-
 const SidebarPanel = styled.aside`
   background: transparent;
   display: flex;
@@ -79,9 +77,9 @@ const WorkspaceName = styled.span`
     [data-desktop-mode='expanded'] & {
       display: block;
       color: ${THEME_LIGHT.font.color.primary};
-      font-family: ${theme.font.family};
-      font-size: ${previewFontSize(theme.font.size.md)};
-      font-weight: ${theme.font.weight.medium};
+      font-family: ${THEME_LIGHT.font.family};
+      font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+      font-weight: ${THEME_LIGHT.font.weight.medium};
       line-height: 1.4;
     }
   }
@@ -121,9 +119,9 @@ const SectionLabelRow = styled.div`
 
 const SectionLabel = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 11px;
-  font-weight: ${theme.font.weight.semiBold};
+  font-weight: ${THEME_LIGHT.font.weight.semiBold};
   line-height: 1;
 `;
 

@@ -14,7 +14,6 @@ import {
   type DashboardLineChart as DashboardLineChartData,
 } from '../../types';
 
-const theme = THEME_LIGHT;
 const ACCENT = APP_PREVIEW_TONES.dashboardChart.accent;
 
 const ChartFrame = styled.div`
@@ -26,7 +25,7 @@ const ChartFrame = styled.div`
 
 const AxisLabel = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 10px;
   line-height: 1;
   overflow: hidden;
@@ -198,7 +197,8 @@ const Bar = styled.div<{ $heightPct: number; $index: number }>`
   animation: barGrow 460ms ${EASING.standard} both;
   animation-delay: ${({ $index }) => `${$index * 90}ms`};
   background: ${ACCENT};
-  border-radius: 4px 4px 0 0;
+  border-radius: ${THEME_LIGHT.border.radius.sm} ${THEME_LIGHT.border.radius.sm}
+    0 0;
   height: ${({ $heightPct }) => `${$heightPct}%`};
   margin: 0 auto;
   max-width: 28px;
@@ -299,15 +299,15 @@ const DonutCenter = styled.div`
 
 const DonutValue = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 22px;
-  font-weight: ${theme.font.weight.semiBold};
+  font-weight: ${THEME_LIGHT.font.weight.semiBold};
   line-height: 1;
 `;
 
 const DonutLabel = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 11px;
   line-height: 1.4;
 `;
@@ -329,7 +329,7 @@ const LegendRow = styled.div`
 
 const LegendDot = styled.span<{ $color: string }>`
   background: ${({ $color }) => $color};
-  border-radius: 2px;
+  border-radius: ${THEME_LIGHT.border.radius.xs};
   flex-shrink: 0;
   height: 8px;
   width: 8px;
@@ -337,7 +337,7 @@ const LegendDot = styled.span<{ $color: string }>`
 
 const LegendLabel = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;

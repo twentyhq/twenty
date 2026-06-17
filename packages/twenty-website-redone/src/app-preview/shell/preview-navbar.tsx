@@ -40,8 +40,6 @@ const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
   rocket: IconRocket,
 };
 
-const theme = THEME_LIGHT;
-
 const NavbarBar = styled.div`
   align-items: center;
   background: transparent;
@@ -83,9 +81,9 @@ const BreadcrumbIconSlot = styled.span`
 
 const CrumbLabel = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.medium};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
   min-width: 0;
   overflow: hidden;
@@ -117,13 +115,13 @@ const DesktopOnlyAction = styled.div`
 const ActionButton = styled.div<{ $iconOnly?: boolean }>`
   align-items: center;
   background: transparent;
-  border: 1px solid ${theme.background.transparent.medium};
-  border-radius: ${theme.border.radius.sm};
+  border: 1px solid ${THEME_LIGHT.background.transparent.medium};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   display: inline-flex;
   flex: 0 1 auto;
-  font-family: ${theme.font.family};
-  font-size: ${previewFontSize(theme.font.size.md)};
-  font-weight: ${theme.font.weight.medium};
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   gap: ${APP_PREVIEW_CHROME.spacingBasePx}px;
   height: 24px;
   justify-content: center;
@@ -167,7 +165,7 @@ const DesktopOnlyTrailing = styled.div`
 `;
 
 const ActionSeparator = styled.div`
-  background: ${theme.background.transparent.medium};
+  background: ${THEME_LIGHT.background.transparent.medium};
   border-radius: 56px;
   height: 100%;
   width: 1px;
@@ -215,8 +213,8 @@ function renderProvidedAction(action: NavbarAction, index: number) {
         <ActionIconWrap>
           <Icon
             aria-hidden
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.md}
+            size={THEME_LIGHT.icon.size.sm}
+            stroke={THEME_LIGHT.icon.stroke.md}
           />
         </ActionIconWrap>
       ) : null}
@@ -247,8 +245,8 @@ function renderPinnedAction(
         <ActionIconWrap>
           <Icon
             aria-hidden
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.md}
+            size={THEME_LIGHT.icon.size.sm}
+            stroke={THEME_LIGHT.icon.stroke.md}
           />
         </ActionIconWrap>
       ) : null}
@@ -316,8 +314,8 @@ function DefaultActions({
           <ActionIconWrap>
             <IconPlus
               aria-hidden
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.md}
+              size={THEME_LIGHT.icon.size.sm}
+              stroke={THEME_LIGHT.icon.stroke.md}
             />
           </ActionIconWrap>
           <ActionLabel>New</ActionLabel>
@@ -327,8 +325,8 @@ function DefaultActions({
         <ActionIconWrap>
           <IconDotsVertical
             aria-hidden
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.md}
+            size={THEME_LIGHT.icon.size.sm}
+            stroke={THEME_LIGHT.icon.stroke.md}
           />
         </ActionIconWrap>
         <DesktopOnlyTrailing>

@@ -97,7 +97,7 @@ const LegendRow = styled.div`
 `;
 
 const LegendDot = styled.span`
-  border-radius: 2px;
+  border-radius: ${THEME_LIGHT.border.radius.xs};
   flex-shrink: 0;
   height: 8px;
   width: 8px;

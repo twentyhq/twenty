@@ -2,8 +2,6 @@ import { styled } from '@linaria/react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 import { IconCalendar, IconCheck, IconPlus } from '@tabler/icons-react';
 
-import { THEME_LIGHT as theme } from 'twenty-ui/theme';
-
 import { FaviconLogo } from '../../primitives/favicon-logo';
 import { PersonAvatar } from '../../primitives/person-avatar';
 import { type RecordTask } from '../../types';
@@ -24,7 +22,7 @@ const TaskCheckbox = styled.span<{ $done?: boolean }>`
     ${({ $done }) =>
       $done ? THEME_LIGHT.accent.accent9 : THEME_LIGHT.font.color.primary};
   border-radius: 50%;
-  color: ${theme.font.color.inverted};
+  color: ${THEME_LIGHT.font.color.inverted};
   display: flex;
   flex-shrink: 0;
   height: 16px;
@@ -34,7 +32,7 @@ const TaskCheckbox = styled.span<{ $done?: boolean }>`
 
 const TaskTitle = styled.span<{ $done?: boolean }>`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 500;
   overflow: hidden;
@@ -46,7 +44,7 @@ const TaskTitle = styled.span<{ $done?: boolean }>`
 
 const TaskBody = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -65,7 +63,7 @@ const DueDate = styled.span`
   align-items: center;
   color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   gap: 4px;
   white-space: nowrap;
@@ -78,7 +76,7 @@ const TargetChip = styled.span`
   border-radius: 50px;
   color: ${THEME_LIGHT.font.color.primary};
   display: inline-flex;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   gap: 4px;
   max-width: 160px;
@@ -128,7 +126,7 @@ export function RecordTasks({ tasks }: { tasks: RecordTask[] }) {
             </TaskLeft>
             <TaskRight>
               <DueDate>
-                <IconCalendar size={16} stroke={theme.icon.stroke.sm} />
+                <IconCalendar size={16} stroke={THEME_LIGHT.icon.stroke.sm} />
                 {task.due}
               </DueDate>
               <TargetChip>

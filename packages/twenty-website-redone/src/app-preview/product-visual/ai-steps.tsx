@@ -16,7 +16,6 @@ import {
 import { useState } from 'react';
 
 import { EASING } from '@/tokens';
-import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 
 import { type AgentStep, type AgentToolIcon } from './product-visual-scenes';
 
@@ -66,11 +65,11 @@ const SummaryButton = styled.button`
   animation: aiSummaryAppear 240ms ${EASING.standard} both;
   background: none;
   border: none;
-  border-radius: 4px;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.tertiary};
   cursor: pointer;
   display: flex;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   gap: 8px;
   min-height: 18px;
   padding: 0;
@@ -123,7 +122,7 @@ const StepLoaderIcon = styled.span`
 
 const StepLabel = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
   font-weight: 400;
   line-height: 18px;

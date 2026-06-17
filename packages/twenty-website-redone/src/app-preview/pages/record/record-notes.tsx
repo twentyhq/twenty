@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { EASING } from '@/tokens';
-import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { type RecordNote } from '../../types';
@@ -18,14 +17,14 @@ const NotesHeader = styled.div`
 
 const NotesCount = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   font-weight: 600;
 `;
 
 const AddNoteButton = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   line-height: 1.4;
 `;
@@ -60,7 +59,7 @@ const NoteCard = styled.div<{
       $highlighted
         ? THEME_LIGHT.border.color.medium
         : THEME_LIGHT.border.color.light};
-  border-radius: 8px;
+  border-radius: ${THEME_LIGHT.border.radius.md};
   display: flex;
   flex-direction: column;
   height: 300px;
@@ -100,7 +99,7 @@ const NoteContent = styled.div`
 
 const NoteTitle = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 14px;
   font-weight: 500;
   line-height: 1.35;
@@ -108,7 +107,7 @@ const NoteTitle = styled.div`
 
 const NoteBody = styled.div`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   line-height: 1.5;
   overflow: hidden;
@@ -134,14 +133,14 @@ const NoteRelationArrow = styled.svg`
 
 const NoteRelationLabel = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
   line-height: 1.4;
 `;
 
 const NoteRelationName = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
   line-height: 1.4;
 `;

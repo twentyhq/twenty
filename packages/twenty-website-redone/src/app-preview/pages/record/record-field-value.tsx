@@ -10,8 +10,6 @@ import {
   IconUser,
 } from '@tabler/icons-react';
 
-import { THEME_LIGHT as theme } from 'twenty-ui/theme';
-
 import { PersonAvatar } from '../../primitives/person-avatar';
 import { PreviewRoundedLink } from '../../primitives/preview-rounded-link';
 import { PreviewTag } from '../../primitives/preview-tag';
@@ -27,7 +25,7 @@ const FieldValueSlot = styled.div`
 
 const FieldValue = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   line-height: 1.4;
   min-width: 0;
@@ -40,7 +38,7 @@ const FieldValuePerson = styled.span`
   align-items: center;
   color: ${THEME_LIGHT.font.color.primary};
   display: flex;
-  font-family: ${theme.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 13px;
   gap: 4px;
   line-height: 1.4;
@@ -55,7 +53,7 @@ const FieldValuePersonName = styled.span`
 `;
 
 function FieldIconGlyph({ iconName }: { iconName: string }) {
-  const stroke = theme.icon.stroke.sm;
+  const stroke = THEME_LIGHT.icon.stroke.sm;
   switch (iconName) {
     case 'link':
       return <IconLink aria-hidden size={16} stroke={stroke} />;
