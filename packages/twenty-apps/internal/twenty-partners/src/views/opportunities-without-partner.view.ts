@@ -10,6 +10,9 @@ import {
   MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
   OPPORTUNITIES_NO_PARTNER_VIEW_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { OPPORTUNITY_IS_LISTED_FIELD_ID } from 'src/fields/opportunity-is-listed.field';
+import { OPPORTUNITY_NEED_FIELD_ID } from 'src/fields/opportunity-need.field';
+import { OPPORTUNITY_REQUIREMENTS_FIELD_ID } from 'src/fields/opportunity-requirements.field';
 
 // Opportunities with no partner assigned yet. Deliberately simple — the matching
 // system will be reworked later, so the pipeline is just split by partner presence.
@@ -30,6 +33,10 @@ export default defineView({
     { universalIdentifier: 'de63b508-8fc8-4696-8155-3511745db9b6', fieldMetadataUniversalIdentifier: '20202020-583e-4642-8533-db761d5fa82f', position: 2, isVisible: true, size: 140 },
     // Match status
     { universalIdentifier: 'c63c13d2-a332-4982-b50d-707cfa6b54b0', fieldMetadataUniversalIdentifier: MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER, position: 3, isVisible: true, size: 200 },
+    // Brief fields (B1): a listed/unassigned Opportunity is an open brief.
+    { universalIdentifier: '58186093-2fb3-42d1-a786-5e00ad1fe97c', fieldMetadataUniversalIdentifier: OPPORTUNITY_IS_LISTED_FIELD_ID, position: 4, isVisible: true, size: 90 },
+    { universalIdentifier: '091686ca-b3b7-4904-9084-8a7f3558581d', fieldMetadataUniversalIdentifier: OPPORTUNITY_NEED_FIELD_ID, position: 5, isVisible: true, size: 280 },
+    { universalIdentifier: '6ecd24e4-dc5d-4174-93cd-faac6d2dacc1', fieldMetadataUniversalIdentifier: OPPORTUNITY_REQUIREMENTS_FIELD_ID, position: 6, isVisible: true, size: 280 },
   ],
   // SELECT fields sort by option position, so this orders rows along the match-status
   // pipeline (To Be Matched → … → Won → Lost), not alphabetically.
