@@ -101,6 +101,8 @@ describe('getOutputSchemaMismatchIssues', () => {
   });
 
   it('should return no issues for an empty expected schema', () => {
-    expect(getOutputSchemaMismatchIssues({ a: leaf('string') }, {})).toEqual([]);
+    expect(getOutputSchemaMismatchIssues({ a: leaf('string') }, {})).toEqual(
+      [],
+    );
   });
 });
