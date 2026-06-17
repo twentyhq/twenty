@@ -19,8 +19,8 @@ import {
   IconPencil,
   IconTrash,
   useIcons,
-} from 'twenty-ui-deprecated/display';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import {
   PermissionFlagType,
   ViewVisibility,

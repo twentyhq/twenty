@@ -3,8 +3,8 @@ import { styled } from '@linaria/react';
 
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { t } from '@lingui/core/macro';
-import { MenuPicker } from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { MenuPicker } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const graphTypeOptions = [
   GraphType.VERTICAL_BAR,

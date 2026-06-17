@@ -13,9 +13,9 @@ import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, Status } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { H2Title, Status } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type AgentMessage,
   GetAgentTurnsDocument,

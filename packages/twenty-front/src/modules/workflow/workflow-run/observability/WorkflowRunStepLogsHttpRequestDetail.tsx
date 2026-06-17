@@ -9,8 +9,8 @@ import {
   IconArrowUp,
   IconClock,
   IconWorld,
-} from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
 import {

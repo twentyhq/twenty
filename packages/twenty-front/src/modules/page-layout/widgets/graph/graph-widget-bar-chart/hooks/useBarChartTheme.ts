@@ -1,7 +1,7 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSizeToPx';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const useBarChartTheme = () => {
   const { theme } = useContext(ThemeContext);

@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type CronTriggerSettings } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DEFAULT_CRON_SETTINGS: CronTriggerSettings = {
   pattern: '0 */1 * * *',

@@ -4,8 +4,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui-deprecated/display';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { useIcons } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const WorkflowDiagramStepNodeLogicFunctionIcon = ({
   logicFunctionId,

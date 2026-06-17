@@ -1,5 +1,5 @@
-import { IconHeartOff } from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { IconHeartOff } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';

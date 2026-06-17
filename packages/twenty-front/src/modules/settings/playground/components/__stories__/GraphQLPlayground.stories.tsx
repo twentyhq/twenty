@@ -7,7 +7,7 @@ import { action } from 'storybook/actions';
 import {
   ComponentDecorator,
   ComponentWithRouterDecorator,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const PlaygroundApiKeySetterEffect = () => {

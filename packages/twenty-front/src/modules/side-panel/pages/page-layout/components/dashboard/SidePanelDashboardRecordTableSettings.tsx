@@ -23,7 +23,7 @@ import {
   IconFilter,
   IconListDetails,
   IconTable,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`

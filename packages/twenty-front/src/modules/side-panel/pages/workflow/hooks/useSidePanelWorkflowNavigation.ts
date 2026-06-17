@@ -14,7 +14,7 @@ import {
   IconBolt,
   type IconComponent,
   IconSettingsAutomation,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
 

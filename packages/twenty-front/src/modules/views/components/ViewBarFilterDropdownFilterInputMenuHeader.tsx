@@ -3,7 +3,7 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { IconChevronLeft } from 'twenty-ui-deprecated/display';
+import { IconChevronLeft } from 'twenty-ui/display';
 
 export const ViewBarFilterDropdownFilterInputMenuHeader = () => {
   const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(

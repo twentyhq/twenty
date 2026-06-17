@@ -27,7 +27,7 @@ import {
   IconLock,
   IconShield,
   InlineBanner,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,

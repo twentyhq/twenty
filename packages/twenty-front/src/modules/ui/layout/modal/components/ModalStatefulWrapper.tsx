@@ -12,7 +12,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Modal } from 'twenty-ui-deprecated/layout';
+import { Modal } from 'twenty-ui/layout';
 
 export const ModalStatefulWrapper = ({
   modalInstanceId,

@@ -1,7 +1,7 @@
 import {
   type IconComponent,
   IllustrationIconOneToMany,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { RelationType } from '~/generated-metadata/graphql';
 import OneToManySvg from '@/settings/data-model/assets/OneToMany.svg';
 

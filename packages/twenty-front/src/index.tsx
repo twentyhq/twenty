@@ -4,12 +4,9 @@ import { App } from '@/app/components/App';
 import { migrateTokenPairCookieToLocalStorage } from '@/auth/utils/migrateTokenPairCookieToLocalStorage';
 import { hydrateMetadataStore } from '@/metadata-store/storage/metadataStoreStorage';
 import 'react-loading-skeleton/dist/skeleton.css';
-import 'twenty-ui-deprecated/style.css';
-import 'twenty-ui-deprecated/theme-light.css';
-import 'twenty-ui-deprecated/theme-dark.css';
-// New twenty-ui ships its component styles (e.g. Toggle SCSS modules) in its own
-// style.css; the --t-* theme tokens it relies on are already provided above.
 import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
 import './index.css';
 
 // TODO: REMOVE this after 2026-12-12 — temporary migration of tokenPair from the

@@ -7,8 +7,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip, ChipVariant } from 'twenty-ui-deprecated/components';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Chip, ChipVariant } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledRecordChipContainer = styled.div`

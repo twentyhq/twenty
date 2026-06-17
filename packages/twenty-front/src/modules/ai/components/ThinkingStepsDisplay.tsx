@@ -9,10 +9,10 @@ import {
   OverflowingTextWithTooltip,
   ThinkingOrbitLoaderIcon,
   TooltipDelay,
-} from 'twenty-ui-deprecated/display';
-import { JsonTree } from 'twenty-ui-deprecated/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { JsonTree } from 'twenty-ui/json-visualizer';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
 import { getToolIcon } from '@/ai/utils/getToolIcon';

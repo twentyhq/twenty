@@ -20,7 +20,7 @@ import {
   IconPinned,
   IconRefreshDot,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID = 'reset-canvas-tab-to-default-modal';
 const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =

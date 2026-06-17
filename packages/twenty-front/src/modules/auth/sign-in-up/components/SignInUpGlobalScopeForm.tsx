@@ -5,10 +5,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import {
-  ClickToActionLink,
-  UndecoratedLink,
-} from 'twenty-ui-deprecated/navigation';
+import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
@@ -34,11 +31,8 @@ import {
   HorizontalSeparator,
   IconChevronRight,
   IconPlus,
-} from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type AvailableWorkspace,
   GetWorkspaceCreationDefaultsDocument,

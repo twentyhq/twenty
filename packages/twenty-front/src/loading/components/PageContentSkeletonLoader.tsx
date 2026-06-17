@@ -3,7 +3,7 @@ import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { type ReactNode, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type PageContentSkeletonLoaderProps = {
   secondaryBar?: ReactNode;

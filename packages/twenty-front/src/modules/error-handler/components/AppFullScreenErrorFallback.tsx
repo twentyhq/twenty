@@ -2,7 +2,7 @@ import { AppErrorDisplay } from '@/error-handler/components/internal/AppErrorDis
 import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppFullScreenErrorFallbackProps = AppErrorDisplayProps;
 

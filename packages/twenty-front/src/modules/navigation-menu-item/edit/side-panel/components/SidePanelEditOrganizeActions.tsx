@@ -6,7 +6,7 @@ import {
   IconRowInsertBottom,
   IconRowInsertTop,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';

@@ -15,7 +15,7 @@ import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/ge
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui-deprecated/display';
+import { useIcons } from 'twenty-ui/display';
 import { useStore } from 'jotai';
 
 export const useRunWorkflowRunOpeningInSidePanelEffects = () => {

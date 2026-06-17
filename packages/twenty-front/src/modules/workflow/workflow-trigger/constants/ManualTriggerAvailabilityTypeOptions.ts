@@ -3,7 +3,7 @@ import {
   type IconComponent,
   IconId,
   IconListDetails,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 export const MANUAL_TRIGGER_AVAILABILITY_TYPE_OPTIONS: Array<{
   label: string;

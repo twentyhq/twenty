@@ -21,8 +21,8 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useIcons } from 'twenty-ui-deprecated/display';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+import { useIcons } from 'twenty-ui/display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type FieldConfiguration } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 

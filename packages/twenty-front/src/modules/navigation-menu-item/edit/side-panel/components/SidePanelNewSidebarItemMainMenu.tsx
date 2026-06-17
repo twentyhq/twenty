@@ -8,8 +8,8 @@ import {
   IconLink,
   IconTable,
   TintedIconTile,
-} from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
