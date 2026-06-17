@@ -1,0 +1,27 @@
+packages/twenty-front/src/modules/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus.ts
+  s_12aa84da069766::t_7a596d977ded46 37
+packages/twenty-server/src/engine/metadata-modules/message-folder/message-folder-metadata.service.ts
+  s_12aa84da069766::t_b9a2c756f66835 198-210,213-240
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service.ts
+  s_12aa84da069766::t_ea0ce157b61a75 144
+packages/twenty-server/src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action.ts
+  s_12aa84da069766::t_a465e3ffc37744 20
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-import-folder-messages.service.ts
+  s_12aa84da069766::t_6b2b41bb552df2 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "67ccf872cc494fb5b0048050d9a86472bf627829",
+  "prompts": {},
+  "sessions": {
+    "s_12aa84da069766": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e1ec289-c505-418c-bd18-6b7be4f5e776",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
