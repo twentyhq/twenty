@@ -1,0 +1,21 @@
+packages/twenty-server/test/integration/graphql/suites/timeline-from-object-record.integration-spec.ts
+  s_42715868b491cc::t_406d181658de5d 4,11,13,34,72,82-92,94,96-105,107-114,117-123,125-126,128-135,138-167,169-181,188,191,193-209,216,221-236,238,240-259,261-265,267-287,290-309,311-315,362-366,369-375,379-383,386-393
+  s_42715868b491cc::t_9befb4854fad7b 210-215,217-218
+  s_42715868b491cc::t_8125b32dd4936b 182-187,189-190
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "c5ef676654a6217ff2b9f72b7e6287670fff0dc2",
+  "prompts": {},
+  "sessions": {
+    "s_42715868b491cc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "54397ad0-f1d2-4221-90d1-7d0e1f9e2668",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
