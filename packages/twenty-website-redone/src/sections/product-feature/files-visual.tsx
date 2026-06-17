@@ -1,119 +1,94 @@
+'use client';
+
 import { styled } from '@linaria/react';
 import {
   IconCalendar,
-  IconCalendarEvent,
-  IconCheckbox,
+  IconDotsVertical,
   IconFileText,
-  IconMail,
-  IconNotes,
-  IconPaperclip,
   IconPhoto,
+  IconPlus,
+  IconPresentation,
   IconTable,
-  IconTimelineEvent,
 } from '@tabler/icons-react';
+import { type ComponentType } from 'react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
-import { PRODUCT_FEATURE_PALETTE } from '@/tokens/feature-scenes/product-feature-palette';
+import { previewFontSize } from '@/app-preview/preview-font-size';
 
-const palette = PRODUCT_FEATURE_PALETTE;
+import { RecordTabHeader } from './record-tab-header';
 
-// The product's six record tabs. Only Files is active here — the others are
-// context (this visual owns its own tab content, nothing else).
-const RECORD_TABS = [
-  { icon: IconTimelineEvent, label: 'Timeline' },
-  { icon: IconCheckbox, label: 'Tasks' },
-  { icon: IconNotes, label: 'Notes' },
-  { icon: IconPaperclip, label: 'Files' },
-  { icon: IconMail, label: 'Emails' },
-  { icon: IconCalendarEvent, label: 'Calendar' },
-];
+type FileCategory = 'document' | 'image' | 'presentation' | 'spreadsheet';
 
-const ACTIVE_TAB = 'Files';
+type FileGlyph = ComponentType<{ size?: number; stroke?: number }>;
 
-type FileKind = 'document' | 'spreadsheet' | 'image';
-
-// twenty-front's file-type icon + colour (document -> blue, spreadsheet -> teal,
-// image -> amber), the tone's strong colour as a solid box with a white glyph.
-const FILE_KINDS: Record<
-  FileKind,
-  { color: string; icon: typeof IconFileText }
-> = {
-  document: { color: palette.tones.blue.text, icon: IconFileText },
-  spreadsheet: { color: palette.tones.teal.text, icon: IconTable },
-  image: { color: palette.tones.amber.text, icon: IconPhoto },
+// twenty-front's file-type icon by category: a solid colour box (document blue,
+// spreadsheet turquoise, presentation orange, image amber) with a white glyph.
+const FILE_ICONS: Record<FileCategory, FileGlyph> = {
+  document: IconFileText,
+  image: IconPhoto,
+  presentation: IconPresentation,
+  spreadsheet: IconTable,
 };
 
-const FILES: { date: string; kind: FileKind; name: string }[] = [
-  { date: 'Jul 1', kind: 'document', name: 'NDA - Anthropic.pdf' },
-  { date: 'Jul 12', kind: 'spreadsheet', name: 'Pricing Q4.xlsx' },
-  { date: 'Jul 18', kind: 'document', name: 'Onboarding deck.pdf' },
-  { date: 'Jul 20', kind: 'image', name: 'Brand assets.png' },
-  { date: 'Jul 24', kind: 'document', name: 'Security review.docx' },
+const FILES: { category: FileCategory; date: string; name: string }[] = [
+  { category: 'document', date: 'Jul 1', name: 'NDA - Anthropic.pdf' },
+  { category: 'spreadsheet', date: 'Jul 12', name: 'Pricing Q4.xlsx' },
+  { category: 'presentation', date: 'Jul 18', name: 'Onboarding deck.pptx' },
+  { category: 'image', date: 'Jul 20', name: 'Brand assets.png' },
+  { category: 'document', date: 'Jul 24', name: 'Security review.docx' },
 ];
 
 const Root = styled.div`
-  background-color: ${palette.background};
+  background-color: ${THEME_LIGHT.background.primary};
   display: flex;
   flex-direction: column;
-  font-family: ${palette.font};
+  font-family: ${THEME_LIGHT.font.family};
   height: 100%;
   overflow: hidden;
   width: 100%;
 `;
 
-const TabBar = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${palette.borderLight};
-  display: flex;
-  flex-shrink: 0;
-  gap: 2px;
-  padding: 0 12px;
-`;
-
-const Tab = styled.span`
-  align-items: center;
-  color: ${palette.textSecondary};
-  display: flex;
-  font-size: 12px;
-  font-weight: 500;
-  gap: 5px;
-  padding: 11px 8px;
-  white-space: nowrap;
-
-  svg {
-    height: 15px;
-    width: 15px;
-  }
-
-  &[data-active] {
-    box-shadow: inset 0 -1px 0 ${palette.textPrimary};
-    color: ${palette.textPrimary};
-  }
-`;
-
-const Body = styled.div`
+const Panel = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   min-height: 0;
+  overflow: hidden;
+  padding-top: 8px;
 `;
 
-const Head = styled.div`
-  align-items: baseline;
+const TitleBar = styled.div`
+  align-items: center;
   display: flex;
   flex-shrink: 0;
-  gap: 6px;
-  padding: 14px 16px 12px;
+  justify-content: space-between;
+  padding: 8px 16px 12px;
 `;
 
-const HeadTitle = styled.span`
-  color: ${palette.textPrimary};
-  font-size: 13px;
-  font-weight: 600;
+const Title = styled.span`
+  align-items: baseline;
+  color: ${THEME_LIGHT.font.color.primary};
+  display: flex;
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.semiBold};
 `;
 
-const HeadCount = styled.span`
-  color: ${palette.textLight};
-  font-size: 13px;
+const Count = styled.span`
+  color: ${THEME_LIGHT.font.color.light};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
+  margin-left: 8px;
+`;
+
+const AddButton = styled.span`
+  align-items: center;
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  color: ${THEME_LIGHT.font.color.secondary};
+  display: inline-flex;
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.sm)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
+  gap: 4px;
+  padding: 4px 8px;
 `;
 
 const List = styled.div`
@@ -122,19 +97,18 @@ const List = styled.div`
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
-  padding: 0 8px;
 `;
 
 const Row = styled.div`
   align-items: center;
-  border-radius: 4px;
+  box-sizing: border-box;
   display: flex;
   gap: 8px;
-  height: 44px;
-  padding: 0 8px;
+  height: 48px;
+  padding: 0 16px;
 
   &:hover {
-    background-color: ${palette.rowHoverBackground};
+    background-color: ${THEME_LIGHT.background.transparent.light};
   }
 `;
 
@@ -144,91 +118,105 @@ const Left = styled.div`
   flex: 1;
   gap: 12px;
   min-width: 0;
+  overflow: hidden;
 `;
 
 const FileIconBox = styled.span`
   align-items: center;
-  border-radius: 4px;
-  color: ${palette.background};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  color: ${THEME_LIGHT.font.color.inverted};
   display: flex;
   flex-shrink: 0;
   justify-content: center;
-  padding: 4px;
+  padding: 5px;
 
-  svg {
-    height: 13px;
-    width: 13px;
+  &[data-category='document'] {
+    background: ${THEME_LIGHT.color.blue};
+  }
+  &[data-category='image'] {
+    background: ${THEME_LIGHT.color.amber};
+  }
+  &[data-category='presentation'] {
+    background: ${THEME_LIGHT.color.orange};
+  }
+  &[data-category='spreadsheet'] {
+    background: ${THEME_LIGHT.color.turquoise};
   }
 `;
 
 const FileName = styled.span`
-  color: ${palette.textPrimary};
-  font-size: 12px;
+  color: ${THEME_LIGHT.font.color.primary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const Meta = styled.span`
+const Right = styled.div`
   align-items: center;
-  color: ${palette.textLight};
-  display: flex;
+  color: ${THEME_LIGHT.font.color.light};
+  display: inline-flex;
   flex-shrink: 0;
-  font-size: 11px;
-  gap: 4px;
-
-  svg {
-    height: 13px;
-    width: 13px;
-  }
+  gap: 2px;
 `;
 
-// A record's Files tab — the tab bar (Files active) over the product's file
-// list with type-coloured icons.
-export function FilesVisual() {
+const DateText = styled.span`
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  white-space: nowrap;
+`;
+
+const CalendarIcon = styled.span`
+  align-items: center;
+  display: inline-flex;
+`;
+
+const Dots = styled.span`
+  align-items: center;
+  display: inline-flex;
+  margin-left: 4px;
+`;
+
+export function FilesVisual({ active: _active }: { active: boolean }) {
   return (
     <Root>
-      <TabBar>
-        {RECORD_TABS.map((recordTab) => {
-          const TabIcon = recordTab.icon;
-          return (
-            <Tab
-              data-active={recordTab.label === ACTIVE_TAB ? '' : undefined}
-              key={recordTab.label}
-            >
-              <TabIcon />
-              {recordTab.label}
-            </Tab>
-          );
-        })}
-      </TabBar>
-      <Body>
-        <Head>
-          <HeadTitle>All</HeadTitle>
-          <HeadCount>{FILES.length}</HeadCount>
-        </Head>
+      <RecordTabHeader active="Files" />
+      <Panel>
+        <TitleBar>
+          <Title>
+            All
+            <Count>{FILES.length}</Count>
+          </Title>
+          <AddButton>
+            <IconPlus size={12} stroke={2} />
+            Add file
+          </AddButton>
+        </TitleBar>
         <List>
           {FILES.map((file) => {
-            const FileIcon = FILE_KINDS[file.kind].icon;
+            const FileGlyphIcon = FILE_ICONS[file.category];
             return (
               <Row key={file.name}>
                 <Left>
-                  <FileIconBox
-                    style={{ backgroundColor: FILE_KINDS[file.kind].color }}
-                  >
-                    <FileIcon />
+                  <FileIconBox data-category={file.category}>
+                    <FileGlyphIcon size={14} stroke={1.6} />
                   </FileIconBox>
                   <FileName>{file.name}</FileName>
                 </Left>
-                <Meta>
-                  <IconCalendar />
-                  {file.date}
-                </Meta>
+                <Right>
+                  <CalendarIcon>
+                    <IconCalendar size={16} stroke={2} />
+                  </CalendarIcon>
+                  <DateText>{file.date}</DateText>
+                  <Dots>
+                    <IconDotsVertical size={16} stroke={2} />
+                  </Dots>
+                </Right>
               </Row>
             );
           })}
         </List>
-      </Body>
+      </Panel>
     </Root>
   );
 }
