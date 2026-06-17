@@ -4,14 +4,17 @@ import { styled } from '@linaria/react';
 import { IconLock, IconPlus } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
+import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
 import { PersonAvatar } from '@/app-preview/primitives/person-avatar';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { RecordTabHeader } from './record-tab-header';
 
+const PEOPLE = sharedAssetUrls.peopleAvatars;
+
 type Participant = {
+  avatarUrl: string;
   name: string;
-  tone: string;
 };
 
 type EmailThread = {
@@ -30,15 +33,15 @@ const THREADS: EmailThread[] = [
   {
     date: '1:30pm',
     messageCount: 2,
-    participants: [{ name: 'Alexandre', tone: 'blue' }],
+    participants: [{ avatarUrl: PEOPLE.anonymousMike, name: 'Mike' }],
     shared: false,
   },
   {
     date: '4 nov 2023',
     messageCount: 4,
     participants: [
-      { name: 'Félix', tone: 'amber' },
-      { name: 'Marie', tone: 'purple' },
+      { avatarUrl: PEOPLE.anonymousFelix, name: 'Félix' },
+      { avatarUrl: PEOPLE.anonymousThomas, name: 'Thomas' },
     ],
     preview:
       "Hey team, I've been in touch with Notion and Figma about potential integrations.",
@@ -231,8 +234,8 @@ export function EmailsVisual({ active: _active }: { active: boolean }) {
                     <PersonAvatar
                       key={participant.name}
                       person={{
+                        avatarUrl: participant.avatarUrl,
                         name: participant.name,
-                        tone: participant.tone,
                       }}
                       size={16}
                     />

@@ -4,8 +4,10 @@
 // compile error, never a silent undefined src (that bug shipped — three
 // familiar-interface avatars rendered blank behind a Record<string,...>).
 const PEOPLE_AVATARS = {
+  anonymousFelix: '/images/shared/people/avatars/anonymous-felix.webp',
   anonymousIndira: '/images/shared/people/avatars/anonymous-indira.webp',
   anonymousLaura: '/images/shared/people/avatars/anonymous-laura.webp',
+  anonymousThomas: '/images/shared/people/avatars/anonymous-thomas.webp',
   benChestnut: '/images/shared/people/avatars/ben-chestnut.webp',
   brianChesky: '/images/shared/people/avatars/brian-chesky.webp',
   chrisWanstrath: '/images/shared/people/avatars/chris-wanstrath.webp',
