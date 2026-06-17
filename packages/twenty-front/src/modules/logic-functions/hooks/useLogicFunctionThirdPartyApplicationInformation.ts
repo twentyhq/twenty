@@ -4,14 +4,14 @@ import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsS
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
-type LogicFunctionThirdPartyApplication = {
+type LogicFunctionThirdPartyApplicationInformation = {
   applicationId: string;
   name: string;
 };
 
-export const useLogicFunctionThirdPartyApplication = (
+export const useLogicFunctionThirdPartyApplicationInformation = (
   logicFunctionId?: string,
-): LogicFunctionThirdPartyApplication | undefined => {
+): LogicFunctionThirdPartyApplicationInformation | undefined => {
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
 
   const applicationId = isDefined(logicFunctionId)

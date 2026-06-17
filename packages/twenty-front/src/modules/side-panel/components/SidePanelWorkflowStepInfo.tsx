@@ -1,5 +1,5 @@
 import { AppChip } from '@/applications/components/AppChip';
-import { useLogicFunctionThirdPartyApplication } from '@/logic-functions/hooks/useLogicFunctionThirdPartyApplication';
+import { useLogicFunctionThirdPartyApplicationInformation } from '@/logic-functions/hooks/useLogicFunctionThirdPartyApplicationInformation';
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
@@ -93,8 +93,8 @@ export const SidePanelWorkflowStepInfo = ({
       ? stepDefinition.definition.settings.input.logicFunctionId
       : undefined;
 
-  const thirdPartyApplication =
-    useLogicFunctionThirdPartyApplication(logicFunctionId);
+  const thirdPartyApplicationInformation =
+    useLogicFunctionThirdPartyApplicationInformation(logicFunctionId);
 
   const agentId = getAgentIdFromStep(stepDefinition);
   const { updateAgentLabel } = useUpdateAgentLabel(agentId);
@@ -137,8 +137,8 @@ export const SidePanelWorkflowStepInfo = ({
 
   const headerType = isTrigger ? t`Trigger` : t`Action`;
 
-  const label = isDefined(thirdPartyApplication)
-    ? thirdPartyApplication.name
+  const label = isDefined(thirdPartyApplicationInformation)
+    ? thirdPartyApplicationInformation.name
     : headerType;
 
   const Icon = getIcon(headerIcon ?? 'IconDefault');
@@ -184,9 +184,9 @@ export const SidePanelWorkflowStepInfo = ({
   return (
     <SidePanelPageInfoLayout
       icon={
-        isDefined(thirdPartyApplication) ? (
+        isDefined(thirdPartyApplicationInformation) ? (
           <AppChip
-            applicationId={thirdPartyApplication.applicationId}
+            applicationId={thirdPartyApplicationInformation.applicationId}
             size="md"
             chipOnly
           />
@@ -194,7 +194,11 @@ export const SidePanelWorkflowStepInfo = ({
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         ) : undefined
       }
-      iconColor={isDefined(thirdPartyApplication) ? undefined : headerIconColor}
+      iconColor={
+        isDefined(thirdPartyApplicationInformation)
+          ? undefined
+          : headerIconColor
+      }
       title={
         <TitleInput
           instanceId={`workflow-step-title-${sidePanelPageInstanceId}`}
