@@ -24,9 +24,6 @@ export type WorkflowLayoutOptions = {
   rankdir: string;
 };
 
-// Pure Dagre auto-layout shared by the frontend "tidy up" and server-side
-// auto-layout. Node sizes are provided by the caller (measured sizes on the
-// frontend, estimated constants on the server).
 export const computeWorkflowLayout = ({
   nodes,
   edges,
@@ -64,8 +61,6 @@ export const computeWorkflowLayout = ({
   return nodes.map((node) => {
     const layoutedNode = graph.node(node.id);
 
-    // Shift the Dagre node position (anchor=center center) to the top left
-    // so it matches the React Flow node anchor point (top left).
     const x = layoutedNode.x - layoutedNode.width / 2;
     const y = layoutedNode.y - layoutedNode.height / 2;
 
