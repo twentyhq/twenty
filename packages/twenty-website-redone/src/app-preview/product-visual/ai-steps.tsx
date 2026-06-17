@@ -1,6 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 import {
   IconChecklist,
   IconChevronRight,
@@ -17,7 +18,6 @@ import { useState } from 'react';
 import { EASING } from '@/tokens';
 import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 
-import { PREVIEW_COLORS } from '../preview-colors';
 import { type AgentStep, type AgentToolIcon } from './product-visual-scenes';
 
 const TOOL_ICONS: Record<AgentToolIcon, typeof IconSearch> = {
@@ -67,7 +67,7 @@ const SummaryButton = styled.button`
   background: none;
   border: none;
   border-radius: 4px;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   cursor: pointer;
   display: flex;
   font-family: ${theme.font.family};
@@ -90,7 +90,7 @@ const SummaryButton = styled.button`
 
 const SummaryChevron = styled.span`
   align-items: center;
-  color: ${PREVIEW_COLORS.textLight};
+  color: ${THEME_LIGHT.font.color.light};
   display: flex;
   justify-content: center;
   transition: transform 150ms ease-in-out;
@@ -105,7 +105,7 @@ const SummaryText = styled.span`
 
 const StepIcon = styled.span`
   align-items: center;
-  color: ${PREVIEW_COLORS.textLight};
+  color: ${THEME_LIGHT.font.color.light};
   display: flex;
   flex-shrink: 0;
   justify-content: center;
@@ -114,7 +114,7 @@ const StepIcon = styled.span`
 
 const StepLoaderIcon = styled.span`
   align-items: center;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
   justify-content: center;
@@ -122,7 +122,7 @@ const StepLoaderIcon = styled.span`
 `;
 
 const StepLabel = styled.span`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: 12px;
   font-weight: 400;

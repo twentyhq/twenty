@@ -20,7 +20,6 @@ import { Chip } from '../../primitives/chip';
 import { FaviconLogo } from '../../primitives/favicon-logo';
 import { PersonAvatar } from '../../primitives/person-avatar';
 import { PreviewAvatar } from '../../primitives/preview-avatar';
-import { PREVIEW_COLORS } from '../../preview-colors';
 import {
   type CellEntity,
   type CellPerson,
@@ -52,8 +51,8 @@ function toneForTitle(title: string): string {
 
 const Card = styled.div`
   animation: kanbanCardAppear 320ms ${EASING.standard} both;
-  background: ${PREVIEW_COLORS.backgroundSecondary};
-  border: 1px solid ${PREVIEW_COLORS.border};
+  background: ${THEME_LIGHT.background.secondary};
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -101,12 +100,14 @@ const CheckboxContainer = styled.div`
 const CheckboxBox = styled.div<{ $checked?: boolean }>`
   align-items: center;
   background: ${({ $checked }) =>
-    $checked ? PREVIEW_COLORS.accentSurfaceSoft : 'transparent'};
+    $checked ? THEME_LIGHT.background.transparent.blue : 'transparent'};
   border: 1px solid
     ${({ $checked }) =>
-      $checked ? PREVIEW_COLORS.accentBorder : PREVIEW_COLORS.borderStrong};
+      $checked
+        ? THEME_LIGHT.border.color.blue
+        : THEME_LIGHT.border.color.strong};
   border-radius: 3px;
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
   height: 14px;
   justify-content: center;
@@ -130,7 +131,7 @@ const FieldRowShell = styled.div`
 
 const FieldIcon = styled.div`
   align-items: center;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   flex: 0 0 16px;
   height: 16px;
@@ -147,7 +148,7 @@ const FieldValueWrap = styled.div`
 `;
 
 const FieldText = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
@@ -214,7 +215,7 @@ function FieldRow({
       <FieldIcon>
         <Icon
           aria-hidden
-          color={PREVIEW_COLORS.textTertiary}
+          color={THEME_LIGHT.font.color.tertiary}
           size={16}
           stroke={theme.icon.stroke.sm}
         />
@@ -245,7 +246,7 @@ export function KanbanCard({ card }: { card: KanbanCardData }) {
             <CheckboxBox $checked>
               <IconCheck
                 aria-hidden
-                color={PREVIEW_COLORS.textSecondary}
+                color={THEME_LIGHT.font.color.secondary}
                 size={10}
                 stroke={theme.icon.stroke.sm}
               />
@@ -270,8 +271,8 @@ export function KanbanCard({ card }: { card: KanbanCardData }) {
                 <RatingStar
                   fillColor={
                     index < card.rating
-                      ? PREVIEW_COLORS.textSecondary
-                      : PREVIEW_COLORS.borderStrong
+                      ? THEME_LIGHT.font.color.secondary
+                      : THEME_LIGHT.border.color.strong
                   }
                 />
               </StarGlyph>

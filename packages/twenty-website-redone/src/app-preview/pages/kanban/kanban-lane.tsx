@@ -8,7 +8,6 @@ import { previewFontSize } from '@/app-preview/preview-font-size';
 import { KanbanCard } from './kanban-card';
 import { MiniIcon } from '../../primitives/mini-icon';
 import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
-import { PREVIEW_COLORS } from '../../preview-colors';
 import { type KanbanLane as KanbanLaneData } from '../../types';
 
 const theme = THEME_LIGHT;
@@ -17,7 +16,7 @@ const Lane = styled.div<{ $index: number; $last?: boolean }>`
   animation: kanbanLaneAppear 420ms ${EASING.standard} both;
   animation-delay: ${({ $index }) => `${120 + $index * 80}ms`};
   border-right: ${({ $last }) =>
-    $last ? 'none' : `1px solid ${PREVIEW_COLORS.borderLight}`};
+    $last ? 'none' : `1px solid ${THEME_LIGHT.border.color.light}`};
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -80,7 +79,7 @@ const LaneTag = styled.span`
 `;
 
 const LaneCount = styled.span`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
@@ -99,7 +98,7 @@ const LaneBody = styled.div`
 
 const AddCardButton = styled.div`
   align-items: center;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: inline-flex;
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
@@ -114,8 +113,8 @@ const AddCardButton = styled.div`
 const SkeletonCardShell = styled.div<{ $index: number }>`
   animation: kanbanSkeletonCardAppear 320ms ${EASING.standard} both;
   animation-delay: ${({ $index }) => `${$index * 90}ms`};
-  background: ${PREVIEW_COLORS.backgroundSecondary};
-  border: 1px solid ${PREVIEW_COLORS.border};
+  background: ${THEME_LIGHT.background.secondary};
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -184,7 +183,7 @@ export function KanbanLane({
         <AddCardButton aria-hidden>
           <MiniIcon
             icon={IconPlus}
-            color={PREVIEW_COLORS.textLight}
+            color={THEME_LIGHT.font.color.light}
             size={12}
           />
           New

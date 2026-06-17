@@ -10,7 +10,6 @@ import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 import { SidebarItem } from './sidebar-item';
 import { MiniIcon } from '../primitives/mini-icon';
 import { renderPreviewIcon } from '../primitives/preview-icon';
-import { PREVIEW_COLORS } from '../preview-colors';
 import { type SidebarFolderDef } from '../types';
 
 const theme = THEME_LIGHT;
@@ -46,7 +45,7 @@ const FolderRowMain = styled.div`
 `;
 
 const FolderText = styled.span`
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
@@ -58,7 +57,7 @@ const FolderText = styled.span`
 `;
 
 const FolderChevron = styled.div<{ $expanded?: boolean }>`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   flex: 0 0 auto;
   margin-left: auto;
@@ -74,7 +73,7 @@ const ChildStack = styled.div`
 `;
 
 const BranchLine = styled.div`
-  background: ${PREVIEW_COLORS.borderStrong};
+  background: ${THEME_LIGHT.border.color.strong};
   bottom: 14px;
   left: 11px;
   position: absolute;
@@ -113,7 +112,7 @@ export function SidebarFolder({
         </FolderRowMain>
         <FolderChevron $expanded={expanded}>
           <MiniIcon
-            color={PREVIEW_COLORS.textTertiary}
+            color={THEME_LIGHT.font.color.tertiary}
             icon={IconChevronDown}
             size={12}
           />

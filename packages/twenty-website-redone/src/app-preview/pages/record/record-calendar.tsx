@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 import { IconArrowRight, IconPlus } from '@tabler/icons-react';
 
 import { EASING } from '@/tokens';
 import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 
-import { PREVIEW_COLORS } from '../../preview-colors';
 import { type RecordCalendarDay } from '../../types';
 import { AvatarGroup } from './avatar-group';
 import { RECORD_PANEL_CHROME } from './record-panel-chrome';
@@ -18,7 +18,7 @@ const CalendarDayRow = styled.div<{ $index: number }>`
   padding: 8px 12px;
 
   & + & {
-    border-top: 1px solid ${PREVIEW_COLORS.borderLight};
+    border-top: 1px solid ${THEME_LIGHT.border.color.light};
   }
 
   @keyframes calendarDayAppear {
@@ -40,7 +40,7 @@ const DayBadge = styled.div`
 `;
 
 const WeekDay = styled.div`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: 10px;
   font-weight: 600;
@@ -49,7 +49,7 @@ const WeekDay = styled.div`
 `;
 
 const MonthDay = styled.div`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 14px;
   font-weight: 500;
@@ -72,7 +72,7 @@ const CalEventRow = styled.div`
 
 const AttendanceBar = styled.span<{ $active?: boolean }>`
   background: ${({ $active }) =>
-    $active ? PREVIEW_COLORS.accent : PREVIEW_COLORS.borderStrong};
+    $active ? THEME_LIGHT.accent.accent9 : THEME_LIGHT.border.color.strong};
   border-radius: 2px;
   flex-shrink: 0;
   height: 24px;
@@ -89,7 +89,7 @@ const CalLabels = styled.div`
 
 const CalTime = styled.div`
   align-items: center;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
   font-family: ${theme.font.family};
@@ -98,7 +98,7 @@ const CalTime = styled.div`
 `;
 
 const CalTitle = styled.div`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 13px;
   font-weight: 500;

@@ -9,8 +9,6 @@ import { mediaUp } from '@/tokens';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 
-import { PREVIEW_COLORS } from '../preview-colors';
-
 const theme = THEME_LIGHT;
 
 const Root = styled.div`
@@ -35,7 +33,7 @@ const SegmentedRail = styled.div`
       ${theme.background.secondary} 80%,
       transparent
     );
-    border: 1px solid ${PREVIEW_COLORS.border};
+    border: 1px solid ${THEME_LIGHT.border.color.medium};
     border-radius: 999px;
     column-gap: 2px;
     height: 26px;
@@ -57,9 +55,9 @@ const Segment = styled.div<{ $selected?: boolean }>`
 const NewChat = styled.div`
   align-items: center;
   background-color: ${theme.background.secondary};
-  border: 1px solid ${PREVIEW_COLORS.border};
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
   border-radius: 999px;
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
   height: 32px;
   justify-content: center;
@@ -94,7 +92,7 @@ export function SidebarControls() {
         <Segment $selected>
           <IconHome
             aria-hidden
-            color={PREVIEW_COLORS.text}
+            color={THEME_LIGHT.font.color.primary}
             size={16}
             strokeWidth={theme.icon.stroke.md}
           />
@@ -102,7 +100,7 @@ export function SidebarControls() {
         <Segment>
           <IconMessageCircle2
             aria-hidden
-            color={PREVIEW_COLORS.textTertiary}
+            color={THEME_LIGHT.font.color.tertiary}
             size={16}
             strokeWidth={theme.icon.stroke.md}
           />
@@ -111,7 +109,7 @@ export function SidebarControls() {
       <NewChat aria-hidden>
         <IconMessageCirclePlus
           aria-hidden
-          color={PREVIEW_COLORS.textSecondary}
+          color={THEME_LIGHT.font.color.secondary}
           size={16}
           strokeWidth={theme.icon.stroke.md}
         />

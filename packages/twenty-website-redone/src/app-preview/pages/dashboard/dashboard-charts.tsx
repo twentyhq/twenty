@@ -8,7 +8,6 @@ import { EASING, REDUCED_MOTION } from '@/tokens';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
-import { PREVIEW_COLORS } from '../../preview-colors';
 import {
   type DashboardBarChart as DashboardBarChartData,
   type DashboardDonutChart as DashboardDonutChartData,
@@ -26,7 +25,7 @@ const ChartFrame = styled.div`
 `;
 
 const AxisLabel = styled.span`
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   font-family: ${theme.font.family};
   font-size: 10px;
   line-height: 1;
@@ -56,7 +55,7 @@ const Gridlines = styled.div<{ $bottom: number }>`
 `;
 
 const GridLine = styled.span`
-  border-top: 1px dashed ${PREVIEW_COLORS.borderLight};
+  border-top: 1px dashed ${THEME_LIGHT.border.color.light};
   display: block;
   width: 100%;
 `;
@@ -299,7 +298,7 @@ const DonutCenter = styled.div`
 `;
 
 const DonutValue = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 22px;
   font-weight: ${theme.font.weight.semiBold};
@@ -307,7 +306,7 @@ const DonutValue = styled.span`
 `;
 
 const DonutLabel = styled.span`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: 11px;
   line-height: 1.4;
@@ -337,7 +336,7 @@ const LegendDot = styled.span<{ $color: string }>`
 `;
 
 const LegendLabel = styled.span`
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   font-family: ${theme.font.family};
   font-size: 12px;
   overflow: hidden;

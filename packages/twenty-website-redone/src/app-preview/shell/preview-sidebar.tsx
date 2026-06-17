@@ -17,7 +17,6 @@ import { SidebarControls } from './sidebar-controls';
 import { SidebarFolder } from './sidebar-folder';
 import { SidebarItem } from './sidebar-item';
 import { renderPreviewIcon } from '../primitives/preview-icon';
-import { PREVIEW_COLORS } from '../preview-colors';
 import { isSidebarFolder } from './is-sidebar-folder';
 import { type SidebarEntry, type SidebarItemDef } from '../types';
 
@@ -79,7 +78,7 @@ const WorkspaceName = styled.span`
   ${mediaUp('md')} {
     [data-desktop-mode='expanded'] & {
       display: block;
-      color: ${PREVIEW_COLORS.text};
+      color: ${THEME_LIGHT.font.color.primary};
       font-family: ${theme.font.family};
       font-size: ${previewFontSize(theme.font.size.md)};
       font-weight: ${theme.font.weight.medium};
@@ -121,7 +120,7 @@ const SectionLabelRow = styled.div`
 `;
 
 const SectionLabel = styled.span`
-  color: ${PREVIEW_COLORS.textLight};
+  color: ${THEME_LIGHT.font.color.light};
   font-family: ${theme.font.family};
   font-size: 11px;
   font-weight: ${theme.font.weight.semiBold};
@@ -208,14 +207,17 @@ export function PreviewSidebar({
           <AppleRainbowMark sizePx={16} />
           <WorkspaceName>Apple</WorkspaceName>
           <DesktopOnly>
-            <IconChevronDown color={PREVIEW_COLORS.textExtraLight} size={16} />
+            <IconChevronDown
+              color={THEME_LIGHT.font.color.extraLight}
+              size={16}
+            />
           </DesktopOnly>
         </HeaderLeft>
         <HeaderRight>
-          <IconSearch color={PREVIEW_COLORS.textSecondary} size={16} />
+          <IconSearch color={THEME_LIGHT.font.color.secondary} size={16} />
           <DesktopOnly>
             <IconLayoutSidebarLeftCollapse
-              color={PREVIEW_COLORS.textSecondary}
+              color={THEME_LIGHT.font.color.secondary}
               size={16}
             />
           </DesktopOnly>

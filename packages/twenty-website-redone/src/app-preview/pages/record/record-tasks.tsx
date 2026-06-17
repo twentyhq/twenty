@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 import { IconCalendar, IconCheck, IconPlus } from '@tabler/icons-react';
 
 import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 
 import { FaviconLogo } from '../../primitives/favicon-logo';
 import { PersonAvatar } from '../../primitives/person-avatar';
-import { PREVIEW_COLORS } from '../../preview-colors';
 import { type RecordTask } from '../../types';
 import { RECORD_PANEL_CHROME } from './record-panel-chrome';
 
@@ -18,9 +18,11 @@ const TaskLeft = styled.div`
 
 const TaskCheckbox = styled.span<{ $done?: boolean }>`
   align-items: center;
-  background: ${({ $done }) => ($done ? PREVIEW_COLORS.accent : 'transparent')};
+  background: ${({ $done }) =>
+    $done ? THEME_LIGHT.accent.accent9 : 'transparent'};
   border: 1px solid
-    ${({ $done }) => ($done ? PREVIEW_COLORS.accent : PREVIEW_COLORS.text)};
+    ${({ $done }) =>
+      $done ? THEME_LIGHT.accent.accent9 : THEME_LIGHT.font.color.primary};
   border-radius: 50%;
   color: ${theme.font.color.inverted};
   display: flex;
@@ -31,7 +33,7 @@ const TaskCheckbox = styled.span<{ $done?: boolean }>`
 `;
 
 const TaskTitle = styled.span<{ $done?: boolean }>`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 13px;
   font-weight: 500;
@@ -43,7 +45,7 @@ const TaskTitle = styled.span<{ $done?: boolean }>`
 `;
 
 const TaskBody = styled.span`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: 13px;
   overflow: hidden;
@@ -61,7 +63,7 @@ const TaskRight = styled.div`
 
 const DueDate = styled.span`
   align-items: center;
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
   font-family: ${theme.font.family};
   font-size: 13px;
@@ -71,10 +73,10 @@ const DueDate = styled.span`
 
 const TargetChip = styled.span`
   align-items: center;
-  background: ${PREVIEW_COLORS.backgroundSecondary};
-  border: 1px solid ${PREVIEW_COLORS.borderLight};
+  background: ${THEME_LIGHT.background.secondary};
+  border: 1px solid ${THEME_LIGHT.border.color.light};
   border-radius: 50px;
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   display: inline-flex;
   font-family: ${theme.font.family};
   font-size: 13px;

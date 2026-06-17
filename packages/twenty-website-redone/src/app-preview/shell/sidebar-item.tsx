@@ -9,7 +9,6 @@ import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { renderPreviewIcon } from '../primitives/preview-icon';
-import { PREVIEW_COLORS } from '../preview-colors';
 import { type SidebarItemDef } from '../types';
 
 const theme = THEME_LIGHT;
@@ -59,7 +58,7 @@ const BranchCell = styled.div<{ $isLastChild?: boolean }>`
   position: relative;
 
   &::before {
-    background: ${PREVIEW_COLORS.borderStrong};
+    background: ${THEME_LIGHT.border.color.strong};
     content: '';
     inset: 0 8px 0 0;
     opacity: ${({ $isLastChild }) => ($isLastChild ? 0 : 1)};
@@ -67,8 +66,8 @@ const BranchCell = styled.div<{ $isLastChild?: boolean }>`
   }
 
   &::after {
-    border-bottom: 1px solid ${PREVIEW_COLORS.borderStrong};
-    border-left: 1px solid ${PREVIEW_COLORS.borderStrong};
+    border-bottom: 1px solid ${THEME_LIGHT.border.color.strong};
+    border-left: 1px solid ${THEME_LIGHT.border.color.strong};
     border-radius: 0 0 0 4px;
     content: '';
     inset: 0 0 12px 0;
@@ -94,7 +93,9 @@ const ItemText = styled.div`
 
 const ItemLabel = styled.span<{ $active?: boolean }>`
   color: ${({ $active }) =>
-    $active ? PREVIEW_COLORS.text : PREVIEW_COLORS.textSecondary};
+    $active
+      ? THEME_LIGHT.font.color.primary
+      : THEME_LIGHT.font.color.secondary};
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
@@ -106,7 +107,7 @@ const ItemLabel = styled.span<{ $active?: boolean }>`
 `;
 
 const ItemMeta = styled.span`
-  color: ${PREVIEW_COLORS.textLight};
+  color: ${THEME_LIGHT.font.color.light};
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};

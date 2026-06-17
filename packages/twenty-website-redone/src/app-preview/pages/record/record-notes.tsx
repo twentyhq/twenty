@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { EASING } from '@/tokens';
 import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
-import { PREVIEW_COLORS } from '../../preview-colors';
 import { type RecordNote } from '../../types';
 
 const NotesHeader = styled.div`
@@ -17,14 +17,14 @@ const NotesHeader = styled.div`
 `;
 
 const NotesCount = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 13px;
   font-weight: 600;
 `;
 
 const AddNoteButton = styled.span`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: 13px;
   line-height: 1.4;
@@ -53,11 +53,13 @@ const NoteCard = styled.div<{
   animation-delay: ${({ $index }) => `${120 + $index * 70}ms`};
   background: ${({ $highlighted }) =>
     $highlighted
-      ? PREVIEW_COLORS.background
-      : PREVIEW_COLORS.backgroundSecondary};
+      ? THEME_LIGHT.background.primary
+      : THEME_LIGHT.background.secondary};
   border: 1px solid
     ${({ $highlighted }) =>
-      $highlighted ? PREVIEW_COLORS.border : PREVIEW_COLORS.borderLight};
+      $highlighted
+        ? THEME_LIGHT.border.color.medium
+        : THEME_LIGHT.border.color.light};
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -97,7 +99,7 @@ const NoteContent = styled.div`
 `;
 
 const NoteTitle = styled.div`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 14px;
   font-weight: 500;
@@ -105,7 +107,7 @@ const NoteTitle = styled.div`
 `;
 
 const NoteBody = styled.div`
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   font-family: ${theme.font.family};
   font-size: 13px;
   line-height: 1.5;
@@ -116,7 +118,7 @@ const NoteBody = styled.div`
 
 const NoteRelation = styled.div`
   align-items: center;
-  border-top: 1px solid ${PREVIEW_COLORS.borderLight};
+  border-top: 1px solid ${THEME_LIGHT.border.color.light};
   display: flex;
   gap: 6px;
   justify-content: center;
@@ -131,14 +133,14 @@ const NoteRelationArrow = styled.svg`
 `;
 
 const NoteRelationLabel = styled.span`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: 12px;
   line-height: 1.4;
 `;
 
 const NoteRelationName = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 12px;
   line-height: 1.4;
@@ -177,7 +179,7 @@ export function RecordNotes({ notes }: { notes: RecordNote[] }) {
               <NoteRelation>
                 <NoteRelationArrow
                   fill="none"
-                  stroke={PREVIEW_COLORS.textTertiary}
+                  stroke={THEME_LIGHT.font.color.tertiary}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="1"

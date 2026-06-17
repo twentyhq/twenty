@@ -10,15 +10,14 @@ import { THEME_LIGHT } from 'twenty-ui/theme';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { MiniIcon } from '../primitives/mini-icon';
-import { PREVIEW_COLORS } from '../preview-colors';
 import { type PageType } from '../types';
 
 const theme = THEME_LIGHT;
 
 const ViewbarBar = styled.div`
   align-items: center;
-  background: ${PREVIEW_COLORS.background};
-  border-bottom: 1px solid ${PREVIEW_COLORS.borderLight};
+  background: ${THEME_LIGHT.background.primary};
+  border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
   display: flex;
   justify-content: space-between;
   min-width: 0;
@@ -42,7 +41,7 @@ const ViewSwitcher = styled.div<{ $tableAligned?: boolean }>`
 `;
 
 const ViewName = styled.span`
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
@@ -51,7 +50,7 @@ const ViewName = styled.span`
 `;
 
 const ViewCount = styled.span`
-  color: ${PREVIEW_COLORS.textLight};
+  color: ${THEME_LIGHT.font.color.light};
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
@@ -60,7 +59,7 @@ const ViewCount = styled.span`
 `;
 
 const TinyDot = styled.div`
-  background: ${PREVIEW_COLORS.borderStrong};
+  background: ${THEME_LIGHT.border.color.strong};
   border-radius: 999px;
   height: 2px;
   width: 2px;
@@ -83,7 +82,7 @@ const ViewActions = styled.div`
 const ViewAction = styled.span`
   align-items: center;
   border-radius: 4px;
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
@@ -119,7 +118,7 @@ export function PreviewViewbar({
           <>
             <MiniIcon
               icon={pageType === 'kanban' ? IconLayoutKanban : IconList}
-              color={PREVIEW_COLORS.textSecondary}
+              color={THEME_LIGHT.font.color.secondary}
               size={16}
             />
             <ViewName>{title}</ViewName>
@@ -129,7 +128,7 @@ export function PreviewViewbar({
                 <ViewCount>{count}</ViewCount>
                 <MiniIcon
                   icon={IconChevronDown}
-                  color={PREVIEW_COLORS.textLight}
+                  color={THEME_LIGHT.font.color.light}
                 />
               </>
             ) : null}

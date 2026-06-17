@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 import {
   IconBrandLinkedin,
   IconBrandX,
@@ -14,7 +15,6 @@ import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 import { PersonAvatar } from '../../primitives/person-avatar';
 import { PreviewRoundedLink } from '../../primitives/preview-rounded-link';
 import { PreviewTag } from '../../primitives/preview-tag';
-import { PREVIEW_COLORS } from '../../preview-colors';
 import { type RecordField } from '../../types';
 
 const FieldValueSlot = styled.div`
@@ -26,7 +26,7 @@ const FieldValueSlot = styled.div`
 `;
 
 const FieldValue = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 13px;
   line-height: 1.4;
@@ -38,7 +38,7 @@ const FieldValue = styled.span`
 
 const FieldValuePerson = styled.span`
   align-items: center;
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   display: flex;
   font-family: ${theme.font.family};
   font-size: 13px;

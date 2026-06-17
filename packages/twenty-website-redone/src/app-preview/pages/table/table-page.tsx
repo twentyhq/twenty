@@ -15,7 +15,6 @@ import { TableCheckbox } from './table-checkbox';
 import { renderTableHeaderIcon } from './table-header-icon';
 import { MiniIcon } from '../../primitives/mini-icon';
 import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
-import { PREVIEW_COLORS } from '../../preview-colors';
 import { useHorizontalDragScroll } from '@/platform/motion';
 import { type TablePageDefinition } from '../../types';
 
@@ -111,14 +110,14 @@ const TableCell = styled.div<{
   align-items: center;
   background: ${({ $header, $hovered }) => {
     if ($header) {
-      return PREVIEW_COLORS.background;
+      return THEME_LIGHT.background.primary;
     }
     return $hovered
-      ? PREVIEW_COLORS.backgroundSecondary
-      : PREVIEW_COLORS.background;
+      ? THEME_LIGHT.background.secondary
+      : THEME_LIGHT.background.primary;
   }};
-  border-bottom: 1px solid ${PREVIEW_COLORS.borderLight};
-  border-right: 1px solid ${PREVIEW_COLORS.borderLight};
+  border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
+  border-right: 1px solid ${THEME_LIGHT.border.color.light};
   box-sizing: border-box;
   display: flex;
   flex: 0 0 ${({ $width }) => `${$width}px`};
@@ -154,13 +153,13 @@ const EmptyFillCell = styled.div<{
 }>`
   background: ${({ $header, $hovered, $footer }) => {
     if ($header || $footer) {
-      return PREVIEW_COLORS.background;
+      return THEME_LIGHT.background.primary;
     }
     return $hovered
-      ? PREVIEW_COLORS.backgroundSecondary
-      : PREVIEW_COLORS.background;
+      ? THEME_LIGHT.background.secondary
+      : THEME_LIGHT.background.primary;
   }};
-  border-bottom: 1px solid ${PREVIEW_COLORS.borderLight};
+  border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
   flex: 0 0 ${({ $width }) => `${$width}px`};
   min-width: ${({ $width }) => `${$width}px`};
 `;
@@ -175,7 +174,7 @@ const HeaderCellContent = styled.div`
 `;
 
 const HeaderLabel = styled.span`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
@@ -187,7 +186,7 @@ const HeaderLabel = styled.span`
 `;
 
 const MutedText = styled.span`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
@@ -271,7 +270,7 @@ export function TablePage({ page }: { page: TablePageDefinition }) {
                       <EdgePlus aria-hidden>
                         <MiniIcon
                           icon={IconPlus}
-                          color={PREVIEW_COLORS.textTertiary}
+                          color={THEME_LIGHT.font.color.tertiary}
                           size={12}
                         />
                       </EdgePlus>
@@ -290,7 +289,7 @@ export function TablePage({ page }: { page: TablePageDefinition }) {
                 <HeaderFillContent>
                   <MiniIcon
                     icon={IconPlus}
-                    color={PREVIEW_COLORS.textTertiary}
+                    color={THEME_LIGHT.font.color.tertiary}
                     size={16}
                   />
                 </HeaderFillContent>
@@ -369,7 +368,7 @@ export function TablePage({ page }: { page: TablePageDefinition }) {
                   <MutedText>Calculate</MutedText>
                   <MiniIcon
                     icon={IconChevronDown}
-                    color={PREVIEW_COLORS.textTertiary}
+                    color={THEME_LIGHT.font.color.tertiary}
                   />
                 </FooterFirstContent>
               </TableCell>

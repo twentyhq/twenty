@@ -1,6 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 import {
   IconArrowUp,
   IconChevronDown,
@@ -14,7 +15,6 @@ import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { ClaudeMark } from '@/icons';
-import { PREVIEW_COLORS } from '../preview-colors';
 import { streamedMarkdown } from './streamed-markdown';
 import { type ProductVisualSceneDefinition } from './product-visual-scenes';
 
@@ -23,9 +23,9 @@ const MAX_VISIBLE_RESPONSE_CHIPS = 3;
 const inks = APP_PREVIEW_TONES.productVisual;
 
 const PanelShell = styled.aside<{ $panelOnly: boolean }>`
-  background: ${PREVIEW_COLORS.background};
+  background: ${THEME_LIGHT.background.primary};
   border: ${({ $panelOnly }) =>
-    $panelOnly ? 'none' : `1px solid ${PREVIEW_COLORS.border}`};
+    $panelOnly ? 'none' : `1px solid ${THEME_LIGHT.border.color.medium}`};
   border-radius: ${({ $panelOnly }) => ($panelOnly ? '0' : '8px')};
   display: flex;
   flex-direction: column;
@@ -38,8 +38,8 @@ const PanelShell = styled.aside<{ $panelOnly: boolean }>`
 
 const PanelHeader = styled.div`
   align-items: center;
-  background-color: ${PREVIEW_COLORS.backgroundSecondary};
-  border-bottom: 1px solid ${PREVIEW_COLORS.border};
+  background-color: ${THEME_LIGHT.background.secondary};
+  border-bottom: 1px solid ${THEME_LIGHT.border.color.medium};
   display: flex;
   flex-shrink: 0;
   gap: 4px;
@@ -50,7 +50,7 @@ const PanelHeader = styled.div`
 const HeaderButton = styled.span`
   align-items: center;
   border-radius: 4px;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   height: 20px;
   justify-content: center;
@@ -58,7 +58,7 @@ const HeaderButton = styled.span`
 `;
 
 const PanelTitle = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   flex: 1;
   font-family: ${theme.font.family};
   font-size: 13px;
@@ -79,7 +79,7 @@ const UserMessage = styled.div`
   align-self: flex-end;
   background: ${inks.userMessageBackground};
   border-radius: 4px;
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   font-family: ${theme.font.family};
   font-size: 13px;
   font-weight: 500;
@@ -89,7 +89,7 @@ const UserMessage = styled.div`
 `;
 
 const AnswerText = styled.div`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 13px;
   font-weight: 400;
@@ -98,7 +98,7 @@ const AnswerText = styled.div`
 `;
 
 const AnswerStrong = styled.strong`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-weight: 500;
 `;
 
@@ -141,7 +141,7 @@ const EntityChipIcon = styled.img`
 `;
 
 const EntityChipName = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 13px;
   font-weight: 400;
@@ -153,7 +153,7 @@ const EntityOverflowChip = styled.div`
   align-items: center;
   background: ${inks.entityChipBackground};
   border-radius: 4px;
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
   font-family: ${theme.font.family};
   font-size: 13px;
@@ -163,7 +163,7 @@ const EntityOverflowChip = styled.div`
 `;
 
 const ThinkingText = styled.span`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: 12px;
   font-weight: 500;
@@ -178,7 +178,7 @@ const InputArea = styled.div`
 
 const InputBox = styled.div`
   background-color: ${inks.inputBoxBackground};
-  border: 1px solid ${PREVIEW_COLORS.border};
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -190,7 +190,7 @@ const InputBox = styled.div`
 `;
 
 const InputPlaceholder = styled.span`
-  color: ${PREVIEW_COLORS.textLight};
+  color: ${THEME_LIGHT.font.color.light};
   font-family: ${theme.font.family};
   font-size: 13px;
   font-weight: 400;
@@ -205,7 +205,7 @@ const InputButtonRow = styled.div`
 
 const InputLeftButtons = styled.div`
   align-items: center;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   gap: 2px;
 `;
@@ -218,9 +218,9 @@ const InputRightButtons = styled.div`
 
 const ModelChip = styled.span`
   align-items: center;
-  border: 1px solid ${PREVIEW_COLORS.border};
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
   border-radius: 4px;
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   display: flex;
   font-family: ${theme.font.family};
   font-size: 12px;
@@ -230,15 +230,15 @@ const ModelChip = styled.span`
 
 const ModelChipChevron = styled.span`
   align-items: center;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
 `;
 
 const SendButton = styled.span`
   align-items: center;
-  background: ${PREVIEW_COLORS.border};
+  background: ${THEME_LIGHT.border.color.medium};
   border-radius: 50%;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   height: 20px;
   justify-content: center;

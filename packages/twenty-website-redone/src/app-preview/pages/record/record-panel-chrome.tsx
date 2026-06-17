@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { EASING } from '@/tokens';
 import { THEME_LIGHT as theme } from 'twenty-ui/theme';
-
-import { PREVIEW_COLORS } from '../../preview-colors';
 
 const TabSection = styled.div`
   display: flex;
@@ -30,14 +29,14 @@ const TabHeaderLabel = styled.span`
 `;
 
 const TabHeaderTitle = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 13px;
   font-weight: 600;
 `;
 
 const TabHeaderCount = styled.span`
-  color: ${PREVIEW_COLORS.textLight};
+  color: ${THEME_LIGHT.font.color.light};
   font-family: ${theme.font.family};
   font-size: 13px;
   margin-left: 8px;
@@ -45,9 +44,9 @@ const TabHeaderCount = styled.span`
 
 const TabAddButton = styled.span`
   align-items: center;
-  border: 1px solid ${PREVIEW_COLORS.border};
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
   border-radius: 4px;
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: inline-flex;
   font-family: ${theme.font.family};
   font-size: 13px;
@@ -57,8 +56,8 @@ const TabAddButton = styled.span`
 `;
 
 const ListCard = styled.div`
-  background: ${PREVIEW_COLORS.backgroundSecondary};
-  border: 1px solid ${PREVIEW_COLORS.border};
+  background: ${THEME_LIGHT.background.secondary};
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
   border-radius: 8px;
   overflow: hidden;
 `;
@@ -75,7 +74,7 @@ const ActivityRowBox = styled.div<{ $index: number }>`
   padding: 0 16px;
 
   & + & {
-    border-top: 1px solid ${PREVIEW_COLORS.borderLight};
+    border-top: 1px solid ${THEME_LIGHT.border.color.light};
   }
 
   @keyframes activityRowAppear {

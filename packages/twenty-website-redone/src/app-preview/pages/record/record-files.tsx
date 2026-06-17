@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 import {
   IconCalendar,
   IconDots,
@@ -11,7 +12,6 @@ import {
 import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
-import { PREVIEW_COLORS } from '../../preview-colors';
 import { type RecordFile } from '../../types';
 import { RECORD_PANEL_CHROME } from './record-panel-chrome';
 
@@ -19,10 +19,10 @@ const FILE_ICONS: Record<
   RecordFile['category'],
   { Icon: typeof IconFile; color: string }
 > = {
-  pdf: { Icon: IconFileText, color: PREVIEW_COLORS.accent },
-  doc: { Icon: IconFileText, color: PREVIEW_COLORS.accent },
+  pdf: { Icon: IconFileText, color: THEME_LIGHT.accent.accent9 },
+  doc: { Icon: IconFileText, color: THEME_LIGHT.accent.accent9 },
   sheet: { Icon: IconTable, color: APP_PREVIEW_TONES.recordFileSheetInk },
-  other: { Icon: IconFile, color: PREVIEW_COLORS.textTertiary },
+  other: { Icon: IconFile, color: THEME_LIGHT.font.color.tertiary },
 };
 
 const FileIconChip = styled.span<{ $color: string }>`
@@ -37,7 +37,7 @@ const FileIconChip = styled.span<{ $color: string }>`
 `;
 
 const FileName = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   flex: 1;
   font-family: ${theme.font.family};
   font-size: 13px;
@@ -48,7 +48,7 @@ const FileName = styled.span`
 
 const FileDate = styled.span`
   align-items: center;
-  color: ${PREVIEW_COLORS.textLight};
+  color: ${THEME_LIGHT.font.color.light};
   display: flex;
   flex-shrink: 0;
   gap: 2px;
@@ -56,7 +56,7 @@ const FileDate = styled.span`
 `;
 
 const FileDateText = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 13px;
   white-space: nowrap;
@@ -64,7 +64,7 @@ const FileDateText = styled.span`
 
 const FileDots = styled.span`
   align-items: center;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
 `;

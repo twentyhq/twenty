@@ -7,7 +7,6 @@ import { mediaUp } from '@/tokens';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { renderPage } from '../pages/render-page';
-import { PREVIEW_COLORS } from '../preview-colors';
 import { PreviewNavbar } from './preview-navbar';
 import { PreviewSidebar, type DesktopSidebarMode } from './preview-sidebar';
 import { PreviewViewbar } from './preview-viewbar';
@@ -55,8 +54,8 @@ const ContentRow = styled.div`
 
 // The morph squeezes the named workflow's canvas into the compact frame.
 const IndexSurface = styled.div`
-  background: ${PREVIEW_COLORS.background};
-  border: 1px solid ${PREVIEW_COLORS.border};
+  background: ${THEME_LIGHT.background.primary};
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
   border-radius: ${THEME_LIGHT.border.radius.md};
   display: flex;
   flex: 1 1 auto;

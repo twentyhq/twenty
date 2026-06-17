@@ -16,8 +16,6 @@ import { type ReactNode } from 'react';
 
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
-import { PREVIEW_COLORS } from '../../preview-colors';
-
 const HEADER_ICON_MAP: Record<string, typeof IconCalendarEvent> = {
   added: IconCalendarEvent,
   accountOwner: IconUserCircle,
@@ -38,7 +36,7 @@ export function renderTableHeaderIcon(columnId: string): ReactNode {
   return (
     <Icon
       aria-hidden
-      color={PREVIEW_COLORS.textTertiary}
+      color={THEME_LIGHT.font.color.tertiary}
       size={16}
       stroke={THEME_LIGHT.icon.stroke.sm}
     />

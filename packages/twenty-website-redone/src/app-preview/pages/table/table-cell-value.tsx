@@ -14,7 +14,6 @@ import { PersonAvatar } from '../../primitives/person-avatar';
 import { PreviewAvatar } from '../../primitives/preview-avatar';
 import { PreviewRoundedLink } from '../../primitives/preview-rounded-link';
 import { PreviewTag } from '../../primitives/preview-tag';
-import { PREVIEW_COLORS } from '../../preview-colors';
 import {
   type CellEntity,
   type CellLink,
@@ -54,7 +53,7 @@ const CellHoverAnchor = styled.div`
 `;
 
 const InlineText = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
@@ -103,7 +102,7 @@ const HoverActions = styled.div<{ $visible: boolean }>`
 const MiniAction = styled.div`
   align-items: center;
   border-radius: 2px;
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
   height: 16px;
   justify-content: center;
@@ -129,7 +128,7 @@ function HoverAction({
   return (
     <HoverActions $visible={visible}>
       <MiniAction aria-hidden>
-        <MiniIcon icon={icon} color={PREVIEW_COLORS.textSecondary} />
+        <MiniIcon icon={icon} color={THEME_LIGHT.font.color.secondary} />
       </MiniAction>
     </HoverActions>
   );
@@ -298,9 +297,17 @@ export function renderTableCellValue({
       return (
         <BooleanRow>
           {cell.value ? (
-            <MiniIcon icon={IconCheck} color={PREVIEW_COLORS.text} size={11} />
+            <MiniIcon
+              icon={IconCheck}
+              color={THEME_LIGHT.font.color.primary}
+              size={11}
+            />
           ) : (
-            <MiniIcon icon={IconX} color={PREVIEW_COLORS.text} size={11} />
+            <MiniIcon
+              icon={IconX}
+              color={THEME_LIGHT.font.color.primary}
+              size={11}
+            />
           )}
           <InlineText>{cell.value ? 'True' : 'False'}</InlineText>
         </BooleanRow>

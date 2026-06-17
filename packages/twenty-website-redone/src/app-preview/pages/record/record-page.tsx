@@ -1,6 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 import { IconChevronDown } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
@@ -8,7 +9,6 @@ import { EASING } from '@/tokens';
 import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 
 import { FaviconLogo } from '../../primitives/favicon-logo';
-import { PREVIEW_COLORS } from '../../preview-colors';
 import { type RecordPageDefinition } from '../../types';
 import { recordFieldValue } from './record-field-value';
 import { RecordCalendar } from './record-calendar';
@@ -29,7 +29,7 @@ const Shell = styled.div`
 `;
 
 const LeftPanel = styled.div`
-  border-right: 1px solid ${PREVIEW_COLORS.borderLight};
+  border-right: 1px solid ${THEME_LIGHT.border.color.light};
   display: flex;
   flex: 0 0 248px;
   flex-direction: column;
@@ -70,13 +70,13 @@ const RecordName = styled.div`
   font-family: ${theme.font.family};
   font-size: 20px;
   font-weight: 600;
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   line-height: 1.3;
   text-align: center;
 `;
 
 const RecordMeta = styled.div`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: 13px;
   line-height: 1.4;
@@ -110,7 +110,7 @@ const FieldRow = styled.div<{ $index: number }>`
 
 const FieldMeta = styled.div`
   align-items: center;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   flex: 0 0 110px;
   gap: 4px;
@@ -120,7 +120,7 @@ const FieldMeta = styled.div`
 
 const FieldIcon = styled.span`
   align-items: center;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   flex: 0 0 16px;
   height: 16px;
@@ -135,7 +135,7 @@ const FieldIcon = styled.span`
 `;
 
 const FieldLabel = styled.span`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-family: ${theme.font.family};
   font-size: 13px;
   line-height: 1.4;
@@ -147,7 +147,7 @@ const FieldLabel = styled.span`
 
 const MoreToggle = styled.div`
   align-items: center;
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   cursor: default;
   display: flex;
   font-family: ${theme.font.family};
@@ -158,7 +158,7 @@ const MoreToggle = styled.div`
 `;
 
 const Divider = styled.div`
-  border-top: 1px solid ${PREVIEW_COLORS.borderLight};
+  border-top: 1px solid ${THEME_LIGHT.border.color.light};
   margin: 4px 0;
 `;
 
@@ -182,7 +182,7 @@ const RelationSection = styled.div`
 `;
 
 const RelationTitle = styled.div`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 12px;
   font-weight: 500;
@@ -190,7 +190,7 @@ const RelationTitle = styled.div`
 `;
 
 const RelationTitleCount = styled.span`
-  color: ${PREVIEW_COLORS.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   font-weight: 400;
   margin-left: 4px;
 `;
@@ -198,10 +198,10 @@ const RelationTitleCount = styled.span`
 const RelationItem = styled.div<{ $highlighted?: boolean; $muted?: boolean }>`
   align-items: center;
   background: ${({ $highlighted }) =>
-    $highlighted ? PREVIEW_COLORS.backgroundSecondary : 'transparent'};
+    $highlighted ? THEME_LIGHT.background.secondary : 'transparent'};
   border: 1px solid
     ${({ $highlighted }) =>
-      $highlighted ? PREVIEW_COLORS.border : 'transparent'};
+      $highlighted ? THEME_LIGHT.border.color.medium : 'transparent'};
   border-radius: 6px;
   display: flex;
   gap: 6px;
@@ -215,7 +215,7 @@ const RelationItem = styled.div<{ $highlighted?: boolean; $muted?: boolean }>`
 `;
 
 const RelationName = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 12px;
   line-height: 1.4;
@@ -244,7 +244,7 @@ const TabBar = styled.div`
   align-items: center;
   animation: tabBarAppear 260ms ease-out both;
   animation-delay: 120ms;
-  border-bottom: 1px solid ${PREVIEW_COLORS.borderLight};
+  border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
   display: flex;
   flex: 0 0 auto;
   gap: 4px;
@@ -267,7 +267,9 @@ const Tab = styled.div<{ $active?: boolean; $clickable?: boolean }>`
   all: unset;
   align-items: center;
   color: ${({ $active }) =>
-    $active ? PREVIEW_COLORS.text : PREVIEW_COLORS.textSecondary};
+    $active
+      ? THEME_LIGHT.font.color.primary
+      : THEME_LIGHT.font.color.secondary};
   cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
   display: flex;
   position: relative;
@@ -276,7 +278,7 @@ const Tab = styled.div<{ $active?: boolean; $clickable?: boolean }>`
 
   &::after {
     background-color: ${({ $active }) =>
-      $active ? PREVIEW_COLORS.text : 'transparent'};
+      $active ? THEME_LIGHT.font.color.primary : 'transparent'};
     bottom: 0;
     content: '';
     height: 1px;

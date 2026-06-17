@@ -22,7 +22,6 @@ import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 
 import { OBJECT_PINNED_ACTIONS } from '../data/object-pinned-actions';
 import { renderPreviewIcon } from '../primitives/preview-icon';
-import { PREVIEW_COLORS } from '../preview-colors';
 import { type NavbarAction, type SidebarItemDef } from '../types';
 
 const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
@@ -83,7 +82,7 @@ const BreadcrumbIconSlot = styled.span`
 `;
 
 const CrumbLabel = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
@@ -137,7 +136,7 @@ const ActionButton = styled.div<{ $iconOnly?: boolean }>`
 
 const ActionIconWrap = styled.span`
   align-items: center;
-  color: ${PREVIEW_COLORS.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
   flex: 0 0 auto;
   justify-content: center;
@@ -145,7 +144,7 @@ const ActionIconWrap = styled.span`
 
 const ActionLabel = styled.span<{ $light?: boolean }>`
   color: ${({ $light }) =>
-    $light ? PREVIEW_COLORS.textLight : PREVIEW_COLORS.textSecondary};
+    $light ? THEME_LIGHT.font.color.light : THEME_LIGHT.font.color.secondary};
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;

@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 import { type ReactNode } from 'react';
-
-import { PREVIEW_COLORS } from '../../preview-colors';
 
 const CheckboxContainer = styled.div`
   align-items: center;
@@ -15,10 +14,12 @@ const CheckboxContainer = styled.div`
 const CheckboxBox = styled.div<{ $checked?: boolean }>`
   align-items: center;
   background: ${({ $checked }) =>
-    $checked ? PREVIEW_COLORS.accentSurfaceSoft : 'transparent'};
+    $checked ? THEME_LIGHT.background.transparent.blue : 'transparent'};
   border: 1px solid
     ${({ $checked }) =>
-      $checked ? PREVIEW_COLORS.accentBorder : PREVIEW_COLORS.text};
+      $checked
+        ? THEME_LIGHT.border.color.blue
+        : THEME_LIGHT.font.color.primary};
   border-radius: 3px;
   display: flex;
   flex: 0 0 auto;

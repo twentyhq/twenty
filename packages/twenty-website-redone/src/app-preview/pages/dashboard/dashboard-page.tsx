@@ -7,7 +7,6 @@ import { previewFontSize } from '@/app-preview/preview-font-size';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { DASHBOARD_CHARTS } from './dashboard-charts';
-import { PREVIEW_COLORS } from '../../preview-colors';
 import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
 import { type DashboardKpi, type DashboardPageDefinition } from '../../types';
 
@@ -40,8 +39,8 @@ const DashboardGrid = styled.div`
 
 const WidgetCard = styled.div`
   animation: dashboardWidgetAppear 360ms ${EASING.standard} both;
-  background: ${PREVIEW_COLORS.backgroundSecondary};
-  border: 1px solid ${PREVIEW_COLORS.borderLight};
+  background: ${THEME_LIGHT.background.secondary};
+  border: 1px solid ${THEME_LIGHT.border.color.light};
   border-radius: 8px;
   box-sizing: border-box;
   display: flex;
@@ -68,7 +67,7 @@ const WidgetCard = styled.div`
 `;
 
 const WidgetTitle = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   flex-shrink: 0;
   font-family: ${theme.font.family};
   font-size: ${previewFontSize(theme.font.size.md)};
@@ -104,7 +103,7 @@ const KpiValueRow = styled.div`
 `;
 
 const KpiValue = styled.span`
-  color: ${PREVIEW_COLORS.text};
+  color: ${THEME_LIGHT.font.color.primary};
   font-family: ${theme.font.family};
   font-size: 25px;
   font-weight: ${theme.font.weight.semiBold};
