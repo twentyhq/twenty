@@ -6,6 +6,12 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 @RegisteredInstanceCommand('2.15.0', 1781646759482)
 export class AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // searchFieldMetadata was introduced as dormant scaffolding and is not
+    // populated by any code path before this release, so it is empty. Defensively
+    // clear any stray rows so the NOT NULL columns can be added on every instance
+    // (applicationId has no valid backfill for orphan rows). The 2-15 backfill
+    // workspace command repopulates the correct rows for every object afterwards.
+    await queryRunner.query('DELETE FROM "core"."searchFieldMetadata"');
     await queryRunner.query('ALTER TABLE "core"."searchFieldMetadata" ADD "universalIdentifier" uuid NOT NULL');
     await queryRunner.query('ALTER TABLE "core"."searchFieldMetadata" ADD "applicationId" uuid NOT NULL');
     await queryRunner.query('CREATE UNIQUE INDEX "IDX_c2e441c901b45221a70d325349" ON "core"."searchFieldMetadata" ("workspaceId", "universalIdentifier") ');
