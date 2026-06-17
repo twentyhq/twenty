@@ -15,11 +15,13 @@ const StyledTableContainer = styled.div`
 type RecordTableWidgetProps = {
   isReadOnly?: boolean;
   isEmptyStateHidden?: boolean;
+  recordLimit?: number;
 };
 
 export const RecordTableWidget = ({
   isReadOnly = true,
   isEmptyStateHidden = false,
+  recordLimit,
 }: RecordTableWidgetProps) => {
   const { objectNameSingular, recordIndexId, viewBarInstanceId } =
     useRecordIndexContextOrThrow();
@@ -37,6 +39,7 @@ export const RecordTableWidget = ({
           recordTableId={recordIndexId}
           objectNameSingular={objectNameSingular}
           viewBarId={viewBarInstanceId}
+          recordLimit={recordLimit}
         />
       </StyledTableContainer>
     </>

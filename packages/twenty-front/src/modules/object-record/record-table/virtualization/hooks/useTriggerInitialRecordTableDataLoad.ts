@@ -37,7 +37,8 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { isDefined } from 'twenty-shared/utils';
 
 export const useTriggerInitialRecordTableDataLoad = () => {
-  const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
+  const { recordTableId, objectNameSingular, recordLimit } =
+    useRecordTableContextOrThrow();
 
   const { findManyRecordsLazy } =
     useRecordIndexTableLazyQuery(objectNameSingular);
@@ -180,7 +181,12 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         records = findManyRecords;
         totalCount = findManyTotalCount;
 
-        store.set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
+        store.set(
+          totalNumberOfRecordsToVirtualizeCallbackState,
+          isDefined(recordLimit)
+            ? Math.min(totalCount, recordLimit)
+            : totalCount,
+        );
 
         if (isDefined(records)) {
           upsertRecordsInStore({ partialRecords: records });
@@ -237,6 +243,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       loadRecordsToVirtualRows,
       reapplyRowSelection,
       recordTableId,
+      recordLimit,
     ],
   );
 

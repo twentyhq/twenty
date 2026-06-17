@@ -95,6 +95,7 @@ export {
   IconArchiveOff,
   IconArrowBackUp,
   IconArrowBarToDown,
+  IconArrowBarToDownDashed,
   IconArrowDown,
   IconArrowLeft,
   IconArrowMerge,

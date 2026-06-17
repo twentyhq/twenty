@@ -13,6 +13,7 @@ type RecordTableContextValue = {
   visibleRecordFields: RecordField[];
   onRecordIdentifierClick?: (rowIndex: number, recordId: string) => void;
   triggerEvent: 'CLICK' | 'MOUSE_DOWN';
+  recordLimit?: number;
 };
 
 export const [RecordTableContextProvider, useRecordTableContextOrThrow] =
