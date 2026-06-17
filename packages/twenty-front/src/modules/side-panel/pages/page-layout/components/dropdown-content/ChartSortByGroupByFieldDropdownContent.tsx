@@ -20,7 +20,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
   GraphOrderBy,
   type GraphOrderBy as GraphOrderByType,

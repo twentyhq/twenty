@@ -2,6 +2,7 @@ import {
   ConsoleLogger,
   type DynamicModule,
   Global,
+  type LogLevel,
   Module,
 } from '@nestjs/common';
 
@@ -54,7 +55,7 @@ export class LoggerModule extends ConfigurableModuleClass {
             ? new ConsoleLogger()
             : undefined;
 
-        logger?.setLogLevels(logLevels);
+        logger?.setLogLevels(logLevels as LogLevel[]);
 
         return logger;
       },

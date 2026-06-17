@@ -3,10 +3,7 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSkeletonContainer = styled.div`
   display: flex;
@@ -32,7 +29,7 @@ export const NavigationMenuItemSkeletonLoader = () => {
   const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
-      baseColor={theme.background.tertiary}
+      baseColor={theme.grayScale.gray3}
       highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >

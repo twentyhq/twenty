@@ -15,10 +15,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -29,9 +26,9 @@ import {
   IconCopy,
   InlineBanner,
   OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
-import { Button, SearchInput } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/display';
+import { Button, SearchInput } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import {
   type ApplicationRegistrationFragmentFragment,
   FindManyApplicationRegistrationsDocument,

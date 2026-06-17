@@ -13,8 +13,8 @@ import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constan
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui-deprecated/components';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainerContainer = styled.div`
   box-sizing: border-box;

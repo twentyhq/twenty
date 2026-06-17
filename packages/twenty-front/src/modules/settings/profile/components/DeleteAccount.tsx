@@ -10,9 +10,9 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { H2Title } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import {
   DeleteUserAccountDocument,
@@ -101,7 +101,7 @@ export const DeleteAccount = () => {
           title={t`Leave workspace`}
           subtitle={
             <>
-              {t`This action cannot be undone. This will permanently remove your membership from this workspace.`}
+              {t`This action cannot be undone. Your membership will be removed; synced emails and calendars stay with the workspace.`}
               <br />
               {t`Please type in your email to confirm.`}
             </>

@@ -6,7 +6,7 @@ import {
   IconProviderOpenai,
   IconRobot,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 export const PROVIDER_ICON_CONFIG: Record<string, { Icon: IconComponent }> = {
   openai: { Icon: IconProviderOpenai },

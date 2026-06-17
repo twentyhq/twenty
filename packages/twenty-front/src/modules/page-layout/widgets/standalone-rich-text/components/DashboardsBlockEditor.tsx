@@ -12,10 +12,7 @@ import { DashboardEditorSideMenu } from '@/page-layout/widgets/standalone-rich-t
 import { DashboardFormattingToolbar } from '@/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbar';
 import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
 import { getDashboardSlashMenu } from '@/page-layout/widgets/standalone-rich-text/utils/getDashboardSlashMenu';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 type DashboardsBlockEditorProps = {
   editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
   onFocus?: () => void;

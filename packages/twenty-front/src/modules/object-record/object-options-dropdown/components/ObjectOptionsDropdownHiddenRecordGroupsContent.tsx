@@ -23,8 +23,8 @@ import { useLocation } from 'react-router-dom';
 import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconChevronLeft, IconSettings } from 'twenty-ui-deprecated/display';
-import { MenuItem, UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
+import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const { t } = useLingui();

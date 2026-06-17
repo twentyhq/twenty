@@ -338,13 +338,14 @@ export default defineFrontComponent({
 
 Hooks disponíveis:
 
-| Hook                                          | Retorna            | Descrição                                                                           |
-| --------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` ou `null` | O ID do usuário atual                                                               |
-| `useSelectedRecordIds()`                      | `string[]`         | Todos os IDs dos registros selecionados (array vazio se nenhum estiver selecionado) |
-| `useRecordId()`                               | `string` ou `null` | **Obsoleto.** Use `useSelectedRecordIds()` em vez disso                             |
-| `useFrontComponentId()`                       | `string`           | O ID desta instância do componente                                                  |
-| `useFrontComponentExecutionContext(selector)` | varia              | Acesse o contexto de execução completo com uma função seletora                      |
+| Hook                                          | Retorna               | Descrição                                                                           |
+| --------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` ou `null`    | O ID do usuário atual                                                               |
+| `useSelectedRecordIds()`                      | `string[]`            | Todos os IDs dos registros selecionados (array vazio se nenhum estiver selecionado) |
+| `useRecordId()`                               | `string` ou `null`    | **Obsoleto.** Use `useSelectedRecordIds()` em vez disso                             |
+| `useFrontComponentId()`                       | `string`              | O ID desta instância do componente                                                  |
+| `useColorScheme()`                            | `'light'` ou `'dark'` | O esquema de cores ativo da interface do host (`System` já está resolvido)          |
+| `useFrontComponentExecutionContext(selector)` | varia                 | Acesse o contexto de execução completo com uma função seletora                      |
 
 ## Variáveis de aplicação
 

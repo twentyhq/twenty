@@ -15,13 +15,13 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { lazy, Suspense, useContext, type ComponentType } from 'react';
-import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
+import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
-import { IconCalendarX } from 'twenty-ui-deprecated/display';
-import { MenuItemLeftContent } from 'twenty-ui-deprecated/navigation';
+import { IconCalendarX } from 'twenty-ui/display';
+import { MenuItemLeftContent } from 'twenty-ui/navigation';
 
 import { useGetShiftedDateToSystemTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToSystemTimeZone';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
@@ -34,10 +34,7 @@ export {
 } from '@/ui/input/components/internal/date/components/DatePicker';
 export { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOuterWrapper = styled.div`
   align-items: flex-start;
@@ -346,10 +343,19 @@ type DateTimePickerProps = {
   timeZone?: string;
 };
 
-type DatePickerPropsType = ReactDatePickerLibProps<
-  boolean | undefined,
-  boolean | undefined
->;
+// react-datepicker v9 types its props as a discriminated union keyed on
+// selectsRange/selectsMultiple. We drive selectsMultiple dynamically, which TS
+// cannot narrow to a single union branch, so collapse the discriminants to plain
+// optionals (selectedDates is accepted but ignored by the library at runtime).
+type DatePickerPropsType = Omit<
+  ReactDatePickerLibProps,
+  'selectsRange' | 'selectsMultiple' | 'onChange' | 'formatMultipleDates'
+> & {
+  selectsRange?: boolean;
+  selectsMultiple?: boolean;
+  selectedDates?: Date[];
+  onChange?: (date: Date | null) => void;
+};
 
 const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
   import('react-datepicker').then((mod) => ({
@@ -438,13 +444,19 @@ export const DateTimePicker = ({
     onChange?.(newZonedDateTime);
   };
 
-  const handleDateChange = (newDate: Date) => {
+  const handleDateChange = (newDate: Date | null) => {
+    if (!isDefined(newDate)) {
+      return;
+    }
     const { zonedDateTime } = getZonedDateTimeFromDatePicked(newDate);
 
     onChange?.(zonedDateTime);
   };
 
-  const handleDateSelect = (newDate: Date) => {
+  const handleDateSelect = (newDate: Date | null) => {
+    if (!isDefined(newDate)) {
+      return;
+    }
     const { zonedDateTime } = getZonedDateTimeFromDatePicked(newDate);
 
     handleClose?.(zonedDateTime);
@@ -524,7 +536,9 @@ export const DateTimePicker = ({
             openToDate={shiftedDateForReactDatePicker}
             disabledKeyboardNavigation
             onChange={handleDateChange}
-            calendarStartDay={calendarStartDayNumber}
+            calendarStartDay={
+              calendarStartDayNumber as 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined
+            }
             renderCustomHeader={({
               prevMonthButtonDisabled,
               nextMonthButtonDisabled,

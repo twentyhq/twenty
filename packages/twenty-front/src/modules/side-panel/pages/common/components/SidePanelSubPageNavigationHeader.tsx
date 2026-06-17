@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { IconChevronLeft } from 'twenty-ui-deprecated/display';
-import { IconButton } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconChevronLeft } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;

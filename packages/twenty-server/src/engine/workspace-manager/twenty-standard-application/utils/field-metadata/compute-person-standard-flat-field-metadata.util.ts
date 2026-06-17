@@ -1,4 +1,6 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   DateDisplayFormat,
@@ -7,6 +9,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
@@ -363,9 +366,12 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'taskTargets',
-      label: i18nLabel(msg`Tasks`),
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget.label,
+      ),
       description: i18nLabel(msg`Tasks tied to the contact`),
-      icon: 'IconCheckbox',
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget
+        .icon,
       isUIEditable: false,
       isNullable: true,
       targetObjectName: 'taskTarget',
@@ -386,9 +392,12 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'noteTargets',
-      label: i18nLabel(msg`Notes`),
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget.label,
+      ),
       description: i18nLabel(msg`Notes tied to the contact`),
-      icon: 'IconNotes',
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget
+        .icon,
       isUIEditable: false,
       isNullable: true,
       targetObjectName: 'noteTarget',
@@ -409,9 +418,12 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'attachments',
-      label: i18nLabel(msg`Attachments`),
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment.label,
+      ),
       description: i18nLabel(msg`Attachments linked to the contact.`),
-      icon: 'IconFileImport',
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+        .icon,
       isNullable: true,
       targetObjectName: 'attachment',
       targetFieldName: 'targetPerson',
@@ -484,6 +496,31 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  listMemberships: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'listMemberships',
+      label: i18nLabel(msg`Lists`),
+      description: i18nLabel(msg`Lists the contact belongs to`),
+      icon: 'IconUsersGroup',
+      isUIEditable: true,
+      isNullable: true,
+      targetObjectName: 'messageListMember',
+      targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+      junctionTargetFieldUniversalIdentifier:
+        STANDARD_OBJECTS.messageListMember.fields.list.universalIdentifier,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

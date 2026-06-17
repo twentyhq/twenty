@@ -6,7 +6,7 @@ import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubField
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui-deprecated/display';
+import { useIcons } from 'twenty-ui/display';
 
 export const useRecordFilterField = (recordFilterId: string) => {
   const currentRecordFilters = useAtomComponentStateValue(

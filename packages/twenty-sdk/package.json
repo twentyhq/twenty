@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.13.0",
+  "version": "2.15.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -83,8 +83,9 @@
     "inquirer": "^14.0.0",
     "jsonc-parser": "^3.2.0",
     "preact": "^10.28.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "semver": "7.6.3",
     "tinyglobby": "^0.2.15",
     "twenty-client-sdk": "workspace:*",
     "typescript": "^5.9.3",
@@ -93,8 +94,9 @@
   "devDependencies": {
     "@prettier/sync": "^0.5.2",
     "@types/node": "^24.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/semver": "^7.5.8",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "@vitest/coverage-v8": "^4.0.18",
     "prettier": "^3.1.1",
@@ -103,7 +105,7 @@
     "tsc-alias": "^1.8.16",
     "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
-    "twenty-ui-deprecated": "workspace:*",
+    "twenty-ui": "workspace:*",
     "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1",

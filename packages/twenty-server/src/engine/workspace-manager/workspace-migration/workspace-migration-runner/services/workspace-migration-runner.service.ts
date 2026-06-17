@@ -128,7 +128,7 @@ export class WorkspaceMigrationRunnerService {
     allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
     workspaceId: string;
   }): Promise<void> {
-    this.logger.time(
+    this.logger.perfTime(
       'Runner',
       `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
     );
@@ -161,13 +161,12 @@ export class WorkspaceMigrationRunnerService {
       );
     }
 
-    this.logger.timeEnd(
+    this.logger.perfTimeEnd(
       'Runner',
       `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
     );
   }
 
-  // TODO(install-perf): temporary, remove. Snapshots blocking DB sessions on a fresh connection.
   private async logBlockingDbActivity(): Promise<void> {
     try {
       // Metadata only (no query text) to avoid logging literals from other sessions.
@@ -216,8 +215,8 @@ export class WorkspaceMigrationRunnerService {
       });
     }
 
-    this.logger.time('Runner', 'Total execution');
-    this.logger.time('Runner', 'Initial cache retrieval');
+    this.logger.perfTime('Runner', 'Total execution');
+    this.logger.perfTime('Runner', 'Initial cache retrieval');
 
     const initialCacheRetrievalStart = performance.now();
 
@@ -248,12 +247,12 @@ export class WorkspaceMigrationRunnerService {
         flatMapsKeys: allFlatEntityMapsKeys,
       });
 
-    this.logger.timeEnd('Runner', 'Initial cache retrieval');
+    this.logger.perfTimeEnd('Runner', 'Initial cache retrieval');
 
     const initialCacheRetrievalMs =
       performance.now() - initialCacheRetrievalStart;
 
-    this.logger.log(
+    this.logger.perf(
       `[install-perf] Runner initial cache retrieval (getOrRecomputeManyOrAllFlatEntityMaps) took ${initialCacheRetrievalMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
       'Runner',
     );
@@ -278,21 +277,19 @@ export class WorkspaceMigrationRunnerService {
       });
     }
 
-    this.logger.time('Runner', 'Transaction execution');
+    this.logger.perfTime('Runner', 'Transaction execution');
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     const allMetadataEvents: MetadataEvent[] = [];
 
-    // TODO(install-perf): temporary, remove.
     const transactionStart = performance.now();
     let slowestActionMs = 0;
     let slowestActionLabel = 'n/a';
     let actionCount = 0;
 
     try {
-      // TODO(install-perf): temporary, remove. Fail fast on lock waits (< 10s query_timeout) for a clear error.
       await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
 
       for (const action of actions) {
@@ -321,7 +318,7 @@ export class WorkspaceMigrationRunnerService {
         }
 
         if (actionMs > 50) {
-          this.logger.log(
+          this.logger.perf(
             `[install-perf] slow action ${action.type}:${action.metadataName} took ${actionMs.toFixed(1)}ms`,
             'Runner',
           );
@@ -342,14 +339,13 @@ export class WorkspaceMigrationRunnerService {
       const commitMs = performance.now() - commitStart;
       const transactionMs = performance.now() - transactionStart;
 
-      this.logger.log(
+      this.logger.perf(
         `[install-perf] Runner transaction summary: ${actionCount} actions, total transaction ${transactionMs.toFixed(1)}ms (commit ${commitMs.toFixed(1)}ms), slowest action ${slowestActionLabel} ${slowestActionMs.toFixed(1)}ms`,
         'Runner',
       );
 
-      this.logger.timeEnd('Runner', 'Transaction execution');
+      this.logger.perfTimeEnd('Runner', 'Transaction execution');
     } catch (error) {
-      // TODO(install-perf): temporary, remove. Logs the real cause + blockers and guards the rollback.
       this.logger.error(
         `[install-perf] migration failed after ${actionCount} action(s): ${
           error instanceof Error ? error.message : String(error)
@@ -431,7 +427,7 @@ export class WorkspaceMigrationRunnerService {
     const postCommitInvalidateMs =
       performance.now() - postCommitInvalidateStart;
 
-    this.logger.log(
+    this.logger.perf(
       `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
       'Runner',
     );
@@ -440,7 +436,7 @@ export class WorkspaceMigrationRunnerService {
       allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
       allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
 
-    this.logger.timeEnd('Runner', 'Total execution');
+    this.logger.perfTimeEnd('Runner', 'Total execution');
 
     return {
       allFlatEntityMaps,

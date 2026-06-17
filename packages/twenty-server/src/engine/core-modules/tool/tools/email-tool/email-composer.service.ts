@@ -8,14 +8,14 @@ import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
   type EmailAttachment,
-  FileFolder,
 } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { In, LessThanOrEqual, type Repository } from 'typeorm';
+import { In, IsNull, LessThanOrEqual, type Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { EMAIL_ATTACHMENT_FILE_FOLDERS } from 'src/engine/core-modules/tool/tools/email-tool/constants/email-attachment-file-folders.const';
 import {
   EmailToolException,
   EmailToolExceptionCode,
@@ -97,7 +97,7 @@ export class EmailComposerService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const allAccounts = await this.connectedAccountRepository.find({
-          where: { workspaceId },
+          where: { workspaceId, archivedAt: IsNull() },
         });
 
         if (!allAccounts || allAccounts.length === 0) {
@@ -185,7 +185,6 @@ export class EmailComposerService {
   private async getAttachments(
     files: Array<EmailAttachment>,
     workspaceId: string,
-    fileFolder: FileFolder,
   ): Promise<MessageAttachment[]> {
     if (files.length === 0) {
       return [];
@@ -224,7 +223,7 @@ export class EmailComposerService {
       const fileStream = await this.fileService.getFileStreamById({
         fileId: fileMetadata.id,
         workspaceId,
-        fileFolder,
+        allowedFileFolders: EMAIL_ATTACHMENT_FILE_FOLDERS,
       });
 
       if (fileStream === null) {
@@ -312,7 +311,6 @@ export class EmailComposerService {
   async composeEmail(
     parameters: ComposeEmailParams,
     context: ToolExecutionContext,
-    options: { attachmentsFileFolder: FileFolder },
   ): Promise<EmailComposerResult> {
     const { workspaceId } = context;
     const { subject, body, files, inReplyTo } = parameters;
@@ -362,9 +360,12 @@ export class EmailComposerService {
       workspaceId,
     );
 
-    const messageChannel = connectedAccount.messageChannels.find(
-      (channel) => channel.handle === connectedAccount.handle,
-    );
+    const messageChannel =
+      connectedAccount.provider === ConnectedAccountProvider.EMAIL_GROUP
+        ? connectedAccount.messageChannels[0]
+        : connectedAccount.messageChannels.find(
+            (channel) => channel.handle === connectedAccount.handle,
+          );
 
     const isSmtpOnlyAccount =
       connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
@@ -387,11 +388,7 @@ export class EmailComposerService {
       );
     }
 
-    const attachments = await this.getAttachments(
-      files || [],
-      workspaceId,
-      options.attachmentsFileFolder,
-    );
+    const attachments = await this.getAttachments(files || [], workspaceId);
 
     const { JSDOM } = await import('jsdom');
     const window = new JSDOM('').window;

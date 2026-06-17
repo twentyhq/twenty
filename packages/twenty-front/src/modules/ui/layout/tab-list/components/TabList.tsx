@@ -12,8 +12,8 @@ import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { TabButton } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { TabButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
 

@@ -2,7 +2,7 @@ import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useMemo, useState } from 'react';
-import { ComponentWithRouterDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
@@ -11,7 +11,7 @@ import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLa
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`

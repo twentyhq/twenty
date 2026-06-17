@@ -8,10 +8,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus, IconReorder } from 'twenty-ui-deprecated/display';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { IconPlus, IconReorder } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import { WorkflowDiagramRightClickCommandMenuClickOutsideEffect } from './WorkflowDiagramRightClickCommandMenuClickOutsideEffect';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ x: number; y: number }>`
   background: ${themeCssVariables.background.primary};

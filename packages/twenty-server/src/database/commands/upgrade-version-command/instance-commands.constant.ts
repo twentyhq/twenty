@@ -60,9 +60,17 @@ import { AddLogicFunctionExecutionModeFastInstanceCommand } from 'src/database/c
 import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1798400000000-encrypt-non-secret-application-variable';
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 import { DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1780579070012-drop-is-custom-from-object-and-field-metadata';
+import { AddArchivedAtToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781171103000-add-archived-at-to-connected-account';
 import { DropEmailingDomainDriverColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-11/2-11-instance-command-fast-1780926908000-drop-emailing-domain-driver-column';
+import { AddEmailingDomainUnsubscribeHostFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1780088214774-add-emailing-domain-unsubscribe-host';
+import { CreateMessageSuppressionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781250000000-create-message-suppression-core-table';
+import { CreateUnsubscribeTopicCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781260000000-create-unsubscribe-topic-core-table';
 import { ViewOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1781114009075-view-overridable-entity';
 import { RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781277453604-rename-is-ui-read-only-to-is-ui-editable';
+import { BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-slow-1781277480000-backfill-non-ui-creatable-standard-system-objects';
+import { CommandMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781253016028-command-menu-item-overridable-entity';
+import { SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-instance-command-slow-1781515653781-set-table-widget-views-visibility-to-workspace';
+import { BackfillConnectionSecuritySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-slow-1781461753981-backfill-connection-security';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -126,6 +134,14 @@ export const INSTANCE_COMMANDS = [
   EncryptNonSecretApplicationVariableSlowInstanceCommand,
   DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand,
   DropEmailingDomainDriverColumnFastInstanceCommand,
+  AddEmailingDomainUnsubscribeHostFastInstanceCommand,
   ViewOverridableEntityFastInstanceCommand,
+  CreateMessageSuppressionCoreTableFastInstanceCommand,
+  CreateUnsubscribeTopicCoreTableFastInstanceCommand,
+  AddArchivedAtToConnectedAccountFastInstanceCommand,
   RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand,
+  BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand,
+  CommandMenuItemOverridableEntityFastInstanceCommand,
+  SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand,
+  BackfillConnectionSecuritySlowInstanceCommand,
 ];

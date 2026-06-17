@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { Suspense, lazy, useContext, type ComponentType } from 'react';
-import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
+import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
@@ -16,10 +16,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined, turnJSDateToPlainDate } from 'twenty-shared/utils';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
@@ -309,10 +306,7 @@ type DatePickerWithoutCalendarProps = {
   keyboardEventsDisabled?: boolean;
 };
 
-type DatePickerPropsType = ReactDatePickerLibProps<
-  boolean | undefined,
-  boolean | undefined
->;
+type DatePickerPropsType = ReactDatePickerLibProps;
 
 const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
   import('react-datepicker').then((mod) => ({
@@ -370,13 +364,19 @@ export const DatePickerWithoutCalendar = ({
     onChange?.(newDate?.toString() ?? null);
   };
 
-  const handleDateChange = (datePicked: Date) => {
+  const handleDateChange = (datePicked: Date | null) => {
+    if (!isDefined(datePicked)) {
+      return;
+    }
     const plainDatePicked = turnJSDateToPlainDate(datePicked);
 
     onChange?.(plainDatePicked.toString());
   };
 
-  const handleDateSelect = (datePicked: Date) => {
+  const handleDateSelect = (datePicked: Date | null) => {
+    if (!isDefined(datePicked)) {
+      return;
+    }
     const plainDatePicked = turnJSDateToPlainDate(datePicked);
 
     handleClose?.(plainDatePicked.toString());
@@ -443,7 +443,9 @@ export const DatePickerWithoutCalendar = ({
             openToDate={dateForDatePicker ?? undefined}
             disabledKeyboardNavigation
             onChange={handleDateChange}
-            calendarStartDay={calendarStartDay}
+            calendarStartDay={
+              calendarStartDay as 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined
+            }
             renderCustomHeader={({
               prevMonthButtonDisabled,
               nextMonthButtonDisabled,

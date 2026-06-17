@@ -21,10 +21,10 @@ import {
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
   type BodyType,
 } from 'twenty-shared/workflow';
-import { IconFileText, IconKey } from 'twenty-ui-deprecated/display';
+import { IconFileText, IconKey } from 'twenty-ui/display';
 import { type JsonValue } from 'type-fest';
 import { KeyValuePairInput } from './KeyValuePairInput';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;

@@ -4,8 +4,9 @@ import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Status } from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
+import { Status } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;
@@ -21,7 +22,20 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
   const messageChannel = account.messageChannels[0];
   const calendarChannel = account.calendarChannels[0];
 
+  const isArchived = isDefined(account.archivedAt);
+
   const status = computeSyncStatus(messageChannel, calendarChannel);
+
+  // Archived accounts are frozen (owner left the workspace): their synced data
+  // is kept but sync is disabled, so the live sync status is no longer relevant.
+  if (isArchived) {
+    return (
+      <StyledRowRightContainer>
+        <Status color="gray" text={t`Archived`} weight="medium" />
+        <SettingsAccountsRowDropdownMenu account={account} />
+      </StyledRowRightContainer>
+    );
+  }
 
   return (
     <StyledRowRightContainer>

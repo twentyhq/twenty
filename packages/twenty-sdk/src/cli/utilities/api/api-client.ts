@@ -1,14 +1,21 @@
-import { ConfigService } from '@/cli/utilities/config/config-service';
 import { isNonEmptyString } from '@sniptt/guards';
-import axios, { type AxiosInstance } from 'axios';
+import axios, {
+  type AxiosInstance,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig,
+} from 'axios';
 import chalk from 'chalk';
 import { isDefined } from 'twenty-shared/utils';
+
+import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 
 export class ApiClient {
   readonly client: AxiosInstance;
   readonly configService: ConfigService;
   private readonly tokenOverride?: string;
   readonly serverUrlOverride?: string;
+  private reauthAttempted: boolean = false;
 
   constructor(options?: {
     disableInterceptors?: boolean;
@@ -48,14 +55,51 @@ export class ApiClient {
     }
 
     this.client.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        if (error.response?.status === 401) {
-          console.error(
-            chalk.red(
-              'Authentication failed. Run `yarn twenty remote:add` to authenticate.',
-            ),
+      async (response) => {
+        // Handle auth errors returned as GraphQL errors in HTTP 200 responses
+        if (
+          response.status === 200 &&
+          response.data?.errors &&
+          Array.isArray(response.data.errors)
+        ) {
+          const hasAuthError = response.data.errors.some(
+            (error: { message?: string; extensions?: { code?: string } }) =>
+              error.extensions?.code === 'UNAUTHENTICATED' ||
+              error.extensions?.code === 'FORBIDDEN' ||
+              (typeof error.message === 'string' &&
+                error.message.toLowerCase().includes('unauthenticated')),
           );
+
+          if (hasAuthError) {
+            if (!this.reauthAttempted) {
+              const retried = await this.tryReauthenticateAndRetry(
+                response.config,
+              );
+
+              if (retried) {
+                return retried;
+              }
+            }
+
+            const authError = new Error(
+              'Authentication failed: GraphQL auth error in response',
+            ) as Error & { response: typeof response };
+            authError.response = response;
+            throw authError;
+          }
+        }
+
+        return response;
+      },
+      async (error) => {
+        if (error.response?.status === 401 && error.config) {
+          if (!this.reauthAttempted) {
+            const retried = await this.tryReauthenticateAndRetry(error.config);
+
+            if (retried) {
+              return retried;
+            }
+          }
         } else if (error.response?.status === 403) {
           console.error(
             chalk.red(
@@ -70,6 +114,30 @@ export class ApiClient {
         throw error;
       },
     );
+  }
+
+  private async tryReauthenticateAndRetry(
+    config: InternalAxiosRequestConfig,
+  ): Promise<AxiosResponse | null> {
+    // Prevent recursion: only attempt reauth once per client instance
+    this.reauthAttempted = true;
+
+    const remoteName = ConfigService.getActiveRemote();
+    console.error(`Authentication failed on remote "${remoteName}"`);
+
+    const outcome = await promptForReauthentication(remoteName);
+
+    if (outcome === 'reauthenticated') {
+      const authToken = await this.resolveAuthToken();
+
+      if (authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`;
+
+        return this.client.request(config);
+      }
+    }
+
+    return null;
   }
 
   async getFrontendUrl(): Promise<string | null> {

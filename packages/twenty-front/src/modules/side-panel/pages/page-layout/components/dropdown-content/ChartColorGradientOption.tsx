@@ -4,13 +4,10 @@ import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGr
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { ColorSample } from 'twenty-ui-deprecated/display';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
+import { ColorSample } from 'twenty-ui/display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor } from 'twenty-ui/theme';
 type ChartColorGradientOptionProps = {
   colorOption: {
     id: string;

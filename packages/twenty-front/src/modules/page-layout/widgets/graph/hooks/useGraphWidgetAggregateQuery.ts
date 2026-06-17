@@ -158,6 +158,7 @@ export const useGraphWidgetAggregateQuery = ({
       localeCatalog: dateLocale.localeCatalog,
       timeFormat,
       timeZone,
+      numberFormat: configuration.numberFormat ?? undefined,
     });
 
   return {

@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconPencil } from 'twenty-ui-deprecated/display';
+import { IconPencil } from 'twenty-ui/display';
 
 export const useOpenRichTextInSidePanel = () => {
   const { navigateSidePanelMenu, openSidePanelMenu } = useSidePanelMenu();

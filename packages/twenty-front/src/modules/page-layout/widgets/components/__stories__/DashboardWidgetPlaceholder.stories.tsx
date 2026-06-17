@@ -11,7 +11,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { DashboardWidgetPlaceholder } from '@/page-layout/widgets/components/DashboardWidgetPlaceholder';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,

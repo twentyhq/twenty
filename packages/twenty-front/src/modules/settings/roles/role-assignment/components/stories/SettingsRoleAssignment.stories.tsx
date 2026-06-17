@@ -6,10 +6,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { UserContext } from '@/users/contexts/UserContext';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  ComponentDecorator,
-  RouterDecorator,
-} from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 
 const SettingsRoleAssignmentWrapper = (

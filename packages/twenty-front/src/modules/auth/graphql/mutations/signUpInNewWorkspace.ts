@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const SIGN_UP_IN_NEW_WORKSPACE = gql`
-  mutation SignUpInNewWorkspace {
-    signUpInNewWorkspace {
+  mutation SignUpInNewWorkspace($input: SignUpInNewWorkspaceInput) {
+    signUpInNewWorkspace(input: $input) {
       loginToken {
         ...AuthTokenFragment
       }

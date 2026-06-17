@@ -1,5 +1,5 @@
 import { checkUrlType } from '~/utils/checkUrlType';
-import { LinkType } from 'twenty-ui-deprecated/navigation';
+import { LinkType } from 'twenty-ui/navigation';
 
 describe('checkUrlType', () => {
   it('should detect LinkedIn urls', () => {

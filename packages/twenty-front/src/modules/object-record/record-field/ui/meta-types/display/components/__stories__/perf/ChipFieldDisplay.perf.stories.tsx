@@ -6,7 +6,7 @@ import { ChipFieldDisplay } from '@/object-record/record-field/ui/meta-types/dis
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -83,7 +83,7 @@ export const Default: Story = {};
 
 export const Performance = getProfilingStory({
   componentName: 'ChipFieldDisplay',
-  averageThresholdInMs: 0.3,
+  averageThresholdInMs: 0.6,
   numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });

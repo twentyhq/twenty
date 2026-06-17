@@ -8,7 +8,7 @@ import {
   IconSettingsAutomation,
   IconUserCircle,
   IconWebhook,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 export const getActorSourceMultiSelectOptions = (
   selectedSourceNames: string[],

@@ -1,18 +1,18 @@
 import { useCallback, useContext, useState } from 'react';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ModalContent } from 'twenty-ui-deprecated/layout';
+import { ModalContent } from 'twenty-ui/layout';
 
 import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-import { CircularProgressBar } from 'twenty-ui-deprecated/feedback';
+import { CircularProgressBar } from 'twenty-ui/feedback';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
 import { ValidationStep } from './ValidationStep/ValidationStep';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type SpreadsheetImportStepperProps = {
   nextStep: () => void;
