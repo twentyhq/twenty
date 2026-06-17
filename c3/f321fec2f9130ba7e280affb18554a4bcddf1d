@@ -1,0 +1,73 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service.ts
+  s_12aa84da069766::t_f3770399b6be80 31
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-import-folder-messages.service.ts
+  s_12aa84da069766::t_a46290c13a9ebf 1
+  s_12aa84da069766::t_f74e57f796bcb7 2,8,20
+  s_12aa84da069766::t_ff2319f31f6596 3,6,21,25-30
+  s_12aa84da069766::t_35b7e20637d4dd 4-5,24,31-32,36-38
+  s_12aa84da069766::t_5b434284c1851a 9
+  s_12aa84da069766::t_b7a1d1243ea029 11-13,18,23
+  s_12aa84da069766::t_f95db04df08678 14-17,33-35
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service.ts
+  s_12aa84da069766::t_dbce64e256234b 30-33
+  s_12aa84da069766::t_9c214bc5bd403f 34
+  s_12aa84da069766::t_59d617b4a68ac4 56
+  s_12aa84da069766::t_5fecce513b4b30 74-81,85,99-100
+  s_12aa84da069766::t_fcaa4fa2229cdd 82,84,86-87
+  s_12aa84da069766::t_d93bdd60915e5d 83
+  s_12aa84da069766::t_56554130c1f83f 139-144
+  s_12aa84da069766::t_32b3aef4011826 322-328,330
+  s_12aa84da069766::t_f6bf2198acc21c 333,335,337,344,346-349,356
+  s_12aa84da069766::t_c7e2d948d62b00 336,338,345
+packages/twenty-server/src/modules/messaging/message-import-manager/messaging-import-manager.module.ts
+  s_12aa84da069766::t_602e9d8d5b4985 36
+  s_12aa84da069766::t_5cff1d5ef450e9 47
+  s_12aa84da069766::t_d28be757173fa2 105
+  s_12aa84da069766::t_6b81c0007586c0 120
+  s_aea35d831569ea::t_819da02d92e5b4 122
+packages/twenty-server/src/engine/metadata-modules/message-folder/message-folder-metadata.service.ts
+  s_aea35d831569ea::t_716325f5f21a6f 6-9
+  s_aea35d831569ea::t_dbfada63d4ccd6 198,211-223
+  s_aea35d831569ea::t_c1088f46673409 199-205,224
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-gmail-folder-backfill.service.ts
+  s_aea35d831569ea::t_6dc9610bced7eb 1-2,9,12,14,16-18,22-23,27-28,41,46-47,50
+  s_12aa84da069766::t_2982407d056546 3,6,21,24-25,29-31,33-40,42,45
+  s_aea35d831569ea::t_524aa44d31bb83 4-5,8
+  s_aea35d831569ea::t_8f7bc9c7e3ea16 7,10-11,13,15,26,32,43,48-49
+  s_aea35d831569ea::t_9494e3adfd0e96 19-20,44
+packages/twenty-shared/src/types/MessageFolderPendingSyncAction.ts
+  s_aea35d831569ea::t_ecc9382ee881d5 3
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service.ts
+  s_12aa84da069766::t_06e80c1f875adb 13,16-17,30,37,45
+  s_12aa84da069766::t_8dd88f8c0202c6 15
+  s_12aa84da069766::t_88f370391e7377 26
+  s_aea35d831569ea::t_cd2e7389958705 33-34
+  s_12aa84da069766::t_d6aa572c625f26 52,63-94
+  s_aea35d831569ea::t_12fcac08fe51fa 55
+  s_12aa84da069766::t_6b2e689fd601fa 56-62
+  s_12aa84da069766::t_1ba601dc643fae 144-145
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "c3f321fec2f9130ba7e280affb18554a4bcddf1d",
+  "prompts": {},
+  "sessions": {
+    "s_12aa84da069766": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e1ec289-c505-418c-bd18-6b7be4f5e776",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_aea35d831569ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b6367-438b-496f-becb-7d7075915638",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
