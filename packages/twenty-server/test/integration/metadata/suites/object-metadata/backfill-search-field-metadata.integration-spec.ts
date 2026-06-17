@@ -4,18 +4,10 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-// Custom object with two TEXT fields whose names overlap by prefix (`tag` is a prefix
-// of `tagline`). The 2.15 backfill selects a custom object's search field set by id
-// (the label-identifier field), never by parsing the searchVector asExpression, so the
-// prefix overlap that the previous `startsWith` heuristic mis-bound is now irrelevant.
-//
-// The backfill's pure selection + per-application grouping + idempotency logic is unit-
-// tested in build-search-field-metadata-backfill-operations.util.spec.ts. This suite
-// asserts the DB-level invariant the backfill relies on: searchFieldMetadata rows for a
-// custom object are persisted with the custom object's own applicationId (BUG 1) — the
-// migration runner assigns applicationId from the per-application migration the backfill
-// groups rows into, so an app-correct provisioned row is the same invariant a correctly
-// grouped backfill row must satisfy.
+// Asserts the DB-level invariant the backfill relies on: a custom object's
+// searchFieldMetadata rows are persisted with the object's own applicationId, never the
+// standard application's. The backfill's selection/grouping/idempotency is unit-tested
+// in build-search-field-metadata-backfill-operations.util.spec.ts.
 const LABEL_FIELD_NAME = 'tag';
 const PREFIX_OVERLAP_FIELD_NAME = 'tagline';
 
@@ -149,15 +141,13 @@ describe('searchFieldMetadata rows - app-correct and deterministic per object', 
     expect(rows.length).toBeGreaterThan(0);
 
     for (const row of rows) {
-      // BUG 1 invariant: a custom object's rows carry the custom object's own
-      // applicationId (the migration's application), never the standard one.
+      // A custom object's rows carry its own applicationId, never the standard one.
       expect(row.searchFieldApplicationId).toBe(row.objectApplicationId);
       expect(row.searchFieldApplicationId).not.toBe(standardApplicationId);
       // No cross-object leakage: every targeted field belongs to this object.
       expect(row.fieldObjectMetadataId).toBe(testObjectMetadataId);
     }
 
-    // The label-identifier field is part of the search field set.
     expect(rows.some((row) => row.fieldName === LABEL_FIELD_NAME)).toBe(true);
   });
 });

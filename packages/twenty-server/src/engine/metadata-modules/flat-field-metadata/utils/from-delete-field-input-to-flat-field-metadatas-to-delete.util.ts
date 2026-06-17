@@ -206,9 +206,8 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   };
 };
 
-// Mirrors index removal on field delete: drop each searchFieldMetadata row that
-// references a deleted field and recompute the affected objects' searchVector
-// without those fields.
+// On field delete, drop each searchFieldMetadata row referencing a deleted field and
+// recompute the affected objects' searchVector (mirrors index removal).
 const computeSearchFieldMetadataDeletionForDeletedFields = ({
   flatFieldMetadatasToDelete,
   flatObjectMetadataMaps,

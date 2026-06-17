@@ -18,9 +18,8 @@ type StandardSearchFieldBuilder<P extends AllStandardObjectName> = (
   args: Omit<CreateStandardSearchFieldArgs<P>, 'context'>,
 ) => FlatSearchFieldMetadata[];
 
-// Only objects with isSearchable: true (see create-standard-flat-object-metadata.util.ts)
-// get searchFieldMetadata rows. Each object's field set mirrors the searchVector
-// asExpression, which is built from the same SEARCH_FIELDS_FOR_* constant.
+// Only isSearchable objects get rows; each object's field set mirrors its searchVector
+// asExpression, built from the same SEARCH_FIELDS_FOR_* constant.
 const STANDARD_FLAT_SEARCH_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   company: buildCompanyStandardFlatSearchFieldMetadatas,
   dashboard: buildDashboardStandardFlatSearchFieldMetadatas,

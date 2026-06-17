@@ -25,8 +25,7 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 
 type ComputeSearchFieldMetadataCreationForFieldsArgs = {
-  // Universal flat field metadatas being created in this migration (multiple fields,
-  // possibly across several objects). The new fields are not yet in the flat maps.
+  // Fields created in this migration; not yet present in the flat maps.
   flatFieldMetadatasToCreate: UniversalFlatFieldMetadata[];
 } & Pick<
   AllFlatEntityMaps,
@@ -35,10 +34,8 @@ type ComputeSearchFieldMetadataCreationForFieldsArgs = {
   | 'flatSearchFieldMetadataMaps'
 >;
 
-// Headline of the field lifecycle: when a searchable-type field is created on an
-// isSearchable object, it is auto-included in global search. This emits one
-// searchFieldMetadata row per such field and the recomputed searchVector field
-// (existing rows' fields + the newly created fields) per affected object.
+// Field lifecycle: a new searchable-type field on an isSearchable object is auto-added
+// to global search — emit its searchFieldMetadata row and recompute the searchVector.
 export const computeSearchFieldMetadataCreationForFields = ({
   flatFieldMetadatasToCreate,
   flatObjectMetadataMaps,

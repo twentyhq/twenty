@@ -48,10 +48,9 @@ export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspa
         { workspaceId },
       );
 
-    // The standard-application sync does not run during version upgrades, so the
-    // standard objects' searchFieldMetadata rows must be backfilled here too. Build
-    // them from the same definition provisioning uses (SEARCH_FIELDS_FOR_* via the
-    // standard builders) rather than parsing the searchVector asExpression.
+    // The standard-application sync does not run during upgrades, so standard objects'
+    // rows are backfilled from the same definition provisioning uses
+    // (SEARCH_FIELDS_FOR_*), not by parsing the searchVector asExpression.
     const { allFlatEntityMaps: standardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
         now: new Date().toISOString(),
@@ -98,9 +97,8 @@ export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspa
       return;
     }
 
-    // One migration per application: the runner assigns applicationId from the
-    // single application passed here, so grouping by the row's own application is
-    // what keeps a custom object's rows tied to the custom application.
+    // One migration per application: the runner assigns applicationId from the single
+    // application passed here, keeping custom-object rows tied to the custom application.
     for (const applicationUniversalIdentifier of applicationUniversalIdentifiers) {
       const flatSearchFieldMetadataToCreate =
         flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier[

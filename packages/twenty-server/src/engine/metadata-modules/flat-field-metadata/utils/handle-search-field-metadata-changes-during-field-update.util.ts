@@ -61,10 +61,9 @@ export const handleSearchFieldMetadataChangesDuringFieldUpdate = ({
   const hasTypeChanged =
     fromFlatFieldMetadata.type !== toFlatFieldMetadata.type;
 
-  // A row is created only on a genuine type transition into a searchable type.
-  // A rename (no type change) must never create a row, otherwise renaming a
-  // searchable-typed field that has no row (a legacy field, or one the user
-  // excluded by removing its row) would silently re-add it to search.
+  // Only a real type transition into a searchable type creates a row. A rename must
+  // not, or renaming a searchable-typed field with no row (legacy, or user-excluded)
+  // would silently re-add it to search.
   const becameSearchableType =
     hasTypeChanged &&
     !isSearchableFieldType(fromFlatFieldMetadata.type) &&
@@ -124,8 +123,7 @@ export const handleSearchFieldMetadataChangesDuringFieldUpdate = ({
     };
   }
 
-  // Rename of a searchable field with an existing row: recompute (asExpression
-  // embeds the column name), no row change.
+  // Rename of a searchable field: recompute (asExpression embeds the column name).
   if (wasSearchable && hasNameChanged) {
     return {
       searchFieldMetadatasToCreate: [],
