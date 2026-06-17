@@ -23,6 +23,7 @@ export enum AppPath {
   MarketingHub = '/marketing',
   MarketingCampaignBuilder = '/marketing/campaign/new',
   MarketingSequenceEditor = '/marketing/sequences',
+  MarketingSocialCalendar = '/marketing/social',
   OneOnOneRunner = '/one-on-one',
 
   RecordIndexPage = '/objects/:objectNamePlural',
