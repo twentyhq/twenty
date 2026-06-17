@@ -12,6 +12,15 @@ export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/ContentTypeValuesH
 export { IF_ELSE_BRANCH_POSITION_OFFSETS } from './constants/IfElseBranchPositionOffsets';
 export { OBJECTS_BLOCKED_FROM_AUTOMATION } from './constants/ObjectsBlockedFromAutomation';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
+export { WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS } from './layout/constants/WorkflowDiagramDefaultNodeDimensions';
+export { WORKFLOW_LAYOUT_DEFAULT_OPTIONS } from './layout/constants/WorkflowLayoutDefaultOptions';
+export type {
+  WorkflowLayoutNode,
+  WorkflowLayoutEdge,
+  WorkflowLayoutPosition,
+  WorkflowLayoutOptions,
+} from './layout/utils/compute-workflow-layout.util';
+export { computeWorkflowLayout } from './layout/utils/compute-workflow-layout.util';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';
 export { baseTriggerSchema } from './schemas/base-trigger-schema';

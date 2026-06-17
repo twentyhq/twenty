@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  buildWorkflowGraph,
+  computeWorkflowLayout,
+  TRIGGER_STEP_ID,
+  WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
@@ -381,5 +387,69 @@ export class WorkflowVersionWorkspaceService {
 
       await workflowVersionRepository.update(workflowVersionId, updatePayload);
     }, authContext);
+  }
+
+  async autoLayoutWorkflowVersion({
+    workflowVersionId,
+    workspaceId,
+  }: {
+    workflowVersionId: string;
+    workspaceId: string;
+  }) {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const positions =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const workflowVersionRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+              workspaceId,
+              'workflowVersion',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          const workflowVersion = await workflowVersionRepository.findOneOrFail(
+            {
+              where: {
+                id: workflowVersionId,
+              },
+            },
+          );
+
+          assertWorkflowVersionIsDraft(workflowVersion);
+
+          const steps = workflowVersion.steps ?? [];
+
+          const { childrenByStepId } = buildWorkflowGraph({
+            trigger: workflowVersion.trigger,
+            steps,
+          });
+
+          const nodes = [
+            {
+              id: TRIGGER_STEP_ID,
+              ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
+            },
+            ...steps.map((step) => ({
+              id: step.id,
+              ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
+            })),
+          ];
+
+          const edges = [...childrenByStepId.entries()].flatMap(
+            ([source, targets]) =>
+              targets.map((target) => ({ source, target })),
+          );
+
+          return computeWorkflowLayout({ nodes, edges });
+        },
+        authContext,
+      );
+
+    await this.updateWorkflowVersionPositions({
+      workflowVersionId,
+      positions,
+      workspaceId,
+    });
   }
 }
