@@ -69,9 +69,7 @@ const buildPageLayoutNavigationMenuItem = (
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
 
-const buildLinkNavigationMenuItem = (
-  position: number,
-): NavigationMenuItem => ({
+const buildLinkNavigationMenuItem = (position: number): NavigationMenuItem => ({
   __typename: 'NavigationMenuItem',
   id: `navigation-menu-item-link-${position}`,
   type: NavigationMenuItemType.LINK,
