@@ -28,6 +28,7 @@ const StyledMainCardWrapper = styled.div`
   width: 0;
 `;
 
+// oxlint-disable-next-line twenty/no-hardcoded-colors
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
   border-radius: 16px 0 0 0;
