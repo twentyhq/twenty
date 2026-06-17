@@ -53,14 +53,15 @@ const PreviewRoot = styled.div`
   width: 100%;
 `;
 
-// The frame fills its host; this scene box owns the geometry — the
-// stage token is the single source (the hero pins the same scene in px).
+// Fixed at the scene's full width, not a responsive fit: on viewports narrower
+// than the scene the mockup stays full-size and bleeds past the gutter, clipping
+// at the section edge (the shell's overflow: clip) — the old site's full-size
+// demo rather than a scaled-down one. The stage token is the single source.
 const SceneBox = styled.div`
   aspect-ratio: ${APP_PREVIEW_STAGE.windowScene.widthPx} /
     ${APP_PREVIEW_STAGE.windowScene.heightPx};
   margin-inline: auto;
-  max-width: ${APP_PREVIEW_STAGE.windowScene.widthPx}px;
-  width: 100%;
+  width: ${APP_PREVIEW_STAGE.windowScene.widthPx}px;
 `;
 
 export function ProductDemo() {
