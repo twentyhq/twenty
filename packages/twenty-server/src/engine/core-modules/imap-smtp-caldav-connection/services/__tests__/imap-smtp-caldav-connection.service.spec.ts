@@ -1,7 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { createTransport } from 'nodemailer';
 import { type DAVClient } from 'tsdav';
 
+import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
 import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
@@ -10,10 +12,19 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 
+jest.mock('nodemailer', () => ({
+  createTransport: jest.fn(),
+}));
+
 describe('ImapSmtpCaldavService', () => {
   let service: ImapSmtpCaldavService;
 
   const mockClient = {} as DAVClient;
+
+  const mockVerify = jest.fn().mockResolvedValue(true);
+  const mockGetValidatedHost = jest
+    .fn()
+    .mockImplementation((host: string) => Promise.resolve(host));
 
   const mockCalDavClientService = {
     getClient: jest.fn(),
@@ -25,6 +36,8 @@ describe('ImapSmtpCaldavService', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    (createTransport as jest.Mock).mockReturnValue({ verify: mockVerify });
+    mockVerify.mockResolvedValue(true);
     mockCalDavClientService.getClient.mockResolvedValue(mockClient);
     mockCalDavFetchEventsService.listEventCalendars.mockResolvedValue([
       { url: 'https://caldav.example.com/calendars/user/default/' },
@@ -33,7 +46,10 @@ describe('ImapSmtpCaldavService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ImapSmtpCaldavService,
-        { provide: SecureHttpClientService, useValue: {} },
+        {
+          provide: SecureHttpClientService,
+          useValue: { getValidatedHost: mockGetValidatedHost },
+        },
         { provide: ImapSmtpCaldavValidatorService, useValue: {} },
         {
           provide: TwentyConfigService,
@@ -59,6 +75,7 @@ describe('ImapSmtpCaldavService', () => {
       port: 443,
       username: 'user@example.com',
       password: 'password123',
+      connectionSecurity: EmailConnectionSecurity.SSL_TLS,
     };
 
     it('builds a CalDAV client and lists its event calendars', async () => {
@@ -91,6 +108,50 @@ describe('ImapSmtpCaldavService', () => {
       await expect(
         service.testCaldavConnection('user@example.com', params),
       ).rejects.toThrow('No calendar with event support found');
+    });
+  });
+
+  describe('testSmtpConnection', () => {
+    const params: ConnectionParameters = {
+      host: 'smtp.example.com',
+      port: 587,
+      username: 'user@example.com',
+      password: 'password123',
+      connectionSecurity: EmailConnectionSecurity.STARTTLS,
+    };
+
+    it('uses implicit TLS when connectionSecurity is SSL_TLS', async () => {
+      await service.testSmtpConnection('user@example.com', {
+        ...params,
+        port: 465,
+        connectionSecurity: EmailConnectionSecurity.SSL_TLS,
+      });
+
+      expect(createTransport).toHaveBeenCalledWith(
+        expect.objectContaining({ secure: true }),
+      );
+    });
+
+    it('upgrades opportunistically via STARTTLS', async () => {
+      await service.testSmtpConnection('user@example.com', {
+        ...params,
+        connectionSecurity: EmailConnectionSecurity.STARTTLS,
+      });
+
+      expect(createTransport).toHaveBeenCalledWith(
+        expect.objectContaining({ secure: false }),
+      );
+    });
+
+    it('disables TLS when connectionSecurity is NONE', async () => {
+      await service.testSmtpConnection('user@example.com', {
+        ...params,
+        connectionSecurity: EmailConnectionSecurity.NONE,
+      });
+
+      expect(createTransport).toHaveBeenCalledWith(
+        expect.objectContaining({ secure: false, ignoreTLS: true }),
+      );
     });
   });
 });

@@ -70,6 +70,7 @@ import { RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand } from 'src/databas
 import { BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-slow-1781277480000-backfill-non-ui-creatable-standard-system-objects';
 import { CommandMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781253016028-command-menu-item-overridable-entity';
 import { SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-instance-command-slow-1781515653781-set-table-widget-views-visibility-to-workspace';
+import { BackfillConnectionSecuritySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-slow-1781461753981-backfill-connection-security';
 import { AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1781646759482-add-universal-identifier-and-application-id-to-search-field-metadata';
 
 export const INSTANCE_COMMANDS = [
@@ -143,5 +144,6 @@ export const INSTANCE_COMMANDS = [
   BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand,
   CommandMenuItemOverridableEntityFastInstanceCommand,
   SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand,
+  BackfillConnectionSecuritySlowInstanceCommand,
   AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstanceCommand,
 ];
