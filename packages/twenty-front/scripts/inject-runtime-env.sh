@@ -12,11 +12,20 @@ if [ -n "$REACT_APP_DIALER_DOCK_URL" ]; then
   DOCK_LINE="        REACT_APP_DIALER_DOCK_URL: \"$REACT_APP_DIALER_DOCK_URL\","
 fi
 
+# Propel Marketing Hub (P3 graduated heroes) — runtime toggle. NOTE: the FE reads
+# Boolean(window._env_.REACT_APP_PROPEL_MARKETING_HUB), so any NON-EMPTY value
+# enables it (set "true" to enable; leave UNSET to disable — do NOT set "false").
+HUB_LINE=""
+if [ -n "$REACT_APP_PROPEL_MARKETING_HUB" ]; then
+  HUB_LINE="        REACT_APP_PROPEL_MARKETING_HUB: \"$REACT_APP_PROPEL_MARKETING_HUB\","
+fi
+
 CONFIG_BLOCK=$(cat << EOF
     <script id="twenty-env-config">
       window._env_ = {
         REACT_APP_SERVER_BASE_URL: "$REACT_APP_SERVER_BASE_URL",
 $DOCK_LINE
+$HUB_LINE
       };
     </script>
     <!-- END: Twenty Config -->
