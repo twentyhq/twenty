@@ -1,7 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
-import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
+import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { getFirstObjectNavigationMenuItemLink } from '@/navigation/utils/getFirstObjectNavigationMenuItemLink';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -35,7 +35,7 @@ export const useDefaultHomePagePath = () => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
-  const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const navigationMenuItemsInDisplayOrder = useNavigationMenuItemSectionItems();
 
   const readableNonSystemObjectMetadataItems = useMemo(
     () =>
@@ -60,7 +60,7 @@ export const useDefaultHomePagePath = () => {
   const firstObjectNavigationMenuItemLink = useMemo(
     () =>
       getFirstObjectNavigationMenuItemLink({
-        workspaceNavigationMenuItemsSorted,
+        navigationMenuItemsInDisplayOrder,
         objectMetadataItems,
         views,
         objectPermissionsByObjectMetadataId,
@@ -69,7 +69,7 @@ export const useDefaultHomePagePath = () => {
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       views,
-      workspaceNavigationMenuItemsSorted,
+      navigationMenuItemsInDisplayOrder,
     ],
   );
 

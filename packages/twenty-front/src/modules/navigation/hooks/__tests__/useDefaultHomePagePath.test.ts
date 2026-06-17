@@ -30,12 +30,27 @@ const Wrapper = ({ children }: { children: ReactNode }) =>
 const buildObjectNavigationMenuItem = (
   objectNameSingular: string,
   position: number,
+  folderId?: string,
 ): NavigationMenuItem => ({
   __typename: 'NavigationMenuItem',
   id: `navigation-menu-item-${objectNameSingular}`,
   type: NavigationMenuItemType.OBJECT,
   targetObjectMetadataId:
     getMockObjectMetadataItemOrThrow(objectNameSingular).id,
+  position,
+  folderId,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
+});
+
+const buildFolderNavigationMenuItem = (
+  id: string,
+  position: number,
+): NavigationMenuItem => ({
+  __typename: 'NavigationMenuItem',
+  id,
+  type: NavigationMenuItemType.FOLDER,
+  name: 'Folder',
   position,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
@@ -166,6 +181,26 @@ describe('useDefaultHomePagePath', () => {
       navigationMenuItems: [
         buildObjectNavigationMenuItem('person', 0),
         buildObjectNavigationMenuItem('company', 1),
+      ],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual('/objects/people');
+    });
+  });
+  // Regression: a folder child has a folder-local position starting at 0, so a
+  // raw global position sort would hoist it above a top-level item at position
+  // 1. The redirect must honor the sidebar display order (top-level items
+  // first, folder children nested under their folder), landing on the
+  // top-level item.
+  it('should honor display order over a lower-positioned item nested in a folder', async () => {
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [
+        buildObjectNavigationMenuItem('company', 0, 'folder-1'),
+        buildObjectNavigationMenuItem('person', 1),
+        buildFolderNavigationMenuItem('folder-1', 2),
       ],
     });
 

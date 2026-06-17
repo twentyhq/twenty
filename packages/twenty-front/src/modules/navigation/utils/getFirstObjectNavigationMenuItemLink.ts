@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type GetFirstObjectNavigationMenuItemLinkArgs = {
-  workspaceNavigationMenuItemsSorted: NavigationMenuItem[];
+  navigationMenuItemsInDisplayOrder: NavigationMenuItem[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
   views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[];
   objectPermissionsByObjectMetadataId: Parameters<
@@ -18,12 +18,12 @@ type GetFirstObjectNavigationMenuItemLinkArgs = {
 };
 
 export const getFirstObjectNavigationMenuItemLink = ({
-  workspaceNavigationMenuItemsSorted,
+  navigationMenuItemsInDisplayOrder,
   objectMetadataItems,
   views,
   objectPermissionsByObjectMetadataId,
 }: GetFirstObjectNavigationMenuItemLinkArgs): string | null => {
-  for (const item of workspaceNavigationMenuItemsSorted) {
+  for (const item of navigationMenuItemsInDisplayOrder) {
     if (
       item.type !== NavigationMenuItemType.OBJECT &&
       item.type !== NavigationMenuItemType.VIEW
