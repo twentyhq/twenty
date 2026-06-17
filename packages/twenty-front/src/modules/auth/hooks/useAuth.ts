@@ -127,11 +127,6 @@ export const useAuth = () => {
     [setTokenPair],
   );
 
-  // Shared post-auth routing for the central sign-up domain, used by both
-  // credentials and SSO so they behave identically: no workspace -> pick a
-  // name + address, one workspace -> go straight in, several -> let the user
-  // choose. In single-workspace mode there is no creation step, so a brand
-  // new user gets a workspace auto-created instead.
   const navigateAfterMultiWorkspaceSignInUp = useCallback(
     async (
       availableWorkspaces: Parameters<typeof countAvailableWorkspaces>[0],

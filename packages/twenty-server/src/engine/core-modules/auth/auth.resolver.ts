@@ -69,7 +69,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
+import { WorkspaceGraphqlApiExceptionFilter } from 'src/engine/core-modules/workspace/filters/workspace-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -105,6 +105,7 @@ import { AuthService } from './services/auth.service';
   PermissionsGraphqlApiExceptionFilter,
   EmailVerificationExceptionFilter,
   TwoFactorAuthenticationExceptionFilter,
+  WorkspaceGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class AuthResolver {
@@ -533,37 +534,26 @@ export class AuthResolver {
     @AuthProvider() authProvider: AuthProviderEnum,
     @Args('input', { nullable: true }) input?: SignUpInNewWorkspaceInput,
   ): Promise<SignUpDTO> {
-    try {
-      const fullUser = await this.userService.findUserByIdOrThrow(
-        currentUser.id,
-      );
+    const fullUser = await this.userService.findUserByIdOrThrow(currentUser.id);
 
-      const { user, workspace } =
-        await this.signInUpService.signUpOnNewWorkspace(
-          { type: 'existingUser', existingUser: fullUser },
-          { displayName: input?.displayName, subdomain: input?.subdomain },
-        );
+    const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
+      { type: 'existingUser', existingUser: fullUser },
+      { displayName: input?.displayName, subdomain: input?.subdomain },
+    );
 
-      const loginToken = await this.loginTokenService.generateLoginToken(
-        user.email,
-        workspace.id,
-        authProvider,
-      );
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+      workspace.id,
+      authProvider,
+    );
 
-      return {
-        loginToken,
-        workspace: {
-          id: workspace.id,
-          workspaceUrls:
-            this.workspaceDomainsService.getWorkspaceUrls(workspace),
-        },
-      };
-    } catch (error) {
-      // Surface subdomain conflicts (invalid / already-taken, including a
-      // concurrent claim) as a clean GraphQL error; rethrow the rest so the
-      // resolver's auth exception filters handle them.
-      return workspaceGraphqlApiExceptionHandler(error);
-    }
+    return {
+      loginToken,
+      workspace: {
+        id: workspace.id,
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
+      },
+    };
   }
 
   @Mutation(() => TransientTokenDTO)

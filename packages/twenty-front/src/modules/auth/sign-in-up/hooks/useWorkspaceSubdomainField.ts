@@ -1,6 +1,6 @@
 import { getSubdomainValidationSchema } from '@/settings/domains/utils/getSubdomainValidationSchema';
 import { useApolloClient, useLazyQuery } from '@apollo/client/react';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   getSubdomainSlugFromDisplayName,
   isDefined,
@@ -57,28 +57,14 @@ export const useWorkspaceSubdomainField = () => {
     { fetchPolicy: 'no-cache' },
   );
 
-  // Imperative handle to cancel the previous in-flight check so a slower,
-  // earlier response can never overwrite a more recent one (not render state).
-  // oxlint-disable-next-line twenty/no-state-useref
-  const inFlightCheckRef = useRef<AbortController | null>(null);
-
   const runAvailabilityCheck = async (
     value: string,
     { adoptSuggestion }: { adoptSuggestion: boolean },
   ) => {
-    inFlightCheckRef.current?.abort();
-    const abortController = new AbortController();
-    inFlightCheckRef.current = abortController;
-
     try {
       const { data } = await checkAvailabilityQuery({
         variables: { subdomain: value },
-        context: { fetchOptions: { signal: abortController.signal } },
       });
-
-      if (abortController.signal.aborted) {
-        return;
-      }
 
       const result = data?.checkWorkspaceSubdomainAvailability;
 
@@ -111,10 +97,8 @@ export const useWorkspaceSubdomainField = () => {
       setStatus('unavailable');
       setSuggestion(result.suggestedSubdomain);
     } catch {
-      if (!abortController.signal.aborted) {
-        setStatus('error');
-        setSuggestion(undefined);
-      }
+      setStatus('error');
+      setSuggestion(undefined);
     }
   };
 
@@ -128,7 +112,6 @@ export const useWorkspaceSubdomainField = () => {
 
     if (!isDefined(slug)) {
       debouncedAvailabilityCheck.cancel();
-      inFlightCheckRef.current?.abort();
       setSubdomain('');
       setStatus('idle');
       setSuggestion(undefined);
@@ -154,7 +137,6 @@ export const useWorkspaceSubdomainField = () => {
 
     // Clearing the field hands control back to name-based autofill.
     if (normalized === '') {
-      inFlightCheckRef.current?.abort();
       setIsManuallyEdited(false);
       setSubdomain('');
       setErrorMessage(undefined);
@@ -170,7 +152,6 @@ export const useWorkspaceSubdomainField = () => {
 
     if (!validation.success) {
       debouncedAvailabilityCheck.cancel();
-      inFlightCheckRef.current?.abort();
       setStatus('invalid');
       setErrorMessage(validation.error.issues[0].message);
       setSuggestion(undefined);
