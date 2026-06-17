@@ -5,12 +5,9 @@ import {
   IconHome,
   IconMessageCirclePlus,
   OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+} from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useContext } from 'react';
 

@@ -7,7 +7,7 @@ import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimensio
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const StyledCommandMenuItemContainer = styled(motion.div)`

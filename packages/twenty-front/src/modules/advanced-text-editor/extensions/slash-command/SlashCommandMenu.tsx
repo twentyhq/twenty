@@ -1,6 +1,6 @@
 import { type Editor, type Range } from '@tiptap/core';
 import { forwardRef, useCallback, useState } from 'react';
-import { MenuItemSuggestion } from 'twenty-ui-deprecated/navigation';
+import { MenuItemSuggestion } from 'twenty-ui/navigation';
 
 import { type SlashCommandItem } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
 import { SuggestionMenu } from '@/ui/suggestion/components/SuggestionMenu';

@@ -3,9 +3,9 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { type IconComponent, IconX } from 'twenty-ui-deprecated/display';
-import { IconButton } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { type IconComponent, IconX } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsCustomizeVideoModalTab = {
   id: string;

@@ -1,9 +1,6 @@
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import {
-  MenuItemToggle,
-  type MenuItemToggleProps,
-} from 'twenty-ui-deprecated/navigation';
+import { MenuItemToggle, type MenuItemToggleProps } from 'twenty-ui/navigation';
 
 export type CommandMenuItemToggleProps = MenuItemToggleProps & {
   id: string;

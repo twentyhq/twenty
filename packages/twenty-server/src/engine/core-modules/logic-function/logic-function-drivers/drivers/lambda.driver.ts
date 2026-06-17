@@ -247,7 +247,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       throw new LogicFunctionException(
         `Lambda invocation failed for function '${flatLogicFunction.id}' during ${currentPhase}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR,
       );
     }
   }

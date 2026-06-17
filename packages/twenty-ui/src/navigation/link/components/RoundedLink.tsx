@@ -2,6 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { type MouseEvent } from 'react';
 
+import { getSafeUrl } from '@ui/utilities/utils/getSafeUrl';
+
 import styles from './RoundedLink.module.scss';
 
 type RoundedLinkProps = {
@@ -28,7 +30,7 @@ export const RoundedLink = ({
 
   return (
     <a
-      href={href}
+      href={getSafeUrl(href)}
       target="_blank"
       rel="noreferrer"
       onClick={handleClick}

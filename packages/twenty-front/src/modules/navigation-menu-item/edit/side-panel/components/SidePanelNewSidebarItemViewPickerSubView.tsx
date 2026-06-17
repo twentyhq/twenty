@@ -19,7 +19,7 @@ import { type View } from '@/views/types/View';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui-deprecated/display';
+import { useIcons } from 'twenty-ui/display';
 
 type SidePanelNewSidebarItemViewPickerSubViewProps = {
   selectedObjectMetadataIdForView: string;

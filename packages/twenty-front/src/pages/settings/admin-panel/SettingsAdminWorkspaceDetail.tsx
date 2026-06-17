@@ -41,11 +41,10 @@ import {
   OverflowingTextWithTooltip,
   IconSettings2,
   IconUsers,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { Toggle } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { Button, Toggle } from 'twenty-ui/input';
+import { Card, Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,

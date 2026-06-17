@@ -7,8 +7,8 @@ import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/gue
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator } from 'twenty-ui-deprecated/display';
-import { MainButton } from 'twenty-ui-deprecated/input';
+import { HorizontalSeparator } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SignInUpSSOIdentityProviderSelection = () => {

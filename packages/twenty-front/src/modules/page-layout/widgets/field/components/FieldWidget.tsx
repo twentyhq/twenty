@@ -34,7 +34,7 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/layout';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`

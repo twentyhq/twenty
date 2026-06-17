@@ -11,7 +11,7 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledSidePanelContent = styled.div`
   flex: 1;

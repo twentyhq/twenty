@@ -18,7 +18,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { type SelectOption } from 'twenty-ui/input';
 
 const OBJECT_FILTER_DROPDOWN_INNER_SELECT_OPERAND_DROPDOWN_ID =
   'object-filter-dropdown-inner-select-operand-dropdown';

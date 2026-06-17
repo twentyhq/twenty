@@ -12,8 +12,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { IconPlus } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
+import { IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -21,7 +21,7 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/layout';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 

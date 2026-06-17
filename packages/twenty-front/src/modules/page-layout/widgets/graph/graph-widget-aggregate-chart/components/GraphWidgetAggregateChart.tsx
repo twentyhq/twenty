@@ -7,11 +7,8 @@ import {
   H1TitleFontColor,
   IconTrendingDown,
   IconTrendingUp,
-} from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 type GraphWidgetAggregateChartProps = {
   value: string | number;
   trendPercentage?: number;

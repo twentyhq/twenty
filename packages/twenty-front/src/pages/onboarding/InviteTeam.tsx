@@ -6,7 +6,7 @@ import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboard
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ModalContent } from 'twenty-ui-deprecated/layout';
+import { ModalContent } from 'twenty-ui/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,10 +22,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCopy, SeparatorLineText } from 'twenty-ui-deprecated/display';
-import { LightButton, MainButton } from 'twenty-ui-deprecated/input';
-import { ClickToActionLink } from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconCopy, SeparatorLineText } from 'twenty-ui/display';
+import { LightButton, MainButton } from 'twenty-ui/input';
+import { ClickToActionLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -96,7 +96,7 @@ export const InviteTeam = () => {
   const { data: inviteSuggestionsData } = useQuery(
     GetInviteSuggestionsDocument,
     {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-first',
     },
   );
 

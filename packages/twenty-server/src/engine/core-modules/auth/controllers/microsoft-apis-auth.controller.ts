@@ -105,12 +105,6 @@ export class MicrosoftAPIsAuthController {
 
       const handle = emails[0].value.toLowerCase();
 
-      const shouldComputeInviteSuggestions =
-        await this.onboardingService.shouldComputeInviteSuggestionsOnConnect({
-          userId,
-          workspaceId,
-        });
-
       const connectedAccountId =
         await this.microsoftAPIsService.refreshMicrosoftRefreshToken({
           handle,
@@ -122,7 +116,6 @@ export class MicrosoftAPIsAuthController {
           calendarVisibility,
           messageVisibility,
           skipMessageChannelConfiguration,
-          shouldComputeInviteSuggestions,
         });
 
       if (userId) {

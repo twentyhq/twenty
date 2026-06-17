@@ -16,7 +16,6 @@ import {
 
 import {
   OnboardingStatus,
-  PermissionFlagType,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
 import {
@@ -31,7 +30,6 @@ const renderHooks = (
   onboardingStatus: OnboardingStatus,
   withCurrentBillingSubscription: boolean,
   withOneWorkspaceMember = true,
-  permissionFlags = mockedUserData.currentUserWorkspace.permissionFlags,
 ) => {
   const { result } = renderHook(
     () => {
@@ -55,10 +53,7 @@ const renderHooks = (
   );
   act(() => {
     result.current.setCurrentUser({ ...mockedUserData, onboardingStatus });
-    result.current.setCurrentUserWorkspace({
-      ...mockedUserData.currentUserWorkspace,
-      permissionFlags,
-    });
+    result.current.setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
     result.current.setCurrentWorkspace({
       ...mockCurrentWorkspace,
       currentBillingSubscription: withCurrentBillingSubscription
@@ -90,16 +85,6 @@ describe('useSetNextOnboardingStatus', () => {
       true,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
-  });
-
-  it('should skip SyncEmail when account sync is disabled', () => {
-    const nextOnboardingStatus = renderHooks(
-      OnboardingStatus.WORKSPACE_ACTIVATION,
-      false,
-      true,
-      [PermissionFlagType.WORKSPACE_MEMBERS],
-    );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
   });
 
   it('should create profile after syncing emails', () => {

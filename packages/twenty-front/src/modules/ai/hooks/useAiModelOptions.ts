@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isAutoSelectModelId } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { type SelectOption } from 'twenty-ui/input';
 
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';

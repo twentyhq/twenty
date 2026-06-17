@@ -11,7 +11,7 @@ import { t } from '@lingui/core/macro';
 import { CronExpressionParser } from 'cron-parser';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const getNextExecutions = (
   cronExpression: string,

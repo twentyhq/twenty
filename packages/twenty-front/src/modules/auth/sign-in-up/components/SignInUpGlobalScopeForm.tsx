@@ -1,21 +1,19 @@
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import {
-  ClickToActionLink,
-  UndecoratedLink,
-} from 'twenty-ui-deprecated/navigation';
+import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
+import { SignInUpWorkspaceCreationForm } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -25,6 +23,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import {
@@ -32,12 +31,12 @@ import {
   HorizontalSeparator,
   IconChevronRight,
   IconPlus,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { type AvailableWorkspace } from '~/generated-metadata/graphql';
+  type AvailableWorkspace,
+  GetWorkspaceCreationDefaultsDocument,
+} from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const StyledWorkspaceContainer = styled.div`
@@ -131,15 +130,18 @@ export const SignInUpGlobalScopeForm = () => {
   const authProviders = useAtomStateValue(authProvidersState);
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
   const signInUpStep = useAtomStateValue(signInUpStepState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
-
-  const { createWorkspace } = useSignUpInNewWorkspace();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
   const { t } = useLingui();
 
   const { form } = useSignInUpForm();
   const { handleResetPassword } = useHandleResetPassword();
   const returnToPath = useAtomStateValue(returnToPathState);
+
+  useQuery(GetWorkspaceCreationDefaultsDocument, {
+    skip: signInUpStep !== SignInUpStep.WorkspaceSelection,
+  });
 
   const getAvailableWorkspaceUrl = (availableWorkspace: AvailableWorkspace) => {
     const { pathname, searchParams } = getAvailableWorkspacePathAndSearchParams(
@@ -200,7 +202,9 @@ export const SignInUpGlobalScopeForm = () => {
               </UndecoratedLink>
             ))}
             {!isDDLLocked && (
-              <StyledWorkspaceItem onClick={() => createWorkspace()}>
+              <StyledWorkspaceItem
+                onClick={() => setSignInUpStep(SignInUpStep.WorkspaceCreation)}
+              >
                 <StyledWorkspaceContent>
                   <StyledWorkspaceLogo>
                     <IconPlus size={theme.icon.size.lg} />
@@ -217,38 +221,42 @@ export const SignInUpGlobalScopeForm = () => {
           </StyledWorkspaceContainer>
         </StyledOnboardingContentContainer>
       )}
-      {signInUpStep !== SignInUpStep.WorkspaceSelection && (
-        <StyledOnboardingContentContainer>
-          {authProviders.google && (
-            <SignInUpWithGoogle
-              action="list-available-workspaces"
-              isGlobalScope
-            />
-          )}
-          {authProviders.microsoft && (
-            <SignInUpWithMicrosoft
-              action="list-available-workspaces"
-              isGlobalScope
-            />
-          )}
-          {(authProviders.google || authProviders.microsoft) && (
-            <HorizontalSeparator />
-          )}
-          {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-          <FormProvider {...form}>
-            <SignInUpWithCredentials isGlobalScope />
-          </FormProvider>
-          {signInUpStep === SignInUpStep.Password && (
-            <StyledForgotPasswordLinkContainer>
-              <ClickToActionLink
-                onClick={handleResetPassword(form.getValues('email'))}
-              >
-                <Trans>Forgot your password?</Trans>
-              </ClickToActionLink>
-            </StyledForgotPasswordLinkContainer>
-          )}
-        </StyledOnboardingContentContainer>
+      {signInUpStep === SignInUpStep.WorkspaceCreation && (
+        <SignInUpWorkspaceCreationForm />
       )}
+      {signInUpStep !== SignInUpStep.WorkspaceSelection &&
+        signInUpStep !== SignInUpStep.WorkspaceCreation && (
+          <StyledOnboardingContentContainer>
+            {authProviders.google && (
+              <SignInUpWithGoogle
+                action="list-available-workspaces"
+                isGlobalScope
+              />
+            )}
+            {authProviders.microsoft && (
+              <SignInUpWithMicrosoft
+                action="list-available-workspaces"
+                isGlobalScope
+              />
+            )}
+            {(authProviders.google || authProviders.microsoft) && (
+              <HorizontalSeparator />
+            )}
+            {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+            <FormProvider {...form}>
+              <SignInUpWithCredentials isGlobalScope />
+            </FormProvider>
+            {signInUpStep === SignInUpStep.Password && (
+              <StyledForgotPasswordLinkContainer>
+                <ClickToActionLink
+                  onClick={handleResetPassword(form.getValues('email'))}
+                >
+                  <Trans>Forgot your password?</Trans>
+                </ClickToActionLink>
+              </StyledForgotPasswordLinkContainer>
+            )}
+          </StyledOnboardingContentContainer>
+        )}
     </>
   );
 };

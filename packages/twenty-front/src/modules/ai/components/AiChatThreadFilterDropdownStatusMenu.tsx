@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconChevronLeft } from 'twenty-ui-deprecated/display';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+import { IconChevronLeft } from 'twenty-ui/display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';

@@ -39,10 +39,6 @@ import {
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
-import {
-  FetchOnboardingInviteSuggestionsJob,
-  type FetchOnboardingInviteSuggestionsJobData,
-} from 'src/modules/onboarding-invite-suggestions/jobs/fetch-onboarding-invite-suggestions.job';
 
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
@@ -89,7 +85,6 @@ export class MicrosoftAPIsService {
     calendarVisibility: CalendarChannelVisibility | undefined;
     messageVisibility: MessageChannelVisibility | undefined;
     skipMessageChannelConfiguration?: boolean;
-    shouldComputeInviteSuggestions?: boolean;
   }): Promise<string> {
     const {
       handle,
@@ -99,7 +94,6 @@ export class MicrosoftAPIsService {
       calendarVisibility,
       messageVisibility,
       skipMessageChannelConfiguration,
-      shouldComputeInviteSuggestions,
     } = input;
 
     const scopes = getMicrosoftApisOauthScopes();
@@ -315,22 +309,6 @@ export class MicrosoftAPIsService {
                 workspaceId,
               },
             );
-          }
-
-          if (
-            shouldComputeInviteSuggestions &&
-            syncableCalendarChannels.length > 0
-          ) {
-            void this.calendarQueueService
-              .add<FetchOnboardingInviteSuggestionsJobData>(
-                FetchOnboardingInviteSuggestionsJob.name,
-                {
-                  workspaceId,
-                  userId,
-                  connectedAccountId: newOrExistingConnectedAccountId,
-                },
-              )
-              .catch(() => undefined);
           }
         }
 

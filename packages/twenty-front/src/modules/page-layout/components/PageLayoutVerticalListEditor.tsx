@@ -14,8 +14,8 @@ import {
 } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { type ReactNode, useId } from 'react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 
