@@ -15,11 +15,14 @@ concurrency:
 
 jobs:
   dispatch:
-    # main push + manual always run; PR events only when the label is present.
+    # main push + manual always run; PR events only when the label is present
+    # and the PR comes from a branch in this repo (forks are excluded, since they
+    # have no access to secrets or a writable token for the dispatch).
     if: >-
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.full_name == github.repository &&
        contains(github.event.pull_request.labels.*.name, 'run-e2e-apps-prod-parity-tests'))
     runs-on: ubuntu-latest
     timeout-minutes: 5
