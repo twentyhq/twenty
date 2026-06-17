@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 import { createBoundedFailureCache } from '@/platform/visuals/engine/bounded-failure-cache';
 
-import { getInitials } from './get-initials';
 import { PreviewAvatar } from './preview-avatar';
 import { type CellPerson } from '../types';
 
@@ -57,7 +56,7 @@ export function PersonAvatar({
           }}
         />
       ) : (
-        (person.shortLabel ?? getInitials(person.name))
+        (person.shortLabel ?? person.name.trim().charAt(0).toUpperCase())
       )}
     </PreviewAvatar>
   );
