@@ -1,7 +1,11 @@
-// The mockup's tone tables (single module — the old site scattered four
-// copies). TAG derives directly from the product's tag system (color3
-// surface / color11 text). STILL HAND-MIXED pending their own derivation:
-// SIDEBAR (object-icon tones — needs the sidebar-page trace).
+// The mockup's tone tables (single module). The product-color groups derive
+// straight from twenty-ui: TAG (tag color3/11), SIDEBAR (TintedIconTile
+// color5/6/11), DASHBOARD_CHART (graph color8), WORKFLOW_CANVAS (blue/red
+// trigger+action, turquoise tag), RECORD_FILE_SHEET_INK (turquoise).
+// Still authored (no product equivalent): TERMINAL + EDITOR (the bespoke AI
+// window), the PRODUCT_VISUAL cursor inks, RECORD_NOTE_HIGHLIGHT_SHADOW, and
+// WORKFLOW_AVATAR_INK (product uses gray for workflow avatars — drift to
+// resolve on the workflow page).
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 type ToneSurface = { background: string; border: string; color: string };
@@ -14,17 +18,37 @@ const tagTone = (name: keyof typeof THEME_LIGHT.tag.text): TonePair => ({
   color: THEME_LIGHT.tag.text[name],
 });
 
+// Object nav items render as the product's TintedIconTile: color5 surface,
+// color6 border, color11 icon. (Our `teal` is the product's `turquoise`.)
+const sidebarTone = (
+  name:
+    | 'amber'
+    | 'blue'
+    | 'gray'
+    | 'green'
+    | 'orange'
+    | 'pink'
+    | 'purple'
+    | 'red'
+    | 'turquoise'
+    | 'violet',
+): ToneSurface => ({
+  background: THEME_LIGHT.color[`${name}5`],
+  border: THEME_LIGHT.color[`${name}6`],
+  color: THEME_LIGHT.color[`${name}11`],
+});
+
 const SIDEBAR: Record<string, ToneSurface> = {
-  amber: { background: '#FEF2A4', border: '#FEF2A4', color: '#35290F' },
-  blue: { background: '#d9e2fc', border: '#c6d4f9', color: '#3A5CCC' },
-  gray: { background: '#ebebeb', border: '#d6d6d6', color: '#838383' },
-  green: { background: '#ccebd7', border: '#bbe4c9', color: '#153226' },
-  orange: { background: '#ffdcc3', border: '#ffcca7', color: '#ED5F00' },
-  pink: { background: '#ffe1e7', border: '#ffc8d6', color: '#a51853' },
-  purple: { background: '#e0e7ff', border: '#c7d2fe', color: '#4f46e5' },
-  red: { background: '#fdd8d8', border: '#f9c6c6', color: '#DC3D43' },
-  teal: { background: '#c7ebe5', border: '#afdfd7', color: '#0E9888' },
-  violet: { background: '#ebe5ff', border: '#d8cbff', color: '#5b3fd1' },
+  amber: sidebarTone('amber'),
+  blue: sidebarTone('blue'),
+  gray: sidebarTone('gray'),
+  green: sidebarTone('green'),
+  orange: sidebarTone('orange'),
+  pink: sidebarTone('pink'),
+  purple: sidebarTone('purple'),
+  red: sidebarTone('red'),
+  teal: sidebarTone('turquoise'),
+  violet: sidebarTone('violet'),
 };
 
 const TAG: Record<string, TonePair> = {
@@ -66,9 +90,9 @@ const PRODUCT_VISUAL = {
   },
 };
 
-// The record page's file-chip ink for spreadsheets (authored; documents
-// reuse the product accent).
-const RECORD_FILE_SHEET_INK = '#12a594';
+// The product's spreadsheet file-icon color (useFileIconColors); documents
+// reuse the accent.
+const RECORD_FILE_SHEET_INK = THEME_LIGHT.color.turquoise;
 
 // The lift shadow under a scenario-highlighted note card (authored).
 const RECORD_NOTE_HIGHLIGHT_SHADOW = '0 4px 14px rgba(0, 0, 0, 0.06)';
@@ -76,23 +100,24 @@ const RECORD_NOTE_HIGHLIGHT_SHADOW = '0 4px 14px rgba(0, 0, 0, 0.06)';
 // The named-workflow avatar ink (authored data color).
 const WORKFLOW_AVATAR_INK = '#451E11';
 
-// The workflow canvas inks (authored artwork colors).
+// The product's workflow-node colors: blue trigger, red action, a turquoise
+// "completed" tag, and the neutral medium border for edges.
 const WORKFLOW_CANVAS = {
-  activeBadgeBackground: '#dff3e6',
-  activeBadgeText: '#228b52',
-  arrowStroke: '#d8d2cb',
-  triggerIcon: '#4A67F6',
-  actionIcon: '#FF6B5F',
+  activeBadgeBackground: THEME_LIGHT.tag.background.turquoise,
+  activeBadgeText: THEME_LIGHT.tag.text.turquoise,
+  arrowStroke: THEME_LIGHT.border.color.medium,
+  triggerIcon: THEME_LIGHT.color.blue,
+  actionIcon: THEME_LIGHT.color.red,
 };
 
-// The dashboard chart inks (authored artwork colors; the donut slice
-// palette is shared with the data module).
+// twenty-front's graph-color registry assigns chart series from the color8
+// shade; trend arrows use the turquoise8/red8 success/danger pair.
 const DASHBOARD_CHART = {
-  accent: '#8da4ef',
-  trendUp: '#53b9ab',
-  trendDown: '#eb8e90',
-  slicePurple: '#be93e4',
-  sliceOrange: '#ec9455',
+  accent: THEME_LIGHT.color.blue8,
+  trendUp: THEME_LIGHT.color.turquoise8,
+  trendDown: THEME_LIGHT.color.red8,
+  slicePurple: THEME_LIGHT.color.purple8,
+  sliceOrange: THEME_LIGHT.color.orange8,
 };
 
 // The AI terminal's authored chrome (a Cursor-class agent window: warm
