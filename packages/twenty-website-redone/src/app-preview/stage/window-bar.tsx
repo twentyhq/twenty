@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import type React from 'react';
 
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { TrafficLights } from './traffic-lights';
 
@@ -25,9 +25,9 @@ const BarRoot = styled.div<{ $grabbable?: boolean; $isDragging?: boolean }>`
 
 const Title = styled.span`
   color: ${stage.titleColor};
-  font-family: ${APP_PREVIEW_THEME.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 12px;
-  font-weight: ${APP_PREVIEW_THEME.font.weight.medium};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   justify-self: center;
   letter-spacing: 0.1px;
   text-align: center;

@@ -5,7 +5,7 @@ import { useEffect, useId, useState, type CSSProperties } from 'react';
 
 import { createAnimationFrameLoop } from '@/platform/motion';
 import { EASING, REDUCED_MOTION } from '@/tokens';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { PREVIEW_COLORS } from '../../preview-colors';
@@ -15,7 +15,7 @@ import {
   type DashboardLineChart as DashboardLineChartData,
 } from '../../types';
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 const ACCENT = APP_PREVIEW_TONES.dashboardChart.accent;
 
 const ChartFrame = styled.div`

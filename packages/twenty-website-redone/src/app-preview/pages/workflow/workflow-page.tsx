@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { WORKFLOW_GRAPH } from './workflow-data';
 import { WorkflowBranchLabel } from './workflow-branch-label';
@@ -9,7 +10,7 @@ import { WorkflowNode } from './workflow-node';
 import { WORKFLOW_THEME } from './workflow-theme';
 import { type WorkflowPageDefinition } from '../../types';
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 const colors = WORKFLOW_THEME.colors;
 
 const PageShell = styled.div`
@@ -79,7 +80,7 @@ const ActiveBadgeLabel = styled.span`
   color: ${colors.activeBadgeText};
   display: inline-flex;
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
   height: 20px;
   line-height: 1.4;

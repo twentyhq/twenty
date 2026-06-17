@@ -12,13 +12,14 @@ import {
 } from '@tabler/icons-react';
 
 import { EASING, REDUCED_MOTION } from '@/tokens';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { WORKFLOW_THEME } from './workflow-theme';
 import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
 import { type WorkflowNodeDef } from '../../types';
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 const colors = WORKFLOW_THEME.colors;
 
 const NODE_ICON_MAP: Record<string, typeof IconPlug> = {
@@ -123,7 +124,7 @@ const NodeLabel = styled.div`
 const NodeTitle = styled.div`
   color: ${colors.textPrimary};
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
   line-height: 1.4;
   overflow: hidden;

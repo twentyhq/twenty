@@ -3,15 +3,15 @@
 import { styled } from '@linaria/react';
 
 import { REDUCED_MOTION } from '@/tokens';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 const SkeletonBase = styled.div`
   animation: previewSkeletonShimmer 1.4s ease infinite;
   background: linear-gradient(
     90deg,
-    ${APP_PREVIEW_THEME.border.color.light} 25%,
-    ${APP_PREVIEW_THEME.background.secondary} 37%,
-    ${APP_PREVIEW_THEME.border.color.light} 63%
+    ${THEME_LIGHT.border.color.light} 25%,
+    ${THEME_LIGHT.background.secondary} 37%,
+    ${THEME_LIGHT.border.color.light} 63%
   );
   background-size: 400% 100%;
 

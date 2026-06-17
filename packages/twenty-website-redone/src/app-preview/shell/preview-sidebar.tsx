@@ -9,7 +9,9 @@ import {
 
 import { AppleRainbowMark } from '@/icons';
 import { mediaUp } from '@/tokens';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
+import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 
 import { SidebarControls } from './sidebar-controls';
 import { SidebarFolder } from './sidebar-folder';
@@ -19,7 +21,7 @@ import { PREVIEW_COLORS } from '../preview-colors';
 import { isSidebarFolder } from './is-sidebar-folder';
 import { type SidebarEntry, type SidebarItemDef } from '../types';
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 
 const SidebarPanel = styled.aside`
   background: transparent;
@@ -35,7 +37,7 @@ const SidebarPanel = styled.aside`
     &[data-desktop-mode='expanded'] {
       padding: 12px 8px;
       row-gap: 12px;
-      width: ${theme.chrome.navigationDrawerWidthPx}px;
+      width: ${APP_PREVIEW_CHROME.navigationDrawerWidthPx}px;
     }
   }
 `;
@@ -79,7 +81,7 @@ const WorkspaceName = styled.span`
       display: block;
       color: ${PREVIEW_COLORS.text};
       font-family: ${theme.font.family};
-      font-size: ${theme.font.sizePx.md}px;
+      font-size: ${previewFontSize(theme.font.size.md)};
       font-weight: ${theme.font.weight.medium};
       line-height: 1.4;
     }

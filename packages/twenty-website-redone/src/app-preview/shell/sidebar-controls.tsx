@@ -6,11 +6,12 @@ import {
 } from '@tabler/icons-react';
 
 import { mediaUp } from '@/tokens';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { PREVIEW_COLORS } from '../preview-colors';
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 
 const Root = styled.div`
   display: flex;
@@ -78,7 +79,7 @@ const NewChatLabel = styled.span`
   ${mediaUp('md')} {
     display: block;
     font-family: ${theme.font.family};
-    font-size: ${theme.font.sizePx.md}px;
+    font-size: ${previewFontSize(theme.font.size.md)};
     font-weight: ${theme.font.weight.medium};
     line-height: 1.4;
   }

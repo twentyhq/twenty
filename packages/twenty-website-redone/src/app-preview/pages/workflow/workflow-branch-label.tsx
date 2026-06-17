@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { REDUCED_MOTION } from '@/tokens';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { WORKFLOW_THEME } from './workflow-theme';
 import { type WorkflowBranchLabelDef } from '../../types';
@@ -17,9 +17,9 @@ const BranchLabelPill = styled.div<{ $centered?: boolean }>`
   border-radius: 4px;
   color: ${colors.textLight};
   display: inline-flex;
-  font-family: ${APP_PREVIEW_THEME.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 11px;
-  font-weight: ${APP_PREVIEW_THEME.font.weight.semiBold};
+  font-weight: ${THEME_LIGHT.font.weight.semiBold};
   height: 20px;
   justify-content: center;
   min-width: 20px;

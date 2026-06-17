@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { EASING } from '@/tokens';
-import { APP_PREVIEW_THEME as theme } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 
 import { PREVIEW_COLORS } from '../../preview-colors';
 

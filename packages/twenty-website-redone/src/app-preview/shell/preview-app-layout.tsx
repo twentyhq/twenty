@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { mediaUp } from '@/tokens';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { renderPage } from '../pages/render-page';
 import { PREVIEW_COLORS } from '../preview-colors';
@@ -57,7 +57,7 @@ const ContentRow = styled.div`
 const IndexSurface = styled.div`
   background: ${PREVIEW_COLORS.background};
   border: 1px solid ${PREVIEW_COLORS.border};
-  border-radius: ${APP_PREVIEW_THEME.border.radius.md};
+  border-radius: ${THEME_LIGHT.border.radius.md};
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;

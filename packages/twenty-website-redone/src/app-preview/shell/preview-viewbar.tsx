@@ -6,13 +6,14 @@ import {
 } from '@tabler/icons-react';
 
 import { mediaUp } from '@/tokens';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { MiniIcon } from '../primitives/mini-icon';
 import { PREVIEW_COLORS } from '../preview-colors';
 import { type PageType } from '../types';
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 
 const ViewbarBar = styled.div`
   align-items: center;
@@ -43,7 +44,7 @@ const ViewSwitcher = styled.div<{ $tableAligned?: boolean }>`
 const ViewName = styled.span`
   color: ${PREVIEW_COLORS.textSecondary};
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
   line-height: 1.4;
   white-space: nowrap;
@@ -52,7 +53,7 @@ const ViewName = styled.span`
 const ViewCount = styled.span`
   color: ${PREVIEW_COLORS.textLight};
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
   line-height: 1.4;
   white-space: nowrap;
@@ -85,7 +86,7 @@ const ViewAction = styled.span`
   color: ${PREVIEW_COLORS.textSecondary};
   display: flex;
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
   height: 24px;
   line-height: 1.4;

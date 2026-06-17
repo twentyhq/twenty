@@ -1,6 +1,6 @@
 import { type ComponentType } from 'react';
 
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 type MiniIconProps = {
   color?: string;
@@ -17,8 +17,8 @@ type MiniIconProps = {
 export function MiniIcon({
   color,
   icon: Icon,
-  size = APP_PREVIEW_THEME.icon.size.sm,
-  stroke = APP_PREVIEW_THEME.icon.stroke.sm,
+  size = THEME_LIGHT.icon.size.sm,
+  stroke = THEME_LIGHT.icon.stroke.sm,
 }: MiniIconProps) {
   return <Icon aria-hidden color={color} size={size} stroke={stroke} />;
 }

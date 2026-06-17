@@ -21,7 +21,7 @@ import {
 import { type ReactNode } from 'react';
 
 import { APP_PREVIEW_MOTION } from '@/tokens/app-preview/app-preview-motion';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { TwentyLogo } from '@/icons';
 
@@ -102,9 +102,9 @@ const SidebarAvatar = styled.div<{
   color: ${({ $color }) => $color};
   display: flex;
   flex: 0 0 auto;
-  font-family: ${APP_PREVIEW_THEME.font.family};
+  font-family: ${THEME_LIGHT.font.family};
   font-size: 10px;
-  font-weight: ${APP_PREVIEW_THEME.font.weight.medium};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   height: 16px;
   justify-content: center;
   line-height: 1;
@@ -113,7 +113,7 @@ const SidebarAvatar = styled.div<{
 
 const LinkOverlayFrame = styled.div`
   align-items: center;
-  background: ${APP_PREVIEW_THEME.border.color.light};
+  background: ${THEME_LIGHT.border.color.light};
   border-radius: 2px;
   bottom: -1px;
   display: flex;
@@ -129,9 +129,9 @@ function LinkOverlay() {
     <LinkOverlayFrame>
       <IconLink
         aria-hidden
-        color={APP_PREVIEW_THEME.font.color.secondary}
+        color={THEME_LIGHT.font.color.secondary}
         size={7}
-        stroke={APP_PREVIEW_THEME.icon.stroke.sm}
+        stroke={THEME_LIGHT.icon.stroke.sm}
       />
     </LinkOverlayFrame>
   );
@@ -146,7 +146,7 @@ export function renderPreviewIcon(
       <SidebarIconSurface
         $background="transparent"
         $border="transparent"
-        $color={APP_PREVIEW_THEME.font.color.secondary}
+        $color={THEME_LIGHT.font.color.secondary}
         $pulse={pulse}
       >
         {icon.brand === 'twenty' ? (
@@ -192,7 +192,7 @@ export function renderPreviewIcon(
           aria-hidden
           color={tone.color}
           size={14}
-          stroke={APP_PREVIEW_THEME.icon.stroke.md}
+          stroke={THEME_LIGHT.icon.stroke.md}
         />
       ) : null}
       {icon.overlay === 'link' ? <LinkOverlay /> : null}

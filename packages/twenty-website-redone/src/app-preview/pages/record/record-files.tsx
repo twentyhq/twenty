@@ -8,7 +8,7 @@ import {
   IconTable,
 } from '@tabler/icons-react';
 
-import { APP_PREVIEW_THEME as theme } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { PREVIEW_COLORS } from '../../preview-colors';

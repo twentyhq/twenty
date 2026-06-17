@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { IconCheck, IconCopy, IconPencil, IconX } from '@tabler/icons-react';
 import { type ReactNode } from 'react';
 
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { TableCheckbox } from './table-checkbox';
 import { Chip, type ChipVariant } from '../../primitives/chip';
@@ -23,7 +24,7 @@ import {
   type CellValue,
 } from '../../types';
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 
 // The floating row action sits over the cell's right padding.
 const CELL_HORIZONTAL_PADDING = 8;
@@ -55,7 +56,7 @@ const CellHoverAnchor = styled.div`
 const InlineText = styled.span`
   color: ${PREVIEW_COLORS.text};
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
   line-height: 1.4;
   min-width: 0;

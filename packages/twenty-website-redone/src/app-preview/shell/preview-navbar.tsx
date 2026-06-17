@@ -16,7 +16,9 @@ import {
 } from '@tabler/icons-react';
 
 import { EASING, mediaUp } from '@/tokens';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
+import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 
 import { OBJECT_PINNED_ACTIONS } from '../data/object-pinned-actions';
 import { renderPreviewIcon } from '../primitives/preview-icon';
@@ -39,7 +41,7 @@ const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
   rocket: IconRocket,
 };
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 
 const NavbarBar = styled.div`
   align-items: center;
@@ -83,7 +85,7 @@ const BreadcrumbIconSlot = styled.span`
 const CrumbLabel = styled.span`
   color: ${PREVIEW_COLORS.text};
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
   line-height: 1.4;
   min-width: 0;
@@ -121,15 +123,15 @@ const ActionButton = styled.div<{ $iconOnly?: boolean }>`
   display: inline-flex;
   flex: 0 1 auto;
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
-  gap: ${theme.spacingBasePx}px;
+  gap: ${APP_PREVIEW_CHROME.spacingBasePx}px;
   height: 24px;
   justify-content: center;
   min-width: ${({ $iconOnly }) => ($iconOnly ? '24px' : '0')};
   max-width: 100%;
   padding: ${({ $iconOnly }) =>
-    $iconOnly ? '0' : `0 ${theme.spacingBasePx * 2}px`};
+    $iconOnly ? '0' : `0 ${APP_PREVIEW_CHROME.spacingBasePx * 2}px`};
   white-space: nowrap;
 `;
 
@@ -157,7 +159,7 @@ const ActionLabel = styled.span<{ $light?: boolean }>`
 const DesktopOnlyTrailing = styled.div`
   align-items: center;
   display: none;
-  gap: ${theme.spacingBasePx}px;
+  gap: ${APP_PREVIEW_CHROME.spacingBasePx}px;
   height: 100%;
 
   ${mediaUp('md')} {

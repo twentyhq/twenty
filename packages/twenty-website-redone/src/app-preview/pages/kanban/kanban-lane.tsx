@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { IconPlus } from '@tabler/icons-react';
 
 import { EASING } from '@/tokens';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { KanbanCard } from './kanban-card';
 import { MiniIcon } from '../../primitives/mini-icon';
@@ -10,7 +11,7 @@ import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
 import { PREVIEW_COLORS } from '../../preview-colors';
 import { type KanbanLane as KanbanLaneData } from '../../types';
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 
 const Lane = styled.div<{ $index: number; $last?: boolean }>`
   animation: kanbanLaneAppear 420ms ${EASING.standard} both;
@@ -53,7 +54,7 @@ const LaneTag = styled.span`
   color: ${theme.tag.text.gray};
   display: inline-flex;
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
   height: 20px;
   line-height: 1.4;
@@ -81,7 +82,7 @@ const LaneTag = styled.span`
 const LaneCount = styled.span`
   color: ${PREVIEW_COLORS.textTertiary};
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
   line-height: 1.4;
   white-space: nowrap;
@@ -101,7 +102,7 @@ const AddCardButton = styled.div`
   color: ${PREVIEW_COLORS.textTertiary};
   display: inline-flex;
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
   gap: 4px;
   height: 24px;

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { IconCalendar, IconCheck, IconPlus } from '@tabler/icons-react';
 
-import { APP_PREVIEW_THEME as theme } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 
 import { FaviconLogo } from '../../primitives/favicon-logo';
 import { PersonAvatar } from '../../primitives/person-avatar';

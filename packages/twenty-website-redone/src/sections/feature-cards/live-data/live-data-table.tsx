@@ -13,13 +13,15 @@ import { useState } from 'react';
 import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
 import { Chip } from '@/app-preview/primitives/chip';
 import { useHorizontalDragScroll } from '@/platform/motion';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
+import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 import { LIVE_DATA_SCENE } from '@/tokens/feature-scenes/live-data-scene';
 
 // The mini companies table renders the app-preview vocabulary (the same
 // Chip and generated theme the mockup uses); the live-data tints are the
 // scene's own.
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 const SCENE = LIVE_DATA_SCENE;
 const APP_FONT = theme.font.family;
 const TABLE_CELL_HORIZONTAL_PADDING = 8;
@@ -245,7 +247,7 @@ const HeaderCellContent = styled.div`
 const HeaderLabel = styled.span`
   color: ${theme.font.color.tertiary};
   font-family: ${APP_FONT};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
   line-height: 1.4;
   min-width: 0;
@@ -310,7 +312,7 @@ const HeaderFillContent = styled.div`
 const MutedText = styled.span`
   color: ${theme.font.color.tertiary};
   font-family: ${APP_FONT};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
   line-height: 1.4;
   white-space: nowrap;
@@ -345,12 +347,12 @@ const StatusChip = styled.div<{ $edited?: boolean; $hoveredByAlice?: boolean }>`
     $edited ? SCENE.colors.tagPurple : SCENE.colors.tagGreen};
   display: inline-flex;
   font-family: ${APP_FONT};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
   height: 20px;
   justify-content: center;
   line-height: 1.4;
-  padding: 3px ${theme.spacingBasePx}px;
+  padding: 3px ${APP_PREVIEW_CHROME.spacingBasePx}px;
   transform: ${({ $hoveredByAlice }) =>
     $hoveredByAlice ? 'scale(1.1)' : 'scale(1)'};
   transform-origin: center;

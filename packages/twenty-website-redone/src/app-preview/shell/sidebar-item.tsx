@@ -3,14 +3,16 @@
 import { styled } from '@linaria/react';
 
 import { APP_PREVIEW_MOTION } from '@/tokens/app-preview/app-preview-motion';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
+import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { renderPreviewIcon } from '../primitives/preview-icon';
 import { PREVIEW_COLORS } from '../preview-colors';
 import { type SidebarItemDef } from '../types';
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 
 const ItemRow = styled.button<{
   $active?: boolean;
@@ -33,7 +35,7 @@ const ItemRow = styled.button<{
   border-radius: 4px;
   cursor: pointer;
   display: flex;
-  height: ${theme.chrome.navigationItemHeightPx}px;
+  height: ${APP_PREVIEW_CHROME.navigationItemHeightPx}px;
   justify-content: flex-start;
   padding-left: ${({ $depth = 0 }) => ($depth === 0 ? '4px' : '11px')};
   padding-right: 2px;
@@ -94,7 +96,7 @@ const ItemLabel = styled.span<{ $active?: boolean }>`
   color: ${({ $active }) =>
     $active ? PREVIEW_COLORS.text : PREVIEW_COLORS.textSecondary};
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
   line-height: 1.4;
   min-width: 0;
@@ -106,7 +108,7 @@ const ItemLabel = styled.span<{ $active?: boolean }>`
 const ItemMeta = styled.span`
   color: ${PREVIEW_COLORS.textLight};
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
   line-height: 1.4;
   min-width: 0;

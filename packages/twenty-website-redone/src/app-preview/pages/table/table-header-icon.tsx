@@ -14,7 +14,7 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode } from 'react';
 
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { PREVIEW_COLORS } from '../../preview-colors';
 
@@ -40,7 +40,7 @@ export function renderTableHeaderIcon(columnId: string): ReactNode {
       aria-hidden
       color={PREVIEW_COLORS.textTertiary}
       size={16}
-      stroke={APP_PREVIEW_THEME.icon.stroke.sm}
+      stroke={THEME_LIGHT.icon.stroke.sm}
     />
   );
 }

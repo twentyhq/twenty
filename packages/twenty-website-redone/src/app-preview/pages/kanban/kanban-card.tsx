@@ -13,7 +13,8 @@ import { type ComponentType, type ReactNode } from 'react';
 
 import { RatingStar } from '@/icons';
 import { EASING } from '@/tokens';
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { Chip } from '../../primitives/chip';
 import { FaviconLogo } from '../../primitives/favicon-logo';
@@ -26,7 +27,7 @@ import {
   type KanbanCard as KanbanCardData,
 } from '../../types';
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 
 // twenty-front hashes a record's identifier to its avatar tone; the mockup
 // does the same so each opportunity gets a stable, distinct color.
@@ -148,7 +149,7 @@ const FieldValueWrap = styled.div`
 const FieldText = styled.span`
   color: ${PREVIEW_COLORS.text};
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
   line-height: 1.4;
   min-width: 0;

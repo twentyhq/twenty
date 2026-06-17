@@ -37,7 +37,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "node scripts/check-conventions.mjs && node scripts/check-translations.mjs && node scripts/check-app-preview-tokens.mjs && npx oxlint -c .oxlintrc.json . && npx oxfmt --check ."
+        "command": "node scripts/check-conventions.mjs && node scripts/check-translations.mjs && npx oxlint -c .oxlintrc.json . && npx oxfmt --check ."
       },
       "configurations": {
         "fix": {
@@ -64,19 +64,6 @@
         "cwd": "{projectRoot}",
         "command": "lingui compile --typescript && npx oxfmt src/locales/compiled"
       }
-    },
-    "tokens:generate": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "node scripts/generate-app-preview-tokens.mjs"
-      },
-      "dependsOn": [
-        {
-          "projects": ["twenty-ui"],
-          "target": "build"
-        }
-      ]
     }
   }
 }

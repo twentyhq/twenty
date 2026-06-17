@@ -6,7 +6,9 @@ import { EASING } from '@/tokens';
 import { IconChevronDown, IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
+import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 
 import { renderTableCellValue } from './table-cell-value';
 import { TableCheckbox } from './table-checkbox';
@@ -17,7 +19,7 @@ import { PREVIEW_COLORS } from '../../preview-colors';
 import { useHorizontalDragScroll } from '@/platform/motion';
 import { type TablePageDefinition } from '../../types';
 
-const theme = APP_PREVIEW_THEME;
+const theme = THEME_LIGHT;
 const CELL_HORIZONTAL_PADDING = 8;
 
 const TableShell = styled.div`
@@ -90,7 +92,7 @@ const DataRow = styled.div<{ $rowIndex: number }>`
     }
     to {
       opacity: 1;
-      max-height: ${theme.chrome.recordTableRowHeightPx}px;
+      max-height: ${APP_PREVIEW_CHROME.recordTableRowHeightPx}px;
     }
   }
 `;
@@ -120,7 +122,7 @@ const TableCell = styled.div<{
   box-sizing: border-box;
   display: flex;
   flex: 0 0 ${({ $width }) => `${$width}px`};
-  height: ${theme.chrome.recordTableRowHeightPx}px;
+  height: ${APP_PREVIEW_CHROME.recordTableRowHeightPx}px;
   justify-content: ${({ $align }) =>
     $align === 'right' ? 'flex-end' : 'flex-start'};
   left: ${({ $sticky }) => ($sticky ? '0' : 'auto')};
@@ -175,7 +177,7 @@ const HeaderCellContent = styled.div`
 const HeaderLabel = styled.span`
   color: ${PREVIEW_COLORS.textTertiary};
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.medium};
   line-height: 1.4;
   min-width: 0;
@@ -187,7 +189,7 @@ const HeaderLabel = styled.span`
 const MutedText = styled.span`
   color: ${PREVIEW_COLORS.textTertiary};
   font-family: ${theme.font.family};
-  font-size: ${theme.font.sizePx.md}px;
+  font-size: ${previewFontSize(theme.font.size.md)};
   font-weight: ${theme.font.weight.regular};
   line-height: 1.4;
   white-space: nowrap;

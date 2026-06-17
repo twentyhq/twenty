@@ -1,23 +1,25 @@
 import { styled } from '@linaria/react';
 
-import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT } from 'twenty-ui/theme';
+import { previewFontSize } from '@/app-preview/preview-font-size';
+import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 
 const LinkPill = styled.span`
   align-items: center;
-  background-color: ${APP_PREVIEW_THEME.background.transparent.lighter};
-  border: 1px solid ${APP_PREVIEW_THEME.border.color.strong};
-  border-radius: ${APP_PREVIEW_THEME.border.radius.pill};
-  color: ${APP_PREVIEW_THEME.font.color.primary};
+  background-color: ${THEME_LIGHT.background.transparent.lighter};
+  border: 1px solid ${THEME_LIGHT.border.color.strong};
+  border-radius: ${THEME_LIGHT.border.radius.pill};
+  color: ${THEME_LIGHT.font.color.primary};
   display: inline-flex;
-  font-family: ${APP_PREVIEW_THEME.font.family};
-  font-size: ${APP_PREVIEW_THEME.font.sizePx.md}px;
-  font-weight: ${APP_PREVIEW_THEME.font.weight.regular};
-  gap: ${APP_PREVIEW_THEME.spacingBasePx}px;
+  font-family: ${THEME_LIGHT.font.family};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
+  gap: ${APP_PREVIEW_CHROME.spacingBasePx}px;
   height: 20px;
   max-width: 100%;
   min-width: 0;
   overflow: hidden;
-  padding: 0 ${APP_PREVIEW_THEME.spacingBasePx * 2}px;
+  padding: 0 ${APP_PREVIEW_CHROME.spacingBasePx * 2}px;
   text-overflow: ellipsis;
   user-select: none;
   white-space: nowrap;

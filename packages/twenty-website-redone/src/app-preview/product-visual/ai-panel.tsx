@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { Fragment, useEffect, useRef, type ReactNode } from 'react';
 
-import { APP_PREVIEW_THEME as theme } from '@/tokens/app-preview/app-preview-theme';
+import { THEME_LIGHT as theme } from 'twenty-ui/theme';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { ClaudeMark } from '@/icons';
