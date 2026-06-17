@@ -120,6 +120,9 @@ export const WorkflowEditActionEmailBase = ({
   const { accounts: myAccounts, loading: myAccountsLoading } =
     useMyConnectedAccounts();
 
+  // Sender variables are only enabled for DRAFT_EMAIL for now; SEND_EMAIL keeps a plain account select.
+  const isSenderVariableEnabled = action.type === 'DRAFT_EMAIL';
+
   const configuredAccountId = formData.connectedAccountId;
   const isSenderVariable = isStandaloneVariableString(configuredAccountId);
   const isConfiguredAccountMine = myAccounts.some(
@@ -201,11 +204,17 @@ export const WorkflowEditActionEmailBase = ({
           <FormSelectFieldInput
             key={`connected-account-${formData.connectedAccountId ?? 'none'}`}
             label={t`Account`}
-            hint={t`Pick a connected account or set a workspace member as variable`}
+            hint={
+              isSenderVariableEnabled
+                ? t`Pick a connected account or set a workspace member as variable`
+                : undefined
+            }
             defaultValue={formData.connectedAccountId}
             options={connectedAccountOptions}
             onChange={handleConnectedAccountChange}
-            VariablePicker={WorkflowVariablePicker}
+            VariablePicker={
+              isSenderVariableEnabled ? WorkflowVariablePicker : undefined
+            }
             readonly={actionOptions.readonly}
             callToActionButton={{
               onClick: () => {
