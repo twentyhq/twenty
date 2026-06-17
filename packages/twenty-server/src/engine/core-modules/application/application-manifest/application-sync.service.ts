@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
@@ -14,6 +14,8 @@ import {
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
+import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -35,6 +37,8 @@ export class ApplicationSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
+    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
+    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
   ) {}
 
   public async synchronizeFromManifest({
@@ -247,6 +251,39 @@ export class ApplicationSyncService {
       workspaceId,
     );
 
+    await this.cleanupApplicationRuntimeResources({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+
     return validateAndBuildResult.workspaceMigration;
+  }
+
+  // Best-effort cleanup of app-scoped runtime resources that live outside the
+  // database / file storage (e.g. the Lambda SDK layer). Per-function resources
+  // (the Lambda functions themselves) are released by the logic-function delete
+  // action handler during the from→empty migration above. This runs after
+  // metadata deletion so an external failure can never wedge the uninstall.
+  // The shared, content-addressed deps layer is intentionally NOT deleted here:
+  // it is shared across apps/workspaces with the same yarn.lock and left to GC.
+  private async cleanupApplicationRuntimeResources({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    try {
+      const driver = this.logicFunctionDriverFactory.getCurrentDriver();
+
+      await driver.deleteApplicationResources({
+        workspaceId,
+        applicationUniversalIdentifier,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to clean up runtime resources for application ${applicationUniversalIdentifier} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 }

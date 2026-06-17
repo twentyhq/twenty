@@ -94,6 +94,19 @@ export class LambdaDriver implements LogicFunctionDriver {
     await this.executorManager.delete(flatLogicFunction);
   }
 
+  async deleteApplicationResources({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    await this.layerManager.deleteSdkLayer({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+  }
+
   async installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void> {
