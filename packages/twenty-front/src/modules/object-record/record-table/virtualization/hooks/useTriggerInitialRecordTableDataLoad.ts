@@ -1,6 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexTableLazyQuery } from '@/object-record/record-index/hooks/useRecordIndexTableLazyQuery';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import {
@@ -37,8 +38,9 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { isDefined } from 'twenty-shared/utils';
 
 export const useTriggerInitialRecordTableDataLoad = () => {
-  const { recordTableId, objectNameSingular, recordLimit } =
-    useRecordTableContextOrThrow();
+  const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
+
+  const { recordLimit } = useRecordIndexContextOrThrow();
 
   const { findManyRecordsLazy } =
     useRecordIndexTableLazyQuery(objectNameSingular);

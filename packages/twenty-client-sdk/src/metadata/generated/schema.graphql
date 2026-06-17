@@ -1367,7 +1367,7 @@ type ViewConfiguration {
 type RecordTableConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
-  limit: Int
+  recordLimit: Int
 }
 
 type WorkflowConfiguration {

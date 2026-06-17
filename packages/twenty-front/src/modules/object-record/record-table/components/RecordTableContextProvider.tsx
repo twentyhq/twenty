@@ -22,7 +22,6 @@ type RecordTableContextProviderProps = {
   recordTableId: string;
   objectNameSingular: string;
   onRecordIdentifierClick?: (rowIndex: number, recordId: string) => void;
-  recordLimit?: number;
   children: ReactNode;
 };
 
@@ -31,7 +30,6 @@ export const RecordTableContextProvider = ({
   recordTableId,
   objectNameSingular,
   onRecordIdentifierClick,
-  recordLimit,
   children,
 }: RecordTableContextProviderProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -87,7 +85,6 @@ export const RecordTableContextProvider = ({
           })),
           onRecordIdentifierClick,
           triggerEvent,
-          recordLimit,
         }}
       >
         <RecordTableUpdateContext.Provider value={updateRecord}>

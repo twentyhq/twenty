@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 
 export const RecordTableRecordLimitReloadEffect = () => {
-  const { recordLimit } = useRecordTableContextOrThrow();
+  const { recordLimit } = useRecordIndexContextOrThrow();
 
   const { triggerInitialRecordTableDataLoad } =
     useTriggerInitialRecordTableDataLoad();

@@ -62,9 +62,9 @@ export const SidePanelDashboardRecordTableSettings = () => {
   const limit =
     isRecordTableConfiguration &&
     isDefined(configuration) &&
-    'limit' in configuration &&
-    isDefined(configuration.limit)
-      ? (configuration.limit as number)
+    'recordLimit' in configuration &&
+    isDefined(configuration.recordLimit)
+      ? (configuration.recordLimit as number)
       : undefined;
 
   const {
@@ -85,7 +85,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
       !isDefined(value) || value < 1 ? undefined : Math.floor(value);
 
     updateCurrentWidgetConfig({
-      configToUpdate: { limit: nextLimit },
+      configToUpdate: { recordLimit: nextLimit },
     });
   };
 

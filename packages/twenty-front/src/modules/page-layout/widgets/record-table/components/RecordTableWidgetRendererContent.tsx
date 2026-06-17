@@ -34,11 +34,11 @@ export const RecordTableWidgetRendererContent = ({
         objectNameSingular={objectMetadataItem.nameSingular}
         viewId={viewId}
         widgetId={widgetId}
+        recordLimit={recordLimit}
       >
         <RecordTableWidget
           isReadOnly={isReadOnly}
           isEmptyStateHidden={isEmptyStateHidden}
-          recordLimit={recordLimit}
         />
       </RecordTableWidgetProvider>
     </>

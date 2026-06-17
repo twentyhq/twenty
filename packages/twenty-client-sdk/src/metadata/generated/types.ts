@@ -2683,7 +2683,7 @@ export default {
             "viewId": [
                 1
             ],
-            "limit": [
+            "recordLimit": [
                 21
             ],
             "__typename": [

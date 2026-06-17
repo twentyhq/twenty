@@ -21,8 +21,8 @@ export const RecordTableWidgetRenderer = ({
       : undefined;
 
   const recordLimit =
-    isRecordTableConfiguration && 'limit' in configuration
-      ? (configuration.limit as number | undefined)
+    isRecordTableConfiguration && 'recordLimit' in configuration
+      ? (configuration.recordLimit as number | undefined)
       : undefined;
 
   if (!isDefined(widget.objectMetadataId) || !isDefined(viewId)) {

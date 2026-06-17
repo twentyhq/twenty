@@ -28,5 +28,5 @@ export class RecordTableConfigurationDTO implements RecordTableConfiguration {
   @IsOptional()
   @IsInt()
   @Min(1)
-  limit?: number;
+  recordLimit?: number;
 }

@@ -16,14 +16,12 @@ type RecordTableWithWrappersProps = {
   objectNameSingular: string;
   recordTableId: string;
   viewBarId: string;
-  recordLimit?: number;
 };
 
 export const RecordTableWithWrappers = ({
   objectNameSingular,
   recordTableId,
   viewBarId,
-  recordLimit,
 }: RecordTableWithWrappersProps) => {
   const { selectAllRows } = useSelectAllRows(recordTableId);
 
@@ -60,7 +58,6 @@ export const RecordTableWithWrappers = ({
         viewBarId={viewBarId}
         objectNameSingular={objectNameSingular}
         onRecordIdentifierClick={handleRecordIdentifierClick}
-        recordLimit={recordLimit}
       >
         <EntityDeleteContext.Provider value={deleteOneRecord}>
           <ScrollWrapper
