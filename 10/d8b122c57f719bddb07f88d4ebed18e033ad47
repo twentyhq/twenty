@@ -1,0 +1,30 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-import-folder-messages.service.ts
+  s_12aa84da069766::t_ff2319f31f6596 3,6,21,25-30
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service.ts
+  s_12aa84da069766::t_dbce64e256234b 30-33
+  s_12aa84da069766::t_c7e2d948d62b00 336,338,345
+  s_12aa84da069766::t_d93bdd60915e5d 83
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service.ts
+  s_12aa84da069766::t_d6aa572c625f26 52,63-94
+  s_12aa84da069766::t_06e80c1f875adb 13,16-17,30,37,45
+  s_12aa84da069766::t_8dd88f8c0202c6 15
+  s_12aa84da069766::t_1ba601dc643fae 144-145
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service.ts
+  s_12aa84da069766::t_f3770399b6be80 31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "10d8b122c57f719bddb07f88d4ebed18e033ad47",
+  "prompts": {},
+  "sessions": {
+    "s_12aa84da069766": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e1ec289-c505-418c-bd18-6b7be4f5e776",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
