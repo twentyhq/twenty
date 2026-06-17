@@ -58,9 +58,6 @@ export class GenerateE2eAccessTokenCommand extends CommandRunner {
     this.logger.log(
       `E2E access token written to ${outputPath} (workspaceId=${workspaceId}, userId=${userId})`,
     );
-
-    process.stdout.write(`E2E_ACCESS_TOKEN_PATH=${outputPath}\n`);
-    process.stdout.write(`E2E_ACCESS_TOKEN=${token}\n`);
   }
 
   private async mintAccessToken({
