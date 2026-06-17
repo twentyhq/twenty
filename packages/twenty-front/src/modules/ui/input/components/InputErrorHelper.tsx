@@ -6,8 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledInputErrorHelper = styled.div`
   color: ${themeCssVariables.color.red};
   font-size: ${themeCssVariables.font.size.xs};
-  margin-top: 1px;
-  position: absolute;
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 export const InputErrorHelper = ({
@@ -15,11 +14,11 @@ export const InputErrorHelper = ({
 }: {
   children?: React.ReactNode;
 }) => (
-  <div>
+  <>
     {isDefined(children) && (
       <StyledInputErrorHelper aria-live="polite">
         {children}
       </StyledInputErrorHelper>
     )}
-  </div>
+  </>
 );
