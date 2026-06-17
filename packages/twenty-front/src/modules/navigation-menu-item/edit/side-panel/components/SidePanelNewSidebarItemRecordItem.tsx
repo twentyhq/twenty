@@ -1,4 +1,4 @@
-import { Avatar, useIcons } from 'twenty-ui-deprecated/display';
+import { Avatar, useIcons } from 'twenty-ui/display';
 import {
   CoreObjectNameSingular,
   NavigationMenuItemType,

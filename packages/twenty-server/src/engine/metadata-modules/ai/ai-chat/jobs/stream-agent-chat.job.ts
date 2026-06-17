@@ -230,6 +230,7 @@ export class StreamAgentChatJob {
             await this.chatExecutionService.streamChat({
               workspace,
               userWorkspaceId: data.userWorkspaceId,
+              threadId: data.threadId,
               messages: data.messages,
               browsingContext: data.browsingContext,
               modelId: data.modelId,

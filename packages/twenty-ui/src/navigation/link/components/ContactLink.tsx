@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { getSafeUrl } from '@ui/utilities/utils/getSafeUrl';
+
 import styles from './ContactLink.module.scss';
 
 type ContactLinkProps = {
@@ -25,7 +27,7 @@ export const ContactLink = ({
       }
       target="_blank"
       onClick={onClick}
-      href={href}
+      href={getSafeUrl(href)}
     >
       {children}
     </a>

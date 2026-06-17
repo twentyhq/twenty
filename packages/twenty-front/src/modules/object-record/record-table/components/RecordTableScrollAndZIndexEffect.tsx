@@ -13,7 +13,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordTableScrollAndZIndexEffect = () => {
   const { recordTableId } = useRecordTableContextOrThrow();

@@ -29,17 +29,14 @@ import {
   IconHierarchy2,
   IconListDetails,
   TooltipDelay,
-} from 'twenty-ui-deprecated/display';
-import { Button, SearchInput } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { Button, SearchInput } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { MenuItem } from 'twenty-ui/navigation';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';

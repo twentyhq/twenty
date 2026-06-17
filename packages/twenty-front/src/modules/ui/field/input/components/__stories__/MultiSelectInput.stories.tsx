@@ -15,9 +15,9 @@ import {
   IconRocket,
   IconTag,
   IconTarget,
-} from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 type RenderProps = {
   values: FieldMultiSelectValue;
@@ -209,6 +209,12 @@ export const SingleSelection: Story = {
       const checkboxes = canvas.queryAllByRole('checkbox', { checked: true });
 
       expect(checkboxes).toHaveLength(0);
+    });
+
+    await userEvent.unhover(canvas.getByText('Professional Network'));
+
+    await waitFor(() => {
+      expect(canvas.queryByRole('tooltip')).not.toBeInTheDocument();
     });
   },
 };

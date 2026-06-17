@@ -33,7 +33,7 @@
     "@azure/msal-node": "^5.2.3",
     "@blocknote/server-util": "^0.51.4",
     "@clickhouse/client": "^1.18.1",
-    "@e2b/code-interpreter": "^1.0.4",
+    "@e2b/code-interpreter": "^2.6.0",
     "@envelop/core": "4.0.3",
     "@faker-js/faker": "9.8.0",
     "@file-type/pdf": "^0.2.0",

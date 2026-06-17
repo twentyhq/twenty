@@ -6,8 +6,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { H2Title, IconTrash } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
+import { H2Title, IconTrash } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { useMutation } from '@apollo/client/react';
 import { DeleteCurrentWorkspaceDocument } from '~/generated-metadata/graphql';
 

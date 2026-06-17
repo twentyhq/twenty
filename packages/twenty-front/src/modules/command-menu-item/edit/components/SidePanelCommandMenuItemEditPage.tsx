@@ -27,9 +27,9 @@ import {
   IconPin,
   IconPinnedOff,
   useIcons,
-} from 'twenty-ui-deprecated/display';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 

@@ -6,7 +6,7 @@ import {
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { styled } from '@linaria/react';
 import { forwardRef } from 'react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFullScreenOverlay = styled.div`
   background: ${themeCssVariables.background.noisy};

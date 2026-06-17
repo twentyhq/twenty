@@ -23,7 +23,7 @@ import {
   isDefined,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
-import { IconUserCircle } from 'twenty-ui-deprecated/display';
+import { IconUserCircle } from 'twenty-ui/display';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

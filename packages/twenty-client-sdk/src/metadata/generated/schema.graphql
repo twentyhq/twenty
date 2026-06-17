@@ -1367,6 +1367,7 @@ type ViewConfiguration {
 type RecordTableConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
+  limit: Int
 }
 
 type WorkflowConfiguration {
@@ -1615,6 +1616,11 @@ type BillingUpdate {
 
   """All billing subscriptions"""
   billingSubscriptions: [BillingSubscription!]!
+}
+
+type InviteSuggestion {
+  email: String!
+  displayName: String
 }
 
 type OnboardingStepSuccess {
@@ -2229,7 +2235,13 @@ type PublicConnectionParametersOutput {
   host: String!
   port: Float!
   username: String
-  secure: Boolean
+  connectionSecurity: EmailConnectionSecurity
+}
+
+enum EmailConnectionSecurity {
+  NONE
+  STARTTLS
+  SSL_TLS
 }
 
 type PublicImapSmtpCaldavConnectionParameters {
@@ -2324,6 +2336,17 @@ type ValidatePasswordResetToken {
 type VerifyEmailAndGetLoginToken {
   loginToken: AuthToken!
   workspaceUrls: WorkspaceUrls!
+}
+
+type SubdomainAvailabilityDTO {
+  isValid: Boolean!
+  available: Boolean!
+  suggestedSubdomain: String!
+}
+
+type WorkspaceCreationDefaultsDTO {
+  displayName: String!
+  subdomain: String!
 }
 
 type ApiKeyToken {
@@ -2584,7 +2607,7 @@ type ImapSmtpCaldavPublicConnectionParams {
   host: String!
   port: Float!
   username: String
-  secure: Boolean
+  connectionSecurity: EmailConnectionSecurity
 }
 
 type ImapSmtpCaldavPublicConnectionParameters {
@@ -3004,6 +3027,8 @@ type Query {
   getViewFieldGroup(id: String!): ViewFieldGroup
   apiKeys: [ApiKey!]!
   apiKey(input: GetApiKeyInput!): ApiKey
+  getInviteSuggestions: [InviteSuggestion!]!
+  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   billingPortalSession(returnUrlPath: String): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
@@ -3013,7 +3038,6 @@ type Query {
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
-  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
@@ -3090,6 +3114,8 @@ type Query {
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
+  checkWorkspaceSubdomainAvailability(subdomain: String!): SubdomainAvailabilityDTO!
+  getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
@@ -3253,6 +3279,7 @@ type Mutation {
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   skipSyncEmailOnboardingStep: OnboardingStepSuccess!
   skipBookOnboardingStep: OnboardingStepSuccess!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   switchSubscriptionInterval: BillingUpdate!
   switchBillingPlan: BillingUpdate!
@@ -3277,7 +3304,6 @@ type Mutation {
   resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   destroyPageLayoutWidget(id: String!): Boolean!
@@ -3361,7 +3387,7 @@ type Mutation {
   getAuthTokensFromOTP(otp: String!, loginToken: String!, captchaToken: String, origin: String!): AuthTokens!
   signUp(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInWorkspace(email: String!, password: String!, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String, captchaToken: String, locale: String, verifyEmailRedirectPath: String): SignUp!
-  signUpInNewWorkspace: SignUp!
+  signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
@@ -4393,6 +4419,11 @@ input GetAuthorizationUrlForSSOInput {
   workspaceInviteHash: String
 }
 
+input SignUpInNewWorkspaceInput {
+  displayName: String
+  subdomain: String
+}
+
 input CreateApplicationRegistrationInput {
   name: String!
   universalIdentifier: String
@@ -4540,7 +4571,7 @@ input ConnectionParametersInput {
   port: Float!
   username: String
   password: String
-  secure: Boolean
+  connectionSecurity: EmailConnectionSecurity
 }
 
 input UpdateLabPublicFeatureFlagInput {

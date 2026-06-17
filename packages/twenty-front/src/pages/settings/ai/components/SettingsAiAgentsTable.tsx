@@ -11,16 +11,10 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconChevronRight,
-  IconSettingsAutomation,
-} from 'twenty-ui-deprecated/display';
-import { SearchInput } from 'twenty-ui-deprecated/input';
-import { MenuItemToggle } from 'twenty-ui-deprecated/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconChevronRight, IconSettingsAutomation } from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
+import { MenuItemToggle } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAiAgentTableMetadata';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 

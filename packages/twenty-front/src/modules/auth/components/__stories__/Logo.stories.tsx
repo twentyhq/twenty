@@ -5,7 +5,7 @@ import {
   AVATAR_URL_MOCK,
   ComponentDecorator,
   RouterDecorator,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 
 const logoUrl = AVATAR_URL_MOCK;
 

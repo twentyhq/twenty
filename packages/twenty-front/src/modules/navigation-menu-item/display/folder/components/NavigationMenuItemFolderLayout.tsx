@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useDeferredValue, useState, type ReactNode } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 

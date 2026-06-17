@@ -11,9 +11,9 @@ import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconSparkles } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { H2Title, IconSparkles } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
 
 export const SettingsUsageAnalyticsSection = () => {

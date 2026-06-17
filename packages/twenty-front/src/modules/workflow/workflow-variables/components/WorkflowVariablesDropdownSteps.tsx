@@ -9,12 +9,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import {
-  IconX,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui-deprecated/display';
-import { MenuItem, MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+import { IconX, OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;

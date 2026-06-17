@@ -8,7 +8,7 @@ import {
   waitForElementToBeRemoved,
   within,
 } from 'storybook/test';
-import { getUserDevice } from 'twenty-ui-deprecated/utilities';
+import { getUserDevice } from 'twenty-ui/utilities';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 

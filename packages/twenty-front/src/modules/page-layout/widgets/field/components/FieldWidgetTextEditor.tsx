@@ -8,7 +8,7 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
 import { styled } from '@linaria/react';
 import { useCallback, useEffect } from 'react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledContainer = styled.div`

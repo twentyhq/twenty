@@ -21,7 +21,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
   type BarChartConfiguration,
   GraphOrderBy,

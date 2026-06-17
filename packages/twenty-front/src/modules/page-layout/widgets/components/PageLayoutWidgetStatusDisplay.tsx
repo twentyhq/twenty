@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { AppTooltip, Status } from 'twenty-ui-deprecated/display';
+import { AppTooltip, Status } from 'twenty-ui/display';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`

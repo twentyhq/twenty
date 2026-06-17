@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { getSafeUrl } from '@ui/utilities/utils/getSafeUrl';
 import { linkifyText } from '@ui/utilities/utils/linkifyText';
 
 import styles from './LinkifiedText.module.scss';
@@ -20,7 +21,7 @@ export const LinkifiedText = ({ text }: LinkifiedTextProps) => {
           <a
             key={index}
             className={styles.link}
-            href={part.content}
+            href={getSafeUrl(part.content)}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}

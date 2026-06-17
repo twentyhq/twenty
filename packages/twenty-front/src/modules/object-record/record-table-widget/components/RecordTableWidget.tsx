@@ -3,7 +3,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { RecordTableWidgetSetReadOnlyColumnHeadersEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetSetReadOnlyColumnHeadersEffect';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTableContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.light};

@@ -11,7 +11,7 @@ import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
 import styles from './ColorSchemeCard.module.scss';
 
 // controls is no longer used since the hover animation is CSS-only now, but it
-// stays in the exported type for public API parity with twenty-ui-deprecated.
+// stays in the exported type for backward-compatible public API parity.
 export type ColorSchemeSegmentProps = {
   variant: ColorScheme;
   controls: AnimationControls;

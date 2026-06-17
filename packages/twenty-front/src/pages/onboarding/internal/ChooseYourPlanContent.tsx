@@ -16,10 +16,10 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Loader } from 'twenty-ui-deprecated/feedback';
-import { CardPicker, MainButton } from 'twenty-ui-deprecated/input';
-import { CAL_LINK, ClickToActionLink } from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Loader } from 'twenty-ui/feedback';
+import { CardPicker, MainButton } from 'twenty-ui/input';
+import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { BillingPlanKey, type Billing } from '~/generated-metadata/graphql';
 
 const StyledSubscriptionContainer = styled.div<{
