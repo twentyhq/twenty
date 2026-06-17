@@ -70,6 +70,15 @@ describe('rewriteTriggerVariablesToPayload', () => {
     expect(value).toBe('{{trigger.metadata.workspaceMemberId}}');
   });
 
+  it('leaves the legacy _metadata key untouched', () => {
+    const { value, changed } = rewriteTriggerVariablesToPayload(
+      '{{trigger._metadata.workspaceMemberId}}',
+    );
+
+    expect(changed).toBe(false);
+    expect(value).toBe('{{trigger._metadata.workspaceMemberId}}');
+  });
+
   it('does not touch references to other steps', () => {
     const { value, changed } = rewriteTriggerVariablesToPayload({
       body: '{{a1b2c3.trigger.name}} {{step-2.email}}',
