@@ -21,6 +21,8 @@ import {
 } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
+const TOOL_SCHEMA_RESOLUTION_TIMEOUT_MS = 10_000;
+
 @Injectable()
 export class ToolRegistryService {
   private readonly logger = new Logger(ToolRegistryService.name);
@@ -80,20 +82,33 @@ export class ToolRegistryService {
         continue;
       }
 
-      const fullDescriptors = await provider.generateDescriptors(context, {
-        includeSchemas: true,
-      });
-
       const entryNameSet = new Set(entries.map((entry) => entry.name));
 
-      for (const descriptor of fullDescriptors) {
-        if (
-          entryNameSet.has(descriptor.name) &&
-          'inputSchema' in descriptor &&
-          descriptor.inputSchema
-        ) {
-          schemas.set(descriptor.name, descriptor.inputSchema);
+      try {
+        const fullDescriptors = await this.withTimeout(
+          provider.generateDescriptors(context, {
+            includeSchemas: true,
+          }),
+          TOOL_SCHEMA_RESOLUTION_TIMEOUT_MS,
+          `Timed out while resolving tool schemas for category "${category}" after ${TOOL_SCHEMA_RESOLUTION_TIMEOUT_MS}ms`,
+        );
+
+        for (const descriptor of fullDescriptors) {
+          if (
+            entryNameSet.has(descriptor.name) &&
+            'inputSchema' in descriptor &&
+            descriptor.inputSchema
+          ) {
+            schemas.set(descriptor.name, descriptor.inputSchema);
+          }
         }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+
+        this.logger.warn(
+          `Failed to resolve tool schemas for category "${category}" in workspace "${context.workspaceId}": ${errorMessage}`,
+        );
       }
     }
 
@@ -329,6 +344,28 @@ export class ToolRegistryService {
     );
 
     return toolSet;
+  }
+
+  private async withTimeout<TData>(
+    promise: Promise<TData>,
+    timeoutMs: number,
+    timeoutMessage: string,
+  ): Promise<TData> {
+    let timeoutHandle: NodeJS.Timeout | undefined;
+
+    const timeoutPromise = new Promise<TData>((_, reject) => {
+      timeoutHandle = setTimeout(() => {
+        reject(new Error(timeoutMessage));
+      }, timeoutMs);
+    });
+
+    try {
+      return await Promise.race([promise, timeoutPromise]);
+    } finally {
+      if (timeoutHandle) {
+        clearTimeout(timeoutHandle);
+      }
+    }
   }
 
   private buildContextFromToolContext(

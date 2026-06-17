@@ -141,11 +141,40 @@ export class ChatExecutionService {
       `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
     );
 
-    const preloadedTools = await this.toolRegistry.getToolsByName(
-      AI_CHAT_TOOL_NAMES_TO_PRELOAD,
-      toolContext,
-      { compactOutput: true },
-    );
+    const preloadStartedAt = performance.now();
+    let preloadedTools: ToolSet = {};
+
+    try {
+      preloadedTools = await this.toolRegistry.getToolsByName(
+        AI_CHAT_TOOL_NAMES_TO_PRELOAD,
+        toolContext,
+        { compactOutput: true },
+      );
+
+      this.logger.log(
+        `Preloaded ${Object.keys(preloadedTools).length}/${AI_CHAT_TOOL_NAMES_TO_PRELOAD.length} tools in ${Math.round(performance.now() - preloadStartedAt)}ms`,
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      this.logger.warn(
+        `Failed to preload AI chat tools in workspace "${workspace.id}" after ${Math.round(performance.now() - preloadStartedAt)}ms: ${errorMessage}`,
+      );
+
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: {
+          id: workspace.id,
+        },
+        user: {
+          id: userId,
+        },
+        additionalData: {
+          phase: 'ai-chat-tool-preload',
+          requestedToolNames: AI_CHAT_TOOL_NAMES_TO_PRELOAD,
+        },
+      });
+    }
 
     const resolvedModelId = modelId ?? workspace.smartModel;
 
