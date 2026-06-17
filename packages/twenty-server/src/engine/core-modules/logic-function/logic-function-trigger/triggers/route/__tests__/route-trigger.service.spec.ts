@@ -150,8 +150,7 @@ const createSharedWebhookIngressSettings =
     ],
     signatureVerification: {
       type: 'svix',
-      secretApplicationRegistrationVariableName:
-        WEBHOOK_SECRET_VARIABLE_NAME,
+      secretApplicationRegistrationVariableName: WEBHOOK_SECRET_VARIABLE_NAME,
     },
   });
 
