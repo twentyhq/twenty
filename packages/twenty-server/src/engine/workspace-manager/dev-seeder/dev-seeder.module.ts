@@ -14,6 +14,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
+import { RolePermissionFlagModule } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.module';
 import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
@@ -40,6 +41,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceCacheStorageModule,
     TypeORMModule,
     RoleModule,
+    RolePermissionFlagModule,
     RoleTargetModule,
     UserRoleModule,
     ApiKeyModule,

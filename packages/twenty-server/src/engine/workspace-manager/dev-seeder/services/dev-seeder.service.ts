@@ -33,6 +33,7 @@ import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/u
 import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
+import { seedTwoFactorAuthenticationMethods } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-two-factor-authentication-methods.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
@@ -310,6 +311,11 @@ export class DevSeederService {
       await seedServerId({ queryRunner, schemaName });
       await seedUsers({ queryRunner, schemaName });
       await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
+      await seedTwoFactorAuthenticationMethods({
+        queryRunner,
+        schemaName,
+        workspaceId,
+      });
 
       await this.applicationService.createTwentyStandardApplication(
         {

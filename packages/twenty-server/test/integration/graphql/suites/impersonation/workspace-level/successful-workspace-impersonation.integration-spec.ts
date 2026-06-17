@@ -11,7 +11,7 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 // guard lets Jane impersonate Jony at the workspace level.
 const IMPERSONATOR_ACCESS_TOKEN = APPLE_JANE_ADMIN_ACCESS_TOKEN;
 
-describe('Impersonation - successful workspace-level flow (integration)', () => {
+describe('Workspace-level impersonation - successful flow (integration)', () => {
   it('lets a workspace admin impersonate a member and obtain a usable access token', async () => {
     const { data: impersonateData, errors: impersonateErrors } =
       await impersonate({
