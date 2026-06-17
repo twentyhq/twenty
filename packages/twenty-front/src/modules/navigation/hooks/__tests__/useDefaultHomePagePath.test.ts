@@ -188,11 +188,6 @@ describe('useDefaultHomePagePath', () => {
       expect(result.current.defaultHomePagePath).toEqual('/objects/people');
     });
   });
-  // Regression: a folder child has a folder-local position starting at 0, so a
-  // raw global position sort would hoist it above a top-level item at position
-  // 1. The redirect must honor the sidebar display order (top-level items
-  // first, folder children nested under their folder), landing on the
-  // top-level item.
   it('should honor display order over a lower-positioned item nested in a folder', async () => {
     const { result } = renderHooks({
       withCurrentUser: true,
