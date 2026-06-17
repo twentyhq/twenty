@@ -56,6 +56,31 @@ const buildFolderNavigationMenuItem = (
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
 
+const buildPageLayoutNavigationMenuItem = (
+  pageLayoutId: string,
+  position: number,
+): NavigationMenuItem => ({
+  __typename: 'NavigationMenuItem',
+  id: `navigation-menu-item-page-layout-${pageLayoutId}`,
+  type: NavigationMenuItemType.PAGE_LAYOUT,
+  pageLayoutId,
+  position,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
+});
+
+const buildLinkNavigationMenuItem = (
+  position: number,
+): NavigationMenuItem => ({
+  __typename: 'NavigationMenuItem',
+  id: `navigation-menu-item-link-${position}`,
+  type: NavigationMenuItemType.LINK,
+  link: 'https://example.com',
+  position,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
+});
+
 const buildViewNavigationMenuItem = (
   viewId: string,
   position: number,
@@ -196,6 +221,34 @@ describe('useDefaultHomePagePath', () => {
         buildObjectNavigationMenuItem('company', 0, 'folder-1'),
         buildObjectNavigationMenuItem('person', 1),
         buildFolderNavigationMenuItem('folder-1', 2),
+      ],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual('/objects/people');
+    });
+  });
+  it('should redirect to a PAGE_LAYOUT navigation menu item as homepage', async () => {
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [
+        buildPageLayoutNavigationMenuItem('page-layout-1', 0),
+        buildObjectNavigationMenuItem('person', 1),
+      ],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual('/page/page-layout-1');
+    });
+  });
+  it('should skip a LINK navigation menu item and use the next valid item', async () => {
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [
+        buildLinkNavigationMenuItem(0),
+        buildObjectNavigationMenuItem('person', 1),
       ],
     });
 

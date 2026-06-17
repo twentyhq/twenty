@@ -3,7 +3,7 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
-import { getFirstObjectNavigationMenuItemLink } from '@/navigation/utils/getFirstObjectNavigationMenuItemLink';
+import { getFirstNavigationMenuItemLink } from '@/navigation/utils/getFirstNavigationMenuItemLink';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
@@ -57,9 +57,9 @@ export const useDefaultHomePagePath = () => {
     [views],
   );
 
-  const firstObjectNavigationMenuItemLink = useMemo(
+  const firstNavigationMenuItemLink = useMemo(
     () =>
-      getFirstObjectNavigationMenuItemLink({
+      getFirstNavigationMenuItemLink({
         navigationMenuItemsInDisplayOrder,
         objectMetadataItems,
         views,
@@ -110,8 +110,8 @@ export const useDefaultHomePagePath = () => {
       return AppPath.Index;
     }
 
-    if (isDefined(firstObjectNavigationMenuItemLink)) {
-      return firstObjectNavigationMenuItemLink;
+    if (isDefined(firstNavigationMenuItemLink)) {
+      return firstNavigationMenuItemLink;
     }
 
     if (!isDefined(firstObjectPathInfo)) {
@@ -130,7 +130,7 @@ export const useDefaultHomePagePath = () => {
     readableNonSystemObjectMetadataItems,
     areObjectMetadataItemsLoaded,
     areNavigationMenuItemsLoaded,
-    firstObjectNavigationMenuItemLink,
+    firstNavigationMenuItemLink,
     firstObjectPathInfo,
   ]);
 

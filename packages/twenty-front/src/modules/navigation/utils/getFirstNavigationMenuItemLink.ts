@@ -8,7 +8,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-type GetFirstObjectNavigationMenuItemLinkArgs = {
+type GetFirstNavigationMenuItemLinkArgs = {
   navigationMenuItemsInDisplayOrder: NavigationMenuItem[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
   views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[];
@@ -17,35 +17,43 @@ type GetFirstObjectNavigationMenuItemLinkArgs = {
   >[0];
 };
 
-export const getFirstObjectNavigationMenuItemLink = ({
+const OBJECT_BACKED_NAVIGATION_MENU_ITEM_TYPES = [
+  NavigationMenuItemType.OBJECT,
+  NavigationMenuItemType.VIEW,
+  NavigationMenuItemType.RECORD,
+];
+
+export const getFirstNavigationMenuItemLink = ({
   navigationMenuItemsInDisplayOrder,
   objectMetadataItems,
   views,
   objectPermissionsByObjectMetadataId,
-}: GetFirstObjectNavigationMenuItemLinkArgs): string | null => {
+}: GetFirstNavigationMenuItemLinkArgs): string | null => {
   for (const item of navigationMenuItemsInDisplayOrder) {
     if (
-      item.type !== NavigationMenuItemType.OBJECT &&
-      item.type !== NavigationMenuItemType.VIEW
+      item.type === NavigationMenuItemType.FOLDER ||
+      item.type === NavigationMenuItemType.LINK
     ) {
       continue;
     }
 
-    const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
-      item,
-      objectMetadataItems,
-      views,
-    );
+    if (OBJECT_BACKED_NAVIGATION_MENU_ITEM_TYPES.includes(item.type)) {
+      const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
+        item,
+        objectMetadataItems,
+        views,
+      );
 
-    if (
-      !isDefined(objectMetadataItem) ||
-      objectMetadataItem.isSystem ||
-      !getObjectPermissionsForObject(
-        objectPermissionsByObjectMetadataId,
-        objectMetadataItem.id,
-      ).canReadObjectRecords
-    ) {
-      continue;
+      if (
+        !isDefined(objectMetadataItem) ||
+        objectMetadataItem.isSystem ||
+        !getObjectPermissionsForObject(
+          objectPermissionsByObjectMetadataId,
+          objectMetadataItem.id,
+        ).canReadObjectRecords
+      ) {
+        continue;
+      }
     }
 
     const link = getNavigationMenuItemComputedLink(
