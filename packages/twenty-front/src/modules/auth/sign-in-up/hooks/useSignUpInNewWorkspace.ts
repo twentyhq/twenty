@@ -1,5 +1,8 @@
+import { useAuth } from '@/auth/hooks/useAuth';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AppPath } from 'twenty-shared/types';
 import { useMutation } from '@apollo/client/react';
@@ -13,6 +16,10 @@ import { useLingui } from '@lingui/react/macro';
 
 export const useSignUpInNewWorkspace = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const { getAuthTokensFromLoginToken } = useAuth();
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
@@ -62,12 +69,18 @@ export const useSignUpInNewWorkspace = () => {
         }
       }
 
+      const loginToken = data.signUpInNewWorkspace.loginToken.token;
+
+      // Single-workspace self-host has no subdomain to redirect to, so we
+      // authenticate in place and let onboarding take over on the same domain.
+      if (!isMultiWorkspaceEnabled) {
+        return await getAuthTokensFromLoginToken(loginToken);
+      }
+
       return await redirectToWorkspaceDomain(
         getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
         AppPath.Verify,
-        {
-          loginToken: data.signUpInNewWorkspace.loginToken.token,
-        },
+        { loginToken },
         newTab ? '_blank' : '_self',
       );
     } catch (error) {
