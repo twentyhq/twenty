@@ -1,5 +1,5 @@
 import 'react-grid-layout/css/styles.css';
-import 'react-grid-layout/css/resizable.css';
+import 'react-resizable/css/styles.css';
 
 import { type ReactNode, useMemo } from 'react';
 import {
