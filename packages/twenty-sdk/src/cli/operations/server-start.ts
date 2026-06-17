@@ -8,9 +8,10 @@ import {
   containerExists,
   DEFAULT_PORT,
   DEFAULT_TEST_PORT,
+  getContainerImageTag,
   getContainerPort,
   getDockerNotRunningMessage,
-  IMAGE,
+  getImageForVersion,
   isContainerRunning,
   TEST_CONTAINER_NAME,
 } from '@/cli/utilities/server/docker-container';
@@ -18,7 +19,9 @@ import {
   checkServerHealth,
   detectLocalServer,
 } from '@/cli/utilities/server/detect-local-server';
+import { serverUpgrade } from '@/cli/operations/server-upgrade';
 import { checkServerVersionCompatibility } from '@/cli/utilities/version/check-server-version-compatibility';
+import { resolveHighestEngineVersion } from '@/cli/utilities/version/resolve-highest-engine-version';
 import { execSync, spawn, spawnSync } from 'node:child_process';
 import chalk from 'chalk';
 
@@ -107,6 +110,7 @@ const waitForHealthy = async (
 export type ServerStartOptions = {
   port?: number;
   test?: boolean;
+  version?: string;
   onProgress?: (message: string) => void;
 };
 
@@ -120,6 +124,9 @@ const innerServerStart = async (
 ): Promise<CommandResult<ServerStartResult>> => {
   const { onProgress, test: isTest } = options;
 
+  const version = await resolveHighestEngineVersion(options.version);
+  const image = getImageForVersion(version);
+
   const containerName = isTest ? TEST_CONTAINER_NAME : CONTAINER_NAME;
   const defaultPort = isTest ? DEFAULT_TEST_PORT : DEFAULT_PORT;
   const volumeData = isTest
@@ -128,6 +135,26 @@ const innerServerStart = async (
   const volumeStorage = isTest
     ? 'twenty-app-dev-test-storage'
     : 'twenty-app-dev-storage';
+
+  if (checkDockerRunning() && containerExists(containerName)) {
+    const currentImage = getContainerImageTag(containerName);
+
+    if (currentImage !== null && currentImage !== image) {
+      onProgress?.(
+        `Existing container runs ${currentImage}; upgrading to ${image}...`,
+      );
+
+      const upgradeResult = await serverUpgrade({
+        version,
+        test: isTest,
+        onProgress,
+      });
+
+      if (!upgradeResult.success) {
+        return { success: false, error: upgradeResult.error };
+      }
+    }
+  }
 
   const existingUrl = await detectLocalServer(options.port ?? defaultPort);
 
@@ -150,9 +177,13 @@ const innerServerStart = async (
   }
 
   if (!checkDockerRunning()) {
-    const retryCommand = isTest
-      ? 'yarn twenty docker:start --test'
-      : 'yarn twenty docker:start';
+    const retryCommand = [
+      'yarn twenty docker:start',
+      version !== 'latest' ? version : null,
+      isTest ? '--test' : null,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     return {
       success: false,
@@ -211,7 +242,9 @@ const innerServerStart = async (
     onProgress?.('Starting existing container...');
     execSync(`docker start ${containerName}`, { stdio: 'ignore' });
   } else {
-    onProgress?.('Pulling Docker image and starting Twenty container...');
+    onProgress?.(
+      `Pulling Docker image (${image}) and starting Twenty container...`,
+    );
 
     const runResult = spawnSync(
       'docker',
@@ -230,7 +263,7 @@ const innerServerStart = async (
         `${volumeData}:/data/postgres`,
         '-v',
         `${volumeStorage}:/app/packages/twenty-server/.local-storage`,
-        IMAGE,
+        image,
       ],
       { stdio: 'inherit' },
     );
