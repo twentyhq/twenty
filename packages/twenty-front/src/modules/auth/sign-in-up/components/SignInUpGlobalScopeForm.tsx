@@ -11,7 +11,6 @@ import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboar
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
-import { SignInUpWorkspaceCreationForm } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import {
@@ -221,42 +220,38 @@ export const SignInUpGlobalScopeForm = () => {
           </StyledWorkspaceContainer>
         </StyledOnboardingContentContainer>
       )}
-      {signInUpStep === SignInUpStep.WorkspaceCreation && (
-        <SignInUpWorkspaceCreationForm />
+      {signInUpStep !== SignInUpStep.WorkspaceSelection && (
+        <StyledOnboardingContentContainer>
+          {authProviders.google && (
+            <SignInUpWithGoogle
+              action="list-available-workspaces"
+              isGlobalScope
+            />
+          )}
+          {authProviders.microsoft && (
+            <SignInUpWithMicrosoft
+              action="list-available-workspaces"
+              isGlobalScope
+            />
+          )}
+          {(authProviders.google || authProviders.microsoft) && (
+            <HorizontalSeparator />
+          )}
+          {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+          <FormProvider {...form}>
+            <SignInUpWithCredentials isGlobalScope />
+          </FormProvider>
+          {signInUpStep === SignInUpStep.Password && (
+            <StyledForgotPasswordLinkContainer>
+              <ClickToActionLink
+                onClick={handleResetPassword(form.getValues('email'))}
+              >
+                <Trans>Forgot your password?</Trans>
+              </ClickToActionLink>
+            </StyledForgotPasswordLinkContainer>
+          )}
+        </StyledOnboardingContentContainer>
       )}
-      {signInUpStep !== SignInUpStep.WorkspaceSelection &&
-        signInUpStep !== SignInUpStep.WorkspaceCreation && (
-          <StyledOnboardingContentContainer>
-            {authProviders.google && (
-              <SignInUpWithGoogle
-                action="list-available-workspaces"
-                isGlobalScope
-              />
-            )}
-            {authProviders.microsoft && (
-              <SignInUpWithMicrosoft
-                action="list-available-workspaces"
-                isGlobalScope
-              />
-            )}
-            {(authProviders.google || authProviders.microsoft) && (
-              <HorizontalSeparator />
-            )}
-            {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-            <FormProvider {...form}>
-              <SignInUpWithCredentials isGlobalScope />
-            </FormProvider>
-            {signInUpStep === SignInUpStep.Password && (
-              <StyledForgotPasswordLinkContainer>
-                <ClickToActionLink
-                  onClick={handleResetPassword(form.getValues('email'))}
-                >
-                  <Trans>Forgot your password?</Trans>
-                </ClickToActionLink>
-              </StyledForgotPasswordLinkContainer>
-            )}
-          </StyledOnboardingContentContainer>
-        )}
     </>
   );
 };
