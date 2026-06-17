@@ -158,12 +158,17 @@ export class BillingPortalWorkspaceService {
         },
       );
 
+    // Validate the Stripe response before persisting, so a malformed response
+    // doesn't leave a synced subscription that blocks the user from retrying.
+    const paymentIntent =
+      this.extractSubscriptionClientSecret(stripeSubscription);
+
     await this.billingSubscriptionService.syncSubscriptionToDatabase(
       workspace.id,
       stripeSubscription.id,
     );
 
-    return this.extractSubscriptionClientSecret(stripeSubscription);
+    return paymentIntent;
   }
 
   private assertNoActiveSubscription(
