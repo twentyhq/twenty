@@ -22,7 +22,8 @@ export const IMPERSONATION_DENIAL_BY_REASON: Record<
   SERVER_LEVEL_2FA_PROVISION_REQUIRED: {
     message:
       'Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.',
-    exceptionCode: AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
+    exceptionCode:
+      AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
     userFriendlyMessage: msg`Set up two-factor authentication before impersonating users in another workspace.`,
   },
   SERVER_LEVEL_2FA_VERIFICATION_REQUIRED: {
