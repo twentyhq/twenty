@@ -15,7 +15,7 @@ const INFORMATION_BANNER_UPGRADE_CREDIT_PLAN_MODAL_ID =
 export const InformationBannerNoMoreCredits = () => {
   const { t } = useLingui();
 
-  const { [PermissionFlagType.WORKSPACE]: hasPermissionToUpdateCreditPlan } =
+  const { [PermissionFlagType.BILLING]: hasPermissionToUpdateCreditPlan } =
     usePermissionFlagMap();
 
   const navigateSettings = useNavigateSettings();

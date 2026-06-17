@@ -15,15 +15,23 @@ export class AddHasPaymentMethodToBillingCustomerFastInstanceCommand
     if (tableExists.length === 0) {
       return;
     }
-    
+
     await queryRunner.query(
-      'ALTER TABLE "core"."billingCustomer" ADD "hasPaymentMethod" boolean',
+      `ALTER TABLE "core"."billingCustomer" ADD COLUMN IF NOT EXISTS "hasPaymentMethod" boolean`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    const tableExists = await queryRunner.query(
+      `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCustomer'`,
+    );
+
+    if (tableExists.length === 0) {
+      return;
+    }
+
     await queryRunner.query(
-      'ALTER TABLE "core"."billingCustomer" DROP COLUMN "hasPaymentMethod"',
+      `ALTER TABLE "core"."billingCustomer" DROP COLUMN IF EXISTS "hasPaymentMethod"`,
     );
   }
 }

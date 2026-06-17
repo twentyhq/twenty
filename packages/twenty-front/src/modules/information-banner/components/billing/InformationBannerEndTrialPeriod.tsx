@@ -16,7 +16,7 @@ export const InformationBannerEndTrialPeriod = () => {
   const { t } = useLingui();
   const { openModal } = useModal();
 
-  const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
+  const { [PermissionFlagType.BILLING]: hasPermissionToEndTrialPeriod } =
     usePermissionFlagMap();
 
   const billingHasPaymentMethod = useAtomStateValue(

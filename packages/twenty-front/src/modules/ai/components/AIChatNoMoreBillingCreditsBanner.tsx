@@ -23,7 +23,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
 
   const { openModal } = useModal();
 
-  const { [PermissionFlagType.WORKSPACE]: hasPermissionToManageBilling } =
+  const { [PermissionFlagType.BILLING]: hasPermissionToManageBilling } =
     usePermissionFlagMap();
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
