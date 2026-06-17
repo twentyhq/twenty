@@ -1,11 +1,11 @@
-// The mockup's tone tables (single module). The product-color groups derive
+// The mockup's tone tables (single module). Every product-color group derives
 // straight from twenty-ui: TAG (tag color3/11), SIDEBAR (TintedIconTile
-// color5/6/11), DASHBOARD_CHART (graph color8), WORKFLOW_CANVAS (blue/red
-// trigger+action, turquoise tag), RECORD_FILE_SHEET_INK (turquoise).
-// Still authored (no product equivalent): TERMINAL + EDITOR (the bespoke AI
-// window), the PRODUCT_VISUAL cursor inks, RECORD_NOTE_HIGHLIGHT_SHADOW, and
-// WORKFLOW_AVATAR_INK (product uses gray for workflow avatars — drift to
-// resolve on the workflow page).
+// color5/6/11), DASHBOARD_CHART (graph color8), WORKFLOW_CANVAS (blue/red +
+// turquoise tag), WORKFLOW_AVATAR_INK (gray11), RECORD_FILE_SHEET_INK
+// (turquoise), PRODUCT_VISUAL washes (transparent ramp + primary ink).
+// Only genuinely authored marketing art remains: TERMINAL + EDITOR (the
+// bespoke AI window), the PRODUCT_VISUAL collaborator-cursor inks, and the
+// box-shadows (e.g. RECORD_NOTE_HIGHLIGHT_SHADOW).
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 type ToneSurface = { background: string; border: string; color: string };
@@ -76,13 +76,14 @@ function hexToRgbTuple(hex: string): string {
   return [(value >> 16) & 255, (value >> 8) & 255, value & 255].join(', ');
 }
 
-// The product hero's Ask-AI panel inks (authored chrome washes + the
-// Claude brand mark).
+// The Ask-AI panel washes map onto twenty-ui's transparent ramp + primary
+// ink. The three collaborator-cursor inks have no product equivalent
+// (authored marketing identities).
 const PRODUCT_VISUAL = {
-  userMessageBackground: '#f1f1f1',
-  entityChipBackground: 'rgba(0, 0, 0, 0.04)',
-  inputBoxBackground: 'rgba(0, 0, 0, 0.02)',
-  cursorLabelInk: '#1f1f1f',
+  userMessageBackground: THEME_LIGHT.background.transparent.medium,
+  entityChipBackground: THEME_LIGHT.background.transparent.light,
+  inputBoxBackground: THEME_LIGHT.background.transparent.lighter,
+  cursorLabelInk: THEME_LIGHT.font.color.primary,
   heroCursorInks: {
     alice: '#ffb08d',
     ben: '#8db4ff',
@@ -97,8 +98,9 @@ const RECORD_FILE_SHEET_INK = THEME_LIGHT.color.turquoise;
 // The lift shadow under a scenario-highlighted note card (authored).
 const RECORD_NOTE_HIGHLIGHT_SHADOW = '0 4px 14px rgba(0, 0, 0, 0.06)';
 
-// The named-workflow avatar ink (authored data color).
-const WORKFLOW_AVATAR_INK = '#451E11';
+// The product assigns gray to workflow objects (getObjectColorWithFallback),
+// so the named-workflow avatar letter inks gray (matching the gray tone).
+const WORKFLOW_AVATAR_INK = THEME_LIGHT.color.gray11;
 
 // The product's workflow-node colors: blue trigger, red action, a turquoise
 // "completed" tag, and the neutral medium border for edges.
