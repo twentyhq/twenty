@@ -44,8 +44,8 @@ export const PARTNER_APPLICATION_FIELD_COPY = {
   partnerScope: msg`What you cover *`,
   partnerScopeHint: msg`Pick every category that applies.`,
   skills: msg`Technical skills`,
-  skillsHint: msg`Press Enter or comma to add a skill.`,
-  skillsPlaceholder: msg`e.g. React, Postgres, n8n…`,
+  skillsHint: msg`Tools, technologies and industries you specialize in. Press Enter or comma to add.`,
+  skillsPlaceholder: msg`e.g. n8n, Shopify, Real estate…`,
   applicationNotes: msg`Anything else we should know?`,
   applicationNotesPlaceholder: msg`Workspace URL, customer references, relevant links…`,
   // Commercials

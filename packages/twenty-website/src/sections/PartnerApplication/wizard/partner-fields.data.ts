@@ -71,96 +71,54 @@ export const PARTNER_SCOPE_OPTIONS: ReadonlyArray<{
   },
 ];
 
-// Shown as ghost chips by default — a short set that leads with the partnership
-// value (data modeling, CRM strategy, migration) rather than raw tech. No
-// competitor CRMs: a migration off any tool is just "CRM migration".
+// Shown as ghost chips by default. Technical skills COMPLEMENT "What you cover"
+// (the service categories): they name the specific tools, technologies and
+// industries a partner brings, not the service itself. No competitor CRMs —
+// a migration off any tool is just "CRM migration".
 export const PARTNER_SKILL_SUGGESTIONS: ReadonlyArray<string> = [
-  'Data modeling',
-  'CRM strategy & discovery',
   'CRM migration',
-  'Workflows & automation',
-  'Integrations',
-  'Change management',
-  'Training & onboarding',
-  'Custom development',
-  'Self-hosting',
-  'AI agents',
-];
-
-// Searchable-only (autocomplete) — depth across data/advisory/ops first, then
-// engineering and verticals. Surfaced when the applicant types a match; not
-// shown as chips. Deliberately excludes competitor CRMs (Salesforce, HubSpot,
-// Attio, Pipedrive, …) — we don't showcase another CRM.
-export const PARTNER_SKILL_POOL: ReadonlyArray<string> = [
-  // Data & CRM model
-  'Data architecture',
-  'Data migration',
-  'Data quality',
-  'Data enrichment',
-  'Reporting & BI',
-  'Forecasting',
-  'Pipeline design',
-  'Lead routing',
-  'Deduplication',
-  // Advisory / RevOps / process
-  'RevOps',
-  'Sales ops',
-  'Requirements gathering',
-  'Process mapping',
-  'Vendor selection',
-  'CRM audit',
-  'Solution architecture',
-  'Quote-to-cash',
-  'Territory management',
-  'Deal desk',
-  // Automation & integration (non-CRM)
-  'No-code automation',
   'n8n',
   'Zapier',
   'Make',
-  'API integration',
-  'Webhooks',
-  'SSO / SCIM',
-  'Multi-language',
-  'WhatsApp',
-  // Engineering & infrastructure
+  'AI agents',
+  'Shopify',
+  'Stripe',
+  'Real estate',
+  'E-commerce',
+];
+
+// Searchable-only (autocomplete) — the rest of the tools, stack and verticals,
+// not shown as chips. Surfaced when the applicant types a match. Excludes
+// competitor CRMs (Salesforce, HubSpot, Attio, …) and anything already covered
+// by the "What you cover" service categories.
+export const PARTNER_SKILL_POOL: ReadonlyArray<string> = [
+  // Stack
   'React',
   'TypeScript',
   'Node.js',
   'Python',
   'PostgreSQL',
   'GraphQL',
+  // Infrastructure
   'Docker',
   'Kubernetes',
   'AWS',
   'GCP',
   'Azure',
   'DevOps',
-  'Security',
-  'Cyber security',
-  // Platforms (non-CRM)
+  // Tools & platforms
   'SAP',
-  'Shopify',
-  'Stripe',
-  // Support & adoption
-  'Managed services',
-  'L1/L2 support',
-  'Documentation',
-  'Onboarding',
-  'Adoption',
-  'Enterprise support',
-  // Compliance
-  'GDPR / data privacy',
-  'Compliance',
-  // AI
+  'WhatsApp',
+  // Specializations
   'AI automations',
+  'Data enrichment',
+  'Cyber security',
   // Verticals
-  'Real estate',
-  'E-commerce',
-  'B2B SaaS',
   'Fintech',
+  'B2B SaaS',
   'Non-profit / NGO',
   'Tax & accounting',
+  'Healthcare',
 ];
 
 export const PARTNER_COUNTRY_VALUES = [
