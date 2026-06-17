@@ -17,18 +17,21 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import { useState } from 'react';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
+import { Chip } from '@/app-preview/primitives/chip';
+import { FaviconLogo } from '@/app-preview/primitives/favicon-logo';
+import { PersonAvatar } from '@/app-preview/primitives/person-avatar';
+import { PreviewTag } from '@/app-preview/primitives/preview-tag';
+import { previewFontSize } from '@/app-preview/preview-font-size';
 import { useHorizontalDragScroll } from '@/platform/motion';
 import { EASING } from '@/tokens';
-import { PRODUCT_FEATURE_PALETTE } from '@/tokens/feature-scenes/product-feature-palette';
-
-const palette = PRODUCT_FEATURE_PALETTE;
 
 const Root = styled.div`
-  background-color: ${palette.background};
+  background-color: ${THEME_LIGHT.background.primary};
   display: flex;
   flex-direction: column;
-  font-family: ${palette.font};
+  font-family: ${THEME_LIGHT.font.family};
   height: 100%;
   overflow: hidden;
   width: 100%;
@@ -36,7 +39,7 @@ const Root = styled.div`
 
 const ViewHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${palette.border};
+  border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
   display: flex;
   gap: 4px;
   height: 34px;
@@ -44,14 +47,14 @@ const ViewHeader = styled.div`
 `;
 
 const ViewTitle = styled.span`
-  color: ${palette.textPrimary};
-  font-size: 13px;
-  font-weight: 500;
+  color: ${THEME_LIGHT.font.color.primary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
 `;
 
 const ViewCount = styled.span`
-  color: ${palette.textTertiary};
-  font-size: 13px;
+  color: ${THEME_LIGHT.font.color.tertiary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
 `;
 
 const TableShell = styled.div`
@@ -62,7 +65,7 @@ const TableShell = styled.div`
 `;
 
 const GripRail = styled.div`
-  background-color: ${palette.background};
+  background-color: ${THEME_LIGHT.background.primary};
   display: grid;
   flex: 0 0 12px;
   grid-auto-rows: 32px;
@@ -70,7 +73,7 @@ const GripRail = styled.div`
 `;
 
 const GripCell = styled.div`
-  border-bottom: 1px solid ${palette.borderLight};
+  border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
 `;
 
 const TableViewport = styled.div`
@@ -118,9 +121,9 @@ const HeaderRow = styled.div`
 
 const Cell = styled.div<{ $width: number }>`
   align-items: center;
-  background-color: ${palette.background};
-  border-bottom: 1px solid ${palette.borderLight};
-  border-right: 1px solid ${palette.borderLight};
+  background-color: ${THEME_LIGHT.background.primary};
+  border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
+  border-right: 1px solid ${THEME_LIGHT.border.color.light};
   box-sizing: border-box;
   display: flex;
   flex: 0 0 ${({ $width }) => `${$width}px`};
@@ -136,7 +139,7 @@ const DataRow = styled.div<{ $index: number }>`
   display: flex;
 
   &:hover > div {
-    background-color: ${palette.rowHoverBackground};
+    background-color: ${THEME_LIGHT.background.transparent.light};
   }
 
   @keyframes rowIn {
@@ -161,9 +164,9 @@ const HeaderContent = styled.div`
 `;
 
 const HeaderLabel = styled.span`
-  color: ${palette.textTertiary};
-  font-size: 13px;
-  font-weight: 500;
+  color: ${THEME_LIGHT.font.color.tertiary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -171,7 +174,7 @@ const HeaderLabel = styled.span`
 
 const HeaderIcon = styled.span`
   align-items: center;
-  color: ${palette.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: inline-flex;
   flex-shrink: 0;
   height: 16px;
@@ -179,137 +182,32 @@ const HeaderIcon = styled.span`
 `;
 
 const EdgePlus = styled.span`
-  color: ${palette.textTertiary};
+  color: ${THEME_LIGHT.font.color.tertiary};
   display: inline-flex;
   margin-left: auto;
 `;
 
-const Chip = styled.div`
-  align-items: center;
-  border-radius: 4px;
-  display: inline-flex;
-  gap: 4px;
-  height: 20px;
+const CellText = styled.span`
+  color: ${THEME_LIGHT.font.color.primary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
   max-width: 100%;
   min-width: 0;
   overflow: hidden;
-  padding: 0 4px;
-
-  &[data-highlighted] {
-    background-color: ${palette.rowHoverBackground};
-  }
-`;
-
-const ChipLabel = styled.span`
-  color: ${palette.textPrimary};
-  font-family: ${palette.font};
-  font-size: 13px;
-  font-weight: 400;
-  max-width: 100%;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  &[data-bold] {
-    font-weight: 500;
-  }
-`;
-
-const LinkChip = styled.div`
-  align-items: center;
-  background-color: ${palette.sunkenBackground};
-  border: 1px solid ${palette.border};
-  border-radius: 999px;
-  display: inline-flex;
-  gap: 4px;
-  height: 20px;
-  max-width: 100%;
-  min-width: 0;
-  overflow: hidden;
-  padding: 0 8px;
-`;
-
-const LinkLabel = styled.span`
-  color: ${palette.textSecondary};
-  font-family: ${palette.font};
-  font-size: 13px;
-  max-width: 100%;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const FaviconFrame = styled.div`
-  align-items: center;
-  border-radius: 4px;
-  display: flex;
-  flex: 0 0 14px;
-  height: 14px;
-  justify-content: center;
-  overflow: hidden;
-  width: 14px;
-`;
-
-const FaviconImage = styled.img`
-  display: block;
-  height: 100%;
-  object-fit: contain;
-  width: 100%;
-`;
-
-const FaviconFallback = styled(FaviconFrame)`
-  background-color: ${palette.sunkenBackground};
-  color: ${palette.textSecondary};
-  font-size: 8px;
-  font-weight: 600;
-`;
-
-const PersonBadge = styled.div<{ $ink: string; $wash: string }>`
-  align-items: center;
-  background-color: ${({ $wash }) => $wash};
-  border-radius: 999px;
-  color: ${({ $ink }) => $ink};
-  display: flex;
-  flex: 0 0 14px;
-  font-family: ${palette.font};
-  font-size: 9px;
-  font-weight: 500;
-  height: 14px;
-  justify-content: center;
-  line-height: 1;
-  overflow: hidden;
-  width: 14px;
-`;
-
-const TagChip = styled.span`
-  align-items: center;
-  background-color: ${palette.sunkenBackground};
-  border-radius: 4px;
-  color: ${palette.textSecondary};
-  display: inline-flex;
-  font-family: ${palette.font};
-  font-size: 13px;
-  height: 20px;
-  max-width: 100%;
-  min-width: 0;
-  overflow: hidden;
-  padding: 0 8px;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
 const BooleanRow = styled.span`
   align-items: center;
-  color: ${palette.textSecondary};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: inline-flex;
   gap: 4px;
 `;
 
 const BooleanText = styled.span`
-  color: ${palette.textSecondary};
-  font-size: 13px;
+  color: ${THEME_LIGHT.font.color.secondary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
 `;
 
 const CheckboxWrap = styled.div`
@@ -324,7 +222,7 @@ const CheckboxWrap = styled.div`
 
 const CheckboxBox = styled.div`
   align-items: center;
-  border: 1px solid ${palette.borderStrong};
+  border: 1px solid ${THEME_LIGHT.border.color.strong};
   border-radius: 3px;
   display: flex;
   height: 14px;
@@ -336,15 +234,15 @@ const CheckboxBox = styled.div`
 
   &:hover,
   &[data-checked] {
-    border-color: ${palette.accent};
+    border-color: ${THEME_LIGHT.border.color.blue};
   }
 
   &[data-checked] {
-    background-color: ${palette.accentSurfaceSoft};
+    background-color: ${THEME_LIGHT.background.transparent.blue};
   }
 `;
 
-type ContactTone = 'amber' | 'blue' | 'gray' | 'pink' | 'purple' | 'teal';
+type ContactTone = 'amber' | 'blue' | 'gray' | 'pink' | 'purple' | 'turquoise';
 
 type ContactPerson = {
   name: string;
@@ -407,7 +305,7 @@ const COMPANIES: ContactCompany[] = [
     domain: 'linkedin.com',
     createdBy: { name: 'Reid Hoffman', tone: 'purple' },
     address: '1226 Moises Causeway',
-    accountOwner: { name: 'Ryan Roslansky', tone: 'teal' },
+    accountOwner: { name: 'Ryan Roslansky', tone: 'turquoise' },
     icp: false,
     arr: '$1,000,000',
     industry: 'Professional Networking',
@@ -415,9 +313,9 @@ const COMPANIES: ContactCompany[] = [
   {
     name: 'Slack',
     domain: 'slack.com',
-    createdBy: { name: 'Stewart Butterfield', tone: 'teal' },
+    createdBy: { name: 'Stewart Butterfield', tone: 'turquoise' },
     address: '1316 Dameon Mountain',
-    accountOwner: { name: 'Stewart Butterfield', tone: 'teal' },
+    accountOwner: { name: 'Stewart Butterfield', tone: 'turquoise' },
     icp: true,
     arr: '$2,300,000',
     industry: 'Collaboration Software',
@@ -500,44 +398,10 @@ const GRIP_CELL_COUNT = 11;
 
 const TOTAL_WIDTH = COLUMNS.reduce((sum, column) => sum + column.width, 0);
 
-function Favicon({ domain, name }: { domain: string; name: string }) {
-  const [failed, setFailed] = useState(false);
-  // The old site loads these favicons from the external icon service
-  // (this fiction predates the shared logo registry); ported verbatim.
-  const url = `https://twenty-icons.com/${domain}`;
-
-  if (failed) {
-    return <FaviconFallback>{name[0]}</FaviconFallback>;
-  }
-
-  return (
-    <FaviconFrame>
-      <FaviconImage
-        alt={`${name} logo`}
-        fetchPriority="low"
-        loading="lazy"
-        src={url}
-        onError={() => setFailed(true)}
-      />
-    </FaviconFrame>
-  );
-}
-
-function PersonChipBadge({ person }: { person: ContactPerson }) {
-  const tone = palette.tones[person.tone];
-  const initials = person.name
-    .split(' ')
-    .map((word) => word[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
-
-  return (
-    <PersonBadge $ink={tone.text} $wash={tone.background}>
-      {initials}
-    </PersonBadge>
-  );
-}
+const GRIP_CELLS = Array.from(
+  { length: GRIP_CELL_COUNT },
+  (_, gripNumber) => gripNumber,
+);
 
 function CellValue({
   columnId,
@@ -549,32 +413,32 @@ function CellValue({
   switch (columnId) {
     case 'company':
       return (
-        <Chip data-highlighted="">
-          <Favicon domain={company.domain} name={company.name} />
-          <ChipLabel data-bold="">{company.name}</ChipLabel>
-        </Chip>
+        <Chip
+          isBold
+          label={company.name}
+          leftComponent={
+            <FaviconLogo domain={company.domain} label={company.name} />
+          }
+          variant="highlighted"
+        />
       );
     case 'url':
-      return (
-        <LinkChip>
-          <LinkLabel>{company.domain}</LinkLabel>
-        </LinkChip>
-      );
+      return <Chip label={company.domain} variant="static" />;
     case 'createdBy':
       return (
-        <Chip>
-          <PersonChipBadge person={company.createdBy} />
-          <ChipLabel>{company.createdBy.name}</ChipLabel>
-        </Chip>
+        <Chip
+          label={company.createdBy.name}
+          leftComponent={<PersonAvatar person={company.createdBy} />}
+        />
       );
     case 'address':
-      return <ChipLabel>{company.address}</ChipLabel>;
+      return <CellText>{company.address}</CellText>;
     case 'accountOwner':
       return (
-        <Chip>
-          <PersonChipBadge person={company.accountOwner} />
-          <ChipLabel>{company.accountOwner.name}</ChipLabel>
-        </Chip>
+        <Chip
+          label={company.accountOwner.name}
+          leftComponent={<PersonAvatar person={company.accountOwner} />}
+        />
       );
     case 'icp':
       return (
@@ -588,16 +452,11 @@ function CellValue({
         </BooleanRow>
       );
     case 'arr':
-      return <ChipLabel>{company.arr}</ChipLabel>;
+      return <CellText>{company.arr}</CellText>;
     case 'industry':
-      return <TagChip>{company.industry}</TagChip>;
+      return <PreviewTag color="gray" label={company.industry} />;
   }
 }
-
-const GRIP_CELLS = Array.from(
-  { length: GRIP_CELL_COUNT },
-  (_, gripNumber) => gripNumber,
-);
 
 export function ContactsVisual({ active: _active }: { active: boolean }) {
   const { i18n } = useLingui();
@@ -697,7 +556,7 @@ export function ContactsVisual({ active: _active }: { active: boolean }) {
                             >
                               {isChecked ? (
                                 <IconCheck
-                                  color={palette.accent}
+                                  color={THEME_LIGHT.border.color.blue}
                                   size={9}
                                   stroke={2}
                                 />
