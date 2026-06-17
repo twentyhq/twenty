@@ -72,10 +72,11 @@ export class MigrateManualTriggerVariablesToPayloadCommand extends ActiveOrSuspe
         continue;
       }
 
+      // Trigger references only appear in downstream steps, never in the
+      // trigger object itself, so only the steps need rewriting.
       const migratedSteps = rewriteTriggerVariablesToPayload(version.steps);
-      const migratedTrigger = rewriteTriggerVariablesToPayload(version.trigger);
 
-      if (!migratedSteps.changed && !migratedTrigger.changed) {
+      if (!migratedSteps.changed) {
         continue;
       }
 
@@ -86,8 +87,7 @@ export class MigrateManualTriggerVariablesToPayloadCommand extends ActiveOrSuspe
       }
 
       await workflowVersionRepository.update(version.id, {
-        ...(migratedSteps.changed ? { steps: migratedSteps.value } : {}),
-        ...(migratedTrigger.changed ? { trigger: migratedTrigger.value } : {}),
+        steps: migratedSteps.value,
       });
     }
 
