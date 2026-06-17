@@ -47,7 +47,6 @@ const MAPPINGS: {
 const Root = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
   display: flex;
-  flex-direction: column;
   font-family: ${THEME_LIGHT.font.family};
   height: 100%;
   justify-content: center;
@@ -66,7 +65,7 @@ const HeaderRow = styled.div`
   border-bottom: 1px solid ${THEME_LIGHT.border.color.medium};
   display: flex;
   flex-shrink: 0;
-  min-height: 32px;
+  min-height: 40px;
 `;
 
 const HeaderCell = styled.span`
@@ -74,7 +73,7 @@ const HeaderCell = styled.span`
   color: ${THEME_LIGHT.font.color.light};
   display: flex;
   flex: 1;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.xs)};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.semiBold};
   padding: 0 16px;
 `;
