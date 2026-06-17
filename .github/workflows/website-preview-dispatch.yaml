@@ -35,18 +35,28 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Mint ci-privileged dispatch token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-privileged
+          permission-actions: write
+
       - name: Dispatch website-preview-build to ci-privileged
         env:
-          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
-          gh api repos/twentyhq/ci-privileged/dispatches \
-            -f event_type=website-preview-build \
-            -f "client_payload[pr_number]=$PR_NUMBER" \
-            -f "client_payload[pr_head_sha]=$PR_HEAD_SHA" \
-            -f "client_payload[pr_head_ref]=$PR_HEAD_REF"
+          gh workflow run website-preview.yaml --repo twentyhq/ci-privileged --ref main \
+            -f action=build \
+            -f pr_number="$PR_NUMBER" \
+            -f pr_head_sha="$PR_HEAD_SHA" \
+            -f pr_head_ref="$PR_HEAD_REF"
 
   trigger-cleanup:
     # Covers both merge and close-without-merge — pull_request `closed` fires
@@ -59,11 +69,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Mint ci-privileged dispatch token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-privileged
+          permission-actions: write
+
       - name: Dispatch website-preview-cleanup to ci-privileged
         env:
-          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          gh api repos/twentyhq/ci-privileged/dispatches \
-            -f event_type=website-preview-cleanup \
-            -f "client_payload[pr_number]=$PR_NUMBER"
+          gh workflow run website-preview.yaml --repo twentyhq/ci-privileged --ref main \
+            -f action=cleanup \
+            -f pr_number="$PR_NUMBER"

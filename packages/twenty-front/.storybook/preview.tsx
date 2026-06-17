@@ -22,6 +22,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui-deprecated/style.css';
 import 'twenty-ui-deprecated/theme-light.css';
 import 'twenty-ui-deprecated/theme-dark.css';
+import 'twenty-ui/style.css';
 import { ThemeProvider } from 'twenty-ui-deprecated/theme-constants';
 // oxlint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';

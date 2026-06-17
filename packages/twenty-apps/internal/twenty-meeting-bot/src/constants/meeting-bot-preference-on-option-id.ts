@@ -1,2 +1,2 @@
 export const MEETING_BOT_PREFERENCE_ON_OPTION_ID =
-  'd7b437b1-d6a3-4e99-8bb8-ba632d4a544e';
+  '72431216-49c4-47c8-99af-de4c3831b0be';
