@@ -590,6 +590,7 @@ const searchThroughManualTriggerOutputSchema = ({
   rawVariableName: string;
   isFullRecord: boolean;
 }): VariableSearchResult => {
+  // Legacy/edge: a bare record schema at the root (before payload nesting).
   if (isRecordOutputSchemaV2(manualTriggerOutputSchema)) {
     return searchThroughRecordOutputSchema({
       stepName,
@@ -599,11 +600,59 @@ const searchThroughManualTriggerOutputSchema = ({
     });
   }
 
-  return searchThroughBaseOutputSchema({
-    stepName,
-    baseOutputSchema: manualTriggerOutputSchema as BaseOutputSchemaV2,
-    rawVariableName,
-  });
+  if (!isObject(manualTriggerOutputSchema)) {
+    return EMPTY_RESULT;
+  }
+
+  const parts = parseVariablePath(stripBrackets(rawVariableName));
+  const stepId = parts[0];
+  const nodeKey = parts[1];
+
+  if (!isDefined(stepId) || !isDefined(nodeKey)) {
+    return EMPTY_RESULT;
+  }
+
+  // The trigger exposes `payload` (the triggering record(s)) and `metadata`
+  // as nested nodes, so descend into the matching node's value — which is a
+  // record schema for single-record triggers and a plain map otherwise —
+  // before searching, the same way find-records descends into `first`.
+  const node = (manualTriggerOutputSchema as BaseOutputSchemaV2)[nodeKey];
+
+  if (!isDefined(node) || node.isLeaf === true || !isDefined(node.value)) {
+    return EMPTY_RESULT;
+  }
+
+  const innerSchema: unknown = node.value;
+  const remainingParts = parts.slice(2);
+  const fieldName = remainingParts[remainingParts.length - 1];
+  const pathSegments = remainingParts.slice(0, -1);
+
+  if (!isDefined(fieldName)) {
+    return EMPTY_RESULT;
+  }
+
+  const nestedStepName = `${stepName} > ${node.label}`;
+
+  if (isRecordOutputSchemaV2(innerSchema)) {
+    return searchRecordOutputSchema({
+      stepName: nestedStepName,
+      recordOutputSchema: innerSchema,
+      selectedField: fieldName,
+      path: pathSegments,
+      isFullRecord,
+    });
+  }
+
+  if (isBaseOutputSchemaV2Shape(innerSchema)) {
+    return searchBaseOutputSchema({
+      stepName: nestedStepName,
+      baseOutputSchema: innerSchema as BaseOutputSchemaV2,
+      path: pathSegments,
+      selectedField: fieldName,
+    });
+  }
+
+  return EMPTY_RESULT;
 };
 
 // Main dispatcher
