@@ -94,6 +94,7 @@ export const SettingsAgentToolsTable = ({
                   <IconChevronRight
                     size={theme.icon.size.md}
                     stroke={theme.icon.stroke.sm}
+                    color={theme.font.color.tertiary}
                   />
                 }
                 link={getToolLink(tool)}

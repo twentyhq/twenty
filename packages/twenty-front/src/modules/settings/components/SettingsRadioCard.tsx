@@ -37,6 +37,7 @@ const StyledTitle = styled.div`
 const StyledDescription = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
 `;
 
 type SettingsRadioCardProps = {

@@ -358,7 +358,6 @@ export const WorkflowEditActionCode = ({
             readOnly: actionOptions.readonly,
             domReadOnly: actionOptions.readonly,
             scrollBeyondLastLine: false,
-            padding: { top: 4, bottom: 4 },
           }}
         />
       </StyledFullScreenCodeEditorContainer>
@@ -397,7 +396,6 @@ export const WorkflowEditActionCode = ({
                   readOnly: actionOptions.readonly,
                   domReadOnly: actionOptions.readonly,
                   scrollBeyondLastLine: false,
-                  padding: { top: 4, bottom: 4 },
                   lineNumbersMinChars: 2,
                   fixedOverflowWidgets: true,
                 }}

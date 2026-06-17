@@ -38,5 +38,8 @@ export { createState } from './state/utils/createState';
 export type { ClickOutsideAttributes } from './types/ClickOutsideAttributes';
 export type { Nullable } from './types/Nullable';
 export { getDisplayValueByUrlType } from './utils/getDisplayValueByUrlType';
+export { getImageAbsoluteURI } from './utils/getImageAbsoluteURI';
+export { getSafeUrl } from './utils/getSafeUrl';
+export { isDefined } from './utils/isDefined';
 export type { LinkifyMatch } from './utils/linkifyText';
 export { linkifyText } from './utils/linkifyText';

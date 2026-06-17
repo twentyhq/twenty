@@ -60,6 +60,11 @@ const StyledSearchInputContainer = styled.div`
   width: 100%;
 `;
 
+const StyledFieldTypeIconContainer = styled.span`
+  display: flex;
+  opacity: 0.64;
+`;
+
 export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   objectNamePlural,
@@ -161,10 +166,12 @@ export const SettingsObjectNewFieldSelector = ({
                           <SettingsCard
                             key={key}
                             Icon={
-                              <config.Icon
-                                size={theme.icon.size.xl}
-                                stroke={theme.icon.stroke.sm}
-                              />
+                              <StyledFieldTypeIconContainer>
+                                <config.Icon
+                                  size={theme.icon.size.xl}
+                                  stroke={theme.icon.stroke.sm}
+                                />
+                              </StyledFieldTypeIconContainer>
                             }
                             title={config.label}
                           />

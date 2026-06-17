@@ -94,7 +94,7 @@ describe('ClientConfigController', () => {
         isGoogleCalendarEnabled: false,
         isConfigVariablesInDbEnabled: false,
         isImapSmtpCaldavEnabled: false,
-        isEmailGroupEnabled: false,
+        isEmailingDomainInDemoMode: false,
         calendarBookingPageId: undefined,
         isTwoFactorAuthenticationEnabled: false,
         allowRequestsToTwentyIcons: true,

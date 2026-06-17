@@ -431,6 +431,7 @@
               "pages": [
                 "developers/extend/apps/operations/overview",
                 "developers/extend/apps/operations/cli",
+                "developers/extend/apps/operations/sync-and-recovery",
                 "developers/extend/apps/operations/testing",
                 "developers/extend/apps/operations/publishing"
               ]

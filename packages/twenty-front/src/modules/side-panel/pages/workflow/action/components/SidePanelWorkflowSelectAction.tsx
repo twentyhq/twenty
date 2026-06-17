@@ -1,4 +1,7 @@
+import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/ToolMenuItem';
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
@@ -9,7 +12,6 @@ import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constan
 import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/FlowActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/ToolMenuItem';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,9 +28,13 @@ export const SidePanelWorkflowSelectAction = ({
   const { t } = useLingui();
 
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const toolFunctions = logicFunctions.filter((fn) =>
-    isDefined(fn.workflowActionTriggerSettings),
+  const toolFunctions = logicFunctions.filter(
+    (fn) =>
+      isDefined(fn.workflowActionTriggerSettings) &&
+      isDefined(fn.applicationId) &&
+      !isWorkspaceCustomApplication({ id: fn.applicationId }, currentWorkspace),
   );
 
   const handleActionClick = (actionType: WorkflowActionType) => {

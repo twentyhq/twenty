@@ -76,6 +76,9 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     workspaceId,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    isActive: true,
+    overrides: null,
+    universalOverrides: null,
     createdAt: now,
     updatedAt: now,
   };

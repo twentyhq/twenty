@@ -1,8 +1,9 @@
-import { styled } from '@linaria/react';
 import { type HTMLMotionProps, motion } from 'framer-motion';
 import { type AnimationDuration } from '@ui/theme';
 import { ThemeContext } from '@ui/theme-constants';
-import { useContext } from 'react';
+import { type JSX, useContext } from 'react';
+
+import styles from './AnimatedRotate.module.scss';
 
 type AnimatedRotateProps = Omit<
   HTMLMotionProps<'div'>,
@@ -11,12 +12,6 @@ type AnimatedRotateProps = Omit<
   duration?: AnimationDuration;
   animateOnHover?: boolean;
 };
-
-const StyledMotionDiv = styled(motion.div)`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`;
 
 export const AnimatedRotate = ({
   children,
@@ -33,7 +28,8 @@ export const AnimatedRotate = ({
   };
 
   return (
-    <StyledMotionDiv
+    <motion.div
+      className={styles.container}
       initial={initial}
       animate={animate}
       transition={transition}
@@ -50,6 +46,6 @@ export const AnimatedRotate = ({
       }
     >
       {children}
-    </StyledMotionDiv>
+    </motion.div>
   );
 };

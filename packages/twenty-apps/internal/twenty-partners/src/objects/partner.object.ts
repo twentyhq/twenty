@@ -88,16 +88,11 @@ export default defineObject({
       icon: 'IconListCheck',
       isNullable: true,
       options: [
-        { id: '00f05e1c-0fd9-4214-a461-554b7c9e7eb5', value: 'APPS', label: 'Apps', position: 0, color: 'blue' },
-        { id: 'e0f789d5-a3bc-4ecb-8bc2-5aa018468d83', value: 'DATA_MODEL', label: 'Data model', position: 1, color: 'green' },
-        { id: 'c88bf189-8be4-4431-aa03-85928f8b2a52', value: 'DATA_MIGRATION', label: 'Data migration', position: 2, color: 'turquoise' },
-        { id: 'a7fd9429-c26f-49ab-bf52-4d591f5ca7a0', value: 'HOSTING_ENVIRONMENT', label: 'Hosting environment', position: 3, color: 'purple' },
-        { id: '9e416a39-05c6-4c80-9f36-99b5b60c26ec', value: 'WORKFLOWS', label: 'Workflows', position: 4, color: 'orange' },
-        { id: 'b1000001-0000-4000-8000-0000000000a1', value: 'ADVISORY', label: 'Advisory & Discovery', position: 5, color: 'blue' },
-        { id: 'b1000002-0000-4000-8000-0000000000a2', value: 'SOLUTIONING', label: 'Solutioning', position: 6, color: 'green' },
-        { id: 'b1000003-0000-4000-8000-0000000000a3', value: 'DEVELOPMENT', label: 'Custom Development', position: 7, color: 'turquoise' },
-        { id: 'b1000004-0000-4000-8000-0000000000a4', value: 'HOSTING', label: 'Hosting & Infrastructure', position: 8, color: 'purple' },
-        { id: 'b1000005-0000-4000-8000-0000000000a5', value: 'SUPPORT', label: 'Training & Adoption', position: 9, color: 'pink' },
+        { id: 'b1000001-0000-4000-8000-0000000000a1', value: 'ADVISORY', label: 'Advisory & Discovery', position: 0, color: 'blue' },
+        { id: 'b1000002-0000-4000-8000-0000000000a2', value: 'SOLUTIONING', label: 'Solutioning', position: 1, color: 'green' },
+        { id: 'b1000003-0000-4000-8000-0000000000a3', value: 'DEVELOPMENT', label: 'Custom Development', position: 2, color: 'turquoise' },
+        { id: 'b1000004-0000-4000-8000-0000000000a4', value: 'HOSTING', label: 'Hosting & Infrastructure', position: 3, color: 'purple' },
+        { id: 'b1000005-0000-4000-8000-0000000000a5', value: 'SUPPORT', label: 'Training & Adoption', position: 4, color: 'pink' },
       ],
     },
     {
@@ -445,12 +440,33 @@ export default defineObject({
       isNullable: true,
     },
     {
+      universalIdentifier: '111eb60a-6e5b-4d0f-ac0d-31e7e0ddff97',
+      type: FieldType.LINKS,
+      name: 'website',
+      label: 'Website',
+      icon: 'IconWorldWww',
+      isNullable: true,
+    },
+    {
+      // Legacy URL picture, kept as LINKS. Twenty treats field type as
+      // immutable, so we cannot flip this to FILES in place on an installed
+      // workspace — the change is silently ignored on upgrade. Existing
+      // partners keep their URL here; new uploads go to profilePictureFile.
       universalIdentifier: '40d730e3-2785-45c8-aa5f-cc724b1b08e0',
       type: FieldType.LINKS,
       name: 'profilePicture',
       label: 'Profile Picture',
       icon: 'IconPhoto',
       isNullable: true,
+    },
+    {
+      universalIdentifier: '076b81f2-2398-4ece-a352-d7a6f6a89cae',
+      type: FieldType.FILES,
+      name: 'profilePictureFile',
+      label: 'Profile Picture File',
+      icon: 'IconPhoto',
+      isNullable: true,
+      universalSettings: { maxNumberOfValues: 1 },
     },
     {
       universalIdentifier: 'a0000008-0000-4000-8000-000000000008',

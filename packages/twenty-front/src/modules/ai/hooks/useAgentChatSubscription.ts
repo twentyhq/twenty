@@ -198,6 +198,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     const startReadLoop = async (readable: ReadableStream<UIMessageChunk>) => {
       const messageStream = readUIMessageStream({ stream: readable });
 
+      let lastUsageCountedMessageId: string | null = null;
+
       for await (const message of messageStream) {
         const extendedMessage = message as ExtendedUIMessage;
 
@@ -225,7 +227,13 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             }
           | undefined;
 
-        if (isDefined(metadata?.usage) && isDefined(metadata?.model)) {
+        if (
+          isDefined(metadata?.usage) &&
+          isDefined(metadata?.model) &&
+          lastUsageCountedMessageId !== extendedMessage.id
+        ) {
+          lastUsageCountedMessageId = extendedMessage.id;
+
           const usage = metadata.usage;
           const model = metadata.model;
 

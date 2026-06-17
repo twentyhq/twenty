@@ -6,10 +6,10 @@ import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/const
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { ModalBackdrop } from 'twenty-ui/layout';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
-import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';
+import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 
 const StyledContainer = styled.div`
-  background: ${themeCssVariables.background.noisy};
+  background: ${themeCssVariables.background.tertiary};
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -25,7 +25,6 @@ const StyledContainer = styled.div`
 
 const StyledLeftPanelWrapper = styled.div`
   flex-shrink: 0;
-  padding: 12px 0 12px 8px;
 `;
 
 export const UserOrMetadataLoader = () => {
@@ -42,7 +41,7 @@ export const UserOrMetadataLoader = () => {
       <StyledLeftPanelWrapper>
         <LeftPanelSkeletonLoader />
       </StyledLeftPanelWrapper>
-      <RightPanelSkeletonLoader />
+      <PageContentSkeletonLoader />
     </StyledContainer>
   );
 };

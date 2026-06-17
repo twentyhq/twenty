@@ -6,6 +6,7 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { fromViewOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view/utils/from-view-overrides-to-universal-overrides.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 export const fromViewEntityToFlatView = ({
@@ -88,12 +89,23 @@ export const fromViewEntityToFlatView = ({
     }
   }
 
+  const universalOverrides = isDefined(viewEntity.overrides)
+    ? fromViewOverridesToUniversalOverrides({
+        overrides: viewEntity.overrides,
+        fieldMetadataUniversalIdentifierById: Object.fromEntries(
+          fieldMetadataIdToUniversalIdentifierMap.entries(),
+        ),
+        shouldThrowOnMissingIdentifier: false,
+      })
+    : null;
+
   return {
     ...viewEntityWithoutRelations,
     createdAt: viewEntity.createdAt.toISOString(),
     updatedAt: viewEntity.updatedAt.toISOString(),
     deletedAt: viewEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier: viewEntityWithoutRelations.universalIdentifier,
+    universalOverrides,
     viewFieldIds: viewEntity.viewFields.map(({ id }) => id),
     viewFieldGroupIds: viewEntity.viewFieldGroups?.map(({ id }) => id) ?? [],
     viewFilterIds: viewEntity.viewFilters.map(({ id }) => id),

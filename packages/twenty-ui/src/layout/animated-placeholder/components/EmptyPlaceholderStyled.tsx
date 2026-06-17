@@ -1,21 +1,9 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
 import { type HTMLMotionProps, motion } from 'framer-motion';
-import { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
-const StyledEmptyContainerBase = styled.div`
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[6]};
-  justify-content: center;
-  text-align: center;
-`;
-
-const MotionEmptyContainer = motion.create(StyledEmptyContainerBase);
+import styles from './EmptyPlaceholderStyled.module.scss';
 
 type AnimatedPlaceholderEmptyContainerProps = Pick<
   HTMLMotionProps<'div'>,
@@ -35,15 +23,15 @@ export const AnimatedPlaceholderEmptyContainer = ({
   transition,
 }: AnimatedPlaceholderEmptyContainerProps) => {
   return (
-    <MotionEmptyContainer
-      className={className}
+    <motion.div
+      className={clsx(styles.emptyContainer, className)}
       style={isDefined(width) ? { width: `${width}px` } : undefined}
       initial={initial}
       animate={animate}
       transition={transition}
     >
       {children}
-    </MotionEmptyContainer>
+    </motion.div>
   );
 };
 
@@ -55,31 +43,35 @@ export const EMPTY_PLACEHOLDER_TRANSITION_PROPS = {
   },
 };
 
-// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
-export const AnimatedPlaceholderEmptyTextContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: center;
-  text-align: center;
-  width: 100%;
-`;
+export const AnimatedPlaceholderEmptyTextContainer = ({
+  className,
+  ...rest
+}: ComponentPropsWithoutRef<'div'>) => (
+  <div
+    className={clsx(styles.emptyTextContainer, className)}
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...rest}
+  />
+);
 
-// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
-export const AnimatedPlaceholderEmptyTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-`;
+export const AnimatedPlaceholderEmptyTitle = ({
+  className,
+  ...rest
+}: ComponentPropsWithoutRef<'div'>) => (
+  <div
+    className={clsx(styles.emptyTitle, className)}
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...rest}
+  />
+);
 
-// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
-export const AnimatedPlaceholderEmptySubTitle = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-  max-height: 2.8em;
-  overflow: hidden;
-  width: 50%;
-`;
+export const AnimatedPlaceholderEmptySubTitle = ({
+  className,
+  ...rest
+}: ComponentPropsWithoutRef<'div'>) => (
+  <div
+    className={clsx(styles.emptySubTitle, className)}
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...rest}
+  />
+);

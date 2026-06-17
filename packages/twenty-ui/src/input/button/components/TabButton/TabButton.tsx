@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
 import { AppTooltip, type IconComponent, TooltipDelay } from '@ui/display';
 import { StyledTabButton } from '@ui/input/button/components/TabButton/internals/components/StyledTabBase';
 import { TabContent } from '@ui/input/button/components/TabButton/internals/components/TabContent';
 import { type ReactElement } from 'react';
-import { Link } from 'react-router-dom';
+
+import styles from './TabButton.module.scss';
 
 type TabButtonProps = {
   id: string;
@@ -21,10 +21,6 @@ type TabButtonProps = {
   disableTestId?: boolean;
   tooltipContent?: string;
 };
-
-const StyledTabTooltipWrapper = styled.div`
-  display: flex;
-`;
 
 export const TabButton = ({
   id,
@@ -45,12 +41,11 @@ export const TabButton = ({
   const tabElementId = `tab-${id}`;
 
   return (
-    <StyledTabTooltipWrapper key={id} id={tabElementId}>
+    <div key={id} id={tabElementId} className={styles.tabTooltipWrapper}>
       <StyledTabButton
         data-testid={disableTestId ? undefined : `tab-${id}`}
         active={active}
         disabled={disabled}
-        as={to ? Link : 'button'}
         to={to}
         className={className}
         onClick={onClick}
@@ -77,6 +72,6 @@ export const TabButton = ({
           delay={TooltipDelay.shortDelay}
         />
       )}
-    </StyledTabTooltipWrapper>
+    </div>
   );
 };

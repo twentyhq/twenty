@@ -1,7 +1,6 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type ReactNode, useContext } from 'react';
 
-import { styled } from '@linaria/react';
 import {
   type IconComponent,
   IconGripVertical,
@@ -21,23 +20,7 @@ import {
   StyledRightMenuItemContextualText,
 } from './StyledMenuItemBase';
 
-const StyledMainText = styled.div`
-  flex-shrink: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-`;
-
-const StyledMenuItemLabelRight = styled.div`
-  display: flex;
-  flex-direction: row;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  overflow: hidden;
-  white-space: nowrap;
-  margin-left: auto;
-`;
+import styles from './MenuItemLeftContent.module.scss';
 
 type MenuItemLeftContentProps = {
   className?: string;
@@ -114,9 +97,9 @@ export const MenuItemLeftContent = ({
       {LeftComponent}
       <StyledMenuItemLabel>
         {isString(text) ? (
-          <StyledMainText>
+          <div className={styles.mainText}>
             <OverflowingTextWithTooltip text={text} />
-          </StyledMainText>
+          </div>
         ) : (
           text
         )}
@@ -136,7 +119,7 @@ export const MenuItemLeftContent = ({
         )}
       </StyledMenuItemLabel>
       {contextualTextPosition === 'right' && (
-        <StyledMenuItemLabelRight>
+        <div className={styles.menuItemLabelRight}>
           <StyledRightMenuItemContextualText>
             {isString(contextualText) ? (
               <OverflowingTextWithTooltip text={contextualText} />
@@ -144,7 +127,7 @@ export const MenuItemLeftContent = ({
               contextualText
             )}
           </StyledRightMenuItemContextualText>
-        </StyledMenuItemLabelRight>
+        </div>
       )}
     </StyledMenuItemLeftContent>
   );

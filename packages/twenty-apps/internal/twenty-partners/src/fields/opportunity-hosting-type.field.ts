@@ -1,7 +1,9 @@
 import { FieldType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, defineField } from 'twenty-sdk/define';
 
+export const OPPORTUNITY_HOSTING_TYPE_FIELD_ID = '7ac7517f-bbca-4b4c-8996-6f864f71219b';
+
 export default defineField({
-  universalIdentifier: '7ac7517f-bbca-4b4c-8996-6f864f71219b',
+  universalIdentifier: OPPORTUNITY_HOSTING_TYPE_FIELD_ID,
   objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
   type: FieldType.SELECT,
   name: 'hostingType',

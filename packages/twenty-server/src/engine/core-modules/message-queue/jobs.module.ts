@@ -12,7 +12,9 @@ import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/j
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
-import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
+import { EmailingModule } from 'src/modules/emailing/emailing.module';
+import { MaterializeCampaignJob } from 'src/modules/emailing/jobs/materialize-campaign.job';
+import { SendCampaignEmailJob } from 'src/modules/emailing/jobs/send-campaign-email.job';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogIngestionModule } from 'src/engine/core-modules/event-logs/ingest/event-log-ingestion.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -80,12 +82,14 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     AiChatModule,
     LogicFunctionModule,
     EnterpriseModule,
-    EmailingDomainModule,
+    EmailingModule,
   ],
   providers: [
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,
+    SendCampaignEmailJob,
+    MaterializeCampaignJob,
     UpdateSubscriptionQuantityJob,
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,

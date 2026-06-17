@@ -113,7 +113,7 @@ export const RecordTableCellFieldContextGeneric = ({
             objectPermissions,
             fieldMetadataItem: {
               id: fieldDefinition.fieldMetadataId,
-              isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
+              isUIEditable: fieldDefinition.metadata.isUIEditable ?? true,
               isCustom: fieldDefinition.metadata.isCustom ?? false,
             },
             fieldDefinition,

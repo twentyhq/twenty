@@ -71,6 +71,12 @@ function dispatchQueueBatch(client: QueryBatcher, queue: Queue): void {
                 queue[i].resolve(responses[i])
             }
         }
+    }).catch((error: any) => {
+        // Reject every queued request if the batched fetch fails (e.g. network
+        // error), otherwise callers hang forever and the rejection is unhandled.
+        for (const item of queue) {
+            item.reject(error)
+        }
     })
 }
 

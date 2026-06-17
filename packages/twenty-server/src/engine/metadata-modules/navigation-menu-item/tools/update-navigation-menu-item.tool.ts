@@ -5,7 +5,7 @@ import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/
 import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
 
 const updateNavigationMenuItemSchema = z.object({
-  id: z.string().uuid().describe('Id of the navigation menu item to update'),
+  id: z.uuid().describe('Id of the navigation menu item to update'),
   name: z
     .string()
     .trim()
@@ -19,7 +19,6 @@ const updateNavigationMenuItemSchema = z.object({
   position: z.number().optional().describe('New position among siblings'),
   folderId: z
     .string()
-    .uuid()
     .nullable()
     .optional()
     .describe(
@@ -32,7 +31,6 @@ const updateNavigationMenuItemSchema = z.object({
     .describe('New URL (only meaningful for LINK items)'),
   pageLayoutId: z
     .string()
-    .uuid()
     .optional()
     .describe('New page layout id (only meaningful for PAGE_LAYOUT items)'),
 });

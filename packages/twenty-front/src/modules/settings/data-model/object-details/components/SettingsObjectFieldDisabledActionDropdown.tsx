@@ -17,6 +17,7 @@ import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
   isCustomField?: boolean;
+  isSystemField?: boolean;
   fieldType?: FieldMetadataType;
   onActivate: () => void;
   onEdit: () => void;
@@ -32,6 +33,7 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
   onDelete,
   onEdit,
   isCustomField,
+  isSystemField,
 }: SettingsObjectFieldInactiveActionDropdownProps) => {
   const dropdownId = `${fieldMetadataItemId}-settings-field-disabled-action-dropdown`;
 
@@ -52,7 +54,7 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
     closeDropdown(dropdownId);
   };
 
-  const isDeletable = isCustomField;
+  const isDeletable = isCustomField && !isSystemField;
 
   return (
     <Dropdown

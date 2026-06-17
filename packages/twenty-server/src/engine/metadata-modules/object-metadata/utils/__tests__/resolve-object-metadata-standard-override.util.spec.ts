@@ -52,6 +52,41 @@ describe('resolveObjectMetadataStandardOverride', () => {
       expect(result).toBe('My Custom');
     });
 
+    it('should never translate a custom label even when it matches a standard catalog entry', () => {
+      const objectMetadata = {
+        labelSingular: 'Company',
+        labelPlural: 'Companies',
+        description: 'Custom Description',
+        icon: 'custom-icon',
+        color: 'blue',
+        isCustom: true,
+        standardOverrides: undefined,
+      } satisfies Pick<
+        ObjectMetadataDTO,
+        | 'color'
+        | 'labelPlural'
+        | 'labelSingular'
+        | 'description'
+        | 'icon'
+        | 'isCustom'
+        | 'standardOverrides'
+      >;
+
+      mockGenerateMessageId.mockReturnValue('company.message.id');
+      mockI18n._.mockReturnValue('Entreprise');
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'labelSingular',
+        'fr-FR',
+        mockI18n,
+      );
+
+      expect(result).toBe('Company');
+      expect(mockGenerateMessageId).not.toHaveBeenCalled();
+      expect(mockI18n._).not.toHaveBeenCalled();
+    });
+
     it('should return the object value for custom description object', () => {
       const objectMetadata = {
         labelSingular: 'My Custom',

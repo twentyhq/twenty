@@ -7,7 +7,9 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
 const Label = styled.span`
+  display: block;
   min-width: 0;
+  padding-bottom: 1px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -27,7 +29,7 @@ const StyledButton = styled.button`
   line-height: ${theme.lineHeight(3.5)};
   max-width: 100%;
   min-width: 0;
-  padding: ${theme.spacing(2)};
+  padding: calc(${theme.spacing(2)} + 1px) ${theme.spacing(2)};
   text-align: left;
   transition:
     background-color 0.2s ease,
@@ -102,7 +104,7 @@ export function TabButton({
     ? theme.colors.highlight[100]
     : theme.colors.secondary.text[100];
 
-  const Icon = INFORMATIVE_ICONS[tab.icon as keyof typeof INFORMATIVE_ICONS];
+  const Icon = INFORMATIVE_ICONS[tab.icon];
 
   return (
     <StyledButton
@@ -116,7 +118,7 @@ export function TabButton({
     >
       <Label>{i18n._(tab.body)}</Label>
       <TabIconBox data-active={String(isActive)}>
-        {Icon ? <Icon color={iconColor} size={16} /> : null}
+        <Icon color={iconColor} size={16} />
       </TabIconBox>
     </StyledButton>
   );

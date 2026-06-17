@@ -112,7 +112,7 @@ export const AiChatAssistantMessageRenderer = ({
 
   return (
     <div>
-      <StyledMessagePartsContainer>
+      <StyledMessagePartsContainer data-replay-ignore-mutations="true">
         {renderItems.map((renderItem, index) =>
           renderItem.type === 'thinking-steps' ? (
             <ThinkingStepsDisplay

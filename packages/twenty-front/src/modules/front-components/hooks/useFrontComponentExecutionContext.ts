@@ -32,10 +32,12 @@ export const useFrontComponentExecutionContext = ({
   frontComponentId,
   commandMenuItemId,
   selectedRecordIds,
+  colorScheme,
 }: {
   frontComponentId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
@@ -141,6 +143,7 @@ export const useFrontComponentExecutionContext = ({
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
+    colorScheme,
   };
 
   const unmountFrontComponent: FrontComponentHostCommunicationApi['unmountFrontComponent'] =

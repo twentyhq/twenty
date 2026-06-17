@@ -85,6 +85,8 @@ export const SettingsAccountsMessageChannelDetails = ({
   const supportsFolderImportPolicy =
     messageChannel.type === MessageChannelType.EMAIL;
 
+  const isGroupMailbox = messageChannel.type === MessageChannelType.EMAIL_GROUP;
+
   return (
     <StyledDetailsContainer>
       {supportsFolderImportPolicy && (
@@ -99,21 +101,23 @@ export const SettingsAccountsMessageChannelDetails = ({
           />
         </Section>
       )}
-      <Section>
-        <Card rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconUsers}
-            title={t`Exclude group emails`}
-            description={t`Don't sync emails from team@ support@ noreply@...`}
-            checked={messageChannel.excludeGroupEmails}
-            onChange={() =>
-              handleIsGroupEmailExcludedToggle(
-                !messageChannel.excludeGroupEmails,
-              )
-            }
-          />
-        </Card>
-      </Section>
+      {!isGroupMailbox && (
+        <Section>
+          <Card rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconUsers}
+              title={t`Exclude group emails`}
+              description={t`Don't sync emails from team@ support@ noreply@...`}
+              checked={messageChannel.excludeGroupEmails}
+              onChange={() =>
+                handleIsGroupEmailExcludedToggle(
+                  !messageChannel.excludeGroupEmails,
+                )
+              }
+            />
+          </Card>
+        </Section>
+      )}
       <Section>
         <H2Title
           title={t`Visibility`}

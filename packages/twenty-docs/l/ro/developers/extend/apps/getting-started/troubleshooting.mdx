@@ -9,5 +9,6 @@ icon: wrench
 * **Lipsește Yarn 4** — Rulați `corepack enable`.
 * **Dependențe nefuncționale** — `rm -rf node_modules && yarn install`.
 * **Erori ale `twenty-sdk` după actualizarea la v2.8.0** — A fost mutat din `dependencies` în `devDependencies` în v2.8.0. Vezi [Structura proiectului → Dependințe](/l/ro/developers/extend/apps/getting-started/project-structure#dependencies).
+* **`twenty build` afișează un avertisment despre `twenty-client-sdk` aflat în `dependencies`** — Este furnizat în timpul execuției de către Twenty, așa că ar trebui mutat în `devDependencies` alături de `twenty-sdk`. Vezi [Structura proiectului → Dependințe](/l/ro/developers/extend/apps/getting-started/project-structure#dependencies).
 
 Blocat? Întrebați pe [Discordul Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

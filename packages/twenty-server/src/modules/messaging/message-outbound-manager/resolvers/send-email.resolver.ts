@@ -7,8 +7,6 @@ import {
 } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
-import { FileFolder } from 'twenty-shared/types';
-
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -69,8 +67,7 @@ export class SendEmailResolver {
           files: input.files ?? [],
           inReplyTo: input.inReplyTo,
         },
-        { workspaceId: workspace.id, userWorkspaceId },
-        { attachmentsFileFolder: FileFolder.EmailAttachment },
+        { workspaceId: workspace.id },
       );
 
       if (!result.success) {

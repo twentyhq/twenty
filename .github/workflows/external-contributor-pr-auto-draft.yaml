@@ -16,13 +16,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Mint ci-privileged dispatch token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-privileged
+          permission-actions: write
+
       - name: Dispatch to ci-privileged
         env:
-          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
         run: |
-          gh api repos/twentyhq/ci-privileged/dispatches \
-            -f event_type=convert-pr-to-draft \
-            -f "client_payload[pr_number]=$PR_NUMBER" \
-            -f "client_payload[pr_node_id]=$PR_NODE_ID"
+          gh workflow run convert-pr-to-draft.yaml --repo twentyhq/ci-privileged --ref main \
+            -f pr_number="$PR_NUMBER"

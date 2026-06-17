@@ -20,10 +20,9 @@ const GetViewSortsInputSchema = z.object({
 const CreateViewSortInputSchema = z.object({
   viewId: z.string().uuid().describe('ID of the view to add the sort to'),
   fieldMetadataId: z
-    .string()
     .uuid()
     .describe(
-      'ID of the field to sort by. Use list_object_metadata_items to find field IDs.',
+      'ID of the field to sort by. Use get_field_metadata to find field IDs.',
     ),
   direction: z
     .enum(VIEW_SORT_DIRECTION_OPTIONS)
@@ -82,7 +81,7 @@ export class ViewSortToolsFactory {
     return {
       create_view_sort: {
         description:
-          'Add a sort to a view. Use list_object_metadata_items to get fieldMetadataId values.',
+          'Add a sort to a view. Use get_field_metadata to get fieldMetadataId values.',
         inputSchema: CreateViewSortInputSchema,
         execute: async (parameters: {
           viewId: string;
@@ -116,7 +115,7 @@ export class ViewSortToolsFactory {
       },
       create_many_view_sorts: {
         description:
-          'Add multiple sorts to a view in one call. Use list_object_metadata_items to get fieldMetadataId values.',
+          'Add multiple sorts to a view in one call. Use get_field_metadata to get fieldMetadataId values.',
         inputSchema: CreateManyViewSortsInputSchema,
         execute: async (parameters: {
           sorts: Array<{

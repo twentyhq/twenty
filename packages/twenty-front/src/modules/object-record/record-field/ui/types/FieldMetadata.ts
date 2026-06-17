@@ -16,7 +16,7 @@ type BaseFieldMetadata = {
   fieldName: string;
   objectMetadataNameSingular?: string;
   isCustom?: boolean;
-  isUIReadOnly?: boolean;
+  isUIEditable?: boolean;
 };
 
 export type FieldUuidMetadata = BaseFieldMetadata & {

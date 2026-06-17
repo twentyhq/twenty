@@ -112,7 +112,7 @@ const renderChart = (args: ChartArgs) => (
 const generateLinearData = (points: number = 10) => {
   return Array.from({ length: points }, (_, i) => ({
     x: i,
-    y: Math.floor(Math.random() * 100) + 20,
+    y: 20 + ((i * 37 + 13) % 80),
   }));
 };
 

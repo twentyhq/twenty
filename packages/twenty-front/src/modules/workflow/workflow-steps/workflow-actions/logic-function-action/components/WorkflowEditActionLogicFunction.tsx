@@ -1,3 +1,4 @@
+import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
@@ -74,6 +75,10 @@ export const WorkflowEditActionLogicFunction = ({
   const { logicFunction, loading } = useGetOneLogicFunction({
     id: logicFunctionId,
   });
+
+  const isThirdPartyApp = useIsThirdPartyApplication(
+    logicFunction?.applicationId,
+  );
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -183,6 +188,8 @@ export const WorkflowEditActionLogicFunction = ({
 
   const hasInputFields = Object.keys(functionInput).length > 0;
 
+  const isTestTabActive = !isThirdPartyApp && activeTabId === TEST_TAB_ID;
+
   const tabs = [
     {
       id: INPUT_TAB_ID,
@@ -199,17 +206,19 @@ export const WorkflowEditActionLogicFunction = ({
   return (
     <>
       <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
-      <StyledTabListContainer>
-        <TabList
-          tabs={tabs}
-          behaveAsLinks={false}
-          componentInstanceId={
-            WORKFLOW_LOGIC_FUNCTION_ACTION_TAB_LIST_COMPONENT_ID
-          }
-        />
-      </StyledTabListContainer>
+      {!isThirdPartyApp && (
+        <StyledTabListContainer>
+          <TabList
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId={
+              WORKFLOW_LOGIC_FUNCTION_ACTION_TAB_LIST_COMPONENT_ID
+            }
+          />
+        </StyledTabListContainer>
+      )}
       <WorkflowStepBody>
-        {activeTabId === TEST_TAB_ID ? (
+        {isTestTabActive ? (
           <>
             <WorkflowEditActionCodeFields
               functionInput={testInput}
@@ -262,7 +271,7 @@ export const WorkflowEditActionLogicFunction = ({
         <WorkflowStepFooter
           stepId={action.id}
           additionalActions={
-            activeTabId === TEST_TAB_ID
+            isTestTabActive
               ? [
                   <WorkflowStepCmdEnterButton
                     title={t`Test`}

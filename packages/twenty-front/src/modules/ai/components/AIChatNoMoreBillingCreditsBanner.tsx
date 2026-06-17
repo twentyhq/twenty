@@ -71,7 +71,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   const message = isTrialing
     ? t`You've hit your usage limit. Subscribe for more usage.`
     : isDefined(nextPrice)
-      ? t`You've hit your usage limit. \nUpgrade to ${nextResourceCreditsAmount} credits for $${nextResourceCreditPrice}/${nextTierInterval}.`
+      ? t`You've hit your usage limit. \nUpgrade to ${nextResourceCreditsAmount ?? ''} credits for $${nextResourceCreditPrice ?? ''}/${nextTierInterval ?? ''}.`
       : t`You've hit your usage limit. \nReach to our support team to upgrade.`;
 
   const buttonTitle = isTrialing
@@ -138,7 +138,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
         <ConfirmationModal
           modalInstanceId={AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID}
           title={t`Get more credits`}
-          subtitle={t`Upgrade to ${nextResourceCreditsAmount} credits for $${nextResourceCreditPrice}/${nextTierInterval}.`}
+          subtitle={t`Upgrade to ${nextResourceCreditsAmount ?? ''} credits for $${nextResourceCreditPrice ?? ''}/${nextTierInterval ?? ''}.`}
           onConfirmClick={handleUpgradeConfirm}
           confirmButtonText={t`Upgrade`}
           confirmButtonAccent="blue"

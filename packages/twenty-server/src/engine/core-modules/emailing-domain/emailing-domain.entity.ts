@@ -9,9 +9,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
@@ -30,13 +30,6 @@ export class EmailingDomainEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'varchar', nullable: false })
   domain: string;
-
-  @Column({
-    type: 'enum',
-    enum: Object.values(EmailingDomainDriver),
-    nullable: false,
-  })
-  driver: EmailingDomainDriver;
 
   @Column({
     type: 'enum',
@@ -59,4 +52,17 @@ export class EmailingDomainEntity extends WorkspaceRelatedEntity {
     nullable: false,
   })
   tenantStatus: EmailingDomainTenantStatus;
+
+  @Column({ type: 'varchar', nullable: true })
+  unsubscribeHostname: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  unsubscribeHostnameId: string | null;
+
+  @Column({
+    type: 'enum',
+    enum: Object.values(UnsubscribeHostnameStatus),
+    nullable: true,
+  })
+  unsubscribeHostnameStatus: UnsubscribeHostnameStatus | null;
 }

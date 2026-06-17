@@ -6,8 +6,8 @@ import React, { useContext, useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -21,6 +21,7 @@ const StyledPicture = styled.button<{ withPicture: boolean }>`
       : themeCssVariables.background.transparent.light};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: content-box;
   color: ${themeCssVariables.font.color.light};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;

@@ -36,6 +36,7 @@ export const WorkflowVariablesDropdown = ({
   onVariableSelect,
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
+  objectNameSingularsToSelect,
 }: {
   clickableComponent?: React.ReactNode;
   disabled?: boolean;
@@ -44,6 +45,7 @@ export const WorkflowVariablesDropdown = ({
   onVariableSelect: (variableName: string) => void;
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
+  objectNameSingularsToSelect?: string[];
 }) => {
   const { theme } = useContext(ThemeContext);
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
@@ -116,6 +118,7 @@ export const WorkflowVariablesDropdown = ({
             onSelect={handleSubItemSelect}
             onBack={handleBack}
             shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+            objectNameSingularsToSelect={objectNameSingularsToSelect}
           />
         )
       }

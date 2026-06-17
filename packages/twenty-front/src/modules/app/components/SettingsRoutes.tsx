@@ -128,6 +128,22 @@ const SettingsWorkspaceEmailGroupChannelDetail = lazy(() =>
   ),
 );
 
+const SettingsWorkspaceNewUnsubscribeTopic = lazy(() =>
+  import('~/pages/settings/email/SettingsWorkspaceNewUnsubscribeTopic').then(
+    (module) => ({
+      default: module.SettingsWorkspaceNewUnsubscribeTopic,
+    }),
+  ),
+);
+
+const SettingsWorkspaceUnsubscribeTopicDetail = lazy(() =>
+  import('~/pages/settings/email/SettingsWorkspaceUnsubscribeTopicDetail').then(
+    (module) => ({
+      default: module.SettingsWorkspaceUnsubscribeTopicDetail,
+    }),
+  ),
+);
+
 const SettingsSubdomainPage = lazy(() =>
   import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
     default: module.SettingsSubdomainPage,
@@ -435,22 +451,6 @@ const SettingsSecurityApprovedAccessDomain = lazy(() =>
   ),
 );
 
-const SettingsNewEmailingDomain = lazy(() =>
-  import('~/pages/settings/emailing-domains/SettingsNewEmailingDomain').then(
-    (module) => ({
-      default: module.SettingsNewEmailingDomain,
-    }),
-  ),
-);
-
-const SettingsEmailingDomainDetail = lazy(() =>
-  import('~/pages/settings/emailing-domains/SettingsEmailingDomainDetail').then(
-    (module) => ({
-      default: module.SettingsEmailingDomainDetail,
-    }),
-  ),
-);
-
 const SettingsAdmin = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdmin').then((module) => ({
     default: module.SettingsAdmin,
@@ -657,8 +657,12 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsWorkspaceEmailGroupChannelDetail />}
         />
         <Route
-          path={SettingsPath.ApiWebhooks}
-          element={<SettingsApiWebhooks />}
+          path={SettingsPath.NewUnsubscribeTopic}
+          element={<SettingsWorkspaceNewUnsubscribeTopic />}
+        />
+        <Route
+          path={SettingsPath.UnsubscribeTopicDetail}
+          element={<SettingsWorkspaceUnsubscribeTopicDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
@@ -673,14 +677,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.CustomDomain}
           element={<SettingsCustomDomainPage />}
-        />
-        <Route
-          path={SettingsPath.NewEmailingDomain}
-          element={<SettingsNewEmailingDomain />}
-        />
-        <Route
-          path={SettingsPath.EmailingDomainDetail}
-          element={<SettingsEmailingDomainDetail />}
         />
         <Route
           path={SettingsPath.PublicDomain}
@@ -825,6 +821,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           />
         }
       >
+        <Route
+          path={SettingsPath.ApiWebhooks}
+          element={<SettingsApiWebhooks />}
+        />
         <Route
           path={`${SettingsPath.GraphQLPlayground}`}
           element={<SettingsGraphQLPlayground />}

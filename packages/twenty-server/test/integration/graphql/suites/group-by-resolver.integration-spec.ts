@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { gql } from 'apollo-server-core';
+import { gql } from 'graphql-tag';
 import { default as request } from 'supertest';
 import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-fields.constants';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
@@ -1145,6 +1145,46 @@ describe('group-by resolver (integration)', () => {
 
         expect(thursdayGroup.totalCount).toBe(2);
         expect(wednesdayGroup.totalCount).toBe(1);
+      });
+
+      it('orders by a base-object date field while grouping by a relation field without ambiguous column error', async () => {
+        // Grouping by the company relation joins the company table (which also
+        // has a createdAt column). Ordering by the base object's own createdAt
+        // must qualify the column with the object table name, otherwise the
+        // "createdAt" reference is ambiguous across the joined tables.
+        const response = await makeGraphqlAPIRequest(
+          groupByOperationFactory({
+            objectMetadataSingularName: 'person',
+            objectMetadataPluralName: 'people',
+            groupBy: [
+              {
+                createdAt: {
+                  granularity: 'DAY_OF_THE_WEEK',
+                },
+              },
+              {
+                company: {
+                  createdAt: {
+                    granularity: 'DAY_OF_THE_WEEK',
+                  },
+                },
+              },
+            ],
+            orderBy: [
+              {
+                createdAt: {
+                  granularity: 'DAY_OF_THE_WEEK',
+                  orderBy: 'AscNullsFirst',
+                },
+              },
+            ],
+            filter: filter2025,
+          }),
+        );
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.peopleGroupBy).toBeDefined();
+        expect(Array.isArray(response.body.data.peopleGroupBy)).toBe(true);
       });
 
       it('groups by one relation field - company createdAt with WEEK granularity and weekStartDay SUNDAY', async () => {

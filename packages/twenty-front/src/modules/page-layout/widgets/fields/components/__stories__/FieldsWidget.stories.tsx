@@ -204,6 +204,7 @@ const createView = (
   viewSorts: [],
   visibility: ViewVisibility.WORKSPACE,
   createdByUserWorkspaceId: null,
+  isActive: true,
   ...overrides,
 });
 
