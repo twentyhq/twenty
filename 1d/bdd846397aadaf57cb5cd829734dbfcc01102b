@@ -1,0 +1,20 @@
+packages/twenty-docs/user-guide/calendar-emails/overview.mdx
+  s_51ad4868598747::t_b5f77aa79ae9fe 93
+  s_51ad4868598747::t_18d82a48a92e48 72-77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "1dbdd846397aadaf57cb5cd829734dbfcc01102b",
+  "prompts": {},
+  "sessions": {
+    "s_51ad4868598747": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8b347d3-351b-417d-893d-3efc5997c3e4",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
