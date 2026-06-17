@@ -83,7 +83,9 @@ describe('ImpersonationAuthorizationService', () => {
         workspaceId: 'workspace-2',
       });
 
-      expect(service.getImpersonationLevel(impersonator, target)).toBe('server');
+      expect(service.getImpersonationLevel(impersonator, target)).toBe(
+        'server',
+      );
     });
   });
 
