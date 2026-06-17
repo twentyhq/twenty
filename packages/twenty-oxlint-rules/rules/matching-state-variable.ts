@@ -25,7 +25,6 @@ const SETTER_HOOKS = [
 const FAMILY_HOOKS = new Set([
   'useAtomFamilyStateValue',
   'useAtomComponentFamilyStateValue',
-  'useAtomFamilyState',
   'useAtomComponentFamilyState',
   'useSetAtomFamilyState',
   'useSetAtomComponentFamilyState',
