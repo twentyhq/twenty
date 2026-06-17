@@ -12,5 +12,6 @@ export type ToolProviderContext = {
   actorContext?: ActorMetadata;
   userId?: string;
   userWorkspaceId?: string;
+  threadId?: string;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
 };

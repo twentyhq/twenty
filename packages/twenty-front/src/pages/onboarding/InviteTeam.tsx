@@ -11,7 +11,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Controller,
   type SubmitHandler,
@@ -19,6 +19,7 @@ import {
   useForm,
 } from 'react-hook-form';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useQuery } from '@apollo/client/react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, SeparatorLineText } from 'twenty-ui/display';
@@ -26,6 +27,7 @@ import { LightButton, MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
+import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
@@ -74,7 +76,8 @@ export const InviteTeam = () => {
     control,
     handleSubmit,
     watch,
-    formState: { isValid, isSubmitting },
+    reset,
+    formState: { isValid, isSubmitting, isDirty },
   } = useForm<FormInput>({
     mode: 'onChange',
     defaultValues: {
@@ -87,6 +90,41 @@ export const InviteTeam = () => {
     control,
     name: 'emails',
   });
+
+  const [hasPrefilledSuggestions, setHasPrefilledSuggestions] = useState(false);
+
+  const { data: inviteSuggestionsData } = useQuery(
+    GetInviteSuggestionsDocument,
+    {
+      fetchPolicy: 'cache-first',
+    },
+  );
+
+  const inviteSuggestions = useMemo(
+    () => inviteSuggestionsData?.getInviteSuggestions ?? [],
+    [inviteSuggestionsData],
+  );
+  const hasInviteSuggestions = inviteSuggestions.length > 0;
+
+  useEffect(() => {
+    if (hasPrefilledSuggestions || !hasInviteSuggestions || isDirty) {
+      return;
+    }
+
+    setHasPrefilledSuggestions(true);
+    reset({
+      emails: [
+        ...inviteSuggestions.map((suggestion) => ({ email: suggestion.email })),
+        { email: '' },
+      ],
+    });
+  }, [
+    hasPrefilledSuggestions,
+    hasInviteSuggestions,
+    inviteSuggestions,
+    isDirty,
+    reset,
+  ]);
 
   watch(({ emails }) => {
     if (!emails) {
@@ -170,7 +208,15 @@ export const InviteTeam = () => {
         <Trans>Invite your team</Trans>
       </Title>
       <SubTitle>
-        <Trans>Get the most out of your workspace by inviting your team.</Trans>
+        {hasPrefilledSuggestions ? (
+          <Trans>
+            We found teammates from your calendar. Review and invite them.
+          </Trans>
+        ) : (
+          <Trans>
+            Get the most out of your workspace by inviting your team.
+          </Trans>
+        )}
       </SubTitle>
       <StyledAnimatedContainer>
         {fields.map((field, index) => (
