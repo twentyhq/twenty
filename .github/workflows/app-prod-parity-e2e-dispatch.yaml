@@ -107,3 +107,15 @@ jobs:
             --repo twentyhq/ci-privileged \
             --ref main \
             -f head_sha="$HEAD_SHA"
+
+      - name: Post dispatch-failed status
+        if: failure() && steps.changes.outputs.relevant == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ steps.sha.outputs.head_sha }}
+        run: |
+          gh api "repos/$REPO/statuses/$HEAD_SHA" \
+            -f state=failure \
+            -f context=app-prod-parity-e2e \
+            -f description="Failed to dispatch prod-parity e2e to ci-privileged"
