@@ -1,0 +1,21 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_12aa84da069766::t_7ff9f2ba460b86 74,148
+packages/twenty-server/src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action.ts
+  s_12aa84da069766::t_7ff9f2ba460b86 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "c8e65702e148b0240be0ae62e69630d8fed7bd29",
+  "prompts": {},
+  "sessions": {
+    "s_12aa84da069766": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e1ec289-c505-418c-bd18-6b7be4f5e776",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
