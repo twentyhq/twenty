@@ -3,10 +3,7 @@ import { expect, within } from 'storybook/test';
 
 import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/SettingsDevelopersWebhookForm';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
-import {
-  ComponentDecorator,
-  RouterDecorator,
-} from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 

@@ -1,29 +1,56 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
+import { resolvePartnerPictureUrl } from './profile-picture';
+
 export const GET_PARTNER_BY_SLUG_LOGIC_FUNCTION_ID =
   '5e3e7b88-2cf2-4f56-9a4a-46c4c1d6b0bb';
 
-type CurrencyValue = { amountMicros: number; currencyCode: string } | null;
-type LinkValue = { primaryLinkUrl: string | null } | null;
+// CoreApiClient is codegenerated from the synced workspace schema, so the
+// selection is strictly typed and the response shape derives from it.
+const queryPartnerBySlug = (client: CoreApiClient, slug: string) =>
+  client.query({
+    partners: {
+      __args: {
+        filter: {
+          slug: { eq: slug },
+          validationStage: { eq: 'VALIDATED' },
+          availability: { eq: 'AVAILABLE' },
+        },
+        first: 1,
+      },
+      edges: {
+        node: {
+          id: true,
+          name: true,
+          slug: true,
+          introduction: true,
+          languagesSpoken: true,
+          deploymentExpertise: true,
+          partnerScope: true,
+          region: true,
+          calendarLink: { primaryLinkUrl: true },
+          hourlyRate: { amountMicros: true, currencyCode: true },
+          projectBudgetMin: { amountMicros: true, currencyCode: true },
+          linkedin: { primaryLinkUrl: true },
+          // profilePicture is the legacy LINKS url; profilePictureFile is the
+          // new FILES upload (its items expose `url`). Display prefers the file.
+          profilePicture: { primaryLinkUrl: true },
+          profilePictureFile: { url: true },
+          skills: true,
+          city: true,
+          country: true,
+        },
+      },
+    },
+  });
 
-type Partner = {
-  id: string;
-  name: string | null;
-  slug: string | null;
-  introduction: string | null;
-  languagesSpoken: string[] | null;
-  deploymentExpertise: string[] | null;
-  partnerScope: string[] | null;
-  region: string[] | null;
-  calendarLink: LinkValue;
-  hourlyRate: CurrencyValue;
-  projectBudgetMin: CurrencyValue;
-  linkedin: LinkValue;
-  profilePicture: LinkValue;
-  skills: string[] | null;
-  city: string | null;
-  country: string | null;
+type PartnerRaw = NonNullable<
+  Awaited<ReturnType<typeof queryPartnerBySlug>>['partners']
+>['edges'][number]['node'];
+
+type Partner = Omit<PartnerRaw, 'profilePicture' | 'profilePictureFile'> & {
+  profilePicture: { primaryLinkUrl: string | null };
 };
 
 type GetPartnerBySlugResult =
@@ -40,46 +67,23 @@ const handler = async (input: {
 
   try {
     const client = new CoreApiClient();
+    const result = await queryPartnerBySlug(client, slug);
+    const rawNode = result.partners?.edges?.[0]?.node;
 
-    const result = await client.query({
-      partners: {
-        __args: {
-          filter: {
-            slug: { eq: slug },
-            validationStage: { eq: 'VALIDATED' },
-            availability: { eq: 'AVAILABLE' },
-          },
-          first: 1,
-        },
-        edges: {
-          node: {
-            id: true,
-            name: true,
-            slug: true,
-            introduction: true,
-            languagesSpoken: true,
-            deploymentExpertise: true,
-            partnerScope: true,
-            region: true,
-            calendarLink: { primaryLinkUrl: true },
-            hourlyRate: { amountMicros: true, currencyCode: true },
-            projectBudgetMin: { amountMicros: true, currencyCode: true },
-            linkedin: { primaryLinkUrl: true },
-            profilePicture: { primaryLinkUrl: true },
-            skills: true,
-            city: true,
-            country: true,
-          },
-        },
-      },
-    } as any);
-
-    const edges = (result?.partners?.edges ?? []) as Array<{ node: Partner }>;
-    const partner = edges[0]?.node;
-
-    if (!partner) {
+    if (!rawNode) {
       return { ok: false, reason: 'NOT_FOUND' };
     }
+
+    const { profilePictureFile, ...rest } = rawNode;
+    const partner: Partner = {
+      ...rest,
+      profilePicture: {
+        primaryLinkUrl: resolvePartnerPictureUrl(
+          profilePictureFile,
+          rawNode.profilePicture?.primaryLinkUrl,
+        ),
+      },
+    };
 
     return { ok: true, partner };
   } catch (err) {

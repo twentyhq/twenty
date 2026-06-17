@@ -11,7 +11,7 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconList, IconSearch } from 'twenty-ui-deprecated/display';
+import { IconList, IconSearch } from 'twenty-ui/display';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <JotaiProvider store={jotaiStore}>

@@ -1,5 +1,5 @@
 import { type Preview } from '@storybook/react-vite';
-import { ThemeProvider } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 const preview: Preview = {
   tags: ['autodocs'],

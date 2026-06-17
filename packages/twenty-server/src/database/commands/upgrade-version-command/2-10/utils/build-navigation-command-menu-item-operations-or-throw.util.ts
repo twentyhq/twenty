@@ -1,3 +1,4 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4, v5 } from 'uuid';
 
@@ -63,6 +64,8 @@ export const buildNavigationCommandMenuItemOperationsOrThrow = ({
         objectMetadata,
         commandMenuItemId: v4(),
         applicationId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         workspaceId,
         position: nextPosition++,
         now,

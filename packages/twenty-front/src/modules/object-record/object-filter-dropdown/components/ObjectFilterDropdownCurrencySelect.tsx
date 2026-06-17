@@ -15,10 +15,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useState } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
-import {
-  MenuItem,
-  MenuItemMultiSelectAvatar,
-} from 'twenty-ui-deprecated/navigation';
+import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';

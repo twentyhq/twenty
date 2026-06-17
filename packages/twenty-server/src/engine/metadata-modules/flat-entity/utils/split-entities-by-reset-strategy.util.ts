@@ -2,6 +2,7 @@ type EntityWithApplicationIdentifierAndOverrides = {
   applicationUniversalIdentifier: string;
   isActive: boolean;
   overrides: unknown;
+  isSystemSideEffect?: boolean;
 };
 
 export const splitEntitiesByResetStrategy = <
@@ -28,7 +29,8 @@ export const splitEntitiesByResetStrategy = <
   for (const entity of entities) {
     if (
       entity.applicationUniversalIdentifier ===
-      workspaceCustomApplicationUniversalIdentifier
+        workspaceCustomApplicationUniversalIdentifier &&
+      !entity.isSystemSideEffect
     ) {
       toHardDelete.push(entity);
     } else {

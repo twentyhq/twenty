@@ -13,7 +13,7 @@ import {
   IconSparkles,
   IconTable,
   IconUser,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type UseActionRolePermissionFlagConfigParams = {

@@ -70,6 +70,7 @@ describe('WorkspaceRepository', () => {
       type: FieldMetadataType.UUID,
       objectMetadataId: 'test-metadata-id',
       isActive: true,
+      isSystemSideEffect: false,
       isNullable: false,
       isUnique: true,
       isSystem: true,

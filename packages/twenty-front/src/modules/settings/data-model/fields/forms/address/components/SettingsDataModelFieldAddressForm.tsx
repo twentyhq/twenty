@@ -18,8 +18,8 @@ import {
   IconMap,
   IconRefresh,
   type IconComponentProps,
-} from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';

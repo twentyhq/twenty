@@ -14,13 +14,13 @@ import {
   type IconComponent,
   IconX,
   OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;

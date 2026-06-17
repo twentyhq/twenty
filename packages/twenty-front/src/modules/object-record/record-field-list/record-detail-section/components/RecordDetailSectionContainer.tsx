@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordDetailSectionWrapper = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};

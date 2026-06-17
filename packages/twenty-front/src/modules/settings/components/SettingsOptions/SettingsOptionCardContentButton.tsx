@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import {
   type IconComponent,
   OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { isDefined } from 'twenty-shared/utils';
 
 type SettingsOptionCardContentButtonProps = {

@@ -6,7 +6,7 @@ import {
   IconEditCircle,
   IconRestore,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 export const EventIconDynamicComponent = ({
   event,

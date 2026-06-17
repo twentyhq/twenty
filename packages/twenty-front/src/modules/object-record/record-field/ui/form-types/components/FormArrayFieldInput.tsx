@@ -27,12 +27,9 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { IconPlus } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MenuItem } from 'twenty-ui/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';
 
 type FormArrayFieldInputProps = {

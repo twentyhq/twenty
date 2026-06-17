@@ -4,9 +4,9 @@ import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '
 
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Avatar } from 'twenty-ui-deprecated/display';
+import { Avatar } from 'twenty-ui/display';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSettingsCardContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[6]};

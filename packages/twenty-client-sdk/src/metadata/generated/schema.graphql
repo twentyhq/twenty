@@ -1367,6 +1367,7 @@ type ViewConfiguration {
 type RecordTableConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
+  recordLimit: Int
 }
 
 type WorkflowConfiguration {
@@ -2337,6 +2338,17 @@ type VerifyEmailAndGetLoginToken {
   workspaceUrls: WorkspaceUrls!
 }
 
+type SubdomainAvailabilityDTO {
+  isValid: Boolean!
+  available: Boolean!
+  suggestedSubdomain: String!
+}
+
+type WorkspaceCreationDefaultsDTO {
+  displayName: String!
+  subdomain: String!
+}
+
 type ApiKeyToken {
   token: String!
 }
@@ -3102,6 +3114,8 @@ type Query {
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
+  checkWorkspaceSubdomainAvailability(subdomain: String!): SubdomainAvailabilityDTO!
+  getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
@@ -3373,7 +3387,7 @@ type Mutation {
   getAuthTokensFromOTP(otp: String!, loginToken: String!, captchaToken: String, origin: String!): AuthTokens!
   signUp(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInWorkspace(email: String!, password: String!, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String, captchaToken: String, locale: String, verifyEmailRedirectPath: String): SignUp!
-  signUpInNewWorkspace: SignUp!
+  signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
@@ -4403,6 +4417,11 @@ input UpdateSkillInput {
 input GetAuthorizationUrlForSSOInput {
   identityProviderId: UUID!
   workspaceInviteHash: String
+}
+
+input SignUpInNewWorkspaceInput {
+  displayName: String
+  subdomain: String
 }
 
 input CreateApplicationRegistrationInput {

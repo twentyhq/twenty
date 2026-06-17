@@ -23,7 +23,7 @@ type Position = {
   y: number;
 };
 
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDragSelection = styled.div<SelectionBox>`
   background: ${themeCssVariables.color.blue7};

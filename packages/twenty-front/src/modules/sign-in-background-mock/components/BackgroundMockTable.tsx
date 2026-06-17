@@ -10,12 +10,9 @@ import {
   IconPlus,
   OverflowingTextWithTooltip,
   useIcons,
-} from 'twenty-ui-deprecated/display';
-import { Checkbox } from 'twenty-ui-deprecated/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { Checkbox } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTableWrapper = styled.div`
   display: flex;

@@ -16,7 +16,7 @@ import { RecordInlineCellContext } from '@/object-record/record-inline-cell/comp
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
-import { IconArrowUpRight, IconPencil } from 'twenty-ui-deprecated/display';
+import { IconArrowUpRight, IconPencil } from 'twenty-ui/display';
 
 type ActivityTargetsInlineCellProps = {
   activityRecordId: string;

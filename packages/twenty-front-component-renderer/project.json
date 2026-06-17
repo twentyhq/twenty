@@ -30,8 +30,8 @@
       "inputs": [
         "{projectRoot}/scripts/remote-dom/**/*",
         "{projectRoot}/src/constants/**/*",
-        "{workspaceRoot}/packages/twenty-ui-deprecated/src/**/index.ts",
-        "{workspaceRoot}/packages/twenty-ui-deprecated/src/**/*.tsx"
+        "{workspaceRoot}/packages/twenty-ui/src/**/index.ts",
+        "{workspaceRoot}/packages/twenty-ui/src/**/*.tsx"
       ],
       "outputs": [
         "{projectRoot}/src/host/generated/*",
@@ -58,7 +58,7 @@
         },
         {
           "target": "build:individual",
-          "projects": "twenty-ui-deprecated"
+          "projects": "twenty-ui"
         },
         {
           "target": "build:individual",

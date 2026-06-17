@@ -12,8 +12,8 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
-import { H2Title, IconEye } from 'twenty-ui-deprecated/display';
-import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { H2Title, IconEye } from 'twenty-ui/display';
+import { Card, Section } from 'twenty-ui/layout';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

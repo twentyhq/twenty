@@ -1,4 +1,8 @@
-import { useLazyQuery, useMutation } from '@apollo/client/react';
+import {
+  useApolloClient,
+  useLazyQuery,
+  useMutation,
+} from '@apollo/client/react';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 
@@ -10,6 +14,7 @@ import {
   GetAuthTokensFromLoginTokenDocument,
   GetAuthTokensFromOtpDocument,
   GetLoginTokenFromCredentialsDocument,
+  GetWorkspaceCreationDefaultsDocument,
   SignInDocument,
   SignUpInWorkspaceDocument,
   SignUpDocument,
@@ -70,6 +75,7 @@ export const useAuth = () => {
     isEmailVerificationRequiredState,
   );
   const { loadCurrentUser } = useLoadCurrentUser();
+  const apolloClient = useApolloClient();
 
   const { createWorkspace } = useSignUpInNewWorkspace();
 
@@ -119,6 +125,54 @@ export const useAuth = () => {
       setTokenPair(tokens);
     },
     [setTokenPair],
+  );
+
+  const navigateAfterMultiWorkspaceSignInUp = useCallback(
+    async (
+      availableWorkspaces: Parameters<typeof countAvailableWorkspaces>[0],
+      email: string,
+      { newTab = true }: { newTab?: boolean } = {},
+    ) => {
+      const availableWorkspacesCount =
+        countAvailableWorkspaces(availableWorkspaces);
+
+      if (availableWorkspacesCount === 0) {
+        if (!isMultiWorkspaceEnabled) {
+          return await createWorkspace({ newTab });
+        }
+
+        await apolloClient.query({
+          query: GetWorkspaceCreationDefaultsDocument,
+        });
+        setSignInUpStep(SignInUpStep.WorkspaceCreation);
+        return;
+      }
+
+      if (availableWorkspacesCount === 1) {
+        const targetWorkspace =
+          getFirstAvailableWorkspaces(availableWorkspaces);
+
+        return await redirectToWorkspaceDomain(
+          getWorkspaceUrl(targetWorkspace.workspaceUrls),
+          targetWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,
+          {
+            ...(targetWorkspace.loginToken && {
+              loginToken: targetWorkspace.loginToken,
+            }),
+            email,
+          },
+        );
+      }
+
+      setSignInUpStep(SignInUpStep.WorkspaceSelection);
+    },
+    [
+      apolloClient,
+      createWorkspace,
+      isMultiWorkspaceEnabled,
+      redirectToWorkspaceDomain,
+      setSignInUpStep,
+    ],
   );
 
   const handleGetLoginTokenFromCredentials = useCallback(
@@ -207,18 +261,17 @@ export const useAuth = () => {
 
       const { user } = await loadCurrentUser();
 
-      if (countAvailableWorkspaces(user.availableWorkspaces) === 0) {
-        return await createWorkspace({ newTab: false });
-      }
-
-      setSignInUpStep(SignInUpStep.WorkspaceSelection);
+      await navigateAfterMultiWorkspaceSignInUp(
+        user.availableWorkspaces,
+        user.email,
+        { newTab: false },
+      );
     },
     [
-      createWorkspace,
       verifyEmailAndGetWorkspaceAgnosticToken,
       handleSetAuthTokens,
       loadCurrentUser,
-      setSignInUpStep,
+      navigateAfterMultiWorkspaceSignInUp,
     ],
   );
 
@@ -307,31 +360,11 @@ export const useAuth = () => {
           handleSetAuthTokens(data.signIn.tokens);
           const { user } = await loadCurrentUser();
 
-          const availableWorkspacesCount = countAvailableWorkspaces(
+          await navigateAfterMultiWorkspaceSignInUp(
             user.availableWorkspaces,
+            user.email,
+            { newTab: false },
           );
-
-          if (availableWorkspacesCount === 0) {
-            return createWorkspace();
-          }
-
-          if (availableWorkspacesCount === 1) {
-            const targetWorkspace = getFirstAvailableWorkspaces(
-              user.availableWorkspaces,
-            );
-            return await redirectToWorkspaceDomain(
-              getWorkspaceUrl(targetWorkspace.workspaceUrls),
-              targetWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,
-              {
-                ...(targetWorkspace.loginToken && {
-                  loginToken: targetWorkspace.loginToken,
-                }),
-                email: user.email,
-              },
-            );
-          }
-
-          setSignInUpStep(SignInUpStep.WorkspaceSelection);
         },
         onError: (error) => {
           if (isGraphqlErrorOfType(error, 'EMAIL_NOT_VERIFIED')) {
@@ -345,12 +378,11 @@ export const useAuth = () => {
     },
     [
       handleSetAuthTokens,
-      redirectToWorkspaceDomain,
       signIn,
       loadCurrentUser,
       setSearchParams,
       setSignInUpStep,
-      createWorkspace,
+      navigateAfterMultiWorkspaceSignInUp,
     ],
   );
 
@@ -383,11 +415,11 @@ export const useAuth = () => {
 
       const { user } = await loadCurrentUser();
 
-      if (countAvailableWorkspaces(user.availableWorkspaces) === 0) {
-        return await createWorkspace({ newTab: false });
-      }
-
-      setSignInUpStep(SignInUpStep.WorkspaceSelection);
+      await navigateAfterMultiWorkspaceSignInUp(
+        user.availableWorkspaces,
+        user.email,
+        { newTab: false },
+      );
     },
     [
       isEmailVerificationRequired,
@@ -396,7 +428,7 @@ export const useAuth = () => {
       signUp,
       loadCurrentUser,
       setSignInUpStep,
-      createWorkspace,
+      navigateAfterMultiWorkspaceSignInUp,
     ],
   );
 
@@ -608,5 +640,6 @@ export const useAuth = () => {
     signInWithMicrosoft: handleMicrosoftLogin,
     setAuthTokens: handleSetAuthTokens,
     getAuthTokensFromOTP: handleGetAuthTokensFromOTP,
+    navigateAfterMultiWorkspaceSignInUp,
   };
 };
