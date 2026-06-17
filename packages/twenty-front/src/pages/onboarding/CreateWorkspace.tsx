@@ -44,9 +44,6 @@ const StyledActivationStep = styled.div`
   width: 100%;
 `;
 
-// The workspace name (and optional logo) are already collected in the shared
-// creation form (Step 1). This onboarding step is now a pure activation loader:
-// it activates the pending workspace on mount and surfaces a retry on failure.
 export const CreateWorkspace = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
