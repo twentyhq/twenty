@@ -71,6 +71,7 @@ import { BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand } from '
 import { CommandMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781253016028-command-menu-item-overridable-entity';
 import { SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-instance-command-slow-1781515653781-set-table-widget-views-visibility-to-workspace';
 import { BackfillConnectionSecuritySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-slow-1781461753981-backfill-connection-security';
+import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -144,4 +145,5 @@ export const INSTANCE_COMMANDS = [
   CommandMenuItemOverridableEntityFastInstanceCommand,
   SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand,
   BackfillConnectionSecuritySlowInstanceCommand,
+  AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand,
 ];
