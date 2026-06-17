@@ -10,8 +10,8 @@ import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-cru
 import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
-// Builds the per-field filter shape and full recursive filter schema
-// for a given object metadata, reusable across find and updateMany tools
+// Builds the per-field filter shape and full filter schema for a given object
+// metadata, reusable across find and updateMany tools
 export const generateRecordFilterSchema = (
   objectMetadata: ObjectMetadataForToolSchema,
   restrictedFields?: RestrictedFieldsPermissions,
@@ -44,24 +44,41 @@ export const generateRecordFilterSchema = (
       fieldFilter;
   });
 
-  const filterSchema: z.ZodTypeAny = z.lazy(() =>
-    z
-      .object({
-        ...filterShape,
-        or: z
-          .array(filterSchema)
-          .optional()
-          .describe('OR condition - matches if ANY of the filters match'),
-        and: z
-          .array(filterSchema)
-          .optional()
-          .describe('AND condition - matches if ALL filters match'),
-        not: filterSchema
-          .optional()
-          .describe('NOT condition - matches if the filter does NOT match'),
-      })
-      .partial(),
-  );
+  const leafFilterSchema = z.object({ ...filterShape }).partial();
+
+  const innerFilterSchema: z.ZodTypeAny = z
+    .object({
+      ...filterShape,
+      or: z
+        .array(leafFilterSchema)
+        .optional()
+        .describe('OR condition - matches if ANY of the filters match'),
+      and: z
+        .array(leafFilterSchema)
+        .optional()
+        .describe('AND condition - matches if ALL filters match'),
+      not: leafFilterSchema
+        .optional()
+        .describe('NOT condition - matches if the filter does NOT match'),
+    })
+    .partial();
+
+  const filterSchema: z.ZodTypeAny = z
+    .object({
+      ...filterShape,
+      or: z
+        .array(innerFilterSchema)
+        .optional()
+        .describe('OR condition - matches if ANY of the filters match'),
+      and: z
+        .array(innerFilterSchema)
+        .optional()
+        .describe('AND condition - matches if ALL filters match'),
+      not: innerFilterSchema
+        .optional()
+        .describe('NOT condition - matches if the filter does NOT match'),
+    })
+    .partial();
 
   return { filterShape, filterSchema };
 };

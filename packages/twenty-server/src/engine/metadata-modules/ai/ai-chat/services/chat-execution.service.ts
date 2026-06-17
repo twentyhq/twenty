@@ -491,7 +491,31 @@ export class ChatExecutionService {
         if (error?.name === 'AbortError') {
           return;
         }
-        this.exceptionHandlerService.captureExceptions([error]);
+
+        const errorAttributes = this.buildAiExecutionErrorAttributes(
+          error,
+          registeredModel.modelId,
+        );
+
+        this.metricsService.incrementCounterBy({
+          key: MetricsKeys.AiChatExecutionFailed,
+          amount: 1,
+          attributes: errorAttributes,
+        });
+
+        this.logger.error(
+          `AI chat execution failed for model ${registeredModel.modelId}`,
+          error instanceof Error ? error.stack : undefined,
+        );
+
+        this.exceptionHandlerService.captureExceptions([error], {
+          additionalData: {
+            feature: 'ai-chat-execution',
+            ...errorAttributes,
+          },
+          workspace: { id: workspace.id },
+          user: { id: userId },
+        });
       });
 
     return {
@@ -499,6 +523,33 @@ export class ChatExecutionService {
       modelConfig,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
     };
+  }
+
+  private buildAiExecutionErrorAttributes(
+    error: unknown,
+    modelId: string,
+  ): Record<string, string | number> {
+    const statusCode = this.extractErrorStatusCode(error);
+
+    return {
+      model: modelId,
+      provider: modelId.split('/')[0] ?? 'unknown',
+      errorName: error instanceof Error ? error.name : 'UnknownError',
+      errorType: isDefined(statusCode) ? 'provider_api' : 'runtime',
+      ...(isDefined(statusCode) && { statusCode }),
+    };
+  }
+
+  private extractErrorStatusCode(error: unknown): number | undefined {
+    if (typeof error !== 'object' || !isDefined(error)) {
+      return undefined;
+    }
+
+    const maybeError = error as { statusCode?: unknown };
+
+    return typeof maybeError.statusCode === 'number'
+      ? maybeError.statusCode
+      : undefined;
   }
 
   private injectBrowsingContextIntoLastUserMessage(

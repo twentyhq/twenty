@@ -43,4 +43,5 @@ export enum MetricsKeys {
   AiChatTurnLatencyMs = 'ai-chat/turn-latency-ms',
   AiChatStepLatencyMs = 'ai-chat/step-latency-ms',
   AiChatTtftMs = 'ai-chat/ttft-ms',
+  AiChatExecutionFailed = 'ai-chat/execution-failed',
 }
