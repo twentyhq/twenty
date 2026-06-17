@@ -346,6 +346,43 @@ const filterProps = <T extends object>(props: T): T => {
 
 type WrapperProps = { children?: React.ReactNode } & Record<string, unknown>;
 
+// Host that is allowed to run scripts / same-origin inside an embedded iframe.
+// WHY: Propel's in-sandbox Social tab embeds the Postiz calendar
+// (https://postiz.remaxhub.ae/launches), which is a real app that needs scripts
+// and same-origin to render. Every OTHER iframe stays locked to `sandbox=""`.
+// To extend the allowlist, add more hosts here and widen the check in
+// computeForcedIframeProps below — keep it host-exact, never a substring match.
+const POSTIZ_EMBED_HOST = 'postiz.remaxhub.ae';
+
+// The relaxed sandbox we grant ONLY to the allowlisted embed host. Intentionally
+// the minimum Postiz needs; not `allow-top-navigation` or `allow-modals`.
+const POSTIZ_EMBED_SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups';
+
+const getIframeSrcHostname = (src: unknown): string | undefined => {
+  if (!isNonEmptyString(src)) {
+    return undefined;
+  }
+  try {
+    return new URL(src).hostname;
+  } catch {
+    // Relative / invalid / non-absolute src — cannot trust it, fall through.
+    return undefined;
+  }
+};
+
+// Compute the iframe's forced props per-instance from its own `src`. Default is
+// the strict `sandbox=''`; we only swap in the relaxed value when the src host
+// EXACTLY matches the allowlisted embed host. Any parse failure or non-matching
+// host keeps the strict sandbox.
+const computeForcedIframeProps = (
+  reactProps: Record<string, unknown>,
+): Record<string, unknown> => {
+  const hostname = getIframeSrcHostname(reactProps.src);
+  const sandbox =
+    hostname === POSTIZ_EMBED_HOST ? POSTIZ_EMBED_SANDBOX : '';
+  return { sandbox };
+};
+
 const FORCED_PROPS_BY_TAG: Record<string, Record<string, unknown>> = {
   iframe: { sandbox: '' },
 };
@@ -440,12 +477,19 @@ const createCaretPreservingElement = (
 };
 
 export const createHtmlHostWrapper = (htmlTag: string) => {
-  const forcedProps = FORCED_PROPS_BY_TAG[htmlTag];
+  const staticForcedProps = FORCED_PROPS_BY_TAG[htmlTag];
   const isVoid = VOID_ELEMENTS.has(htmlTag);
+  const isIframe = htmlTag === 'iframe';
 
   return ({ children, ...props }: WrapperProps) => {
     const setEditableFocused = useContext(FrontComponentInputFocusContext);
     const reactProps = filterProps(props);
+
+    // iframe's forced sandbox is per-instance: strict `''` unless the src host is
+    // the allowlisted embed host. Every other tag keeps its static forced props.
+    const forcedProps = isIframe
+      ? computeForcedIframeProps(reactProps)
+      : staticForcedProps;
 
     if (
       htmlTag === 'textarea' ||
