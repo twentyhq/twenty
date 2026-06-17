@@ -1,5 +1,10 @@
 import { Button, Center, Stack, Text } from '@mantine/core';
-import { IconCalendarEvent, IconPlug, IconRefresh } from 'twenty-ui/display';
+import {
+  IconCalendarEvent,
+  IconPlug,
+  IconPlus,
+  IconRefresh,
+} from 'twenty-ui/display';
 import { StyledSocialCalendarSkeleton } from '@/propel/components/calendar/socialCalendarStyles';
 
 // Loading — a calendar-shaped skeleton grid with a shimmer sweep, NOT a spinner
@@ -68,9 +73,13 @@ export const CalendarEmptyNoChannels = ({
   </Center>
 );
 
-// Empty — channels connected, but no posts in range. Friendly compose CTA. The
-// compose entry point itself lands in a later slice; for S1 this is informational.
-export const CalendarEmptyNoPosts = () => (
+// Empty — channels connected, but no posts in range. Friendly compose CTA. S3
+// wires the CTA to open the composer.
+export const CalendarEmptyNoPosts = ({
+  onCompose,
+}: {
+  onCompose?: () => void;
+}) => (
   <Center mih={240}>
     <Stack gap="xs" align="center" maw={320}>
       <IconCalendarEvent
@@ -84,6 +93,17 @@ export const CalendarEmptyNoPosts = () => (
         Nothing on the calendar for this period yet. Compose your first post to
         see it here.
       </Text>
+      {onCompose !== undefined ? (
+        <Button
+          size="xs"
+          color="red"
+          mt={4}
+          leftSection={<IconPlus size={14} />}
+          onClick={onCompose}
+        >
+          Compose a post
+        </Button>
+      ) : null}
     </Stack>
   </Center>
 );

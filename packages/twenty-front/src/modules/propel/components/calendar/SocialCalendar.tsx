@@ -3,6 +3,7 @@ import {
   Calendar,
   dateFnsLocalizer,
   type Components,
+  type SlotInfo,
   type View,
 } from 'react-big-calendar';
 import format from 'date-fns/format';
@@ -51,6 +52,8 @@ export const SocialCalendar = ({
   onView,
   onNavigate,
   onSelectEvent,
+  onSelectSlot,
+  onCompose,
   hasAnyPosts,
 }: {
   events: SocialCalendarEvent[];
@@ -59,6 +62,10 @@ export const SocialCalendar = ({
   onView: (view: SocialCalendarView) => void;
   onNavigate: (date: Date) => void;
   onSelectEvent: (event: SocialCalendarEvent) => void;
+  // S3: clicking an empty day/slot opens the composer prefilled with that date.
+  onSelectSlot: (start: Date) => void;
+  // S3: the no-posts empty-state CTA opens a blank composer.
+  onCompose: () => void;
   hasAnyPosts: boolean;
 }) => {
   const eventPropGetter = useMemo(
@@ -93,6 +100,11 @@ export const SocialCalendar = ({
             onView={(next) => onView(next as SocialCalendarView)}
             onNavigate={(next) => onNavigate(next)}
             onSelectEvent={onSelectEvent}
+            // Clicking an empty day cell (or a week/day slot) opens the composer
+            // prefilled with that date (§4.1 hover-"+" / §3 "reachable from
+            // calendar day +"). We pass the slot's start instant straight through.
+            selectable
+            onSelectSlot={(slot: SlotInfo) => onSelectSlot(slot.start)}
             components={components}
             eventPropGetter={eventPropGetter}
             popup
@@ -115,7 +127,7 @@ export const SocialCalendar = ({
           posts.) The grid still renders behind it for orientation. */}
       {!hasAnyPosts ? (
         <div style={{ paddingTop: 12 }}>
-          <CalendarEmptyNoPosts />
+          <CalendarEmptyNoPosts onCompose={onCompose} />
         </div>
       ) : null}
     </StyledSocialCalendarShell>

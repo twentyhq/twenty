@@ -186,12 +186,15 @@ export const PostDetailDrawer = ({
   listings,
   connectUrl,
   onClose,
+  onEdit,
 }: {
   /** the post to show; null closes the drawer (drives AnimatePresence) */
   post: SocialPost | null;
   listings: SocialListing[] | undefined;
   connectUrl: string | undefined;
   onClose: () => void;
+  /** S3: open the composer in edit mode for this (DRAFT/SCHEDULED) post */
+  onEdit: (post: SocialPost) => void;
 }) => {
   const reduce = useReducedMotion() ?? false;
 
@@ -273,6 +276,7 @@ export const PostDetailDrawer = ({
               connectUrl={connectUrl}
               reduce={reduce}
               onClose={onClose}
+              onEdit={onEdit}
             />
           </motion.div>
         </StyledDrawerOverlay>
@@ -289,12 +293,14 @@ const DrawerContent = ({
   connectUrl,
   reduce,
   onClose,
+  onEdit,
 }: {
   post: SocialPost;
   listings: SocialListing[] | undefined;
   connectUrl: string | undefined;
   reduce: boolean;
   onClose: () => void;
+  onEdit: (post: SocialPost) => void;
 }) => {
   const status = post.status;
   const statusMeta = STATUS_META[status];
@@ -630,7 +636,18 @@ const DrawerContent = ({
 
       {/* ── Status-aware footer ── */}
       {footerActions.length > 0 || liveUrl !== null ? (
-        <DrawerFooter actions={footerActions} liveUrl={liveUrl} />
+        <DrawerFooter
+          actions={footerActions}
+          liveUrl={liveUrl}
+          // S3: Edit (and Reschedule, which is edit-in-schedule-mode) open the
+          // composer for DRAFT/SCHEDULED posts. The remaining mutating actions
+          // (publish/retry/delete/duplicate) stay stubbed for S4.
+          onEdit={
+            status === 'DRAFT' || status === 'SCHEDULED'
+              ? () => onEdit(post)
+              : undefined
+          }
+        />
       ) : null}
     </StyledDrawerPanel>
   );
@@ -797,16 +814,19 @@ const ComplianceRow = ({
   );
 };
 
-// Status-aware footer. The mutating actions (edit / reschedule / publish / retry /
-// delete) are STUBBED for S2: rendered but disabled with a "soon" hint so the
-// footer reads complete. They get wired in S3 (edit/reschedule/publish/delete)
-// and S4 (retry). The "view live" link is fully functional (read).
+// Status-aware footer. S3 wires Edit + Reschedule (both open the composer for
+// DRAFT/SCHEDULED posts — reschedule is just edit landing in schedule mode). The
+// remaining mutating actions (publish / retry / delete / duplicate) stay STUBBED
+// (disabled with a "soon" hint) until S4. The "view live" link is fully read.
 const DrawerFooter = ({
   actions,
   liveUrl,
+  onEdit,
 }: {
   actions: FooterAction[];
   liveUrl: string | null;
+  /** present for DRAFT/SCHEDULED → Edit + Reschedule become live (S3) */
+  onEdit: (() => void) | undefined;
 }) => (
   <div
     style={{
@@ -833,11 +853,12 @@ const DrawerFooter = ({
       </Button>
     ) : null}
 
-    {/* Stubbed mutating actions — disabled until S3/S4. */}
     {actions.map((a) => {
       const meta = ACTION_META[a];
       const Icon = meta.Icon;
-      // `duplicate` is also a future (S3) action; keep it disabled for now.
+      // S3-live: Edit + Reschedule open the composer (Reschedule = edit-in-
+      // schedule-mode; the composer lands on the existing scheduledAt).
+      const live = (a === 'edit' || a === 'reschedule') && onEdit !== undefined;
       const soon = 'Available soon';
       return (
         <Button
@@ -846,8 +867,9 @@ const DrawerFooter = ({
           variant={meta.danger === true ? 'light' : 'default'}
           color={meta.danger === true ? 'red' : undefined}
           leftSection={<Icon size={14} />}
-          disabled
-          title={soon}
+          onClick={live ? onEdit : undefined}
+          disabled={!live}
+          title={live ? undefined : soon}
         >
           {meta.label}
         </Button>

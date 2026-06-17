@@ -3,6 +3,8 @@ import { callPropelRoute } from '@/propel/lib/callPropelRoute';
 import {
   type SocialAccount,
   type SocialCalendarEvent,
+  type SocialListing,
+  type SocialNetwork,
   type SocialPost,
   type SocialStatusPayload,
 } from '@/propel/types/socialCalendar';
@@ -17,11 +19,24 @@ import {
 // gated server-side (non-coordinator → NOT_FOUND → null here), so a non-
 // coordinator simply sees the empty/error surface; no client-side role logic.
 
+const KNOWN_NETWORKS: SocialNetwork[] = [
+  'FACEBOOK',
+  'INSTAGRAM',
+  'LINKEDIN',
+  'TIKTOK',
+];
+
 export type SocialCalendarState = {
   payload: SocialStatusPayload | null;
   accounts: SocialAccount[];
   posts: SocialPost[];
   events: SocialCalendarEvent[];
+  /** LIVE listings the composer can attach (from the same status payload) */
+  listings: SocialListing[];
+  /** the Postiz connect URL (one-time channel connect bounce) */
+  connectUrl: string | undefined;
+  /** the distinct networks with a CONNECTED account — what the composer enables */
+  connectedNetworks: SocialNetwork[];
   /** true while a fetch is in flight */
   isLoading: boolean;
   /** true once at least one fetch attempt has settled (success or failure) */
@@ -97,11 +112,34 @@ export const useSocialCalendarData = (): SocialCalendarState => {
     [posts],
   );
 
+  const listings = useMemo(
+    () => (Array.isArray(payload?.listings) ? payload.listings : []),
+    [payload],
+  );
+
+  const connectUrl = payload?.connectUrl;
+
+  // The networks the composer can enable: distinct networks across CONNECTED
+  // accounts. We treat any account whose status isn't an explicit 'EXPIRED' as
+  // usable (the route already only returns linked accounts).
+  const connectedNetworks = useMemo<SocialNetwork[]>(() => {
+    const seen = new Set<SocialNetwork>();
+    for (const a of accounts) {
+      if (a.status === 'EXPIRED') continue;
+      const n = a.network as SocialNetwork;
+      if (KNOWN_NETWORKS.includes(n)) seen.add(n);
+    }
+    return KNOWN_NETWORKS.filter((n) => seen.has(n));
+  }, [accounts]);
+
   return {
     payload,
     accounts,
     posts,
     events,
+    listings,
+    connectUrl,
+    connectedNetworks,
     isLoading,
     loaded,
     isError,

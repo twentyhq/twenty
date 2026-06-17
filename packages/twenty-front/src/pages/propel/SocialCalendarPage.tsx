@@ -1,4 +1,4 @@
-import { Box, Button, Group, Stack, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Stack } from '@mantine/core';
 import { useMemo, useState } from 'react';
 import { IconCalendarEvent, IconPlus } from 'twenty-ui/display';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
@@ -10,9 +10,14 @@ import {
   CalendarError,
   CalendarLoading,
 } from '@/propel/components/calendar/CalendarStates';
+import {
+  type ComposerOpen,
+  PostComposer,
+} from '@/propel/components/calendar/PostComposer';
 import { PostDetailDrawer } from '@/propel/components/calendar/PostDetailDrawer';
 import { SocialCalendar } from '@/propel/components/calendar/SocialCalendar';
 import { useSocialCalendarData } from '@/propel/hooks/useSocialCalendarData';
+import { isoToLocalInput } from '@/propel/lib/socialComposer';
 import {
   type SocialCalendarEvent,
   type SocialCalendarFilters,
@@ -20,19 +25,42 @@ import {
   type SocialPost,
 } from '@/propel/types/socialCalendar';
 
+// Default schedule time for a day-cell "+" prefill: 9 AM local on the picked day
+// (a sensible posting hour; the composer datetime field stays editable).
+const slotToScheduleLocal = (slotStart: Date): string => {
+  const d = new Date(slotStart);
+  d.setHours(9, 0, 0, 0);
+  return isoToLocalInput(d.toISOString());
+};
+
 // The graduated Social Posting Calendar hero (P3 hero #5). Rides Twenty's
 // DefaultLayout (nav + top bar from the router <Outlet/>); this page owns the
 // header + filter bar + native calendar, wrapped in its own Mantine scope.
 //
-// S1 scope: native Month/Week/List calendar reading socialPost records from
-// POST /s/marketing/social/connect { action:'status' }, status-coded pills,
-// channel/status filters, and the loading/empty/error states. The post-detail
-// drawer (S2), calendar-native CRUD + drag-reschedule (S3), and retry (S4) land
-// in later slices — clicking a pill is wired here but its handler is a no-op
-// placeholder until S2 supplies the drawer.
+// Slices landed:
+//   S1 — native Month/Week/List calendar reading socialPost records from
+//        POST /s/marketing/social/connect { action:'status' }, status pills,
+//        channel/status filters, loading/empty/error states.
+//   S2 — post-detail READ drawer (pill click) for all statuses.
+//   S3 — the compose surface (this slice): a two-pane composer reached from the
+//        top Compose button, a day-cell "+" (empty-slot click prefills the date),
+//        and the detail-drawer Edit/Reschedule action (DRAFT/SCHEDULED). Create +
+//        edit both call /marketing/social/save-post and refresh on success.
+// Still stubbed: drag-to-reschedule + publish/retry/delete from the drawer (S4),
+// and the AI "use listing details" caption (the AI slice).
 export const SocialCalendarPage = () => {
-  const { accounts, events, isLoading, loaded, isError, payload, reload } =
-    useSocialCalendarData();
+  const {
+    accounts,
+    events,
+    listings,
+    connectUrl,
+    connectedNetworks,
+    isLoading,
+    loaded,
+    isError,
+    payload,
+    reload,
+  } = useSocialCalendarData();
 
   const [view, setView] = useState<SocialCalendarView>('month');
   const [date, setDate] = useState<Date>(() => new Date());
@@ -42,6 +70,8 @@ export const SocialCalendarPage = () => {
   });
   // S2: the post selected for the read drawer. null = drawer closed.
   const [selectedPost, setSelectedPost] = useState<SocialPost | null>(null);
+  // S3: the composer's open intent (create / edit). null = composer closed.
+  const [composer, setComposer] = useState<ComposerOpen | null>(null);
 
   // Apply channel + status filters. Empty selection on an axis = no filter.
   const filteredEvents = useMemo(() => {
@@ -64,6 +94,32 @@ export const SocialCalendarPage = () => {
   // lookup is needed; the drawer reads everything from this record + the payload.
   const handleSelectEvent = (event: SocialCalendarEvent) => {
     setSelectedPost(event.post);
+  };
+
+  // ── S3 compose entry points ───────────────────────────────────────────────
+  // Top "Compose" button → blank create.
+  const openCompose = () => setComposer({ kind: 'create' });
+
+  // Day-cell "+" (an empty-slot click) → create prefilled with that day @ 9 AM.
+  const handleSelectSlot = (slotStart: Date) => {
+    setComposer({
+      kind: 'create',
+      prefillScheduledLocal: slotToScheduleLocal(slotStart),
+    });
+  };
+
+  // Detail-drawer "Edit" → open the composer in edit mode and close the drawer so
+  // the two surfaces don't stack (the composer overlays at a higher z anyway).
+  const handleEditFromDrawer = (post: SocialPost) => {
+    setSelectedPost(null);
+    setComposer({ kind: 'edit', post });
+  };
+
+  // On a successful create/edit, close the composer and refresh the calendar so
+  // the new/edited pill appears.
+  const handleSaved = () => {
+    setComposer(null);
+    reload();
   };
 
   const renderBody = () => {
@@ -91,6 +147,8 @@ export const SocialCalendarPage = () => {
             onView={setView}
             onNavigate={setDate}
             onSelectEvent={handleSelectEvent}
+            onSelectSlot={handleSelectSlot}
+            onCompose={openCompose}
             hasAnyPosts={hasAnyPosts}
           />
         </Box>
@@ -103,18 +161,17 @@ export const SocialCalendarPage = () => {
       <PageContainer>
         <PageHeader title="Social Calendar" Icon={IconCalendarEvent}>
           <Group gap="sm" wrap="nowrap">
-            {/* Compose lands as a calendar-native entry point in S3; surfaced
-                here disabled so the header reads complete. */}
-            <Tooltip label="Composing from the calendar arrives soon" withArrow>
-              <Button
-                size="xs"
-                color="red"
-                leftSection={<IconPlus size={14} />}
-                disabled
-              >
-                Compose
-              </Button>
-            </Tooltip>
+            {/* S3: the top Compose entry point. Enabled once there's at least one
+                connected channel (the composer needs a network to target). */}
+            <Button
+              size="xs"
+              color="red"
+              leftSection={<IconPlus size={14} />}
+              onClick={openCompose}
+              disabled={!hasChannels}
+            >
+              Compose
+            </Button>
           </Group>
         </PageHeader>
 
@@ -133,12 +190,25 @@ export const SocialCalendarPage = () => {
 
       {/* S2 post-detail read drawer. Overlays the whole page; AnimatePresence
           inside handles enter/exit when selectedPost flips null↔record. Reads
-          listings + connectUrl off the same status payload (no new fetch). */}
+          listings + connectUrl off the same status payload (no new fetch). S3
+          wires its Edit/Reschedule actions to open the composer (DRAFT/SCHEDULED). */}
       <PostDetailDrawer
         post={selectedPost}
-        listings={payload?.listings}
-        connectUrl={payload?.connectUrl}
+        listings={listings}
+        connectUrl={connectUrl}
         onClose={() => setSelectedPost(null)}
+        onEdit={handleEditFromDrawer}
+      />
+
+      {/* S3 compose surface. A right-side two-pane panel (form + live preview).
+          Handles create (top Compose / day-cell +) and edit (from the drawer).
+          On save it closes + reloads the calendar so the new pill appears. */}
+      <PostComposer
+        open={composer}
+        connectedNetworks={connectedNetworks}
+        listings={listings}
+        onClose={() => setComposer(null)}
+        onSaved={handleSaved}
       />
     </PropelMantineProvider>
   );
