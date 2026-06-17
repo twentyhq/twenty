@@ -1,6 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { APPLICATION_ID_ENV_VAR_NAME } from 'src/logic-functions/constants/application-id-env-var-name';
 import { reapOrphanedMeetingBots } from 'src/logic-functions/flows/reap-orphaned-meeting-bots.util';
 
 const listScheduledRecallBotsMock = vi.hoisted(() => vi.fn());
@@ -24,6 +25,7 @@ vi.mock('src/logic-functions/recall-api/eject-recall-bot.util', () => ({
 
 const JOIN_AT_AFTER = '2026-01-01T08:00:00.000Z';
 const JOIN_AT_BEFORE = '2026-01-02T12:00:00.000Z';
+const ORIGINAL_APPLICATION_ID = process.env[APPLICATION_ID_ENV_VAR_NAME];
 
 type CallRecordingNode = {
   id: string;
@@ -53,14 +55,35 @@ class FakeCoreApiClient {
 const buildClient = (callRecordings: CallRecordingNode[]): CoreApiClient =>
   new FakeCoreApiClient(callRecordings) as unknown as CoreApiClient;
 
-const buildBot = (id: string, twentyCallRecordingId?: string) => ({
+const restoreOriginalApplicationId = () => {
+  if (ORIGINAL_APPLICATION_ID === undefined) {
+    delete process.env[APPLICATION_ID_ENV_VAR_NAME];
+
+    return;
+  }
+
+  process.env[APPLICATION_ID_ENV_VAR_NAME] = ORIGINAL_APPLICATION_ID;
+};
+
+const buildBot = ({
   id,
-  metadata:
-    twentyCallRecordingId === undefined ? {} : { twentyCallRecordingId },
+  twentyCallRecordingId,
+  twentyApplicationId,
+}: {
+  id: string;
+  twentyCallRecordingId?: string;
+  twentyApplicationId?: string;
+}) => ({
+  id,
+  metadata: {
+    ...(twentyCallRecordingId === undefined ? {} : { twentyCallRecordingId }),
+    ...(twentyApplicationId === undefined ? {} : { twentyApplicationId }),
+  },
 });
 
 describe('reapOrphanedMeetingBots', () => {
   beforeEach(() => {
+    restoreOriginalApplicationId();
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     listScheduledRecallBotsMock.mockReset();
     cancelRecallBotMock.mockReset();
@@ -69,10 +92,19 @@ describe('reapOrphanedMeetingBots', () => {
     ejectRecallBotMock.mockResolvedValue({ ok: true });
   });
 
+  afterEach(() => {
+    restoreOriginalApplicationId();
+  });
+
   it('keeps bots that their call recording still references', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
-      bots: [buildBot('claimed-bot', 'call-recording-1')],
+      bots: [
+        buildBot({
+          id: 'claimed-bot',
+          twentyCallRecordingId: 'call-recording-1',
+        }),
+      ],
     });
 
     const result = await reapOrphanedMeetingBots({
@@ -97,7 +129,12 @@ describe('reapOrphanedMeetingBots', () => {
   it('cancels bots whose call recording request was canceled locally', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
-      bots: [buildBot('stale-cancel-bot', 'call-recording-1')],
+      bots: [
+        buildBot({
+          id: 'stale-cancel-bot',
+          twentyCallRecordingId: 'call-recording-1',
+        }),
+      ],
     });
 
     const result = await reapOrphanedMeetingBots({
@@ -125,8 +162,14 @@ describe('reapOrphanedMeetingBots', () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
       bots: [
-        buildBot('superseded-bot', 'call-recording-1'),
-        buildBot('claimed-bot', 'call-recording-1'),
+        buildBot({
+          id: 'superseded-bot',
+          twentyCallRecordingId: 'call-recording-1',
+        }),
+        buildBot({
+          id: 'claimed-bot',
+          twentyCallRecordingId: 'call-recording-1',
+        }),
       ],
     });
 
@@ -155,7 +198,12 @@ describe('reapOrphanedMeetingBots', () => {
   it('cancels bots whose call recording no longer exists', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
-      bots: [buildBot('orphan-bot', 'call-recording-gone')],
+      bots: [
+        buildBot({
+          id: 'orphan-bot',
+          twentyCallRecordingId: 'call-recording-gone',
+        }),
+      ],
     });
 
     const result = await reapOrphanedMeetingBots({
@@ -173,7 +221,12 @@ describe('reapOrphanedMeetingBots', () => {
   it('grants a grace round to requested recordings without a bot id yet', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
-      bots: [buildBot('pending-bot', 'call-recording-1')],
+      bots: [
+        buildBot({
+          id: 'pending-bot',
+          twentyCallRecordingId: 'call-recording-1',
+        }),
+      ],
     });
 
     const result = await reapOrphanedMeetingBots({
@@ -198,7 +251,7 @@ describe('reapOrphanedMeetingBots', () => {
   it('ignores bots that were not created by this app', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
-      bots: [buildBot('unrelated-bot')],
+      bots: [buildBot({ id: 'unrelated-bot' })],
     });
 
     const result = await reapOrphanedMeetingBots({
@@ -214,10 +267,69 @@ describe('reapOrphanedMeetingBots', () => {
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
 
+  it('ignores bots claimed by another application registration', async () => {
+    process.env[APPLICATION_ID_ENV_VAR_NAME] = 'current-application-id';
+    listScheduledRecallBotsMock.mockResolvedValue({
+      ok: true,
+      bots: [
+        buildBot({
+          id: 'other-app-bot',
+          twentyCallRecordingId: 'call-recording-gone',
+          twentyApplicationId: 'other-application-id',
+        }),
+      ],
+    });
+
+    const result = await reapOrphanedMeetingBots({
+      client: buildClient([]),
+      joinAtAfter: JOIN_AT_AFTER,
+      joinAtBefore: JOIN_AT_BEFORE,
+    });
+
+    expect(result).toEqual({
+      scannedBotCount: 1,
+      canceledExternalBotIds: [],
+    });
+    expect(cancelRecallBotMock).not.toHaveBeenCalled();
+  });
+
+  it('cancels orphaned bots claimed by this application registration', async () => {
+    process.env[APPLICATION_ID_ENV_VAR_NAME] = 'current-application-id';
+    listScheduledRecallBotsMock.mockResolvedValue({
+      ok: true,
+      bots: [
+        buildBot({
+          id: 'same-app-bot',
+          twentyCallRecordingId: 'call-recording-gone',
+          twentyApplicationId: 'current-application-id',
+        }),
+      ],
+    });
+
+    const result = await reapOrphanedMeetingBots({
+      client: buildClient([]),
+      joinAtAfter: JOIN_AT_AFTER,
+      joinAtBefore: JOIN_AT_BEFORE,
+    });
+
+    expect(result).toEqual({
+      scannedBotCount: 1,
+      canceledExternalBotIds: ['same-app-bot'],
+    });
+    expect(cancelRecallBotMock).toHaveBeenCalledWith({
+      externalBotId: 'same-app-bot',
+    });
+  });
+
   it('ejects an orphaned bot that already joined when deletion is rejected', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
-      bots: [buildBot('in-call-orphan', 'call-recording-gone')],
+      bots: [
+        buildBot({
+          id: 'in-call-orphan',
+          twentyCallRecordingId: 'call-recording-gone',
+        }),
+      ],
     });
     cancelRecallBotMock.mockResolvedValue({
       ok: false,

@@ -1,11 +1,13 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { APPLICATION_ID_ENV_VAR_NAME } from 'src/logic-functions/constants/application-id-env-var-name';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
+import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import {
@@ -41,8 +43,9 @@ export const reapOrphanedMeetingBots = async ({
     return { scannedBotCount: 0, canceledExternalBotIds: [] };
   }
 
-  const appManagedBots = listResult.bots.filter(
-    (bot) => !isUndefined(getClaimedCallRecordingId(bot)),
+  const currentApplicationId = getCurrentApplicationId();
+  const appManagedBots = listResult.bots.filter((bot) =>
+    isCurrentApplicationManagedBot({ bot, currentApplicationId }),
   );
 
   if (appManagedBots.length === 0) {
@@ -93,9 +96,39 @@ const getClaimedCallRecordingId = (
 ): string | undefined => {
   const claimedCallRecordingId = bot.metadata.twentyCallRecordingId;
 
-  return isNonEmptyString(claimedCallRecordingId)
-    ? claimedCallRecordingId
-    : undefined;
+  return normalizeOptionalString(claimedCallRecordingId);
+};
+
+const getClaimedApplicationId = (
+  bot: RecallScheduledBot,
+): string | undefined => {
+  const claimedApplicationId = bot.metadata.twentyApplicationId;
+
+  return normalizeOptionalString(claimedApplicationId);
+};
+
+const getCurrentApplicationId = (): string | undefined =>
+  normalizeOptionalString(
+    getApplicationVariableValue(APPLICATION_ID_ENV_VAR_NAME),
+  );
+
+const isCurrentApplicationManagedBot = ({
+  bot,
+  currentApplicationId,
+}: {
+  bot: RecallScheduledBot;
+  currentApplicationId: string | undefined;
+}): boolean => {
+  if (isUndefined(getClaimedCallRecordingId(bot))) {
+    return false;
+  }
+
+  const claimedApplicationId = getClaimedApplicationId(bot);
+
+  return (
+    isUndefined(claimedApplicationId) ||
+    claimedApplicationId === currentApplicationId
+  );
 };
 
 const isBotClaimed = ({
@@ -144,3 +177,6 @@ const cancelOrEjectRecallBot = async (
 
   return false;
 };
+
+const normalizeOptionalString = (value: unknown): string | undefined =>
+  isNonEmptyString(value) ? value.trim() : undefined;

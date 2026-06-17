@@ -21,6 +21,7 @@ const CONVERGENCE_LOOKBACK_DAYS = 7;
 const LIVE_MEETING_GRACE_MINUTES = 30;
 
 const NON_TERMINAL_CALL_RECORDING_STATUSES = [
+  CallRecordingStatus.SCHEDULED,
   CallRecordingStatus.JOINING,
   CallRecordingStatus.RECORDING,
   CallRecordingStatus.PROCESSING,
