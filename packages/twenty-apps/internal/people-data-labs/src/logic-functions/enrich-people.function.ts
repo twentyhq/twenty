@@ -9,12 +9,6 @@ import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 
 const handler = (input: BulkEnrichInput) => enrichPeopleCore({ input });
 
-const personRecordItems = {
-  type: 'object' as const,
-  objectUniversalIdentifier:
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-};
-
 export default defineLogicFunction({
   universalIdentifier: PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPeople,
   name: 'enrich-people',
@@ -30,7 +24,11 @@ export default defineLogicFunction({
         properties: {
           records: {
             type: 'array',
-            items: personRecordItems,
+            items: {
+              type: 'object',
+              objectUniversalIdentifier:
+                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+            },
             label: 'Records',
           },
           overrideExistingValues: {

@@ -9,12 +9,6 @@ import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 
 const handler = (input: BulkEnrichInput) => enrichCompaniesCore({ input });
 
-const companyRecordItems = {
-  type: 'object' as const,
-  objectUniversalIdentifier:
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-};
-
 export default defineLogicFunction({
   universalIdentifier: PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompanies,
   name: 'enrich-companies',
@@ -30,7 +24,11 @@ export default defineLogicFunction({
         properties: {
           records: {
             type: 'array',
-            items: companyRecordItems,
+            items: {
+              type: 'object',
+              objectUniversalIdentifier:
+                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+            },
             label: 'Records',
           },
           overrideExistingValues: {

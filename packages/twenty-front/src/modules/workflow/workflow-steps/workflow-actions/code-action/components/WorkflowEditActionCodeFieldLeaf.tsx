@@ -109,11 +109,9 @@ export const WorkflowEditActionCodeFieldLeaf = ({
       <FormNumberFieldInput
         label={label}
         defaultValue={
-          !isDefined(inputValue)
-            ? undefined
-            : typeof inputValue === 'number' || typeof inputValue === 'string'
-              ? inputValue
-              : undefined
+          typeof inputValue === 'number' || typeof inputValue === 'string'
+            ? inputValue
+            : undefined
         }
         readonly={readonly}
         onChange={onChange}

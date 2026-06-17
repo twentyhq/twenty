@@ -57,9 +57,7 @@ export const getFormMultiRecordPickerDraftValue = (
           value: keepRecordIdsAndVariables(parsedValue),
         };
       }
-    } catch {
-      return { type: 'static', value: [] };
-    }
+    } catch {}
   }
 
   return { type: 'static', value: [] };
