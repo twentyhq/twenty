@@ -62,16 +62,21 @@ export const NavigationDrawerOtherSection = () => {
         containAnimation
         initial={false}
       >
+        {/* Propel: plain string labels (NOT the t`` macro). These are
+            Propel-custom strings absent from the compiled Lingui catalog, so the
+            macro renders the hashed message id at runtime ("vo2a+a" / "4T6rI4")
+            instead of the text. The CRM is English-only, so a literal is correct
+            and catalog-independent. Do not "restore" the t`` macro. */}
         {PROPEL_MARKETING_HUB_ENABLED && (
           <NavigationDrawerItem
-            label={t`Marketing`}
+            label="Marketing"
             to={AppPath.MarketingHub}
             Icon={IconBroadcast}
           />
         )}
         {PROPEL_MARKETING_HUB_ENABLED && (
           <NavigationDrawerItem
-            label={t`Weekly 1:1`}
+            label="Weekly 1:1"
             to={AppPath.OneOnOneRunner}
             Icon={IconUsers}
           />
