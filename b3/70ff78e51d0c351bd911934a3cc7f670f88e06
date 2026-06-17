@@ -1,0 +1,21 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/commands/messaging-single-message-import.command.ts
+  s_12aa84da069766::t_c168ed85b8f5d8 1-69
+packages/twenty-server/src/modules/messaging/message-import-manager/jobs/messaging-add-single-message-to-cache-for-import.job.ts
+  s_12aa84da069766::t_c168ed85b8f5d8 1-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "b370ff78e51d0c351bd911934a3cc7f670f88e06",
+  "prompts": {},
+  "sessions": {
+    "s_12aa84da069766": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e1ec289-c505-418c-bd18-6b7be4f5e776",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
