@@ -25,6 +25,7 @@ export const SignInUpGlobalScopeFormEffect = () => {
       await navigateAfterMultiWorkspaceSignInUp(
         user.availableWorkspaces,
         user.email,
+        { newTab: false },
       );
     };
 
