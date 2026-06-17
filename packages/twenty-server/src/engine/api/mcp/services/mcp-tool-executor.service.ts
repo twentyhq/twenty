@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -37,8 +38,17 @@ export class McpToolExecutorService {
     params: Record<string, unknown>,
     sseWriter?: (data: Record<string, unknown>) => void,
   ) {
-    const toolName = String(params.name);
-    const tool = toolSet[toolName as keyof typeof toolSet];
+    if (!isNonEmptyString(params.name)) {
+      return wrapJsonRpcResponse(id, {
+        error: {
+          code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
+          message: 'Tool name is required',
+        },
+      });
+    }
+
+    const toolName = params.name;
+    const tool = toolSet[toolName];
 
     if (!isDefined(tool) || !isDefined(tool.execute)) {
       return wrapJsonRpcResponse(id, {
