@@ -20,17 +20,29 @@ import {
   responseData as findManyObjectMetadataItemsResponseData,
 } from '@/object-metadata/hooks/__mocks__/useFindManyObjectMetadataItems';
 
+const deleteOneObjectMetadataItemResultMock = jest.fn(() => ({
+  data: {
+    deleteOneObject: responseData,
+  },
+}));
+
+const findManyObjectMetadataItemsResultMock = jest.fn(() => ({
+  data: findManyObjectMetadataItemsResponseData,
+}));
+
+const findManyCommandMenuItemsResultMock = jest.fn(() => ({
+  data: {
+    commandMenuItems: [],
+  },
+}));
+
 const mocks = [
   {
     request: {
       query,
       variables,
     },
-    result: jest.fn(() => ({
-      data: {
-        deleteOneObject: responseData,
-      },
-    })),
+    result: deleteOneObjectMetadataItemResultMock,
   },
   {
     request: {
@@ -59,20 +71,14 @@ const mocks = [
       query: findManyObjectMetadataItemsQuery,
       variables: {},
     },
-    result: jest.fn(() => ({
-      data: findManyObjectMetadataItemsResponseData,
-    })),
+    result: findManyObjectMetadataItemsResultMock,
   },
   {
     request: {
       query: FindManyCommandMenuItemsDocument,
       variables: {},
     },
-    result: jest.fn(() => ({
-      data: {
-        commandMenuItems: [],
-      },
-    })),
+    result: findManyCommandMenuItemsResultMock,
   },
 ];
 
@@ -93,5 +99,8 @@ describe('useDeleteOneObjectMetadataItem', () => {
       jestExpectSuccessfulMetadataRequestResult(res);
       expect(res.response).toEqual({ data: { deleteOneObject: responseData } });
     });
+
+    expect(findManyObjectMetadataItemsResultMock).toHaveBeenCalled();
+    expect(findManyCommandMenuItemsResultMock).toHaveBeenCalled();
   });
 });

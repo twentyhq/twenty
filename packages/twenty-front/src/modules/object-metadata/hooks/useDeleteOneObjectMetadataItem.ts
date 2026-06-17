@@ -6,6 +6,8 @@ import {
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { splitObjectMetadataGqlResponse } from '@/metadata-store/utils/splitObjectMetadataGqlResponse';
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -20,8 +22,7 @@ export const useDeleteOneObjectMetadataItem = () => {
   const client = useApolloClient();
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { removeFromDraft, replaceDraft, applyChanges } =
-    useUpdateMetadataStoreDraft();
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const deleteOneObjectMetadataItem = async (
     idToDelete: string,
@@ -37,14 +38,24 @@ export const useDeleteOneObjectMetadataItem = () => {
         },
       });
 
-      removeFromDraft({ key: 'objectMetadataItems', itemIds: [idToDelete] });
-      applyChanges();
+      const [objectMetadataItemsResult, commandMenuItemsResult] =
+        await Promise.all([
+          client.query({
+            query: FIND_MANY_OBJECT_METADATA_ITEMS,
+            fetchPolicy: 'network-only',
+          }),
+          client.query({
+            query: FindManyCommandMenuItemsDocument,
+            fetchPolicy: 'network-only',
+          }),
+        ]);
 
-      const commandMenuItemsResult = await client.query({
-        query: FindManyCommandMenuItemsDocument,
-        fetchPolicy: 'network-only',
-      });
+      const { flatObjects, flatFields, flatIndexes } =
+        splitObjectMetadataGqlResponse(objectMetadataItemsResult.data);
 
+      replaceDraft('objectMetadataItems', flatObjects);
+      replaceDraft('fieldMetadataItems', flatFields);
+      replaceDraft('indexMetadataItems', flatIndexes);
       replaceDraft(
         'commandMenuItems',
         commandMenuItemsResult.data?.commandMenuItems ?? [],
