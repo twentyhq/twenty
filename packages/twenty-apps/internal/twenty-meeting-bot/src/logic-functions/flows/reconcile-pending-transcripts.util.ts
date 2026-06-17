@@ -7,7 +7,10 @@ import { type FilesFieldValue } from 'src/logic-functions/types/files-field-valu
 import { type TranscriptMarker } from 'src/logic-functions/types/transcript-marker.type';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
-import { fetchAllNodes } from 'src/logic-functions/data/fetch-all-nodes.util';
+import {
+  fetchAllNodes,
+  type ConnectionPage,
+} from 'src/logic-functions/data/fetch-all-nodes.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
@@ -28,6 +31,16 @@ type PendingTranscriptCallRecording = {
   transcript: unknown;
   audio: FilesFieldValue | undefined;
   video: FilesFieldValue | undefined;
+};
+
+type PendingTranscriptCallRecordingNode = {
+  id: string;
+  status?: string | null;
+  startedAt?: string | null;
+  endedAt?: string | null;
+  transcript?: unknown;
+  audio?: FilesFieldValue | null;
+  video?: FilesFieldValue | null;
 };
 
 export type ReconcilePendingTranscriptsResult = {
@@ -138,34 +151,39 @@ const fetchPendingTranscriptCallRecordings = async (
       ).toISOString(),
     },
   };
-  const callRecordingNodes = await fetchAllNodes(async (afterCursor) => {
-    const queryResult = await client.query({
-      callRecordings: {
-        __args: {
-          filter,
-          first: TWENTY_PAGE_SIZE,
-          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
-        },
-        pageInfo: {
-          hasNextPage: true,
-          endCursor: true,
-        },
-        edges: {
-          node: {
-            id: true,
-            status: true,
-            startedAt: true,
-            endedAt: true,
-            transcript: true,
-            audio: { fileId: true },
-            video: { fileId: true },
+  const callRecordingNodes =
+    await fetchAllNodes<PendingTranscriptCallRecordingNode>(
+      async (afterCursor) => {
+        const queryResult = await client.query({
+          callRecordings: {
+            __args: {
+              filter,
+              first: TWENTY_PAGE_SIZE,
+              ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
+            },
+            pageInfo: {
+              hasNextPage: true,
+              endCursor: true,
+            },
+            edges: {
+              node: {
+                id: true,
+                status: true,
+                startedAt: true,
+                endedAt: true,
+                transcript: true,
+                audio: { fileId: true },
+                video: { fileId: true },
+              },
+            },
           },
-        },
-      },
-    });
+        });
 
-    return queryResult.callRecordings;
-  });
+        return queryResult.callRecordings as
+          | ConnectionPage<PendingTranscriptCallRecordingNode>
+          | undefined;
+      },
+    );
 
   return callRecordingNodes.flatMap((node) => {
     const marker = parseTranscriptMarker(node.transcript);

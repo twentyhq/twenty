@@ -9,7 +9,10 @@ import {
   extractRecallBotConvergence,
   type RecallBotConvergence,
 } from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
-import { fetchAllNodes } from 'src/logic-functions/data/fetch-all-nodes.util';
+import {
+  fetchAllNodes,
+  type ConnectionPage,
+} from 'src/logic-functions/data/fetch-all-nodes.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
@@ -44,6 +47,20 @@ type DivergedCallRecordingCandidate = {
   video: FilesFieldValue | undefined;
   createdAt: string | undefined;
   calendarEventEndsAt: string | undefined;
+};
+
+type DivergedCallRecordingNode = {
+  id: string;
+  status?: string | null;
+  startedAt?: string | null;
+  endedAt?: string | null;
+  externalBotId?: string | null;
+  externalRecordingId?: string | null;
+  transcript?: unknown;
+  audio?: FilesFieldValue | null;
+  video?: FilesFieldValue | null;
+  createdAt?: string | null;
+  calendarEvent?: { endsAt?: string | null } | null;
 };
 
 export type ConvergeDivergedCallRecordingsResult = {
@@ -126,40 +143,44 @@ const fetchDivergedCallRecordingCandidates = async (
       },
     ],
   };
-  const candidateNodes = await fetchAllNodes(async (afterCursor) => {
-    const queryResult = await client.query({
-      callRecordings: {
-        __args: {
-          filter,
-          first: TWENTY_PAGE_SIZE,
-          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
-        },
-        pageInfo: {
-          hasNextPage: true,
-          endCursor: true,
-        },
-        edges: {
-          node: {
-            id: true,
-            status: true,
-            startedAt: true,
-            endedAt: true,
-            externalBotId: true,
-            externalRecordingId: true,
-            transcript: true,
-            audio: { fileId: true },
-            video: { fileId: true },
-            createdAt: true,
-            calendarEvent: {
-              endsAt: true,
+  const candidateNodes = await fetchAllNodes<DivergedCallRecordingNode>(
+    async (afterCursor) => {
+      const queryResult = await client.query({
+        callRecordings: {
+          __args: {
+            filter,
+            first: TWENTY_PAGE_SIZE,
+            ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
+          },
+          pageInfo: {
+            hasNextPage: true,
+            endCursor: true,
+          },
+          edges: {
+            node: {
+              id: true,
+              status: true,
+              startedAt: true,
+              endedAt: true,
+              externalBotId: true,
+              externalRecordingId: true,
+              transcript: true,
+              audio: { fileId: true },
+              video: { fileId: true },
+              createdAt: true,
+              calendarEvent: {
+                endsAt: true,
+              },
             },
           },
         },
-      },
-    });
+      });
 
-    return queryResult.callRecordings;
-  });
+      return queryResult.callRecordings as
+        | ConnectionPage<DivergedCallRecordingNode>
+        | undefined;
+    },
+  );
 
   return candidateNodes.map((node) => ({
     id: node.id,
