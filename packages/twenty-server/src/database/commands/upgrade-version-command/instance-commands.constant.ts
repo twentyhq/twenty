@@ -72,6 +72,7 @@ import { EmailingDomainTenantStatusAndGlobalUniquenessFastInstanceCommand } from
 import { AddLogicFunctionExecutionModeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799000030000-add-logic-function-execution-mode';
 import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1798400000000-encrypt-non-secret-application-variable';
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
+import { AddHasPaymentMethodToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1781280240009-add-has-payment-method-to-billing-customer';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -135,6 +136,7 @@ export const INSTANCE_COMMANDS = [
   EncryptNonSecretApplicationVariableSlowInstanceCommand,
   DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand,
   DropEmailingDomainDriverColumnFastInstanceCommand,
+  AddHasPaymentMethodToBillingCustomerFastInstanceCommand,
   AddEmailingDomainUnsubscribeHostFastInstanceCommand,
   ViewOverridableEntityFastInstanceCommand,
   CreateMessageSuppressionCoreTableFastInstanceCommand,
