@@ -1,21 +1,10 @@
-import { isToolUIPart } from 'ai';
+import { getToolName, isToolUIPart } from 'ai';
 import {
   isExtendedFileUIPart,
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 
 import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
-
-// Static tool parts use `tool-<name>` as their type; dynamic tool parts
-// (tools the model invokes that aren't part of the bound schema) use the
-// literal type `dynamic-tool` and carry the name on a `toolName` field.
-const getToolNameFromPart = (part: {
-  type: string;
-  toolName?: string;
-}): string =>
-  part.type === 'dynamic-tool'
-    ? (part.toolName ?? '')
-    : part.type.slice('tool-'.length);
 
 export const mapUIMessagePartsToDBParts = (
   uiMessageParts: ExtendedUIMessagePart[],
@@ -91,7 +80,7 @@ export const mapUIMessagePartsToDBParts = (
           if (isToolUIPart(part)) {
             return {
               ...basePart,
-              toolName: getToolNameFromPart(part),
+              toolName: getToolName(part),
               toolCallId: part.toolCallId,
               toolInput: part.input,
               toolOutput: part.output,
