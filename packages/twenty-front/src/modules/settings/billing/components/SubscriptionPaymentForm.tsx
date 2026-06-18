@@ -137,7 +137,6 @@ const SubscriptionPaymentFormContent = ({
           defaultValues: isDefined(customerEmail)
             ? { billingDetails: { email: customerEmail } }
             : undefined,
-          fields: { billingDetails: { address: 'never' } },
         }}
       />
       <StyledButtonContainer>
