@@ -27,7 +27,10 @@ import {
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
-import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
+import {
+  MessagingProcessFolderActionsService,
+  type ProcessFolderActionsResult,
+} from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
@@ -68,7 +71,7 @@ export class MessagingMessageListFetchService {
               workspaceId,
             );
 
-          const pendingFolderActionsProcessed =
+          const processedfolderActionsResult =
             await this.processPendingFolderActions(messageChannel, workspaceId);
 
           await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
@@ -81,7 +84,8 @@ export class MessagingMessageListFetchService {
           );
 
           const freshMessageChannel =
-            pendingGroupEmailActionsProcessed || pendingFolderActionsProcessed
+            pendingGroupEmailActionsProcessed ||
+            isDefined(processedfolderActionsResult)
               ? await this.messageChannelRepository.findOne({
                   where: {
                     id: messageChannel.id,
@@ -120,9 +124,12 @@ export class MessagingMessageListFetchService {
             `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
           );
 
-          const messageExternalIds = messageLists.flatMap(
-            (messageList) => messageList.messageExternalIds,
-          );
+          const messageExternalIds = [
+            ...messageLists.flatMap(
+              (messageList) => messageList.messageExternalIds,
+            ),
+            ...(processedfolderActionsResult?.messageExternalIdsToImport ?? []),
+          ];
 
           const messageExternalIdsToDelete = messageLists.flatMap(
             (messageList) => messageList.messageExternalIdsToDelete,
@@ -312,7 +319,7 @@ export class MessagingMessageListFetchService {
   private async processPendingFolderActions(
     messageChannel: MessageChannelEntity,
     workspaceId: string,
-  ): Promise<boolean> {
+  ): Promise<ProcessFolderActionsResult | null> {
     const foldersWithPendingActions = messageChannel.messageFolders.filter(
       (folder) =>
         isDefined(folder.pendingSyncAction) &&
@@ -320,20 +327,18 @@ export class MessagingMessageListFetchService {
     );
 
     if (foldersWithPendingActions.length === 0) {
-      return false;
+      return null;
     }
 
     this.logger.log(
       `messageChannelId: ${messageChannel.id} Processing pending folder actions before message list fetch`,
     );
 
-    await this.messagingProcessFolderActionsService.processFolderActions(
+    return this.messagingProcessFolderActionsService.processFolderActions(
       messageChannel,
       foldersWithPendingActions,
       workspaceId,
     );
-
-    return true;
   }
 
   private async computeFullSyncMessageChannelMessageAssociationsToDelete(

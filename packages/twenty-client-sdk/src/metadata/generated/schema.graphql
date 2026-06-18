@@ -2943,6 +2943,7 @@ type MessageFolder {
 
 enum MessageFolderPendingSyncAction {
   FOLDER_DELETION
+  FOLDER_IMPORT
   NONE
 }
 
@@ -4374,7 +4375,7 @@ input UpdateMessageFolderInput {
 }
 
 input UpdateMessageFolderInputUpdates {
-  isSynced: Boolean
+  isSynced: Boolean!
 }
 
 input UpdateMessageFoldersInput {
