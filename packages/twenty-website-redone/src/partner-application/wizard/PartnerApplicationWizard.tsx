@@ -181,13 +181,14 @@ export function PartnerApplicationWizard({
       }
       if (state.isSubmitting) return;
 
+      setSubmitError(null);
+
       if (Object.keys(validatePartnerApplicationStep(state)).length > 0) {
         goNext();
         return;
       }
 
       const payload = buildPartnerApplicationRequestBody(state);
-      setSubmitError(null);
       setSubmitting(true);
       try {
         const response = await fetch('/api/partner-application', {

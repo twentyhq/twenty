@@ -314,17 +314,15 @@ function walk(directory) {
 
     // .tsx files are PascalCase (named after their React component); .ts
     // files are kebab-case. Test files mirror their subject's name, so the
-    // .test/.spec infix is stripped before the casing rule (TagInput.test.tsx,
-    // partner-fields.test.ts). Next.js route files (page/layout/...) and the
-    // compiled locale catalogs are exempt.
+    // .test infix is stripped before the casing rule (TagInput.test.tsx,
+    // partner-fields.test.ts) — matching the .test-only exemptions elsewhere.
+    // Next.js route files (page/layout/...) and the compiled locale catalogs
+    // are exempt.
     if (
       !NEXT_CONTRACT_FILES.has(entry.name) &&
       !relativePath.startsWith('locales' + path.sep)
     ) {
-      const nameForCasing = entry.name.replace(
-        /\.(test|spec)(?=\.[tj]sx?$)/,
-        '',
-      );
+      const nameForCasing = entry.name.replace(/\.test(?=\.[tj]sx?$)/, '');
       if (nameForCasing.endsWith('.tsx')) {
         if (!/^[A-Z][A-Za-z0-9]*\.tsx$/.test(nameForCasing)) {
           failures.push(`src/${relativePath}: .tsx filenames are PascalCase.`);

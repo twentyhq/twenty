@@ -18,9 +18,9 @@ const STEP_REQUIRED_FIELDS: Record<
 };
 
 function isEmpty(value: unknown): boolean {
-  if (value === '' || value === null || value === undefined) return true;
+  if (typeof value === 'string') return value.trim() === '';
   if (Array.isArray(value)) return value.length === 0;
-  return false;
+  return value === null || value === undefined;
 }
 
 type FieldFormatCheck = {
@@ -70,6 +70,12 @@ const STEP_FORMAT_CHECKS: Partial<
 export function validatePartnerApplicationStep(
   state: PartnerApplicationState,
 ): Partial<Record<string, string>> {
+  if (
+    state.stepIndex < 0 ||
+    state.stepIndex >= PARTNER_APPLICATION_STEP_IDS.length
+  ) {
+    return { step: 'invalid_step' };
+  }
   const stepId = PARTNER_APPLICATION_STEP_IDS[state.stepIndex];
   const errors: Partial<Record<string, string>> = {};
 
