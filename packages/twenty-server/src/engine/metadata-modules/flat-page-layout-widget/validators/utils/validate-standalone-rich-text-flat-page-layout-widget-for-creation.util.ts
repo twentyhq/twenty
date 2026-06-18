@@ -5,6 +5,7 @@ import { type ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs } fro
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { validateStandaloneRichTextBody } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util';
 import { validateStandaloneRichTextConfigurationType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util';
+import { validateStandaloneRichTextPageLayoutType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-page-layout-type.util';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
 export const validateStandaloneRichTextFlatPageLayoutWidgetForCreation = (
@@ -13,6 +14,8 @@ export const validateStandaloneRichTextFlatPageLayoutWidgetForCreation = (
   const { flatEntityToValidate } = args;
   const { universalConfiguration, title: widgetTitle } = flatEntityToValidate;
   const errors: FlatPageLayoutWidgetValidationError[] = [];
+
+  errors.push(...validateStandaloneRichTextPageLayoutType(args));
 
   if (!isDefined(universalConfiguration)) {
     errors.push({
