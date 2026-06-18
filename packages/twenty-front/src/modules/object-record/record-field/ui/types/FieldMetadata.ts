@@ -336,7 +336,7 @@ export type PhoneRecord = {
 };
 
 export type FieldPhonesValue = {
-  primaryPhoneNumber: string;
+  primaryPhoneNumber: string | null;
   primaryPhoneCountryCode: string;
   primaryPhoneCallingCode?: string;
   additionalPhones?: PhoneRecord[] | null;

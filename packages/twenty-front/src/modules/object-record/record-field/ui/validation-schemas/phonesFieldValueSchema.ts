@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 export const phonesFieldValueSchema = z.object({
-  primaryPhoneNumber: z.string(),
+  primaryPhoneNumber: z.string().nullable(),
   primaryPhoneCountryCode: z.string(),
   primaryPhoneCallingCode: z.string().optional(),
   additionalPhones: z
