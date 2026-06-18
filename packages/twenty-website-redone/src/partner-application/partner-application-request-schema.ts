@@ -1,0 +1,43 @@
+import { z } from 'zod';
+
+import { PARTNER_COUNTRY_OPTIONS } from './data/partner-country-options';
+import { PARTNER_LANGUAGE_OPTIONS } from './data/partner-language-options';
+import { PARTNER_SCOPE_OPTIONS } from './data/partner-scope-options';
+import { PARTNER_TEAM_TYPE_OPTIONS } from './data/partner-team-type-options';
+import { emailFieldSchema } from './email-field-schema';
+import { httpUrlFieldSchema } from './http-url-field-schema';
+
+const countryValues = PARTNER_COUNTRY_OPTIONS.map((option) => option.value);
+const languageValues = PARTNER_LANGUAGE_OPTIONS.map((option) => option.value);
+const scopeValues = PARTNER_SCOPE_OPTIONS.map((option) => option.value);
+const teamTypeValues = PARTNER_TEAM_TYPE_OPTIONS.map((option) => option.value);
+
+const optionalNonEmptyString = z.string().trim().min(1).optional();
+const optionalUrl = httpUrlFieldSchema.optional();
+const optionalNonNegativeNumber = z.number().nonnegative().optional();
+
+// The single source of truth for partner-application validation. The server
+// route parses against it; the client reducer reuses the field schemas above
+// so both accept and reject exactly the same input. strictObject so unknown
+// keys are rejected rather than silently forwarded to the webhook.
+export const partnerApplicationRequestSchema = z.strictObject({
+  name: z.string().trim().min(1, { error: 'Name is required.' }),
+  email: emailFieldSchema,
+  company: z.string().trim().min(1, { error: 'Company is required.' }),
+  website: optionalUrl,
+  linkedin: optionalUrl,
+  city: optionalNonEmptyString,
+  country: z.enum(countryValues).optional(),
+  languages: z.array(z.enum(languageValues)).optional(),
+  typeOfTeam: z.enum(teamTypeValues).optional(),
+  partnerScope: z.array(z.enum(scopeValues)).optional(),
+  skills: z.array(z.string().trim().min(1)).optional(),
+  applicationNotes: optionalNonEmptyString,
+  hourlyRate: optionalNonNegativeNumber,
+  projectBudgetMin: optionalNonNegativeNumber,
+  calendarLink: optionalUrl,
+});
+
+export type PartnerApplicationRequest = z.infer<
+  typeof partnerApplicationRequestSchema
+>;

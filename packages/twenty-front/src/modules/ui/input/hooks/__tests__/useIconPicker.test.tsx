@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
 import { useIconPicker } from '@/ui/input/hooks/useIconPicker';
-import { Icon123, IconApps } from 'twenty-ui/display';
+import { Icon123, IconApps } from 'twenty-ui/icon';
 
 describe('useIconPicker', () => {
   it('should return correct iconPickerState', async () => {

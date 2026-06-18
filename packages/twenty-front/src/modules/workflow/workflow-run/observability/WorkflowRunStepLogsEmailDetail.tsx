@@ -8,7 +8,7 @@ import {
   IconClock,
   IconMail,
   IconPaperclip,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {

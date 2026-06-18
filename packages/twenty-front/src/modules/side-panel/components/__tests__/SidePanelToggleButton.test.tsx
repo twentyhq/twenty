@@ -12,14 +12,14 @@ import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelS
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconDotsVertical } from 'twenty-ui/display';
+import { IconDotsVertical } from 'twenty-ui/icon';
 
 jest.mock('twenty-ui/utilities', () => ({
   useIsMobile: () => false,
 }));
 
-jest.mock('twenty-ui/display', () => ({
-  ...jest.requireActual('twenty-ui/display'),
+jest.mock('twenty-ui/surfaces', () => ({
+  ...jest.requireActual('twenty-ui/surfaces'),
   AppTooltip: () => null,
 }));
 

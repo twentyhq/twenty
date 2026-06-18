@@ -1,4 +1,5 @@
-import { H2Title, IconChevronRight } from 'twenty-ui/display';
+import { IconChevronRight } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';

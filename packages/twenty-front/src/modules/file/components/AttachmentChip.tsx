@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { AvatarOrIcon } from 'twenty-ui/components';
-import { IconX } from 'twenty-ui/display';
+import { AvatarOrIcon } from 'twenty-ui/data-display';
+import { IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getFileType } from '@/activities/files/utils/getFileType';

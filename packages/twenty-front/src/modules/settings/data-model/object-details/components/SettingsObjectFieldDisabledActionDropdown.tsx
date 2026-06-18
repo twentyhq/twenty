@@ -10,7 +10,7 @@ import {
   IconEye,
   IconPencil,
   IconTrash,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';

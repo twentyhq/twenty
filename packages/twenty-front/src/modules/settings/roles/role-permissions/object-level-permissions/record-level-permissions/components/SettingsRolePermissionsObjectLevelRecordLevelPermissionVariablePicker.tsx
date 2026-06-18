@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
-import { IconVariablePlus } from 'twenty-ui/display';
+import { IconVariablePlus } from 'twenty-ui/icon';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

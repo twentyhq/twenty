@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { type EmailAttachment } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconUpload } from 'twenty-ui/display';
+import { IconUpload } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useUploadEmailAttachment } from '@/activities/emails/hooks/useUploadEmailAttachment';

@@ -1,5 +1,6 @@
 import { Section } from 'twenty-ui/layout';
-import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
+import { IconReload, IconTrash } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';

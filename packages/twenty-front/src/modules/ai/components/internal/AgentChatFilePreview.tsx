@@ -10,8 +10,8 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useContext } from 'react';
 import { type ExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/components';
-import { type IconComponent, IconX } from 'twenty-ui/display';
+import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/data-display';
+import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 

@@ -68,6 +68,27 @@ const unresolvedToolCallIds = async (
   return [...pending];
 };
 
+// convertToModelMessages drops the `input` field when a tool part's input is
+// nullish, so every reconstructed tool-call must carry a defined input.
+const toolCallInputs = async (messages: UIMessage[]): Promise<unknown[]> => {
+  const modelMessages = await convertToModelMessages(messages);
+  const inputs: unknown[] = [];
+
+  for (const message of modelMessages) {
+    if (!Array.isArray(message.content)) {
+      continue;
+    }
+
+    for (const content of message.content) {
+      if (typeof content === 'object' && content.type === 'tool-call') {
+        inputs.push(content.input);
+      }
+    }
+  }
+
+  return inputs;
+};
+
 describe('finalizeDanglingToolParts round-trip', () => {
   const interruptedBatch: ExtendedUIMessagePart[] = [
     { type: 'text', text: 'Creating items…' } as ExtendedUIMessagePart,
@@ -126,5 +147,44 @@ describe('finalizeDanglingToolParts round-trip', () => {
         }),
       ]),
     );
+  });
+
+  // A tool call that failed input validation: persisted as output-error with
+  // a null input (issue #21695).
+  const validationErroredPart: ExtendedUIMessagePart = {
+    type: 'tool-execute_tool',
+    toolCallId: 'validation_failed_1',
+    state: 'output-error',
+    errorText: 'Invalid input for tool execute_tool: Type validation failed',
+  } as unknown as ExtendedUIMessagePart;
+
+  it('replays a validation-errored tool part with a defined input', async () => {
+    const reloaded = persistAndReload(
+      finalizeDanglingToolParts([validationErroredPart]),
+    );
+
+    const inputs = await toolCallInputs(buildThread(reloaded));
+
+    expect(inputs).toHaveLength(1);
+    expect(inputs[0]).toBeDefined();
+    expect(inputs[0]).toEqual({});
+  });
+
+  it('keeps a validation-errored tool call resolved after the round-trip', async () => {
+    const reloaded = persistAndReload(
+      finalizeDanglingToolParts([validationErroredPart]),
+    );
+
+    expect(await unresolvedToolCallIds(buildThread(reloaded))).toEqual([]);
+  });
+
+  it('persists an empty object rather than null for a missing tool input', () => {
+    const [dbPart] = mapUIMessagePartsToDBParts(
+      finalizeDanglingToolParts([validationErroredPart]),
+      'message-1',
+      'workspace-1',
+    );
+
+    expect(dbPart.toolInput).toEqual({});
   });
 });

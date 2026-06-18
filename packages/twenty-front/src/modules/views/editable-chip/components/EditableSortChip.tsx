@@ -11,7 +11,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArrowDown, IconArrowUp } from 'twenty-ui/display';
+import { IconArrowDown, IconArrowUp } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 

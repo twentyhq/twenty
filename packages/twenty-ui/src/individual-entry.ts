@@ -1,15 +1,22 @@
-// Entry point for the individual/self-contained build (vite.config.individual.ts).
-// Re-exports all public modules so a single bundle contains every component with
-// internal deps bundled, while React stays external for the consumer's bundler.
+/*
+ * _____                    _
+ *|_   _|_      _____ _ __ | |_ _   _
+ *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-generated file
+ *  | |  \ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
+ *  |_|   \_/\_/ \___|_| |_|\__|\__, |
+ *                              |___/
+ */
 
 export * from './accessibility';
-export * from './components';
-export * from './display';
+export * from './data-display';
 export * from './feedback';
+export * from './icon';
 export * from './input';
 export * from './json-visualizer';
 export * from './layout';
 export * from './navigation';
+export * from './surfaces';
 export * from './theme';
 export * from './theme-constants';
+export * from './typography';
 export * from './utilities';

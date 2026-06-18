@@ -16,7 +16,7 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconDotsVertical } from 'twenty-ui/display';
+import { IconDotsVertical } from 'twenty-ui/icon';
 
 jest.mock('@/side-panel/components/SidePanelTopBarInputFocusEffect', () => ({
   SidePanelTopBarInputFocusEffect: () => null,

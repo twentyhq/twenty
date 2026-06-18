@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { TintedIconTile } from 'twenty-ui/data-display';
 import {
   IconBuildingSkyscraper,
   IconDotsVertical,
   IconLayoutSidebarRight,
   IconPlus,
-  TintedIconTile,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/input';
 
 import { BackgroundMockTable } from '@/sign-in-background-mock/components/BackgroundMockTable';
