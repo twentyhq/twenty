@@ -329,6 +329,7 @@ export class ViewService {
         existingFlatView.applicationUniversalIdentifier,
       workspaceCustomApplicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
+      isSystemSideEffect: existingFlatView.isSystemSideEffect,
     });
 
     const now = new Date().toISOString();

@@ -4,7 +4,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useLingui } from '@lingui/react/macro';
-import { IconFilter } from 'twenty-ui-deprecated/display';
+import { IconFilter } from 'twenty-ui/display';
 
 export const AnyFieldSearchChip = () => {
   const { t } = useLingui();

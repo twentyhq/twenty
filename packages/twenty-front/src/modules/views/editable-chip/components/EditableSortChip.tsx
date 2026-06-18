@@ -11,8 +11,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArrowDown, IconArrowUp } from 'twenty-ui-deprecated/display';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+import { IconArrowDown, IconArrowUp } from 'twenty-ui/display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 type EditableSortChipProps = {

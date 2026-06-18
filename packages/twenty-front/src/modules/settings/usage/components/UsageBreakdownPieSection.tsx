@@ -8,9 +8,9 @@ import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueForm
 import { getOperationTypeLabel } from '@/settings/usage/utils/getOperationTypeLabel';
 import { Select } from '@/ui/input/components/Select';
 import { useContext } from 'react';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 
 type UsageBreakdownField = 'operationType' | 'model';

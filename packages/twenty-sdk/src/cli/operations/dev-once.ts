@@ -1,5 +1,5 @@
 import path from 'path';
-import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { type SyncAction } from 'twenty-shared/metadata';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
@@ -7,6 +7,7 @@ import {
   ensureAppAccessTokenIsValidOrRefresh,
   ensureAppRegistration,
 } from '@/cli/utilities/auth';
+import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
@@ -81,14 +82,20 @@ const innerAppDevOnce = async (
   }
 
   if (!validateAuth.authValid) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.SYNC_FAILED,
-        message:
-          'Authentication failed. Run `yarn twenty remote:add --local` to authenticate.',
-      },
-    };
+    const outcome = await promptForReauthentication(
+      ConfigService.getActiveRemote(),
+    );
+
+    if (outcome !== 'reauthenticated') {
+      return {
+        success: false,
+        error: {
+          code: APP_ERROR_CODES.SYNC_FAILED,
+          message:
+            'Authentication failed. Run `yarn twenty remote:add` to authenticate.',
+        },
+      };
+    }
   }
 
   onProgress?.('Building manifest...');

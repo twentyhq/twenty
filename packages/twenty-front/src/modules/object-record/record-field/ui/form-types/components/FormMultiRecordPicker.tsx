@@ -31,8 +31,8 @@ import { useContext, useId, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
-import { IconChevronDown } from 'twenty-ui-deprecated/display';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { IconChevronDown } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export type FormMultiRecordPickerProps = {
   label?: string;

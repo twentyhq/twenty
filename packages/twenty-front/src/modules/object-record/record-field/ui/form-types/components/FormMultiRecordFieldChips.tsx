@@ -7,7 +7,7 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChipsContainer = styled.div`
   align-items: center;

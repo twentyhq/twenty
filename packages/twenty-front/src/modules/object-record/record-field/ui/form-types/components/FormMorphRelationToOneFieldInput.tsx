@@ -18,7 +18,7 @@ import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
 const StyledReadonlyContainer = styled.div`

@@ -3,7 +3,7 @@ import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpg
 import { getWorkspacesUpgradeHealth } from '@/settings/admin-panel/utils/getWorkspacesUpgradeHealth';
 import { getWorkspacesUpgradeHealthText } from '@/settings/admin-panel/utils/getWorkspacesUpgradeHealthText';
 import { t } from '@lingui/core/macro';
-import { Status } from 'twenty-ui-deprecated/display';
+import { Status } from 'twenty-ui/display';
 
 export const SettingsAdminUpgradeStatusRightContainer = ({
   item,

@@ -42,6 +42,7 @@ export const fromViewManifestToUniversalFlatView = ({
     anyFieldFilterValue: null,
     createdByUserWorkspaceId: null,
     isActive: true,
+    isSystemSideEffect: false,
     universalOverrides: null,
     viewFieldUniversalIdentifiers: [],
     viewFilterUniversalIdentifiers: [],

@@ -1,12 +1,9 @@
 import { styled } from '@linaria/react';
 import { useContext, type ReactNode } from 'react';
-import { H2Title } from 'twenty-ui-deprecated/display';
+import { H2Title } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
-import { Section } from 'twenty-ui-deprecated/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { Section } from 'twenty-ui/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.div`
   align-items: center;

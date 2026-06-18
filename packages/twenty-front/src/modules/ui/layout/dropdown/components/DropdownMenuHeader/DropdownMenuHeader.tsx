@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ComponentProps, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.li`
   align-items: center;

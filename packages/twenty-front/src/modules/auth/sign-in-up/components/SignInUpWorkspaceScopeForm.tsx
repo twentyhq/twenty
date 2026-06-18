@@ -12,8 +12,8 @@ import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceA
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { HorizontalSeparator } from 'twenty-ui-deprecated/display';
-import { ClickToActionLink } from 'twenty-ui-deprecated/navigation';
+import { HorizontalSeparator } from 'twenty-ui/display';
+import { ClickToActionLink } from 'twenty-ui/navigation';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SignInUpWorkspaceScopeForm = () => {
