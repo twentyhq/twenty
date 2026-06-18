@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Impersonation - unauthenticated request denial (integration) rejects an impersonation request with no authentication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;

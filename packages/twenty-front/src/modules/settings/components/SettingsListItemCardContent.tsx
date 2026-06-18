@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, type IconComponent } from 'twenty-ui/display';
-import { CardContent } from 'twenty-ui/layout';
+import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
+import { CardContent } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowContainer = styled.div`

@@ -3,13 +3,14 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
@@ -36,6 +37,7 @@ describe('ImpersonationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ImpersonationService,
+        ImpersonationAuthorizationService,
         {
           provide: getRepositoryToken(UserEntity),
           useValue: {
@@ -366,7 +368,7 @@ describe('ImpersonationService', () => {
       ),
     ).rejects.toThrow(
       new AuthException(
-        'Impersonation not enabled for the impersonator user or the target workspace',
+        'Server level impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
@@ -409,7 +411,7 @@ describe('ImpersonationService', () => {
       ),
     ).rejects.toThrow(
       new AuthException(
-        'Impersonation not enabled for the impersonator user or the target workspace',
+        'Server level impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
@@ -698,7 +700,7 @@ describe('ImpersonationService', () => {
       ).rejects.toThrow(
         new AuthException(
           'Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
         ),
       );
     });
@@ -752,8 +754,8 @@ describe('ImpersonationService', () => {
         ),
       ).rejects.toThrow(
         new AuthException(
-          'Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          'Two-factor authentication is required for server-level impersonation. Please verify your 2FA method before attempting to impersonate users.',
+          AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED,
         ),
       );
     });

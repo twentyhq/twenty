@@ -16,7 +16,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useEffect } from 'react';
-import { IconPlayerPlay, IconSettings } from 'twenty-ui/display';
+import { IconPlayerPlay, IconSettings } from 'twenty-ui/icon';
 import {
   HTTP_METHODS,
   JSON_RESPONSE_PLACEHOLDER,

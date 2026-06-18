@@ -6,10 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
   IconCpu,
-  OverflowingTextWithTooltip,
   ThinkingOrbitLoaderIcon,
-  TooltipDelay,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

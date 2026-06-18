@@ -11,7 +11,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconCircleX,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

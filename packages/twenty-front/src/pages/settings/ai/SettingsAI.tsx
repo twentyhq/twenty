@@ -14,7 +14,7 @@ import {
   IconPlus,
   IconSparkles,
   IconTool,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';

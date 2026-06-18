@@ -14,8 +14,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { type IconComponent, IconEye, IconEyeOff } from 'twenty-ui/display';
-import { AutogrowWrapper } from 'twenty-ui/utilities';
+import { type IconComponent, IconEye, IconEyeOff } from 'twenty-ui/icon';
+import { AutogrowWrapper } from 'twenty-ui/layout';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

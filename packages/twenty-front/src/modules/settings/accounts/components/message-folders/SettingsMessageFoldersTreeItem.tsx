@@ -8,7 +8,7 @@ import { isFolderTreePartiallySelected } from '@/settings/accounts/components/me
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

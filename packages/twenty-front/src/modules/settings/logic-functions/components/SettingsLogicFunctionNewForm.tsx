@@ -4,8 +4,10 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { H2Title, IconClockHour8 } from 'twenty-ui/display';
-import { Card, Section } from 'twenty-ui/layout';
+import { IconClockHour8 } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputsContainer = styled.div`
