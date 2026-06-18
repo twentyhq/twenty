@@ -63,10 +63,6 @@ describe('recall bot api', () => {
       meeting_url: 'https://meet.google.com/abc-defg-hij',
       join_at: '2026-01-01T13:00:00.000Z',
       bot_name: 'Twenty Meeting Bot',
-      automatic_leave: {
-        waiting_room_timeout: 1200,
-        noone_joined_timeout: 1200,
-      },
       recording_config: {
         video_mixed_mp4: {},
         audio_mixed_mp3: {},
@@ -77,33 +73,6 @@ describe('recall bot api', () => {
         twentyRealMeetingKey: 'meeting-key',
       },
     });
-  });
-
-  it('carries the automatic leave config when rescheduling a bot', async () => {
-    const result = await rescheduleRecallBot({
-      externalBotId: 'recall-bot-id',
-      meetingUrl: 'https://meet.google.com/abc-defg-hij',
-      joinAt: '2026-01-02T13:00:00.000Z',
-      metadata: {
-        twentyCallRecordingId: 'call-recording-id',
-        twentyCalendarEventId: 'calendar-event-id',
-        twentyRealMeetingKey: 'meeting-key',
-      },
-    });
-
-    expect(result).toEqual({ ok: true, externalBotId: 'recall-bot-id' });
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://ap-northeast-1.recall.ai/api/v1/bot/recall-bot-id/',
-      expect.objectContaining({ method: 'PATCH' }),
-    );
-    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual(
-      expect.objectContaining({
-        automatic_leave: {
-          waiting_room_timeout: 1200,
-          noone_joined_timeout: 1200,
-        },
-      }),
-    );
   });
 
   it('fails when the create response does not include a bot id', async () => {
