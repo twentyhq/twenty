@@ -174,7 +174,9 @@ export class StripeCheckoutService {
         automatic_tax: { enabled: false },
         expand: ['pending_setup_intent', 'latest_invoice.confirmation_secret'],
       },
-      { idempotencyKey: `onboarding-subscription-${workspace.id}-${idempotencyKey}` },
+      {
+        idempotencyKey: `onboarding-subscription-${workspace.id}-${idempotencyKey}`,
+      },
     );
   }
 
