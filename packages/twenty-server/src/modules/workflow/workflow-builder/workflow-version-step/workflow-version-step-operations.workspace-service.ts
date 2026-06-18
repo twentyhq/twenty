@@ -205,6 +205,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 },
                 _outputSchemaType: 'LINK',
               },
+              expectedOutputSchema: {},
               input: {
                 logicFunctionId: newLogicFunction.id,
                 logicFunctionInput: isDefined(
@@ -272,6 +273,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             settings: {
               ...BASE_STEP_DEFINITION,
               outputSchema: initialOutputSchema,
+              expectedOutputSchema: {},
               input: {
                 logicFunctionId,
                 logicFunctionInput: isDefined(
@@ -477,6 +479,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             type: WorkflowActionType.HTTP_REQUEST,
             settings: {
               ...BASE_STEP_DEFINITION,
+              expectedOutputSchema: {},
               input: {
                 url: '',
                 method: 'GET',

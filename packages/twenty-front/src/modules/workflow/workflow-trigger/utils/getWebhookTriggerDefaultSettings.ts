@@ -27,6 +27,9 @@ export const getWebhookTriggerDefaultSettings = (
         expectedBody: {
           message: 'Workflow was started',
         },
+        expectedOutputSchema: {
+          message: 'Workflow was started',
+        },
         authentication: null,
       };
   }
