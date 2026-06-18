@@ -1,0 +1,29 @@
+packages/twenty-server/src/database/commands/data-seed-dev-workspace.command.ts
+  s_0264fafd6ed0ed::t_cb1e392983f7ac 31
+packages/twenty-server/test/integration/upgrade/utils/upgrade-sequence-runner-integration-test.util.ts
+  s_0264fafd6ed0ed::t_39cda2ce3a9997 44-56,58-68,83,97-107
+  s_0264fafd6ed0ed::t_5688ec01fc87d5 84-96
+  s_0264fafd6ed0ed::t_9bdee048736206 177
+  s_0264fafd6ed0ed::t_1545eea232b380 178
+  s_0264fafd6ed0ed::t_e8472e17dd16ad 9
+  s_0264fafd6ed0ed::t_37708440b3a295 6
+  s_0264fafd6ed0ed::t_8b6235f894aef2 29
+  s_0264fafd6ed0ed::t_a619279246cae0 69-82
+  s_0264fafd6ed0ed::t_8eeba039e5896e 57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "9f0d21ef57f85cceca534de6931ac6088af51295",
+  "prompts": {},
+  "sessions": {
+    "s_0264fafd6ed0ed": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3d1f12f6-048a-4a64-a575-348b6f9b92c1",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
