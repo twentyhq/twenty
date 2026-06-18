@@ -6,6 +6,7 @@ import {
   PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { PARTNER_WORKFLOWS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER } from 'src/permission-flags/partner-workflows.permission-flag';
 import { OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID } from 'src/fields/opportunity-design-doc-status.field';
 import { OPPORTUNITY_DESIGN_DOC_URL_FIELD_ID } from 'src/fields/opportunity-design-doc-url.field';
 import { OPPORTUNITY_HOSTING_TYPE_FIELD_ID } from 'src/fields/opportunity-hosting-type.field';
@@ -45,6 +46,9 @@ export default defineRole({
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
+  permissionFlagUniversalIdentifiers: [
+    PARTNER_WORKFLOWS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+  ],
   // Lock every Opportunity field except stage/amount (editable) and the system/
   // server-managed fields left out here (id, timestamps, updatedBy, position — see header).
   fieldPermissions: [
