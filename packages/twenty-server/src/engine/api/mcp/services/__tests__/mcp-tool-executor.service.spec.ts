@@ -4,8 +4,8 @@ import {
   MCP_PROGRESS_NOTIFICATION_METHOD,
   TOOL_CALL_PROGRESS_TOKEN_PREFIX,
 } from 'src/engine/api/mcp/constants/mcp-progress-notification.const';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
 describe('McpToolExecutorService', () => {
   let service: McpToolExecutorService;
@@ -13,6 +13,7 @@ describe('McpToolExecutorService', () => {
   beforeEach(() => {
     const metricsService = {
       incrementCounterBy: jest.fn().mockResolvedValue(undefined),
+      recordHistogram: jest.fn(),
     } as unknown as MetricsService;
 
     service = new McpToolExecutorService(metricsService);
