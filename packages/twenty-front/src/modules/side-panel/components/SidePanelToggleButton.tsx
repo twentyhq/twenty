@@ -10,12 +10,15 @@ import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { motion } from 'framer-motion';
-import { useContext } from 'react';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
+import {
+  AppTooltip,
+  IconDotsVertical,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
   align-items: ${({ alignToTop }) => (alignToTop ? 'center' : 'initial')};
@@ -32,96 +35,6 @@ const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
 const StyledTooltipWrapper = styled.div`
   font-size: ${themeCssVariables.font.size.md};
 `;
-
-const xPaths = {
-  topLeft: `M12 12 L6 6`,
-  topRight: `M12 12 L18 6`,
-  bottomLeft: `M12 12 L6 18`,
-  bottomRight: `M12 12 L18 18`,
-};
-
-const AnimatedIcon = ({
-  isSidePanelOpened,
-}: {
-  isSidePanelOpened: boolean;
-}) => {
-  const { theme } = useContext(ThemeContext);
-
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={theme.icon.size.sm}
-      height={theme.icon.size.sm}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={theme.icon.stroke.md}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      style={{ display: 'block' }}
-    >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <motion.circle
-        cx={12}
-        cy={12}
-        r="1"
-        initial={{ opacity: 0 }}
-        animate={{
-          scale: isSidePanelOpened ? 0 : 1,
-          opacity: isSidePanelOpened ? 0 : 1,
-        }}
-        transition={{
-          duration: theme.animation.duration.fast,
-        }}
-      />
-
-      {Object.values(xPaths).map((path, index) => (
-        <motion.path
-          key={index}
-          d={path}
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{
-            pathLength: isSidePanelOpened ? 1 : 0,
-            opacity: isSidePanelOpened ? 1 : 0,
-          }}
-          transition={{
-            duration: theme.animation.duration.fast,
-            ease: 'easeInOut',
-            delay: isSidePanelOpened ? 0.1 : 0,
-          }}
-        />
-      ))}
-
-      <motion.circle
-        cx="12"
-        cy="5"
-        r="1"
-        initial={{ opacity: 0 }}
-        animate={{
-          scale: isSidePanelOpened ? 0 : 1,
-          opacity: isSidePanelOpened ? 0 : 1,
-        }}
-        transition={{
-          duration: theme.animation.duration.fast,
-        }}
-      />
-
-      <motion.circle
-        cx="12"
-        cy="19"
-        r="1"
-        initial={{ opacity: 0 }}
-        animate={{
-          scale: isSidePanelOpened ? 0 : 1,
-          opacity: isSidePanelOpened ? 0 : 1,
-        }}
-        transition={{
-          duration: theme.animation.duration.fast,
-        }}
-      />
-    </svg>
-  );
-};
 
 export const SidePanelToggleButton = () => {
   const { openSidePanelMenu } = useSidePanelMenu();
@@ -160,7 +73,7 @@ export const SidePanelToggleButton = () => {
     <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>
       <div id="toggle-side-panel-button">
         <AnimatedButton
-          animatedSvg={<AnimatedIcon isSidePanelOpened={false} />}
+          Icon={IconDotsVertical}
           dataClickOutsideId={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
           dataTestId="page-header-side-panel-button"
           size={isMobile ? 'medium' : 'small'}
