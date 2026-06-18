@@ -10,6 +10,7 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/display';
 
@@ -144,6 +145,19 @@ describe('SidePanelToggleButton', () => {
     });
 
     expect(screen.getByTestId('page-header-side-panel-button')).toBeVisible();
+  });
+
+  it('marks the command menu button as a click-outside exclusion', () => {
+    renderSidePanelToggleButton();
+
+    expect(
+      screen
+        .getByTestId('page-header-side-panel-button')
+        .closest('[data-click-outside-id]'),
+    ).toHaveAttribute(
+      'data-click-outside-id',
+      PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID,
+    );
   });
 
   it('replaces a directly opened side-panel page with the root command menu', () => {

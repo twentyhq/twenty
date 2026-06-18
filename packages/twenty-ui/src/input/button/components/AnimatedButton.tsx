@@ -19,7 +19,7 @@ import styles from './AnimatedButton.module.scss';
 
 export type AnimatedButtonProps = ButtonProps &
   Pick<MotionProps, 'animate' | 'transition'> & {
-    animatedSvg?: React.ReactNode;
+    animatedSvg: React.ReactNode;
     soonLabel?: string;
     // Renders a square icon-only button (width matches the size-based height).
     square?: boolean;
