@@ -56,9 +56,14 @@ describe('POST /api/partner-application', () => {
   beforeEach(() => {
     process.env.PARTNER_APPLICATION_WEBHOOK_URL = 'https://hooks.example/test';
     process.env.PARTNER_APPLICATION_SECRET = 'test-key-abc123';
+    // The route logs to console.error on its upstream/logic failure paths,
+    // which several tests below exercise on purpose — mute the noise so the
+    // suite output stays clean.
+    jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
     global.fetch = ORIGINAL_FETCH;
     process.env.PARTNER_APPLICATION_WEBHOOK_URL = ORIGINAL_WEBHOOK_URL;
     process.env.PARTNER_APPLICATION_SECRET = ORIGINAL_API_KEY;
