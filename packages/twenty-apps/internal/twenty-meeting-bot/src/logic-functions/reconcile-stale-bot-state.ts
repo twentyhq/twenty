@@ -15,6 +15,10 @@ import {
   reapOrphanedMeetingBots,
   type ReapOrphanedMeetingBotsResult,
 } from 'src/logic-functions/flows/reap-orphaned-meeting-bots.util';
+import {
+  reconcilePendingTranscripts,
+  type ReconcilePendingTranscriptsResult,
+} from 'src/logic-functions/flows/reconcile-pending-transcripts.util';
 
 // Every unwanted bot passes through this join_at window before it can attend.
 const REAPER_JOIN_AT_LOOKBACK_HOURS = 4;
@@ -38,11 +42,16 @@ export const reconcileStaleBotStateHandler = async (): Promise<object> => {
     client,
     now,
   );
+  const pendingTranscriptResult = await reconcilePendingTranscriptsSafely(
+    client,
+    now,
+  );
 
   return {
     botlessHealResult,
     orphanedBotReapingResult,
     statusConvergenceResult,
+    pendingTranscriptResult,
   };
 };
 
@@ -87,6 +96,17 @@ const convergeDivergedCallRecordingsSafely = async (
   }
 };
 
+const reconcilePendingTranscriptsSafely = async (
+  client: CoreApiClient,
+  now: Date,
+): Promise<ReconcilePendingTranscriptsResult | StepFailure> => {
+  try {
+    return await reconcilePendingTranscripts({ client, now });
+  } catch (error) {
+    return buildStepFailure('pending transcript reconciliation', error);
+  }
+};
+
 const buildStepFailure = (stepLabel: string, error: unknown): StepFailure => {
   const errorMessage = error instanceof Error ? error.message : String(error);
 
@@ -101,8 +121,7 @@ export default defineLogicFunction({
   universalIdentifier: STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-stale-bot-state',
   description:
-    'Converges call recordings with Recall on a schedule: pulls stale bot statuses, finishes failed cancellations, schedules bots for recordings still missing one, and reaps unclaimed bots. Reads calendar events only to heal already-decided recordings, never to discover meetings.',
-  // Pulling bot statuses for many recordings is the dominant cost.
+    'Converges call recordings with Recall on a schedule: pulls stale bot statuses and overdue transcripts, finishes failed cancellations, schedules bots for recordings still missing one, and reaps unclaimed bots. Reads calendar events only to heal already-decided recordings, never to discover meetings.',
   timeoutSeconds: 300,
   handler: reconcileStaleBotStateHandler,
   cronTriggerSettings: {
