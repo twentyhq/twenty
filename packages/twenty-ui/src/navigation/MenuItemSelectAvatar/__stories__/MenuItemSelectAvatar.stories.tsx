@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { Avatar } from '@ui/data-display';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   AVATAR_URL_MOCK,
   CatalogDecorator,
   type CatalogDimension,
@@ -21,8 +22,7 @@ export default meta;
 
 type Story = StoryObj<typeof MenuItemSelectAvatar>;
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     text: 'First option',
     contextualText: 'Contextual text',
@@ -31,7 +31,15 @@ export const Default: Story = {
   argTypes: {
     className: { control: false },
   },
-  decorators: [ComponentDecorator, JotaiRootDecorator],
+  decorators: [
+    (Story) => (
+      <div role="listbox" aria-label="Options">
+        <Story />
+      </div>
+    ),
+    ComponentDecorator,
+    JotaiRootDecorator,
+  ],
 };
 
 export const Catalog: CatalogStory<Story, typeof MenuItemSelectAvatar> = {
@@ -40,8 +48,7 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelectAvatar> = {
     className: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
@@ -93,5 +100,13 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelectAvatar> = {
       } as CatalogOptions,
     },
   },
-  decorators: [CatalogDecorator, JotaiRootDecorator],
+  decorators: [
+    (Story) => (
+      <div role="listbox" aria-label="Options">
+        <Story />
+      </div>
+    ),
+    CatalogDecorator,
+    JotaiRootDecorator,
+  ],
 };

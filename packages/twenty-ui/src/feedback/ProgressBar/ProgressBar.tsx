@@ -8,6 +8,7 @@ export type ProgressBarProps = {
   barColor?: string;
   backgroundColor?: string;
   withBorderRadius?: boolean;
+  ariaLabel?: string;
 };
 
 export type StyledBarProps = {
@@ -24,11 +25,13 @@ export const ProgressBar = ({
   barColor,
   backgroundColor = 'none',
   withBorderRadius = false,
+  ariaLabel,
 }: ProgressBarProps) => (
   <div
     className={clsx(styles.bar, className)}
     data-with-border-radius={withBorderRadius || undefined}
     role="progressbar"
+    aria-label={ariaLabel}
     aria-valuenow={Math.ceil(value)}
     style={
       {
