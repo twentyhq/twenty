@@ -72,7 +72,7 @@ export class ViewFieldService {
         },
       );
 
-    const { flatFieldMetadataMaps, flatViewMaps, flatViewFieldGroupMaps } =
+    const { flatFieldMetadataMaps, flatViewMaps, flatViewFieldGroupMaps, flatApplicationMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -80,19 +80,27 @@ export class ViewFieldService {
             'flatFieldMetadataMaps',
             'flatViewMaps',
             'flatViewFieldGroupMaps',
+            'flatApplicationMaps',
           ],
         },
       );
 
     const flatViewFieldsToCreate = createViewFieldInputs.map(
-      (createViewFieldInput) =>
-        fromCreateViewFieldInputToFlatViewFieldToCreate({
+      (createViewFieldInput) => {
+        const flatApplication = createViewFieldInput.applicationUniversalIdentifier
+          ? flatApplicationMaps.byUniversalIdentifier[
+              createViewFieldInput.applicationUniversalIdentifier
+            ] ?? workspaceCustomFlatApplication
+          : workspaceCustomFlatApplication;
+
+        return fromCreateViewFieldInputToFlatViewFieldToCreate({
           createViewFieldInput,
-          flatApplication: workspaceCustomFlatApplication,
+          flatApplication,
           flatFieldMetadataMaps,
           flatViewMaps,
           flatViewFieldGroupMaps,
-        }),
+        });
+      }
     );
 
     const validateAndBuildResult =

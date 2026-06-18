@@ -55,4 +55,9 @@ export class CreatePageLayoutWidgetInput {
   @IsObject()
   @IsOptional()
   configuration: AllPageLayoutWidgetConfiguration;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  applicationUniversalIdentifier?: string;
 }

@@ -19,6 +19,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
+import { ApplicationSetupStatus } from 'src/engine/core-modules/application/enums/application-setup-status.enum';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -58,6 +59,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
       '2.2.0_AddLogoToApplicationFastInstanceCommand_1777539664664',
   })
   logo: string | null;
+
+  @Column({
+    type: 'enum',
+    enum: ApplicationSetupStatus,
+    default: ApplicationSetupStatus.COMPLETE,
+  })
+  setupStatus: ApplicationSetupStatus;
 
   // TODO should not be nullable
   @Column({ nullable: true, type: 'text' })

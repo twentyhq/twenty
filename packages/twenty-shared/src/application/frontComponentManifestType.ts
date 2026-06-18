@@ -1,6 +1,7 @@
+import { type AppPlacementMetadata } from '@/application/appPlacementMetadataType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
-export type CommandMenuItemManifest = SyncableEntityOptions & {
+export type CommandMenuItemManifest = SyncableEntityOptions & AppPlacementMetadata & {
   label: string;
   shortLabel?: string;
   /** @deprecated icon will be ignored in favor of application icon */

@@ -76,4 +76,9 @@ export class CreateNavigationMenuItemInput {
   @IsOptional()
   @Field({ nullable: true })
   position?: number;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  applicationUniversalIdentifier?: string;
 }

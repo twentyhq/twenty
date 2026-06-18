@@ -75,7 +75,9 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     pageLayoutUniversalIdentifier,
     workspaceId,
     applicationId: flatApplication.id,
-    applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    applicationUniversalIdentifier:
+      createCommandMenuItemInput.applicationUniversalIdentifier ??
+      flatApplication.universalIdentifier,
     isActive: true,
     isSystemSideEffect: false,
     overrides: null,

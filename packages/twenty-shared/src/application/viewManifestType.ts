@@ -1,3 +1,4 @@
+import { type AppPlacementMetadata } from '@/application/appPlacementMetadataType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
   type AggregateOperations,
@@ -18,7 +19,7 @@ export type ViewManifestFilterValue =
   | number
   | Record<string, unknown>;
 
-export type ViewFieldManifest = SyncableEntityOptions & {
+export type ViewFieldManifest = SyncableEntityOptions & AppPlacementMetadata & {
   fieldMetadataUniversalIdentifier: string;
   isVisible?: boolean;
   size?: number;

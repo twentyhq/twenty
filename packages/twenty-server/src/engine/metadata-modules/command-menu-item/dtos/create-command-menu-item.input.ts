@@ -88,4 +88,9 @@ export class CreateCommandMenuItemInput {
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   pageLayoutId?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  applicationUniversalIdentifier?: string;
 }

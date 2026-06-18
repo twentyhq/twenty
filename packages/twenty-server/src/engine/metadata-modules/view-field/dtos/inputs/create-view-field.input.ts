@@ -54,6 +54,11 @@ export class CreateViewFieldInput {
   @HideField()
   universalIdentifier?: string;
 
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  applicationUniversalIdentifier?: string;
+
   @HideField()
   applicationId?: string;
 }

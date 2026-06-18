@@ -93,7 +93,9 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       position,
       workspaceId,
       applicationId: flatApplication.id,
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      applicationUniversalIdentifier:
+        createNavigationMenuItemInput.applicationUniversalIdentifier ??
+        flatApplication.universalIdentifier,
       createdAt: now,
       updatedAt: now,
     };

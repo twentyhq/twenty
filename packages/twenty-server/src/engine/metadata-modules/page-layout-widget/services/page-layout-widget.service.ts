@@ -230,6 +230,7 @@ export class PageLayoutWidgetService {
       flatFrontComponentMaps,
       flatViewFieldGroupMaps,
       flatViewMaps,
+      flatApplicationMaps,
     } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -241,15 +242,22 @@ export class PageLayoutWidgetService {
             'flatFrontComponentMaps',
             'flatViewFieldGroupMaps',
             'flatViewMaps',
+            'flatApplicationMaps',
           ],
         },
       );
+
+    const flatApplication = createInput.applicationUniversalIdentifier
+      ? flatApplicationMaps.byUniversalIdentifier[
+          createInput.applicationUniversalIdentifier
+        ] ?? workspaceCustomFlatApplication
+      : workspaceCustomFlatApplication;
 
     const flatPageLayoutWidgetToCreate =
       fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
         createPageLayoutWidgetInput: createInput,
         workspaceId,
-        flatApplication: workspaceCustomFlatApplication,
+        flatApplication,
         flatPageLayoutTabMaps,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
