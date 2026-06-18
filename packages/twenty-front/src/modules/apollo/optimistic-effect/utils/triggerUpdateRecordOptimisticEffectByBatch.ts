@@ -84,6 +84,7 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
               record: updatedRecord,
               filter: rootQueryFilter ?? {},
               objectMetadataItem,
+              objectMetadataItems,
             });
 
           const updatedRecordFoundInRootQueryEdges = isDefined(
@@ -148,5 +149,6 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
     operation: 'update',
     records: updatedRecords,
     shouldMatchRootQueryFilter: true,
+    objectMetadataItems,
   });
 };

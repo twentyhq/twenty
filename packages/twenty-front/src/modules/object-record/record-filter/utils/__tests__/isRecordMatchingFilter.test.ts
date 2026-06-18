@@ -11,10 +11,11 @@ const companiesMock = mockedCompanyRecords.map((record) =>
   getRecordFromRecordNode<Company>({ recordNode: record }),
 );
 
-const companyMockObjectMetadataItem =
-  getTestEnrichedObjectMetadataItemsMock().find(
-    (item) => item.nameSingular === 'company',
-  )!;
+const objectMetadataItemsMock = getTestEnrichedObjectMetadataItemsMock();
+
+const companyMockObjectMetadataItem = objectMetadataItemsMock.find(
+  (item) => item.nameSingular === 'company',
+)!;
 
 describe('isRecordMatchingFilter', () => {
   describe('Empty Filters', () => {
@@ -451,6 +452,127 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockNotInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+  });
+
+  describe('Relation Filters', () => {
+    it('matches relation object filters by using the relation join column', () => {
+      const companyMockWithRelation = {
+        ...companiesMock[0],
+      };
+
+      const companyMockWithoutRelation = {
+        ...companiesMock[0],
+        accountOwnerId: null,
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockWithRelation,
+          filter: {
+            accountOwner: {
+              is: 'NOT_NULL',
+            },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockWithoutRelation,
+          filter: {
+            accountOwner: {
+              is: 'NOT_NULL',
+            },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
+    it('matches relation object filters with nested id predicate', () => {
+      const companyMockWithRelation = {
+        ...companiesMock[0],
+      };
+
+      const companyMockWithoutRelation = {
+        ...companiesMock[0],
+        accountOwnerId: null,
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockWithRelation,
+          filter: {
+            accountOwner: {
+              id: {
+                is: 'NOT_NULL',
+              },
+            },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockWithoutRelation,
+          filter: {
+            accountOwner: {
+              id: {
+                is: 'NOT_NULL',
+              },
+            },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
+    it('matches relation traversal filters against related record fields', () => {
+      const companyMockMatchingTraversalFilter = {
+        ...companiesMock[0],
+      };
+
+      const companyMockNotMatchingTraversalFilter = {
+        ...companiesMock[0],
+        accountOwner: {
+          ...companiesMock[0].accountOwner,
+          name: {
+            ...companiesMock[0].accountOwner.name,
+            firstName: `${companiesMock[0].accountOwner.name.firstName}-different`,
+          },
+        },
+      };
+
+      const filter = {
+        accountOwner: {
+          name: {
+            firstName: {
+              eq: companiesMock[0].accountOwner.name.firstName,
+            },
+          },
+        },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockMatchingTraversalFilter,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems: objectMetadataItemsMock,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockNotMatchingTraversalFilter,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems: objectMetadataItemsMock,
         }),
       ).toBe(false);
     });

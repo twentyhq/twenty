@@ -20,6 +20,7 @@ type TriggerUpdateGroupByQueriesOptimisticEffectArgs = {
   operation: 'create' | 'update' | 'delete';
   records: RecordGqlNode[];
   shouldMatchRootQueryFilter?: boolean;
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
 };
 
 export const triggerUpdateGroupByQueriesOptimisticEffect = ({
@@ -28,6 +29,7 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
   operation,
   records,
   shouldMatchRootQueryFilter = false,
+  objectMetadataItems,
 }: TriggerUpdateGroupByQueriesOptimisticEffectArgs) => {
   const groupByQueryFieldName = `${objectMetadataItem.namePlural}GroupBy`;
 
@@ -86,6 +88,7 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
                   : [],
                 groupByConfig,
                 objectMetadataItem,
+                objectMetadataItems,
                 readField,
                 toReference,
               });
@@ -122,6 +125,7 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
               record,
               filter: queryFilter ?? {},
               objectMetadataItem,
+              objectMetadataItems,
             });
 
             if (

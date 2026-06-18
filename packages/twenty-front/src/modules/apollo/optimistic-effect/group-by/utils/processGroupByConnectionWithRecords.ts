@@ -27,6 +27,7 @@ type ProcessGroupByConnectionWithRecordsArgs = {
     | Array<Record<string, boolean | Record<string, string>>>
     | Record<string, boolean | Record<string, string>>;
   objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
   readField: ReadFieldFunction;
   toReference: ToReferenceFunction;
 };
@@ -41,6 +42,7 @@ export const processGroupByConnectionWithRecords = ({
   groupByDimensionValues,
   groupByConfig,
   objectMetadataItem,
+  objectMetadataItems,
   readField,
   toReference,
 }: ProcessGroupByConnectionWithRecordsArgs): {
@@ -62,6 +64,7 @@ export const processGroupByConnectionWithRecords = ({
       record,
       filter: queryFilter ?? {},
       objectMetadataItem,
+      objectMetadataItems,
     });
 
     const belongsToGroup = doesRecordBelongToGroup(

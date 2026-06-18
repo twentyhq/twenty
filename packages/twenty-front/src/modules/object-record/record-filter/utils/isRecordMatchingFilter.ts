@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/react';
 import { isObject } from '@sniptt/guards';
 
 import {
@@ -90,18 +91,69 @@ const isOrFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is OrObjectRecordFilter => 'or' in filter && !!filter.or;
 
+const reportedOptimisticRelationFilterFallbackSet = new Set<string>();
+
+const captureOptimisticRelationFilterFallback = ({
+  objectNameSingular,
+  filterKey,
+  reason,
+}: {
+  objectNameSingular: string;
+  filterKey: string;
+  reason: 'missing-target-metadata' | 'missing-related-record';
+}) => {
+  const deduplicationKey = `${objectNameSingular}.${filterKey}.${reason}`;
+
+  if (reportedOptimisticRelationFilterFallbackSet.has(deduplicationKey)) {
+    return;
+  }
+
+  reportedOptimisticRelationFilterFallbackSet.add(deduplicationKey);
+
+  captureException(
+    new Error(
+      `Optimistic relation traversal filter fallback for "${objectNameSingular}.${filterKey}" (${reason})`,
+    ),
+    (scope) => {
+      scope.setLevel('warning');
+      scope.setTag('error-handler', 'optimistic-filter-matcher');
+      scope.setTag('reason', reason);
+      scope.setTag('objectNameSingular', objectNameSingular);
+      scope.setTag('filterKey', filterKey);
+      scope.setFingerprint([
+        'optimistic-filter-matcher-relation-traversal-fallback',
+        objectNameSingular,
+        filterKey,
+        reason,
+      ]);
+
+      return scope;
+    },
+  );
+};
+
 const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
+
+const isUuidFilter = (value: unknown): value is UUIDFilter => {
+  if (!isObject(value)) {
+    return false;
+  }
+
+  return ['eq', 'neq', 'in', 'is'].some((key) => key in value);
+};
 
 export const isRecordMatchingFilter = ({
   record,
   filter,
   objectMetadataItem,
+  objectMetadataItems,
 }: {
   record: any;
   filter: RecordGqlOperationFilter;
   objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
@@ -113,6 +165,7 @@ export const isRecordMatchingFilter = ({
         record,
         filter: { [filterKey]: value },
         objectMetadataItem,
+        objectMetadataItems,
       }),
     );
   }
@@ -133,6 +186,7 @@ export const isRecordMatchingFilter = ({
           record,
           filter: andFilter,
           objectMetadataItem,
+          objectMetadataItems,
         }),
       )
     );
@@ -149,6 +203,7 @@ export const isRecordMatchingFilter = ({
             record,
             filter: orFilter,
             objectMetadataItem,
+            objectMetadataItems,
           }),
         )
       );
@@ -160,6 +215,7 @@ export const isRecordMatchingFilter = ({
         record,
         filter: filterValue,
         objectMetadataItem,
+        objectMetadataItems,
       });
     }
 
@@ -179,6 +235,7 @@ export const isRecordMatchingFilter = ({
         record,
         filter: filterValue,
         objectMetadataItem,
+        objectMetadataItems,
       })
     );
   }
@@ -416,26 +473,83 @@ export const isRecordMatchingFilter = ({
       }
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
+        const relationJoinColumnName = computeRelationGqlFieldJoinColumnName({
+          name: objectMetadataField.name,
+        });
+
         const isJoinColumn =
-          computeRelationGqlFieldJoinColumnName({
-            name: objectMetadataField.name,
-          }) === filterKey ||
+          relationJoinColumnName === filterKey ||
           (objectMetadataField.type === FieldMetadataType.MORPH_RELATION &&
             isMorphRelationJoinColumnKey({
               fieldMetadataItem: objectMetadataField,
               key: filterKey,
             }));
 
-        if (isJoinColumn) {
+        if (isJoinColumn && isUuidFilter(filterValue)) {
           return isMatchingUUIDFilter({
-            uuidFilter: filterValue as UUIDFilter,
+            uuidFilter: filterValue,
             value: record[filterKey],
           });
         }
 
-        throw new Error(
-          `Not implemented yet, use UUID filter instead on the corresponding "${filterKey}Id" field`,
-        );
+        if (filterKey === objectMetadataField.name && isUuidFilter(filterValue)) {
+          return isMatchingUUIDFilter({
+            uuidFilter: filterValue,
+            value: record[relationJoinColumnName],
+          });
+        }
+
+        if (
+          filterKey === objectMetadataField.name &&
+          isObject(filterValue) &&
+          'id' in filterValue &&
+          isUuidFilter(filterValue.id)
+        ) {
+          return isMatchingUUIDFilter({
+            uuidFilter: filterValue.id,
+            value: record[relationJoinColumnName],
+          });
+        }
+
+        if (filterKey === objectMetadataField.name && isObject(filterValue)) {
+          const relationRecord = record[filterKey];
+
+          if (!isObject(relationRecord)) {
+            captureOptimisticRelationFilterFallback({
+              objectNameSingular: objectMetadataItem.nameSingular,
+              filterKey,
+              reason: 'missing-related-record',
+            });
+
+            return false;
+          }
+
+          const relationTargetObjectMetadataId =
+            objectMetadataField.relation?.targetObjectMetadata.id;
+
+          const relationTargetObjectMetadataItem = objectMetadataItems?.find(
+            (metadataItem) => metadataItem.id === relationTargetObjectMetadataId,
+          );
+
+          if (!isDefined(relationTargetObjectMetadataItem)) {
+            captureOptimisticRelationFilterFallback({
+              objectNameSingular: objectMetadataItem.nameSingular,
+              filterKey,
+              reason: 'missing-target-metadata',
+            });
+
+            return false;
+          }
+
+          return isRecordMatchingFilter({
+            record: relationRecord,
+            filter: filterValue as RecordGqlOperationFilter,
+            objectMetadataItem: relationTargetObjectMetadataItem,
+            objectMetadataItems,
+          });
+        }
+
+        return false;
       }
       case FieldMetadataType.TS_VECTOR: {
         return isMatchingTSVectorFilter({

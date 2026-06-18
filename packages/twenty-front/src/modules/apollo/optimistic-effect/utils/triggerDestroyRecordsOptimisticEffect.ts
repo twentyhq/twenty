@@ -63,6 +63,7 @@ export const triggerDestroyRecordsOptimisticEffect = ({
               record,
               filter: rootQueryVariables?.filter ?? {},
               objectMetadataItem,
+              objectMetadataItems,
             }),
         );
 
@@ -131,5 +132,6 @@ export const triggerDestroyRecordsOptimisticEffect = ({
     objectMetadataItem,
     operation: 'delete',
     records: recordsToDestroy,
+    objectMetadataItems,
   });
 };
