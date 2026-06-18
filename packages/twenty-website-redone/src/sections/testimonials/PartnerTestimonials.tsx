@@ -19,6 +19,7 @@ export function PartnerTestimonials() {
   return (
     <SectionShell
       background={<NotchedCardShape cardScheme="dark" />}
+      fullBleedBackground
       rhythm="spacious"
       scheme="light"
     >
