@@ -23,6 +23,8 @@
     "twenty-client-sdk": "2.13.0"
   },
   "devDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@types/node": "^24.7.2",
     "@types/react": "^19.0.0",
     "oxlint": "^0.16.0",
