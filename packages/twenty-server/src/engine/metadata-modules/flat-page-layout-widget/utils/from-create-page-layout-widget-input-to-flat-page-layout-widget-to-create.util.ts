@@ -73,7 +73,9 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     universalIdentifier: pageLayoutWidgetId,
     configuration: createPageLayoutWidgetInput.configuration,
     applicationId: flatApplication.id,
-    applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    applicationUniversalIdentifier:
+      createPageLayoutWidgetInput.applicationUniversalIdentifier ??
+      flatApplication.universalIdentifier,
     conditionalDisplay: null,
     conditionalAvailabilityExpression: null,
     overrides: null,

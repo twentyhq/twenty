@@ -66,19 +66,26 @@ export class ViewService {
     const {
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatApplicationMaps,
     } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps', 'flatApplicationMaps'],
         },
       );
+
+    const flatApplication = createViewInput.applicationUniversalIdentifier
+      ? flatApplicationMaps.byUniversalIdentifier[
+          createViewInput.applicationUniversalIdentifier
+        ] ?? workspaceCustomFlatApplication
+      : workspaceCustomFlatApplication;
 
     const { flatViewToCreate, flatViewGroupsToCreate } =
       fromCreateViewInputToFlatViewToCreate({
         createViewInput,
         createdByUserWorkspaceId,
-        flatApplication: workspaceCustomFlatApplication,
+        flatApplication,
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });

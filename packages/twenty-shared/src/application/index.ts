@@ -14,6 +14,7 @@ export type {
   ApplicationVariable,
   ApplicationVariables,
 } from './applicationVariablesType';
+export * from './appPlacementMetadataType';
 export type { AssetManifest } from './assetManifestType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';

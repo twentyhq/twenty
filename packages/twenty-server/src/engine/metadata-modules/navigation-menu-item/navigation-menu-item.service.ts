@@ -213,6 +213,7 @@ export class NavigationMenuItemService {
       flatObjectMetadataMaps,
       flatViewMaps,
       flatPageLayoutMaps,
+      flatApplicationMaps,
     } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -221,6 +222,7 @@ export class NavigationMenuItemService {
           'flatObjectMetadataMaps',
           'flatViewMaps',
           'flatPageLayoutMaps',
+          'flatApplicationMaps',
         ],
       },
     );
@@ -250,11 +252,17 @@ export class NavigationMenuItemService {
             : input.userWorkspaceId,
       };
 
+      const flatApplication = normalizedInput.applicationUniversalIdentifier
+        ? flatApplicationMaps.byUniversalIdentifier[
+            normalizedInput.applicationUniversalIdentifier
+          ] ?? workspaceCustomFlatApplication
+        : workspaceCustomFlatApplication;
+
       const flatNavigationMenuItemToCreate =
         fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate({
           createNavigationMenuItemInput: normalizedInput,
           workspaceId,
-          flatApplication: workspaceCustomFlatApplication,
+          flatApplication,
           flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
           flatObjectMetadataMaps,
           flatViewMaps,

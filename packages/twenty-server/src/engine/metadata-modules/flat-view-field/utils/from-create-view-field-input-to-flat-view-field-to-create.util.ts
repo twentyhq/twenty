@@ -70,6 +70,8 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     isSystemSideEffect: false,
     universalOverrides: null,
     viewFieldGroupUniversalIdentifier,
-    applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    applicationUniversalIdentifier:
+      createViewFieldInput.applicationUniversalIdentifier ??
+      flatApplication.universalIdentifier,
   };
 };

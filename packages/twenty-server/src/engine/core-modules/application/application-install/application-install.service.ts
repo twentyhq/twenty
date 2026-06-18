@@ -36,6 +36,8 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { ApplicationSetupStatus } from 'src/engine/core-modules/application/enums/application-setup-status.enum';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
 export class ApplicationInstallService {
@@ -66,6 +68,41 @@ export class ApplicationInstallService {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
+
+  async previewApplicationInstall(params: {
+    appRegistrationId: string;
+    version?: string;
+  }): Promise<{ manifest: Manifest }> {
+    const appRegistration = await this.appRegistrationRepository.findOne({
+      where: { id: params.appRegistrationId },
+    });
+
+    if (!appRegistration) {
+      throw new ApplicationException(
+        `Application registration with id ${params.appRegistrationId} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const resolvedPackage =
+      await this.applicationPackageFetcherService.resolvePackage(
+        appRegistration,
+        { targetVersion: params.version },
+      );
+
+    if (!resolvedPackage) {
+      throw new ApplicationException(
+        `Failed to resolve package for app registration ${params.appRegistrationId}`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
+
+    await this.applicationPackageFetcherService.cleanupExtractedDir(
+      resolvedPackage.cleanupDir,
+    );
+
+    return { manifest: resolvedPackage.manifest };
+  }
 
   async installApplication(params: {
     appRegistrationId: string;
@@ -247,17 +284,8 @@ export class ApplicationInstallService {
         });
       }
 
-      await this.runPostInstallHook({
-        manifest: resolvedPackage.manifest,
-        workspaceId: params.workspaceId,
-        previousVersion,
-        newVersion,
-        isVersionUpgrade,
-        universalIdentifier,
-      });
-
       this.logger.log(
-        `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
+        `Successfully base-installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
 
       return true;
@@ -462,6 +490,49 @@ export class ApplicationInstallService {
     }
   }
 
+  async finishApplicationSetup(params: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const application = await this.applicationService.findByUniversalIdentifier({
+      universalIdentifier: params.universalIdentifier,
+      workspaceId: params.workspaceId,
+    });
+
+    if (!application) {
+      throw new ApplicationException(
+        `Application with universalIdentifier ${params.universalIdentifier} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    await this.applicationService.update(application.id, {
+      setupStatus: ApplicationSetupStatus.COMPLETE,
+      workspaceId: params.workspaceId,
+    });
+
+    const manifestContent = await this.fileStorageService.readFile({
+      applicationUniversalIdentifier: params.universalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: 'manifest.json',
+      workspaceId: params.workspaceId,
+    });
+
+    const manifestBuffer = await streamToBuffer(manifestContent);
+    const manifest = JSON.parse(manifestBuffer.toString('utf-8')) as Manifest;
+
+    // Run post install hook
+    await this.runPostInstallHook({
+      manifest,
+      workspaceId: params.workspaceId,
+      newVersion: application.version || '0.0.0', // We might not have previous version
+      isVersionUpgrade: false, // For now, assume finish setup is for new install
+      universalIdentifier: params.universalIdentifier,
+    });
+
+    return true;
+  }
+
   private async writeFilesToStorage(
     extractedDir: string,
     manifest: Manifest,
@@ -557,6 +628,7 @@ export class ApplicationInstallService {
       sourceType: params.sourceType,
       applicationRegistrationId: params.applicationRegistrationId,
       workspaceId: params.workspaceId,
+      setupStatus: ApplicationSetupStatus.INCOMPLETE,
     });
   }
 }

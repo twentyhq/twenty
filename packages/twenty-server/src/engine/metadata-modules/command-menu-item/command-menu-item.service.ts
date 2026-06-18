@@ -105,6 +105,7 @@ export class CommandMenuItemService {
       flatObjectMetadataMaps,
       flatFrontComponentMaps,
       flatPageLayoutMaps,
+      flatApplicationMaps,
     } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -113,6 +114,7 @@ export class CommandMenuItemService {
             'flatObjectMetadataMaps',
             'flatFrontComponentMaps',
             'flatPageLayoutMaps',
+            'flatApplicationMaps',
           ],
         },
       );
@@ -122,11 +124,17 @@ export class CommandMenuItemService {
         { workspaceId },
       );
 
+    const flatApplication = input.applicationUniversalIdentifier
+      ? flatApplicationMaps.byUniversalIdentifier[
+          input.applicationUniversalIdentifier
+        ] ?? workspaceCustomFlatApplication
+      : workspaceCustomFlatApplication;
+
     const flatCommandMenuItemToCreate =
       fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate({
         createCommandMenuItemInput: input,
         workspaceId,
-        flatApplication: workspaceCustomFlatApplication,
+        flatApplication,
         flatObjectMetadataMaps,
         flatFrontComponentMaps,
         flatPageLayoutMaps,

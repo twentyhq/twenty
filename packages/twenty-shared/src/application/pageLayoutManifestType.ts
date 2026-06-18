@@ -1,3 +1,4 @@
+import { type AppPlacementMetadata } from '@/application/appPlacementMetadataType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
   type GridPosition,
@@ -6,7 +7,7 @@ import {
   type PageLayoutWidgetUniversalConfiguration,
 } from '@/types';
 
-export type PageLayoutWidgetManifest = SyncableEntityOptions & {
+export type PageLayoutWidgetManifest = SyncableEntityOptions & AppPlacementMetadata & {
   title: string;
   type: string;
   objectUniversalIdentifier?: string;
