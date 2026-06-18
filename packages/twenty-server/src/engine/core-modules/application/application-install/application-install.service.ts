@@ -506,10 +506,9 @@ export class ApplicationInstallService {
       );
     }
 
-    await this.applicationService.update(application.id, {
-      setupStatus: ApplicationSetupStatus.COMPLETE,
-      workspaceId: params.workspaceId,
-    });
+    if (application.setupStatus === ApplicationSetupStatus.COMPLETE) {
+      return true;
+    }
 
     const manifestContent = await this.fileStorageService.readFile({
       applicationUniversalIdentifier: params.universalIdentifier,
@@ -528,6 +527,11 @@ export class ApplicationInstallService {
       newVersion: application.version || '0.0.0', // We might not have previous version
       isVersionUpgrade: false, // For now, assume finish setup is for new install
       universalIdentifier: params.universalIdentifier,
+    });
+
+    await this.applicationService.update(application.id, {
+      setupStatus: ApplicationSetupStatus.COMPLETE,
+      workspaceId: params.workspaceId,
     });
 
     return true;
