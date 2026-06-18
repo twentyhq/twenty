@@ -21,6 +21,7 @@ export enum TwentyORMExceptionCode {
   METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
   ENUM_TYPE_NAME_NOT_FOUND = 'ENUM_TYPE_NAME_NOT_FOUND',
   QUERY_READ_TIMEOUT = 'QUERY_READ_TIMEOUT',
+  QUERY_RUNNER_RELEASED = 'QUERY_RUNNER_RELEASED',
   DUPLICATE_ENTRY_DETECTED = 'DUPLICATE_ENTRY_DETECTED',
   TOO_MANY_RECORDS_TO_UPDATE = 'TOO_MANY_RECORDS_TO_UPDATE',
   INVALID_INPUT = 'INVALID_INPUT',
@@ -61,6 +62,8 @@ const getTwentyORMExceptionUserFriendlyMessage = (
       return msg`This operation is not allowed.`;
     case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
       return msg`Query timed out. Please try again.`;
+    case TwentyORMExceptionCode.QUERY_RUNNER_RELEASED:
+      return msg`We are experiencing a temporary issue with our database. Please try again later.`;
     case TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED:
       return msg`A duplicate entry was detected.`;
     case TwentyORMExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:

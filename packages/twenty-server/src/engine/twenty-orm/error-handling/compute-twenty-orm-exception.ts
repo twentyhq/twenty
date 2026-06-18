@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { QueryFailedError } from 'typeorm';
+import { QueryFailedError, QueryRunnerAlreadyReleasedError } from 'typeorm';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -24,6 +24,17 @@ export const computeTwentyORMException = async (
   entityManager?: WorkspaceEntityManager,
   internalContext?: WorkspaceInternalContext,
 ): Promise<Error | TwentyORMException> => {
+  // A released query runner means the underlying connection was torn down
+  // mid-flight (e.g. node-postgres `query_timeout` destroying the pooled
+  // connection during a transaction). It is transient, so we surface it as a
+  // retryable error rather than an opaque failure.
+  if (error instanceof QueryRunnerAlreadyReleasedError) {
+    return new TwentyORMException(
+      error.message,
+      TwentyORMExceptionCode.QUERY_RUNNER_RELEASED,
+    );
+  }
+
   if (error instanceof QueryFailedError) {
     if (error.message.includes('Query read timeout')) {
       return new TwentyORMException(
