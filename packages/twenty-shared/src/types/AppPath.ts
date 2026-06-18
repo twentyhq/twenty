@@ -26,6 +26,7 @@ export enum AppPath {
   MarketingSocialCalendar = '/marketing/social',
   OneOnOneRunner = '/one-on-one',
   A2AStudio = '/a2a-studio',
+  ListingStudio = '/listing-studio',
 
   RecordIndexPage = '/objects/:objectNamePlural',
   RecordShowPage = '/object/:objectNameSingular/:objectRecordId',

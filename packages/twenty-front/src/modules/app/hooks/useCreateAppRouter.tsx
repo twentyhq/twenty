@@ -64,6 +64,12 @@ const A2AStudioPage = lazy(() =>
   })),
 );
 
+const ListingStudioPage = lazy(() =>
+  import('~/pages/propel/ListingStudioPage').then((module) => ({
+    default: module.ListingStudioPage,
+  })),
+);
+
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
     default: module.SignInUp,
@@ -307,6 +313,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <A2AStudioPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.ListingStudio}
+            element={
+              <LazyRoute>
+                <ListingStudioPage />
               </LazyRoute>
             }
           />
