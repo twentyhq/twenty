@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
@@ -20,10 +22,25 @@ type ApplicationRegistrationVariableRow = {
   encryptedValue: string;
 };
 
+// Legacy CTR ciphertext is base64-encoded and at least 16 bytes (one IV
+// block) — i.e. ≥ 22 base64 chars. Anything outside that shape is treated as
+// plaintext and encrypted as-is: CTR decrypt has no integrity tag and would
+// silently turn a non-ciphertext value into garbage instead of throwing.
+const LEGACY_CTR_LOOKS_LIKE_BASE64_RE = /^[A-Za-z0-9+/]+={0,2}$/;
+const LEGACY_CTR_MIN_LENGTH = 22;
+
+const looksLikeLegacyCtrCiphertext = (value: string): boolean =>
+  value.length >= LEGACY_CTR_MIN_LENGTH &&
+  LEGACY_CTR_LOOKS_LIKE_BASE64_RE.test(value);
+
 @RegisteredInstanceCommand('2.5.0', 1798000006000, { type: 'slow' })
 export class EncryptApplicationRegistrationVariableSlowInstanceCommand
   implements SlowInstanceCommand
 {
+  private readonly logger = new Logger(
+    EncryptApplicationRegistrationVariableSlowInstanceCommand.name,
+  );
+
   constructor(
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
@@ -57,9 +74,27 @@ export class EncryptApplicationRegistrationVariableSlowInstanceCommand
           continue;
         }
 
-        const plaintext = this.secretEncryptionService.decrypt(
-          row.encryptedValue,
-        ) as PlaintextString;
+        let plaintext: PlaintextString;
+
+        if (looksLikeLegacyCtrCiphertext(row.encryptedValue)) {
+          try {
+            plaintext = this.secretEncryptionService.decrypt(
+              row.encryptedValue,
+            ) as PlaintextString;
+          } catch (error) {
+            this.logger.warn(
+              `applicationRegistrationVariable row ${row.id} encryptedValue not valid ciphertext; treating as plaintext. ${
+                error instanceof Error ? error.message : String(error)
+              }`,
+            );
+            plaintext = row.encryptedValue as PlaintextString;
+          }
+        } else {
+          this.logger.warn(
+            `applicationRegistrationVariable row ${row.id} encryptedValue is not legacy CTR ciphertext; treating as plaintext.`,
+          );
+          plaintext = row.encryptedValue as PlaintextString;
+        }
 
         if (!isDefined(plaintext)) {
           continue;

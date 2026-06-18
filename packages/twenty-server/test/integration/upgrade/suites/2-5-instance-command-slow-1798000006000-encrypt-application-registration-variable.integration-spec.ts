@@ -162,6 +162,31 @@ describe('2-5 slow instance command 1798000006000 - EncryptApplicationRegistrati
     );
   });
 
+  // A non-ciphertext value (e.g. a corrupted/tampered row, or a future code
+  // path writing raw values) must be encrypted as-is rather than fed through
+  // the integrity-less CTR decrypt, which would silently corrupt it into
+  // garbage before re-encrypting.
+  it('encrypts a non-ciphertext plaintext value as-is instead of corrupting it', async () => {
+    const plaintext = 'plain-registration-value@example.com';
+    const id = await seedVariable({ encryptedValue: plaintext });
+
+    await command.runDataMigration(dataSource);
+
+    const [row] = await dataSource.query(
+      `SELECT "encryptedValue"
+         FROM "core"."applicationRegistrationVariable"
+        WHERE id = $1`,
+      [id],
+    );
+
+    expect(
+      row.encryptedValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX),
+    ).toBe(true);
+    expect(secretEncryptionService.decryptVersioned(row.encryptedValue)).toBe(
+      plaintext,
+    );
+  });
+
   it('leaves unfilled rows (encryptedValue = "") untouched', async () => {
     const id = await seedVariable({ encryptedValue: '' });
 

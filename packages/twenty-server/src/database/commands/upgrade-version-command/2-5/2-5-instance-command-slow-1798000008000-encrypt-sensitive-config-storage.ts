@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
@@ -14,8 +16,23 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 type SensitiveConfigRow = { id: string; value: unknown };
 
+// Legacy CTR ciphertext is base64-encoded and at least 16 bytes (one IV
+// block) — i.e. ≥ 22 base64 chars. Anything outside that shape is plaintext
+// that must be encrypted as-is: CTR decrypt has no integrity tag and would
+// silently turn a real secret into garbage instead of throwing.
+const LEGACY_CTR_LOOKS_LIKE_BASE64_RE = /^[A-Za-z0-9+/]+={0,2}$/;
+const LEGACY_CTR_MIN_LENGTH = 22;
+
+const looksLikeLegacyCtrCiphertext = (value: string): boolean =>
+  value.length >= LEGACY_CTR_MIN_LENGTH &&
+  LEGACY_CTR_LOOKS_LIKE_BASE64_RE.test(value);
+
 @RegisteredInstanceCommand('2.5.0', 1798000008000, { type: 'slow' })
 export class EncryptSensitiveConfigStorageSlowInstanceCommand implements SlowInstanceCommand {
+  private readonly logger = new Logger(
+    EncryptSensitiveConfigStorageSlowInstanceCommand.name,
+  );
+
   constructor(
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
@@ -24,9 +41,10 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand implements SlowIns
   // user/feature-flag entries and with non-sensitive config — so a CHECK
   // constraint cannot be added column-wide. The backfill walks only the
   // CONFIG_VARIABLE rows whose key is declared `isSensitive` + STRING in
-  // the ConfigVariables metadata, decrypts the legacy CTR ciphertext, and
-  // re-encrypts it into the instance-scoped versioned envelope. Idempotent:
-  // already-v2 rows are left untouched.
+  // the ConfigVariables metadata, decrypts legacy CTR ciphertext (or treats a
+  // non-ciphertext value as plaintext), and re-encrypts it into the
+  // instance-scoped versioned envelope. Idempotent: already-v2 rows are left
+  // untouched.
   async runDataMigration(dataSource: DataSource): Promise<void> {
     const sensitiveStringKeys = this.collectSensitiveStringConfigKeys();
 
@@ -56,9 +74,27 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand implements SlowIns
           continue;
         }
 
-        const plaintext = this.secretEncryptionService.decrypt(
-          rawValue,
-        ) as PlaintextString;
+        let plaintext: PlaintextString;
+
+        if (looksLikeLegacyCtrCiphertext(rawValue)) {
+          try {
+            plaintext = this.secretEncryptionService.decrypt(
+              rawValue,
+            ) as PlaintextString;
+          } catch (error) {
+            this.logger.warn(
+              `keyValuePair config row ${row.id} (key "${key}") value not valid ciphertext; treating as plaintext. ${
+                error instanceof Error ? error.message : String(error)
+              }`,
+            );
+            plaintext = rawValue as PlaintextString;
+          }
+        } else {
+          this.logger.warn(
+            `keyValuePair config row ${row.id} (key "${key}") value is not legacy CTR ciphertext; treating as plaintext.`,
+          );
+          plaintext = rawValue as PlaintextString;
+        }
 
         if (!isDefined(plaintext)) {
           continue;

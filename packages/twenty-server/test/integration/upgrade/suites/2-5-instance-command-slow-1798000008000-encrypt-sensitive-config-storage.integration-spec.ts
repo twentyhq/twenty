@@ -128,4 +128,22 @@ describe('2-5 slow instance command 1798000008000 - EncryptSensitiveConfigStorag
 
     expect(await readValue(id)).toBe('');
   });
+
+  // A value that predates encryption (or whose key only later became
+  // sensitive) is stored as plaintext. It must be encrypted as-is rather
+  // than fed through the integrity-less CTR decrypt, which would silently
+  // corrupt the secret into garbage before re-encrypting it.
+  it('encrypts a non-ciphertext plaintext value as-is instead of corrupting it', async () => {
+    const plaintext = 'plain-smtp-user@example.com';
+    const id = await seedRow(plaintext);
+
+    await command.runDataMigration(dataSource);
+
+    const value = await readValue(id);
+
+    expect(value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)).toBe(true);
+    expect(
+      secretEncryptionService.decryptVersioned(value as EncryptedString),
+    ).toBe(plaintext);
+  });
 });
