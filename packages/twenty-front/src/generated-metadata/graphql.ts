@@ -5344,7 +5344,7 @@ export type UpdateMessageFolderInput = {
 };
 
 export type UpdateMessageFolderInputUpdates = {
-  isSynced?: InputMaybe<Scalars['Boolean']['input']>;
+  isSynced: Scalars['Boolean']['input'];
 };
 
 export type UpdateMessageFoldersInput = {

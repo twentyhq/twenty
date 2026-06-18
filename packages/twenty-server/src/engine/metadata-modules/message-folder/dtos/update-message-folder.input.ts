@@ -4,7 +4,6 @@ import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
-  IsOptional,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
@@ -13,10 +12,9 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 @InputType()
 export class UpdateMessageFolderInputUpdates {
-  @IsOptional()
   @IsBoolean()
-  @Field({ nullable: true })
-  isSynced?: boolean;
+  @Field()
+  isSynced: boolean;
 }
 
 @InputType()

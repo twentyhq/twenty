@@ -4378,7 +4378,7 @@ input UpdateMessageFolderInput {
 }
 
 input UpdateMessageFolderInputUpdates {
-  isSynced: Boolean
+  isSynced: Boolean!
 }
 
 input UpdateMessageFoldersInput {

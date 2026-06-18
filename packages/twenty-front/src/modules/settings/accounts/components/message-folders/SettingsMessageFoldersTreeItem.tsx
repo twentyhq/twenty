@@ -9,7 +9,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
-import { IconChevronDown, IconChevronUp, Status } from 'twenty-ui/icon';
+import { Status } from 'twenty-ui/data-display';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

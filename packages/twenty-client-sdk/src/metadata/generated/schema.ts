@@ -6475,7 +6475,7 @@ id: Scalars['UUID']}
 
 export interface UpdateMessageFolderInput {id: Scalars['UUID'],update: UpdateMessageFolderInputUpdates}
 
-export interface UpdateMessageFolderInputUpdates {isSynced?: (Scalars['Boolean'] | null)}
+export interface UpdateMessageFolderInputUpdates {isSynced: Scalars['Boolean']}
 
 export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: UpdateMessageFolderInputUpdates}
 
