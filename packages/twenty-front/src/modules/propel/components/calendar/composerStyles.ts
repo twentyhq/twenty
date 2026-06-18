@@ -320,6 +320,123 @@ export const StyledComposerPanel = styled.div`
     padding: 12px 20px;
   }
 
+  /* ── AI copy bundle (§15) ── */
+  /* The AI controls row: tone select + generate, rewrite chips, hashtags, Arabic. */
+  .propel-ai-row {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .propel-ai-divider {
+    background: var(--mantine-color-default-border);
+    flex: none;
+    height: 18px;
+    width: 1px;
+  }
+
+  /* "Generating" = a shimmer over the textarea region, never a spinner. The
+     overlay rides above the textarea; the returned copy fades/blurs in (handled
+     by framer-motion in the component). */
+  .propel-ai-shimmer {
+    --skel-bg: color-mix(in srgb, var(--mantine-color-text) 6%, transparent);
+    --skel-hi: color-mix(in srgb, var(--pulse-red) 22%, transparent);
+    background: var(--skel-bg);
+    border-radius: 8px;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+  }
+  .propel-ai-shimmer::after {
+    animation: propel-ai-sweep 1.2s linear infinite;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--skel-hi) 50%,
+      transparent 100%
+    );
+    content: '';
+    inset: 0;
+    position: absolute;
+    transform: translateX(-100%);
+  }
+  @keyframes propel-ai-sweep {
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Compliance-lint flag list under the copy. block = red, warn = amber, info =
+     dimmed. Each flag is dismissible. */
+  .propel-ai-flags {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .propel-ai-flag {
+    align-items: flex-start;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    display: flex;
+    font-size: 12px;
+    gap: 8px;
+    line-height: 1.4;
+    padding: 8px 10px;
+  }
+  .propel-ai-flag[data-severity='block'] {
+    background: color-mix(in srgb, var(--failed-fill) 10%, transparent);
+    border-color: color-mix(in srgb, var(--failed-fill) 38%, transparent);
+  }
+  .propel-ai-flag[data-severity='warn'] {
+    background: color-mix(in srgb, #b8860b 12%, transparent);
+    border-color: color-mix(in srgb, #b8860b 36%, transparent);
+  }
+  .propel-ai-flag[data-severity='info'] {
+    background: color-mix(in srgb, var(--mantine-color-text) 5%, transparent);
+    border-color: var(--mantine-color-default-border);
+  }
+  .propel-ai-flag-icon {
+    flex: none;
+    margin-top: 1px;
+  }
+  .propel-ai-flag-icon[data-severity='block'] {
+    color: var(--failed-fill);
+  }
+  .propel-ai-flag-icon[data-severity='warn'] {
+    color: #b8860b;
+  }
+  .propel-ai-flag-icon[data-severity='info'] {
+    color: var(--mantine-color-dimmed);
+  }
+  .propel-ai-flag-body {
+    color: var(--mantine-color-text);
+    flex: 1;
+    min-width: 0;
+  }
+  .propel-ai-flag-span {
+    background: color-mix(in srgb, var(--mantine-color-text) 8%, transparent);
+    border-radius: 4px;
+    font-family: var(--font-family-monospace, monospace);
+    padding: 0 4px;
+  }
+  .propel-ai-flag-dismiss {
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: var(--mantine-color-dimmed);
+    cursor: pointer;
+    display: flex;
+    flex: none;
+    padding: 2px;
+  }
+  /* The Arabic version reads RTL when shown. */
+  .propel-ai-arabic[dir='rtl'] {
+    direction: rtl;
+    text-align: right;
+  }
+
   @media (hover: hover) and (pointer: fine) {
     .propel-chip:hover:not([data-disabled='true']) {
       border-color: var(--chip-color);
@@ -330,6 +447,10 @@ export const StyledComposerPanel = styled.div`
     .propel-media-add:hover {
       border-color: var(--pulse-red);
     }
+    .propel-ai-flag-dismiss:hover {
+      background: color-mix(in srgb, var(--mantine-color-text) 8%, transparent);
+      color: var(--mantine-color-text);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -337,6 +458,11 @@ export const StyledComposerPanel = styled.div`
     .propel-preset,
     .propel-media-tile {
       transition: none;
+    }
+    .propel-ai-shimmer::after {
+      animation: none;
+      opacity: 0.5;
+      transform: none;
     }
   }
 `;

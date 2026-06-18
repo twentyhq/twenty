@@ -10,7 +10,14 @@ import {
   Textarea,
   Tooltip,
 } from '@mantine/core';
-import { type ChangeEvent, type DragEvent, useMemo, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  type DragEvent,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   IconAlertTriangle,
@@ -19,10 +26,10 @@ import {
   IconInfoCircle,
   IconPhoto,
   IconShield,
-  IconSparkles,
   IconUpload,
   IconX,
 } from 'twenty-ui/display';
+import { AiCopyControls } from '@/propel/components/calendar/AiCopyControls';
 import { ComposerPreview } from '@/propel/components/calendar/ComposerPreview';
 import {
   StyledComposerBackdrop,
@@ -220,6 +227,8 @@ const ComposerBody = ({
   const [saveError, setSaveError] = useState<SaveOutcome & { ok: false } | null>(
     null,
   );
+  // True while an AI draft/rewrite is in flight — shimmers the textarea (§15).
+  const [aiGenerating, setAiGenerating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOverAdd, setDragOverAdd] = useState(false);
   // The tile index a carousel drag started from. This is transient gesture state
@@ -352,6 +361,24 @@ const ComposerBody = ({
   );
   const hasListing = form.listingId !== null && form.listingId !== '';
 
+  // ── AI copy bundle wiring ──────────────────────────────────────────────────
+  // The AI controls replace or extend the body; errors surface in the same inline
+  // slot the save flow uses (an AI failure reads as a NETWORK-class SaveOutcome).
+  const setBody = useCallback((next: string) => patch({ body: next }), []);
+  const appendHashtags = useCallback((line: string) => {
+    if (!line.trim()) return;
+    setForm((f) => {
+      const sep = f.body.trim().length === 0 ? '' : f.body.endsWith('\n') ? '' : '\n\n';
+      return { ...f, body: `${f.body}${sep}${line.trim()}` };
+    });
+  }, []);
+  const surfaceAiError = useCallback(
+    (message: string, operatorAction: string | null) => {
+      setSaveError({ ok: false, code: 'AI', message, operatorAction });
+    },
+    [],
+  );
+
   // ── save ─────────────────────────────────────────────────────────────────
   const handleSave = async () => {
     if (!canSave) return;
@@ -455,37 +482,48 @@ const ComposerBody = ({
             </div>
           </div>
 
-          {/* Post copy + per-network counters */}
+          {/* Post copy + AI bundle + per-network counters */}
           <div className="propel-field">
-            <Group justify="space-between" align="center" mb={8}>
-              <span className="propel-field-label" style={{ margin: 0 }}>
-                Post copy
-              </span>
-              {/* STUB (AI slice): caption-from-listing / rewrite. Present so the
-                  surface reads complete; disabled until the AI slice wires it. */}
-              <Tooltip
-                label="AI caption from the listing — coming soon"
-                withArrow
-              >
-                <Button
-                  size="compact-xs"
-                  variant="light"
-                  color="grape"
-                  leftSection={<IconSparkles size={13} />}
-                  disabled
-                >
-                  Use listing details
-                </Button>
-              </Tooltip>
-            </Group>
-            <Textarea
-              autosize
-              minRows={4}
-              maxRows={12}
-              placeholder="What do you want to share?"
-              value={form.body}
-              onChange={(e) => patch({ body: e.currentTarget.value })}
-            />
+            <span className="propel-field-label">Post copy</span>
+            {/* AI copy bundle: tone draft, rewrite, hashtags, Arabic, lint. */}
+            <div style={{ marginBottom: 8 }}>
+              <AiCopyControls
+                body={form.body}
+                listingId={hasListing ? form.listingId : null}
+                hasListing={hasListing}
+                noEmoji={false}
+                onReplaceBody={setBody}
+                onAppendHashtags={appendHashtags}
+                onError={surfaceAiError}
+                onCopyGenerating={setAiGenerating}
+              />
+            </div>
+            {/* The textarea shimmers (§15) while a draft/rewrite is in flight; the
+                returned copy is already faded in via the value swap. */}
+            <div style={{ position: 'relative' }}>
+              <Textarea
+                autosize
+                minRows={4}
+                maxRows={12}
+                placeholder="What do you want to share?"
+                value={form.body}
+                onChange={(e) => patch({ body: e.currentTarget.value })}
+                disabled={aiGenerating}
+              />
+              <AnimatePresence>
+                {aiGenerating ? (
+                  <motion.div
+                    key="propel-copy-shimmer"
+                    className="propel-ai-shimmer"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0, transition: { duration: 0.18 } }}
+                    transition={{ duration: 0.16 }}
+                    aria-hidden="true"
+                  />
+                ) : null}
+              </AnimatePresence>
+            </div>
             {counters.length > 0 ? (
               <div style={{ marginTop: 8 }}>
                 {counters.map((c) => (
