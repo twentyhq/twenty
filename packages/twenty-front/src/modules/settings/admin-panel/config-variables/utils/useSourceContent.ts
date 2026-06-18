@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { CustomError } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 import { ConfigSource } from '~/generated-admin/graphql';
 

@@ -19,7 +19,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { useCallback, useState } from 'react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSidePanelWrapper = styled.div<{
   isOpen: boolean;
@@ -37,6 +37,7 @@ const StyledSidePanelWrapper = styled.div<{
 
 const StyledSidePanel = styled.aside`
   background: ${themeCssVariables.background.primary};
+  border-left: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

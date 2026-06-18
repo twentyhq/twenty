@@ -1,6 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type AppMenuItemProps = {
   applicationId?: string | null;

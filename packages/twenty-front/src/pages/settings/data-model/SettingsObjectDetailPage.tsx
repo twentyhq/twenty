@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
@@ -29,9 +30,9 @@ import {
   IconListDetails,
   IconPlus,
   IconSettings,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
@@ -135,6 +136,7 @@ export const SettingsObjectDetailPage = () => {
   return (
     <SettingsPageLayout
       title={objectMetadataItem.labelPlural}
+      icon={<ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />}
       links={[
         {
           children: t`Workspace`,

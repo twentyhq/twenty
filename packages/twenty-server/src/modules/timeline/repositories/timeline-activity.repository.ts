@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
 import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
@@ -38,21 +38,23 @@ export class TimelineActivityRepository {
         payloads,
       });
 
-      const payloadsWithDiff = payloads
-        .filter(({ properties }) => {
-          const isDiffEmpty =
-            properties.diff !== null &&
-            properties.diff &&
-            Object.keys(properties.diff).length === 0;
+      const payloadsToUpsert = payloads.flatMap(
+        ({ name, properties, ...rest }) => {
+          const [objectName, action] = name.split('.');
+          const { diff } = properties;
+          const hasDiff = isDefined(diff) && Object.keys(diff).length > 0;
 
-          return !isDiffEmpty;
-        })
-        .map(({ properties, ...rest }) => ({
-          ...rest,
-          properties: isDefined(properties.diff)
-            ? { diff: properties.diff }
-            : {},
-        }));
+          if (objectName.startsWith('linked-')) {
+            return [{ ...rest, name, properties: hasDiff ? { diff } : {} }];
+          }
+
+          if (action === 'updated') {
+            return hasDiff ? [{ ...rest, name, properties: { diff } }] : [];
+          }
+
+          return [{ ...rest, name, properties: {} }];
+        },
+      );
 
       const payloadsToInsert: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'] =
         [];
@@ -60,7 +62,7 @@ export class TimelineActivityRepository {
       const timelineActivityPropertyName =
         await this.getTimelineActivityPropertyName(objectSingularName);
 
-      for (const payload of payloadsWithDiff) {
+      for (const payload of payloadsToUpsert) {
         const recentTimelineActivity = recentTimelineActivities.find(
           (timelineActivity) =>
             timelineActivity[timelineActivityPropertyName] ===

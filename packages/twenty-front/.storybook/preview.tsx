@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { type Preview } from '@storybook/react-vite';
+import { http, HttpResponse } from 'msw';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
@@ -18,10 +19,10 @@ import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiSt
 import { UserContext } from '../src/modules/users/contexts/UserContext';
 
 import 'react-loading-skeleton/dist/skeleton.css';
-import 'twenty-ui-deprecated/style.css';
-import 'twenty-ui-deprecated/theme-light.css';
-import 'twenty-ui-deprecated/theme-dark.css';
-import { ThemeProvider } from 'twenty-ui-deprecated/theme-constants';
+import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 // oxlint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
 
@@ -32,38 +33,60 @@ import { mockedUserJWT } from '~/testing/mock-data/jwt';
 // oxlint-disable-next-line no-restricted-imports
 import { ClickOutsideListenerContext } from '../src/modules/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 
-initialize({
-  onUnhandledRequest: async (request: Request) => {
-    const fileExtensionsToIgnore =
-      /\.(ts|tsx|js|jsx|svg|css|png|woff2)(\?v=[a-zA-Z0-9]+)?/;
+const MOCK_IMAGE_SVG =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><rect width="192" height="192" fill="#d9d9d9"/></svg>';
 
-    if (fileExtensionsToIgnore.test(request.url)) {
-      return;
-    }
+const respondWithMockImage = () =>
+  new HttpResponse(MOCK_IMAGE_SVG, {
+    headers: { 'Content-Type': 'image/svg+xml' },
+  });
 
-    if (request.url.startsWith('http://localhost:3000/files/')) {
-      return;
-    }
+const remoteImageMockHandlers = [
+  http.get('https://picsum.photos/*', respondWithMockImage),
+  http.get('https://twenty-icons.com/*', respondWithMockImage),
+  http.get('https://twentyhq.github.io/*', respondWithMockImage),
+  http.get('https://via.placeholder.com/*', respondWithMockImage),
+  http.get(
+    'https://twenty-front-screenshots.s3.eu-west-3.amazonaws.com/*',
+    respondWithMockImage,
+  ),
+];
 
-    try {
-      const requestBody = await request.json();
+initialize(
+  {
+    onUnhandledRequest: async (request: Request) => {
+      const fileExtensionsToIgnore =
+        /\.(ts|tsx|js|jsx|svg|css|png|woff2)(\?v=[a-zA-Z0-9]+)?/;
 
-      // oxlint-disable-next-line no-console
-      console.warn(`Unhandled ${request.method} request to ${request.url}
+      if (fileExtensionsToIgnore.test(request.url)) {
+        return;
+      }
+
+      if (request.url.startsWith('http://localhost:3000/files/')) {
+        return;
+      }
+
+      try {
+        const requestBody = await request.json();
+
+        // oxlint-disable-next-line no-console
+        console.warn(`Unhandled ${request.method} request to ${request.url}
         with payload ${JSON.stringify(requestBody)}\n
         This request should be mocked with MSW`);
-    } catch (error) {
-      // oxlint-disable-next-line no-console
-      console.error(`Cannot parse msw request body : ${error}`);
-    }
+      } catch (error) {
+        // oxlint-disable-next-line no-console
+        console.error(`Cannot parse msw request body : ${error}`);
+      }
 
-    // oxlint-disable-next-line no-console
-    console.warn(
-      `Unhandled ${request.method} request to ${request.url} \n  This request should be mocked with MSW`,
-    );
+      // oxlint-disable-next-line no-console
+      console.warn(
+        `Unhandled ${request.method} request to ${request.url} \n  This request should be mocked with MSW`,
+      );
+    },
+    quiet: true,
   },
-  quiet: true,
-});
+  remoteImageMockHandlers,
+);
 
 // Mirrors production's MinimalMetadataGater so any story rendering a
 // date-aware component (DateTimeDisplay, etc.) sees a real IANA timeZone

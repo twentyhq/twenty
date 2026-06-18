@@ -12,11 +12,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { useIcons } from 'twenty-ui/icon';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 import {
   type FieldPermission,
@@ -195,7 +192,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
             <TableCell>
               <OverridableCheckbox
                 disabled={
-                  (fieldMetadataItem.isUIReadOnly || isLabelIdentifier) ?? false
+                  !(fieldMetadataItem.isUIEditable ?? true) || isLabelIdentifier
                 }
                 checked={true}
                 onChange={handleSeeChange}
@@ -206,7 +203,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
           {shouldShowUpdateTableHeader && (
             <TableCell align="left">
               <OverridableCheckbox
-                disabled={fieldMetadataItem.isUIReadOnly ?? false}
+                disabled={!(fieldMetadataItem.isUIEditable ?? true)}
                 checked={true}
                 onChange={handleUpdateChange}
                 type={isUpdateRestricted ? 'override' : 'default'}

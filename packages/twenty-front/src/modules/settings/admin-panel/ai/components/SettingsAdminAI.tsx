@@ -4,15 +4,11 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui-deprecated/components';
-import {
-  H2Title,
-  IconBolt,
-  IconLock,
-  IconRobot,
-} from 'twenty-ui-deprecated/display';
-import { Card, Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconBolt, IconRobot } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
@@ -49,6 +45,7 @@ import {
   AiModelRole,
   type AdminAiModelConfig,
 } from '~/generated-admin/graphql';
+import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 const USAGE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
@@ -202,14 +199,7 @@ export const SettingsAdminAI = () => {
         <H2Title
           title={t`Custom Providers`}
           description={t`Add custom endpoints, private gateways, or additional regions.`}
-          adornment={
-            <Tag
-              text={t`Enterprise`}
-              color="transparent"
-              Icon={IconLock}
-              variant="border"
-            />
-          }
+          adornment={<OrganizationAdornment />}
         />
 
         <SettingsAdminAiProviderListCard
@@ -230,6 +220,7 @@ export const SettingsAdminAI = () => {
               Icon={IconRobot}
               title={t`Smart Model`}
               description={t`Default model for chats and complex reasoning`}
+              divider
             >
               <Select
                 dropdownId="admin-smart-model-select"
@@ -318,12 +309,7 @@ export const SettingsAdminAI = () => {
                 selectSizeVariant="small"
               />
             ) : (
-              <Tag
-                text={t`Enterprise`}
-                color="transparent"
-                Icon={IconLock}
-                variant="border"
-              />
+              <OrganizationAdornment />
             )
           }
         />

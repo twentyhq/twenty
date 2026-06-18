@@ -1,4 +1,4 @@
-import { type AvatarType } from 'twenty-ui-deprecated/display';
+import { type AvatarType } from 'twenty-ui/data-display';
 export type ObjectRecordIdentifier = {
   id: string;
   name: string;

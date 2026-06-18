@@ -79,7 +79,7 @@ Both routes require an authenticated Twenty user and use the same shared Slack c
    reinstall the Slack app to the workspace) so the token picks up new scopes.
 
 3. Set the **Redirect URL** on the Slack app to
-   `<YOUR_TWENTY_SERVER_URL>/apps/oauth/callback` — the same origin your
+   `<YOUR_TWENTY_SERVER_URL>/auth/apps/callback` — the same origin your
    Twenty **server** uses for API routes (the callback is not served by the SPA
    alone). Local monorepo dev often uses `http://localhost:3000` (confirm the
    port your `twenty-server` / `SERVER_URL` actually uses).

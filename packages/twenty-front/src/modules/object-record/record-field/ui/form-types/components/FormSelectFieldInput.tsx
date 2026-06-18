@@ -6,7 +6,7 @@ import { VariableChipStandalone } from '@/object-record/record-field/ui/form-typ
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { Select } from '@/ui/input/components/Select';
+import { type CallToActionButton, Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -14,9 +14,9 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { useContext, useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCircleOff } from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { IconCircleOff } from 'twenty-ui/icon';
+import { type SelectOption } from 'twenty-ui/input';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -26,6 +26,7 @@ type FormSelectFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   options: SelectOption[];
   readonly?: boolean;
+  callToActionButton?: CallToActionButton;
 };
 
 export const FormSelectFieldInput = ({
@@ -36,6 +37,7 @@ export const FormSelectFieldInput = ({
   VariablePicker,
   options,
   readonly,
+  callToActionButton,
 }: FormSelectFieldInputProps) => {
   const { theme } = useContext(ThemeContext);
   const instanceId = useId();
@@ -139,6 +141,7 @@ export const FormSelectFieldInput = ({
             value={selectedOption?.value}
             onChange={onSelect}
             emptyOption={defaultEmptyOption}
+            callToActionButton={callToActionButton}
             fullWidth
             hasRightElement={isDefined(VariablePicker) && !readonly}
             withSearchInput

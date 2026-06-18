@@ -4,14 +4,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { type MouseEvent } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  type IconComponent,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui-deprecated/display';
-import { Button, IconButton } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { type IconComponent } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import { Button, IconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledWrapper = styled.div`
   font-size: ${themeCssVariables.font.size.md};

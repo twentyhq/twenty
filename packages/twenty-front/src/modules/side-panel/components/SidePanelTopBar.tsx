@@ -20,13 +20,10 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useRef } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconX } from 'twenty-ui-deprecated/display';
-import { IconButton } from 'twenty-ui-deprecated/input';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconX } from 'twenty-ui/icon';
+import { IconButton } from 'twenty-ui/input';
+import { useIsMobile } from 'twenty-ui/utilities';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const COMMAND_MENU_SIDE_PANEL_PAGES = [
   SidePanelPages.CommandMenuDisplay,

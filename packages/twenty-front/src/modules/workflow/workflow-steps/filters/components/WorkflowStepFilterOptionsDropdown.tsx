@@ -6,9 +6,9 @@ import { useRemoveStepFilter } from '@/workflow/workflow-steps/filters/hooks/use
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
-import { IconDotsVertical, IconTrash } from 'twenty-ui-deprecated/display';
-import { IconButton } from 'twenty-ui-deprecated/input';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
+import { IconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type WorkflowStepFilterOptionsDropdownProps = {
   stepFilterId: string;

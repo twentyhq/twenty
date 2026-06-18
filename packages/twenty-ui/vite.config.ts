@@ -89,6 +89,16 @@ export default defineConfig(({ command }) => {
     },
     optimizeDeps: {
       exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
+      // Pre-bundle React up front so Vite's dep optimizer doesn't re-bundle it
+      // mid-run during browser-mode Storybook tests — re-bundling rotates the
+      // optimized chunk hash and 404s in-flight dynamic imports (vite 8 / rolldown).
+      include: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+      ],
     },
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-ui',

@@ -233,7 +233,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       shortcut: null,
       description: null,
       standardOverrides: null,
-      isUIReadOnly: false,
+      isUIEditable: true,
       labelIdentifierFieldMetadataId: null,
       imageIdentifierFieldMetadataId: null,
       duplicateCriteria: null,

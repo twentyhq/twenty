@@ -1,7 +1,7 @@
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { styled } from '@linaria/react';
 import { Handle, Position } from '@xyflow/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowDiagramHandleTargetProps = {
   isConnectable?: boolean;

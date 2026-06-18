@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Page layout widget update should succeed from a GRAPH widget should update page layout widget to AGGREGATE_CHART configuration 1`] = `
 {
@@ -10,8 +10,8 @@ exports[`Page layout widget update should succeed from a GRAPH widget should upd
     "displayDataLabel": true,
     "filter": null,
     "firstDayOfTheWeek": 1,
-    "format": "0,0",
     "label": "Total Records",
+    "numberFormat": "SHORT",
     "prefix": null,
     "suffix": null,
     "timezone": "UTC",

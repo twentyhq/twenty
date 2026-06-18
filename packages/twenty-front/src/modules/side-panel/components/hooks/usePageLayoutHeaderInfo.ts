@@ -15,8 +15,8 @@ import {
   IconTable,
   type IconComponent,
   useIcons,
-} from 'twenty-ui-deprecated/display';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 type PageLayoutHeaderInfo = {

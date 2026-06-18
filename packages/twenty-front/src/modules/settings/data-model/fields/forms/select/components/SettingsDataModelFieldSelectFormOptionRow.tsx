@@ -9,26 +9,23 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
+import { ColorSample } from 'twenty-ui/data-display';
 import {
-  ColorSample,
   IconCheck,
   IconDotsVertical,
   IconGripVertical,
   IconTrash,
   IconX,
-} from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/input';
 import {
   type ColorLabels,
   MenuItem,
   MenuItemSelectColor,
-} from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/navigation';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { MAIN_COLOR_NAMES } from 'twenty-ui-deprecated/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 const useColorLabels = (): ColorLabels => ({
   gray: t`Gray`,

@@ -26,6 +26,7 @@ import { fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow } fr
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -198,6 +199,10 @@ export class CommandMenuItemService {
         updateCommandMenuItemInput: input,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         flatPageLayoutMaps: existingFlatPageLayoutMaps,
+        callerApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
       });
 
     const validateAndBuildResult =
@@ -240,6 +245,90 @@ export class CommandMenuItemService {
     );
   }
 
+  async reset(id: string, workspaceId: string): Promise<CommandMenuItemDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatCommandMenuItemMaps'],
+        },
+      );
+
+    const existingFlatCommandMenuItem = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: existingFlatCommandMenuItemMaps,
+    });
+
+    if (!isDefined(existingFlatCommandMenuItem)) {
+      throw new CommandMenuItemException(
+        'Command menu item not found',
+        CommandMenuItemExceptionCode.COMMAND_MENU_ITEM_NOT_FOUND,
+      );
+    }
+
+    if (
+      existingFlatCommandMenuItem.applicationUniversalIdentifier ===
+      workspaceCustomFlatApplication.universalIdentifier
+    ) {
+      throw new CommandMenuItemException(
+        'Custom command menu item cannot be reset to default',
+        CommandMenuItemExceptionCode.COMMAND_MENU_ITEM_CANNOT_BE_RESET,
+      );
+    }
+
+    const flatCommandMenuItemToUpdate: FlatCommandMenuItem = {
+      ...existingFlatCommandMenuItem,
+      isActive: true,
+      overrides: null,
+      universalOverrides: null,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            commandMenuItem: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatCommandMenuItemToUpdate],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while resetting command menu item to default',
+      );
+    }
+
+    const { flatCommandMenuItemMaps: recomputedFlatCommandMenuItemMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatCommandMenuItemMaps'],
+        },
+      );
+
+    return fromFlatCommandMenuItemToCommandMenuItemDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatCommandMenuItemMaps,
+      }),
+    );
+  }
+
   async delete(id: string, workspaceId: string): Promise<CommandMenuItemDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -260,14 +349,34 @@ export class CommandMenuItemService {
         commandMenuItemId: id,
       });
 
+    const shouldDeactivate = isCallerOverridingEntity({
+      callerApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      entityApplicationUniversalIdentifier:
+        flatCommandMenuItemToDelete.applicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      isSystemSideEffect: flatCommandMenuItemToDelete.isSystemSideEffect,
+    });
+
+    const deactivatedFlatCommandMenuItem = {
+      ...flatCommandMenuItemToDelete,
+      isActive: false,
+      updatedAt: new Date().toISOString(),
+    };
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [flatCommandMenuItemToDelete],
-              flatEntityToUpdate: [],
+              flatEntityToDelete: shouldDeactivate
+                ? []
+                : [flatCommandMenuItemToDelete],
+              flatEntityToUpdate: shouldDeactivate
+                ? [deactivatedFlatCommandMenuItem]
+                : [],
             },
           },
           workspaceId,
@@ -285,7 +394,9 @@ export class CommandMenuItemService {
     }
 
     return fromFlatCommandMenuItemToCommandMenuItemDto(
-      flatCommandMenuItemToDelete,
+      shouldDeactivate
+        ? deactivatedFlatCommandMenuItem
+        : flatCommandMenuItemToDelete,
     );
   }
 

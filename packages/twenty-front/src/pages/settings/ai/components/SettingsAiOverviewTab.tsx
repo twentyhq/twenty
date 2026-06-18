@@ -9,21 +9,13 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Fragment, useContext, useState } from 'react';
-import {
-  H2Title,
-  IconMessage,
-  IconRobot,
-  IconSparkles,
-  IconTool,
-} from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import { IconMessage, IconRobot, IconSparkles, IconTool } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   FindWorkspaceAiStatsDocument,
@@ -98,11 +90,15 @@ export const SettingsAiOverviewTab = () => {
                 label: t`Conversations`,
                 value: stats ? stats.conversationsCount.toString() : '—',
               },
+            ],
+            [
               {
                 Icon: IconSparkles,
                 label: t`Skills`,
                 value: stats ? stats.skillsCount.toString() : '—',
               },
+            ],
+            [
               {
                 Icon: IconTool,
                 label: t`Tools`,

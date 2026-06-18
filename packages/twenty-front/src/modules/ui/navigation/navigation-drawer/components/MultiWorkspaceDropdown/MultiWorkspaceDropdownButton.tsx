@@ -32,7 +32,7 @@ export const MultiWorkspaceDropdownButton = () => {
   return (
     <Dropdown
       dropdownId={MULTI_WORKSPACE_DROPDOWN_ID}
-      dropdownOffset={{ y: -29, x: -5 }}
+      dropdownOffset={{ y: -31, x: -5 }}
       clickableComponent={
         <MultiWorkspaceDropdownClickableComponent
           disabled={isLayoutCustomizationModeEnabled}

@@ -1,9 +1,10 @@
 # twenty-ui
 
-> **Status:** Phases 0–3 complete (June 2026). All 192 components and all 70 stories were
-> migrated from `twenty-ui-deprecated` with full public-API parity (export-identifier diff:
-> 0 missing / 0 extra across all 13 subpath modules) and byte-identical story titles for the
-> Argos cross-package diff. Gates green: typecheck, lint, jest, build, storybook:build,
+> **Status:** Cut-over complete (June 2026). All 192 components and all 70 stories were
+> migrated from the legacy library with full public-API parity (export-identifier diff:
+> 0 missing / 0 extra across all 13 subpath modules), `twenty-front` was switched over to
+> `twenty-ui`, and the legacy `twenty-ui-deprecated` package was removed. Gates green:
+> typecheck, lint, jest, build, storybook:build,
 > storybook:test (225 stories incl. play functions + live axe gate), size.
 > Remaining: the Argos visual-parity triage, the a11y fix pass (119 stories carry
 > inherited-violation `a11y: 'todo'` overrides), the CI diff-table workflow, the
@@ -11,8 +12,8 @@
 > The sections below remain the design document for the full effort; see
 > [Migration outcomes](#migration-outcomes-june-2026) for decisions taken during the port.
 
-`twenty-ui` is the next generation of Twenty's UI library, replacing [`twenty-ui-deprecated`](../twenty-ui-deprecated).
-It is built on a headless component library and a zero-runtime, CSS-variable styling layer.
+`twenty-ui` is Twenty's UI library, the successor to the legacy `twenty-ui-deprecated` package
+(now removed). It is built on a headless component library and a zero-runtime, CSS-variable styling layer.
 
 ## Goals
 
@@ -332,7 +333,7 @@ to review diffs.
 - ~~**Phase 3 — Long tail**~~ ✅ done June 2026. Follow-up debt: the a11y fix pass for the 119 `a11y: 'todo'` stories, and the Argos visual-parity triage.
 - **Phase 4 — Application-level UI:** migrate the generic/hybrid components from `twenty-front/src/modules/ui` per the triage — decouple state, split headless cores, swap each behind its existing `@/ui/...` import path.
 - **Phase 5 — Hardening & publish:** close gaps; finalize release pipeline; cut `1.0.0`; publish docs.
-- **Phase 6 — Cut-over:** dogfood → codemod → swap → remove `twenty-ui-deprecated`.
+- ~~**Phase 6 — Cut-over**~~ ✅ done June 2026: codemod imports → swap dependency → remove `twenty-ui-deprecated`.
 
 A component is done only with: stories (all states, light/dark), passing interaction + a11y tests,
 a passing visual-parity diff, and a within-budget size entry.

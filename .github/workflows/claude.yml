@@ -80,7 +80,7 @@ jobs:
         uses: ./.github/actions/yarn-install
       - name: Run Claude Code
         id: claude-code
-        uses: anthropics/claude-code-action@dde2242db6af13460b916652159b6ba19a598f30 # v1
+        uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           additional_permissions: |
@@ -170,7 +170,7 @@ jobs:
             core.setOutput('issue_number', p.issue_number);
       - name: Run Claude Code
         id: claude
-        uses: anthropics/claude-code-action@dde2242db6af13460b916652159b6ba19a598f30 # v1
+        uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: ${{ steps.prompt.outputs.prompt }}
@@ -183,18 +183,26 @@ jobs:
                 "PG_DATABASE_URL": "postgres://postgres:postgres@localhost:5432/default"
               }
             }
+      - name: Mint ci-privileged dispatch token
+        id: app-token
+        if: always()
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-privileged
+          permission-actions: write
+
       - name: Dispatch response to ci-privileged
         if: always()
         env:
-          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           REPO: ${{ steps.prompt.outputs.repo }}
           ISSUE_NUMBER: ${{ steps.prompt.outputs.issue_number }}
-          RUN_ID: ${{ github.run_id }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          gh api repos/twentyhq/ci-privileged/dispatches \
-            -f event_type=claude-cross-repo-response \
-            -f "client_payload[repo]=$REPO" \
-            -f "client_payload[issue_number]=$ISSUE_NUMBER" \
-            -f "client_payload[run_id]=$RUN_ID" \
-            -f "client_payload[run_url]=$RUN_URL"
+          gh workflow run post-claude-response.yaml --repo twentyhq/ci-privileged --ref main \
+            -f repo="$REPO" \
+            -f issue_number="$ISSUE_NUMBER" \
+            -f run_url="$RUN_URL"

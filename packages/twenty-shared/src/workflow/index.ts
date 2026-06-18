@@ -12,15 +12,21 @@ export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/ContentTypeValuesH
 export { IF_ELSE_BRANCH_POSITION_OFFSETS } from './constants/IfElseBranchPositionOffsets';
 export { OBJECTS_BLOCKED_FROM_AUTOMATION } from './constants/ObjectsBlockedFromAutomation';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
+export { WORKFLOW_TRIGGER_METADATA_KEY } from './constants/WorkflowTriggerMetadataKey';
+export { WORKFLOW_TRIGGER_METADATA_LABEL } from './constants/WorkflowTriggerMetadataLabel';
+export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY } from './constants/WorkflowTriggerMetadataWorkspaceMemberIdKey';
+export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_LABEL } from './constants/WorkflowTriggerMetadataWorkspaceMemberIdLabel';
+export { WORKFLOW_TRIGGER_PAYLOAD_KEY } from './constants/WorkflowTriggerPayloadKey';
+export { WORKFLOW_TRIGGER_PAYLOAD_LABEL } from './constants/WorkflowTriggerPayloadLabel';
 export { WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS } from './layout/constants/WorkflowDiagramDefaultNodeDimensions';
 export { WORKFLOW_LAYOUT_DEFAULT_OPTIONS } from './layout/constants/WorkflowLayoutDefaultOptions';
-export type {
-  WorkflowLayoutNode,
-  WorkflowLayoutEdge,
-  WorkflowLayoutPosition,
-  WorkflowLayoutOptions,
-} from './layout/utils/compute-workflow-layout.util';
 export { computeWorkflowLayout } from './layout/utils/compute-workflow-layout.util';
+export type {
+  WorkflowLayoutEdge,
+  WorkflowLayoutNode,
+  WorkflowLayoutOptions,
+  WorkflowLayoutPosition,
+} from './layout/utils/compute-workflow-layout.util';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
@@ -37,6 +43,7 @@ export { workflowDeleteRecordActionSettingsSchema } from './schemas/delete-recor
 export { workflowDraftEmailActionSchema } from './schemas/draft-email-action-schema';
 export { workflowEmptyActionSchema } from './schemas/empty-action-schema';
 export { workflowEmptyActionSettingsSchema } from './schemas/empty-action-settings-schema';
+export { expectedOutputSchemaShape } from './schemas/expected-output-schema-shape';
 export { workflowFilterActionSchema } from './schemas/filter-action-schema';
 export { workflowFilterActionSettingsSchema } from './schemas/filter-action-settings-schema';
 export { workflowFindRecordsActionSchema } from './schemas/find-records-action-schema';
@@ -57,7 +64,11 @@ export { workflowLogicFunctionActionSettingsSchema } from './schemas/logic-funct
 export { workflowManualTriggerSchema } from './schemas/manual-trigger-schema';
 export { objectRecordSchema } from './schemas/object-record-schema';
 export { workflowSendEmailActionSchema } from './schemas/send-email-action-schema';
-export { workflowSendEmailActionSettingsSchema } from './schemas/send-email-action-settings-schema';
+export {
+  workflowEmailFilesSchema,
+  workflowSendEmailActionSettingsSchema,
+} from './schemas/send-email-action-settings-schema';
+export type { WorkflowEmailFiles } from './schemas/send-email-action-settings-schema';
 export { stepFilterGroupSchema } from './schemas/step-filter-group-schema';
 export { stepFilterSchema } from './schemas/step-filter-schema';
 export { workflowUpdateRecordActionSchema } from './schemas/update-record-action-schema';
@@ -83,24 +94,24 @@ export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
 export type { EmailRecipients } from './types/EmailRecipients';
 export type { FunctionInput } from './types/FunctionInput';
 export type {
-  InputSchemaPropertyType,
-  InputSchemaProperty,
   InputSchema,
+  InputSchemaProperty,
+  InputSchemaPropertyType,
 } from './types/InputSchema';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export { WorkflowActionType } from './types/WorkflowActionType';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
 export type { BodyType } from './types/workflowHttpRequestStep';
+export { StepStatus } from './types/WorkflowRunStateStepInfos';
 export type {
   WorkflowRunStepInfo,
   WorkflowRunStepInfos,
 } from './types/WorkflowRunStateStepInfos';
-export { StepStatus } from './types/WorkflowRunStateStepInfos';
 export type {
-  WorkflowRunStepLog,
-  WorkflowRunStepLogs,
   AiAgentStepLogDetails,
   AiToolCallLog,
+  WorkflowRunStepLog,
+  WorkflowRunStepLogs,
 } from './types/WorkflowRunStepLog';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
@@ -109,9 +120,9 @@ export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
 export {
-  needsEscaping,
   escapePathSegment,
   joinVariablePath,
+  needsEscaping,
   parseVariablePath,
 } from './utils/variable-path.util';
 export { isIfElseStepInput } from './validation/guards/isIfElseStepInput';
@@ -119,16 +130,16 @@ export { isIteratorStepInput } from './validation/guards/isIteratorStepInput';
 export type {
   IfElseStepInput,
   IteratorStepInput,
-  WorkflowValidationSeverity,
-  WorkflowValidationIssueCode,
-  WorkflowValidationIssue,
-  WorkflowValidationResult,
+  ValidatableWorkflow,
   ValidatableWorkflowStep,
   ValidatableWorkflowTrigger,
-  ValidatableWorkflow,
+  WorkflowValidationIssue,
+  WorkflowValidationIssueCode,
+  WorkflowValidationResult,
+  WorkflowValidationSeverity,
 } from './validation/types/workflow-validation.type';
-export type { WorkflowGraph } from './validation/utils/build-workflow-graph.util';
 export { buildWorkflowGraph } from './validation/utils/build-workflow-graph.util';
+export type { WorkflowGraph } from './validation/utils/build-workflow-graph.util';
 export { extractVariablesFromInput } from './validation/utils/extract-variables-from-input.util';
 export { getEditDistance } from './validation/utils/get-edit-distance.util';
 export {
@@ -142,46 +153,47 @@ export { validateWorkflowVariableReferences } from './validation/utils/validate-
 export { validateWorkflowStructure } from './validation/validate-workflow-structure.util';
 export { isBaseOutputSchemaV2 } from './workflow-schema/guards/isBaseOutputSchemaV2';
 export type {
-  LeafType,
-  NodeType,
-  Leaf,
-  Node,
   BaseOutputSchemaV2,
+  Leaf,
+  LeafType,
+  Node,
+  NodeType,
 } from './workflow-schema/types/base-output-schema.type';
 export type {
-  RecordFieldLeaf,
-  RecordFieldNode,
-  RecordFieldNodeValue,
+  CodeOutputSchema,
   FieldOutputSchemaV2,
-  RecordOutputSchemaV2,
-  RecordNode,
   FindRecordsOutputSchema,
-  IteratorOutputSchema,
   FormFieldLeaf,
   FormFieldNode,
   FormOutputSchema,
+  IteratorOutputSchema,
   LinkOutputSchema,
-  CodeOutputSchema,
   ManualTriggerOutputSchema,
   OutputSchemaV2,
+  RecordFieldLeaf,
+  RecordFieldNode,
+  RecordFieldNodeValue,
+  RecordNode,
+  RecordOutputSchemaV2,
   VariableSearchResult,
 } from './workflow-schema/types/output-schema.type';
+export { buildManualTriggerMetadataNode } from './workflow-schema/utils/build-manual-trigger-metadata-node';
 export { collectOutputSchemaPaths } from './workflow-schema/utils/collect-output-schema-paths';
-export type { OutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
 export { findOutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
+export type { OutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
 export { navigateOutputSchemaProperty } from './workflow-schema/utils/navigate-output-schema-property';
-export type { ResolvedVariable } from './workflow-schema/utils/resolve-variable-path-in-output-schema';
 export {
+  collectOutputSchemaVariablePaths,
   resolveInSchema,
   resolveVariablePathInOutputSchema,
-  collectOutputSchemaVariablePaths,
 } from './workflow-schema/utils/resolve-variable-path-in-output-schema';
+export type { ResolvedVariable } from './workflow-schema/utils/resolve-variable-path-in-output-schema';
 export {
   searchRecordOutputSchema,
   searchVariableInOutputSchema,
 } from './workflow-schema/utils/search-variable-in-output-schema';
 export type {
+  BulkRecordsAvailability,
   GlobalAvailability,
   SingleRecordAvailability,
-  BulkRecordsAvailability,
 } from './workflow-trigger/types/workflow-trigger.type';

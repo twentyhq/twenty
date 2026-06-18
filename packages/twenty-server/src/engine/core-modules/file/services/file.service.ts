@@ -81,20 +81,25 @@ export class FileService {
   async getFileStreamById({
     fileId,
     workspaceId,
-    fileFolder,
+    allowedFileFolders = [FileFolder.Workflow],
   }: {
     fileId: string;
     workspaceId: string;
-    fileFolder: FileFolder;
+    allowedFileFolders?: FileFolder[];
   }): Promise<{ stream: Readable; mimeType: string } | null> {
     const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         id: fileId,
-        path: Like(`${fileFolder}/%`),
       },
     });
 
     if (file === null) {
+      return null;
+    }
+
+    const [fileFolder] = file.path.split('/');
+
+    if (!allowedFileFolders.includes(fileFolder as FileFolder)) {
       return null;
     }
 
@@ -116,7 +121,7 @@ export class FileService {
     try {
       const stream = await this.fileStorageService.readFile({
         resourcePath: removeFileFolderFromFileEntityPath(file.path),
-        fileFolder,
+        fileFolder: fileFolder as FileFolder,
         applicationUniversalIdentifier: application.universalIdentifier,
         workspaceId,
       });

@@ -15,6 +15,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { InlineBanner } from 'twenty-ui/feedback';
 import {
   IconBook,
   IconBox,
@@ -26,8 +27,7 @@ import {
   IconListDetails,
   IconLock,
   IconShield,
-  InlineBanner,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,

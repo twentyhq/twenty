@@ -13,7 +13,7 @@ import {
   IconSettings2,
   IconSparkles,
   IconVariable,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 
 export const SettingsAdminContent = () => {
   const currentUser = useAtomStateValue(currentUserState);

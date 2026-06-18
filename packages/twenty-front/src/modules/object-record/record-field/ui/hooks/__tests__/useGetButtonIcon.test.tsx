@@ -9,7 +9,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetButtonIcon';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { IconPencil } from 'twenty-ui-deprecated/display';
+import { IconPencil } from 'twenty-ui/icon';
 
 const recordId = 'recordId';
 

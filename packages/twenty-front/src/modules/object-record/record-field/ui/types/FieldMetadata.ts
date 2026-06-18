@@ -8,7 +8,7 @@ import {
   type FieldMetadataMultiItemSettings,
   type FileCategory,
 } from 'twenty-shared/types';
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
+import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';
 
@@ -16,7 +16,7 @@ type BaseFieldMetadata = {
   fieldName: string;
   objectMetadataNameSingular?: string;
   isCustom?: boolean;
-  isUIReadOnly?: boolean;
+  isUIEditable?: boolean;
 };
 
 export type FieldUuidMetadata = BaseFieldMetadata & {

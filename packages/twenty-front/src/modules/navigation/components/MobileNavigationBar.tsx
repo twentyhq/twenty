@@ -20,8 +20,8 @@ import {
   IconList,
   IconMessageCirclePlus,
   IconSearch,
-} from 'twenty-ui-deprecated/display';
-import { NavigationBar } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/icon';
+import { NavigationBar } from 'twenty-ui/navigation';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type NavigationBarItemName = 'main' | 'search' | 'newAiChat';

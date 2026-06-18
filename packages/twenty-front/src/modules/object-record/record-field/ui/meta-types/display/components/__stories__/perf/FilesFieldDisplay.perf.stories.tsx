@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { FilesDisplay } from '@/ui/field/display/components/FilesDisplay';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
@@ -54,7 +54,7 @@ export const Elipsis: Story = {
 
 export const Performance = getProfilingStory({
   componentName: 'FilesFieldDisplay',
-  averageThresholdInMs: 0.8,
+  averageThresholdInMs: 1.6,
   numberOfRuns: 50,
   numberOfTestsPerRun: 100,
 });

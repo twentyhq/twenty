@@ -1,5 +1,5 @@
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowDiagramColors = {
   background: string;

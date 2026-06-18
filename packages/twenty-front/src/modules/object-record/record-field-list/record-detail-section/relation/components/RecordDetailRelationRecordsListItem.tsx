@@ -42,10 +42,10 @@ import {
   IconTrash,
   IconUnlink,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
-import { AnimatedEaseInOut } from 'twenty-ui-deprecated/utilities';
+} from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
+import { AnimatedEaseInOut } from 'twenty-ui/layout';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const StyledClickableZone = styled.div`

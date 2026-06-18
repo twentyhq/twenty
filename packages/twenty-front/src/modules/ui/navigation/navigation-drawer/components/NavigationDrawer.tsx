@@ -19,10 +19,7 @@ import {
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import {
-  MOBILE_VIEWPORT,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -62,7 +59,7 @@ const StyledContainer = styled.div<{
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
   height: 100%;
-  padding: ${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]}
+  padding: ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[4]}
     ${themeCssVariables.spacing[2]};
   width: ${({ isExpanded }) =>
     isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};

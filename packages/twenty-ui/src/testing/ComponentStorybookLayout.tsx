@@ -1,3 +1,4 @@
+import { type JSX } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './ComponentStorybookLayout.module.scss';

@@ -38,3 +38,24 @@ my-twenty-app/
 <Note>
 **Die Dateiorganisation liegt bei Ihnen.** Die oben genannten Ordner sind Konventionen – das SDK erkennt Entitäten über eine AST-Analyse von `export default defineEntity(...)`-Aufrufen, unabhängig davon, wo sich die Datei befindet.
 </Note>
+
+## Abhängigkeiten
+
+Beide Twenty-SDK-Pakete gehören unter `devDependencies`, nicht unter `dependencies`:
+
+```json filename="package.json"
+{
+  "dependencies": {},
+  "devDependencies": {
+    "twenty-client-sdk": "^2.13.0",
+    "twenty-sdk": "^2.13.0"
+  }
+}
+```
+
+* **`twenty-sdk`** stellt die `twenty`-CLI sowie die Build-/Scaffolding-Tools bereit. Es läuft nur während der Entwicklung und beim Build und wird zur Laufzeit der veröffentlichten App niemals importiert.
+* **`twenty-client-sdk`** *wird* hingegen von deinem App-Code importiert (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), aber Twenty stellt es zur Laufzeit bereit – Logikfunktionen beziehen es aus einer generierten SDK-Schicht, und Frontend-Komponenten lösen es aus serverseitig ausgelieferten Modulen auf. Deine installierte Kopie wird nur für die Typprüfung und den Build zum Zeitpunkt des Deployments verwendet, daher muss sie niemals im ausgelieferten Bundle enthalten sein.
+
+Wenn eines der Pakete unter `dependencies` bleibt, wird es in das Runtime-Bundle der installierten App gezogen, wo es nur Ballast ist. `twenty build` gibt eine Warnung aus, wenn eines von beiden weiterhin unter `dependencies` aufgeführt ist.
+
+Füge die eigenen Runtime-Abhängigkeiten deiner App (Bibliotheken, die deine Logikfunktionen zur Laufzeit tatsächlich importieren) wie gewohnt unter `dependencies` hinzu.

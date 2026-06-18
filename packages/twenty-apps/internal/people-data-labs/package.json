@@ -22,8 +22,8 @@
     "test:integration": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "twenty-client-sdk": "2.10.1",
-    "twenty-sdk": "2.10.1"
+    "twenty-client-sdk": "2.13.0",
+    "twenty-sdk": "2.13.0"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
@@ -33,6 +33,6 @@
     "react-dom": "^19.0.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^3.2.6"
+    "vitest": "^4.0.0"
   }
 }

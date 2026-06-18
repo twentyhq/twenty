@@ -2,11 +2,12 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { Logo } from '@/auth/components/Logo';
 import {
+  AVATAR_URL_MOCK,
   ComponentDecorator,
   RouterDecorator,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 
-const logoUrl = 'https://picsum.photos/192/192';
+const logoUrl = AVATAR_URL_MOCK;
 
 const meta: Meta<typeof Logo> = {
   title: 'Modules/Auth/Logo',

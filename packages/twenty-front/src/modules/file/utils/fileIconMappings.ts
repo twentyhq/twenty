@@ -9,7 +9,7 @@ import {
   IconPresentation,
   IconTable,
   IconVideo,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 
 export const IconMapping: {
   [key in AttachmentFileCategory]: IconComponent;

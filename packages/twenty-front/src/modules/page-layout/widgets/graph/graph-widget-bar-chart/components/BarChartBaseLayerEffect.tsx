@@ -15,7 +15,7 @@ import {
   useState,
 } from 'react';
 import { BarChartLayout } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type BarChartBaseLayerEffectProps = {
   bars: BarPosition[];
@@ -28,7 +28,7 @@ type BarChartBaseLayerEffectProps = {
   showGrid: boolean;
   highlightedLegendId: string | null;
   allowDataTransitions: boolean;
-  canvasRef: RefObject<HTMLCanvasElement>;
+  canvasRef: RefObject<HTMLCanvasElement | null>;
 };
 
 type AnimationState = {

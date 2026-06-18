@@ -1,0 +1,2 @@
+export const ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME =
+  '2.15.0_AddIsSystemSideEffectFastInstanceCommand_1781600000000';

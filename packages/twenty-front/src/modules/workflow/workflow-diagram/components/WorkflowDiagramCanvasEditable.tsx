@@ -31,7 +31,7 @@ import {
   type Connection,
   type Edge,
 } from '@xyflow/react';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramCanvasEditable = () => {
@@ -134,7 +134,7 @@ export const WorkflowDiagramCanvasEditable = () => {
   };
 
   const onNodeDragStop = async (
-    _: React.MouseEvent<Element>,
+    _: MouseEvent | TouchEvent,
     node: WorkflowDiagramNode,
   ) => {
     const stepToUpdate =
