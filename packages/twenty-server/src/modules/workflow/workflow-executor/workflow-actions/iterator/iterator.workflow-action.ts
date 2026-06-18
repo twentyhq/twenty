@@ -50,7 +50,22 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
 
     const { items, initialLoopStepIds } = iteratorInput;
 
-    const parsedItems = isString(items) ? JSON.parse(items) : items;
+    let parsedItems = items;
+
+    if (isString(items)) {
+      try {
+        parsedItems = JSON.parse(items);
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          throw new WorkflowStepExecutorException(
+            'Iterator input items must be a valid JSON array',
+            WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+          );
+        }
+
+        throw error;
+      }
+    }
 
     if (!Array.isArray(parsedItems)) {
       throw new WorkflowStepExecutorException(

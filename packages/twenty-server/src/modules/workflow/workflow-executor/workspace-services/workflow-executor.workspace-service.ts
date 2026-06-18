@@ -139,6 +139,7 @@ export class WorkflowExecutorWorkspaceService {
         steps,
         stepInfos,
         workflowRunId,
+        workflowVersionId: workflowRun.workflowVersionId,
         workspaceId,
       });
 
@@ -471,12 +472,14 @@ export class WorkflowExecutorWorkspaceService {
     steps,
     stepInfos,
     workflowRunId,
+    workflowVersionId,
     workspaceId,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
     stepInfos: WorkflowRunStepInfos;
     workflowRunId: string;
+    workflowVersionId: string;
     workspaceId: string;
   }) {
     // Credit-cap enforcement lives at the AI entry points (chat resolver,
@@ -517,6 +520,12 @@ export class WorkflowExecutorWorkspaceService {
       if (!isUserError) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
+          additionalData: {
+            workflowRunId,
+            workflowVersionId,
+            stepId,
+            stepType: step.type,
+          },
         });
 
         await this.metricsService.incrementCounterForEvent({

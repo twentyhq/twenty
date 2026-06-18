@@ -2,7 +2,10 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { StepStatus } from 'twenty-shared/workflow';
 
-import { WorkflowStepExecutorException } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { IteratorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator.workflow-action';
 import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
@@ -102,6 +105,22 @@ describe('IteratorWorkflowAction', () => {
     it('should throw error if items is not an array', async () => {
       const input = {
         currentStepId: mockIteratorStepId,
+        steps: [createIteratorAction(JSON.stringify('not-an-array'))],
+        context: {},
+        runInfo: {
+          workflowRunId: mockWorkflowRunId,
+          workspaceId: mockWorkspaceId,
+        },
+      };
+
+      await expect(service.execute(input)).rejects.toMatchObject({
+        code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      });
+    });
+
+    it('should throw error if items is an invalid JSON string', async () => {
+      const input = {
+        currentStepId: mockIteratorStepId,
         steps: [createIteratorAction('not-an-array')],
         context: {},
         runInfo: {
@@ -110,7 +129,9 @@ describe('IteratorWorkflowAction', () => {
         },
       };
 
-      await expect(service.execute(input)).rejects.toThrow();
+      await expect(service.execute(input)).rejects.toMatchObject({
+        code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      });
     });
 
     it('should return early if no items to process', async () => {

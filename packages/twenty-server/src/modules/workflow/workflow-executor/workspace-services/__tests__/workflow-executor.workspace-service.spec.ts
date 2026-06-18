@@ -13,6 +13,10 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
@@ -197,6 +201,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
     mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockReturnValue({
       state: { flow: { steps: mockSteps }, stepInfos: mockStepInfos },
       workflowId: 'workflow-id',
+      workflowVersionId: 'workflow-version-id',
     });
 
     it('should execute a step and continue to the next step on success', async () => {
@@ -314,6 +319,37 @@ describe('WorkflowExecutorWorkspaceService', () => {
         workflowRunId: mockWorkflowRunId,
         workspaceId: 'workspace-id',
       });
+
+      expect(mockExceptionHandlerService.captureExceptions).toHaveBeenCalledWith(
+        [expect.any(Error)],
+        {
+          workspace: { id: mockWorkspaceId },
+          additionalData: {
+            workflowRunId: mockWorkflowRunId,
+            workflowVersionId: 'workflow-version-id',
+            stepId: 'step-1',
+            stepType: WorkflowActionType.CODE,
+          },
+        },
+      );
+    });
+
+    it('should not capture workflow user errors in sentry', async () => {
+      mockWorkflowExecutor.execute.mockRejectedValueOnce(
+        new WorkflowStepExecutorException(
+          'Invalid workflow step input',
+          WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+        ),
+      );
+
+      await service.executeFromSteps({
+        workflowRunId: mockWorkflowRunId,
+        stepIds: ['step-1'],
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(mockExceptionHandlerService.captureExceptions).not.toHaveBeenCalled();
+      expect(mockMetricsService.incrementCounterForEvent).not.toHaveBeenCalled();
     });
 
     it('should handle pending events', async () => {
