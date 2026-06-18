@@ -24,15 +24,19 @@ export const computeTwentyORMException = async (
   entityManager?: WorkspaceEntityManager,
   internalContext?: WorkspaceInternalContext,
 ): Promise<Error | TwentyORMException> => {
-  // A released query runner means the underlying connection was torn down
-  // mid-flight (e.g. node-postgres `query_timeout` destroying the pooled
-  // connection during a transaction). It is transient, so we surface it as a
-  // retryable error rather than an opaque failure.
   if (error instanceof QueryRunnerAlreadyReleasedError) {
-    return new TwentyORMException(
+    const releasedRunnerException = new TwentyORMException(
       error.message,
       TwentyORMExceptionCode.QUERY_RUNNER_RELEASED,
     );
+
+    // Keep the original stack: it points at the query that ran on the
+    // released runner, which is the only way to locate where the operation
+    // escaped its transaction boundary.
+    releasedRunnerException.stack = error.stack;
+    releasedRunnerException.cause = error;
+
+    return releasedRunnerException;
   }
 
   if (error instanceof QueryFailedError) {

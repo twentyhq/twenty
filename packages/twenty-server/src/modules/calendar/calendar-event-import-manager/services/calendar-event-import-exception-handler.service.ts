@@ -56,8 +56,24 @@ export class CalendarEventImportErrorHandlerService {
           workspaceId,
         );
         break;
-      case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
       case TwentyORMExceptionCode.QUERY_RUNNER_RELEASED:
+        // Transient, so retried like any temporary error - but also reported
+        // every time (with the original stack preserved upstream) so the
+        // operation that escapes its transaction boundary can be located.
+        this.exceptionHandlerService.captureExceptions([exception], {
+          additionalData: {
+            calendarChannelId: calendarChannel.id,
+            syncStep,
+          },
+          workspace: { id: workspaceId },
+        });
+        await this.handleTemporaryException(
+          syncStep,
+          calendarChannel,
+          workspaceId,
+        );
+        break;
+      case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
       case CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR:
       case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
         await this.handleTemporaryException(

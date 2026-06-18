@@ -18,6 +18,15 @@ describe('computeTwentyORMException', () => {
     );
   });
 
+  it('should preserve the original stack and cause when wrapping a released runner error', async () => {
+    const error = new QueryRunnerAlreadyReleasedError();
+
+    const result = await computeTwentyORMException(error);
+
+    expect(result.stack).toBe(error.stack);
+    expect((result as TwentyORMException).cause).toBe(error);
+  });
+
   it('should return unrelated errors unchanged', async () => {
     const error = new Error('some other error');
 
