@@ -4,12 +4,6 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormSingleRecordFieldChip } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip';
 import {
-  StyledDropdownContainer,
-  StyledFormSelectContainerWrapper,
-  StyledIconButton,
-  StyledVariablePickerContainer,
-} from '@/object-record/record-field/ui/form-types/components/formRecordPickerStyles';
-import {
   type RecordId,
   type Variable,
 } from '@/object-record/record-field/ui/form-types/types/RecordPickerValue';
@@ -24,11 +18,36 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useContext, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
+  display: flex;
+  height: 32px;
+  min-width: 0;
+  width: 100%;
+`;
+
+const StyledIconButton = styled.div`
+  display: flex;
+  padding-right: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledDropdownContainer = styled.div`
+  display: flex;
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledVariablePickerContainer = styled.div`
+  display: flex;
+  flex-shrink: 0;
+`;
 
 type FormSingleRecordPickerValue =
   | {

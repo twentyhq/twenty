@@ -3,12 +3,6 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormMultiRecordFieldChips } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips';
-import {
-  StyledDropdownContainer,
-  StyledFormSelectContainerWrapper,
-  StyledIconButton,
-  StyledVariablePickerContainer,
-} from '@/object-record/record-field/ui/form-types/components/formRecordPickerStyles';
 import { useOpenFormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/hooks/useOpenFormMultiRecordPicker';
 import {
   type RecordId,
@@ -26,13 +20,38 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useId, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { IconChevronDown } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
+  display: flex;
+  height: 32px;
+  min-width: 0;
+  width: 100%;
+`;
+
+const StyledIconButton = styled.div`
+  display: flex;
+  padding-right: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledDropdownContainer = styled.div`
+  display: flex;
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledVariablePickerContainer = styled.div`
+  display: flex;
+  flex-shrink: 0;
+`;
 
 export type FormMultiRecordPickerProps = {
   label?: string;
