@@ -153,6 +153,10 @@ function walk(directory) {
 
     if (
       !relativePath.startsWith('tokens' + path.sep) &&
+      // The /halftone generator is a standalone color/shader tool: hex + rgba
+      // colors and cubic-bezier eases are its domain values (and what it
+      // exports), not design-system tokens.
+      !posixPath.startsWith('platform/visuals/halftone-studio/') &&
       !relativePath.includes('.test.') &&
       !LITERAL_ALLOWLIST.has(`src/${relativePath}`)
     ) {
@@ -272,9 +276,10 @@ function walk(directory) {
 
     // three is heavy (~150KB gz): only the visuals heavy zones may value-
     // import it, reached exclusively via the rigs' dynamic imports — the
-    // bundle boundary as a build invariant.
+    // bundle boundary as a build invariant. (halftone-studio is the standalone
+    // /halftone generator tool, dynamic-imported on its own code-split route.)
     if (
-      !/^platform\/visuals\/(three-runtime|halftone)\//.test(
+      !/^platform\/visuals\/(three-runtime|halftone|halftone-studio)\//.test(
         relativePath.split(path.sep).join('/'),
       ) &&
       /^import (?!type )[^;]*from 'three/m.test(content)
