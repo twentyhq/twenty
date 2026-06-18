@@ -27,6 +27,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["node", "jest"],
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
