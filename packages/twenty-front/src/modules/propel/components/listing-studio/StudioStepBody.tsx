@@ -29,12 +29,10 @@ const StepStub = ({
   icon,
   title,
   lines,
-  slice,
 }: {
   icon: React.ReactNode;
   title: string;
   lines: string[];
-  slice: string;
 }) => (
   <Card withBorder radius="md" padding="xl">
     <Stack align="center" gap="sm" py="lg">
@@ -49,9 +47,6 @@ const StepStub = ({
           </Text>
         ))}
       </Stack>
-      <Text size="xs" c="dimmed" mt="xs" fs="italic">
-        {slice}
-      </Text>
     </Stack>
   </Card>
 );
@@ -200,9 +195,7 @@ export const StudioStepBody = ({
           lines={[
             'Drop the title deed (or Oqood / SPA), Form A, and unit photos.',
             'We read them and pre-fill the facts.',
-          ]}
-          slice="Document upload + AI extract — slice S3."
-        />
+          ]}        />
       );
     case 'details':
       return <DetailsForm facts={facts} onPatch={onPatch} />;
@@ -214,9 +207,7 @@ export const StudioStepBody = ({
           lines={[
             'Order and cover-pick the unit photos.',
             'Apply the RE/MAX watermark — never double-stamped.',
-          ]}
-          slice="Watermark + host + PF spec check — slice S5."
-        />
+          ]}        />
       );
     case 'writeup':
       return (
@@ -226,9 +217,7 @@ export const StudioStepBody = ({
           lines={[
             'Generate EN + AR copy in your chosen tone.',
             'Compliance-lint strips anything Property Finder rejects.',
-          ]}
-          slice="AI generation + tone + lint — slice S6."
-        />
+          ]}        />
       );
     case 'permit':
       return (
@@ -238,9 +227,7 @@ export const StudioStepBody = ({
           lines={[
             'Enter the Trakheesi permit you obtained from DLD.',
             'We validate it against the property and expiry.',
-          ]}
-          slice="Capture + validation + attestation — slice S7."
-        />
+          ]}        />
       );
     case 'publish':
       return (
@@ -250,9 +237,7 @@ export const StudioStepBody = ({
           lines={[
             'Check eligibility and the credit cost.',
             'Go live on Property Finder.',
-          ]}
-          slice="Eligibility + credits + publish — slice S8."
-        />
+          ]}        />
       );
     default:
       return null;
