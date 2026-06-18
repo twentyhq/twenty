@@ -1,6 +1,8 @@
+import { currentUserState } from '@/auth/states/currentUserState';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -13,7 +15,7 @@ import {
 import { useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Loader } from 'twenty-ui/feedback';
+import { Info, Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -52,6 +54,9 @@ const SubscriptionPaymentFormContent = ({
   const elements = useElements();
   const { enqueueErrorSnackBar } = useSnackBar();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Prefill the email so Stripe Link can recognize returning customers.
+  const customerEmail = useAtomStateValue(currentUserState)?.email;
 
   const [createSubscriptionPaymentIntent] = useMutation(
     CreateSubscriptionPaymentIntentDocument,
@@ -132,7 +137,12 @@ const SubscriptionPaymentFormContent = ({
   return (
     <StyledFormContainer>
       <PaymentElement
-        options={{ fields: { billingDetails: { address: 'never' } } }}
+        options={{
+          defaultValues: isDefined(customerEmail)
+            ? { billingDetails: { email: customerEmail } }
+            : undefined,
+          fields: { billingDetails: { address: 'never' } },
+        }}
       />
       <StyledButtonContainer>
         <MainButton
@@ -156,7 +166,14 @@ export const SubscriptionPaymentForm = ({
   const appearance = useStripeAppearance();
 
   if (!isDefined(stripePromise)) {
-    return null;
+    return (
+      <StyledFormContainer>
+        <Info
+          accent="danger"
+          text={t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}
+        />
+      </StyledFormContainer>
+    );
   }
 
   return (

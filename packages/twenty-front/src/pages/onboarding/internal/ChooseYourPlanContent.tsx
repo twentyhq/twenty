@@ -25,8 +25,14 @@ const StyledChooseTrialContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[2]};
-  margin: ${themeCssVariables.spacing[8]} 0;
+  margin-bottom: ${themeCssVariables.spacing[4]};
+  margin-top: ${themeCssVariables.spacing[8]};
   width: 100%;
+
+  > * {
+    flex: 1 1 0;
+    min-width: 0;
+  }
 `;
 
 const StyledLinkGroup = styled.div`
