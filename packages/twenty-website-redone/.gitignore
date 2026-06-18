@@ -7,6 +7,7 @@ yarn-debug.log*
 yarn-error.log*
 .env
 .env*
+!.env.example
 *.tsbuildinfo
 next-env.d.ts
 
