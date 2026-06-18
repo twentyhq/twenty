@@ -1,5 +1,6 @@
 /* oxlint-disable twenty/no-navigate-prefer-link */
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
@@ -55,6 +56,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
 }) => {
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigateSettings();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const [searchParams] = useSearchParams();
   const fromAgentId = searchParams.get('fromAgent');
   const [searchFilter, setSearchFilter] = useState('');
@@ -94,10 +96,10 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
     );
 
   const standardObjects = filteredObjectMetadataItems.filter(
-    (item) => !item.isCustom,
+    (item) => !getIsMetadataItemCustom(item),
   );
-  const customObjects = filteredObjectMetadataItems.filter(
-    (item) => item.isCustom,
+  const customObjects = filteredObjectMetadataItems.filter((item) =>
+    getIsMetadataItemCustom(item),
   );
 
   return (

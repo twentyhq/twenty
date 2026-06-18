@@ -47,22 +47,6 @@ export class FieldMetadataResolver {
 
   @ResolveField(() => Boolean, {
     nullable: true,
-    deprecationReason:
-      'isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application.',
-  })
-  async isCustom(
-    @Parent() fieldMetadata: Pick<FieldMetadataDTO, 'applicationId'>,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Context() context: { loaders: IDataloaders },
-  ): Promise<boolean> {
-    return context.loaders.isCustomLoader.load({
-      workspaceId,
-      applicationId: fieldMetadata.applicationId,
-    });
-  }
-
-  @ResolveField(() => Boolean, {
-    nullable: true,
     deprecationReason: 'Use isUIEditable',
   })
   async isUIReadOnly(

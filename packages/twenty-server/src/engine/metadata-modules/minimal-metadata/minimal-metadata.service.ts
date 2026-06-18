@@ -107,7 +107,6 @@ export class MinimalMetadataService {
             i18nInstance,
           ),
           icon: flatObjectMetadata.icon ?? undefined,
-          isCustom,
           isActive: flatObjectMetadata.isActive,
           isSystem: flatObjectMetadata.isSystem,
           isRemote: flatObjectMetadata.isRemote,

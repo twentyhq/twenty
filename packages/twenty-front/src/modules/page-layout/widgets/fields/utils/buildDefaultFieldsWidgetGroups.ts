@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getIsMetadataItemCustom } from '@/object-metadata/utils/getIsMetadataItemCustom';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isFieldMetadataEligibleForFieldsWidget } from 'twenty-shared/utils';
@@ -7,9 +8,11 @@ import { v4 as uuidv4 } from 'uuid';
 export const buildDefaultFieldsWidgetGroups = ({
   fields,
   labelIdentifierFieldMetadataItemId,
+  workspaceCustomApplicationId,
 }: {
   fields: FieldMetadataItem[];
   labelIdentifierFieldMetadataItemId: string | undefined;
+  workspaceCustomApplicationId?: string | null;
 }): FieldsWidgetGroup[] => {
   const eligibleFields = fields.filter(
     (field) =>
@@ -21,8 +24,12 @@ export const buildDefaultFieldsWidgetGroups = ({
       }),
   );
 
-  const standardFields = eligibleFields.filter((field) => !field.isCustom);
-  const customFields = eligibleFields.filter((field) => field.isCustom);
+  const standardFields = eligibleFields.filter(
+    (field) => !getIsMetadataItemCustom(field, workspaceCustomApplicationId),
+  );
+  const customFields = eligibleFields.filter((field) =>
+    getIsMetadataItemCustom(field, workspaceCustomApplicationId),
+  );
 
   const isFieldVisible = (fieldType: FieldMetadataType) =>
     fieldType !== FieldMetadataType.RELATION &&

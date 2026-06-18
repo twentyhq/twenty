@@ -98,13 +98,7 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field(() => FieldStandardOverridesDTO, { nullable: true })
   standardOverrides?: FieldStandardOverridesDTO;
 
-  @IsBoolean()
-  @IsOptional()
-  @Field({
-    nullable: true,
-    deprecationReason:
-      'isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application.',
-  })
+  @HideField()
   isCustom?: boolean;
 
   @IsBoolean()

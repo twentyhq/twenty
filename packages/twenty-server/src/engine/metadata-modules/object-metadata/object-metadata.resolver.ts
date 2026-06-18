@@ -49,21 +49,6 @@ export class ObjectMetadataResolver {
   ) {}
 
   @ResolveField(() => Boolean, {
-    deprecationReason:
-      'isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application.',
-  })
-  async isCustom(
-    @Parent() objectMetadata: ObjectMetadataDTO,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Context() context: { loaders: IDataloaders },
-  ): Promise<boolean> {
-    return context.loaders.isCustomLoader.load({
-      workspaceId,
-      applicationId: objectMetadata.applicationId,
-    });
-  }
-
-  @ResolveField(() => Boolean, {
     deprecationReason: 'Use isUIEditable',
   })
   async isUIReadOnly(

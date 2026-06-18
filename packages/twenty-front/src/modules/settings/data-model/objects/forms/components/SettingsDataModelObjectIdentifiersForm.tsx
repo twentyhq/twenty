@@ -1,4 +1,5 @@
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
@@ -49,6 +50,9 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const isCustomObject = getIsMetadataItemCustom(objectMetadataItem);
 
   const readonly =
     isObjectMetadataReadOnly({
@@ -130,7 +134,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
               options={options}
               value={value}
               withSearchInput={label === t`Record label`}
-              disabled={!objectMetadataItem.isCustom || readonly}
+              disabled={!isCustomObject || readonly}
               callToActionButton={
                 label === t`Record label`
                   ? {
