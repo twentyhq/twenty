@@ -30,6 +30,7 @@ import {
   IconX,
 } from 'twenty-ui/display';
 import { AiCopyControls } from '@/propel/components/calendar/AiCopyControls';
+import { AiImageControls } from '@/propel/components/calendar/AiImageControls';
 import { ComposerPreview } from '@/propel/components/calendar/ComposerPreview';
 import {
   StyledComposerBackdrop,
@@ -37,7 +38,9 @@ import {
   StyledComposerPanel,
 } from '@/propel/components/calendar/composerStyles';
 import { CHANNEL_META } from '@/propel/lib/socialCalendarConfig';
+import { generateImage } from '@/propel/lib/socialAiImage';
 import { parseMediaRefs } from '@/propel/lib/socialPostDetail';
+import { type SocialImageAspect } from '@/propel/types/socialAiImage';
 import {
   type ComposeMode,
   type ComposerFormState,
@@ -303,6 +306,57 @@ const ComposerBody = ({
     }
   };
 
+  // AI errors surface in the same inline slot the save flow uses (an AI failure
+  // reads as a NETWORK-class SaveOutcome). Shared by the copy bundle + image gen.
+  const surfaceAiError = useCallback(
+    (message: string, operatorAction: string | null) => {
+      setSaveError({ ok: false, code: 'AI', message, operatorAction });
+    },
+    [],
+  );
+
+  // Generate a brand image. The parent owns the lifecycle (NOT the control) so the
+  // in-flight state participates in the SAME save gate as a file upload: we insert
+  // a placeholder `uploading` media tile immediately, so validateForm's
+  // isUploadingMedia blocks Save until the image resolves — no race where Save
+  // fires mid-generation and drops the image (codex P2). On success the tile
+  // becomes a ready image at the stored URL; on failure it surfaces the error and
+  // the tile is dropped. Returns the optimized prompt (or null) so the control can
+  // show "we refined your prompt to: …".
+  const generateBrandImage = useCallback(
+    async (args: {
+      prompt: string;
+      aspect: SocialImageAspect;
+      brandHints: string | null;
+    }): Promise<{ ok: true; optimizedPrompt: string | null } | { ok: false }> => {
+      const id = uid();
+      setForm((f) => ({
+        ...f,
+        media: [
+          ...f.media,
+          { id, url: null, objectUrl: null, kind: 'image', name: 'Generating image…', status: 'uploading', error: null },
+        ],
+      }));
+      const res = await generateImage(args);
+      if (res.ok) {
+        setForm((f) => ({
+          ...f,
+          media: f.media.map((m) =>
+            m.id === id
+              ? { ...m, url: res.url, kind: mediaKindOf('image/png', res.url), name: 'Generated image', status: 'ready', error: null }
+              : m,
+          ),
+        }));
+        return { ok: true, optimizedPrompt: res.optimizedPrompt };
+      }
+      // drop the placeholder; surface the error in the composer's inline slot
+      setForm((f) => ({ ...f, media: f.media.filter((m) => m.id !== id) }));
+      surfaceAiError(res.message, res.operatorAction);
+      return { ok: false };
+    },
+    [surfaceAiError],
+  );
+
   const onPickFiles = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) addFiles(e.target.files);
     e.target.value = ''; // allow re-selecting the same file
@@ -372,12 +426,6 @@ const ComposerBody = ({
       return { ...f, body: `${f.body}${sep}${line.trim()}` };
     });
   }, []);
-  const surfaceAiError = useCallback(
-    (message: string, operatorAction: string | null) => {
-      setSaveError({ ok: false, code: 'AI', message, operatorAction });
-    },
-    [],
-  );
 
   // ── save ─────────────────────────────────────────────────────────────────
   const handleSave = async () => {
@@ -603,6 +651,12 @@ const ComposerBody = ({
                 ? '(Instagram needs at least one image)'
                 : '(optional)'}
             </span>
+            {/* Generative brand-image affordance (§15): describe a graphic → AI
+                generates it → it attaches as a ready media tile. Brand/graphic
+                only; the route blocks photoreal-property prompts. */}
+            <div style={{ marginBottom: 8 }}>
+              <AiImageControls onGenerate={generateBrandImage} />
+            </div>
             <div className="propel-media-strip">
               <AnimatePresence initial={false}>
                 {form.media.map((m, index) => (

@@ -437,6 +437,40 @@ export const StyledComposerPanel = styled.div`
     text-align: right;
   }
 
+  /* Generative image affordance panel (sits in the media area). */
+  .propel-aiimg-panel {
+    background: color-mix(in srgb, var(--mantine-color-text) 3%, transparent);
+    border: 1px solid var(--mantine-color-default-border);
+    border-radius: 10px;
+    margin-top: 6px;
+    padding: 10px;
+  }
+  .propel-aiimg-note {
+    display: block;
+    margin-bottom: 8px;
+  }
+  .propel-aiimg-optimized {
+    align-items: flex-start;
+    background: color-mix(in srgb, var(--mantine-color-text) 5%, transparent);
+    border: 1px solid var(--mantine-color-default-border);
+    border-radius: 8px;
+    margin-top: 8px;
+    padding: 8px 10px;
+    position: relative;
+  }
+  .propel-aiimg-optimized-dismiss {
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: var(--mantine-color-dimmed);
+    cursor: pointer;
+    display: flex;
+    padding: 2px;
+    position: absolute;
+    right: 6px;
+    top: 6px;
+  }
+
   @media (hover: hover) and (pointer: fine) {
     .propel-chip:hover:not([data-disabled='true']) {
       border-color: var(--chip-color);
