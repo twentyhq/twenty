@@ -1,0 +1,64 @@
+---
+title: تكوين التطبيق
+description: عرّف هوية تطبيقك، والدور الافتراضي، والمتغيرات، وبيانات التعريف لسوق التطبيقات باستخدام defineApplication.
+icon: rocket
+---
+
+يجب أن يحتوي كل تطبيق على استدعاء واحد فقط لـ `defineApplication`. يحدّد ما يلي:
+
+* **الهوية** — المعرّف الشامل، واسم العرض، والوصف.
+* **الأذونات** — الدور الذي تعمل بموجبه دوال المنطق والمكوّنات الأمامية الخاصة به.
+* **المتغيرات** *(اختياري)* — أزواج مفتاح–قيمة تُتاح لكودك كمتغيرات بيئة.
+* **خطافات ما قبل التثبيت/ما بعد التثبيت** *(اختياري)* — راجع [Logic Functions](/l/ar/developers/extend/apps/logic/logic-functions).
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+});
+```
+
+الملاحظات:
+
+* حقول `universalIdentifier` هي معرّفات حتمية تملكها أنت. أنشِئها مرة واحدة واحتفظ بها ثابتة عبر عمليات المزامنة.
+* `applicationVariables` تصبح متغيرات بيئة لوظائفك ومكوّناتك الأمامية. في وظائف المنطق (على جانب الخادم)، تكون متاحة على شكل `process.env.VARIABLE_NAME`. في المكوّنات الأمامية، استخدم `getApplicationVariable('VARIABLE_NAME')` من `twenty-sdk/front-component`. يتم حقن المتغيّرات المعلَّمة بـ `isSecret: true` في وظائف المنطق فقط. المكوّنات الأمامية تتلقّى المتغيّرات غير السرّية فقط.
+* يتم اكتشاف الدور الافتراضي تلقائيًا من ملف الدور المميز بـ [`defineApplicationRole()`](/l/ar/developers/extend/apps/config/roles) — لست بحاجة إلى الإشارة إليه من `defineApplication()`.
+* يتم اكتشاف دوال ما قبل التثبيت وما بعده تلقائيًا أثناء بناء البيان — لا حاجة للإشارة إليها في `defineApplication()`.
+* لا يزال تمرير `defaultRoleUniversalIdentifier` بشكل صريح مدعومًا من أجل التوافق مع الإصدارات السابقة، ولكنه مُهمل لصالح `defineApplicationRole()`.
+
+## الدور الافتراضي للوظيفة
+
+يتحكم الدور المعلن باستخدام [`defineApplicationRole()`](/l/ar/developers/extend/apps/config/roles) في ما يمكن لوظائف منطق التطبيق ومكوّنات الواجهة الوصول إليه:
+
+* رمز وقت التشغيل المحقون باسم `TWENTY_APP_ACCESS_TOKEN` مستمد من هذا الدور.
+* يكون عميل واجهة برمجة التطبيقات مضبوط الأنواع مقيّدًا بالأذونات الممنوحة لذلك الدور.
+* اتبع مبدأ أقل امتياز: صرّح فقط عن الأذونات التي تحتاجها دوالك.
+
+عند إنشاء هيكل لتطبيق جديد، ينشئ CLI ملف دور مبدئي في `src/roles/default-role.ts`. راجع [Roles & Permissions](/l/ar/developers/extend/apps/config/roles) للاطلاع على المرجع الكامل.
+
+## بيانات التعريف لسوق التطبيقات
+
+إذا كنت تخطط لـ [نشر تطبيقك](/l/ar/developers/extend/apps/operations/publishing)، فإن هذه الحقول الاختيارية تتحكّم في كيفية ظهوره في السوق:
+
+| الحقل              | الوصف                                                                                                        |
+| ------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `author`           | اسم المؤلف أو الشركة                                                                                         |
+| `category`         | فئة التطبيق لتصفية سوق التطبيقات                                                                             |
+| `logoUrl`          | مسار شعار تطبيقك (مثلًا، `public/logo.png`)                                                                  |
+| `screenshots`      | مصفوفة لمسارات لقطات الشاشة (مثلًا، `public/screenshot-1.png`)                                               |
+| `aboutDescription` | وصف ماركداون أطول لعلامة التبويب "حول". إذا لم يتم تضمينه، يستخدم السوق ملف `README.md` الخاص بالحزمة من npm |
+| `websiteUrl`       | رابط إلى موقعك الإلكتروني                                                                                    |
+| `termsUrl`         | رابط إلى شروط الخدمة                                                                                         |
+| `emailSupport`     | عنوان البريد الإلكتروني للدعم                                                                                |
+| `issueReportUrl`   | رابط إلى متتبّع المشاكل                                                                                      |

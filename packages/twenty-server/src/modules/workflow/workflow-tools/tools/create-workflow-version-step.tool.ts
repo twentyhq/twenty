@@ -31,13 +31,6 @@ const baseStepFields = {
     .string()
     .optional()
     .describe('Optional ID of the step this new step should connect to'),
-  position: z
-    .object({
-      x: z.number(),
-      y: z.number(),
-    })
-    .optional()
-    .describe('Optional position coordinates for the step'),
 };
 
 const nonLogicFunctionStepTypes = Object.values(WorkflowActionType).filter(
@@ -100,7 +93,9 @@ const enrichResultWithNextStep = ({
 export const createCreateWorkflowVersionStepTool = (
   deps: Pick<
     WorkflowToolDependencies,
-    'workflowVersionStepService' | 'workflowVersionStepHelpersService'
+    | 'workflowVersionStepService'
+    | 'workflowVersionStepHelpersService'
+    | 'workflowVersionService'
   >,
   context: WorkflowToolContext,
 ) => ({
@@ -147,6 +142,11 @@ export const createCreateWorkflowVersionStepTool = (
             parentStepId: effectiveParentStepId,
           },
         });
+
+      await deps.workflowVersionService.autoLayoutWorkflowVersion({
+        workflowVersionId: parameters.workflowVersionId,
+        workspaceId: context.workspaceId,
+      });
 
       return enrichResultWithNextStep({
         result,

@@ -32,20 +32,6 @@ const createCompleteWorkflowSchema = z.object({
   steps: z
     .array(workflowActionSchema)
     .describe('Array of workflow action steps'),
-  stepPositions: z
-    .array(
-      z.object({
-        stepId: z
-          .string()
-          .describe('The ID of the step (use "trigger" for trigger step)'),
-        position: z.object({
-          x: z.number().describe('X coordinate for the step position'),
-          y: z.number().describe('Y coordinate for the step position'),
-        }),
-      }),
-    )
-    .optional()
-    .describe('Optional array of step positions for layout'),
   edges: z
     .array(
       z.object({
@@ -92,7 +78,8 @@ CRITICAL SCHEMA REQUIREMENTS:
 - Each step MUST include: id (must be a valid UUID), name, type, valid, settings
 - CREATE_RECORD actions MUST have objectName and objectRecord in settings.input
 - objectRecord must contain actual field values, not just field names
-- Use "trigger" as stepId for trigger step in stepPositions and edges
+- Use "trigger" as the id for the trigger step in edges
+- Step positions are computed automatically; do not provide coordinates
 
 Common mistakes to avoid:
 - Using "RECORD_CREATED" instead of "DATABASE_EVENT"
@@ -118,10 +105,6 @@ The response includes a compact validation summary. For the full validation repo
     description?: string;
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
-    stepPositions?: Array<{
-      stepId: string;
-      position: { x: number; y: number };
-    }>;
     edges?: Array<{ source: string; target: string }>;
     activate?: boolean;
   }) => {
@@ -161,19 +144,6 @@ The response includes a compact validation summary. For the full validation repo
         steps: parameters.steps,
       });
 
-      if (parameters.stepPositions && parameters.stepPositions.length > 0) {
-        const positions = parameters.stepPositions.map((pos) => ({
-          id: pos.stepId === 'trigger' ? 'trigger' : pos.stepId,
-          position: pos.position,
-        }));
-
-        await deps.workflowVersionService.updateWorkflowVersionPositions({
-          workflowVersionId,
-          positions,
-          workspaceId: context.workspaceId,
-        });
-      }
-
       if (parameters.edges && parameters.edges.length > 0) {
         for (const edge of parameters.edges) {
           await deps.workflowVersionEdgeService.createWorkflowVersionEdge({
@@ -184,6 +154,11 @@ The response includes a compact validation summary. For the full validation repo
           });
         }
       }
+
+      await deps.workflowVersionService.autoLayoutWorkflowVersion({
+        workflowVersionId,
+        workspaceId: context.workspaceId,
+      });
 
       if (parameters.activate) {
         await deps.workflowTriggerService.activateWorkflowVersion(

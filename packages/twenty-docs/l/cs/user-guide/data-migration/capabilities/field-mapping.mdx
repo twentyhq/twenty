@@ -56,7 +56,7 @@ Adresa je vnořené pole s více sloupci. Některé lze ponechat prázdné.
 Použijte následující formát:
 
 ```
-[\"value1\",\"value2\"]
+["value1","value2"]
 ```
 
 ### Booleovská pole
@@ -94,7 +94,7 @@ Podporované formáty:
 * Pro další e‑maily: použijte **E‑maily / Primární e‑mail** pro hlavní e‑mail a **E‑maily / Další e‑maily** v tomto formátu:
 
 ```
-[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
+["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
 ### Pole ID
@@ -125,7 +125,7 @@ Podobně jako u doménových polí:
 * Pro sekundární odkazy použijte sloupec **Odkazy / Sekundární odkazy** v tomto formátu:
 
 ```
-[{\"url\":\"https://twenty.com\",\"label\":\"Twenty\"}]
+[{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
 ### Pole s vícenásobným výběrem
@@ -133,7 +133,7 @@ Podobně jako u doménových polí:
 Použijte **názvy API** (nikoli zobrazované popisky) v následujícím formátu:
 
 ```
-[\"VALUE1\",\"VALUE2\"]
+["VALUE1","VALUE2"]
 ```
 
 Viz [zde](#finding-api-names-for-select-fields), kde najdete názvy API.
@@ -143,7 +143,7 @@ Viz [zde](#finding-api-names-for-select-fields), kde najdete názvy API.
 <Warning>
 **Import přepisuje, nepřidává.**
 
-Pokud má záznam již vybrány `VALUE2` a `VALUE3` a vy importujete `[\"VALUE1\"]`, bude mít po importu pouze `VALUE1`. Předchozí výběry se nahrazují, neslučují.
+Pokud má záznam již vybrány `VALUE2` a `VALUE3` a vy importujete `["VALUE1"]`, bude mít po importu pouze `VALUE1`. Předchozí výběry se nahrazují, neslučují.
 </Warning>
 
 ### Číselná pole
