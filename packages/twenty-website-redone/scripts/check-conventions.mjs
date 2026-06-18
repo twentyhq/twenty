@@ -114,7 +114,15 @@ function walk(directory) {
     if (entry.isDirectory()) {
       // oxfmt silently ignores directories named "lib" (build-output
       // convention), so a lib/ directory would dodge formatting forever.
-      if (entry.name === 'lib' || entry.name === 'generated') {
+      // src/locales/generated is the one sanctioned exception: it is the
+      // lingui compile output the shared CI regenerates, and oxfmt ignoring
+      // machine-generated catalogs is exactly what we want there.
+      const isLocalesGenerated =
+        entry.name === 'generated' && path.basename(directory) === 'locales';
+      if (
+        entry.name === 'lib' ||
+        (entry.name === 'generated' && !isLocalesGenerated)
+      ) {
         failures.push(
           `${fullPath}: directories named "lib" or "generated" are forbidden (oxfmt ignores them).`,
         );

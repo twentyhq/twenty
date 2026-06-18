@@ -1,9 +1,9 @@
 import { type Messages } from '@lingui/core';
 import { type AppLocale } from 'twenty-shared/translations';
 
-import { messages as enMessages } from '@/locales/compiled/en';
-import { messages as esMessages } from '@/locales/compiled/es-ES';
-import { messages as frMessages } from '@/locales/compiled/fr-FR';
+import { messages as enMessages } from '@/locales/generated/en';
+import { messages as esMessages } from '@/locales/generated/es-ES';
+import { messages as frMessages } from '@/locales/generated/fr-FR';
 
 import { WEBSITE_LOCALE_LIST } from './website-locale-list';
 
@@ -20,7 +20,7 @@ for (const locale of WEBSITE_LOCALE_LIST) {
     throw new Error(
       `Missing compiled catalog for website locale "${locale}". Run ` +
         `\`nx run twenty-website-redone:lingui:compile\` and import ` +
-        `@/locales/compiled/${locale} in messages-by-locale.ts.`,
+        `@/locales/generated/${locale} in messages-by-locale.ts.`,
     );
   }
 }

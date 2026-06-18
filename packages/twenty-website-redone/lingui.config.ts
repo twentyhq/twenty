@@ -16,7 +16,7 @@ export default defineConfig({
       include: ['src'],
     },
   ],
-  catalogsMergePath: '<rootDir>/src/locales/compiled/{locale}',
+  catalogsMergePath: '<rootDir>/src/locales/generated/{locale}',
   compileNamespace: 'ts',
   format: formatter({ lineNumbers: false, printLinguiId: true }),
 });

@@ -62,7 +62,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "lingui compile --typescript && npx oxfmt src/locales/compiled"
+        "command": "lingui compile --typescript"
       }
     }
   }
