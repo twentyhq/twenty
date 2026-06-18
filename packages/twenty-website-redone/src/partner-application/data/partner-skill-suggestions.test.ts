@@ -1,8 +1,6 @@
 import { PARTNER_SKILL_POOL } from './partner-skill-pool';
 import { PARTNER_SKILL_SUGGESTIONS } from './partner-skill-suggestions';
 
-// Guard: a partner migrating off these is "CRM migration", never a chip or
-// autocomplete entry that reads as an endorsement.
 const COMPETITOR_CRMS = ['Salesforce', 'HubSpot', 'Attio', 'Pipedrive', 'Zoho'];
 
 describe('partner skill suggestions', () => {

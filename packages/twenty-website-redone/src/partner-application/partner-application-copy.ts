@@ -1,8 +1,5 @@
 import { msg } from '@lingui/core/macro';
 
-// All of the wizard's copy in one place: modal chrome, the success screen, the
-// per-field labels/placeholders/hints, validation messages, and the step header
-// labels. The wizard and steps read the slices they need.
 export const PARTNER_APPLICATION_COPY = {
   title: msg`Apply to build\n*the future of CRM*`,
   subtitle: msg`Join our ecosystem and help businesses take control of their customer data with open-source primitives.`,

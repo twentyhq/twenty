@@ -50,8 +50,6 @@ const TitleBlock = styled.div`
   }
 `;
 
-// The title + subtitle are one tight group; the step header sits further below
-// (matching the old site's larger intro→header separation).
 const IntroGroup = styled.div`
   display: flex;
   flex-direction: column;
@@ -93,8 +91,6 @@ const Footer = styled.div`
   }
 `;
 
-// The Back control: a plain bordered mono rectangle (the old secondary button),
-// distinct from the primary's angled ButtonShape.
 const SecondaryButton = styled.button`
   background: none;
   border: 1px solid ${semanticColor.lineStrong};
@@ -185,9 +181,6 @@ export function PartnerApplicationWizard({
       }
       if (state.isSubmitting) return;
 
-      // Fail fast: gate the final step client-side before POSTing. goNext on the
-      // last step re-runs validation and surfaces the errors without advancing,
-      // so empty or invalid required fields never round-trip to the server.
       if (Object.keys(validatePartnerApplicationStep(state)).length > 0) {
         goNext();
         return;

@@ -7,8 +7,6 @@ import { httpUrlFieldSchema } from './http-url-field-schema';
 import { nonNegativeAmountFieldSchema } from './non-negative-amount-field-schema';
 import { type PartnerApplicationState } from './partner-application-state';
 
-// Per-step required fields; GO_NEXT and the final-step submit are gated on these
-// being filled in.
 const STEP_REQUIRED_FIELDS: Record<
   PartnerApplicationStepId,
   readonly (keyof PartnerApplicationState)[]
@@ -25,9 +23,6 @@ function isEmpty(value: unknown): boolean {
   return false;
 }
 
-// Per-step format checks reuse the shared field schemas so the client rejects
-// exactly what the server route schema rejects. The required gate above owns
-// "is it filled in"; these only run on non-empty values.
 type FieldFormatCheck = {
   field:
     | 'email'

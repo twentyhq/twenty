@@ -1,11 +1,6 @@
 import { type PartnerApplicationRequest } from './partner-application-request-schema';
 import { type PartnerApplicationState } from './partner-application-state';
 
-// Maps the form state to the POST body: trims the required strings, parses the
-// required commercials, and omits the empty optionals. The client gate runs
-// first, so the required fields are present and valid by the time this runs; a
-// bypassed empty/NaN value still fails the route's schema rather than slipping
-// through. The shape must satisfy the request schema the route validates against.
 export function buildPartnerApplicationRequestBody(
   state: PartnerApplicationState,
 ): PartnerApplicationRequest {

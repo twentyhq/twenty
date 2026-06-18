@@ -15,10 +15,6 @@ const teamTypeValues = PARTNER_TEAM_TYPE_OPTIONS.map((option) => option.value);
 const optionalNonEmptyString = z.string().trim().min(1).optional();
 const optionalUrl = httpUrlFieldSchema.optional();
 
-// The single source of truth for partner-application validation. The server
-// route parses against it; the client reducer reuses the field schemas above
-// so both accept and reject exactly the same input. strictObject so unknown
-// keys are rejected rather than silently forwarded to the webhook.
 export const partnerApplicationRequestSchema = z.strictObject({
   name: z.string().trim().min(1, { error: 'Name is required.' }),
   email: emailFieldSchema,
