@@ -114,6 +114,7 @@ export default defineObject({
         { id: 'e4e3d579-17ef-4ef8-b9be-54f7d361ad51', value: 'INTRODUCED', label: 'Introduced', position: 2, color: 'purple' },
         { id: '66ff342c-577b-4a84-bbdc-4ffbfa0bdd0e', value: 'WON', label: 'Won', position: 3, color: 'green' },
         { id: '83846e19-5008-4f06-b62d-7a1f0dad23e2', value: 'DECLINED', label: 'Declined', position: 4, color: 'red' },
+        { id: '124f7e81-39b4-47cc-83f7-7dfb81ea751d', value: 'BACKUP', label: 'Backup', position: 5, color: 'orange' },
       ],
     },
     {
