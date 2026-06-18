@@ -6026,57 +6026,15 @@ export default {
                     ]
                 }
             ],
-            "findOneLogicFunction": [
-                41,
+            "findManyAgents": [
+                25
+            ],
+            "findOneAgent": [
+                25,
                 {
                     "input": [
                         327,
-                        "LogicFunctionIdInput!"
-                    ]
-                }
-            ],
-            "findManyLogicFunctions": [
-                41
-            ],
-            "getAvailablePackages": [
-                15,
-                {
-                    "input": [
-                        327,
-                        "LogicFunctionIdInput!"
-                    ]
-                }
-            ],
-            "getLogicFunctionSourceCode": [
-                1,
-                {
-                    "input": [
-                        327,
-                        "LogicFunctionIdInput!"
-                    ]
-                }
-            ],
-            "commandMenuItems": [
-                35
-            ],
-            "commandMenuItem": [
-                35,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "frontComponents": [
-                34
-            ],
-            "frontComponent": [
-                34,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
+                        "AgentIdInput!"
                     ]
                 }
             ],
@@ -6127,15 +6085,57 @@ export default {
                     ]
                 }
             ],
-            "findManyAgents": [
-                25
-            ],
-            "findOneAgent": [
-                25,
+            "findOneLogicFunction": [
+                41,
                 {
                     "input": [
                         328,
-                        "AgentIdInput!"
+                        "LogicFunctionIdInput!"
+                    ]
+                }
+            ],
+            "findManyLogicFunctions": [
+                41
+            ],
+            "getAvailablePackages": [
+                15,
+                {
+                    "input": [
+                        328,
+                        "LogicFunctionIdInput!"
+                    ]
+                }
+            ],
+            "getLogicFunctionSourceCode": [
+                1,
+                {
+                    "input": [
+                        328,
+                        "LogicFunctionIdInput!"
+                    ]
+                }
+            ],
+            "commandMenuItems": [
+                35
+            ],
+            "commandMenuItem": [
+                35,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "frontComponents": [
+                34
+            ],
+            "frontComponent": [
+                34,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
                     ]
                 }
             ],
@@ -6557,17 +6557,17 @@ export default {
                 1
             ]
         },
-        "LogicFunctionIdInput": {
+        "AgentIdInput": {
             "id": [
-                219
+                3
             ],
             "__typename": [
                 1
             ]
         },
-        "AgentIdInput": {
+        "LogicFunctionIdInput": {
             "id": [
-                3
+                219
             ],
             "__typename": [
                 1
@@ -7439,11 +7439,83 @@ export default {
                     ]
                 }
             ],
+            "createOneAgent": [
+                25,
+                {
+                    "input": [
+                        395,
+                        "CreateAgentInput!"
+                    ]
+                }
+            ],
+            "updateOneAgent": [
+                25,
+                {
+                    "input": [
+                        396,
+                        "UpdateAgentInput!"
+                    ]
+                }
+            ],
+            "deleteOneAgent": [
+                25,
+                {
+                    "input": [
+                        327,
+                        "AgentIdInput!"
+                    ]
+                }
+            ],
+            "createOneObject": [
+                56,
+                {
+                    "input": [
+                        397,
+                        "CreateOneObjectInput!"
+                    ]
+                }
+            ],
+            "deleteOneObject": [
+                56,
+                {
+                    "input": [
+                        399,
+                        "DeleteOneObjectInput!"
+                    ]
+                }
+            ],
+            "updateOneObject": [
+                56,
+                {
+                    "input": [
+                        400,
+                        "UpdateOneObjectInput!"
+                    ]
+                }
+            ],
+            "createOneIndex": [
+                47,
+                {
+                    "input": [
+                        402,
+                        "CreateOneIndexInput!"
+                    ]
+                }
+            ],
+            "deleteOneIndex": [
+                47,
+                {
+                    "input": [
+                        405,
+                        "DeleteOneIndexInput!"
+                    ]
+                }
+            ],
             "deleteOneLogicFunction": [
                 41,
                 {
                     "input": [
-                        327,
+                        328,
                         "LogicFunctionIdInput!"
                     ]
                 }
@@ -7452,7 +7524,7 @@ export default {
                 41,
                 {
                     "input": [
-                        395,
+                        406,
                         "CreateLogicFunctionFromSourceInput!"
                     ]
                 }
@@ -7461,7 +7533,7 @@ export default {
                 169,
                 {
                     "input": [
-                        396,
+                        407,
                         "ExecuteOneLogicFunctionInput!"
                     ]
                 }
@@ -7470,7 +7542,7 @@ export default {
                 6,
                 {
                     "input": [
-                        397,
+                        408,
                         "UpdateLogicFunctionFromSourceInput!"
                     ]
                 }
@@ -7479,7 +7551,7 @@ export default {
                 35,
                 {
                     "input": [
-                        399,
+                        410,
                         "CreateCommandMenuItemInput!"
                     ]
                 }
@@ -7488,7 +7560,7 @@ export default {
                 35,
                 {
                     "input": [
-                        400,
+                        411,
                         "UpdateCommandMenuItemInput!"
                     ]
                 }
@@ -7506,7 +7578,7 @@ export default {
                 34,
                 {
                     "input": [
-                        401,
+                        412,
                         "CreateFrontComponentInput!"
                     ]
                 }
@@ -7515,7 +7587,7 @@ export default {
                 34,
                 {
                     "input": [
-                        402,
+                        413,
                         "UpdateFrontComponentInput!"
                     ]
                 }
@@ -7526,78 +7598,6 @@ export default {
                     "id": [
                         3,
                         "UUID!"
-                    ]
-                }
-            ],
-            "createOneObject": [
-                56,
-                {
-                    "input": [
-                        404,
-                        "CreateOneObjectInput!"
-                    ]
-                }
-            ],
-            "deleteOneObject": [
-                56,
-                {
-                    "input": [
-                        406,
-                        "DeleteOneObjectInput!"
-                    ]
-                }
-            ],
-            "updateOneObject": [
-                56,
-                {
-                    "input": [
-                        407,
-                        "UpdateOneObjectInput!"
-                    ]
-                }
-            ],
-            "createOneIndex": [
-                47,
-                {
-                    "input": [
-                        409,
-                        "CreateOneIndexInput!"
-                    ]
-                }
-            ],
-            "deleteOneIndex": [
-                47,
-                {
-                    "input": [
-                        412,
-                        "DeleteOneIndexInput!"
-                    ]
-                }
-            ],
-            "createOneAgent": [
-                25,
-                {
-                    "input": [
-                        413,
-                        "CreateAgentInput!"
-                    ]
-                }
-            ],
-            "updateOneAgent": [
-                25,
-                {
-                    "input": [
-                        414,
-                        "UpdateAgentInput!"
-                    ]
-                }
-            ],
-            "deleteOneAgent": [
-                25,
-                {
-                    "input": [
-                        328,
-                        "AgentIdInput!"
                     ]
                 }
             ],
@@ -9802,6 +9802,235 @@ export default {
                 1
             ]
         },
+        "CreateAgentInput": {
+            "name": [
+                1
+            ],
+            "label": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "prompt": [
+                1
+            ],
+            "modelId": [
+                1
+            ],
+            "roleId": [
+                3
+            ],
+            "responseFormat": [
+                15
+            ],
+            "modelConfiguration": [
+                15
+            ],
+            "evaluationInputs": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateAgentInput": {
+            "id": [
+                3
+            ],
+            "name": [
+                1
+            ],
+            "label": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "prompt": [
+                1
+            ],
+            "modelId": [
+                1
+            ],
+            "roleId": [
+                3
+            ],
+            "responseFormat": [
+                15
+            ],
+            "modelConfiguration": [
+                15
+            ],
+            "evaluationInputs": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateOneObjectInput": {
+            "object": [
+                398
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateObjectInput": {
+            "nameSingular": [
+                1
+            ],
+            "namePlural": [
+                1
+            ],
+            "labelSingular": [
+                1
+            ],
+            "labelPlural": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "shortcut": [
+                1
+            ],
+            "color": [
+                1
+            ],
+            "skipNameField": [
+                6
+            ],
+            "isRemote": [
+                6
+            ],
+            "primaryKeyColumnType": [
+                1
+            ],
+            "primaryKeyFieldMetadataSettings": [
+                15
+            ],
+            "isLabelSyncedWithName": [
+                6
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DeleteOneObjectInput": {
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateOneObjectInput": {
+            "update": [
+                401
+            ],
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateObjectPayload": {
+            "labelSingular": [
+                1
+            ],
+            "labelPlural": [
+                1
+            ],
+            "nameSingular": [
+                1
+            ],
+            "namePlural": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "shortcut": [
+                1
+            ],
+            "color": [
+                1
+            ],
+            "isActive": [
+                6
+            ],
+            "labelIdentifierFieldMetadataId": [
+                3
+            ],
+            "imageIdentifierFieldMetadataId": [
+                3
+            ],
+            "isLabelSyncedWithName": [
+                6
+            ],
+            "isSearchable": [
+                6
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateOneIndexInput": {
+            "index": [
+                403
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateIndexInput": {
+            "objectMetadataId": [
+                3
+            ],
+            "fields": [
+                404
+            ],
+            "indexType": [
+                48
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateIndexFieldInput": {
+            "fieldMetadataId": [
+                3
+            ],
+            "subFieldName": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DeleteOneIndexInput": {
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "CreateLogicFunctionFromSourceInput": {
             "id": [
                 3
@@ -9856,7 +10085,7 @@ export default {
                 3
             ],
             "update": [
-                398
+                409
             ],
             "__typename": [
                 1
@@ -10016,7 +10245,7 @@ export default {
                 3
             ],
             "update": [
-                403
+                414
             ],
             "__typename": [
                 1
@@ -10027,235 +10256,6 @@ export default {
                 1
             ],
             "description": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateOneObjectInput": {
-            "object": [
-                405
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateObjectInput": {
-            "nameSingular": [
-                1
-            ],
-            "namePlural": [
-                1
-            ],
-            "labelSingular": [
-                1
-            ],
-            "labelPlural": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "shortcut": [
-                1
-            ],
-            "color": [
-                1
-            ],
-            "skipNameField": [
-                6
-            ],
-            "isRemote": [
-                6
-            ],
-            "primaryKeyColumnType": [
-                1
-            ],
-            "primaryKeyFieldMetadataSettings": [
-                15
-            ],
-            "isLabelSyncedWithName": [
-                6
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DeleteOneObjectInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateOneObjectInput": {
-            "update": [
-                408
-            ],
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateObjectPayload": {
-            "labelSingular": [
-                1
-            ],
-            "labelPlural": [
-                1
-            ],
-            "nameSingular": [
-                1
-            ],
-            "namePlural": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "shortcut": [
-                1
-            ],
-            "color": [
-                1
-            ],
-            "isActive": [
-                6
-            ],
-            "labelIdentifierFieldMetadataId": [
-                3
-            ],
-            "imageIdentifierFieldMetadataId": [
-                3
-            ],
-            "isLabelSyncedWithName": [
-                6
-            ],
-            "isSearchable": [
-                6
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateOneIndexInput": {
-            "index": [
-                410
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateIndexInput": {
-            "objectMetadataId": [
-                3
-            ],
-            "fields": [
-                411
-            ],
-            "indexType": [
-                48
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateIndexFieldInput": {
-            "fieldMetadataId": [
-                3
-            ],
-            "subFieldName": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DeleteOneIndexInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateAgentInput": {
-            "name": [
-                1
-            ],
-            "label": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "prompt": [
-                1
-            ],
-            "modelId": [
-                1
-            ],
-            "roleId": [
-                3
-            ],
-            "responseFormat": [
-                15
-            ],
-            "modelConfiguration": [
-                15
-            ],
-            "evaluationInputs": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateAgentInput": {
-            "id": [
-                3
-            ],
-            "name": [
-                1
-            ],
-            "label": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "prompt": [
-                1
-            ],
-            "modelId": [
-                1
-            ],
-            "roleId": [
-                3
-            ],
-            "responseFormat": [
-                15
-            ],
-            "modelConfiguration": [
-                15
-            ],
-            "evaluationInputs": [
                 1
             ],
             "__typename": [

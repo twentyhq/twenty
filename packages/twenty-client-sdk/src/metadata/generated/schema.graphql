@@ -2967,14 +2967,8 @@ type Query {
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
-  findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
-  findManyLogicFunctions: [LogicFunction!]!
-  getAvailablePackages(input: LogicFunctionIdInput!): JSON!
-  getLogicFunctionSourceCode(input: LogicFunctionIdInput!): String
-  commandMenuItems: [CommandMenuItem!]!
-  commandMenuItem(id: UUID!): CommandMenuItem
-  frontComponents: [FrontComponent!]!
-  frontComponent(id: UUID!): FrontComponent
+  findManyAgents: [Agent!]!
+  findOneAgent(input: AgentIdInput!): Agent!
   objectRecordCounts: [ObjectRecordCount!]!
   object(
     """The id of the record to find."""
@@ -2998,8 +2992,14 @@ type Query {
     """Specify to filter the records returned."""
     filter: IndexFilter! = {}
   ): IndexConnection!
-  findManyAgents: [Agent!]!
-  findOneAgent(input: AgentIdInput!): Agent!
+  findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
+  findManyLogicFunctions: [LogicFunction!]!
+  getAvailablePackages(input: LogicFunctionIdInput!): JSON!
+  getLogicFunctionSourceCode(input: LogicFunctionIdInput!): String
+  commandMenuItems: [CommandMenuItem!]!
+  commandMenuItem(id: UUID!): CommandMenuItem
+  frontComponents: [FrontComponent!]!
+  frontComponent(id: UUID!): FrontComponent
   getRoles: [Role!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
@@ -3069,14 +3069,14 @@ input GetApiKeyInput {
   id: UUID!
 }
 
-input LogicFunctionIdInput {
-  """The id of the function."""
-  id: ID!
-}
-
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
+}
+
+input LogicFunctionIdInput {
+  """The id of the function."""
+  id: ID!
 }
 
 input ListAppConnectionsInput {
@@ -3227,6 +3227,14 @@ type Mutation {
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   destroyPageLayoutWidget(id: String!): Boolean!
+  createOneAgent(input: CreateAgentInput!): Agent!
+  updateOneAgent(input: UpdateAgentInput!): Agent!
+  deleteOneAgent(input: AgentIdInput!): Agent!
+  createOneObject(input: CreateOneObjectInput!): Object!
+  deleteOneObject(input: DeleteOneObjectInput!): Object!
+  updateOneObject(input: UpdateOneObjectInput!): Object!
+  createOneIndex(input: CreateOneIndexInput!): Index!
+  deleteOneIndex(input: DeleteOneIndexInput!): Index!
   deleteOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
   executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
@@ -3237,14 +3245,6 @@ type Mutation {
   createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   deleteFrontComponent(id: UUID!): FrontComponent!
-  createOneObject(input: CreateOneObjectInput!): Object!
-  deleteOneObject(input: DeleteOneObjectInput!): Object!
-  updateOneObject(input: UpdateOneObjectInput!): Object!
-  createOneIndex(input: CreateOneIndexInput!): Index!
-  deleteOneIndex(input: DeleteOneIndexInput!): Index!
-  createOneAgent(input: CreateAgentInput!): Agent!
-  updateOneAgent(input: UpdateAgentInput!): Agent!
-  deleteOneAgent(input: AgentIdInput!): Agent!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -3819,6 +3819,103 @@ input UpdatePageLayoutWidgetInput {
   conditionalAvailabilityExpression: String
 }
 
+input CreateAgentInput {
+  name: String
+  label: String!
+  icon: String
+  description: String
+  prompt: String!
+  modelId: String!
+  roleId: UUID
+  responseFormat: JSON
+  modelConfiguration: JSON
+  evaluationInputs: [String!]
+}
+
+input UpdateAgentInput {
+  id: UUID!
+  name: String
+  label: String
+  icon: String
+  description: String
+  prompt: String
+  modelId: String
+  roleId: UUID
+  responseFormat: JSON
+  modelConfiguration: JSON
+  evaluationInputs: [String!]
+}
+
+input CreateOneObjectInput {
+  """The object to create"""
+  object: CreateObjectInput!
+}
+
+input CreateObjectInput {
+  nameSingular: String!
+  namePlural: String!
+  labelSingular: String!
+  labelPlural: String!
+  description: String
+  icon: String
+  shortcut: String
+  color: String
+  skipNameField: Boolean
+  isRemote: Boolean
+  primaryKeyColumnType: String
+  primaryKeyFieldMetadataSettings: JSON
+  isLabelSyncedWithName: Boolean
+}
+
+input DeleteOneObjectInput {
+  """The id of the record to delete."""
+  id: UUID!
+}
+
+input UpdateOneObjectInput {
+  update: UpdateObjectPayload!
+
+  """The id of the object to update"""
+  id: UUID!
+}
+
+input UpdateObjectPayload {
+  labelSingular: String
+  labelPlural: String
+  nameSingular: String
+  namePlural: String
+  description: String
+  icon: String
+  shortcut: String
+  color: String
+  isActive: Boolean
+  labelIdentifierFieldMetadataId: UUID
+  imageIdentifierFieldMetadataId: UUID
+  isLabelSyncedWithName: Boolean
+  isSearchable: Boolean
+}
+
+input CreateOneIndexInput {
+  """The custom index to create"""
+  index: CreateIndexInput!
+}
+
+input CreateIndexInput {
+  objectMetadataId: UUID!
+  fields: [CreateIndexFieldInput!]!
+  indexType: IndexType! = BTREE
+}
+
+input CreateIndexFieldInput {
+  fieldMetadataId: UUID!
+  subFieldName: String
+}
+
+input DeleteOneIndexInput {
+  """The id of the custom index to delete."""
+  id: UUID!
+}
+
 input CreateLogicFunctionFromSourceInput {
   id: UUID
   universalIdentifier: UUID
@@ -3915,103 +4012,6 @@ input UpdateFrontComponentInput {
 input UpdateFrontComponentInputUpdates {
   name: String
   description: String
-}
-
-input CreateOneObjectInput {
-  """The object to create"""
-  object: CreateObjectInput!
-}
-
-input CreateObjectInput {
-  nameSingular: String!
-  namePlural: String!
-  labelSingular: String!
-  labelPlural: String!
-  description: String
-  icon: String
-  shortcut: String
-  color: String
-  skipNameField: Boolean
-  isRemote: Boolean
-  primaryKeyColumnType: String
-  primaryKeyFieldMetadataSettings: JSON
-  isLabelSyncedWithName: Boolean
-}
-
-input DeleteOneObjectInput {
-  """The id of the record to delete."""
-  id: UUID!
-}
-
-input UpdateOneObjectInput {
-  update: UpdateObjectPayload!
-
-  """The id of the object to update"""
-  id: UUID!
-}
-
-input UpdateObjectPayload {
-  labelSingular: String
-  labelPlural: String
-  nameSingular: String
-  namePlural: String
-  description: String
-  icon: String
-  shortcut: String
-  color: String
-  isActive: Boolean
-  labelIdentifierFieldMetadataId: UUID
-  imageIdentifierFieldMetadataId: UUID
-  isLabelSyncedWithName: Boolean
-  isSearchable: Boolean
-}
-
-input CreateOneIndexInput {
-  """The custom index to create"""
-  index: CreateIndexInput!
-}
-
-input CreateIndexInput {
-  objectMetadataId: UUID!
-  fields: [CreateIndexFieldInput!]!
-  indexType: IndexType! = BTREE
-}
-
-input CreateIndexFieldInput {
-  fieldMetadataId: UUID!
-  subFieldName: String
-}
-
-input DeleteOneIndexInput {
-  """The id of the custom index to delete."""
-  id: UUID!
-}
-
-input CreateAgentInput {
-  name: String
-  label: String!
-  icon: String
-  description: String
-  prompt: String!
-  modelId: String!
-  roleId: UUID
-  responseFormat: JSON
-  modelConfiguration: JSON
-  evaluationInputs: [String!]
-}
-
-input UpdateAgentInput {
-  id: UUID!
-  name: String
-  label: String
-  icon: String
-  description: String
-  prompt: String
-  modelId: String
-  roleId: UUID
-  responseFormat: JSON
-  modelConfiguration: JSON
-  evaluationInputs: [String!]
 }
 
 input CreateRoleInput {

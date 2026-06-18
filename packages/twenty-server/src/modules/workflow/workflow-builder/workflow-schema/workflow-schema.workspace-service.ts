@@ -295,7 +295,7 @@ export class WorkflowSchemaWorkspaceService {
       return textResponseOutputSchema;
     }
 
-    return Object.entries(responseFormat.schema.properties).reduce(
+    return Object.entries(responseFormat.schema.properties || {}).reduce(
       (outputSchema, [propertyName, property]) => {
         outputSchema[propertyName] = {
           isLeaf: true,
