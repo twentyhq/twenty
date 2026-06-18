@@ -1,8 +1,5 @@
 import { msg } from '@lingui/core/macro';
 
-// All of the wizard's copy in one place: modal chrome, the success screen, the
-// per-field labels/placeholders/hints, validation messages, and the step header
-// labels. The wizard and steps read the slices they need.
 export const PARTNER_APPLICATION_COPY = {
   title: msg`Apply to build\n*the future of CRM*`,
   subtitle: msg`Join our ecosystem and help businesses take control of their customer data with open-source primitives.`,
@@ -19,6 +16,7 @@ export const PARTNER_APPLICATION_COPY = {
     incompleteForm: msg`Please complete all required fields before continuing.`,
     invalidEmail: msg`Enter a valid email address.`,
     invalidUrl: msg`Enter a valid URL (starting with http:// or https://).`,
+    invalidAmount: msg`Enter a valid amount using numbers only.`,
     submitFailed: msg`We could not submit your application. Please try again in a moment.`,
   },
   removeSkill: (skill: string) => msg`Remove ${skill}`,
@@ -26,9 +24,9 @@ export const PARTNER_APPLICATION_COPY = {
     name: msg`Your name *`,
     email: msg`Work email *`,
     company: msg`Company or brand *`,
-    website: msg`Website or GitHub`,
+    website: msg`Website or GitHub *`,
     linkedin: msg`LinkedIn URL`,
-    city: msg`City`,
+    city: msg`City *`,
     country: msg`Country *`,
     countryPlaceholder: msg`Select your country`,
     countrySearchPlaceholder: msg`Search a country…`,
@@ -39,13 +37,13 @@ export const PARTNER_APPLICATION_COPY = {
     partnerScope: msg`What you cover *`,
     partnerScopeHint: msg`Pick every category that applies.`,
     skills: msg`Technical skills`,
-    skillsHint: msg`Press Enter or comma to add a skill.`,
-    skillsPlaceholder: msg`e.g. React, Postgres, n8n…`,
+    skillsHint: msg`Tools, technologies and industries you specialize in. Press Enter or comma to add.`,
+    skillsPlaceholder: msg`e.g. n8n, Shopify, Real estate…`,
     applicationNotes: msg`Anything else we should know?`,
     applicationNotesPlaceholder: msg`Workspace URL, customer references, relevant links…`,
-    hourlyRate: msg`Hourly rate`,
+    hourlyRate: msg`Hourly rate *`,
     hourlyRatePlaceholder: msg`150`,
-    projectBudgetMin: msg`Minimum project budget`,
+    projectBudgetMin: msg`Minimum project budget *`,
     projectBudgetMinPlaceholder: msg`5,000`,
     calendarLink: msg`Calendar / booking link`,
   },

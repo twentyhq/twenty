@@ -39,10 +39,14 @@
     "@lingui/format-po": "5.1.2",
     "@lingui/swc-plugin": "^5.11.0",
     "@opennextjs/cloudflare": "^1.0.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.184.1",
+    "jest-environment-jsdom": "30.0.0-beta.3",
     "wrangler": "^4.0.0"
   }
 }

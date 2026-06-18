@@ -22,6 +22,7 @@ import {
   type PartnerApplicationController,
   usePartnerApplicationState,
 } from '../use-partner-application-state';
+import { validatePartnerApplicationStep } from '../validate-partner-application-step';
 import { PartnerApplicationSuccess } from './PartnerApplicationSuccess';
 import { CommercialsStep } from './steps/CommercialsStep';
 import { ExpertiseStep } from './steps/ExpertiseStep';
@@ -49,8 +50,6 @@ const TitleBlock = styled.div`
   }
 `;
 
-// The title + subtitle are one tight group; the step header sits further below
-// (matching the old site's larger intro→header separation).
 const IntroGroup = styled.div`
   display: flex;
   flex-direction: column;
@@ -92,8 +91,6 @@ const Footer = styled.div`
   }
 `;
 
-// The Back control: a plain bordered mono rectangle (the old secondary button),
-// distinct from the primary's angled ButtonShape.
 const SecondaryButton = styled.button`
   background: none;
   border: 1px solid ${semanticColor.lineStrong};
@@ -171,7 +168,9 @@ export function PartnerApplicationWizard({
     ? COPY.validation.invalidEmail
     : errorValues.includes('invalid_url')
       ? COPY.validation.invalidUrl
-      : COPY.validation.incompleteForm;
+      : errorValues.includes('invalid_amount')
+        ? COPY.validation.invalidAmount
+        : COPY.validation.incompleteForm;
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -182,8 +181,14 @@ export function PartnerApplicationWizard({
       }
       if (state.isSubmitting) return;
 
-      const payload = buildPartnerApplicationRequestBody(state);
       setSubmitError(null);
+
+      if (Object.keys(validatePartnerApplicationStep(state)).length > 0) {
+        goNext();
+        return;
+      }
+
+      const payload = buildPartnerApplicationRequestBody(state);
       setSubmitting(true);
       try {
         const response = await fetch('/api/partner-application', {

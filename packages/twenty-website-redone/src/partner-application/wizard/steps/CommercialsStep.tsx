@@ -22,6 +22,7 @@ export function CommercialsStep({
       <Field label={i18n._(FIELDS.hourlyRate)}>
         <NumberField
           ariaLabel={i18n._(FIELDS.hourlyRate)}
+          invalid={state.fieldErrors.hourlyRate !== undefined}
           name="hourlyRate"
           onValueChange={(value) => setField('hourlyRate', value)}
           placeholder={i18n._(FIELDS.hourlyRatePlaceholder)}
@@ -32,6 +33,7 @@ export function CommercialsStep({
       <Field label={i18n._(FIELDS.projectBudgetMin)}>
         <NumberField
           ariaLabel={i18n._(FIELDS.projectBudgetMin)}
+          invalid={state.fieldErrors.projectBudgetMin !== undefined}
           name="projectBudgetMin"
           onValueChange={(value) => setField('projectBudgetMin', value)}
           placeholder={i18n._(FIELDS.projectBudgetMinPlaceholder)}

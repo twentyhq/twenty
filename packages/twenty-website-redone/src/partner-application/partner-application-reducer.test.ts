@@ -8,6 +8,7 @@ const baseValidIdentity: Partial<PartnerApplicationState> = {
   name: 'Ada Lovelace',
   email: 'ada@example.com',
   company: 'Analytical Engines Ltd',
+  website: 'https://analyticalengines.example',
 };
 
 describe('partnerApplicationReducer', () => {
@@ -53,6 +54,7 @@ describe('partnerApplicationReducer', () => {
       'company',
       'email',
       'name',
+      'website',
     ]);
   });
 
@@ -99,6 +101,7 @@ describe('partnerApplicationReducer', () => {
       ...INITIAL_PARTNER_APPLICATION_STATE,
       stepIndex: 1,
       country: 'FRANCE',
+      city: 'Paris',
     };
     const blocked = partnerApplicationReducer(onProfile, { type: 'GO_NEXT' });
     expect(blocked.stepIndex).toBe(1);
@@ -109,6 +112,30 @@ describe('partnerApplicationReducer', () => {
       { type: 'GO_NEXT' },
     );
     expect(ok.stepIndex).toBe(2);
+    expect(ok.fieldErrors).toEqual({});
+  });
+
+  it('GO_NEXT on Commercials gates on hourly rate and minimum budget', () => {
+    const onCommercials: PartnerApplicationState = {
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      stepIndex: 3,
+    };
+    const blocked = partnerApplicationReducer(onCommercials, {
+      type: 'GO_NEXT',
+    });
+    expect(blocked.fieldErrors.hourlyRate).toBe('required');
+    expect(blocked.fieldErrors.projectBudgetMin).toBe('required');
+
+    const badAmount = partnerApplicationReducer(
+      { ...onCommercials, hourlyRate: '.', projectBudgetMin: '5000' },
+      { type: 'GO_NEXT' },
+    );
+    expect(badAmount.fieldErrors.hourlyRate).toBe('invalid_amount');
+
+    const ok = partnerApplicationReducer(
+      { ...onCommercials, hourlyRate: '150', projectBudgetMin: '5000' },
+      { type: 'GO_NEXT' },
+    );
     expect(ok.fieldErrors).toEqual({});
   });
 

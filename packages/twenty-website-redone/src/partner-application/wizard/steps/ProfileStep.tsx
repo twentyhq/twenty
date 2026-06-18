@@ -59,6 +59,7 @@ export function ProfileStep({
       <Field>
         <TextField
           ariaLabel={i18n._(FIELDS.city)}
+          invalid={state.fieldErrors.city !== undefined}
           name="city"
           onValueChange={(value) => setField('city', value)}
           placeholder={i18n._(FIELDS.city)}

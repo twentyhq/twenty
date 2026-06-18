@@ -322,17 +322,21 @@ function walk(directory) {
     }
 
     // .tsx files are PascalCase (named after their React component); .ts
-    // files are kebab-case. Next.js route files (page/layout/...) and the
-    // compiled locale catalogs are exempt.
+    // files are kebab-case. Test files mirror their subject's name, so the
+    // .test infix is stripped before the casing rule (TagInput.test.tsx,
+    // partner-fields.test.ts) — matching the .test-only exemptions elsewhere.
+    // Next.js route files (page/layout/...) and the compiled locale catalogs
+    // are exempt.
     if (
       !NEXT_CONTRACT_FILES.has(entry.name) &&
       !relativePath.startsWith('locales' + path.sep)
     ) {
-      if (entry.name.endsWith('.tsx')) {
-        if (!/^[A-Z][A-Za-z0-9]*\.tsx$/.test(entry.name)) {
+      const nameForCasing = entry.name.replace(/\.test(?=\.[tj]sx?$)/, '');
+      if (nameForCasing.endsWith('.tsx')) {
+        if (!/^[A-Z][A-Za-z0-9]*\.tsx$/.test(nameForCasing)) {
           failures.push(`src/${relativePath}: .tsx filenames are PascalCase.`);
         }
-      } else if (/[A-Z]/.test(entry.name)) {
+      } else if (/[A-Z]/.test(nameForCasing)) {
         failures.push(`src/${relativePath}: .ts filenames are kebab-case.`);
       }
     }

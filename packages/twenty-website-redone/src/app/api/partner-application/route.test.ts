@@ -7,6 +7,9 @@ const VALID_PAYLOAD = {
   name: 'Ada Lovelace',
   company: 'Analytical Engines',
   website: 'https://analytical.example/',
+  city: 'London',
+  hourlyRate: 150,
+  projectBudgetMin: 5000,
 };
 
 const VALID_BODY = JSON.stringify(VALID_PAYLOAD);
@@ -33,15 +36,11 @@ function buildRequest({
   });
 }
 
-// resetModules so each test gets a fresh module-level rate limiter; distinct
-// IPs keep buckets from bleeding between cases.
 async function loadRoute() {
   jest.resetModules();
   return import('@/app/api/partner-application/route');
 }
 
-// Sequential by recursion (not a for-await loop): the rate limiter is stateful,
-// so the calls must run in order to deplete the bucket deterministically.
 async function runSequentially(
   makeCall: () => Promise<Response>,
   count: number,
@@ -56,9 +55,6 @@ describe('POST /api/partner-application', () => {
   beforeEach(() => {
     process.env.PARTNER_APPLICATION_WEBHOOK_URL = 'https://hooks.example/test';
     process.env.PARTNER_APPLICATION_SECRET = 'test-key-abc123';
-    // The route logs to console.error on its upstream/logic failure paths,
-    // which several tests below exercise on purpose — mute the noise so the
-    // suite output stays clean.
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
@@ -169,6 +165,9 @@ describe('POST /api/partner-application', () => {
       lastName: 'Lovelace',
       companyName: 'Analytical Engines',
       domainName: 'https://analytical.example/',
+      city: 'London',
+      hourlyRate: 150,
+      projectBudgetMin: 5000,
     });
     expect(init.signal).toBeInstanceOf(AbortSignal);
   });
@@ -265,8 +264,6 @@ describe('POST /api/partner-application', () => {
   });
 
   it('rate-limits the same IP after the burst capacity is spent', async () => {
-    // mockImplementation (not mockResolvedValue): each call needs a fresh
-    // Response since the route consumes its body, and this test reads five.
     global.fetch = jest
       .fn()
       .mockImplementation(() =>

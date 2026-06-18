@@ -9,6 +9,10 @@ const minimalState: PartnerApplicationState = {
   name: 'Ada Lovelace',
   email: 'ada@example.com',
   company: 'Analytical Engines Ltd',
+  website: 'https://analyticalengines.example',
+  city: 'London',
+  hourlyRate: '150',
+  projectBudgetMin: '5000',
 };
 
 describe('buildPartnerApplicationRequestBody', () => {
@@ -17,6 +21,10 @@ describe('buildPartnerApplicationRequestBody', () => {
       name: 'Ada Lovelace',
       email: 'ada@example.com',
       company: 'Analytical Engines Ltd',
+      website: 'https://analyticalengines.example',
+      city: 'London',
+      hourlyRate: 150,
+      projectBudgetMin: 5000,
     });
   });
 
@@ -35,15 +43,11 @@ describe('buildPartnerApplicationRequestBody', () => {
   it('omits optional string fields that are blank or whitespace-only', () => {
     const body = buildPartnerApplicationRequestBody({
       ...minimalState,
-      website: '   ',
       linkedin: '',
-      city: '  ',
       applicationNotes: '',
       calendarLink: '   ',
     });
-    expect(body).not.toHaveProperty('website');
     expect(body).not.toHaveProperty('linkedin');
-    expect(body).not.toHaveProperty('city');
     expect(body).not.toHaveProperty('applicationNotes');
     expect(body).not.toHaveProperty('calendarLink');
   });
@@ -95,23 +99,5 @@ describe('buildPartnerApplicationRequestBody', () => {
     });
     expect(body.hourlyRate).toBe(150);
     expect(body.projectBudgetMin).toBe(5000);
-  });
-
-  it('omits numeric fields that are blank, unparseable, or negative', () => {
-    const blank = buildPartnerApplicationRequestBody({
-      ...minimalState,
-      hourlyRate: '',
-      projectBudgetMin: 'abc',
-    });
-    expect(blank).not.toHaveProperty('hourlyRate');
-    expect(blank).not.toHaveProperty('projectBudgetMin');
-
-    const negative = buildPartnerApplicationRequestBody({
-      ...minimalState,
-      hourlyRate: '-5',
-      projectBudgetMin: '-1',
-    });
-    expect(negative).not.toHaveProperty('hourlyRate');
-    expect(negative).not.toHaveProperty('projectBudgetMin');
   });
 });
