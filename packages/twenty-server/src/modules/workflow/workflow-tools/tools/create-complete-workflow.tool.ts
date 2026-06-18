@@ -1,5 +1,6 @@
 import {
   workflowActionSchema,
+  WorkflowActionType,
   workflowTriggerSchema,
 } from 'twenty-shared/workflow';
 import { v4 as uuidv4 } from 'uuid';
@@ -31,20 +32,6 @@ const createCompleteWorkflowSchema = z.object({
   steps: z
     .array(workflowActionSchema)
     .describe('Array of workflow action steps'),
-  stepPositions: z
-    .array(
-      z.object({
-        stepId: z
-          .string()
-          .describe('The ID of the step (use "trigger" for trigger step)'),
-        position: z.object({
-          x: z.number().describe('X coordinate for the step position'),
-          y: z.number().describe('Y coordinate for the step position'),
-        }),
-      }),
-    )
-    .optional()
-    .describe('Optional array of step positions for layout'),
   edges: z
     .array(
       z.object({
@@ -91,7 +78,8 @@ CRITICAL SCHEMA REQUIREMENTS:
 - Each step MUST include: id (must be a valid UUID), name, type, valid, settings
 - CREATE_RECORD actions MUST have objectName and objectRecord in settings.input
 - objectRecord must contain actual field values, not just field names
-- Use "trigger" as stepId for trigger step in stepPositions and edges
+- Use "trigger" as the id for the trigger step in edges
+- Step positions are computed automatically; do not provide coordinates
 
 Common mistakes to avoid:
 - Using "RECORD_CREATED" instead of "DATABASE_EVENT"
@@ -99,6 +87,7 @@ Common mistakes to avoid:
 - Missing the "objectRecord" field in CREATE_RECORD actions
 - Using "fieldsToUpdate" instead of "objectRecord" in CREATE_RECORD actions
 - Including CODE steps in this tool — this tool does NOT create the underlying logic function needed by CODE steps. Instead, create the workflow without CODE steps first, then add CODE steps individually using create_workflow_version_step (which properly creates the logic function), then call update_logic_function_source to define the code.
+- Including AI_AGENT steps in this tool — this tool does NOT create the underlying agent needed by AI_AGENT steps. Instead, create the workflow without AI_AGENT steps first, then add AI_AGENT steps individually using create_workflow_version_step (which properly creates the agent), then call update_agent to configure the agent.
 
 IMPORTANT: The tool schema provides comprehensive field descriptions, examples, and validation rules. Always refer to the schema for:
 - Field requirements and data types
@@ -116,10 +105,6 @@ The response includes a compact validation summary. For the full validation repo
     description?: string;
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
-    stepPositions?: Array<{
-      stepId: string;
-      position: { x: number; y: number };
-    }>;
     edges?: Array<{ source: string; target: string }>;
     activate?: boolean;
   }) => {
@@ -131,6 +116,17 @@ The response includes a compact validation summary. For the full validation repo
       if (codeSteps.length > 0) {
         throw new WorkflowVersionStepException(
           'CODE steps cannot be created via create_complete_workflow because it does not create the underlying logic function. Use create_workflow_version_step instead.',
+          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        );
+      }
+
+      const aiAgentSteps = parameters.steps.filter(
+        (step) => step.type === WorkflowActionType.AI_AGENT,
+      );
+
+      if (aiAgentSteps.length > 0) {
+        throw new WorkflowVersionStepException(
+          'AI_AGENT steps cannot be created via create_complete_workflow because it does not create the underlying agent. Use create_workflow_version_step instead, then call update_agent to configure the agent.',
           WorkflowVersionStepExceptionCode.INVALID_REQUEST,
         );
       }
@@ -148,19 +144,6 @@ The response includes a compact validation summary. For the full validation repo
         steps: parameters.steps,
       });
 
-      if (parameters.stepPositions && parameters.stepPositions.length > 0) {
-        const positions = parameters.stepPositions.map((pos) => ({
-          id: pos.stepId === 'trigger' ? 'trigger' : pos.stepId,
-          position: pos.position,
-        }));
-
-        await deps.workflowVersionService.updateWorkflowVersionPositions({
-          workflowVersionId,
-          positions,
-          workspaceId: context.workspaceId,
-        });
-      }
-
       if (parameters.edges && parameters.edges.length > 0) {
         for (const edge of parameters.edges) {
           await deps.workflowVersionEdgeService.createWorkflowVersionEdge({
@@ -171,6 +154,11 @@ The response includes a compact validation summary. For the full validation repo
           });
         }
       }
+
+      await deps.workflowVersionService.autoLayoutWorkflowVersion({
+        workflowVersionId,
+        workspaceId: context.workspaceId,
+      });
 
       if (parameters.activate) {
         await deps.workflowTriggerService.activateWorkflowVersion(

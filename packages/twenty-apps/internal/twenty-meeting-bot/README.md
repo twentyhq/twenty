@@ -17,13 +17,25 @@ Run `yarn twenty help` to list all available commands.
 
 ## Recall.ai configuration
 
-This app schedules Recall.ai meeting bots and ingests their lifecycle events. A server admin configures it through server variables on the application registration (Settings → Applications → Twenty Meeting Bot):
+This app schedules Recall.ai meeting bots and ingests their lifecycle events.
+
+A server admin configures Recall credentials through server variables on the application registration (Settings → Applications → Twenty Meeting Bot):
 
 | Server variable | Required | Purpose |
 | --- | --- | --- |
 | `RECALL_API_KEY` | Yes | Recall.ai API key for the configured region; used to schedule, update, and cancel bots. |
 | `RECALL_REGION` | No | Recall.ai region for API requests. Defaults to `eu-central-1`. |
 | `RECALL_WEBHOOK_SECRET` | Yes | Svix signing secret (`whsec_…`) used to verify incoming Recall webhooks. |
+
+A workspace admin can adjust bot behavior through application variables:
+
+| Application variable | Default | Purpose |
+| --- | --- | --- |
+| `RECALL_BOT_NAME` | `Twenty Meeting Bot` | Display name used when scheduling Recall.ai meeting bots. |
+| `RECALL_BOT_JOIN_EARLY_MINUTES` | `1` | How many minutes before the meeting start time the bot should join. Set to `0` to join at the scheduled start time. |
+| `RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS` | `1200` | How many seconds the bot waits in a meeting lobby before giving up and leaving. |
+| `RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS` | `1200` | How many seconds the bot stays in an empty meeting when no one else ever joins. |
+| `RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS` | `2` | How many seconds the bot keeps recording after everyone else leaves the meeting. |
 
 ### Configuring the webhook
 

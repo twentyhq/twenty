@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { Tag } from 'twenty-ui/components';
+import { Tag } from 'twenty-ui/data-display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 

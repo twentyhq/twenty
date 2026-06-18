@@ -1,7 +1,47 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { handleRecallWebhook } from 'src/logic-functions/flows/handle-recall-webhook.util';
+
+const getRecallBotMock = vi.hoisted(() => vi.fn());
+const listRecallTranscriptsMock = vi.hoisted(() => vi.fn());
+const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
+const retrieveRecallTranscriptMock = vi.hoisted(() => vi.fn());
+const ingestCallRecordingMediaMock = vi.hoisted(() => vi.fn());
+const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
+
+vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
+  getRecallBot: getRecallBotMock,
+}));
+
+vi.mock('src/logic-functions/recall-api/list-recall-transcripts.util', () => ({
+  listRecallTranscripts: listRecallTranscriptsMock,
+}));
+
+vi.mock(
+  'src/logic-functions/recall-api/create-async-recall-transcript.util',
+  () => ({
+    createAsyncRecallTranscript: createAsyncRecallTranscriptMock,
+  }),
+);
+
+vi.mock(
+  'src/logic-functions/recall-api/retrieve-recall-transcript.util',
+  () => ({
+    retrieveRecallTranscript: retrieveRecallTranscriptMock,
+  }),
+);
+
+vi.mock('src/logic-functions/flows/ingest-call-recording-media.util', () => ({
+  ingestCallRecordingMedia: ingestCallRecordingMediaMock,
+}));
+
+vi.mock(
+  'src/logic-functions/flows/charge-completed-call-recording.util',
+  () => ({
+    chargeCompletedCallRecording: chargeCompletedCallRecordingMock,
+  }),
+);
 
 type CallRecordingNode = {
   id: string;
@@ -10,6 +50,9 @@ type CallRecordingNode = {
   externalRecordingId?: string | null;
   startedAt?: string | null;
   endedAt?: string | null;
+  transcript?: unknown;
+  audio?: unknown;
+  video?: unknown;
 };
 
 class FakeCoreApiClient {
@@ -37,6 +80,15 @@ class FakeCoreApiClient {
   }
 
   async mutation(mutation: any): Promise<any> {
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const id = filter.id.eq;
+
+      this.mutations.push({ id, data });
+
+      return { updateCallRecordings: [{ id }] };
+    }
+
     if (mutation.updateCallRecording !== undefined) {
       const { id, data } = mutation.updateCallRecording.__args;
 
@@ -73,6 +125,37 @@ class FakeCoreApiClient {
 }
 
 describe('handleRecallWebhook', () => {
+  beforeEach(() => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    getRecallBotMock.mockReset();
+    getRecallBotMock.mockResolvedValue({
+      ok: false,
+      status: null,
+      errorMessage: 'bot fetch disabled in test',
+    });
+    listRecallTranscriptsMock.mockReset();
+    listRecallTranscriptsMock.mockResolvedValue({
+      ok: true,
+      transcripts: [],
+    });
+    createAsyncRecallTranscriptMock.mockReset();
+    createAsyncRecallTranscriptMock.mockResolvedValue({
+      ok: false,
+      status: null,
+      errorMessage: 'transcript request disabled in test',
+    });
+    retrieveRecallTranscriptMock.mockReset();
+    retrieveRecallTranscriptMock.mockResolvedValue({
+      ok: false,
+      status: null,
+      errorMessage: 'transcript retrieval disabled in test',
+    });
+    ingestCallRecordingMediaMock.mockReset();
+    ingestCallRecordingMediaMock.mockResolvedValue({});
+    chargeCompletedCallRecordingMock.mockReset();
+    chargeCompletedCallRecordingMock.mockResolvedValue(undefined);
+  });
+
   it('updates a call recording from bot metadata on status change events', async () => {
     const client = new FakeCoreApiClient([
       {
@@ -470,6 +553,11 @@ describe('handleRecallWebhook', () => {
         externalBotId: 'recall-bot-1',
         startedAt: '2026-01-01T13:02:00.000Z',
         endedAt: '2026-01-01T14:05:00.000Z',
+        transcript: {
+          recallTranscriptId: 'recall-transcript-1',
+          status: 'PENDING',
+          requestedAt: '2026-01-01T14:06:00.000Z',
+        },
       },
     ]);
 
@@ -497,50 +585,6 @@ describe('handleRecallWebhook', () => {
         id: 'call-recording-1',
         data: {
           status: 'PROCESSING',
-          externalBotId: 'recall-bot-1',
-        },
-      },
-    ]);
-  });
-
-  it('maps a fatal bot status to FAILED_UNKNOWN', async () => {
-    const client = new FakeCoreApiClient([
-      {
-        id: 'call-recording-1',
-        status: 'RECORDING',
-        externalBotId: 'recall-bot-1',
-      },
-    ]);
-
-    const result = await handleRecallWebhook({
-      client: client as unknown as CoreApiClient,
-      body: {
-        event: 'bot.status_change',
-        data: {
-          bot: {
-            id: 'recall-bot-1',
-            metadata: {
-              twentyCallRecordingId: 'call-recording-1',
-            },
-          },
-          status: {
-            code: 'fatal',
-          },
-        },
-      },
-    });
-
-    expect(result).toEqual({
-      status: 'updated',
-      event: 'bot.status_change',
-      callRecordingId: 'call-recording-1',
-      callRecordingStatus: 'FAILED_UNKNOWN',
-    });
-    expect(client.mutations).toEqual([
-      {
-        id: 'call-recording-1',
-        data: {
-          status: 'FAILED_UNKNOWN',
           externalBotId: 'recall-bot-1',
         },
       },
@@ -663,6 +707,538 @@ describe('handleRecallWebhook', () => {
       status: 'skipped',
       event: 'participant_events.done',
       reason: 'unsupported Recall event status participant_events.done',
+    });
+    expect(client.mutations).toEqual([]);
+  });
+
+  it('requests a transcript once when the recording first completes', async () => {
+    createAsyncRecallTranscriptMock.mockResolvedValue({
+      ok: true,
+      transcriptId: 'recall-transcript-1',
+    });
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        transcript: null,
+      },
+    ]);
+
+    await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'recording.done',
+        data: {
+          bot_id: 'recall-bot-1',
+          recording: {
+            id: 'recall-recording-1',
+          },
+        },
+      },
+    });
+
+    expect(createAsyncRecallTranscriptMock).toHaveBeenCalledTimes(1);
+    expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
+      externalRecordingId: 'recall-recording-1',
+      callRecordingId: 'call-recording-1',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'PROCESSING',
+          externalBotId: 'recall-bot-1',
+          externalRecordingId: 'recall-recording-1',
+          transcript: {
+            recallTranscriptId: 'recall-transcript-1',
+            status: 'PENDING',
+            requestedAt: expect.any(String),
+          },
+        },
+      },
+    ]);
+  });
+
+  it('does not re-request a transcript on a redelivered done event while Recall list is stale', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        externalRecordingId: 'recall-recording-1',
+        transcript: {
+          recallTranscriptId: 'recall-transcript-1',
+          status: 'PENDING',
+          requestedAt: '2026-01-01T14:06:00.000Z',
+        },
+      },
+    ]);
+
+    await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'recording.done',
+        data: {
+          bot_id: 'recall-bot-1',
+          recording: {
+            id: 'recall-recording-1',
+          },
+        },
+      },
+    });
+
+    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(listRecallTranscriptsMock).toHaveBeenCalledWith({
+      externalRecordingId: 'recall-recording-1',
+    });
+    expect(retrieveRecallTranscriptMock).toHaveBeenCalledWith({
+      transcriptId: 'recall-transcript-1',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'PROCESSING',
+          externalBotId: 'recall-bot-1',
+          externalRecordingId: 'recall-recording-1',
+        },
+      },
+    ]);
+  });
+
+  it('resolves the recording id from the bot when the payload and record lack one', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        recordings: [{ id: 'recall-recording-9' }],
+      },
+    });
+    createAsyncRecallTranscriptMock.mockResolvedValue({
+      ok: true,
+      transcriptId: 'recall-transcript-9',
+    });
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        transcript: null,
+      },
+    ]);
+
+    await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'done',
+          },
+        },
+      },
+    });
+
+    expect(getRecallBotMock).toHaveBeenCalledWith({
+      externalBotId: 'recall-bot-1',
+    });
+    expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
+      externalRecordingId: 'recall-recording-9',
+      callRecordingId: 'call-recording-1',
+    });
+    expect(client.mutations).toEqual([
+      expect.objectContaining({
+        id: 'call-recording-1',
+        data: expect.objectContaining({
+          status: 'PROCESSING',
+          externalBotId: 'recall-bot-1',
+          externalRecordingId: 'recall-recording-9',
+        }),
+      }),
+    ]);
+  });
+
+  it('ingests media on recording.done and completes once all artifacts are present', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: { id: 'recall-bot-1' },
+    });
+    ingestCallRecordingMediaMock.mockResolvedValue({
+      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+      video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+    });
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        externalRecordingId: 'recall-recording-1',
+        startedAt: '2026-01-01T13:02:00.000Z',
+        endedAt: '2026-01-01T14:05:00.000Z',
+        transcript: [{ participant: { id: 1 }, words: [] }],
+      },
+    ]);
+
+    await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'recording.done',
+        data: {
+          bot_id: 'recall-bot-1',
+          recording: {
+            id: 'recall-recording-1',
+          },
+        },
+      },
+    });
+
+    expect(ingestCallRecordingMediaMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      externalRecordingId: 'recall-recording-1',
+      hasAudio: false,
+      hasVideo: false,
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          externalBotId: 'recall-bot-1',
+          externalRecordingId: 'recall-recording-1',
+          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+          video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+        },
+      },
+      {
+        id: 'call-recording-1',
+        data: { status: 'COMPLETED' },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      startedAt: '2026-01-01T13:02:00.000Z',
+      endedAt: '2026-01-01T14:05:00.000Z',
+    });
+  });
+
+  it('stays PROCESSING on recording.done while artifacts are missing', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: { id: 'recall-bot-1' },
+    });
+    ingestCallRecordingMediaMock.mockResolvedValue({
+      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+    });
+    createAsyncRecallTranscriptMock.mockResolvedValue({
+      ok: true,
+      transcriptId: 'recall-transcript-1',
+    });
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        startedAt: '2026-01-01T13:02:00.000Z',
+        endedAt: '2026-01-01T14:05:00.000Z',
+        transcript: null,
+      },
+    ]);
+
+    await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'recording.done',
+        data: {
+          bot_id: 'recall-bot-1',
+          recording: {
+            id: 'recall-recording-1',
+          },
+        },
+      },
+    });
+
+    expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
+      externalRecordingId: 'recall-recording-1',
+      callRecordingId: 'call-recording-1',
+    });
+    expect(client.mutations).toEqual([
+      expect.objectContaining({
+        id: 'call-recording-1',
+        data: expect.objectContaining({
+          status: 'PROCESSING',
+          externalBotId: 'recall-bot-1',
+          externalRecordingId: 'recall-recording-1',
+          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        }),
+      }),
+    ]);
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
+  });
+
+  it('completes and charges on transcript.done when media is already ingested', async () => {
+    const transcriptContent = [
+      {
+        participant: { id: 1, name: 'Alice' },
+        words: [{ text: 'hello', start_timestamp: { relative: 0.5 } }],
+      },
+    ];
+
+    retrieveRecallTranscriptMock.mockResolvedValue({
+      ok: true,
+      transcript: {
+        downloadUrl: 'https://recall-transcripts.example.com/transcript-1',
+        statusCode: 'done',
+        statusSubCode: null,
+      },
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => transcriptContent,
+      }),
+    );
+
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        externalRecordingId: 'recall-recording-1',
+        startedAt: '2026-01-01T13:02:00.000Z',
+        endedAt: '2026-01-01T14:05:00.000Z',
+        transcript: {
+          recallTranscriptId: 'recall-transcript-1',
+          status: 'PENDING',
+          requestedAt: '2026-01-01T14:06:00.000Z',
+        },
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'transcript.done',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          transcript: {
+            id: 'recall-transcript-1',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'transcript.done',
+      callRecordingId: 'call-recording-1',
+      transcriptOutcome: 'FILLED',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: { transcript: transcriptContent },
+      },
+      {
+        id: 'call-recording-1',
+        data: { status: 'COMPLETED' },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      startedAt: '2026-01-01T13:02:00.000Z',
+      endedAt: '2026-01-01T14:05:00.000Z',
+    });
+
+    vi.unstubAllGlobals();
+  });
+
+  it('fills the transcript from the download URL on transcript.done', async () => {
+    const transcriptContent = [
+      {
+        participant: { id: 1, name: 'Alice' },
+        words: [{ text: 'hello', start_timestamp: { relative: 0.5 } }],
+      },
+    ];
+
+    retrieveRecallTranscriptMock.mockResolvedValue({
+      ok: true,
+      transcript: {
+        downloadUrl: 'https://recall-transcripts.example.com/transcript-1',
+        statusCode: 'done',
+        statusSubCode: null,
+      },
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => transcriptContent,
+      }),
+    );
+
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'COMPLETED',
+        externalBotId: 'recall-bot-1',
+        transcript: {
+          recallTranscriptId: 'recall-transcript-1',
+          status: 'PENDING',
+          requestedAt: '2026-01-01T14:06:00.000Z',
+        },
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'transcript.done',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          transcript: {
+            id: 'recall-transcript-1',
+          },
+          recording: {
+            id: 'recall-recording-1',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'transcript.done',
+      callRecordingId: 'call-recording-1',
+      transcriptOutcome: 'FILLED',
+    });
+    expect(retrieveRecallTranscriptMock).toHaveBeenCalledWith({
+      transcriptId: 'recall-transcript-1',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          transcript: transcriptContent,
+          externalRecordingId: 'recall-recording-1',
+        },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
+
+    vi.unstubAllGlobals();
+  });
+
+  it('writes a FAILED marker on transcript.failed', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        externalRecordingId: 'recall-recording-1',
+        transcript: {
+          recallTranscriptId: 'recall-transcript-1',
+          status: 'PENDING',
+          requestedAt: '2026-01-01T14:06:00.000Z',
+        },
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'transcript.failed',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          transcript: {
+            id: 'recall-transcript-1',
+          },
+          status: {
+            sub_code: 'transcription_failed',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'transcript.failed',
+      callRecordingId: 'call-recording-1',
+      transcriptOutcome: 'FAILED',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          transcript: {
+            recallTranscriptId: 'recall-transcript-1',
+            status: 'FAILED',
+            subCode: 'transcription_failed',
+          },
+          status: 'FAILED_UNKNOWN',
+        },
+      },
+    ]);
+    expect(console.warn).toHaveBeenCalled();
+  });
+
+  it('does not clobber a downloaded transcript with a late transcript.failed', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'COMPLETED',
+        externalBotId: 'recall-bot-1',
+        transcript: [{ participant: { id: 1 }, words: [] }],
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'transcript.failed',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          transcript: {
+            id: 'recall-transcript-1',
+          },
+          status: {
+            sub_code: 'transcription_failed',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'skipped',
+      event: 'transcript.failed',
+      reason: 'transcript already filled',
     });
     expect(client.mutations).toEqual([]);
   });

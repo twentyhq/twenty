@@ -8,7 +8,7 @@ import {
   IllustrationIconTag,
   IllustrationIconTags,
   IllustrationIconText,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 
 export const FORM_SELECT_FIELD_TYPE_OPTIONS: SelectOption<WorkflowFormFieldType>[] =

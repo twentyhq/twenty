@@ -6,7 +6,7 @@ import { MemberNameFields } from '@/settings/members/components/MemberNameFields
 import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

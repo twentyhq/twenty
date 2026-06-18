@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -20,7 +20,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   );
 };
 
-jest.mock('twenty-ui/display', () => ({
+jest.mock('twenty-ui/icon', () => ({
   useIcons: jest.fn(),
 }));
 

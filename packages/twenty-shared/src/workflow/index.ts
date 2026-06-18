@@ -18,6 +18,15 @@ export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY } from './constants/W
 export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_LABEL } from './constants/WorkflowTriggerMetadataWorkspaceMemberIdLabel';
 export { WORKFLOW_TRIGGER_PAYLOAD_KEY } from './constants/WorkflowTriggerPayloadKey';
 export { WORKFLOW_TRIGGER_PAYLOAD_LABEL } from './constants/WorkflowTriggerPayloadLabel';
+export { WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS } from './layout/constants/WorkflowDiagramDefaultNodeDimensions';
+export { WORKFLOW_LAYOUT_DEFAULT_OPTIONS } from './layout/constants/WorkflowLayoutDefaultOptions';
+export type {
+  WorkflowLayoutNode,
+  WorkflowLayoutEdge,
+  WorkflowLayoutPosition,
+  WorkflowLayoutOptions,
+} from './layout/utils/compute-workflow-layout.util';
+export { computeWorkflowLayout } from './layout/utils/compute-workflow-layout.util';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
@@ -34,6 +43,7 @@ export { workflowDeleteRecordActionSettingsSchema } from './schemas/delete-recor
 export { workflowDraftEmailActionSchema } from './schemas/draft-email-action-schema';
 export { workflowEmptyActionSchema } from './schemas/empty-action-schema';
 export { workflowEmptyActionSettingsSchema } from './schemas/empty-action-settings-schema';
+export { expectedOutputSchemaShape } from './schemas/expected-output-schema-shape';
 export { workflowFilterActionSchema } from './schemas/filter-action-schema';
 export { workflowFilterActionSettingsSchema } from './schemas/filter-action-settings-schema';
 export { workflowFindRecordsActionSchema } from './schemas/find-records-action-schema';

@@ -1,4 +1,4 @@
-import { IconHeartOff } from 'twenty-ui/display';
+import { IconHeartOff } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 

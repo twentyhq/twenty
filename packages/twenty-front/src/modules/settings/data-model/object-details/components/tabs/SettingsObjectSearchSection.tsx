@@ -13,8 +13,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
 
-import { IconEye, IconSearch, useIcons } from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
+import { IconEye, IconSearch, useIcons } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsObjectSearchSectionProps = {

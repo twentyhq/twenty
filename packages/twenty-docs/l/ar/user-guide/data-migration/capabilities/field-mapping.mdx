@@ -56,7 +56,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 استخدم التنسيق التالي:
 
 ```
-[\"value1\",\"value2\"]
+["value1","value2"]
 ```
 
 ### حقول القيم المنطقية
@@ -94,7 +94,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * للبريد الإلكتروني الإضافي: استخدم **Emails / Primary Email** للبريد الرئيسي، و**Emails / Additional Emails** بهذا التنسيق:
 
 ```
-[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
+["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
 ### حقول المعرّف
@@ -125,7 +125,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * للروابط الثانوية، استخدم عمود **Links / Secondary Links** بهذا التنسيق:
 
 ```
-[{\"url\":\"https://twenty.com\",\"label\":\"Twenty\"}]
+[{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
 ### حقول التحديد المتعدد
@@ -133,7 +133,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 استخدم **أسماء واجهة برمجة التطبيقات (API)** (وليس تسميات العرض) بالتنسيق التالي:
 
 ```
-[\"VALUE1\",\"VALUE2\"]
+["VALUE1","VALUE2"]
 ```
 
 اطّلع [هنا](#finding-api-names-for-select-fields) لمعرفة مكان العثور على أسماء واجهة برمجة التطبيقات.
@@ -143,7 +143,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 <Warning>
 **الاستيراد يستبدل، لا يضيف.**
 
-إذا كان السجل يحتوي بالفعل على `VALUE2` و`VALUE3` محدّدين، ثم استوردت `[\"VALUE1\"]`، فسيحتوي السجل على `VALUE1` فقط بعد الاستيراد. يتم استبدال التحديدات السابقة، وليس دمجها.
+إذا كان السجل يحتوي بالفعل على `VALUE2` و`VALUE3` محدّدين، ثم استوردت `["VALUE1"]`، فسيحتوي السجل على `VALUE1` فقط بعد الاستيراد. يتم استبدال التحديدات السابقة، وليس دمجها.
 </Warning>
 
 ### حقول الأرقام

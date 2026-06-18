@@ -1,0 +1,104 @@
+---
+title: 개체
+description: defineObject를 사용하여 고유한 필드를 가진 사용자 정의 테이블인 새 레코드 유형을 선언합니다.
+icon: 테이블
+---
+
+사용자 정의 **개체**는 워크스페이스에 앱이 추가하는 새로운 레코드 유형입니다. 엽서(Post Card), 송장(Invoice), 구독(Subscription) 등 도메인에 특화된 어떤 것이라도 될 수 있습니다. 각 개체는 스키마(필드, 관계, 기본값)와 동기화 및 배포 간에도 유지되는 안정적인 범용 식별자를 선언합니다.
+
+```ts src/objects/post-card.object.ts
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+## 핵심 요점
+
+* `universalIdentifier`는 배포 전반에서 고유하고 안정적이어야 합니다.
+* 각 필드는 `name`, `type`, `label` 및 고유하고 안정적인 `universalIdentifier`가 필요합니다.
+* `fields` 배열은 선택 사항입니다. 사용자 정의 필드 없이도 개체를 정의할 수 있습니다.
+* 여기에서 정의된 인라인 필드는 `objectUniversalIdentifier`가 **필요하지 않습니다** — 상위 개체에서 상속됩니다. 소유하지 않은 개체에 필드를 추가하려면 [`defineField()`](/l/ko/developers/extend/apps/data/extending-objects)를 사용하세요.
+* `yarn twenty dev:add object`를 사용하여 새 개체를 스캐폴딩할 수 있으며, 이름, 필드, 관계 설정 과정을 안내합니다. [Architecture → Scaffolding entities](/l/ko/developers/extend/apps/getting-started/scaffolding)를 참조하세요.
+
+<Note>
+**기본 필드는 자동으로 추가됩니다.** 사용자 정의 개체를 정의하면 Twenty가 `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy`, `deletedAt`와 같은 표준 필드를 자동으로 생성합니다. 이 필드들은 `fields` 배열에 선언할 필요가 없습니다 — 사용자 정의 필드만 선언하면 됩니다. 동일한 이름으로 필드를 선언하여 기본 필드를 재정의할 수 있지만, 이는 거의 바람직하지 않습니다.
+</Note>
+
+## 기본값
+
+리터럴 문자열 기본값은 문자열 **내부에서** 작은따옴표로 감싸야 합니다. 즉, `defaultValue: "'Draft'"`처럼 작성해야 하며, `defaultValue: "Draft"`처럼 작성하면 안 됩니다. 그래서 위의 `status` 필드는 `` `'${PostCardStatus.DRAFT}'` ``를 사용합니다.
+
+따옴표로 감싸지 않은 문자열은 레코드가 생성될 때 평가되는 계산형 기본값으로 예약되어 있습니다.
+
+* `'uuid'` — UUID를 생성합니다 (`UUID` 필드용).
+* `'now'` — 현재 타임스탬프입니다 (`DATE_TIME` 필드용).
+
+동일한 규칙이 복합 기본값의 문자열 하위 필드(예: `ACTOR` 필드의 `{ source: "'MANUAL'" }`)와 `SELECT`/`MULTI_SELECT` 값에도 적용됩니다. 따옴표로 감싸지 않은 리터럴 문자열 기본값은 앱을 빌드할 때 경고를 발생시킵니다.
+
+## 다음 단계
+
+* **이 개체를 다른 개체와 연결** — 양방향 관계 패턴은 [Relations](/l/ko/developers/extend/apps/data/relations)를 참조하세요.
+* **다른 앱의 개체에 필드 추가** — `defineField()`에 대해서는 [Extending Objects](/l/ko/developers/extend/apps/data/extending-objects)를 참조하세요.
+* **UI에 이 개체 표시** — 사이드바에 배치하려면 [Views](/l/ko/developers/extend/apps/layout/views) 및 [Navigation Menu Items](/l/ko/developers/extend/apps/layout/navigation-menu-items)를 참조하세요.

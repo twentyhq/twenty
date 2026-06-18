@@ -5,7 +5,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip, Status } from 'twenty-ui/display';
+import { Status } from 'twenty-ui/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

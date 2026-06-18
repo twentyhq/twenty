@@ -5,8 +5,8 @@ import { STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constan
 import { STALE_BOT_STATE_CRON_PATTERN } from 'src/logic-functions/constants/stale-bot-state-cron-pattern';
 import {
   convergeDivergedCallRecordings,
-  type ConvergeDivergedCallRecordingsResult,
 } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
+import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
 import {
   healCallRecordingsMissingBot,
   type HealCallRecordingsMissingBotResult,
@@ -22,7 +22,7 @@ const REAPER_JOIN_AT_LOOKAHEAD_HOURS = 24;
 
 type StepFailure = { error: string };
 
-export const reconcileStaleBotStateHandler = async (): Promise<object> => {
+const reconcileStaleBotStateHandler = async (): Promise<object> => {
   const now = new Date();
   const client = new CoreApiClient();
 
@@ -101,9 +101,8 @@ export default defineLogicFunction({
   universalIdentifier: STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-stale-bot-state',
   description:
-    'Converges call recordings with Recall on a schedule: pulls stale bot statuses, finishes failed cancellations, schedules bots for recordings still missing one, and reaps unclaimed bots. Reads calendar events only to heal already-decided recordings, never to discover meetings.',
-  // Pulling bot statuses for many recordings is the dominant cost.
-  timeoutSeconds: 300,
+    'Converges call recordings with Recall on a schedule: pulls stale bot statuses and overdue transcripts, finishes failed cancellations, schedules bots for recordings still missing one, and reaps unclaimed bots. Reads calendar events only to heal already-decided recordings, never to discover meetings.',
+  timeoutSeconds: 250,
   handler: reconcileStaleBotStateHandler,
   cronTriggerSettings: {
     pattern: STALE_BOT_STATE_CRON_PATTERN,

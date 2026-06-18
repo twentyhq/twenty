@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 
 const StyledText = styled.span`
   align-items: center;

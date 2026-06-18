@@ -1,9 +1,7 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconColumnInsertRight,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { IconColumnInsertRight } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';

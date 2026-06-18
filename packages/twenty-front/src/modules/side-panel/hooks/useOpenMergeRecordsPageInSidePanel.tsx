@@ -8,7 +8,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 
 import { msg, t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { IconArrowMerge } from 'twenty-ui/display';
+import { IconArrowMerge } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
 

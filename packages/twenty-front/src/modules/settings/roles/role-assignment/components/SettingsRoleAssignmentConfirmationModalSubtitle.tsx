@@ -4,7 +4,7 @@ import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '
 
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Avatar } from 'twenty-ui/display';
+import { Avatar } from 'twenty-ui/data-display';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

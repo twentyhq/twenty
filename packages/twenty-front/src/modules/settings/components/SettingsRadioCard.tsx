@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { CardContent } from 'twenty-ui/layout';
-import { type IconComponent } from 'twenty-ui/display';
+import { CardContent } from 'twenty-ui/surfaces';
+import { type IconComponent } from 'twenty-ui/icon';
 import { Radio } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { type PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -118,7 +117,6 @@ export class RolePermissionFlagService {
           createRolePermissionFlagInput: {
             roleId: input.roleId,
             permissionFlagId: permissionFlag.id,
-            flag: permissionFlag.key as PermissionFlagType,
           },
           flatApplication: workspaceCustomFlatApplication,
           flatPermissionFlagMaps,

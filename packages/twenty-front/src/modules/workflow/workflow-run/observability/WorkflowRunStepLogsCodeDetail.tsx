@@ -7,7 +7,7 @@ import {
   IconCheck,
   IconClock,
   IconTerminal,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';

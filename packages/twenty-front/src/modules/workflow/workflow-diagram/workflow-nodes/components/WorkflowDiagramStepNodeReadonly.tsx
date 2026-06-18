@@ -25,7 +25,7 @@ import { isNodeTitleHighlighted } from '@/workflow/workflow-diagram/workflow-nod
 import { Position } from '@xyflow/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 
 export const WorkflowDiagramStepNodeReadonly = ({
   id,

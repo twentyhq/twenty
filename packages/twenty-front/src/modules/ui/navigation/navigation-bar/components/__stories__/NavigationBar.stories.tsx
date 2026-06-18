@@ -5,7 +5,7 @@ import {
   IconList,
   IconSearch,
   IconSettings,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { NavigationBar } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';

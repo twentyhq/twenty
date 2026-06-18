@@ -12,7 +12,7 @@ import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/W
 import { styled } from '@linaria/react';
 import { type MouseEvent, useContext } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { IconLock } from 'twenty-ui/display';
+import { IconLock } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { WidgetType } from '~/generated-metadata/graphql';
 

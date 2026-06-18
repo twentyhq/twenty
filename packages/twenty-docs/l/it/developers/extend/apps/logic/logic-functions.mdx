@@ -1,0 +1,514 @@
+---
+title: Funzioni logiche
+description: Definisci funzioni TypeScript lato server con trigger HTTP, cron e trigger di eventi del database.
+icon: bolt
+---
+
+Le funzioni logiche sono funzioni TypeScript lato server che vengono eseguite sulla piattaforma Twenty. Possono essere attivate da richieste HTTP, pianificazioni cron o eventi del database — e possono anche essere esposte come strumenti per agenti di IA.
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="Definisci funzioni logiche e i relativi trigger">
+
+Ogni file di funzione usa `defineLogicFunction()` per esportare una configurazione con un handler e trigger opzionali.
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const body = (params.body ?? {}) as { name?: string };
+  const name = body.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+Tipi di trigger disponibili:
+* **httpRoute**: Espone la tua funzione su un percorso e metodo HTTP **sotto l'endpoint `/s/`**:
+> ad es. `path: '/post-card/create'` è invocabile su `https://your-twenty-server.com/s/post-card/create`
+
+<Note>
+Per richiamare, da un componente front-end (headless), una funzione logica attivata da una rotta, vedi [Chiamare una funzione logica](/l/it/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
+* **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON.
+* **databaseEvent**: Viene eseguito sugli eventi del ciclo di vita degli oggetti dello spazio di lavoro. Quando l'operazione dell'evento è `updated`, è possibile specificare campi specifici da monitorare nell'array `updatedFields`. Se lasciato non definito o vuoto, qualsiasi aggiornamento attiverà la funzione.
+> ad es. `person.updated`, `*.created`, `company.*`
+
+<Note>
+Puoi anche eseguire manualmente una funzione utilizzando la CLI:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+Puoi osservare i log con:
+
+```bash filename="Terminal"
+yarn twenty dev:function:logs
+```
+</Note>
+
+#### Payload del trigger di route
+
+Quando un trigger di tipo route invoca la tua funzione logica, questa riceve un oggetto `RoutePayload` che segue il [formato AWS HTTP API v2](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
+Importa il tipo `RoutePayload` da `twenty-sdk/logic-function`:
+
+```ts
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+Il tipo `RoutePayload` ha la seguente struttura:
+
+  | Proprietà                    | Tipo                                                    | Descrizione                                                                                                                                                                                                                   | Esempio                                                                    |
+  | ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | Intestazioni HTTP (solo quelle elencate in `forwardedRequestHeaders`)                                                                                                                                                         | vedi la sezione sotto                                                      |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri della query string (valori multipli uniti da virgole)                                                                                                                                                               | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Parametri di percorso estratti dal pattern della route                                                                                                                                                                        | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Corpo della richiesta analizzato (JSON)                                                                                                                                                                                       | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | Corpo della richiesta UTF-8 originale, prima dell'analisi JSON. Utile per verificare le firme dei webhook in stile HMAC (ad es. `X-Hub-Signature-256` di GitHub, Stripe). `undefined` quando il runtime non lo ha conservato. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Indica se il corpo è codificato in base64                                                                                                                                                                                     |                                                                            |
+  | `requestContext.http.method` | `string`                                                | Metodo HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                   |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Percorso della richiesta non elaborato                                                                                                                                                                                        |                                                                            |
+
+
+#### forwardedRequestHeaders
+
+Per impostazione predefinita, le intestazioni HTTP delle richieste in ingresso **non** vengono passate alla tua funzione logica per motivi di sicurezza.
+Per accedere a intestazioni specifiche, elencale nell'array `forwardedRequestHeaders`:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+Nel tuo handler, accedi alle intestazioni inoltrate in questo modo:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+I nomi delle intestazioni vengono normalizzati in minuscolo. Accedile usando chiavi in minuscolo (ad es., `event.headers['content-type']`).
+</Note>
+
+#### Risposta HTTP personalizzata
+
+Per impostazione predefinita, restituire un valore semplice dal tuo handler lo invia come risposta `200` (JSON per gli oggetti, `text/plain` per le stringhe). Per controllare il codice di stato e le intestazioni della risposta, restituisci un oggetto `Response` da `twenty-sdk/logic-function`:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+Per motivi di sicurezza, le intestazioni di risposta sono limitate a un elenco consentito. Qualsiasi intestazione che non è presente nell'elenco (ad esempio `Set-Cookie`, intestazioni CORS come `Access-Control-Allow-Origin` o intestazioni personalizzate `X-*`) viene ignorata senza segnalazione prima che la risposta venga inviata. Le intestazioni di risposta consentite sono:
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+Il codice di stato deve essere un codice di stato HTTP valido (compreso tra 100 e 599). I nomi delle intestazioni di risposta vengono confrontati senza distinzione tra maiuscole e minuscole.
+</Note>
+
+#### Payload del trigger di evento del database
+
+Quando un trigger di evento del database invoca la tua funzione logica, questa riceve un `DatabaseEventPayload` per ogni record modificato. Il payload combina i metadati sull’area di lavoro e sull’oggetto di origine con l’evento a livello di record.
+
+```ts
+import type {
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+} from 'twenty-sdk/logic-function';
+
+type Person = {
+  id: string;
+  emails?: { primaryEmail?: string };
+};
+```
+
+Il payload include:
+
+| Proprietà                                        | Descrizione                                                                                              |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `name`                                           | Nome dell'evento, ad esempio `person.updated`.                                                           |
+| `workspaceId`                                    | Area di lavoro in cui si è verificato l'evento.                                                          |
+| `objectMetadata`                                 | Metadati per l'oggetto che è cambiato.                                                                   |
+| `recordId`                                       | ID del record modificato.                                                                                |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | Campi dell'attore quando l'evento è stato causato da un utente dell'area di lavoro.                      |
+| `properties`                                     | Dati del record per l'evento, con `before`, `after`, `diff` e `updatedFields` a seconda dell'operazione. |
+
+| Evento             | Dati del record                                                                                                |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `person.created`   | `event.properties.after`                                                                                       |
+| `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
+| `person.destroyed` | `event.properties.before`                                                                                      |
+
+Per le eliminazioni logiche, `.deleted` segue la struttura in stile aggiornamento perché il campo `deletedAt` del record cambia.
+Per le eliminazioni permanenti, usa `.destroyed`.
+
+<Note>
+`databaseEventTriggerSettings.updatedFields` filtra quali eventi di aggiornamento attivano la funzione.
+`event.properties.updatedFields` indica quali campi sono effettivamente cambiati nell'evento corrente.
+</Note>
+
+Esempio di evento "created":
+
+```ts
+type PersonCreatedEvent = DatabaseEventPayload<
+  ObjectRecordCreateEvent<Person>
+>;
+
+const handler = async (event: PersonCreatedEvent) => {
+  const person = event.properties.after;
+
+  return {
+    personId: event.recordId,
+    email: person.emails?.primaryEmail,
+  };
+};
+```
+
+Esempio di evento "updated":
+
+```ts
+type PersonUpdatedEvent = DatabaseEventPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (event: PersonUpdatedEvent) => {
+  const { before, after, diff, updatedFields } = event.properties;
+
+  return {
+    personId: event.recordId,
+    updatedFields,
+    previousEmail: before.emails?.primaryEmail,
+    currentEmail: after.emails?.primaryEmail,
+    emailDiff: diff.emails,
+  };
+};
+```
+
+Attiva solo sugli aggiornamenti dell'email:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    updatedFields: ['emails'],
+  },
+});
+```
+
+Esempio di evento "destroyed":
+
+```ts
+type PersonDestroyedEvent = DatabaseEventPayload<
+  ObjectRecordDestroyEvent<Person>
+>;
+
+const handler = async (event: PersonDestroyedEvent) => {
+  const personBeforeDestroy = event.properties.before;
+
+  return {
+    personId: event.recordId,
+    email: personBeforeDestroy.emails?.primaryEmail,
+  };
+};
+```
+
+#### Esporre una funzione come strumento di IA o come azione del flusso di lavoro
+
+Le funzioni logiche possono essere esposte su due superfici, ciascuna con il proprio trigger:
+
+* **`toolTriggerSettings`** — rende la funzione individuabile dalle funzionalità di IA di Twenty (chat, MCP, function calling). Usa lo standard JSON Schema, il formato che gli LLM comprendono nativamente.
+* **`workflowActionTriggerSettings`** — fa apparire la funzione come un passaggio nel builder visivo dei flussi di lavoro. Usa il ricco `InputSchema` di Twenty affinché il builder possa visualizzare correttamente editor di campi, selettori di variabili ed etichette.
+
+Una funzione può optare per uno, l'altro o entrambi. Si affiancano a `cronTriggerSettings`, `databaseEventTriggerSettings` e `httpRouteTriggerSettings` — stesso schema, stessa struttura.
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  toolTriggerSettings: {},
+});
+```
+
+Punti chiave:
+
+* Una funzione può combinare le superfici — dichiara sia `toolTriggerSettings` sia `workflowActionTriggerSettings` per esporla in chat E nel builder dei flussi di lavoro.
+* `toolTriggerSettings.inputSchema` e `workflowActionTriggerSettings.inputSchema` sono entrambi opzionali. Se omessi, il builder del manifest li deduce dal codice sorgente dell'handler (JSON Schema per lo strumento di IA, `InputSchema` di Twenty per l'azione del flusso di lavoro). Forniscine uno esplicitamente quando desideri una tipizzazione più ricca — ad esempio, con campi compatibili con `FieldMetadataType` come `CURRENCY` o `RELATION` per il builder dei flussi di lavoro, oppure con campi `description` che l'agente di IA può leggere:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
+      },
+      required: ['companyName'],
+    },
+  },
+});
+```
+
+<Note>
+**Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description` della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e quando dovrebbe essere invocato.
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+**Hook di installazione** — i gestori di pre-installazione e post-installazione — condividono questo runtime, ma sono dichiarati con le proprie funzioni di definizione e non accettano impostazioni dei trigger. Consulta [Hook di installazione](/l/it/developers/extend/apps/config/install-hooks) per `definePreInstallLogicFunction` e `definePostInstallLogicFunction`.
+</Note>
+
+## Client API tipizzati (twenty-client-sdk)
+
+Il pacchetto `twenty-client-sdk` fornisce due client GraphQL tipizzati per interagire con l'API di Twenty dalle tue funzioni logiche e dai componenti front-end.
+
+| Client              | Importa                      | Endpoint                                                                 | Generato?                  |
+| ------------------- | ---------------------------- | ------------------------------------------------------------------------ | -------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — dati dello spazio di lavoro (record, oggetti)               | Sì, in fase di dev/build   |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — configurazione dello spazio di lavoro, caricamenti di file | No, fornito pronto all'uso |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="Esegui query e modifica i dati dello spazio di lavoro (record, oggetti)">
+
+`CoreApiClient` è il client principale per interrogare e modificare i dati dello spazio di lavoro. Viene **generato dallo schema del tuo spazio di lavoro** durante `yarn twenty dev` o `yarn twenty dev:build`, quindi è completamente tipizzato per corrispondere ai tuoi oggetti e campi.
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+Il client utilizza una sintassi a selection-set: passa `true` per includere un campo, usa `__args` per gli argomenti e annida oggetti per le relazioni. Ottieni completamento automatico e controllo dei tipi completi basati sullo schema del tuo spazio di lavoro.
+
+<Note>
+**CoreApiClient viene generato in fase di dev/build.** Se lo usi senza eseguire prima `yarn twenty dev` o `yarn twenty dev:build`, genera un errore. La generazione avviene automaticamente — la CLI esegue l'introspezione dello schema GraphQL del tuo spazio di lavoro e genera un client tipizzato usando `@genql/cli`.
+</Note>
+
+#### Utilizzo di CoreSchema per le annotazioni di tipo
+
+`CoreSchema` fornisce tipi TypeScript corrispondenti agli oggetti del tuo spazio di lavoro — utile per tipizzare lo stato dei componenti o i parametri delle funzioni:
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="Configurazione dello spazio di lavoro, applicazioni e caricamenti di file">
+
+`MetadataApiClient` è fornito pronto all'uso con l'SDK (nessuna generazione richiesta). Interroga l'endpoint `/metadata` per la configurazione dello spazio di lavoro, le applicazioni e i caricamenti di file.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### Caricamento dei file
+
+`MetadataApiClient` include un metodo `uploadFile` per allegare file ai campi di tipo file:
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| Parametro                          | Tipo     | Descrizione                                                            |
+| ---------------------------------- | -------- | ---------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Il contenuto grezzo del file                                           |
+| `filename`                         | `string` | Il nome del file (utilizzato per l'archiviazione e la visualizzazione) |
+| `contentType`                      | `string` | Tipo MIME (predefinito su `application/octet-stream` se omesso)        |
+| `fieldMetadataUniversalIdentifier` | `string` | L'`universalIdentifier` del campo di tipo file nel tuo oggetto         |
+
+Punti chiave:
+* Usa l'`universalIdentifier` del campo (non il suo ID specifico dello spazio di lavoro), quindi il tuo codice di upload funziona in qualsiasi spazio di lavoro in cui la tua app è installata.
+* L'`url` restituito è un URL firmato che puoi usare per accedere al file caricato.
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+  Quando il tuo codice viene eseguito su Twenty (funzioni logiche o componenti front-end), la piattaforma inietta le credenziali come variabili d'ambiente:
+
+  * `TWENTY_API_URL` — URL di base dell'API di Twenty
+  * `TWENTY_APP_ACCESS_TOKEN` — Chiave a breve durata con ambito al ruolo funzione predefinito della tua applicazione
+
+  Non è **necessario** passarle ai client — vengono lette automaticamente da `process.env`. I permessi della chiave API sono determinati dal ruolo dichiarato con `defineApplicationRole()` (o referenziato tramite `defaultRoleUniversalIdentifier` in `application-config.ts`).
+</Note>
