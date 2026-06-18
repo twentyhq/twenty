@@ -139,6 +139,7 @@ export class StripeCheckoutService {
     stripeCustomerId,
     plan = BillingPlanKey.PRO,
     withTrialPeriod,
+    idempotencyKey,
   }: {
     user: AuthContextUser;
     workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
@@ -146,6 +147,7 @@ export class StripeCheckoutService {
     stripeCustomerId?: string;
     plan?: BillingPlanKey;
     withTrialPeriod: boolean;
+    idempotencyKey: string;
   }): Promise<Stripe.Subscription> {
     const customerId = await this.getOrCreateStripeCustomerId({
       user,
@@ -177,8 +179,9 @@ export class StripeCheckoutService {
         automatic_tax: { enabled: false },
         expand: ['pending_setup_intent', 'latest_invoice.confirmation_secret'],
       },
-      // Idempotency key so concurrent submits reuse one subscription, not duplicate it.
-      { idempotencyKey: `onboarding-subscription-${workspace.id}-${plan}` },
+      // Client-generated key per attempt so a double-submit reuses one subscription;
+      // a fresh attempt sends a new key, avoiding Stripe's 24h response caching.
+      { idempotencyKey: `onboarding-subscription-${workspace.id}-${idempotencyKey}` },
     );
   }
 

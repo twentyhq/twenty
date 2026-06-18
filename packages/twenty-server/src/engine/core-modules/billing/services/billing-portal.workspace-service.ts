@@ -133,7 +133,10 @@ export class BillingPortalWorkspaceService {
     workspace,
     billingPricesPerPlan,
     plan,
-  }: BillingPortalCheckoutSessionParameters): Promise<{
+    idempotencyKey,
+  }: BillingPortalCheckoutSessionParameters & {
+    idempotencyKey: string;
+  }): Promise<{
     clientSecret: string;
     paymentIntentType: string;
   }> {
@@ -155,6 +158,7 @@ export class BillingPortalWorkspaceService {
           plan,
           withTrialPeriod:
             !isDefined(customer) || customer.billingSubscriptions.length === 0,
+          idempotencyKey,
         },
       );
 

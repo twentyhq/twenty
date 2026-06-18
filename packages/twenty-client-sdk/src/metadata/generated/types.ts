@@ -7418,6 +7418,10 @@ export default {
                     ],
                     "successUrlPath": [
                         1
+                    ],
+                    "idempotencyKey": [
+                        1,
+                        "String!"
                     ]
                 }
             ],

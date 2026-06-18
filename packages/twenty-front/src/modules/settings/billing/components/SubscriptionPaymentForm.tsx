@@ -55,6 +55,9 @@ const SubscriptionPaymentFormContent = ({
   const { enqueueErrorSnackBar } = useSnackBar();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // New key per mount: dedupes double-submits, but a fresh attempt avoids Stripe's 24h cache.
+  const [idempotencyKey] = useState(() => crypto.randomUUID());
+
   // Prefill the email so Stripe Link can recognize returning customers.
   const customerEmail = useAtomStateValue(currentUserState)?.email;
 
@@ -84,7 +87,7 @@ const SubscriptionPaymentFormContent = ({
       }
 
       const { data } = await createSubscriptionPaymentIntent({
-        variables: { recurringInterval, plan },
+        variables: { recurringInterval, plan, idempotencyKey },
       });
 
       const paymentIntent = data?.createSubscriptionPaymentIntent;
