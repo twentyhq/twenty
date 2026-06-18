@@ -1,5 +1,6 @@
 import {
   workflowActionSchema,
+  WorkflowActionType,
   workflowTriggerSchema,
 } from 'twenty-shared/workflow';
 import { v4 as uuidv4 } from 'uuid';
@@ -134,7 +135,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
       }
 
       const aiAgentSteps = parameters.steps.filter(
-        (step) => step.type === ('AI_AGENT' as string),
+        (step) => step.type === WorkflowActionType.AI_AGENT,
       );
 
       if (aiAgentSteps.length > 0) {
