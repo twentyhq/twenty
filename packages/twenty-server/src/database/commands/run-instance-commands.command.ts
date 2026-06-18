@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
@@ -142,25 +143,40 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     const previousVersion =
       TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 1];
 
-    const lastWorkspaceCommand =
-      this.upgradeCommandRegistryService.getLastWorkspaceCommandForVersion(
+    const previousVersionLastCommand =
+      this.upgradeCommandRegistryService.getLastCommandForVersion(
         previousVersion,
       );
 
-    if (!lastWorkspaceCommand) {
+    if (!previousVersionLastCommand) {
       return;
     }
 
-    const allAtPreviousVersion =
-      await this.upgradeMigrationService.areAllWorkspacesAtCommand({
-        commandName: lastWorkspaceCommand.name,
-        workspaceIds: activeOrSuspendedWorkspaceIds,
-      });
+    const workspaceCursors =
+      await this.upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow(
+        activeOrSuspendedWorkspaceIds,
+      );
 
-    if (!allAtPreviousVersion) {
+    const laggingWorkspaceIds = activeOrSuspendedWorkspaceIds.filter(
+      (workspaceId) => {
+        const cursor = workspaceCursors.get(workspaceId);
+
+        if (!isDefined(cursor)) {
+          return true;
+        }
+
+        return !this.upgradeSequenceReaderService.isCursorAtOrPastStep({
+          cursor: { name: cursor.name, status: cursor.status },
+          requiredStepName: previousVersionLastCommand.name,
+        });
+      },
+    );
+
+    if (laggingWorkspaceIds.length > 0) {
       throw new Error(
-        'Unable to run instance commands. Some workspace(s) have not completed ' +
-          `the last workspace command for ${previousVersion} ("${lastWorkspaceCommand.name}").\n` +
+        'Unable to run instance commands. Some workspace(s) have not reached ' +
+          `the last command for ${previousVersion} ("${previousVersionLastCommand.name}").\n` +
+          `Lagging workspace(s): ${laggingWorkspaceIds.join(', ')}.\n` +
           'Please ensure all workspaces are upgraded to at least the previous version before running migrations.\n' +
           'Use --force to bypass this check (not recommended).',
       );

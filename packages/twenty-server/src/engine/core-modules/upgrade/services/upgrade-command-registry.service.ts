@@ -186,12 +186,20 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     return this.bundlesByVersion.get(version) ?? buildEmptyVersionBundle();
   }
 
-  getLastWorkspaceCommandForVersion(
+  getLastCommandForVersion(
     version: TwentyAllVersion,
-  ): RegisteredWorkspaceCommand | undefined {
+  ):
+    | RegisteredFastInstanceCommand
+    | RegisteredSlowInstanceCommand
+    | RegisteredWorkspaceCommand
+    | undefined {
     const bundle = this.getBundleForVersion(version);
 
-    return bundle.workspaceCommands[bundle.workspaceCommands.length - 1];
+    return (
+      bundle.workspaceCommands[bundle.workspaceCommands.length - 1] ??
+      bundle.slowInstanceCommands[bundle.slowInstanceCommands.length - 1] ??
+      bundle.fastInstanceCommands[bundle.fastInstanceCommands.length - 1]
+    );
   }
 
   getCrossUpgradeSupportedFastInstanceCommands(): RegisteredFastInstanceCommand[] {

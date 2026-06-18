@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, type QueryRunner, Repository } from 'typeorm';
+import { IsNull, type QueryRunner, Repository } from 'typeorm';
 
 import {
   UpgradeMigrationEntity,
@@ -303,37 +303,6 @@ export class UpgradeMigrationService {
     }
 
     return cursors;
-  }
-
-  async areAllWorkspacesAtCommand({
-    commandName,
-    workspaceIds,
-  }: {
-    commandName: string;
-    workspaceIds: string[];
-  }): Promise<boolean> {
-    if (workspaceIds.length === 0) {
-      return true;
-    }
-
-    const completedCount = await this.upgradeMigrationRepository
-      .createQueryBuilder('migration')
-      .where({
-        name: commandName,
-        status: 'completed',
-        workspaceId: In(workspaceIds),
-      })
-      .andWhere(
-        `migration.attempt = (
-          SELECT MAX(sub.attempt)
-          FROM core."upgradeMigration" sub
-          WHERE sub.name = migration.name
-          AND sub."workspaceId" = migration."workspaceId"
-        )`,
-      )
-      .getCount();
-
-    return completedCount === workspaceIds.length;
   }
 
   async getLastAttemptedInstanceCommand(): Promise<{
