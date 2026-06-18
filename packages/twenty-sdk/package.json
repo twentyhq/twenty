@@ -88,6 +88,7 @@
     "semver": "7.6.3",
     "tinyglobby": "^0.2.15",
     "twenty-client-sdk": "workspace:*",
+    "twenty-ui": "workspace:*",
     "typescript": "^5.9.3",
     "uuid": "^13.0.2"
   },
@@ -105,7 +106,6 @@
     "tsc-alias": "^1.8.16",
     "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*",
     "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1",
