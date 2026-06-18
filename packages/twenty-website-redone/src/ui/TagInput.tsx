@@ -157,12 +157,15 @@ function matchingSuggestions(
 // A free-text tag entry with suggestions: type to filter the dropdown menu,
 // Enter/comma adds the draft (or the highlighted match), Backspace on an empty
 // draft removes the last tag, and the remaining suggestions show as quick-add
-// ghost chips. Stays i18n-free — the consumer supplies a localized removeLabel.
+// ghost chips. searchPool entries are autocomplete-only — they widen the menu
+// but are never shown as chips. Stays i18n-free — the consumer supplies a
+// localized removeLabel.
 export function TagInput({
   ariaLabel,
   onValuesChange,
   placeholder,
   removeLabel,
+  searchPool,
   suggestions,
   values,
 }: {
@@ -170,6 +173,7 @@ export function TagInput({
   onValuesChange: (values: string[]) => void;
   placeholder?: string;
   removeLabel: (tag: string) => string;
+  searchPool?: readonly string[];
   suggestions: readonly string[];
   values: readonly string[];
 }) {
@@ -177,7 +181,11 @@ export function TagInput({
   const [activeIndex, setActiveIndex] = useState(-1);
   const listId = useId();
 
-  const menuMatches = matchingSuggestions(suggestions, values, draft);
+  const menuMatches = matchingSuggestions(
+    searchPool === undefined ? suggestions : [...suggestions, ...searchPool],
+    values,
+    draft,
+  );
   const menuOpen = menuMatches.length > 0;
 
   const commit = (raw: string) => {
