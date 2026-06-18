@@ -54927,6 +54927,7 @@ __metadata:
   dependencies:
     "@babel/preset-env": "npm:^7.26.9"
     "@babel/preset-typescript": "npm:^7.24.6"
+    "@dagrejs/dagre": "npm:^1.1.8"
     "@lingui/core": "npm:^5.9.5"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
