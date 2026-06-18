@@ -59,17 +59,17 @@ Avant d'importer des données, préparez votre espace de travail Twenty :
 4. Configurez les paramètres des champs (unique, obligatoire, options de sélection, etc.)
 
 <Warning>
-  **Les champs doivent exister avant l'importation.**
+**Les champs doivent exister avant l'importation.**
 
-  L'import CSV crée des enregistrements, pas des champs. Créez tous les champs personnalisés dans **Paramètres → Modèle de données** avant l'importation.
+L'import CSV crée des enregistrements, pas des champs. Créez tous les champs personnalisés dans **Paramètres → Modèle de données** avant l'importation.
 </Warning>
 
 ### Invitez votre équipe
 
 <Warning>
-  **Invitez les utilisateurs AVANT d'importer des données.**
+**Invitez les utilisateurs AVANT d'importer des données.**
 
-  Si vos données incluent des références à des utilisateurs (propriétaire du compte, assigné, etc.), ces utilisateurs doivent exister dans Twenty avant l'importation. Sinon, ces relations ne pourront pas être mises en correspondance.
+Si vos données incluent des références à des utilisateurs (propriétaire du compte, assigné, etc.), ces utilisateurs doivent exister dans Twenty avant l'importation. Sinon, ces relations ne pourront pas être mises en correspondance.
 </Warning>
 
 1. Allez dans **Paramètres → Membres**
@@ -116,9 +116,9 @@ Ouvrez chaque CSV exporté dans une application de tableur et préparez-le pour 
 | **Champs de sélection** | Utilisez les noms d'API, pas les libellés d'affichage |
 
 <Warning>
-  **Le format du domaine est critique.**
+**Le format du domaine est critique.**
 
-  Utilisez `https://domain.com` (pas `domain.com` ni `www.domain.com`). Cela correspond au format de Twenty et évite les doublons lorsque vous connectez la synchronisation e-mail/calendrier.
+Utilisez `https://domain.com` (pas `domain.com` ni `www.domain.com`). Cela correspond au format de Twenty et évite les doublons lorsque vous connectez la synchronisation e-mail/calendrier.
 </Warning>
 
 Voir [Comment préparer vos fichiers CSV](/l/fr/user-guide/data-migration/how-tos/prepare-your-csv-files) pour connaître les exigences complètes de formatage pour tous les types de champs.
@@ -149,17 +149,16 @@ Voir [Comment préparer vos fichiers CSV](/l/fr/user-guide/data-migration/how-to
 ## Étape 6 : Importez dans Twenty
 
 <Warning>
-  **L'ordre d'importation est important !**
+**L'ordre d'importation est important !**
 
-  Importez toujours dans cet ordre :
+Importez toujours dans cet ordre :
+1. **Entreprises** d'abord (aucune dépendance)
+2. **Personnes** ensuite (liées aux Entreprises)
+3. **Opportunités** en troisième (liées aux Entreprises/Personnes)
+4. **Notes et tâches** (liées aux enregistrements)
+5. **Objets personnalisés** en suivant leurs dépendances
 
-  1. **Entreprises** d'abord (aucune dépendance)
-  2. **Personnes** ensuite (liées aux Entreprises)
-  3. **Opportunités** en troisième (liées aux Entreprises/Personnes)
-  4. **Notes et tâches** (liées aux enregistrements)
-  5. **Objets personnalisés** en suivant leurs dépendances
-
-  L'enregistrement parent doit exister avant que vous puissiez y faire référence.
+L'enregistrement parent doit exister avant que vous puissiez y faire référence.
 </Warning>
 
 ### Importez chaque objet
@@ -215,7 +214,7 @@ Après l'importation des données, terminez la configuration de votre espace de 
 
 ### Configurez les rôles et les autorisations
 
-* Configurez les rôles dans **Paramètres → Rôles**
+* Configurez les rôles dans **Paramètres → Membres → Rôles**
 * Affectez les utilisateurs aux rôles appropriés
 
 ### Connectez les e-mails et le calendrier
