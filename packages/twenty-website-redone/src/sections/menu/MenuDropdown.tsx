@@ -192,8 +192,6 @@ export function MenuDropdown({ items }: MenuDropdownProps) {
       <DropdownList>
         {items.map((child) => {
           const IconComponent = child.icon;
-          // Highlight the link for the current page (and its sub-pages); the
-          // external docs links never carry a current-page state.
           const isCurrentPage =
             child.external !== true &&
             (pathname === child.href || pathname.startsWith(`${child.href}/`));
@@ -236,8 +234,6 @@ export function MenuDropdown({ items }: MenuDropdownProps) {
             <NextImage
               alt={i18n._(activeItem.preview.imageAlt)}
               fill
-              // 2x the 360px frame: imageScale magnifies the raster, so the
-              // fine halftone needs the scaled resolution to stay crisp.
               sizes="720px"
               src={activeItem.preview.image}
               style={{

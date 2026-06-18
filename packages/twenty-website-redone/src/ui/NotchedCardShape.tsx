@@ -7,29 +7,15 @@ import {
   semanticColor,
 } from '@/tokens';
 
-// A card with the sculpted notched top edge — shared by the footer stage card
-// and the testimonials card. The card presents a surface scheme: its fill is
-// that scheme's surface (light → white, dark → black). On a light section a
-// dark card reads as a dark panel whose notch reveals the white surface behind
-// it. The old site stretched one 1360px-wide path with
-// preserveAspectRatio="none", distorting the notch slopes at every other width.
-// Here the slopes keep their authored geometry (fixed-width SVG caps extracted
-// from the original path) and only the flat runs flex, in the original
-// 344 : 518 : 343 proportions.
 const CAP_HEIGHT_PX = 20;
 
 const LEFT_SLOPE_WIDTH_PX = 74;
 const RIGHT_SLOPE_WIDTH_PX = 73;
 
-// The cap's flexible width splits between the flat runs and the central notch
-// in these proportions.
 const LEFT_FLAT_GROW = 344;
 const NOTCH_GROW = 518;
 const RIGHT_FLAT_GROW = 343;
 
-// The notch reaches its authored width at the content cap and grows no further:
-// past that — a full-bleed card — the flat runs absorb the extra, so the white
-// spans the full section while the notch stays fixed and centred.
 const NOTCH_MAX_WIDTH_PX = Math.round(
   (NOTCH_GROW / (LEFT_FLAT_GROW + NOTCH_GROW + RIGHT_FLAT_GROW)) *
     (MAX_CONTENT_WIDTH_PX - LEFT_SLOPE_WIDTH_PX - RIGHT_SLOPE_WIDTH_PX),
@@ -83,14 +69,9 @@ const BodyFill = styled.div`
   left: 0;
   position: absolute;
   right: 0;
-  /* 1px overlap with the cap row prevents subpixel seams. */
   top: ${CAP_HEIGHT_PX - 1}px;
 `;
 
-// The card carries its own surface scheme so its fill is independent of the
-// host section's scheme — a white card on a muted section, a black card on a
-// light one. The shape draws no text, so it adopts only the scheme variables
-// (it reads `surface`); the ink colour belongs to its content, not the shape.
 const ShapeLayer = styled.div`
   inset: 0;
   pointer-events: none;
