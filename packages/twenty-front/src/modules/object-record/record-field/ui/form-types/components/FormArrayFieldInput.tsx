@@ -27,7 +27,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MenuItem } from 'twenty-ui/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';

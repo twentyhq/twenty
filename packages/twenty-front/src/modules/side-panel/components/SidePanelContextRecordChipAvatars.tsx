@@ -4,7 +4,7 @@ import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { Avatar } from 'twenty-ui/display';
+import { Avatar } from 'twenty-ui/data-display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
   align-items: center;

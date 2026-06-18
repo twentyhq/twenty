@@ -10,11 +10,8 @@ import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatePresence } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type IconComponent,
-  IconX,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { type IconComponent, IconX } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { LightIconButton } from 'twenty-ui/input';
 import {
   MOBILE_VIEWPORT,

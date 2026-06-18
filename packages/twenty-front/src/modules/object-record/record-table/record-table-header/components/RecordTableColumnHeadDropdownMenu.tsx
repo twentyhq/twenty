@@ -22,7 +22,7 @@ import {
   IconEyeOff,
   IconFilter,
   IconSortDescending,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
 export type RecordTableColumnHeadDropdownMenuProps = {

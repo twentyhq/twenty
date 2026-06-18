@@ -16,7 +16,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconKey } from 'twenty-ui/display';
+import { IconKey } from 'twenty-ui/icon';
 import { GetSsoIdentityProvidersDocument } from '~/generated-metadata/graphql';
 
 const StyledLinkContainer = styled.div<{ isDisabled: boolean }>`

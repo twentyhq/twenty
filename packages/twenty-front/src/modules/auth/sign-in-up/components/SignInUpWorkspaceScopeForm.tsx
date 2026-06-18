@@ -12,7 +12,7 @@ import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceA
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { HorizontalSeparator } from 'twenty-ui/display';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

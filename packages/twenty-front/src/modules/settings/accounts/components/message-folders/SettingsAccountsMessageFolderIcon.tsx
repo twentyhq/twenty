@@ -4,7 +4,7 @@ import {
   IconFolderRoot,
   IconInbox,
   IconSend,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 type SettingsAccountsMessageFolderIconProps = {

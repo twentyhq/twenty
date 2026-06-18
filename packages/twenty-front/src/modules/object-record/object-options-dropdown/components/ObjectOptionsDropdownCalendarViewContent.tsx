@@ -13,13 +13,13 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { t } from '@lingui/core/macro';
-import { Pill } from 'twenty-ui/components';
+import { Pill } from 'twenty-ui/data-display';
 import {
   IconCalendarMonth,
   IconCalendarWeek,
   IconChevronLeft,
   IconTimelineEvent,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 

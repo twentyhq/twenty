@@ -14,7 +14,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ViewKey } from '@/views/types/ViewKey';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 
 export const SidePanelNewSidebarItemObjectSystemPickerSubPage = () => {
   const { t } = useLingui();

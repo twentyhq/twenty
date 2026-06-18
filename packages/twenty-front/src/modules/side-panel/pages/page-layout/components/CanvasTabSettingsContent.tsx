@@ -13,14 +13,14 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AppTooltip,
   IconChevronLeft,
   IconChevronRight,
   IconEyeX,
   IconPinned,
   IconRefreshDot,
   IconTrash,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { AppTooltip } from 'twenty-ui/surfaces';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID = 'reset-canvas-tab-to-default-modal';
 const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =

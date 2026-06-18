@@ -1,5 +1,5 @@
 import { VisibilityHidden } from '@ui/accessibility';
-import { IconChevronDown } from '@ui/display';
+import { IconChevronDown } from '@ui/icon';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { clsx } from 'clsx';

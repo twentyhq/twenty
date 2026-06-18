@@ -18,7 +18,7 @@ import {
   IconHttpPost,
   IconHttpPut,
   type IconComponent,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Toggle } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';

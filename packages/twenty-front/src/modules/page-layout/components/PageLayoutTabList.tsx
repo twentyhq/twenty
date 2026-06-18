@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconPlus, useIcons } from 'twenty-ui/display';
+import { IconPlus, useIcons } from 'twenty-ui/icon';
 import { TabButton } from 'twenty-ui/input';
 
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';

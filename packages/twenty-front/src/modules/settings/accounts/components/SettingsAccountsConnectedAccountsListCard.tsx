@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { useLingui } from '@lingui/react/macro';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

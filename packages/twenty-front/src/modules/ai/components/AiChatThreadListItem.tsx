@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconArchive, IconSparkles } from 'twenty-ui/display';
+import { IconArchive, IconSparkles } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
