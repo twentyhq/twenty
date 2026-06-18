@@ -1,20 +1,25 @@
 import { styled } from '@linaria/react';
 
-import { buildSchemeDeclarations, type Scheme, semanticColor } from '@/tokens';
+import {
+  buildSchemeDeclarations,
+  MAX_CONTENT_WIDTH_PX,
+  type Scheme,
+  semanticColor,
+} from '@/tokens';
 
-// A card with the sculpted notched top edge — shared by the footer stage card
-// and the testimonials card. The card presents a surface scheme: its fill is
-// that scheme's surface (light → white, dark → black). On a light section a
-// dark card reads as a dark panel whose notch reveals the white surface behind
-// it. The old site stretched one 1360px-wide path with
-// preserveAspectRatio="none", distorting the notch slopes at every other width.
-// Here the slopes keep their authored geometry (fixed-width SVG caps extracted
-// from the original path) and only the flat runs flex, in the original
-// 344 : 518 : 343 proportions.
 const CAP_HEIGHT_PX = 20;
 
 const LEFT_SLOPE_WIDTH_PX = 74;
 const RIGHT_SLOPE_WIDTH_PX = 73;
+
+const LEFT_FLAT_GROW = 344;
+const NOTCH_GROW = 518;
+const RIGHT_FLAT_GROW = 343;
+
+const NOTCH_MAX_WIDTH_PX = Math.round(
+  (NOTCH_GROW / (LEFT_FLAT_GROW + NOTCH_GROW + RIGHT_FLAT_GROW)) *
+    (MAX_CONTENT_WIDTH_PX - LEFT_SLOPE_WIDTH_PX - RIGHT_SLOPE_WIDTH_PX),
+);
 
 const LEFT_SLOPE_PATH =
   'M0 0 C4.197 0 8.369 0.66 12.361 1.958 L61.861 18.042 A40 40 0 0 0 74.222 20 L0 20 Z';
@@ -43,17 +48,18 @@ const FlatRun = styled.div`
   min-width: 0;
 
   &[data-edge='left'] {
-    flex-grow: 344;
+    flex-grow: ${LEFT_FLAT_GROW};
   }
 
   &[data-edge='right'] {
-    flex-grow: 343;
+    flex-grow: ${RIGHT_FLAT_GROW};
   }
 `;
 
 const Plateau = styled.div`
   flex-basis: 0;
-  flex-grow: 518;
+  flex-grow: ${NOTCH_GROW};
+  max-width: ${NOTCH_MAX_WIDTH_PX}px;
   min-width: 0;
 `;
 
@@ -63,14 +69,9 @@ const BodyFill = styled.div`
   left: 0;
   position: absolute;
   right: 0;
-  /* 1px overlap with the cap row prevents subpixel seams. */
   top: ${CAP_HEIGHT_PX - 1}px;
 `;
 
-// The card carries its own surface scheme so its fill is independent of the
-// host section's scheme — a white card on a muted section, a black card on a
-// light one. The shape draws no text, so it adopts only the scheme variables
-// (it reads `surface`); the ink colour belongs to its content, not the shape.
 const ShapeLayer = styled.div`
   inset: 0;
   pointer-events: none;

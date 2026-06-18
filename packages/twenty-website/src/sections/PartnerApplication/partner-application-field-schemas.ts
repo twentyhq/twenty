@@ -25,20 +25,36 @@ export const httpUrlFieldSchema = z
   .min(1)
   .pipe(z.httpUrl({ error: 'Invalid URL.' }));
 
+// Currency fields live in wizard state as strings, and the Form.Currency input
+// allows digits plus a single decimal separator — so a lone "." (or "") can
+// reach the reducer. Reject any non-empty value that doesn't represent a
+// finite, non-negative number, so the wizard fails fast on the commercials step
+// instead of submitting parseFloat(".") === NaN to the server.
+export const nonNegativeAmountStringSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .refine(
+    (value) => {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) && parsed >= 0;
+    },
+    { error: 'Enter a valid non-negative amount.' },
+  );
+
 const optionalNonEmptyString = z.string().trim().min(1).optional();
 const optionalUrl = httpUrlFieldSchema.optional();
-const optionalNonNegativeNumber = z.number().nonnegative().optional();
 
 export const partnerApplicationRequestSchema = z.strictObject({
   // Identity
   name: z.string().trim().min(1, { error: 'Name is required.' }),
   email: emailFieldSchema,
   company: z.string().trim().min(1, { error: 'Company is required.' }),
-  website: optionalUrl,
+  website: httpUrlFieldSchema,
 
   // Profile
   linkedin: optionalUrl,
-  city: optionalNonEmptyString,
+  city: z.string().trim().min(1, { error: 'City is required.' }),
   country: z.enum(PARTNER_COUNTRY_VALUES).optional(),
   languages: z.array(z.enum(PARTNER_LANGUAGE_VALUES)).optional(),
 
@@ -49,8 +65,10 @@ export const partnerApplicationRequestSchema = z.strictObject({
   applicationNotes: optionalNonEmptyString,
 
   // Commercials
-  hourlyRate: optionalNonNegativeNumber,
-  projectBudgetMin: optionalNonNegativeNumber,
+  hourlyRate: z.number({ error: 'Hourly rate is required.' }).nonnegative(),
+  projectBudgetMin: z
+    .number({ error: 'Minimum project budget is required.' })
+    .nonnegative(),
   calendarLink: optionalUrl,
 });
 

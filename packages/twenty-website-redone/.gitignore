@@ -9,3 +9,9 @@ yarn-error.log*
 .env*
 *.tsbuildinfo
 next-env.d.ts
+
+# OpenNext / Cloudflare Workers
+.open-next/
+.wrangler/
+.dev.vars
+cloudflare-env.d.ts

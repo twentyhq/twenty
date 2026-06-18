@@ -115,11 +115,14 @@ export class WorkspaceResolver {
   @Mutation(() => WorkspaceEntity)
   @UseGuards(UserAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
   async activateWorkspace(
-    @Args('data') data: ActivateWorkspaceInput,
+    // Deprecated: the workspace name is set at creation. This argument is kept
+    // for backward compatibility (removing it would be a breaking schema change)
+    // but is ignored.
+    @Args('data') _data: ActivateWorkspaceInput,
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    return await this.workspaceService.activateWorkspace(user, workspace, data);
+    return await this.workspaceService.activateWorkspace(user, workspace);
   }
 
   @Mutation(() => WorkspaceEntity)

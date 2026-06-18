@@ -136,6 +136,7 @@ type FormTagInputProps = {
   placeholder?: string;
   ariaLabel?: string;
   suggestions?: ReadonlyArray<string>;
+  searchPool?: ReadonlyArray<string>;
 };
 
 export function FormTagInput({
@@ -144,14 +145,20 @@ export function FormTagInput({
   placeholder,
   ariaLabel,
   suggestions,
+  searchPool,
 }: FormTagInputProps) {
   const [draft, setDraft] = useState('');
   const [activeIndex, setActiveIndex] = useState(-1);
   const listId = useId();
 
-  const menuMatches =
+  const searchableSuggestions =
     suggestions !== undefined
-      ? filterSkillSuggestions(suggestions, values, draft)
+      ? [...suggestions, ...(searchPool ?? [])]
+      : undefined;
+
+  const menuMatches =
+    searchableSuggestions !== undefined
+      ? filterSkillSuggestions(searchableSuggestions, values, draft)
       : [];
   const menuOpen = menuMatches.length > 0;
 

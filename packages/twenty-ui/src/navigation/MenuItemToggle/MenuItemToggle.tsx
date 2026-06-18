@@ -57,6 +57,7 @@ export const MenuItemToggle = ({
             onChange={disabled ? undefined : onToggleChange}
             toggleSize={toggleSize}
             disabled={disabled}
+            aria-label={text}
           />
         </StyledMenuItemRightContent>
       </div>

@@ -54927,6 +54927,7 @@ __metadata:
   dependencies:
     "@babel/preset-env": "npm:^7.26.9"
     "@babel/preset-typescript": "npm:^7.24.6"
+    "@dagrejs/dagre": "npm:^1.1.8"
     "@lingui/core": "npm:^5.9.5"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
@@ -55054,6 +55055,7 @@ __metadata:
     "@lingui/react": "npm:^5.1.2"
     "@lingui/swc-plugin": "npm:^5.11.0"
     "@lottiefiles/dotlottie-react": "npm:^0.18.10"
+    "@opennextjs/cloudflare": "npm:^1.0.0"
     "@tabler/icons-react": "npm:^3.41.1"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
@@ -55070,6 +55072,7 @@ __metadata:
     three: "npm:^0.184.0"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
+    wrangler: "npm:^4.0.0"
     zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -55095,6 +55098,9 @@ __metadata:
     "@swc/core": "npm:^1.15.11"
     "@swc/jest": "npm:^0.2.39"
     "@tabler/icons-react": "npm:^3.41.1"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@testing-library/user-event": "npm:^14.6.1"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19.2.0"
@@ -55106,6 +55112,7 @@ __metadata:
     framer-motion: "npm:^11.18.0"
     gray-matter: "npm:^4.0.3"
     jest: "npm:29.7.0"
+    jest-environment-jsdom: "npm:30.0.0-beta.3"
     jest-environment-node: "npm:^29.4.1"
     next: "npm:^16.2.6"
     next-with-linaria: "npm:^1.3.0"

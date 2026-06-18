@@ -1,4 +1,5 @@
 import path from 'path';
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 import withLinaria, { type LinariaConfig } from 'next-with-linaria';
 
 import { localeToUrlSegment } from './src/platform/i18n/locale-to-url-segment';
@@ -48,3 +49,7 @@ const nextConfig: LinariaConfig = {
 };
 
 export default withLinaria(nextConfig);
+
+// Binds the Cloudflare dev context (R2 incremental cache, env vars) into
+// `next dev` so local runs mirror the deployed OpenNext worker.
+initOpenNextCloudflareForDev();

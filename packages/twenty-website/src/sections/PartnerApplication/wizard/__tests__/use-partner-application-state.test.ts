@@ -8,6 +8,7 @@ const baseValidIdentity: Partial<PartnerApplicationState> = {
   name: 'Ada Lovelace',
   email: 'ada@example.com',
   company: 'Analytical Engines Ltd',
+  website: 'https://analyticalengines.example',
 };
 
 describe('partnerApplicationReducer', () => {
@@ -53,6 +54,7 @@ describe('partnerApplicationReducer', () => {
       'company',
       'email',
       'name',
+      'website',
     ]);
   });
 
@@ -126,7 +128,7 @@ describe('partnerApplicationReducer', () => {
     );
   });
 
-  it('GO_NEXT on Profile requires country and typeOfTeam', () => {
+  it('GO_NEXT on Profile requires country, typeOfTeam, and city', () => {
     const onProfile: PartnerApplicationState = {
       ...INITIAL_PARTNER_APPLICATION_STATE,
       stepIndex: 1,
@@ -135,9 +137,10 @@ describe('partnerApplicationReducer', () => {
     const blocked = partnerApplicationReducer(onProfile, { type: 'GO_NEXT' });
     expect(blocked.stepIndex).toBe(1);
     expect(blocked.fieldErrors.typeOfTeam).toBe('required');
+    expect(blocked.fieldErrors.city).toBe('required');
 
     const ok = partnerApplicationReducer(
-      { ...onProfile, typeOfTeam: 'SOLO' },
+      { ...onProfile, typeOfTeam: 'SOLO', city: 'Paris' },
       { type: 'GO_NEXT' },
     );
     expect(ok.stepIndex).toBe(2);
@@ -151,5 +154,54 @@ describe('partnerApplicationReducer', () => {
       value: 'Workspace: https://x · refs: Acme',
     });
     expect(next.applicationNotes).toBe('Workspace: https://x · refs: Acme');
+  });
+
+  it('SET_FIELD_ERRORS replaces fieldErrors', () => {
+    const next = partnerApplicationReducer(INITIAL_PARTNER_APPLICATION_STATE, {
+      type: 'SET_FIELD_ERRORS',
+      errors: { hourlyRate: 'required', projectBudgetMin: 'required' },
+    });
+    expect(next.fieldErrors).toEqual({
+      hourlyRate: 'required',
+      projectBudgetMin: 'required',
+    });
+  });
+
+  it('flags Commercials required fields (hourlyRate, projectBudgetMin) when empty', () => {
+    const onCommercials: PartnerApplicationState = {
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      stepIndex: 3,
+    };
+    const blocked = partnerApplicationReducer(onCommercials, {
+      type: 'GO_NEXT',
+    });
+    expect(blocked.fieldErrors.hourlyRate).toBe('required');
+    expect(blocked.fieldErrors.projectBudgetMin).toBe('required');
+  });
+
+  it('flags Commercials amounts that are non-empty but unparseable (e.g. ".")', () => {
+    const onCommercials: PartnerApplicationState = {
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      stepIndex: 3,
+      hourlyRate: '.',
+      projectBudgetMin: '5000',
+    };
+    const blocked = partnerApplicationReducer(onCommercials, {
+      type: 'GO_NEXT',
+    });
+    expect(blocked.stepIndex).toBe(3);
+    expect(blocked.fieldErrors.hourlyRate).toBe('invalid_amount');
+    expect(blocked.fieldErrors.projectBudgetMin).toBeUndefined();
+  });
+
+  it('accepts valid Commercials amounts', () => {
+    const onCommercials: PartnerApplicationState = {
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      stepIndex: 3,
+      hourlyRate: '120',
+      projectBudgetMin: '5000',
+    };
+    const next = partnerApplicationReducer(onCommercials, { type: 'GO_NEXT' });
+    expect(next.fieldErrors).toEqual({});
   });
 });

@@ -13,9 +13,6 @@ import {
 
 import { Container } from './Container';
 
-// The only place a <section> exists. Every section gets its vertical rhythm
-// from a named token class and resolves its semantic colors from its scheme —
-// no per-section padding, no background props.
 const sectionShellClassName = css`
   background-color: ${semanticColor.surface};
   min-width: 0;
@@ -70,14 +67,6 @@ const sectionShellClassName = css`
     ${buildSchemeContext('dark')}
   }
 
-  /* Same-scheme neighbours share one surface, so the follower trims its top
-     to a single small step rather than stacking a second full rhythm band of
-     the same colour. The upper section keeps its full bottom rhythm; the
-     follower's 6px (not 0) leaves room for frame decorations that overflow its
-     top edge — TrustedBy's corner markers. Flush scenes own their own edges
-     and opt out, as does a section with keepsTopRhythm — one whose own top
-     padding is load-bearing (an editorial's top-anchored crosshair needs the
-     room below it). */
   &[data-scheme='light']:not([data-rhythm='flush'])
     + &[data-scheme='light']:not([data-keep-top-rhythm]),
   &[data-scheme='muted']:not([data-rhythm='flush'])
@@ -87,13 +76,6 @@ const sectionShellClassName = css`
     padding-top: ${spacing(1.5)};
   }
 
-  /* A section can declare that it connects up into the section above it — a
-     single continuous decorative frame across the seam (the partners promo
-     hanging off the TrustedBy band). The upper section drops its bottom rhythm
-     so its border meets the seam exactly, and shows overflow so its bottom
-     corner markers sit on that line instead of being clipped; z-index keeps
-     those markers above the section below. Same-scheme by intent — the
-     connecting section is responsible for sharing the surface. */
   &:has(+ &[data-connect-up]) {
     overflow: visible;
     padding-bottom: 0;
@@ -109,6 +91,10 @@ const backgroundLayerClassName = css`
   pointer-events: none;
   position: absolute;
   z-index: 0;
+
+  &[data-full-bleed] {
+    max-width: none;
+  }
 `;
 
 const contentLayerClassName = css`
@@ -118,19 +104,11 @@ const contentLayerClassName = css`
 
 export type SectionShellProps = {
   ariaLabel?: string;
-  // Decorative layer behind the content (gradients, visuals), capped at the
-  // content width — only the section's solid colour bleeds full-width.
   background?: ReactNode;
   children: ReactNode;
-  // Forms one continuous frame with the section directly above (same scheme):
-  // that section yields its bottom rhythm so the two tuck together.
   connectsUp?: boolean;
-  // Removes the Container's horizontal gutter (the max-width cap and centring
-  // stay) — for content that runs edge-to-edge within the content column,
-  // like the marquee. Most sections keep the gutter.
   flushInline?: boolean;
-  // Keeps its own full top rhythm instead of collapsing under a same-scheme
-  // predecessor — for sections whose top padding is load-bearing.
+  fullBleedBackground?: boolean;
   keepsTopRhythm?: boolean;
   rhythm?: 'section' | 'hero' | 'spacious' | 'flush';
   scheme?: Scheme;
@@ -142,6 +120,7 @@ export function SectionShell({
   children,
   connectsUp = false,
   flushInline = false,
+  fullBleedBackground = false,
   keepsTopRhythm = false,
   rhythm = 'section',
   scheme = 'light',
@@ -160,6 +139,7 @@ export function SectionShell({
           aria-hidden
           className={backgroundLayerClassName}
           data-background-layer=""
+          data-full-bleed={fullBleedBackground ? '' : undefined}
         >
           {background}
         </div>

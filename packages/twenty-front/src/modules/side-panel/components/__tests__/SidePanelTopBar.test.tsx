@@ -36,8 +36,10 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   }),
 }));
 
+let mockIsMobile = false;
+
 jest.mock('twenty-ui/utilities', () => ({
-  useIsMobile: () => true,
+  useIsMobile: () => mockIsMobile,
 }));
 
 const recordIndexFocusItem = {
@@ -52,27 +54,36 @@ const recordIndexFocusItem = {
   },
 };
 
-const createSidePanelTopBarStore = () => {
-  const store = createStore();
-
-  store.set(isSidePanelOpenedState.atom, true);
-  store.set(sidePanelPageState.atom, SidePanelPages.CommandMenuDisplay);
-  store.set(sidePanelNavigationStackState.atom, [
+const createSidePanelTopBarStore = ({
+  sidePanelPage = SidePanelPages.CommandMenuDisplay,
+  sidePanelNavigationStack = [
     {
       page: SidePanelPages.CommandMenuDisplay,
       pageTitle: 'Command Menu',
       pageIcon: IconDotsVertical,
       pageId: 'command-menu',
     },
-  ]);
+  ],
+}: {
+  sidePanelPage?: SidePanelPages;
+  sidePanelNavigationStack?: Array<{
+    page: SidePanelPages;
+    pageTitle: string;
+    pageIcon: typeof IconDotsVertical;
+    pageId: string;
+  }>;
+} = {}) => {
+  const store = createStore();
+
+  store.set(isSidePanelOpenedState.atom, true);
+  store.set(sidePanelPageState.atom, sidePanelPage);
+  store.set(sidePanelNavigationStackState.atom, sidePanelNavigationStack);
   store.set(focusStackState.atom, [recordIndexFocusItem]);
 
   return store;
 };
 
-const renderSidePanelCommandMenu = () => {
-  const store = createSidePanelTopBarStore();
-
+const renderSidePanelCommandMenu = (store = createSidePanelTopBarStore()) => {
   render(
     <I18nProvider i18n={i18n}>
       <JotaiProvider store={store}>
@@ -93,6 +104,10 @@ const renderSidePanelCommandMenu = () => {
 };
 
 describe('SidePanelTopBar', () => {
+  beforeEach(() => {
+    mockIsMobile = false;
+  });
+
   it('keeps the command menu search input focused while arrowing through items', async () => {
     const { store } = renderSidePanelCommandMenu();
 
@@ -133,5 +148,92 @@ describe('SidePanelTopBar', () => {
         componentInstanceId: SIDE_PANEL_FOCUS_ID,
       },
     });
+  });
+
+  it('shows only the close button on the root command menu', () => {
+    renderSidePanelCommandMenu();
+
+    expect(
+      screen.getByRole('button', { name: 'Close side panel' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Back' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('does not show the close button on mobile', () => {
+    mockIsMobile = true;
+
+    renderSidePanelCommandMenu();
+
+    expect(
+      screen.queryByRole('button', { name: 'Close side panel' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('renders the close button after the command menu content', () => {
+    renderSidePanelCommandMenu();
+
+    const input = screen.getByTestId(SIDE_PANEL_FOCUS_ID);
+    const closeButton = screen.getByRole('button', {
+      name: 'Close side panel',
+    });
+
+    expect(
+      Boolean(
+        input.compareDocumentPosition(closeButton) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      ),
+    ).toBe(true);
+  });
+
+  it('shows both back and close buttons for command menu subpages', () => {
+    renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({
+        sidePanelPage: SidePanelPages.SearchRecords,
+        sidePanelNavigationStack: [
+          {
+            page: SidePanelPages.CommandMenuDisplay,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
+            pageId: 'command-menu',
+          },
+          {
+            page: SidePanelPages.SearchRecords,
+            pageTitle: 'Search',
+            pageIcon: IconDotsVertical,
+            pageId: 'search-records',
+          },
+        ],
+      }),
+    );
+
+    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Close side panel' }),
+    ).toBeInTheDocument();
+  });
+
+  it('shows only the close button when a page was opened directly', () => {
+    renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({
+        sidePanelPage: SidePanelPages.ViewRecord,
+        sidePanelNavigationStack: [
+          {
+            page: SidePanelPages.ViewRecord,
+            pageTitle: 'Company',
+            pageIcon: IconDotsVertical,
+            pageId: 'view-record',
+          },
+        ],
+      }),
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Close side panel' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Back' }),
+    ).not.toBeInTheDocument();
   });
 });

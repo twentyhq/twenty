@@ -6,6 +6,7 @@ import { type ModalSize } from '@ui/surfaces/Modal/types/ModalSize';
 
 export type ModalProps = React.PropsWithChildren & {
   isOpen: boolean;
+  ariaLabel?: string;
   size?: ModalSize;
   padding?: ModalPadding;
   overlay?: ModalOverlay;

@@ -24,7 +24,7 @@ describe('isValidReturnToPath', () => {
   });
 
   it('should return false for onboarding paths', () => {
-    expect(isValidReturnToPath('/create/workspace')).toBe(false);
+    expect(isValidReturnToPath('/workspace-activation')).toBe(false);
     expect(isValidReturnToPath('/create/profile')).toBe(false);
   });
 
