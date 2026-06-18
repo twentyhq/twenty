@@ -10,8 +10,7 @@ import {
   useElements,
   useStripe,
 } from '@stripe/react-stripe-js';
-import { type StripeElementsOptions } from '@stripe/stripe-js';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
@@ -156,17 +155,15 @@ export const SubscriptionPaymentForm = ({
   const stripePromise = useStripePromise();
   const appearance = useStripeAppearance();
 
-  const options = useMemo<StripeElementsOptions>(
-    () => ({ mode: 'subscription', amount, currency: 'usd', appearance }),
-    [amount, appearance],
-  );
-
   if (!isDefined(stripePromise)) {
     return null;
   }
 
   return (
-    <Elements stripe={stripePromise} options={options}>
+    <Elements
+      stripe={stripePromise}
+      options={{ mode: 'subscription', amount, currency: 'usd', appearance }}
+    >
       <SubscriptionPaymentFormContent
         plan={plan}
         recurringInterval={recurringInterval}
