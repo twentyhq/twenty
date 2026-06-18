@@ -17,6 +17,7 @@ import {
   ENTERPRISE_JWT_PUBLIC_KEY,
 } from 'src/engine/core-modules/enterprise/constants/enterprise-public-key.constant';
 import {
+  type EnterpriseInstanceMetadata,
   type EnterpriseKeyPayload,
   type EnterpriseLicenseInfo,
   type EnterpriseValidityPayload,
@@ -27,6 +28,9 @@ import {
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class EnterprisePlanService implements OnModuleInit {
@@ -38,6 +42,12 @@ export class EnterprisePlanService implements OnModuleInit {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async onModuleInit() {
@@ -215,10 +225,12 @@ export class EnterprisePlanService implements OnModuleInit {
     const validateUrl = `${apiUrl}/validate`;
 
     try {
+      const instanceMetadata = await this.gatherInstanceMetadata();
+
       const response = await fetch(validateUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enterpriseKey }),
+        body: JSON.stringify({ enterpriseKey, instanceMetadata }),
       });
 
       if (!response.ok) {
@@ -269,10 +281,12 @@ export class EnterprisePlanService implements OnModuleInit {
     const seatsUrl = `${apiUrl}/seats`;
 
     try {
+      const instanceMetadata = await this.gatherInstanceMetadata();
+
       const response = await fetch(seatsUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enterpriseKey, seatCount }),
+        body: JSON.stringify({ enterpriseKey, seatCount, instanceMetadata }),
       });
 
       if (!response.ok) {
@@ -437,6 +451,76 @@ export class EnterprisePlanService implements OnModuleInit {
         `Enterprise checkout request failed: ${error instanceof Error ? error.message : 'Network error'}`,
       );
 
+      return null;
+    }
+  }
+
+  // Best-effort diagnostic metadata for the license validation channel. Every
+  // lookup is isolated so a failure degrades to null and never prevents a
+  // license refresh or seat report. Only sent when an ENTERPRISE_KEY is present.
+  private async gatherInstanceMetadata(): Promise<EnterpriseInstanceMetadata> {
+    const metadata: EnterpriseInstanceMetadata = {
+      serverId: null,
+      serverUrl: null,
+      appVersion: null,
+      nodeEnv: null,
+      telemetryEnabled: null,
+      workspaceCount: null,
+      activeUserWorkspaceCount: null,
+      distinctUserCount: null,
+      adminContactEmail: null,
+      sentAt: new Date().toISOString(),
+    };
+
+    try {
+      metadata.serverId = this.twentyConfigService.get('SERVER_ID') ?? null;
+      metadata.serverUrl = this.twentyConfigService.get('SERVER_URL') ?? null;
+      metadata.appVersion = this.twentyConfigService.get('APP_VERSION') ?? null;
+      metadata.nodeEnv = this.twentyConfigService.get('NODE_ENV') ?? null;
+      metadata.telemetryEnabled =
+        this.twentyConfigService.get('TELEMETRY_ENABLED') ?? null;
+    } catch {
+      // keep nulls on config read failure
+    }
+
+    metadata.workspaceCount = await this.safeCount(() =>
+      this.workspaceRepository.count(),
+    );
+    metadata.activeUserWorkspaceCount = await this.safeCount(() =>
+      this.userWorkspaceRepository.count({ where: { deletedAt: IsNull() } }),
+    );
+    metadata.distinctUserCount = await this.safeCount(() =>
+      this.userRepository.count({ where: { deletedAt: IsNull() } }),
+    );
+    metadata.adminContactEmail = await this.getAdminContactEmail();
+
+    return metadata;
+  }
+
+  private async safeCount(
+    countFn: () => Promise<number>,
+  ): Promise<number | null> {
+    try {
+      return await countFn();
+    } catch {
+      return null;
+    }
+  }
+
+  // Single administrative contact (the oldest active user, i.e. the operator who
+  // set the instance up) for license administration. Spoofable, so it is not an
+  // abuse signal; the authoritative licensee contact is the checkout/billing
+  // email keyed by subscription.
+  private async getAdminContactEmail(): Promise<string | null> {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { deletedAt: IsNull() },
+        order: { createdAt: 'ASC' },
+        select: { email: true },
+      });
+
+      return user?.email ?? null;
+    } catch {
       return null;
     }
   }
