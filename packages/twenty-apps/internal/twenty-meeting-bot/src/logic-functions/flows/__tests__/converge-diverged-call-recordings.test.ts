@@ -82,7 +82,10 @@ const buildStuckRecordingNode = (
   audio: null,
   video: null,
   createdAt: '2026-06-09T12:00:00.000Z',
-  calendarEvent: { endsAt: '2026-06-09T13:00:00.000Z' },
+  calendarEvent: {
+    startsAt: '2026-06-09T12:00:00.000Z',
+    endsAt: '2026-06-09T13:00:00.000Z',
+  },
   ...overrides,
 });
 
@@ -168,6 +171,7 @@ describe('convergeDivergedCallRecordings', () => {
       updatedCallRecordingIds: ['call-recording-1'],
       markedFailedCallRecordingIds: [],
       unconvergeableCallRecordingIds: [],
+      skippedNotStartedCallRecordingIds: [],
     });
   });
 
@@ -230,13 +234,17 @@ describe('convergeDivergedCallRecordings', () => {
       updatedCallRecordingIds: ['call-recording-1'],
       markedFailedCallRecordingIds: [],
       unconvergeableCallRecordingIds: [],
+      skippedNotStartedCallRecordingIds: [],
     });
   });
 
-  it('skips records whose meeting may still be live', async () => {
+  it('skips records whose meeting has not started yet', async () => {
     const client = buildClient([
       buildStuckRecordingNode({
-        calendarEvent: { endsAt: '2026-06-10T11:50:00.000Z' },
+        calendarEvent: {
+          startsAt: '2026-06-10T12:30:00.000Z',
+          endsAt: '2026-06-10T13:30:00.000Z',
+        },
       }),
     ]);
 
@@ -247,7 +255,46 @@ describe('convergeDivergedCallRecordings', () => {
 
     expect(getRecallBotMock).not.toHaveBeenCalled();
     expect(client.mutations).toEqual([]);
-    expect(result.candidateCount).toBe(1);
+    expect(result.skippedNotStartedCallRecordingIds).toEqual([
+      'call-recording-1',
+    ]);
+  });
+
+  it('converges a meeting that ended early while its scheduled end is still in the future', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        status_changes: [
+          { code: 'done', created_at: '2026-06-10T11:30:00.000Z' },
+        ],
+        recordings: [
+          {
+            id: 'recall-recording-1',
+            started_at: '2026-06-10T11:05:00.000Z',
+            completed_at: '2026-06-10T11:25:00.000Z',
+          },
+        ],
+      },
+    });
+    const client = buildClient([
+      buildStuckRecordingNode({
+        calendarEvent: {
+          startsAt: '2026-06-10T11:00:00.000Z',
+          endsAt: '2026-06-10T13:00:00.000Z',
+        },
+      }),
+    ]);
+
+    const result = await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(getRecallBotMock).toHaveBeenCalledWith({
+      externalBotId: 'recall-bot-1',
+    });
+    expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(result.skippedNotStartedCallRecordingIds).toEqual([]);
   });
 
   it('marks FAILED_UNKNOWN without clearing the bot id when Recall returns 404', async () => {

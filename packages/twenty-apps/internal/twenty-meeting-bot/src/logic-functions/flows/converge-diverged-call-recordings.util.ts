@@ -26,7 +26,6 @@ import {
 } from 'src/logic-functions/data/update-call-recording.util';
 
 const CONVERGENCE_LOOKBACK_DAYS = 7;
-const LIVE_MEETING_GRACE_MINUTES = 30;
 
 const NON_TERMINAL_CALL_RECORDING_STATUSES = [
   CallRecordingStatus.SCHEDULED,
@@ -46,6 +45,7 @@ type DivergedCallRecordingCandidate = {
   audio: FilesFieldValue | undefined;
   video: FilesFieldValue | undefined;
   createdAt: string | undefined;
+  calendarEventStartsAt: string | undefined;
   calendarEventEndsAt: string | undefined;
 };
 
@@ -60,7 +60,7 @@ type DivergedCallRecordingNode = {
   audio?: FilesFieldValue | null;
   video?: FilesFieldValue | null;
   createdAt?: string | null;
-  calendarEvent?: { endsAt?: string | null } | null;
+  calendarEvent?: { startsAt?: string | null; endsAt?: string | null } | null;
 };
 
 export type ConvergeDivergedCallRecordingsResult = {
@@ -68,6 +68,7 @@ export type ConvergeDivergedCallRecordingsResult = {
   updatedCallRecordingIds: string[];
   markedFailedCallRecordingIds: string[];
   unconvergeableCallRecordingIds: string[];
+  skippedNotStartedCallRecordingIds: string[];
 };
 
 // Webhook deliveries get lost; this pull pass re-derives state from Recall.
@@ -82,15 +83,12 @@ export const convergeDivergedCallRecordings = async ({
   const convergenceLowerBound = new Date(
     now.getTime() - CONVERGENCE_LOOKBACK_DAYS * 24 * 60 * 60 * 1000,
   );
-  const liveMeetingCutoff = new Date(
-    now.getTime() - LIVE_MEETING_GRACE_MINUTES * 60 * 1000,
-  );
-
   const result: ConvergeDivergedCallRecordingsResult = {
     candidateCount: candidates.length,
     updatedCallRecordingIds: [],
     markedFailedCallRecordingIds: [],
     unconvergeableCallRecordingIds: [],
+    skippedNotStartedCallRecordingIds: [],
   };
 
   for (const candidate of candidates) {
@@ -110,7 +108,8 @@ export const convergeDivergedCallRecordings = async ({
       continue;
     }
 
-    if (isPossiblyStillLive(candidate, liveMeetingCutoff)) {
+    if (isBeforeMeetingStart(candidate, now)) {
+      result.skippedNotStartedCallRecordingIds.push(candidate.id);
       continue;
     }
 
@@ -169,6 +168,7 @@ const fetchDivergedCallRecordingCandidates = async (
               video: { fileId: true },
               createdAt: true,
               calendarEvent: {
+                startsAt: true,
                 endsAt: true,
               },
             },
@@ -197,6 +197,7 @@ const fetchDivergedCallRecordingCandidates = async (
     audio: node.audio ?? undefined,
     video: node.video ?? undefined,
     createdAt: node.createdAt ?? undefined,
+    calendarEventStartsAt: node.calendarEvent?.startsAt ?? undefined,
     calendarEventEndsAt: node.calendarEvent?.endsAt ?? undefined,
   }));
 };
@@ -215,15 +216,13 @@ const isOutsideConvergenceBound = (
   );
 };
 
-// Inside the grace period the meeting may still be recording; webhooks own it.
-const isPossiblyStillLive = (
+// Until the meeting starts the bot has recorded nothing, so there is nothing to pull yet.
+const isBeforeMeetingStart = (
   candidate: DivergedCallRecordingCandidate,
-  liveMeetingCutoff: Date,
+  now: Date,
 ): boolean =>
-  candidate.status !== CallRecordingStatus.COMPLETED &&
-  !isUndefined(candidate.calendarEventEndsAt) &&
-  new Date(candidate.calendarEventEndsAt).getTime() >
-    liveMeetingCutoff.getTime();
+  !isUndefined(candidate.calendarEventStartsAt) &&
+  new Date(candidate.calendarEventStartsAt).getTime() > now.getTime();
 
 const convergeCallRecording = async ({
   client,
