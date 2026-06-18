@@ -72,8 +72,7 @@ export class BillingPortalWorkspaceService {
         stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
-        withTrialPeriod:
-          !isDefined(customer) || customer.billingSubscriptions.length === 0,
+        withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
       });
 
     assertIsDefinedOrThrow(
@@ -122,8 +121,7 @@ export class BillingPortalWorkspaceService {
         stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
-        withTrialPeriod:
-          !isDefined(customer) || customer.billingSubscriptions.length === 0,
+        withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
       });
 
     await this.billingSubscriptionService.syncSubscriptionToDatabase(
@@ -167,15 +165,7 @@ export class BillingPortalWorkspaceService {
           stripeSubscriptionLineItems,
           stripeCustomerId: customer?.stripeCustomerId,
           plan,
-          // A failed earlier attempt leaves an incomplete subscription; exclude
-          // those so a retry still gets the trial instead of an immediate charge.
-          withTrialPeriod:
-            !isDefined(customer) ||
-            !customer.billingSubscriptions.some(
-              (subscription) =>
-                subscription.status !== SubscriptionStatus.Incomplete &&
-                subscription.status !== SubscriptionStatus.IncompleteExpired,
-            ),
+          withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
           idempotencyKey,
         },
       );
@@ -189,6 +179,22 @@ export class BillingPortalWorkspaceService {
       this.extractSubscriptionClientSecret(stripeSubscription);
 
     return paymentIntent;
+  }
+
+  // A failed earlier attempt leaves an incomplete subscription; it must not
+  // count, or a retry would be charged immediately instead of getting the
+  // trial. Only a real (non-incomplete) subscription blocks a new trial.
+  private isCustomerEligibleForTrialPeriod(
+    customer: BillingCustomerEntity | null,
+  ): boolean {
+    return (
+      !isDefined(customer) ||
+      !customer.billingSubscriptions.some(
+        (subscription) =>
+          subscription.status !== SubscriptionStatus.Incomplete &&
+          subscription.status !== SubscriptionStatus.IncompleteExpired,
+      )
+    );
   }
 
   private async findResumableSubscriptionPaymentIntent(
