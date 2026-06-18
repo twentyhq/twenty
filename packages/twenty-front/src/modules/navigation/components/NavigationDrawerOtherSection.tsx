@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import {
   IconBroadcast,
+  IconCalendarEvent,
   IconHelpCircle,
   IconSettings,
   IconUsers,
@@ -72,6 +73,13 @@ export const NavigationDrawerOtherSection = () => {
             label="Marketing"
             to={AppPath.MarketingHub}
             Icon={IconBroadcast}
+          />
+        )}
+        {PROPEL_MARKETING_HUB_ENABLED && (
+          <NavigationDrawerItem
+            label="Social Calendar"
+            to={AppPath.MarketingSocialCalendar}
+            Icon={IconCalendarEvent}
           />
         )}
         {PROPEL_MARKETING_HUB_ENABLED && (

@@ -52,6 +52,12 @@ const OneOnOneRunnerPage = lazy(() =>
   })),
 );
 
+const SocialCalendarPage = lazy(() =>
+  import('~/pages/propel/SocialCalendarPage').then((module) => ({
+    default: module.SocialCalendarPage,
+  })),
+);
+
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
     default: module.SignInUp,
@@ -279,6 +285,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <OneOnOneRunnerPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.MarketingSocialCalendar}
+            element={
+              <LazyRoute>
+                <SocialCalendarPage />
               </LazyRoute>
             }
           />
