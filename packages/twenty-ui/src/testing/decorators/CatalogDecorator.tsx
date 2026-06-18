@@ -75,7 +75,7 @@ export const CatalogDecorator: Decorator = (Story, context) => {
                       <div
                         className={styles.cellContainer}
                         key={`d1-${index1}`}
-                        id={`catalog-cell-${index4}-${index3}-${index2}-${index1}`}
+                        id={value1}
                       >
                         <span className={styles.elementTitle}>
                           {dimension1.labels?.(value1) ??
