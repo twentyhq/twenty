@@ -96,9 +96,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     viewFieldGroupUniversalIdentifiers: [],
     viewFilterGroupUniversalIdentifiers: [],
     viewSortUniversalIdentifiers: [],
-    applicationUniversalIdentifier:
-      createViewInput.applicationUniversalIdentifier ??
-      flatApplication.universalIdentifier,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 
   let flatViewGroupsToCreate: UniversalFlatViewGroup[] = [];
