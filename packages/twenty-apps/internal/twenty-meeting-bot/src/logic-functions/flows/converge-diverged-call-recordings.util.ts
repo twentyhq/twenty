@@ -1,4 +1,4 @@
-import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
+import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
@@ -18,7 +18,7 @@ import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
-import { requestTranscript } from 'src/logic-functions/flows/request-transcript.util';
+import { reconcileCallRecordingTranscriptArtifact } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact.util';
 import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
 import {
   updateCallRecording,
@@ -67,6 +67,7 @@ export type ConvergeDivergedCallRecordingsResult = {
   candidateCount: number;
   updatedCallRecordingIds: string[];
   markedFailedCallRecordingIds: string[];
+  requestedTranscriptCallRecordingIds: string[];
   unconvergeableCallRecordingIds: string[];
   skippedNotStartedCallRecordingIds: string[];
 };
@@ -87,6 +88,7 @@ export const convergeDivergedCallRecordings = async ({
     candidateCount: candidates.length,
     updatedCallRecordingIds: [],
     markedFailedCallRecordingIds: [],
+    requestedTranscriptCallRecordingIds: [],
     unconvergeableCallRecordingIds: [],
     skippedNotStartedCallRecordingIds: [],
   };
@@ -117,7 +119,6 @@ export const convergeDivergedCallRecordings = async ({
       client,
       candidate,
       externalBotId: candidate.externalBotId,
-      now,
       result,
     });
   }
@@ -228,13 +229,11 @@ const convergeCallRecording = async ({
   client,
   candidate,
   externalBotId,
-  now,
   result,
 }: {
   client: CoreApiClient;
   candidate: DivergedCallRecordingCandidate;
   externalBotId: string;
-  now: Date;
   result: ConvergeDivergedCallRecordingsResult;
 }): Promise<void> => {
   const botResult = await getRecallBot({ externalBotId });
@@ -265,20 +264,18 @@ const convergeCallRecording = async ({
     candidate.externalRecordingId ?? convergence.externalRecordingId;
 
   if (convergence.isRecallRecordingDone && !isUndefined(externalRecordingId)) {
-    if (isUndefined(candidate.transcript)) {
-      const transcriptMarker = await requestTranscript({
+    const transcriptArtifactResult =
+      await reconcileCallRecordingTranscriptArtifact({
+        callRecordingId: candidate.id,
+        currentStatus: candidate.status,
         externalRecordingId,
-        requestedAt: now.toISOString(),
+        transcript: candidate.transcript,
       });
 
-      if (!isNull(transcriptMarker)) {
-        updateData.transcript = transcriptMarker;
-        updateData.externalRecordingId = externalRecordingId;
-        await updateCallRecording(client, {
-          id: candidate.id,
-          data: { transcript: transcriptMarker, externalRecordingId },
-        });
-      }
+    Object.assign(updateData, transcriptArtifactResult.updateData);
+
+    if (transcriptArtifactResult.requestedTranscript) {
+      result.requestedTranscriptCallRecordingIds.push(candidate.id);
     }
 
     Object.assign(

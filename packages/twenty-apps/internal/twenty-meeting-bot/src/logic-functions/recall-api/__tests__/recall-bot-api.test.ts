@@ -4,6 +4,7 @@ import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bo
 import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/create-async-recall-transcript.util';
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
+import { listRecallTranscripts } from 'src/logic-functions/recall-api/list-recall-transcripts.util';
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
@@ -354,6 +355,136 @@ describe('recall bot api', () => {
     });
   });
 
+  it('lists transcripts for a recording id and normalizes Recall artifact fields', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        next: null,
+        results: [
+          {
+            id: 'recall-transcript-id',
+            created_at: '2026-01-01T13:05:00.000Z',
+            provider: { recallai_async: { language_code: 'auto' } },
+            status: { code: 'done', sub_code: null },
+            data: {
+              download_url:
+                'https://recall-transcripts.example.com/transcript',
+            },
+          },
+        ],
+      }),
+    });
+
+    const result = await listRecallTranscripts({
+      externalRecordingId: 'recall-recording-id',
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      transcripts: [
+        {
+          id: 'recall-transcript-id',
+          createdAt: '2026-01-01T13:05:00.000Z',
+          downloadUrl: 'https://recall-transcripts.example.com/transcript',
+          provider: 'recallai_async',
+          statusCode: 'done',
+          statusSubCode: undefined,
+        },
+      ],
+    });
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://ap-northeast-1.recall.ai/api/v1/transcript/?recording_id=recall-recording-id',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
+  it('follows transcript list pagination within the configured Recall region', async () => {
+    fetchMock
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          next: 'https://ap-northeast-1.recall.ai/api/v1/transcript/?cursor=page-2',
+          results: [
+            {
+              id: 'recall-transcript-id-1',
+              provider: { recallai_async: {} },
+              status: { code: 'processing' },
+              data: {},
+            },
+          ],
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          next: null,
+          results: [
+            {
+              id: 'recall-transcript-id-2',
+              provider: { assembly_ai_async: {} },
+              status: { code: 'failed', sub_code: 'audio_missing' },
+              data: {},
+            },
+          ],
+        }),
+      });
+
+    const result = await listRecallTranscripts({
+      externalRecordingId: 'recall-recording-id',
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      transcripts: [
+        {
+          id: 'recall-transcript-id-1',
+          createdAt: undefined,
+          downloadUrl: undefined,
+          provider: 'recallai_async',
+          statusCode: 'processing',
+          statusSubCode: undefined,
+        },
+        {
+          id: 'recall-transcript-id-2',
+          createdAt: undefined,
+          downloadUrl: undefined,
+          provider: 'assembly_ai_async',
+          statusCode: 'failed',
+          statusSubCode: 'audio_missing',
+        },
+      ],
+    });
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      'https://ap-northeast-1.recall.ai/api/v1/transcript/?cursor=page-2',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
+  it('rejects malformed transcript lists', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        next: null,
+        results: [{}],
+      }),
+    });
+
+    const result = await listRecallTranscripts({
+      externalRecordingId: 'recall-recording-id',
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      status: 200,
+      errorMessage: 'Recall API returned malformed transcript list',
+    });
+  });
+
   it('creates an async transcript with the locked provider settings', async () => {
     fetchMock.mockResolvedValue({
       ok: true,
@@ -374,6 +505,46 @@ describe('recall bot api', () => {
       provider: { recallai_async: { language_code: 'auto' } },
       diarization: { use_separate_streams_when_available: true },
     });
+  });
+
+  it('adds call recording metadata when convergence creates an async transcript', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: async () => ({ id: 'recall-transcript-id' }),
+    });
+
+    const result = await createAsyncRecallTranscript({
+      externalRecordingId: 'recall-recording-id',
+      callRecordingId: 'call-recording-id',
+    });
+
+    expect(result).toEqual({ ok: true, transcriptId: 'recall-transcript-id' });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
+      provider: { recallai_async: { language_code: 'auto' } },
+      diarization: { use_separate_streams_when_available: true },
+      metadata: { twentyCallRecordingId: 'call-recording-id' },
+    });
+  });
+
+  it('does not retry async transcript creation failures', async () => {
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 503,
+      json: async () => ({ detail: 'service unavailable' }),
+    });
+
+    const result = await createAsyncRecallTranscript({
+      externalRecordingId: 'recall-recording-id',
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      status: 503,
+      errorMessage:
+        'Recall API responded with HTTP 503: {"detail":"service unavailable"}',
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('fails when the transcript creation response has no id', async () => {
