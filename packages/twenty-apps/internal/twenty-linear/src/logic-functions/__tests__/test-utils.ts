@@ -18,19 +18,25 @@ export const buildConnection = (
   ...overrides,
 });
 
-// Stubs `fetch` to first answer the SDK's `/apps/connections/list` call, then
+// Stubs `fetch` to first answer the SDK's connections GraphQL call, then
 // the handler's downstream Linear GraphQL request.
 export const stubConnectionsThenLinear = (
   connections: ReturnType<typeof buildConnection>[],
   linearJson: unknown,
 ) => {
-  const fetchMock = vi.fn(async (url: string) => {
-    if (url.endsWith('/apps/connections/list')) {
+  const fetchMock = vi.fn(
+    async (
+      url: string,
+      _init: { headers: Record<string, string>; body?: BodyInit },
+    ) => {
+    if (url.endsWith('/metadata')) {
+      const connectionsJson = { data: { appConnections: connections } };
+
       return {
         ok: true,
         status: 200,
-        json: async () => connections,
-        text: async () => JSON.stringify(connections),
+        json: async () => connectionsJson,
+        text: async () => JSON.stringify(connectionsJson),
       };
     }
 

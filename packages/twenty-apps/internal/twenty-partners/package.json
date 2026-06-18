@@ -15,6 +15,7 @@
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "test": "vitest run",
     "test:unit": "vitest run --config vitest.unit.config.ts",
+    "test:unit:watch": "vitest --config vitest.unit.config.ts",
     "test:watch": "vitest",
     "seed": "tsx src/scripts/seed.ts",
     "seed:prod": "ENV_FILE=.env.prod tsx src/scripts/seed.ts",

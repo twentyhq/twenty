@@ -12,8 +12,8 @@ export default defineField({
   defaultValue: "'TO_BE_MATCHED'",
   options: [
     // Pre-match (new). NEW UUIDs generated with `uuidgen` (v4).
-    { id: '8b3a1c0e-2f64-4a87-9d2b-1e3c4f5a6b78', value: 'TO_BE_MATCHED', label: 'To Be Matched', position: 0, color: 'grey' },
-    { id: '4c5d6e7f-8a9b-4c0d-9e1f-2a3b4c5d6e7f', value: 'MANUAL_MATCH',  label: 'Manual Match',  position: 1, color: 'grey' },
+    { id: '8b3a1c0e-2f64-4a87-9d2b-1e3c4f5a6b78', value: 'TO_BE_MATCHED', label: 'To Be Matched', position: 0, color: 'gray' },
+    { id: '4c5d6e7f-8a9b-4c0d-9e1f-2a3b4c5d6e7f', value: 'MANUAL_MATCH',  label: 'Manual Match',  position: 1, color: 'gray' },
     { id: '7e8f9a0b-1c2d-4e3f-8a4b-5c6d7e8f9a0b', value: 'AUTO_MATCH',    label: 'Auto Match',    position: 2, color: 'yellow' },
     // Post-match. Reuse DELIVERED's UUID for MATCHED so existing rows auto-relabel.
     { id: '095428d8-4680-4a2c-af83-7809dcb3f194', value: 'MATCHED',       label: 'Matched',       position: 3, color: 'blue' },

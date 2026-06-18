@@ -2389,6 +2389,7 @@ __metadata:
   dependencies:
     "@types/node": "npm:^24.7.2"
     oxlint: "npm:^0.16.0"
+    twenty-client-sdk: "npm:2.13.0"
     twenty-sdk: "npm:2.13.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.3.2"
