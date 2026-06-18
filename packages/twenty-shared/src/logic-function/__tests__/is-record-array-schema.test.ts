@@ -20,12 +20,7 @@ describe('isRecordArraySchema', () => {
   });
 
   it('returns false for non-array schemas and nullish input', () => {
-    expect(
-      isRecordArraySchema({
-        type: 'object',
-        objectUniversalIdentifier: 'person-universal-identifier',
-      }),
-    ).toBe(false);
+    expect(isRecordArraySchema({ type: 'object' })).toBe(false);
     expect(isRecordArraySchema(undefined)).toBe(false);
   });
 });
