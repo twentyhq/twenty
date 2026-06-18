@@ -7,9 +7,9 @@ import {
 
 const ON_OPP_PARTNER_WON_FN_ID = '683f407e-e7a0-435d-a380-e51e536770f8';
 
-// WON is the locked mirror of Opportunity.partner: exactly one WON Application per opportunity,
-// always the assigned partner's. Reverts a demoted/unassigned winner to INTRODUCED (it was at
-// least introduced to have been picked). Runs under the app identity, bypassing partner locks.
+// WON/BACKUP mirror of Opportunity.partner: on assign, winner -> WON and other active apps ->
+// BACKUP; on unassign, WON/BACKUP -> APPLIED. DECLINED is never touched. Runs under the app
+// identity, bypassing partner locks.
 export const handler = async (
   payload: DatabaseEventPayload<ObjectRecordUpdateEvent<CoreSchema.Opportunity>>,
 ): Promise<Record<string, unknown>> => {
@@ -28,35 +28,34 @@ export const handler = async (
   });
   const applications = result.applications?.edges ?? [];
 
-  // Revert any current WON that is no longer the assigned partner.
-  for (const edge of applications) {
-    const node = edge?.node;
-    if (node?.state === 'WON' && node.partnerId !== newPartnerId) {
-      await client.mutation({
-        updateApplication: {
-          __args: { id: node.id, data: { state: 'INTRODUCED' } },
-          id: true,
-        },
-      });
-    }
-  }
+  const setState = async (id: string, state: string) => {
+    await client.mutation({
+      updateApplication: { __args: { id, data: { state } }, id: true },
+    });
+  };
 
-  // Promote the assigned partner's application (if one exists) to WON.
   if (newPartnerId) {
+    // Winner -> WON; every other active (non-DECLINED) application -> BACKUP.
+    for (const edge of applications) {
+      const node = edge?.node;
+      if (!node || node.state === 'DECLINED') continue;
+      const target = node.partnerId === newPartnerId ? 'WON' : 'BACKUP';
+      if (node.state !== target) await setState(node.id, target);
+    }
     const winner = applications.find(
       (edge) => edge?.node?.partnerId === newPartnerId,
     )?.node;
-    if (winner && winner.state !== 'WON') {
-      await client.mutation({
-        updateApplication: {
-          __args: { id: winner.id, data: { state: 'WON' } },
-          id: true,
-        },
-      });
-    }
     return { won: winner?.id ?? null };
   }
 
+  // Unassigned: WON and BACKUP applications re-open to APPLIED. DECLINED untouched.
+  for (const edge of applications) {
+    const node = edge?.node;
+    if (!node) continue;
+    if (node.state === 'WON' || node.state === 'BACKUP') {
+      await setState(node.id, 'APPLIED');
+    }
+  }
   return { won: null, cleared: true };
 };
 

@@ -4,7 +4,6 @@ const { queryMock, mutationMock } = vi.hoisted(() => ({
   queryMock: vi.fn(),
   mutationMock: vi.fn(),
 }));
-
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: vi.fn(function () {
     return { query: queryMock, mutation: mutationMock };
@@ -13,54 +12,70 @@ vi.mock('twenty-client-sdk/core', () => ({
 
 import { handler } from '../on-opportunity-partner-won';
 
-const event = (
-  after: Record<string, unknown>,
-  before: Record<string, unknown>,
-) => ({ properties: { after, before, updatedFields: ['partnerId'] } }) as never;
+const OPP = 'aaaaaaaa-0000-0000-0000-000000000001';
+const P_WIN = 'bbbbbbbb-0000-0000-0000-000000000001';
+const P_OTHER = 'bbbbbbbb-0000-0000-0000-000000000002';
 
-describe('on-opportunity-partner-won', () => {
+const event = (after: Record<string, unknown>, updatedFields: string[]) =>
+  ({ properties: { after, updatedFields } }) as never;
+
+const apps = (...nodes: Array<Record<string, unknown>>) =>
+  ({ applications: { edges: nodes.map((node) => ({ node })) } });
+
+const stateUpdates = () =>
+  mutationMock.mock.calls.map((c) => {
+    const a = c[0].updateApplication.__args;
+    return { id: a.id, state: a.data.state };
+  });
+
+describe('on-opportunity-partner-won cascade', () => {
   beforeEach(() => {
     queryMock.mockReset();
     mutationMock.mockReset();
     mutationMock.mockResolvedValue({ updateApplication: { id: 'x' } });
   });
 
-  it('does nothing when partnerId did not change', async () => {
-    await handler({ properties: { after: { id: 'o1' }, before: {}, updatedFields: ['name'] } } as never);
+  it('ignores updates that do not touch partnerId', async () => {
+    const result = await handler(event({ id: OPP, partnerId: P_WIN }, ['stage']));
+    expect(result).toEqual({});
     expect(queryMock).not.toHaveBeenCalled();
   });
 
-  it('sets the matched application to WON and reverts a prior winner on re-assign', async () => {
-    // applications on the opportunity: a1 (new winner, partner p2), a2 (old winner WON, p1)
-    queryMock.mockResolvedValue({
-      applications: {
-        edges: [
-          { node: { id: 'a1', partnerId: 'p2', state: 'APPLIED' } },
-          { node: { id: 'a2', partnerId: 'p1', state: 'WON' } },
-        ],
-      },
-    });
-
-    await handler(event({ id: 'o1', partnerId: 'p2' }, { partnerId: 'p1' }));
-
-    // a2 reverted off WON, a1 set to WON
-    expect(mutationMock).toHaveBeenCalledWith({
-      updateApplication: { __args: { id: 'a2', data: { state: 'INTRODUCED' } }, id: true },
-    });
-    expect(mutationMock).toHaveBeenCalledWith({
-      updateApplication: { __args: { id: 'a1', data: { state: 'WON' } }, id: true },
-    });
+  it('on assign: winner -> WON, other active apps -> BACKUP, DECLINED untouched', async () => {
+    queryMock.mockResolvedValue(
+      apps(
+        { id: 'app-win', partnerId: P_WIN, state: 'APPLIED' },
+        { id: 'app-other', partnerId: P_OTHER, state: 'APPLIED' },
+        { id: 'app-declined', partnerId: 'p3', state: 'DECLINED' },
+      ),
+    );
+    await handler(event({ id: OPP, partnerId: P_WIN }, ['partnerId']));
+    const updates = stateUpdates();
+    expect(updates).toContainEqual({ id: 'app-win', state: 'WON' });
+    expect(updates).toContainEqual({ id: 'app-other', state: 'BACKUP' });
+    expect(updates.find((u) => u.id === 'app-declined')).toBeUndefined();
   });
 
-  it('reverts the WON application on unassign', async () => {
-    queryMock.mockResolvedValue({
-      applications: { edges: [{ node: { id: 'a2', partnerId: 'p1', state: 'WON' } }] },
-    });
+  it('on unassign: WON and BACKUP -> APPLIED, DECLINED untouched', async () => {
+    queryMock.mockResolvedValue(
+      apps(
+        { id: 'app-win', partnerId: P_WIN, state: 'WON' },
+        { id: 'app-bk', partnerId: P_OTHER, state: 'BACKUP' },
+        { id: 'app-declined', partnerId: 'p3', state: 'DECLINED' },
+      ),
+    );
+    await handler(event({ id: OPP, partnerId: null }, ['partnerId']));
+    const updates = stateUpdates();
+    expect(updates).toContainEqual({ id: 'app-win', state: 'APPLIED' });
+    expect(updates).toContainEqual({ id: 'app-bk', state: 'APPLIED' });
+    expect(updates.find((u) => u.id === 'app-declined')).toBeUndefined();
+  });
 
-    await handler(event({ id: 'o1', partnerId: null }, { partnerId: 'p1' }));
-
-    expect(mutationMock).toHaveBeenCalledWith({
-      updateApplication: { __args: { id: 'a2', data: { state: 'INTRODUCED' } }, id: true },
-    });
+  it('does not rewrite an app already in its target state', async () => {
+    queryMock.mockResolvedValue(
+      apps({ id: 'app-win', partnerId: P_WIN, state: 'WON' }),
+    );
+    await handler(event({ id: OPP, partnerId: P_WIN }, ['partnerId']));
+    expect(stateUpdates().find((u) => u.id === 'app-win')).toBeUndefined();
   });
 });
