@@ -1,8 +1,8 @@
 /* oxlint-disable twenty/no-hardcoded-colors -- the per-network status colors
    (green ok / red error) and the FAILED alarm red are semantic status constants
    mirrored from the pill language (§7), not theme tokens. */
-import { ActionIcon, Badge, Button, Group, Text } from '@mantine/core';
-import { useEffect } from 'react';
+import { ActionIcon, Badge, Button, Group, Text, TextInput } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import {
   type PanInfo,
   AnimatePresence,
@@ -52,29 +52,36 @@ import {
   resolveListingName,
 } from '@/propel/lib/socialPostDetail';
 import {
+  type SaveOutcome,
+  isoToLocalInput,
+  localInputToIso,
+} from '@/propel/lib/socialComposer';
+import { type DeleteOutcome } from '@/propel/lib/socialReschedule';
+import {
   type SocialListing,
   type SocialNetwork,
   type SocialPost,
 } from '@/propel/types/socialCalendar';
 
-// The post-detail READ drawer (§4.5 / §5 / §7 / §15). Opens from a calendar pill
-// click; works for ALL statuses, content adapts. Pure read view — it never
-// mutates. The mutating footer actions (Edit / Reschedule / Publish / Retry /
-// Delete) are PRESENT-BUT-STUBBED here and get wired in S3 (CRUD + reschedule)
-// and S4 (FAILED retry + delete-from-detail). The READ surface and the "view
-// live" link are fully functional.
+// The post-detail drawer (§4.5 / §5 / §7 / §15). Opens from a calendar pill click;
+// works for ALL statuses, content adapts. The READ surface (S2) is pure; the
+// mutating footer actions are wired in S3 (Edit) and S4 (Reschedule inline,
+// Publish now, Delete inline-confirm, Duplicate). The ONLY remaining stub is
+// FAILED → Retry, which needs a NEW server retry route (save-post returns
+// ILLEGAL_TRANSITION for FAILED) — a separate cross-plane follow-up. It stays
+// present-but-disabled with a "soon" hint until that route exists.
 //
 // Motion (§15): the drawer enters translateX(100%)→0 on --ease-drawer ~320ms and
 // exits faster (~220ms); the backdrop fades; sections stagger in on first open.
 // Swipe-right dismisses (velocity-based). prefers-reduced-motion → fade, no slide.
+// An in-flight footer action crossfades its label (the spinner) — no hard swap.
 
 const EASE_DRAWER: [number, number, number, number] = [0.32, 0.72, 0, 1];
 const ENTER_S = 0.32;
 const EXIT_S = 0.22;
 
 // Status → footer "action set". Which buttons appear is status-aware (§4.5).
-// `mutating: true` actions are stubbed for S2 (disabled with a "soon" hint);
-// `liveLink`/`duplicate` are read-ish and handled inline.
+// All are wired in S4 EXCEPT `retry` (still stubbed — see header note).
 type FooterAction =
   | 'edit'
   | 'reschedule'
@@ -187,6 +194,10 @@ export const PostDetailDrawer = ({
   connectUrl,
   onClose,
   onEdit,
+  onReschedule,
+  onPublishNow,
+  onDelete,
+  onDuplicate,
 }: {
   /** the post to show; null closes the drawer (drives AnimatePresence) */
   post: SocialPost | null;
@@ -195,6 +206,14 @@ export const PostDetailDrawer = ({
   onClose: () => void;
   /** S3: open the composer in edit mode for this (DRAFT/SCHEDULED) post */
   onEdit: (post: SocialPost) => void;
+  /** S4: reschedule to a new ISO instant (save-post); returns the server outcome */
+  onReschedule: (post: SocialPost, newIso: string) => Promise<SaveOutcome>;
+  /** S4: move scheduledAt to now so the publish cron picks it up */
+  onPublishNow: (post: SocialPost) => Promise<SaveOutcome>;
+  /** S4: delete the post (delete-post route); returns the server outcome */
+  onDelete: (post: SocialPost) => Promise<DeleteOutcome>;
+  /** S4: open the composer prefilled from this post as a NEW draft */
+  onDuplicate: (post: SocialPost) => void;
 }) => {
   const reduce = useReducedMotion() ?? false;
 
@@ -277,6 +296,10 @@ export const PostDetailDrawer = ({
               reduce={reduce}
               onClose={onClose}
               onEdit={onEdit}
+              onReschedule={onReschedule}
+              onPublishNow={onPublishNow}
+              onDelete={onDelete}
+              onDuplicate={onDuplicate}
             />
           </motion.div>
         </StyledDrawerOverlay>
@@ -294,6 +317,10 @@ const DrawerContent = ({
   reduce,
   onClose,
   onEdit,
+  onReschedule,
+  onPublishNow,
+  onDelete,
+  onDuplicate,
 }: {
   post: SocialPost;
   listings: SocialListing[] | undefined;
@@ -301,6 +328,10 @@ const DrawerContent = ({
   reduce: boolean;
   onClose: () => void;
   onEdit: (post: SocialPost) => void;
+  onReschedule: (post: SocialPost, newIso: string) => Promise<SaveOutcome>;
+  onPublishNow: (post: SocialPost) => Promise<SaveOutcome>;
+  onDelete: (post: SocialPost) => Promise<DeleteOutcome>;
+  onDuplicate: (post: SocialPost) => void;
 }) => {
   const status = post.status;
   const statusMeta = STATUS_META[status];
@@ -637,16 +668,14 @@ const DrawerContent = ({
       {/* ── Status-aware footer ── */}
       {footerActions.length > 0 || liveUrl !== null ? (
         <DrawerFooter
+          post={post}
           actions={footerActions}
           liveUrl={liveUrl}
-          // S3: Edit (and Reschedule, which is edit-in-schedule-mode) open the
-          // composer for DRAFT/SCHEDULED posts. The remaining mutating actions
-          // (publish/retry/delete/duplicate) stay stubbed for S4.
-          onEdit={
-            status === 'DRAFT' || status === 'SCHEDULED'
-              ? () => onEdit(post)
-              : undefined
-          }
+          onEdit={onEdit}
+          onReschedule={onReschedule}
+          onPublishNow={onPublishNow}
+          onDelete={onDelete}
+          onDuplicate={onDuplicate}
         />
       ) : null}
     </StyledDrawerPanel>
@@ -814,66 +843,259 @@ const ComplianceRow = ({
   );
 };
 
-// Status-aware footer. S3 wires Edit + Reschedule (both open the composer for
-// DRAFT/SCHEDULED posts — reschedule is just edit landing in schedule mode). The
-// remaining mutating actions (publish / retry / delete / duplicate) stay STUBBED
-// (disabled with a "soon" hint) until S4. The "view live" link is fully read.
+// The footer's transient interaction mode. 'idle' shows the action buttons;
+// 'reschedule' swaps in an inline datetime field; 'confirm-delete' swaps in a
+// confirm/cancel pair. Only one inline mode is open at a time.
+type FooterMode = 'idle' | 'reschedule' | 'confirm-delete';
+
+// Status-aware footer (S4). Wires every action except FAILED→Retry:
+//   • Edit       → opens the composer (DRAFT/SCHEDULED).
+//   • Reschedule → inline datetime → save-post(scheduledAt) (DRAFT/SCHEDULED).
+//   • Publish now→ save-post(scheduledAt = now) so the cron picks it up.
+//   • Delete     → inline confirm → delete-post (DRAFT/SCHEDULED/FAILED).
+//   • Duplicate  → opens the composer prefilled (new post, no postId).
+//   • Retry      → STUBBED (disabled + "soon"): FAILED can't go through save-post
+//                  (ILLEGAL_TRANSITION), so retry needs a NEW server route — a
+//                  separate cross-plane follow-up. See the file header.
+// A running mutation crossfades its label to a spinner (no hard text swap, §15);
+// a failure surfaces the server message inline AND the page toasts it; on success
+// the page closes the drawer + refreshes the calendar.
 const DrawerFooter = ({
+  post,
   actions,
   liveUrl,
   onEdit,
+  onReschedule,
+  onPublishNow,
+  onDelete,
+  onDuplicate,
 }: {
+  post: SocialPost;
   actions: FooterAction[];
   liveUrl: string | null;
-  /** present for DRAFT/SCHEDULED → Edit + Reschedule become live (S3) */
-  onEdit: (() => void) | undefined;
-}) => (
-  <div
-    style={{
-      display: 'flex',
-      gap: 8,
-      flexWrap: 'wrap',
-      padding: '12px 20px',
-      borderTop: '1px solid var(--mantine-color-default-border)',
-      background: 'var(--mantine-color-body)',
-    }}
-  >
-    {/* Functional read action: open the live post (POSTED). */}
-    {liveUrl !== null ? (
-      <Button
-        size="xs"
-        color="red"
-        component="a"
-        href={liveUrl}
-        target="_blank"
-        rel="noreferrer"
-        leftSection={<IconExternalLink size={14} />}
-      >
-        View live
-      </Button>
-    ) : null}
+  onEdit: (post: SocialPost) => void;
+  onReschedule: (post: SocialPost, newIso: string) => Promise<SaveOutcome>;
+  onPublishNow: (post: SocialPost) => Promise<SaveOutcome>;
+  onDelete: (post: SocialPost) => Promise<DeleteOutcome>;
+  onDuplicate: (post: SocialPost) => void;
+}) => {
+  const [mode, setMode] = useState<FooterMode>('idle');
+  // Which action is currently mid-flight (drives the per-button spinner + a
+  // whole-footer disable so a double mutation can't race).
+  const [busy, setBusy] = useState<FooterAction | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  // The inline reschedule datetime, seeded from the post's current scheduledAt.
+  const [rescheduleLocal, setRescheduleLocal] = useState<string>(() =>
+    isoToLocalInput(post.scheduledAt),
+  );
 
-    {actions.map((a) => {
-      const meta = ACTION_META[a];
-      const Icon = meta.Icon;
-      // S3-live: Edit + Reschedule open the composer (Reschedule = edit-in-
-      // schedule-mode; the composer lands on the existing scheduledAt).
-      const live = (a === 'edit' || a === 'reschedule') && onEdit !== undefined;
-      const soon = 'Available soon';
-      return (
-        <Button
-          key={a}
-          size="xs"
-          variant={meta.danger === true ? 'light' : 'default'}
-          color={meta.danger === true ? 'red' : undefined}
-          leftSection={<Icon size={14} />}
-          onClick={live ? onEdit : undefined}
-          disabled={!live}
-          title={live ? undefined : soon}
+  const isReschedulable = post.status === 'DRAFT' || post.status === 'SCHEDULED';
+
+  // Run a mutation: set busy, await the page handler, surface failure inline (the
+  // page also toasts). On success the page closes + reloads, so we don't reset
+  // local state (the drawer unmounts). On failure we clear busy + show the reason.
+  const runPublish = async () => {
+    setBusy('publish');
+    setError(null);
+    const out = await onPublishNow(post);
+    if (!out.ok) {
+      setBusy(null);
+      setError(out.message);
+    }
+  };
+
+  const runReschedule = async () => {
+    const iso = localInputToIso(rescheduleLocal);
+    if (iso === null) {
+      setError('Pick a valid date and time.');
+      return;
+    }
+    setBusy('reschedule');
+    setError(null);
+    const out = await onReschedule(post, iso);
+    if (!out.ok) {
+      setBusy(null);
+      setError(out.message);
+    }
+  };
+
+  const runDelete = async () => {
+    setBusy('delete');
+    setError(null);
+    const out = await onDelete(post);
+    if (!out.ok) {
+      setBusy(null);
+      setError(out.message);
+    }
+  };
+
+  const onAction = (a: FooterAction) => {
+    setError(null);
+    if (a === 'edit') {
+      onEdit(post);
+    } else if (a === 'duplicate') {
+      onDuplicate(post);
+    } else if (a === 'publish') {
+      void runPublish();
+    } else if (a === 'reschedule') {
+      setRescheduleLocal(isoToLocalInput(post.scheduledAt));
+      setMode('reschedule');
+    } else if (a === 'delete') {
+      setMode('confirm-delete');
+    }
+    // 'retry' is stubbed → button is disabled, never reaches here.
+  };
+
+  const anyBusy = busy !== null;
+
+  return (
+    <div
+      style={{
+        borderTop: '1px solid var(--mantine-color-default-border)',
+        background: 'var(--mantine-color-body)',
+      }}
+    >
+      {/* Inline error from the last failed action (e.g. COMPLIANCE_BLOCK). The
+          page also toasts it; this keeps it visible next to the action. */}
+      {error !== null ? (
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            alignItems: 'flex-start',
+            padding: '10px 20px 0',
+          }}
         >
-          {meta.label}
-        </Button>
-      );
-    })}
-  </div>
-);
+          <IconAlertTriangle
+            size={14}
+            style={{ flex: 'none', color: FAILED_FILL, marginTop: 2 }}
+          />
+          <Text size="xs" c="dimmed" style={{ wordBreak: 'break-word' }}>
+            {error}
+          </Text>
+        </div>
+      ) : null}
+
+      <div
+        style={{
+          display: 'flex',
+          gap: 8,
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          padding: '12px 20px',
+        }}
+      >
+        {/* ── Inline reschedule mode ── */}
+        {mode === 'reschedule' ? (
+          <>
+            <TextInput
+              type="datetime-local"
+              size="xs"
+              value={rescheduleLocal}
+              onChange={(e) => setRescheduleLocal(e.currentTarget.value)}
+              disabled={anyBusy}
+              style={{ flex: 1, minWidth: 200 }}
+              aria-label="New schedule time"
+            />
+            <Button
+              size="xs"
+              color="red"
+              onClick={() => void runReschedule()}
+              loading={busy === 'reschedule'}
+              disabled={anyBusy && busy !== 'reschedule'}
+              leftSection={<IconCalendar size={14} />}
+            >
+              Save time
+            </Button>
+            <Button
+              size="xs"
+              variant="default"
+              onClick={() => {
+                setMode('idle');
+                setError(null);
+              }}
+              disabled={anyBusy}
+            >
+              Cancel
+            </Button>
+          </>
+        ) : mode === 'confirm-delete' ? (
+          /* ── Inline delete confirm ── */
+          <>
+            <Text size="xs" c="dimmed" style={{ flex: 1, minWidth: 160 }}>
+              Delete this post? This can’t be undone.
+            </Text>
+            <Button
+              size="xs"
+              variant="light"
+              color="red"
+              onClick={() => void runDelete()}
+              loading={busy === 'delete'}
+              disabled={anyBusy && busy !== 'delete'}
+              leftSection={<IconTrash size={14} />}
+            >
+              Delete
+            </Button>
+            <Button
+              size="xs"
+              variant="default"
+              onClick={() => {
+                setMode('idle');
+                setError(null);
+              }}
+              disabled={anyBusy}
+            >
+              Cancel
+            </Button>
+          </>
+        ) : (
+          /* ── Idle: the status-aware action set ── */
+          <>
+            {/* Functional read action: open the live post (POSTED). */}
+            {liveUrl !== null ? (
+              <Button
+                size="xs"
+                color="red"
+                component="a"
+                href={liveUrl}
+                target="_blank"
+                rel="noreferrer"
+                leftSection={<IconExternalLink size={14} />}
+              >
+                View live
+              </Button>
+            ) : null}
+
+            {actions.map((a) => {
+              const meta = ACTION_META[a];
+              const Icon = meta.Icon;
+              // Retry is the only remaining stub (needs a new server route).
+              const stubbed = a === 'retry';
+              // Reschedule/edit only make sense for DRAFT/SCHEDULED; FOOTER_BY_STATUS
+              // already restricts them, but guard defensively.
+              const gated =
+                (a === 'reschedule' || a === 'edit') && !isReschedulable;
+              const disabled = stubbed || gated || anyBusy;
+              const running = busy === a;
+              return (
+                <Button
+                  key={a}
+                  size="xs"
+                  variant={meta.danger === true ? 'light' : 'default'}
+                  color={meta.danger === true ? 'red' : undefined}
+                  leftSection={running ? undefined : <Icon size={14} />}
+                  loading={running}
+                  onClick={() => onAction(a)}
+                  disabled={disabled}
+                  title={stubbed ? 'Retry is coming soon' : undefined}
+                >
+                  {meta.label}
+                </Button>
+              );
+            })}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};

@@ -69,16 +69,27 @@ const EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1];
 const uid = () =>
   `m-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
-// Build the initial form for create vs edit. For a prefilled date (day-cell "+"),
-// the composer opens in schedule mode with that datetime pre-set.
+// Build the initial form for create vs edit vs duplicate. For a prefilled date
+// (day-cell "+"), the composer opens in schedule mode with that datetime pre-set.
+// For a duplicate, we prefill the source post's content but DROP the schedule (a
+// copy starts as a fresh draft the operator re-times) — and crucially carry NO
+// postId, so save creates a brand-new record.
 const initialForm = (
-  post: SocialPost | null,
+  editPost: SocialPost | null,
+  duplicateSource: SocialPost | null,
   connectedNetworks: SocialNetwork[],
   prefillScheduledLocal: string | null,
 ): ComposerFormState => {
-  if (post !== null) {
-    const media = parseMediaRefs(post.mediaRefs);
-    return formFromPost(post, media);
+  if (editPost !== null) {
+    const media = parseMediaRefs(editPost.mediaRefs);
+    return formFromPost(editPost, media);
+  }
+  if (duplicateSource !== null) {
+    // Reuse formFromPost to copy body/networks/listing/media, then strip the
+    // schedule so the duplicate opens as a clean draft (no time, no postId path).
+    const media = parseMediaRefs(duplicateSource.mediaRefs);
+    const base = formFromPost(duplicateSource, media);
+    return { ...base, mode: 'draft', scheduledLocal: '' };
   }
   return {
     body: '',
@@ -93,7 +104,10 @@ const initialForm = (
 
 export type ComposerOpen =
   | { kind: 'create'; prefillScheduledLocal?: string | null }
-  | { kind: 'edit'; post: SocialPost };
+  | { kind: 'edit'; post: SocialPost }
+  // S4: "Duplicate" from the detail drawer — prefills from `source` but creates a
+  // NEW post (no postId). Treated as a create for save purposes.
+  | { kind: 'duplicate'; source: SocialPost };
 
 export const PostComposer = ({
   open,
@@ -120,6 +134,7 @@ export const PostComposer = ({
           role="dialog"
           aria-modal="true"
           aria-label={open.kind === 'edit' ? 'Edit post' : 'Compose post'}
+          // (duplicate + create both read as "Compose post" — both create a record)
         >
           <motion.div
             style={{ position: 'absolute', inset: 0 }}
@@ -153,8 +168,14 @@ export const PostComposer = ({
           >
             <ComposerBody
               // Remount per open identity so form state resets cleanly between
-              // a create and an edit (and between different edited posts).
-              key={open.kind === 'edit' ? `edit-${open.post.id}` : 'create'}
+              // a create, an edit, and a duplicate (and between different posts).
+              key={
+                open.kind === 'edit'
+                  ? `edit-${open.post.id}`
+                  : open.kind === 'duplicate'
+                    ? `dup-${open.source.id}`
+                    : 'create'
+              }
               open={open}
               connectedNetworks={connectedNetworks}
               listings={listings}
@@ -184,11 +205,13 @@ const ComposerBody = ({
   const reduce = useReducedMotion() ?? false;
   const editing = open.kind === 'edit';
   const editPost = editing ? open.post : null;
+  // A duplicate prefills from a source post but saves as a NEW record (no postId).
+  const duplicateSource = open.kind === 'duplicate' ? open.source : null;
   const prefill =
     open.kind === 'create' ? (open.prefillScheduledLocal ?? null) : null;
 
   const [form, setForm] = useState<ComposerFormState>(() =>
-    initialForm(editPost, connectedNetworks, prefill),
+    initialForm(editPost, duplicateSource, connectedNetworks, prefill),
   );
   const [activePreview, setActivePreview] = useState<SocialNetwork | null>(
     () => form.networks[0] ?? connectedNetworks[0] ?? null,

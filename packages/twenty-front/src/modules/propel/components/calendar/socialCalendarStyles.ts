@@ -5,6 +5,9 @@ import { PULSE_RED } from '@/propel/lib/socialCalendarConfig';
 // at the calendar boundary — Twenty has no global rbc CSS. Propel overrides below
 // are scoped to the styled wrapper so they never leak into the CRM.
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+// The drag-and-drop addon's stylesheet (S4) — supplies the .rbc-addons-dnd-*
+// classes the move interaction needs (drag preview, drop-target highlight).
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 
 // The Pulse-themed calendar shell. All colors read Twenty's `--t-*` tokens (via
 // PropelMantineProvider's bridge) so the grid matches the surrounding CRM in
@@ -115,6 +118,41 @@ export const StyledSocialCalendarShell = styled.div`
   /* rbc sets inline bg on events; neutralize so our pill owns the look. */
   .rbc-event-content {
     overflow: visible;
+  }
+
+  /* ── S4 drag-to-reschedule (§7 / §15) ──
+     Reschedulable (DRAFT/SCHEDULED) pills get a grab cursor; the pointer becomes
+     grabbing mid-drag. Locked pills (POSTED/PUBLISHING/FAILED) show no-drop and
+     never receive the addon's drag affordance. */
+  .rbc-addons-dnd .rbc-event:not(.rbc-event--locked) {
+    cursor: grab;
+  }
+  .rbc-addons-dnd.rbc-addons-dnd-is-dragging .rbc-event,
+  .rbc-addons-dnd .rbc-event:not(.rbc-event--locked):active {
+    cursor: grabbing;
+  }
+  .rbc-event--locked,
+  .rbc-event--locked .rbc-event-content {
+    cursor: no-drop;
+  }
+  /* Don't let a locked pill expose the addon's resize anchors. */
+  .rbc-event--locked .rbc-addons-dnd-resize-ns-anchor,
+  .rbc-event--locked .rbc-addons-dnd-resize-ew-anchor {
+    display: none;
+  }
+  /* The dragged preview: lift it so it reads as "picked up" (transform/opacity
+     only — GPU-cheap, §15). The spring settle on drop is handled by the optimistic
+     state swap + framer toast, not here. The lift shadow is derived from the text
+     token (a neutral scrim that adapts to light/dark), not a hardcoded color. */
+  .rbc-addons-dnd .rbc-addons-dnd-drag-preview .rbc-event,
+  .rbc-addons-dnd-dragged-event {
+    opacity: 0.92;
+    box-shadow: 0 6px 18px
+      color-mix(in srgb, var(--mantine-color-text) 22%, transparent);
+  }
+  /* Drop target highlight while hovering a day cell with a dragged pill. */
+  .rbc-addons-dnd .rbc-addons-dnd-over {
+    background: var(--pulse-red-soft);
   }
 
   /* Agenda (List) view rows. */
