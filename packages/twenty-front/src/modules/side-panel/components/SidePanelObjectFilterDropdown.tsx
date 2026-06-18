@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFilter } from 'twenty-ui/display';
+import { IconFilter } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 
 import { SidePanelObjectFilterDropdownContent } from '@/side-panel/components/SidePanelObjectFilterDropdownContent';

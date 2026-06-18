@@ -4,7 +4,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { styled } from '@linaria/react';
 import { Key } from 'ts-key-enum';
 import { t } from '@lingui/core/macro';
-import { IconArrowMerge } from 'twenty-ui/display';
+import { IconArrowMerge } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

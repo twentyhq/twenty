@@ -36,8 +36,8 @@ import {
   ChipAccent,
   ChipSize,
   ChipVariant,
-} from 'twenty-ui/components';
-import { IconCalendarEvent } from 'twenty-ui/display';
+} from 'twenty-ui/data-display';
+import { IconCalendarEvent } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 

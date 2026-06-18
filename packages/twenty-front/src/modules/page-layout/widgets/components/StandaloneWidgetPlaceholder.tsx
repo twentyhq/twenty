@@ -8,7 +8,7 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
+} from 'twenty-ui/feedback';
 
 const StyledPlaceholderContainer = styled.div`
   background: ${themeCssVariables.background.secondary};

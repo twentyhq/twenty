@@ -1,26 +1,16 @@
-export * from 'twenty-ui';
 export * from 'twenty-ui/accessibility';
-export * from 'twenty-ui/components';
+export * from 'twenty-ui/data-display';
 
-// Selective re-export from twenty-ui/display:
+// Selective re-export from twenty-ui's component domains:
 // IconsProvider, useIcons, and iconsState are excluded to avoid bundling
 // the AllIcons module (~5000 Tabler icons) which adds ~4MB to the SDK dist.
 export {
-  AnimatedCheckmark,
-  AppTooltip,
-  Avatar,
-  AVATAR_PROPERTIES_BY_SIZE,
-  AvatarGroup,
   Banner,
   Callout,
-  Checkmark,
-  ColorSample,
-  CommandBlock,
-  H1Title,
-  H1TitleFontColor,
-  H2Title,
-  H3Title,
-  HorizontalSeparator,
+  Info,
+  SidePanelInformationBanner,
+} from 'twenty-ui/feedback';
+export {
   Icon,
   Icon123,
   IconAddressBook,
@@ -31,8 +21,8 @@ export {
   IconAlignLeft,
   IconAlignRight,
   IconApi,
-  IconApps,
   IconAppWindow,
+  IconApps,
   IconArchive,
   IconArchiveOff,
   IconArrowBackUp,
@@ -40,12 +30,12 @@ export {
   IconArrowLeft,
   IconArrowMerge,
   IconArrowRight,
+  IconArrowUp,
+  IconArrowUpRight,
   IconArrowsDiagonal,
   IconArrowsSort,
   IconArrowsSplit2,
   IconArrowsVertical,
-  IconArrowUp,
-  IconArrowUpRight,
   IconAt,
   IconAxisX,
   IconAxisY,
@@ -104,8 +94,8 @@ export {
   IconChevronLeft,
   IconChevronRight,
   IconChevronRightPipe,
-  IconChevronsRight,
   IconChevronUp,
+  IconChevronsRight,
   IconCircle,
   IconCircleDashed,
   IconCircleDot,
@@ -210,8 +200,8 @@ export {
   IconFilterCog,
   IconFilterOff,
   IconFilterPlus,
-  IconFilters,
   IconFilterX,
+  IconFilters,
   IconFlag,
   IconFlask,
   IconFocusCentered,
@@ -378,10 +368,10 @@ export {
   IconShield,
   IconSitemap,
   IconSlash,
+  IconSortAZ,
   IconSortAscending,
   IconSortAscendingLetters,
   IconSortAscendingNumbers,
-  IconSortAZ,
   IconSortDescending,
   IconSortDescendingLetters,
   IconSortDescendingNumbers,
@@ -476,43 +466,43 @@ export {
   IllustrationIconUid,
   IllustrationIconUser,
   IllustrationIconWrapper,
-  Info,
-  invalidAvatarUrlsAtomV2,
-  Label,
+  ThinkingOrbitLoaderIcon,
+} from 'twenty-ui/icon';
+export { HorizontalSeparator } from 'twenty-ui/layout';
+export {
+  AppTooltip,
   OverflowingTextWithTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/surfaces';
+export {
+  H1Title,
+  H1TitleFontColor,
+  H2Title,
+  H3Title,
+  Label,
   SeparatorLineText,
-  SidePanelInformationBanner,
-  Status,
   StyledText,
   StyledTextContent,
   StyledTextWrapper,
-  ThinkingOrbitLoaderIcon,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/display';
+} from 'twenty-ui/typography';
 export type {
-  AnimatedCheckmarkProps,
-  AppTooltipProps,
-  AvatarGroupProps,
-  AvatarProps,
-  AvatarSize,
-  AvatarType,
   BannerColor,
   BannerVariant,
   CalloutProps,
   CalloutVariant,
-  CheckmarkProps,
-  ColorSampleProps,
-  ColorSampleVariant,
+  InfoAccent,
+  InfoProps,
+  SidePanelInformationBannerProps,
+} from 'twenty-ui/feedback';
+export type {
   IconComponent,
   IconComponentProps,
   IconProps,
-  InfoAccent,
-  InfoProps,
-  LabelVariant,
-  SidePanelInformationBannerProps,
   TablerIconsProps,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+export type { AppTooltipProps } from 'twenty-ui/surfaces';
+export type { LabelVariant } from 'twenty-ui/typography';
 
 export * from 'twenty-ui/feedback';
 export * from 'twenty-ui/input';

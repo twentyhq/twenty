@@ -8,13 +8,13 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { Avatar } from 'twenty-ui/data-display';
 import {
-  Avatar,
   IconInfoCircle,
   IconKey,
   IconSettings,
   IconWorld,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';

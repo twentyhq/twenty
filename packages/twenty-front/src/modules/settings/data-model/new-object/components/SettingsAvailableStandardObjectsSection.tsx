@@ -4,7 +4,7 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {

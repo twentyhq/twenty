@@ -4,7 +4,7 @@ import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { styled } from '@linaria/react';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 import { TabButton } from 'twenty-ui/input';
 
 import { type TabListDimensions } from '@/ui/layout/tab-list/types/TabListDimension';

@@ -18,7 +18,8 @@ import {
   isDefined,
   isValidUrl,
 } from 'twenty-shared/utils';
-import { H2Title, IconTrash } from 'twenty-ui/display';
+import { IconTrash } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

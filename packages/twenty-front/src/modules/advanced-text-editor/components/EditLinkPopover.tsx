@@ -9,7 +9,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type Editor } from '@tiptap/core';
 import { useId, useState, type FocusEvent, type FormEvent } from 'react';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
-import { IconLink, IconPencil } from 'twenty-ui/display';
+import { IconLink, IconPencil } from 'twenty-ui/icon';
 
 type EditLinkPopoverProps = {
   defaultValue: string | undefined;

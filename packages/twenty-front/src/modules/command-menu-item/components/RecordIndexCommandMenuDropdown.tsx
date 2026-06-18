@@ -17,7 +17,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
+import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 

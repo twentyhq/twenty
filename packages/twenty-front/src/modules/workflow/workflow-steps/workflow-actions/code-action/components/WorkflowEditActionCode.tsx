@@ -45,7 +45,7 @@ import {
 } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
-import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
+import { IconCode, IconPlayerPlay } from 'twenty-ui/icon';
 import { CodeEditor } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
