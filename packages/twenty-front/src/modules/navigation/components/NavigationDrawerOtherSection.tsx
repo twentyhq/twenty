@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import {
   IconBroadcast,
+  IconBuildingSkyscraper,
   IconHelpCircle,
   IconSettings,
   IconUsers,
@@ -79,6 +80,13 @@ export const NavigationDrawerOtherSection = () => {
             label="Weekly 1:1"
             to={AppPath.OneOnOneRunner}
             Icon={IconUsers}
+          />
+        )}
+        {PROPEL_MARKETING_HUB_ENABLED && (
+          <NavigationDrawerItem
+            label="Listing Studio"
+            to={AppPath.ListingStudio}
+            Icon={IconBuildingSkyscraper}
           />
         )}
         <NavigationDrawerItem
