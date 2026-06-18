@@ -167,8 +167,15 @@ export class BillingPortalWorkspaceService {
           stripeSubscriptionLineItems,
           stripeCustomerId: customer?.stripeCustomerId,
           plan,
+          // A failed earlier attempt leaves an incomplete subscription; exclude
+          // those so a retry still gets the trial instead of an immediate charge.
           withTrialPeriod:
-            !isDefined(customer) || customer.billingSubscriptions.length === 0,
+            !isDefined(customer) ||
+            !customer.billingSubscriptions.some(
+              (subscription) =>
+                subscription.status !== SubscriptionStatus.Incomplete &&
+                subscription.status !== SubscriptionStatus.IncompleteExpired,
+            ),
           idempotencyKey,
         },
       );
