@@ -341,9 +341,17 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       throw new Error('Workspace is not pending creation');
     }
 
-    await this.workspaceRepository.update(workspace.id, {
-      activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
-    });
+    const activationLockResult = await this.workspaceRepository.update(
+      {
+        id: workspace.id,
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      },
+      { activationStatus: WorkspaceActivationStatus.ONGOING_CREATION },
+    );
+
+    if (activationLockResult.affected === 0) {
+      throw new Error('Workspace is already being created');
+    }
 
     await this.coreEntityCacheService.invalidate(
       'workspaceEntity',
