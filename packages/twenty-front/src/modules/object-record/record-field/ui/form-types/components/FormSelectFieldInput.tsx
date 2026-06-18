@@ -13,6 +13,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useContext, useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleOff } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
@@ -38,7 +39,7 @@ export const FormSelectFieldInput = ({
   VariablePicker,
   options,
   readonly,
-  isNullable = true,
+  isNullable,
   callToActionButton,
 }: FormSelectFieldInputProps) => {
   const { theme } = useContext(ThemeContext);
@@ -70,16 +71,16 @@ export const FormSelectFieldInput = ({
         },
   );
 
-  const onSelect = (option: string) => {
+  const onSelect = (selectedValue: string) => {
     setDraftValue({
       type: 'static',
-      value: option,
+      value: selectedValue,
       editingMode: 'view',
     });
 
     removeFocusItemFromFocusStackById({ focusId: instanceId });
 
-    onChange(option);
+    onChange(isNonEmptyString(selectedValue) ? selectedValue : null);
   };
 
   const onCancel = () => {
@@ -95,17 +96,19 @@ export const FormSelectFieldInput = ({
     removeFocusItemFromFocusStackById({ focusId: instanceId });
   };
 
-  const selectedOption = options.find(
+  const emptyOption: SelectOption = {
+    label: label ? t`No ${label}` : t`No value`,
+    value: '',
+    Icon: IconCircleOff,
+  };
+
+  const optionsWithEmptyOption = isNullable
+    ? [emptyOption, ...options]
+    : options;
+
+  const selectedOption = optionsWithEmptyOption.find(
     (option) => option.value === draftValue.value,
   );
-
-  const emptyOption = isNullable
-    ? {
-        label: label ? t`No ${label}` : t`No value`,
-        value: '',
-        icon: IconCircleOff,
-      }
-    : undefined;
 
   const handleUnlinkVariable = () => {
     setDraftValue({
@@ -141,10 +144,9 @@ export const FormSelectFieldInput = ({
         {draftValue.type === 'static' ? (
           <Select
             dropdownId={`${instanceId}-select-display`}
-            options={options}
+            options={optionsWithEmptyOption}
             value={selectedOption?.value}
             onChange={onSelect}
-            emptyOption={emptyOption}
             callToActionButton={callToActionButton}
             fullWidth
             hasRightElement={isDefined(VariablePicker) && !readonly}

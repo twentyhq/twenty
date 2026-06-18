@@ -46,9 +46,35 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const selectedOption = await canvas.findByText('Work Policy');
+    const label = await canvas.findByText('Work Policy');
+    expect(label).toBeVisible();
 
-    expect(selectedOption).toBeVisible();
+    const selectControl = await canvas.findByText('Work Policy 1');
+    expect(selectControl).toBeVisible();
+  },
+};
+
+export const Nullable: Story = {
+  args: {
+    label: 'Work Policy',
+    defaultValue: 'WORK_POLICY_1',
+    options: [
+      {
+        label: 'Work Policy 1',
+        value: 'WORK_POLICY_1',
+        color: 'blue',
+      },
+      {
+        label: 'Work Policy 2',
+        value: 'WORK_POLICY_2',
+        color: 'green',
+      },
+    ],
+    onChange: fn(),
+    isNullable: true,
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
 
     const selectControl = await canvas.findByText('Work Policy 1');
     await userEvent.click(selectControl);
@@ -58,6 +84,10 @@ export const Default: Story = {
     await waitFor(() => {
       expect(dropdown.getByText('No Work Policy')).toBeVisible();
     });
+
+    await userEvent.click(dropdown.getByText('No Work Policy'));
+
+    expect(args.onChange).toHaveBeenCalledWith(null);
   },
 };
 
