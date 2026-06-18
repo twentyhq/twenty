@@ -24,9 +24,11 @@ import { useSocialCalendarData } from '@/propel/hooks/useSocialCalendarData';
 import { isoToLocalInput } from '@/propel/lib/socialComposer';
 import {
   type DeleteOutcome,
+  type RetryOutcome,
   deletePost,
   publishNow,
   reschedulePost,
+  retryPost,
 } from '@/propel/lib/socialReschedule';
 import {
   type SocialCalendarEvent,
@@ -284,6 +286,30 @@ export const SocialCalendarPage = () => {
     [reload, showToast],
   );
 
+  // Retry → resurrect a FAILED post via the retry-post route. On success the post
+  // is back on the publish cron's path (SCHEDULED if it kept a future schedule,
+  // else DRAFT) and the failure detail is cleared; close the drawer + reload so the
+  // pill flips. The success toast reflects where it landed.
+  const handleRetry = useCallback(
+    async (post: SocialPost): Promise<RetryOutcome> => {
+      const outcome = await retryPost(post.id);
+      if (outcome.ok) {
+        setSelectedPost(null);
+        reload();
+        showToast(
+          'success',
+          outcome.status === 'SCHEDULED'
+            ? 'Retrying — queued for the next publish run.'
+            : 'Moved back to draft — re-schedule when you’re ready.',
+        );
+      } else {
+        showToast('error', outcome.operatorAction ?? outcome.message);
+      }
+      return outcome;
+    },
+    [reload, showToast],
+  );
+
   // Duplicate → open the composer prefilled from the post as a NEW draft (no
   // postId). Close the drawer so the two surfaces don't stack.
   const handleDuplicate = useCallback((post: SocialPost) => {
@@ -374,6 +400,7 @@ export const SocialCalendarPage = () => {
         onPublishNow={handlePublishNow}
         onDelete={handleDelete}
         onDuplicate={handleDuplicate}
+        onRetry={handleRetry}
       />
 
       {/* S3 compose surface. A right-side two-pane panel (form + live preview).

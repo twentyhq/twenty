@@ -56,7 +56,10 @@ import {
   isoToLocalInput,
   localInputToIso,
 } from '@/propel/lib/socialComposer';
-import { type DeleteOutcome } from '@/propel/lib/socialReschedule';
+import {
+  type DeleteOutcome,
+  type RetryOutcome,
+} from '@/propel/lib/socialReschedule';
 import {
   type SocialListing,
   type SocialNetwork,
@@ -66,10 +69,10 @@ import {
 // The post-detail drawer (§4.5 / §5 / §7 / §15). Opens from a calendar pill click;
 // works for ALL statuses, content adapts. The READ surface (S2) is pure; the
 // mutating footer actions are wired in S3 (Edit) and S4 (Reschedule inline,
-// Publish now, Delete inline-confirm, Duplicate). The ONLY remaining stub is
-// FAILED → Retry, which needs a NEW server retry route (save-post returns
-// ILLEGAL_TRANSITION for FAILED) — a separate cross-plane follow-up. It stays
-// present-but-disabled with a "soon" hint until that route exists.
+// Publish now, Delete inline-confirm, Duplicate). FAILED → Retry is wired (S-Retry)
+// to the dedicated /marketing/social/retry-post route — save-post can't take a
+// FAILED post (ILLEGAL_TRANSITION), so retry flips it back to SCHEDULED/DRAFT and
+// clears the failure detail so the publish cron re-attempts cleanly.
 //
 // Motion (§15): the drawer enters translateX(100%)→0 on --ease-drawer ~320ms and
 // exits faster (~220ms); the backdrop fades; sections stagger in on first open.
@@ -81,7 +84,7 @@ const ENTER_S = 0.32;
 const EXIT_S = 0.22;
 
 // Status → footer "action set". Which buttons appear is status-aware (§4.5).
-// All are wired in S4 EXCEPT `retry` (still stubbed — see header note).
+// All are wired (S4 + S-Retry).
 type FooterAction =
   | 'edit'
   | 'reschedule'
@@ -198,6 +201,7 @@ export const PostDetailDrawer = ({
   onPublishNow,
   onDelete,
   onDuplicate,
+  onRetry,
 }: {
   /** the post to show; null closes the drawer (drives AnimatePresence) */
   post: SocialPost | null;
@@ -214,6 +218,8 @@ export const PostDetailDrawer = ({
   onDelete: (post: SocialPost) => Promise<DeleteOutcome>;
   /** S4: open the composer prefilled from this post as a NEW draft */
   onDuplicate: (post: SocialPost) => void;
+  /** S-Retry: resurrect a FAILED post (retry-post route); returns the server outcome */
+  onRetry: (post: SocialPost) => Promise<RetryOutcome>;
 }) => {
   const reduce = useReducedMotion() ?? false;
 
@@ -300,6 +306,7 @@ export const PostDetailDrawer = ({
               onPublishNow={onPublishNow}
               onDelete={onDelete}
               onDuplicate={onDuplicate}
+              onRetry={onRetry}
             />
           </motion.div>
         </StyledDrawerOverlay>
@@ -321,6 +328,7 @@ const DrawerContent = ({
   onPublishNow,
   onDelete,
   onDuplicate,
+  onRetry,
 }: {
   post: SocialPost;
   listings: SocialListing[] | undefined;
@@ -332,6 +340,7 @@ const DrawerContent = ({
   onPublishNow: (post: SocialPost) => Promise<SaveOutcome>;
   onDelete: (post: SocialPost) => Promise<DeleteOutcome>;
   onDuplicate: (post: SocialPost) => void;
+  onRetry: (post: SocialPost) => Promise<RetryOutcome>;
 }) => {
   const status = post.status;
   const statusMeta = STATUS_META[status];
@@ -676,6 +685,7 @@ const DrawerContent = ({
           onPublishNow={onPublishNow}
           onDelete={onDelete}
           onDuplicate={onDuplicate}
+          onRetry={onRetry}
         />
       ) : null}
     </StyledDrawerPanel>
@@ -848,15 +858,14 @@ const ComplianceRow = ({
 // confirm/cancel pair. Only one inline mode is open at a time.
 type FooterMode = 'idle' | 'reschedule' | 'confirm-delete';
 
-// Status-aware footer (S4). Wires every action except FAILED→Retry:
+// Status-aware footer (S4 + S-Retry). Wires every action:
 //   • Edit       → opens the composer (DRAFT/SCHEDULED).
 //   • Reschedule → inline datetime → save-post(scheduledAt) (DRAFT/SCHEDULED).
 //   • Publish now→ save-post(scheduledAt = now) so the cron picks it up.
 //   • Delete     → inline confirm → delete-post (DRAFT/SCHEDULED/FAILED).
 //   • Duplicate  → opens the composer prefilled (new post, no postId).
-//   • Retry      → STUBBED (disabled + "soon"): FAILED can't go through save-post
-//                  (ILLEGAL_TRANSITION), so retry needs a NEW server route — a
-//                  separate cross-plane follow-up. See the file header.
+//   • Retry      → retry-post route (FAILED only): flips the post back to
+//                  SCHEDULED/DRAFT and clears the failure so the cron re-attempts.
 // A running mutation crossfades its label to a spinner (no hard text swap, §15);
 // a failure surfaces the server message inline AND the page toasts it; on success
 // the page closes the drawer + refreshes the calendar.
@@ -869,6 +878,7 @@ const DrawerFooter = ({
   onPublishNow,
   onDelete,
   onDuplicate,
+  onRetry,
 }: {
   post: SocialPost;
   actions: FooterAction[];
@@ -878,6 +888,7 @@ const DrawerFooter = ({
   onPublishNow: (post: SocialPost) => Promise<SaveOutcome>;
   onDelete: (post: SocialPost) => Promise<DeleteOutcome>;
   onDuplicate: (post: SocialPost) => void;
+  onRetry: (post: SocialPost) => Promise<RetryOutcome>;
 }) => {
   const [mode, setMode] = useState<FooterMode>('idle');
   // Which action is currently mid-flight (drives the per-button spinner + a
@@ -929,6 +940,19 @@ const DrawerFooter = ({
     }
   };
 
+  // Retry a FAILED post. On success the page closes the drawer + reloads (the pill
+  // flips to scheduled/draft), so we don't reset local state. On failure we clear
+  // busy and surface the server message inline (the page also toasts it).
+  const runRetry = async () => {
+    setBusy('retry');
+    setError(null);
+    const out = await onRetry(post);
+    if (!out.ok) {
+      setBusy(null);
+      setError(out.message);
+    }
+  };
+
   const onAction = (a: FooterAction) => {
     setError(null);
     if (a === 'edit') {
@@ -937,13 +961,14 @@ const DrawerFooter = ({
       onDuplicate(post);
     } else if (a === 'publish') {
       void runPublish();
+    } else if (a === 'retry') {
+      void runRetry();
     } else if (a === 'reschedule') {
       setRescheduleLocal(isoToLocalInput(post.scheduledAt));
       setMode('reschedule');
     } else if (a === 'delete') {
       setMode('confirm-delete');
     }
-    // 'retry' is stubbed → button is disabled, never reaches here.
   };
 
   const anyBusy = busy !== null;
@@ -1069,13 +1094,11 @@ const DrawerFooter = ({
             {actions.map((a) => {
               const meta = ACTION_META[a];
               const Icon = meta.Icon;
-              // Retry is the only remaining stub (needs a new server route).
-              const stubbed = a === 'retry';
               // Reschedule/edit only make sense for DRAFT/SCHEDULED; FOOTER_BY_STATUS
               // already restricts them, but guard defensively.
               const gated =
                 (a === 'reschedule' || a === 'edit') && !isReschedulable;
-              const disabled = stubbed || gated || anyBusy;
+              const disabled = gated || anyBusy;
               const running = busy === a;
               return (
                 <Button
@@ -1087,7 +1110,6 @@ const DrawerFooter = ({
                   loading={running}
                   onClick={() => onAction(a)}
                   disabled={disabled}
-                  title={stubbed ? 'Retry is coming soon' : undefined}
                 >
                   {meta.label}
                 </Button>

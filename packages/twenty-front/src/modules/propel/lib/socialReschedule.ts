@@ -130,3 +130,61 @@ export const deletePost = async (postId: string): Promise<DeleteOutcome> => {
     operatorAction: null,
   };
 };
+
+// A normalized retry outcome — same shape as DeleteOutcome plus the new status
+// the server settled on (SCHEDULED if the post had a future scheduledAt, else
+// DRAFT). The drawer footer renders success/failure identically to delete; the
+// page uses `status` to word the success toast.
+export type RetryOutcome =
+  | { ok: true; status: 'SCHEDULED' | 'DRAFT' }
+  | { ok: false; code: string; message: string; operatorAction: string | null };
+
+const RETRY_ERROR_FALLBACK: Record<string, string> = {
+  ILLEGAL_TRANSITION:
+    'Only a failed post can be retried (this one is no longer failed).',
+  NOT_FOUND: 'You do not have access to do that.',
+  ENV_MISSING: 'Social posting is not configured on this environment.',
+};
+
+// Retry a FAILED post via /marketing/social/retry-post. The ROUTE re-checks that
+// the post is FAILED (returns ILLEGAL_TRANSITION otherwise) and flips it back onto
+// the publish cron's path — to SCHEDULED if it still carries a future scheduledAt,
+// else to DRAFT with the schedule cleared — clearing the prior failure detail so
+// the cron's next attempt starts clean. The UI only offers Retry on FAILED posts,
+// but we still surface the envelope honestly if the server disagrees.
+export const retryPost = async (postId: string): Promise<RetryOutcome> => {
+  const res = await callPropelRoute<unknown>('/marketing/social/retry-post', {
+    body: { postId },
+  });
+
+  if (res === null) {
+    return {
+      ok: false,
+      code: 'NETWORK',
+      message: "Couldn't reach the server. Check your connection and try again.",
+      operatorAction: null,
+    };
+  }
+
+  if (isDeleteEnvelope(res)) {
+    const code = res.code ?? 'UNKNOWN';
+    const message =
+      (typeof res.error === 'string' && res.error) ||
+      RETRY_ERROR_FALLBACK[code] ||
+      'Something went wrong retrying this post.';
+    return { ok: false, code, message, operatorAction: res.operatorAction ?? null };
+  }
+
+  const out = res as { ok?: boolean; status?: unknown };
+  if (out.ok === true) {
+    const status = out.status === 'SCHEDULED' ? 'SCHEDULED' : 'DRAFT';
+    return { ok: true, status };
+  }
+
+  return {
+    ok: false,
+    code: 'UNKNOWN',
+    message: 'Something went wrong retrying this post.',
+    operatorAction: null,
+  };
+};
