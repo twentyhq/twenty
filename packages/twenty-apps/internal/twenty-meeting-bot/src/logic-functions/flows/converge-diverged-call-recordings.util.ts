@@ -176,7 +176,7 @@ const fetchDivergedCallRecordingCandidates = async (
         },
       });
 
-      return queryResult.callRecordings as
+      return (queryResult.callRecordings ?? undefined) as
         | ConnectionPage<DivergedCallRecordingNode>
         | undefined;
     },

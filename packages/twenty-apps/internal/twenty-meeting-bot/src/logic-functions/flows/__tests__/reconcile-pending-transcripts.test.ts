@@ -280,6 +280,41 @@ describe('reconcilePendingTranscripts', () => {
     expect(result.failedCallRecordingIds).toEqual([]);
   });
 
+  it('fails a stale pending marker without a Recall transcript id', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        transcript: {
+          recallTranscriptId: null,
+          status: 'PENDING',
+          requestedAt: STALE_REQUESTED_AT,
+        },
+      },
+    ]);
+
+    const result = await reconcilePendingTranscripts({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(retrieveRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          transcript: {
+            recallTranscriptId: null,
+            status: 'FAILED',
+            subCode: 'missing_transcript_id',
+          },
+          status: 'FAILED_UNKNOWN',
+        },
+      },
+    ]);
+    expect(result.failedCallRecordingIds).toEqual(['call-recording-1']);
+  });
+
   it('ignores records holding real transcript content or FAILED markers', async () => {
     const client = new FakeCoreApiClient([
       {

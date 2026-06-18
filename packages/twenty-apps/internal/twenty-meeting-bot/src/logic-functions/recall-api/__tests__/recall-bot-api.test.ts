@@ -451,6 +451,42 @@ describe('recall bot api', () => {
     });
   });
 
+  it('rejects malformed transcript details', async () => {
+    fetchMock
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          id: 'recall-transcript-id',
+          status: { code: 'done' },
+          data: {},
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          id: 'recall-transcript-id',
+          data: {},
+        }),
+      });
+
+    await expect(
+      retrieveRecallTranscript({ transcriptId: 'recall-transcript-id' }),
+    ).resolves.toEqual({
+      ok: false,
+      status: 200,
+      errorMessage: 'Recall API returned malformed transcript details',
+    });
+    await expect(
+      retrieveRecallTranscript({ transcriptId: 'recall-transcript-id' }),
+    ).resolves.toEqual({
+      ok: false,
+      status: 200,
+      errorMessage: 'Recall API returned malformed transcript details',
+    });
+  });
+
   describe('transient failure retries', () => {
     beforeEach(() => {
       vi.useFakeTimers();

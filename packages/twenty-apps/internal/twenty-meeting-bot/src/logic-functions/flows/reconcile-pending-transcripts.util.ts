@@ -82,8 +82,24 @@ export const reconcilePendingTranscripts = async ({
 
     if (isNull(marker.recallTranscriptId)) {
       console.warn(
-        `[twenty-meeting-bot] call recording ${id} has a pending transcript marker without a transcript id; it cannot be re-checked`,
+        `[twenty-meeting-bot] call recording ${id} has a pending transcript marker without a transcript id; marking it failed`,
       );
+      await updateCallRecording(client, {
+        id,
+        data: {
+          transcript: buildFailedTranscriptMarker({
+            recallTranscriptId: null,
+            subCode: 'missing_transcript_id',
+          }),
+          ...(isCallRecordingStatusDowngrade({
+            fromStatus: pendingCallRecording.status,
+            toStatus: CallRecordingStatus.FAILED_UNKNOWN,
+          })
+            ? {}
+            : { status: CallRecordingStatus.FAILED_UNKNOWN }),
+        },
+      });
+      result.failedCallRecordingIds.push(id);
       continue;
     }
 
@@ -179,7 +195,7 @@ const fetchPendingTranscriptCallRecordings = async (
           },
         });
 
-        return queryResult.callRecordings as
+        return (queryResult.callRecordings ?? undefined) as
           | ConnectionPage<PendingTranscriptCallRecordingNode>
           | undefined;
       },

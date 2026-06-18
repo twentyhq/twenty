@@ -1,3 +1,5 @@
+import { isUndefined } from '@sniptt/guards';
+
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
@@ -35,7 +37,17 @@ export const retrieveRecallTranscript = async ({
     return result;
   }
 
-  return { ok: true, transcript: extractRecallTranscriptDetails(result.data) };
+  const transcript = extractRecallTranscriptDetails(result.data);
+
+  if (isMalformedRecallTranscriptDetails(transcript)) {
+    return {
+      ok: false,
+      status: result.status,
+      errorMessage: 'Recall API returned malformed transcript details',
+    };
+  }
+
+  return { ok: true, transcript };
 };
 
 const extractRecallTranscriptDetails = (
@@ -50,3 +62,10 @@ const extractRecallTranscriptDetails = (
     statusSubCode: getString(status?.sub_code),
   };
 };
+
+const isMalformedRecallTranscriptDetails = ({
+  downloadUrl,
+  statusCode,
+}: RecallTranscriptDetails): boolean =>
+  (isUndefined(downloadUrl) && isUndefined(statusCode)) ||
+  (isUndefined(downloadUrl) && statusCode === 'done');
