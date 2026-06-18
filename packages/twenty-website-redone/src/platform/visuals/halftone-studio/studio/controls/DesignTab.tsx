@@ -9,14 +9,14 @@ import type {
   HalftoneStudioSettings,
 } from '../../engine/studio-settings-types';
 
-import { ColorField } from './color-field';
+import { ColorField } from './ColorField';
 import { CONTROLS_PANEL_SHELL } from './controls-panel-shell';
-import { CONTROLS_SECTION } from './controls-section';
+import { CONTROLS_SECTION } from './ControlsSection';
 import { CONTROLS_TABS } from './controls-tabs';
 import { HALFTONE_FORMATTERS } from './formatters';
-import { SegmentedControl } from './segmented-control';
+import { SegmentedControl } from './SegmentedControl';
 import { SelectInput } from './select-input';
-import { SliderControl } from './slider-control';
+import { SliderControl } from './SliderControl';
 
 const DEFAULT_IMAGE_FILE_NAME = 'twenty-logo.svg';
 const DEFAULT_IMAGE_OPTION_LABEL = 'Twenty image';

@@ -1,7 +1,7 @@
 import { css } from '@linaria/core';
 import { type ReactNode } from 'react';
 
-import { LocalizedLink } from '@/platform/i18n/localized-link';
+import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
   EASING,
   color,

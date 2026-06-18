@@ -1,4 +1,4 @@
-import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import { paletteColorNumber, type PaletteToken } from '@/tokens';
 
 import { buildCustomerCasesCoverSettings } from './customer-cases-cover-config';

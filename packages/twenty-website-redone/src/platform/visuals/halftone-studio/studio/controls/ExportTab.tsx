@@ -10,12 +10,12 @@ import { HALFTONE_EXPORT_NAMES } from '../../export/export-names';
 import type { ReactExportSettings } from '../../export/exporter-types';
 
 import { CONTROLS_PANEL_SHELL } from './controls-panel-shell';
-import { CONTROLS_SECTION } from './controls-section';
+import { CONTROLS_SECTION } from './ControlsSection';
 import { CONTROLS_TABS } from './controls-tabs';
 import { HALFTONE_FORMATTERS } from './formatters';
-import { LabelWithTooltip } from './label-with-tooltip';
-import { SelectControl } from './select-control';
-import { ToggleControl } from './toggle-control';
+import { LabelWithTooltip } from './LabelWithTooltip';
+import { SelectControl } from './SelectControl';
+import { ToggleControl } from './ToggleControl';
 
 const RESOLUTION_OPTIONS = [
   { label: '720p (1280 × 720)', value: '1280x720' },

@@ -5,7 +5,7 @@ export { computeScrollProgress } from './compute-scroll-progress';
 export {
   ScrollProgressEffect,
   type ScrollProgressEffectProps,
-} from './scroll-progress-effect';
+} from './ScrollProgressEffect';
 export { getReducedMotionSnapshot } from './reduced-motion-snapshot';
 export { observeElementSize } from './observe-element-size';
 export { useScaleToFit } from './use-scale-to-fit';

@@ -52,7 +52,7 @@ function EmbedLoadingFallback() {
 // a page load where the visitor does not ask for it.
 const CalFormEmbed = dynamic(
   () =>
-    import('@/platform/cal/cal-embed').then((mod) => ({
+    import('@/platform/cal/CalEmbed').then((mod) => ({
       default: mod.CalEmbed,
     })),
   { loading: () => <EmbedLoadingFallback />, ssr: false },

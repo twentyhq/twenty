@@ -6,7 +6,7 @@ import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { type CSSProperties } from 'react';
 
-import { LocalizedLink } from '@/platform/i18n/localized-link';
+import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
   color,
   EASING,

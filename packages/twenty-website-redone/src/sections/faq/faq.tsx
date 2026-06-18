@@ -8,7 +8,7 @@ import { styled } from '@linaria/react';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { SITE_URLS } from '@/platform/site-urls';
 import { buildFaqPageJsonLd } from '@/platform/seo/build-faq-page-json-ld';
-import { JsonLd } from '@/platform/seo/json-ld';
+import { JsonLd } from '@/platform/seo/JsonLd';
 import { mediaUp, spacing } from '@/tokens';
 import {
   Button,

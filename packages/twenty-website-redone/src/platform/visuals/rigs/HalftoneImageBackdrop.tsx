@@ -4,12 +4,12 @@ import dynamic from 'next/dynamic';
 import { type ReactNode } from 'react';
 
 import { type ImageSessionSettings } from '../halftone/create-image-session';
-import { VisualMount } from '../engine/visual-mount';
+import { VisualMount } from '../engine/VisualMount';
 
 // The ONLY import() of the heavy image pipeline.
 const HalftoneImageScene = dynamic(
   () =>
-    import('../halftone/halftone-image-scene').then(
+    import('../halftone/HalftoneImageScene').then(
       (module) => module.HalftoneImageScene,
     ),
   { ssr: false },

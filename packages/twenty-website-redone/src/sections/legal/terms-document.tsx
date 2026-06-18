@@ -1,4 +1,4 @@
-import { LocalizedLink } from '@/platform/i18n/localized-link';
+import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import { ExternalLink } from '@/ui';
 
 export function TermsDocument() {

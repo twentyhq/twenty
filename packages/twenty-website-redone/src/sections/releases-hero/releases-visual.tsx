@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import { color, mediaUp, radius } from '@/tokens';
 
 import { RELEASES_VISUAL } from './releases-visual-config';

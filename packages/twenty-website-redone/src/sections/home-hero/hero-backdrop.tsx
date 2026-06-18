@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { DURATION } from '@/tokens';
 import { useState } from 'react';
 
-import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 import { HERO_BACKDROP } from './hero-backdrop-config';
 

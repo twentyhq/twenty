@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import { color, radius, semanticColor } from '@/tokens';
 
 import { PROMO_MIC_VISUAL } from './promo-mic-config';

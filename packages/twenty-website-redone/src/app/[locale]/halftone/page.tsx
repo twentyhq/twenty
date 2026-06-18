@@ -3,7 +3,7 @@ import {
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
 import { buildRouteMetadata } from '@/platform/seo';
-import { HalftoneStudioMount } from '@/platform/visuals/halftone-studio/studio/halftone-studio-mount';
+import { HalftoneStudioMount } from '@/platform/visuals/halftone-studio/studio/HalftoneStudioMount';
 
 export const generateMetadata = buildRouteMetadata('halftone');
 

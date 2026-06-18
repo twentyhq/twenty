@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { HalftoneModel } from '@/platform/visuals/rigs/halftone-model';
+import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 import { mediaUp, radius } from '@/tokens';
 
 import { PARTNER_QUOTE_VISUAL } from './partner-quote-config';

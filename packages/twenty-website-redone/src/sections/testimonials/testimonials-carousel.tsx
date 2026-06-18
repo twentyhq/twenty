@@ -16,7 +16,7 @@ import {
   spacing,
   typeRampDeclarations,
 } from '@/tokens';
-import { HalftoneModel } from '@/platform/visuals/rigs/halftone-model';
+import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 import { Body, Eyebrow, IconButton, MarkedDivider } from '@/ui';
 
 import { HOURGLASS_VISUAL } from './hourglass-config';

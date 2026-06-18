@@ -2,7 +2,7 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
-import { HalftoneModel } from '@/platform/visuals/rigs/halftone-model';
+import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 import { radius } from '@/tokens';
 
 import { WHY_TWENTY_HERO } from './why-twenty-visual-config';

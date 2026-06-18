@@ -25,7 +25,7 @@ import {
 
 import { useTimeoutRegistry } from '@/app-preview/stage/use-timeout-registry';
 import { useScaleToFit } from '@/platform/motion';
-import { HalftoneCardBackdrop } from '@/platform/visuals/rigs/halftone-card-backdrop';
+import { HalftoneCardBackdrop } from '@/platform/visuals/rigs/HalftoneCardBackdrop';
 import { EASING, FONT_WEIGHT } from '@/tokens';
 import { FAST_PATH_SCENE } from '@/tokens/feature-scenes/fast-path-scene';
 

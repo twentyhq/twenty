@@ -3,7 +3,7 @@
 import { styled } from '@linaria/react';
 import { type ChangeEventHandler, type ReactNode, useId } from 'react';
 
-import { ToggleSwitch } from './toggle-switch';
+import { ToggleSwitch } from './ToggleSwitch';
 
 const Section = styled.div<{ $first?: boolean }>`
   border-top: ${(props) =>

@@ -17,7 +17,7 @@ import {
   HalftoneCanvas,
   type HalftoneRenderStrategy,
   type HalftoneSnapshotFn,
-} from './halftone-canvas';
+} from './HalftoneCanvas';
 import type {
   HalftoneExportPose,
   HalftoneModelLoader,

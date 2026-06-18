@@ -1,6 +1,6 @@
 import { paletteColorNumber } from '@/tokens';
 
-import { type HalftoneModelProps } from '@/platform/visuals/rigs/halftone-model';
+import { type HalftoneModelProps } from '@/platform/visuals/rigs/HalftoneModel';
 
 // The /why-twenty hero "20": the studio-default solid band halftone (the
 // redone band defaults ARE this scene's studio export), recoloured to a white

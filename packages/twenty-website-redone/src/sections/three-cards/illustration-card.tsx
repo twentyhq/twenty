@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { HalftoneModel } from '@/platform/visuals/rigs/halftone-model';
+import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 
 import { CARD_MODEL_CONFIGS } from './card-model-configs';
 
@@ -7,7 +7,7 @@ import { ArrowRight } from '@/icons';
 import { msg } from '@lingui/core/macro';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { LocalizedLink } from '@/platform/i18n/localized-link';
+import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
   color,
   EASING,
@@ -20,7 +20,7 @@ import {
   REDUCED_MOTION,
 } from '@/tokens';
 import { Body } from '@/ui';
-import { ButtonShape } from '@/ui/button-shape';
+import { ButtonShape } from '@/ui/ButtonShape';
 
 import { CardShape } from './card-shape';
 import { type IllustrationCardRecord } from './three-cards.data';

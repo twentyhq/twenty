@@ -1,7 +1,7 @@
 'use client';
 
 import { msg } from '@lingui/core/macro';
-import { HalftoneModel } from '@/platform/visuals/rigs/halftone-model';
+import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 
 import { HELPED_MODEL_CONFIGS } from './helped-model-configs';
 import { useLingui } from '@lingui/react';

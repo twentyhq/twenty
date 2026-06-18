@@ -1,6 +1,6 @@
 import { paletteColorNumber } from '@/tokens';
 
-import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 // The authored bridge framing per viewport band. These thresholds are the
 // artwork's own (how the bridge crops against the copy), independent of

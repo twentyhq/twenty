@@ -4,12 +4,12 @@ import dynamic from 'next/dynamic';
 import { type ReactNode, type RefObject } from 'react';
 
 import { type CardHalftoneConfig } from '../halftone/create-card-halftone-session';
-import { VisualMount } from '../engine/visual-mount';
+import { VisualMount } from '../engine/VisualMount';
 
 // The ONLY import() of the card halftone pipeline.
 const CardHalftoneScene = dynamic(
   () =>
-    import('../halftone/card-halftone-scene').then(
+    import('../halftone/CardHalftoneScene').then(
       (module) => module.CardHalftoneScene,
     ),
   { ssr: false },

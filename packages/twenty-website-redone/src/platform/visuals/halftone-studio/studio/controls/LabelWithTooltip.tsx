@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { TooltipPositionEffect } from './tooltip-position-effect';
+import { TooltipPositionEffect } from './TooltipPositionEffect';
 
 const LabelWithInfoRow = styled.span`
   align-items: center;

@@ -3,7 +3,7 @@
 import { styled } from '@linaria/react';
 
 import { useMediaQuery } from '@/platform/motion';
-import { HalftoneModel } from '@/platform/visuals/rigs/halftone-model';
+import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 import { BREAKPOINT_PX, mediaUp, spacing, Z_INDEX } from '@/tokens';
 
 import { FOOTER_BACKDROP } from './footer-backdrop-config';

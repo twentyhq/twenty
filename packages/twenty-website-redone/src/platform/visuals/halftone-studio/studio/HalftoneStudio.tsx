@@ -16,7 +16,7 @@ import { HALFTONE_FOOTPRINT } from '../engine/footprint';
 import {
   HalftoneCanvas,
   type HalftoneSnapshotFn,
-} from '../engine/halftone-canvas';
+} from '../engine/HalftoneCanvas';
 import { normalizeHalftoneStudioSettings } from '../engine/normalize-studio-settings';
 import { halftoneStudioReducer } from '../engine/studio-reducer';
 import { HALFTONE_STUDIO_DEFAULTS } from '../engine/studio-settings-defaults';
@@ -35,10 +35,10 @@ import {
 } from '../export/exporter-types';
 import { generateImageHalftoneSvg } from '../export/image-svg-export';
 
-import { ControlsPanel } from './controls-panel';
-import { CopyHalftoneShortcutEffect } from './copy-halftone-shortcut-effect';
+import { ControlsPanel } from './ControlsPanel';
+import { CopyHalftoneShortcutEffect } from './CopyHalftoneShortcutEffect';
 import { STUDIO_STYLES } from './halftone-studio-styles';
-import { PasteImageEffect } from './paste-image-effect';
+import { PasteImageEffect } from './PasteImageEffect';
 import { useDefaultHalftoneImage } from './use-default-halftone-image';
 import { useGeometryLoader } from './use-geometry-loader';
 import { useImageElement } from './use-image-element';

@@ -1,6 +1,6 @@
 import { paletteColorNumber } from '@/tokens';
 
-import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 // The author portrait as a halftone: white dashes in the photo's light areas
 // (toneTarget light) on the dark testimonials panel, with a hover halftone

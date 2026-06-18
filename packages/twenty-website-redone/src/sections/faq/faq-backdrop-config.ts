@@ -1,6 +1,6 @@
 import { paletteColorNumber } from '@/tokens';
 
-import { type HalftoneModelProps } from '@/platform/visuals/rigs/halftone-model';
+import { type HalftoneModelProps } from '@/platform/visuals/rigs/HalftoneModel';
 
 // The authored FAQ background model: row halftone in brand blue, slow -z
 // rotation, lifted high in frame, baked clocks. No pointer interaction.

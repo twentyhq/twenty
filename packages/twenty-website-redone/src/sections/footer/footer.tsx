@@ -8,7 +8,7 @@ import { Container } from '@/ui';
 
 import { FooterBottom } from './footer-bottom';
 import { FooterNav } from './footer-nav';
-import { NotchedCardShape } from '@/ui/notched-card-shape';
+import { NotchedCardShape } from '@/ui/NotchedCardShape';
 
 const FooterRoot = styled.footer`
   background-color: ${color('black')};

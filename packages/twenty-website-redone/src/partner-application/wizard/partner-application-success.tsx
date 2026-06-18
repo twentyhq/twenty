@@ -3,7 +3,7 @@
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
-import { CalEmbed } from '@/platform/cal/cal-embed';
+import { CalEmbed } from '@/platform/cal/CalEmbed';
 import {
   fontFamily,
   fontSize,

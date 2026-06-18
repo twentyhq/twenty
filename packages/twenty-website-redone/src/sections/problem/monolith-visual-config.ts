@@ -1,6 +1,6 @@
 import { paletteColorNumber } from '@/tokens';
 
-import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 // The authored monolith: ash band halftone over the masked image, with the
 // subtle hover light (the old mount runs a continuous loop for it).

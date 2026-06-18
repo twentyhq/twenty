@@ -1,6 +1,6 @@
 import { paletteColorNumber } from '@/tokens';
 
-import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 // The authored stepper backdrop: fog dashes over the worker image inside
 // the graphite frame, brightening to white where the pointer hovers (the

@@ -1,6 +1,6 @@
 import { paletteColorNumber } from '@/tokens';
 
-import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 // The partner hero halftone: stone dashes over the photo, going blue (#4a38f5)
 // under the cursor. The image is contained at previewDistance 3.2, and the

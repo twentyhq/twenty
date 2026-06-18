@@ -1,6 +1,6 @@
 import { paletteColorNumber } from '@/tokens';
 
-import { type HalftoneModelProps } from '@/platform/visuals/rigs/halftone-model';
+import { type HalftoneModelProps } from '@/platform/visuals/rigs/HalftoneModel';
 
 // The authored hourglass: legacy row halftone in brand blue, slow
 // auto-rotate with drag (no spring), baked to the pose the old site ships

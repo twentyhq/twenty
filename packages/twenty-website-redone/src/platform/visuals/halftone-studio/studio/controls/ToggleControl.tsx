@@ -3,7 +3,7 @@
 import { styled } from '@linaria/react';
 import type { ChangeEventHandler, ReactNode } from 'react';
 
-import { ToggleSwitch } from './toggle-switch';
+import { ToggleSwitch } from './ToggleSwitch';
 
 const ToggleRow = styled.div`
   align-items: center;

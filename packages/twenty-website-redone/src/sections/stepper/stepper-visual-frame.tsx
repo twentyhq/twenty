@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 import { STEPPER_BACKDROP } from './stepper-backdrop-config';
 import { type ReactNode } from 'react';

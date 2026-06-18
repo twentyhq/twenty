@@ -12,11 +12,11 @@ import type {
 } from '../engine/studio-settings-types';
 import type { ReactExportSettings } from '../export/exporter-types';
 
-import { AnimationsTab } from './controls/animations-tab';
+import { AnimationsTab } from './controls/AnimationsTab';
 import { CONTROLS_PANEL_SHELL } from './controls/controls-panel-shell';
 import { CONTROLS_TABS } from './controls/controls-tabs';
-import { DesignTab } from './controls/design-tab';
-import { ExportTab } from './controls/export-tab';
+import { DesignTab } from './controls/DesignTab';
+import { ExportTab } from './controls/ExportTab';
 
 type ControlsPanelProps = {
   activeTab: HalftoneTabId;

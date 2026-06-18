@@ -2,15 +2,15 @@
 
 import type { HalftoneStudioSettings } from '../../engine/studio-settings-types';
 
-import { ColorField } from './color-field';
+import { ColorField } from './ColorField';
 import { CONTROLS_PANEL_SHELL } from './controls-panel-shell';
-import { CONTROLS_SECTION } from './controls-section';
+import { CONTROLS_SECTION } from './ControlsSection';
 import { CONTROLS_TABS } from './controls-tabs';
 import { HALFTONE_FORMATTERS } from './formatters';
-import { LabelWithTooltip } from './label-with-tooltip';
-import { SelectControl } from './select-control';
-import { SliderControl } from './slider-control';
-import { ToggleControl } from './toggle-control';
+import { LabelWithTooltip } from './LabelWithTooltip';
+import { SelectControl } from './SelectControl';
+import { SliderControl } from './SliderControl';
+import { ToggleControl } from './ToggleControl';
 
 const MIN_ROTATION_SPEED = 0.01;
 const ROTATION_SPEED_STEP = 0.01;

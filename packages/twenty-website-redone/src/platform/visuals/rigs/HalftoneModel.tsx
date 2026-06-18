@@ -6,13 +6,13 @@ import { type ReactNode } from 'react';
 import { type HalftoneInitialPose } from '../halftone/halftone-interaction-state';
 import { type HalftoneSceneSettingsOverrides } from '../halftone/halftone-settings';
 import { type LoadGlbGeometryOptions } from '../three-runtime/load-glb-geometry';
-import { VisualMount } from '../engine/visual-mount';
+import { VisualMount } from '../engine/VisualMount';
 
 // The ONLY import() of the heavy model pipeline: three stays out of the
 // main chunk, and the fetch happens after policy + viewport + slot grant.
 const HalftoneModelScene = dynamic(
   () =>
-    import('../halftone/halftone-model-scene').then(
+    import('../halftone/HalftoneModelScene').then(
       (module) => module.HalftoneModelScene,
     ),
   { ssr: false },

@@ -1,7 +1,7 @@
 import { paletteColorNumber } from '@/tokens';
 import { type HalftoneEffectSettingsOverrides } from '@/platform/visuals/halftone/halftone-settings';
 
-import { type HalftoneModelProps } from '@/platform/visuals/rigs/halftone-model';
+import { type HalftoneModelProps } from '@/platform/visuals/rigs/HalftoneModel';
 import { type IllustrationId } from './three-cards.data';
 
 // The authored three-cards models: solid-surface band halftone in brand

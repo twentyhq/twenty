@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 import { PARTNER_PORTRAIT_SETTINGS } from './partner-portrait-config';
 

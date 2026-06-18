@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 import { MONOLITH_VISUAL } from './monolith-visual-config';
 

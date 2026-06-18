@@ -1,6 +1,6 @@
 import { paletteColorNumber } from '@/tokens';
 
-import { type HalftoneModelProps } from '@/platform/visuals/rigs/halftone-model';
+import { type HalftoneModelProps } from '@/platform/visuals/rigs/HalftoneModel';
 
 // The authored footer model: charcoal rows breathing on the black stage,
 // held at its baked pose (the old hook's drag handler is authored-disabled).

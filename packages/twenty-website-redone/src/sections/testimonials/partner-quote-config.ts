@@ -1,4 +1,4 @@
-import { type HalftoneModelProps } from '@/platform/visuals/rigs/halftone-model';
+import { type HalftoneModelProps } from '@/platform/visuals/rigs/HalftoneModel';
 
 // The decorative quote-mark behind the testimonial text. The model session's
 // solid defaults already match the old quote exactly (band halftone scale

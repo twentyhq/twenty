@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { useLayoutEffect, useRef } from 'react';
 
 import { createAnimationFrameLoop } from '@/platform/motion';
-import { HalftoneModel } from '@/platform/visuals/rigs/halftone-model';
+import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 import { mediaUp } from '@/tokens';
 
 import { FAQ_BACKDROP } from './faq-backdrop-config';

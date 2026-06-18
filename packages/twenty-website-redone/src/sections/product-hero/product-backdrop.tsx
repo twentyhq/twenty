@@ -2,7 +2,7 @@
 
 import { paletteColorNumber, type PaletteToken } from '@/tokens';
 
-import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 const BACKGROUND_IMAGE_URL = '/images/product/product-hero-background.webp';
 

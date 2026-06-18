@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { observeElementVisibility } from './observe-element-visibility';
 import { useWebGlGate } from './use-webgl-gate';
-import { VisualErrorBoundary } from './visual-error-boundary';
+import { VisualErrorBoundary } from './VisualErrorBoundary';
 import { VisualRuntimeContext } from './visual-runtime-context';
 import { webGlContextBudget } from './webgl-context-budget';
 import { WEBGL_CONTEXT_LOST_EVENT } from './webgl-context-lost-event';

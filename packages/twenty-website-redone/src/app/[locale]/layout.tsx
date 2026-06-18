@@ -8,7 +8,7 @@ import {
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
 import { ContactCalModalRoot } from '@/contact-cal';
-import { I18nProvider } from '@/platform/i18n/i18n-provider';
+import { I18nProvider } from '@/platform/i18n/I18nProvider';
 import { localeToUrlSegment } from '@/platform/i18n/locale-to-url-segment';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';

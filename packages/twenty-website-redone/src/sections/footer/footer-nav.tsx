@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 
 import { TalkToUsButton } from '@/contact-cal';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { LocalizedLink } from '@/platform/i18n/localized-link';
+import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
   color,
   FONT_WEIGHT,

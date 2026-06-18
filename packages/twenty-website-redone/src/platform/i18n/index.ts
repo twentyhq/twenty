@@ -2,12 +2,12 @@
 // are imported by path so client components can use this barrel freely.
 export { createI18nInstance } from './create-i18n-instance';
 export { getLocaleMessages } from './get-locale-messages';
-export { I18nProvider, type I18nProviderProps } from './i18n-provider';
+export { I18nProvider, type I18nProviderProps } from './I18nProvider';
 export { isWebsiteLocale } from './is-website-locale';
 export { localeDisplayName } from './locale-display-name';
 export { LOCALE_BY_URL_SEGMENT } from './locale-by-url-segment';
 export { localeToUrlSegment } from './locale-to-url-segment';
-export { LocalizedLink, type LocalizedLinkProps } from './localized-link';
+export { LocalizedLink, type LocalizedLinkProps } from './LocalizedLink';
 export { localizeHref } from './localize-href';
 export { resolveLocaleParam } from './resolve-locale-param';
 export { stripLocale } from './strip-locale';

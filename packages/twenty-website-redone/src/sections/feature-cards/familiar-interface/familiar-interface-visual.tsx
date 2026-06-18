@@ -5,7 +5,7 @@ import { IconChevronDown, IconList, IconPlus } from '@tabler/icons-react';
 import { useRef, type RefObject } from 'react';
 
 import { useScaleToFit } from '@/platform/motion';
-import { HalftoneCardBackdrop } from '@/platform/visuals/rigs/halftone-card-backdrop';
+import { HalftoneCardBackdrop } from '@/platform/visuals/rigs/HalftoneCardBackdrop';
 import { EASING, FONT_WEIGHT } from '@/tokens';
 import { FAMILIAR_INTERFACE_SCENE } from '@/tokens/feature-scenes/familiar-interface-scene';
 

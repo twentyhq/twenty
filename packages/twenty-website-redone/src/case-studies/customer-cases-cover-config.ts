@@ -1,4 +1,4 @@
-import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 // The case-study cover halftone: the studio band defaults (the same export the
 // why-twenty hero and releases milestone use) over the cover photo, cover-fit,

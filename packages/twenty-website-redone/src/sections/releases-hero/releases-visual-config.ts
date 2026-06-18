@@ -1,6 +1,6 @@
 import { paletteColorNumber } from '@/tokens';
 
-import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/halftone-image-backdrop';
+import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
 // The release-notes milestone halftone: chalk (#f3f3f3) dashes over the iron
 // (#777777) panel, cover-fit over the milestone photo with a soft hover light.
