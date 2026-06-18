@@ -4,6 +4,7 @@ import { type MetadataRoute } from 'next';
 export type WebsiteRouteId =
   | 'customers'
   | 'enterpriseActivate'
+  | 'halftone'
   | 'home'
   | 'partners'
   | 'partnersApply'

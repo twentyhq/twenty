@@ -78,6 +78,9 @@ const PUBLIC_SVG_BRAND_FILES = new Set([
   'public/images/logo-bar/wazoku.svg',
   'public/images/shared/companies/logos/linear.svg',
   'public/images/shared/companies/logos/twenty.svg',
+  // The halftone studio's default image input: fetched at runtime as an
+  // <img> and fed through the halftone shader, not rendered as an icon glyph.
+  'public/images/shared/halftone/twenty-logo.svg',
 ]);
 // Vertical rhythm rides margins ('& > * + *'), not row-gap: gap breaks
 // silently when a wrapper changes the child list. row-gap is allowed only

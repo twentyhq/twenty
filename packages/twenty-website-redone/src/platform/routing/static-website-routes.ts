@@ -115,4 +115,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     priority: 0.3,
     title: msg`Enterprise Activation | Twenty`,
   },
+  {
+    // The interactive halftone generator: an internal dev tool, noindex and
+    // excluded from the sitemap (getIndexedWebsiteRoutes). Mounted client-only.
+    changeFrequency: 'monthly',
+    description: msg`Interactive halftone generator exported from Twenty.`,
+    id: 'halftone',
+    indexed: false,
+    path: '/halftone',
+    priority: 0,
+    title: msg`Halftone Generator | Twenty`,
+  },
 ];

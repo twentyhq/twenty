@@ -2656,6 +2656,11 @@ msgstr "Haiti 🇭🇹"
 msgid "Halftone generator"
 msgstr "Halftone generator"
 
+#. js-lingui-id: DHC85F
+#: src/platform/routing/static-website-routes.ts
+msgid "Halftone Generator | Twenty"
+msgstr "Halftone Generator | Twenty"
+
 #. js-lingui-id: c3XJ18
 #: src/sections/pricing-salesfarce/salesfarce-window.tsx
 #: src/sections/footer/footer.data.ts
@@ -2915,6 +2920,11 @@ msgstr "Install shared tarball app"
 #: src/case-studies/case-study-stories.ts
 msgid "Integration"
 msgstr "Integration"
+
+#. js-lingui-id: OChKCc
+#: src/platform/routing/static-website-routes.ts
+msgid "Interactive halftone generator exported from Twenty."
+msgstr "Interactive halftone generator exported from Twenty."
 
 #. js-lingui-id: +83cJG
 #: src/partners-marketplace/partner-profile-ctas.tsx
