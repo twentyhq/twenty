@@ -24,8 +24,8 @@ describe('computeLambdaInvokeAbortTimeoutMs', () => {
   });
 
   it('caps the abort at the Lambda hard limit plus grace when the requested timeout exceeds it', () => {
-    expect(computeLambdaInvokeAbortTimeoutMs(lambdaHardTimeoutMs + 60_000)).toBe(
-      lambdaHardTimeoutMs + EXECUTOR_LAMBDA_INVOKE_ABORT_GRACE_PERIOD_MS,
-    );
+    expect(
+      computeLambdaInvokeAbortTimeoutMs(lambdaHardTimeoutMs + 60_000),
+    ).toBe(lambdaHardTimeoutMs + EXECUTOR_LAMBDA_INVOKE_ABORT_GRACE_PERIOD_MS);
   });
 });
