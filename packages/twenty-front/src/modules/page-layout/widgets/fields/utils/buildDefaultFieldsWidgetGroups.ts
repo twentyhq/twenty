@@ -24,7 +24,7 @@ export const buildDefaultFieldsWidgetGroups = ({
       }),
   );
 
-  const standardFields = eligibleFields.filter(
+  const nonCustomFields = eligibleFields.filter(
     (field) => !getIsMetadataItemCustom(field, workspaceCustomApplicationId),
   );
   const customFields = eligibleFields.filter((field) =>
@@ -38,13 +38,13 @@ export const buildDefaultFieldsWidgetGroups = ({
   const groups: FieldsWidgetGroup[] = [];
   let globalIndex = 0;
 
-  if (standardFields.length > 0) {
+  if (nonCustomFields.length > 0) {
     groups.push({
       id: uuidv4(),
       name: 'General',
       position: 0,
       isVisible: true,
-      fields: standardFields.map((field, index) => ({
+      fields: nonCustomFields.map((field, index) => ({
         fieldMetadataItem: field,
         position: index,
         isVisible: isFieldVisible(field.type),
