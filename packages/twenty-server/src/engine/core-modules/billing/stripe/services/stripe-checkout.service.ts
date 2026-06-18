@@ -159,23 +159,27 @@ export class StripeCheckoutService {
         quantity: lineItem.quantity,
       }));
 
-    return await this.stripe.subscriptions.create({
-      customer: customerId,
-      items: subscriptionItems,
-      metadata: {
-        workspaceId: workspace.id,
-        plan,
+    return await this.stripe.subscriptions.create(
+      {
+        customer: customerId,
+        items: subscriptionItems,
+        metadata: {
+          workspaceId: workspace.id,
+          plan,
+        },
+        payment_behavior: 'default_incomplete',
+        payment_settings: {
+          save_default_payment_method: 'on_subscription',
+        },
+        ...this.getStripeSubscriptionTrialPeriodConfig(withTrialPeriod, true),
+        // Tax needs a billing address, which we don't collect inline to keep
+        // onboarding friction low; enable it once an address is gathered.
+        automatic_tax: { enabled: false },
+        expand: ['pending_setup_intent', 'latest_invoice.confirmation_secret'],
       },
-      payment_behavior: 'default_incomplete',
-      payment_settings: {
-        save_default_payment_method: 'on_subscription',
-      },
-      ...this.getStripeSubscriptionTrialPeriodConfig(withTrialPeriod, true),
-      // Tax needs a billing address, which we don't collect inline to keep
-      // onboarding friction low; enable it once an address is gathered.
-      automatic_tax: { enabled: false },
-      expand: ['pending_setup_intent', 'latest_invoice.confirmation_secret'],
-    });
+      // Idempotency key so concurrent submits reuse one subscription, not duplicate it.
+      { idempotencyKey: `onboarding-subscription-${workspace.id}-${plan}` },
+    );
   }
 
   private async getOrCreateStripeCustomerId({
