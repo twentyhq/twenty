@@ -4,6 +4,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotMetadata } from 'src/logic-functions/domain/build-recall-bot-metadata.util';
+import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
@@ -14,11 +15,13 @@ export const ensureMeetingBot = async (
   { callRecording, calendarEvent }: MeetingRecording,
 ): Promise<boolean> => {
   const meetingUrl = calendarEvent.conferenceLinkUrl;
-  const joinAt = calendarEvent.startsAt;
+  const meetingStartsAt = calendarEvent.startsAt;
 
-  if (isUndefined(meetingUrl) || isUndefined(joinAt)) {
+  if (isUndefined(meetingUrl) || isUndefined(meetingStartsAt)) {
     return false;
   }
+
+  const joinAt = computeRecallBotJoinAt(meetingStartsAt);
 
   const freshCallRecording = (
     await findCallRecordingsByIds(client, [callRecording.id])

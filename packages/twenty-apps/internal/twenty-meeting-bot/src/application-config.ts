@@ -3,11 +3,23 @@ import { defineApplication } from 'twenty-sdk/define';
 import { APP_DESCRIPTION } from 'src/constants/app-description';
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
+import { RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/recall-bot-everyone-left-timeout-seconds-app-variable-universal-identifier';
+import { RECALL_BOT_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/recall-bot-join-early-minutes-app-variable-universal-identifier';
 import { RECALL_BOT_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/recall-bot-name-app-variable-universal-identifier';
+import { RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/recall-bot-noone-joined-timeout-seconds-app-variable-universal-identifier';
+import { RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/recall-bot-waiting-room-timeout-seconds-app-variable-universal-identifier';
+import { DEFAULT_RECALL_BOT_JOIN_EARLY_MINUTES } from 'src/logic-functions/constants/default-recall-bot-join-early-minutes';
 import { DEFAULT_RECALL_BOT_NAME } from 'src/logic-functions/constants/default-recall-bot-name';
 import { DEFAULT_RECALL_REGION } from 'src/logic-functions/constants/default-recall-region';
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
+import { RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS } from 'src/logic-functions/constants/recall-bot-everyone-left-timeout-seconds';
+import { RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-everyone-left-timeout-seconds-env-var-name';
+import { RECALL_BOT_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-join-early-minutes-env-var-name';
 import { RECALL_BOT_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-name-env-var-name';
+import { RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS } from 'src/logic-functions/constants/recall-bot-noone-joined-timeout-seconds';
+import { RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-noone-joined-timeout-seconds-env-var-name';
+import { RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS } from 'src/logic-functions/constants/recall-bot-waiting-room-timeout-seconds';
+import { RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-waiting-room-timeout-seconds-env-var-name';
 import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
 import { RECALL_WEBHOOK_SECRET_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-webhook-secret-env-var-name';
 
@@ -22,6 +34,38 @@ export default defineApplication({
       description: 'Display name used when scheduling Recall.ai meeting bots.',
       isSecret: false,
       value: DEFAULT_RECALL_BOT_NAME,
+    },
+    [RECALL_BOT_JOIN_EARLY_MINUTES_ENV_VAR_NAME]: {
+      universalIdentifier:
+        RECALL_BOT_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      description:
+        'How many minutes before the meeting start time the bot should join. Set to 0 to join at the scheduled start time.',
+      isSecret: false,
+      value: String(DEFAULT_RECALL_BOT_JOIN_EARLY_MINUTES),
+    },
+    [RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
+      universalIdentifier:
+        RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      description:
+        'How long the bot waits in a meeting lobby before giving up and leaving.',
+      isSecret: false,
+      value: String(RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS),
+    },
+    [RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
+      universalIdentifier:
+        RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      description:
+        'How long the bot stays in an empty meeting when no one else ever joins.',
+      isSecret: false,
+      value: String(RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS),
+    },
+    [RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
+      universalIdentifier:
+        RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      description:
+        'How long the bot keeps recording after everyone else leaves the meeting.',
+      isSecret: false,
+      value: String(RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS),
     },
   },
   serverVariables: {
