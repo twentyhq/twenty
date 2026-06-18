@@ -109,6 +109,12 @@ const backgroundLayerClassName = css`
   pointer-events: none;
   position: absolute;
   z-index: 0;
+
+  /* Opt out of the content cap so the decorative layer bleeds the full
+     section width — for heroes whose backdrop frames the whole viewport. */
+  &[data-full-bleed] {
+    max-width: none;
+  }
 `;
 
 const contentLayerClassName = css`
@@ -119,7 +125,8 @@ const contentLayerClassName = css`
 export type SectionShellProps = {
   ariaLabel?: string;
   // Decorative layer behind the content (gradients, visuals), capped at the
-  // content width — only the section's solid colour bleeds full-width.
+  // content width — only the section's solid colour bleeds full-width, unless
+  // fullBleedBackground lifts that cap.
   background?: ReactNode;
   children: ReactNode;
   // Forms one continuous frame with the section directly above (same scheme):
@@ -129,6 +136,9 @@ export type SectionShellProps = {
   // stay) — for content that runs edge-to-edge within the content column,
   // like the marquee. Most sections keep the gutter.
   flushInline?: boolean;
+  // Lets the background layer bleed the full section width instead of being
+  // capped at the content width — for heroes whose backdrop frames the viewport.
+  fullBleedBackground?: boolean;
   // Keeps its own full top rhythm instead of collapsing under a same-scheme
   // predecessor — for sections whose top padding is load-bearing.
   keepsTopRhythm?: boolean;
@@ -142,6 +152,7 @@ export function SectionShell({
   children,
   connectsUp = false,
   flushInline = false,
+  fullBleedBackground = false,
   keepsTopRhythm = false,
   rhythm = 'section',
   scheme = 'light',
@@ -160,6 +171,7 @@ export function SectionShell({
           aria-hidden
           className={backgroundLayerClassName}
           data-background-layer=""
+          data-full-bleed={fullBleedBackground ? '' : undefined}
         >
           {background}
         </div>
