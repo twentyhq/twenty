@@ -9,7 +9,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui-deprecated/display';
+import { Avatar } from 'twenty-ui/data-display';
 import { useLingui } from '@lingui/react/macro';
 
 export const SidePanelSearchRecordsPage = () => {

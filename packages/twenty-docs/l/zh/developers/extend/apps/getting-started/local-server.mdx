@@ -11,6 +11,7 @@ icon: server
 | 命令                                     | 作用                        |
 | -------------------------------------- | ------------------------- |
 | `yarn twenty docker:start`             | 启动服务器（按需拉取镜像）             |
+| `yarn twenty docker:start 2.2.0`       | 启动指定的服务器版本                |
 | `yarn twenty docker:start --port 3030` | 在自定义端口启动                  |
 | `yarn twenty docker:stop`              | 停止服务器（保留数据）               |
 | `yarn twenty docker:status`            | 显示 URL、版本和登录凭据            |
@@ -20,6 +21,20 @@ icon: server
 | `yarn twenty docker:upgrade 2.2.0`     | 升级到指定版本                   |
 
 数据在重启后会保留，存储于两个 Docker 卷中（`twenty-app-dev-data` 用于 PostgreSQL，`twenty-app-dev-storage` 用于文件）。 使用 `reset` 清空所有内容。
+
+## 固定服务器版本
+
+当未传入版本时，`docker:start` 会根据你的应用在 `package.json` 中的 `engines.twenty` 范围解析版本 —— 这与在安装你的应用时服务器用于校验的范围相同。 它会启动满足该范围的最新已发布 `twenty-app-dev` 镜像，当该字段缺失或没有已发布版本匹配时，则回退到 `latest`：
+
+```json filename="package.json"
+{
+  "engines": {
+    "twenty": ">=2.2.0"
+  }
+}
+```
+
+显式传入一个版本以在单次运行中覆盖该范围：`yarn twenty docker:start 2.3.0`。 如果已有容器使用的是不同版本，`docker:start` 会就地升级它（在保留你的数据卷的同时重新创建容器）。
 
 ## 升级服务器镜像
 

@@ -4,10 +4,11 @@ description: Frequently asked questions about workflows in Twenty.
 ---
 
 <AccordionGroup>
+
   <Accordion title="Why can't I activate a workflow?">
     This is likely a permissions issue. You need access to workflows to create and activate them.
 
-    **Solution**: Contact your workspace administrator to grant you workflow access under **Settings → Roles**.
+    **해결 방법**: 워크스페이스 관리자에게 문의하여 **Settings → Members → Roles**에서 워크플로 액세스 권한을 부여받으세요.
 
     If you don't see the Workflows section at all in your sidebar, this confirms it's a permissions issue.
   </Accordion>
@@ -27,7 +28,6 @@ description: Frequently asked questions about workflows in Twenty.
   <Accordion title="What's the difference between Single, Global, and Bulk manual triggers?">
     | 유형 | Records Required | Workflow 실행들 |
     | -- | ---------------- | ------------ |
-
     \| **Global** | None | Once, no record input |
     \| **Single** | One or more selected | Once per selected record |
     \| **Bulk** | One or more selected | Once, with all records as array |
@@ -61,7 +61,6 @@ description: Frequently asked questions about workflows in Twenty.
     **Yes**, branches run in parallel by default.
 
     If you want only one branch to execute:
-
     * Add a **Filter** action at the start of each branch
     * Set opposite conditions (e.g., Branch A: status = "Open", Branch B: status ≠ "Open")
 
@@ -72,7 +71,6 @@ description: Frequently asked questions about workflows in Twenty.
     **Yes**. After your parallel branches complete, you can add a step that both branches connect to.
 
     In the workflow editor:
-
     1. Complete your branched actions
     2. Add a new step after the branches
     3. Drag connections from the end of each branch to this new step
@@ -84,7 +82,6 @@ description: Frequently asked questions about workflows in Twenty.
     **Search Records returns a maximum of 200 records.**
 
     If you need to process more:
-
     * Add more specific filters to reduce results
     * Use scheduled workflows to process in batches
     * Consider using the API for bulk operations
@@ -102,12 +99,10 @@ description: Frequently asked questions about workflows in Twenty.
     Every action produces output data that can be used in subsequent steps.
 
     **To reference previous step data**:
-
     * Use the variable picker when configuring a field
     * Or type `{{stepName.fieldName}}` directly
 
     **예시**:
-
     * Trigger data: `{{trigger.object.email}}`
     * Search results: `{{searchRecords[0].name}}`
     * Code output: `{{code.calculatedValue}}`
@@ -123,7 +118,6 @@ description: Frequently asked questions about workflows in Twenty.
     3. **Wrong variable selected**: Make sure you select the array itself, not a single record
 
     **Correct setup**:
-
     1. Search Records (returns array)
     2. Filter: length > 0
     3. Iterator: select `{{searchRecords}}`
@@ -138,7 +132,6 @@ description: Frequently asked questions about workflows in Twenty.
     If your code exceeds this limit, the action will fail with a timeout error.
 
     **Tips to avoid timeouts**:
-
     * Break large operations into smaller chunks using Iterator
     * Avoid heavy computations; use external services via HTTP Request for intensive processing
     * Optimize your code to reduce execution time
@@ -149,12 +142,10 @@ description: Frequently asked questions about workflows in Twenty.
     Workflow runs show the execution history and help you debug issues.
 
     **Access runs**:
-
     * In workflow editor → **Runs** panel on the right
     * Or go to **Workflow Runs** in the sidebar
 
     **Understanding a run**:
-
     * **Status**: Running, Completed, Failed, Waiting
     * **Steps**: See which steps executed and their output
     * **Errors**: Click failed steps to see error messages
@@ -171,13 +162,11 @@ description: Frequently asked questions about workflows in Twenty.
     If you exceed this limit, workflows are immediately marked as failed and won't appear in your runs list as expected.
 
     **Common scenarios that hit this limit**:
-
     * Selecting more than 5,000 records with a Single manual trigger
     * Multiple workflows running simultaneously across your workspace
     * High-frequency automated triggers (e.g., Record Updated on a busy object)
 
     **해결책**:
-
     * Use **Bulk** triggers instead of Single to process many records in one run
     * Space out large batch operations
     * Use filters to reduce trigger frequency
@@ -189,7 +178,6 @@ description: Frequently asked questions about workflows in Twenty.
 
     | Limit | 값 | Behavior |
     | ----- | - | -------- |
-
     \| **Soft limit** | 100 runs/minute | Runs queue in "Not Started" status, processed gradually |
     \| **Hard limit** | 5,000 runs/hour | Runs immediately fail |
 
@@ -198,7 +186,6 @@ description: Frequently asked questions about workflows in Twenty.
     **Hard limit (5,000/hr)**: This applies to your entire workspace. If all your workflows combined exceed 5,000 runs in an hour, additional runs will fail immediately.
 
     **Tips to stay within limits**:
-
     * Use Bulk triggers with Iterator instead of Single triggers for large batches
     * Combine related automations into fewer workflows
     * Use scheduled workflows to spread load over time
@@ -208,13 +195,11 @@ description: Frequently asked questions about workflows in Twenty.
     **No, there is no automatic retry functionality at the moment.**
 
     If a workflow run fails, you'll need to:
-
     1. Review the error in **Settings → Workflows → [Your Workflow] → Runs**
     2. Fix the issue (data, configuration, or external service)
     3. Manually trigger the workflow again on the affected record(s)
 
     **Tips to reduce failures**:
-
     * Add **Filter** nodes to validate data before actions
     * Use **Search Records** to check if related records exist
     * Test thoroughly with a few records before bulk operations
@@ -226,14 +211,12 @@ description: Frequently asked questions about workflows in Twenty.
     **Yes, if your workflows are triggered by record creation or updates.**
 
     When you import data via CSV, each record created or updated can trigger workflows. A large import (thousands of records) could:
-
     * Hit the 5,000 runs/hour limit
     * Consume significant workflow credits
     * Send unexpected emails or notifications
     * Create duplicate tasks or records
 
     **Before a mass import**:
-
     1. Go to **Settings → Workflows**
     2. Identify workflows triggered by the object you're importing
     3. **Deactivate** them temporarily
@@ -251,4 +234,5 @@ description: Frequently asked questions about workflows in Twenty.
 
     This will automatically rearrange all nodes into a clean, organized layout.
   </Accordion>
+
 </AccordionGroup>

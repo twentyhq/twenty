@@ -1,0 +1,148 @@
+---
+title: عناصر قائمة الأوامر
+description: اعرض مكوّنات الواجهة الأمامية كإجراءات سريعة ومدخلات في قائمة الأوامر (Cmd+K) باستخدام ‎defineCommandMenuItem‎.
+icon: الطرفية
+---
+
+يُعَدّ **عنصر قائمة الأوامر** الجسر بين المستخدم و[مكوّن الواجهة الأمامية](/l/ar/developers/extend/apps/layout/front-components). يسجّل هذا العنصر المكوّن في قائمة الأوامر في Twenty‏ (Cmd+K)، وبشكل اختياري، كزر إجراء سريع مُثبَّت في الزاوية العلوية اليمنى من الصفحة.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+## حقول التكوين
+
+| الحقل                                   | مطلوب | الوصف                                                                                                                                                  |
+| --------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | نعم   | معرّف فريد ثابت للأمر                                                                                                                                  |
+| `label`                                 | نعم   | التسمية الكاملة المعروضة في قائمة الأوامر (Cmd+K)                                                                                                      |
+| `frontComponentUniversalIdentifier`     | نعم   | قيمة `universalIdentifier` للمكوّن الأمامي الذي يفتحه هذا الأمر                                                                                        |
+| `shortLabel`                            | لا    | تسمية أقصر تُعرَض على زر الإجراء السريع المثبّت                                                                                                        |
+| `icon`                                  | لا    | اسم الأيقونة المعروض بجانب التسمية (مثل `'IconBolt'` و`'IconSend'`)                                                                                    |
+| `isPinned`                              | لا    | عند كونها `true`، يعرض الأمر كزر إجراء سريع في الزاوية العلوية اليمنى من الصفحة                                                                        |
+| `availabilityType`                      | لا    | تتحكّم في مكان ظهور الأمر: `'GLOBAL'` (متاح دائمًا)، و`'RECORD_SELECTION'` (فقط عند تحديد سجلات)، أو `'FALLBACK'` (يُعرَض عند عدم تطابق أي أوامر أخرى) |
+| `availabilityObjectUniversalIdentifier` | لا    | تقييد الأمر بصفحات نوع كائن معيّن (مثل سجلات Company فقط)                                                                                              |
+| `conditionalAvailabilityExpression`     | لا    | تعبير منطقي يتحكّم ديناميكيًا في الظهور (انظر أدناه)                                                                                                   |
+
+## أوامر بدون واجهة
+
+يُعَدّ عنصر قائمة الأوامر المقترن بـ[مكوّن واجهة أمامية بدون واجهة](/l/ar/developers/extend/apps/layout/front-components#headless-vs-non-headless) الطريقة القياسية لتوفير إجراء بنقرة واحدة — لتشغيل الشفرة أو التنقّل أو التأكيد ثم التنفيذ. تغطي صفحة مكوّنات الواجهة الأمامية [مكوّنات الأوامر في SDK](/l/ar/developers/extend/apps/layout/front-components#sdk-command-components) ‎(`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`)‎ التي تتعامل مع نمط الإجراء-ثم-إلغاء التركيب.
+
+تدفق نموذجي:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+## تعابير الإتاحة الشرطية
+
+يتيح لك الحقل `conditionalAvailabilityExpression` التحكّم في وقت ظهور الأمر بناءً على سياق الصفحة الحالي. استورد متغيّرات ومشغّلات مضبوطة الأنواع من `twenty-sdk` لبناء التعابير:
+
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import {
+  defineCommandMenuItem,
+  objectPermissions,
+  everyEquals,
+} from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
+});
+```
+
+<Note>
+  `RECORD_SELECTION` تعني بالفعل وجود تحديد غير فارغ — استخدم `numberOfSelectedRecords` فقط لعرض الأعداد المحددة (على سبيل المثال `>= 2`).
+</Note>
+
+### متغيّرات السياق
+
+تُمثّل هذه المتغيّرات الحالة الحالية للصفحة:
+
+| المتغيّر                       | النوع     | الوصف                                                           |
+| ------------------------------ | --------- | --------------------------------------------------------------- |
+| `pageType`                     | `string`  | نوع الصفحة الحالي (مثل `'RecordIndexPage'` و`'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | ما إذا كان المكوّن معروضًا في لوحة جانبية                       |
+| `numberOfSelectedRecords`      | `number`  | عدد السجلات المحدّدة حاليًا                                     |
+| `isSelectAll`                  | `boolean` | ما إذا كان "تحديد الكل" مفعّلًا                                 |
+| `selectedRecords`              | `array`   | كائنات السجلات المحدّدة                                         |
+| `favoriteRecordIds`            | `array`   | معرّفات السجلات المفضّلة                                        |
+| `objectPermissions`            | `object`  | الأذونات الخاصة بنوع الكائن الحالي                              |
+| `targetObjectReadPermissions`  | `object`  | أذونات القراءة للكائن الهدف                                     |
+| `targetObjectWritePermissions` | `object`  | أذونات الكتابة للكائن الهدف                                     |
+| `featureFlags`                 | `object`  | أعلام الميزات المفعَّلة                                         |
+| `objectMetadataItem`           | `object`  | بيانات التعريف لنوع الكائن الحالي                               |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | ما إذا كان العرض الحالي يحتوي على مرشّح حذف منطقي               |
+
+### المُشغِّلات
+
+جمّع المتغيّرات في تعابير منطقية:
+
+| المُشغِّل                           | الوصف                                                              |
+| ----------------------------------- | ------------------------------------------------------------------ |
+| `isDefined(value)`                  | `true` إذا لم تكن القيمة null/undefined                            |
+| `isNonEmptyString(value)`           | `true` إذا كانت القيمة سلسلة غير فارغة                             |
+| `includes(array, value)`            | `true` إذا كانت المصفوفة تحتوي على القيمة                          |
+| `includesEvery(array, prop, value)` | `true` إذا كانت خاصية كل عنصر تتضمن القيمة                         |
+| `every(array, prop)`                | `true` إذا كانت الخاصية تُقيَّم كقيمة صادقة في كل عنصر             |
+| `everyDefined(array, prop)`         | `true` إذا كانت الخاصية معرّفة في كل عنصر                          |
+| `everyEquals(array, prop, value)`   | `true` إذا كانت الخاصية تساوي القيمة في كل عنصر                    |
+| `some(array, prop)`                 | `true` إذا كانت الخاصية تُقيَّم كقيمة صادقة في عنصر واحد على الأقل |
+| `someDefined(array, prop)`          | `true` إذا كانت الخاصية معرّفة في عنصر واحد على الأقل              |
+| `someEquals(array, prop, value)`    | `true` إذا كانت الخاصية تساوي القيمة في عنصر واحد على الأقل        |
+| `someNonEmptyString(array, prop)`   | `true` إذا كانت الخاصية سلسلة غير فارغة في عنصر واحد على الأقل     |
+| `none(array, prop)`                 | `true` إذا كانت الخاصية تُقيَّم كقيمة زائفة في كل عنصر             |
+| `noneDefined(array, prop)`          | `true` إذا كانت الخاصية غير معرّفة في كل عنصر                      |
+| `noneEquals(array, prop, value)`    | `true` إذا لم تكن الخاصية تساوي القيمة في أي عنصر                  |

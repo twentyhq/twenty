@@ -14,7 +14,7 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsAccountsEmails = () => {
   const { t } = useLingui();

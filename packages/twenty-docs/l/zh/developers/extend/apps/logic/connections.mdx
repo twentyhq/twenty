@@ -82,7 +82,7 @@ export default defineApplication({
 你的提供方需要加入白名单的 OAuth 回调 URL 为：
 
 ```
-https://<your-twenty-server>/apps/oauth/callback
+https://<your-twenty-server>/auth/apps/callback
 ```
 
 </Accordion>
@@ -182,7 +182,7 @@ const conn = connections.find((c) => c.visibility === 'workspace');
 对于每个连接提供方，服务器管理员需要先在第三方注册一个 OAuth 应用。
 
 1. 前往提供方的开发者设置（例如 https://linear.app/settings/api/applications/new）。
-2. 将**Redirect URI** 设置为 `\<SERVER_URL>/apps/oauth/callback`。
+2. 将 **Redirect URI** 设置为 `\<SERVER_URL>/auth/apps/callback`。
 3. 复制生成的**Client ID**和**Client Secret**。
 4. 以服务器管理员身份在 Twenty 中打开已安装的应用 → 在相应的 `serverVariables` 上设置这些值。
 5. 之后，工作区成员可以在每个应用的**连接**部分添加连接。

@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type IconComponent } from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { type IconComponent } from 'twenty-ui/icon';
+import { type SelectOption } from 'twenty-ui/input';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';

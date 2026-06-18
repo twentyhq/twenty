@@ -14,7 +14,7 @@ import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constan
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
-import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui-deprecated/components';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/data-display';
 
 export const RecordBoardClickOutsideEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);

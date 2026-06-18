@@ -17,11 +17,15 @@ const jestConfig = {
   testEnvironment: 'node',
   setupFilesAfterEnv: ['./setupTests.ts'],
   transformIgnorePatterns: [
-    '/node_modules/(?!(file-type|@file-type|strtok3|token-types|@borewit|@tokenizer|uint8array-extras|read-next-line|digest-fetch|md5|js-sha256|js-sha512|base-64|charenc|crypt|email-reply-parser)/)',
+    // jsdom 29 pulls ESM-only transitive deps (parse5, entities, tough-cookie,
+    // @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp css engine).
+    // jest's CJS runtime can't load their `export` syntax, so let swc transform them.
+    '/node_modules/(?!(file-type|@file-type|strtok3|token-types|@borewit|@tokenizer|uint8array-extras|read-next-line|digest-fetch|md5|js-sha256|js-sha512|base-64|charenc|crypt|email-reply-parser|jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|graphql-upload|fs-capacitor)/)',
   ],
   testRegex: '.*\\.spec\\.ts$',
   transform: {
-    '^.+\\.(t|j)s$': [
+    // include .mjs so swc transforms ESM-only deps (e.g. jsdom's @csstools/* .mjs)
+    '^.+\\.(t|j|mj)s$': [
       '@swc/jest',
       {
         jsc: {
@@ -52,7 +56,7 @@ const jestConfig = {
     '^test/(.*)': '<rootDir>/test/$1',
     '^file-type$': require.resolve('file-type'),
   },
-  moduleFileExtensions: ['js', 'json', 'ts'],
+  moduleFileExtensions: ['js', 'mjs', 'json', 'ts'],
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   fakeTimers: {
     enableGlobally: true,

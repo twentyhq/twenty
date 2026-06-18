@@ -1,24 +1,27 @@
 {
   "tabs": {
+    "gettingStarted": {
+      "label": "Primeros pasos",
+      "groups": {
+        "welcome": {
+          "label": "Bienvenido"
+        },
+        "coreConcepts": {
+          "label": "Conceptos clave"
+        }
+      }
+    },
     "userGuide": {
       "label": "Guía de usuario",
       "groups": {
-        "discoverTwenty": {
-          "label": "Descubre Twenty",
-          "groups": {
-            "gettingStartedCapabilities": {
-              "label": "Capacidades"
-            },
-            "gettingStartedHowTos": {
-              "label": "Guías prácticas"
-            }
-          }
+        "userGuideOverview": {
+          "label": "Resumen"
         },
         "dataModel": {
           "label": "Modelo de datos",
           "groups": {
-            "dataModelCapabilities": {
-              "label": "Capacidades"
+            "dataModelReference": {
+              "label": "Referencia"
             },
             "dataModelHowTos": {
               "label": "Guías prácticas"
@@ -28,8 +31,8 @@
         "dataMigration": {
           "label": "Migración de datos",
           "groups": {
-            "dataMigrationCapabilities": {
-              "label": "Capacidades"
+            "dataMigrationReference": {
+              "label": "Referencia"
             },
             "dataMigrationHowTos": {
               "label": "Guías prácticas"
@@ -39,8 +42,8 @@
         "calendarEmails": {
           "label": "Calendario y correos electrónicos",
           "groups": {
-            "calendarEmailsCapabilities": {
-              "label": "Capacidades"
+            "calendarEmailsReference": {
+              "label": "Referencia"
             },
             "calendarEmailsHowTos": {
               "label": "Guías prácticas"
@@ -50,8 +53,8 @@
         "workflows": {
           "label": "Flujos de trabajo",
           "groups": {
-            "workflowsCapabilities": {
-              "label": "Capacidades"
+            "workflowsReference": {
+              "label": "Referencia"
             },
             "workflowsHowTos": {
               "label": "Guías prácticas",
@@ -75,21 +78,26 @@
         "ai": {
           "label": "IA",
           "groups": {
-            "aiCapabilities": {
-              "label": "Capacidades"
+            "aiReference": {
+              "label": "Referencia"
             },
             "aiHowTos": {
               "label": "Guías prácticas"
             }
           }
         },
-        "viewsPipelines": {
-          "label": "Vistas y canalizaciones",
+        "layout": {
+          "label": "Diseño",
           "groups": {
-            "viewsPipelinesCapabilities": {
-              "label": "Capacidades"
+            "layoutReference": {
+              "label": "Referencia",
+              "groups": {
+                "layoutViews": {
+                  "label": "Vistas"
+                }
+              }
             },
-            "viewsPipelinesHowTos": {
+            "layoutHowTos": {
               "label": "Guías prácticas"
             }
           }
@@ -97,8 +105,8 @@
         "dashboards": {
           "label": "Tableros",
           "groups": {
-            "dashboardsCapabilities": {
-              "label": "Capacidades"
+            "dashboardsReference": {
+              "label": "Referencia"
             },
             "dashboardsHowTos": {
               "label": "Guías prácticas"
@@ -108,8 +116,8 @@
         "permissionsAccess": {
           "label": "Permisos y acceso",
           "groups": {
-            "permissionsAccessCapabilities": {
-              "label": "Capacidades"
+            "permissionsAccessReference": {
+              "label": "Referencia"
             },
             "permissionsAccessHowTos": {
               "label": "Guías prácticas"
@@ -119,8 +127,8 @@
         "billing": {
           "label": "Facturación",
           "groups": {
-            "billingCapabilities": {
-              "label": "Capacidades"
+            "billingReference": {
+              "label": "Referencia"
             },
             "billingHowTos": {
               "label": "Guías prácticas"
@@ -130,8 +138,8 @@
         "settings": {
           "label": "Configuración",
           "groups": {
-            "settingsCapabilities": {
-              "label": "Capacidades"
+            "settingsReference": {
+              "label": "Referencia"
             },
             "settingsHowTos": {
               "label": "Guías prácticas"
@@ -143,59 +151,40 @@
     "developers": {
       "label": "Desarrolladores",
       "groups": {
-        "developersGroup": {
-          "label": "Desarrolladores"
+        "developersOverview": {
+          "label": "Resumen"
         },
-        "extend": {
-          "label": "Ampliar",
+        "apps": {
+          "label": "Aplicaciones",
           "groups": {
-            "extendCapabilities": {
-              "label": "Capacidades"
+            "appsGettingStarted": {
+              "label": "Primeros pasos"
+            },
+            "appsConfig": {
+              "label": "Configuración"
+            },
+            "appsData": {
+              "label": "Datos"
+            },
+            "appsLogic": {
+              "label": "Lógica"
+            },
+            "appsLayout": {
+              "label": "Diseño"
+            },
+            "appsOperations": {
+              "label": "Operaciones"
             }
           }
+        },
+        "api": {
+          "label": "API"
         },
         "selfHost": {
-          "label": "Autoalojamiento",
-          "groups": {
-            "selfHostCapabilities": {
-              "label": "Capacidades"
-            }
-          }
+          "label": "Autoalojamiento"
         },
         "contribute": {
-          "label": "Contribuir",
-          "groups": {
-            "contributeCapabilities": {
-              "label": "Capacidades",
-              "groups": {
-                "frontendDevelopment": {
-                  "label": "Desarrollo Frontend",
-                  "groups": {
-                    "twentyUi": {
-                      "label": "Twenty UI",
-                      "groups": {
-                        "display": {
-                          "label": "Mostrar"
-                        },
-                        "feedback": {
-                          "label": "Retroalimentación"
-                        },
-                        "input": {
-                          "label": "Entrada"
-                        },
-                        "navigation": {
-                          "label": "Navegación"
-                        }
-                      }
-                    }
-                  }
-                },
-                "backendDevelopment": {
-                  "label": "Desarrollo Backend"
-                }
-              }
-            }
-          }
+          "label": "Contribuir"
         }
       }
     }

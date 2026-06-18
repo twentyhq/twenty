@@ -1,8 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
-import { ModalContent } from 'twenty-ui-deprecated/layout';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ModalContent } from 'twenty-ui/surfaces';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const RenderWithModalContent = (

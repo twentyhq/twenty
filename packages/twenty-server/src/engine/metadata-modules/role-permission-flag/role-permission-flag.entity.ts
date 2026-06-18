@@ -51,7 +51,7 @@ export class RolePermissionFlagEntity extends SyncableEntity {
       '2.7.0_FinalizeRolePermissionFlagCutoverFastInstanceCommand_1779600000000',
   })
   @Column({ nullable: false, type: 'varchar' })
-  flag: PermissionFlagType;
+  flag: WasRemovedInUpgrade<PermissionFlagType>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

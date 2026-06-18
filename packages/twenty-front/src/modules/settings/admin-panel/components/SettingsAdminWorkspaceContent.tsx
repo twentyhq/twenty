@@ -17,20 +17,19 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { type GetUpgradeStatusQuery } from '~/generated-admin/graphql';
-import { AvatarOrIcon, LinkChip } from 'twenty-ui-deprecated/components';
+import { AvatarOrIcon, LinkChip, Status } from 'twenty-ui/data-display';
 import {
-  H2Title,
   IconCalendar,
   IconHome,
   IconId,
   IconLink,
   IconStatusChange,
   IconUser,
-  OverflowingTextWithTooltip,
-  Status,
-} from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';

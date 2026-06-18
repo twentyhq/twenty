@@ -1,0 +1,94 @@
+---
+title: Role a oprávnění
+description: Určete, které objekty a pole mohou funkce aplikační logiky a front-endové komponenty vaší aplikace číst a zapisovat.
+icon: shield-halved
+---
+
+**Role** je sada oprávnění: které objekty může aplikace číst nebo zapisovat, která pole může vidět a jaké schopnosti na úrovni platformy může používat. Všechny logické funkce aplikace a front-endové komponenty dědí oprávnění role označené pomocí `defineApplicationRole()` (viz [Výchozí role funkce](#the-default-function-role) níže).
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+});
+```
+
+## Výchozí role funkce
+
+Když vygenerujete novou aplikaci, CLI vytvoří výchozí soubor role deklarovaný pomocí `defineApplicationRole()`:
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlagUniversalIdentifiers: [],
+});
+```
+
+`defineApplicationRole()` je tenký wrapper kolem `defineRole()`, který označuje **tu** roli, jež je při instalaci použita jako výchozí role vaší aplikace. Validace je shodná s `defineRole`, ale build pipeline automaticky propojí její `universalIdentifier` s `defaultRoleUniversalIdentifier` v manifestu aplikace — takže na něj nemusíte v [`defineApplication`](/l/cs/developers/extend/apps/config/application) sami odkazovat.
+
+Poznámky:
+
+* Na jednu aplikaci je povolena přesně **jedna** definice `defineApplicationRole(...)` — pokud build manifestu najde více než jednu, sestavení selže.
+* Pro všechny **další** role, které vaše aplikace poskytuje, použijte `defineRole()` (nikoli `defineApplicationRole()`).
+* Explicitní nastavení `defaultRoleUniversalIdentifier` v `defineApplication()` je stále podporováno kvůli zpětné kompatibilitě, ale je označeno jako zastaralé ve prospěch `defineApplicationRole()`.
+
+## Osvědčené postupy
+
+* Začněte od vygenerované role a postupně ji omezujte — výchozí nastavení poskytuje široká oprávnění pro čtení, což je v produkci zřídka žádoucí.
+* Nahraďte `objectPermissions` a `fieldPermissions` přesně těmi objekty a poli, které vaše funkce skutečně potřebují.
+* `permissionFlagUniversalIdentifiers` řídí přístup k schopnostem na úrovni platformy. Udržujte je co nejmenší.
+* Podívejte se na funkční příklad: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

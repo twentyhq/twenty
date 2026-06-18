@@ -9,17 +9,18 @@ import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, Status } from 'twenty-ui-deprecated/display';
-import { Button, LightIconButton } from 'twenty-ui-deprecated/input';
+import { Status } from 'twenty-ui/data-display';
+import { IconChevronRight } from 'twenty-ui/icon';
+import { Button, LightIconButton } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui-deprecated/layout';
-import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/feedback';
+import { UndecoratedLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
   EvaluateAgentTurnDocument,

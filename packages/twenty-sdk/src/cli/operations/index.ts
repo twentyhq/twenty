@@ -40,6 +40,8 @@ export {
   getImageDigest,
   getImageForVersion,
 } from '@/cli/utilities/server/docker-container';
+export { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
+export { resolveHighestEngineVersion } from '@/cli/utilities/version/resolve-highest-engine-version';
 
 // Config
 export { ConfigService } from '@/cli/utilities/config/config-service';

@@ -8,16 +8,16 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  H2Title,
   IconEye,
   IconHierarchy2,
   IconLink,
   IconList,
   IconPlus,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import DarkCoverImage from '@/settings/data-model/assets/cover-dark.png';
 import LightCoverImage from '@/settings/data-model/assets/cover-light.png';
 import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectTable';

@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 import { ActorDisplay } from '@/ui/field/display/components/ActorDisplay';
-import { CatalogDecorator } from 'twenty-ui-deprecated/testing';
+import { CatalogDecorator } from 'twenty-ui/testing';
 
 const meta: Meta = {
   title: 'UI/Display/ActorDisplay',

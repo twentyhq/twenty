@@ -29,12 +29,12 @@ import {
   IconEyeOff,
   IconLayoutList,
   IconSortDescending,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 import {
   MenuItem,
   MenuItemNavigate,
   MenuItemToggle,
-} from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { t } = useLingui();

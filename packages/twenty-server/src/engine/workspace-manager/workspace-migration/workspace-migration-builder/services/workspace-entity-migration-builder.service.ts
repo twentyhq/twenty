@@ -70,8 +70,11 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     additionalCacheDataMaps,
     workspaceId,
   }: ValidateAndBuildArgs<T>): ValidateAndBuildReturnType<T> {
-    this.logger.time(`EntityBuilder ${this.metadataName}`, 'validateAndBuild');
-    this.logger.time(
+    this.logger.perfTime(
+      `EntityBuilder ${this.metadataName}`,
+      'validateAndBuild',
+    );
+    this.logger.perfTime(
       `EntityBuilder ${this.metadataName}`,
       'matrix computation',
     );
@@ -94,11 +97,14 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       buildOptions,
     });
 
-    this.logger.timeEnd(
+    this.logger.perfTimeEnd(
       `EntityBuilder ${this.metadataName}`,
       'matrix computation',
     );
-    this.logger.time(`EntityBuilder ${this.metadataName}`, 'entity processing');
+    this.logger.perfTime(
+      `EntityBuilder ${this.metadataName}`,
+      'entity processing',
+    );
 
     const flatEntityMapsKey = getMetadataFlatEntityMapsKey(this.metadataName);
     const actionsResult = getMetadataEmptyWorkspaceMigrationActionRecord(
@@ -107,7 +113,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     const allValidationResult: FailedFlatEntityValidateAndBuild<T>['errors'] =
       [];
 
-    this.logger.time(
+    this.logger.perfTime(
       `EntityBuilder ${this.metadataName}`,
       'deletion validation',
     );
@@ -173,11 +179,14 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       );
     }
 
-    this.logger.timeEnd(
+    this.logger.perfTimeEnd(
       `EntityBuilder ${this.metadataName}`,
       'deletion validation',
     );
-    this.logger.time(`EntityBuilder ${this.metadataName}`, 'update validation');
+    this.logger.perfTime(
+      `EntityBuilder ${this.metadataName}`,
+      'update validation',
+    );
 
     for (const flatEntityToUpdateUniversalIdentifier in updatedFlatEntityMaps.byUniversalIdentifier) {
       const flatEntityUpdate =
@@ -257,7 +266,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       );
     }
 
-    this.logger.timeEnd(
+    this.logger.perfTimeEnd(
       `EntityBuilder ${this.metadataName}`,
       'update validation',
     );
@@ -266,7 +275,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       createdFlatEntityMaps,
     );
 
-    this.logger.time(
+    this.logger.perfTime(
       `EntityBuilder ${this.metadataName}`,
       'creation validation',
     );
@@ -338,11 +347,11 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       actionsResult.create.push(formattedNewCreateAction);
     }
 
-    this.logger.timeEnd(
+    this.logger.perfTimeEnd(
       `EntityBuilder ${this.metadataName}`,
       'creation validation',
     );
-    this.logger.timeEnd(
+    this.logger.perfTimeEnd(
       `EntityBuilder ${this.metadataName}`,
       'entity processing',
     );
@@ -354,7 +363,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       };
     }
 
-    this.logger.timeEnd(
+    this.logger.perfTimeEnd(
       `EntityBuilder ${this.metadataName}`,
       'validateAndBuild',
     );
@@ -376,6 +385,16 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         {
           code: FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
           message: `Invalid universalIdentifier: "${universalIdentifier}" is not a valid UUID, uuid version should be greater than 4`,
+          value: universalIdentifier,
+        },
+      ];
+    }
+
+    if (universalIdentifier !== universalIdentifier.toLowerCase()) {
+      return [
+        {
+          code: FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
+          message: `Invalid universalIdentifier: "${universalIdentifier}" must be lowercase`,
           value: universalIdentifier,
         },
       ];

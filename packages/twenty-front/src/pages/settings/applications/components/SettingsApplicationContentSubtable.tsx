@@ -7,15 +7,9 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronRight,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconChevronRight, useIcons } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AppChip } from '@/applications/components/AppChip';
 
 export type ApplicationContentRow = {

@@ -4,9 +4,8 @@ import { useContext } from 'react';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isDefined } from 'twenty-shared/utils';
+import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
 import {
-  Avatar,
-  getIconTileColorShades,
   IconCode,
   IconEdit,
   IconPlus,
@@ -14,11 +13,8 @@ import {
   IconTrash,
   useIcons,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ApplicationInfo = {
   name: string;

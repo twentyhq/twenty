@@ -10,9 +10,9 @@ import { type SidePanelFooterCommandMenuItem } from '@/ui/layout/side-panel/type
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { t } from '@lingui/core/macro';
-import { IconArrowBackUp, IconSend, IconX } from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
-import { getOsControlSymbol } from 'twenty-ui-deprecated/utilities';
+import { IconArrowBackUp, IconSend, IconX } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const StyledReplyBar = styled.button`
   align-items: center;

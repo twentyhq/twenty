@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { TextArea, type TextAreaProps } from '@/ui/input/components/TextArea';
 import { expect, userEvent, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 type RenderProps = TextAreaProps;
 

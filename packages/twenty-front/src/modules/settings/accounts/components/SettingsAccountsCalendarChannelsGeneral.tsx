@@ -1,14 +1,15 @@
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { DATE_TIME_SETTINGS_PREVIEW_DATE } from '@/localization/constants/DateTimeSettingsPreviewDate';
 import { SettingsAccountsCalendarDisplaySettings } from '@/settings/accounts/components/SettingsAccountsCalendarDisplaySettings';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   CalendarChannelVisibility,
   type TimelineCalendarEvent,
@@ -24,7 +25,7 @@ const StyledGeneralContainer = styled.div`
 export const SettingsAccountsCalendarChannelsGeneral = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const exampleStartDate = new Date();
+  const exampleStartDate = DATE_TIME_SETTINGS_PREVIEW_DATE;
   const exampleEndDate = min([
     addMinutes(exampleStartDate, 30),
     endOfDay(exampleStartDate),

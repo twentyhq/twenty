@@ -23,9 +23,9 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconClock,
-} from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,

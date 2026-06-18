@@ -73,6 +73,7 @@ export function ProfileStep({ controller }: ProfileStepProps) {
           type="text"
           value={state.city}
           onChange={(event) => setField('city', event.target.value)}
+          aria-invalid={state.fieldErrors.city ? true : undefined}
         />
       </Form.Field>
       <Form.Field>

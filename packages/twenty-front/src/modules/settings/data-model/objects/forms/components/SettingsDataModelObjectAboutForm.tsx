@@ -13,20 +13,11 @@ import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  IconInfoCircle,
-  IconLink,
-  IconRefresh,
-  TooltipDelay,
-  InlineBanner,
-} from 'twenty-ui-deprecated/display';
-import { Card } from 'twenty-ui-deprecated/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { parseThemeColor } from 'twenty-ui-deprecated/utilities';
+import { InlineBanner } from 'twenty-ui/feedback';
+import { IconInfoCircle, IconLink, IconRefresh } from 'twenty-ui/icon';
+import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { parseThemeColor } from 'twenty-ui/utilities';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { computeMetadataNamesFromLabels } from '~/pages/settings/data-model/utils/computeMetadataNamesFromLabels';

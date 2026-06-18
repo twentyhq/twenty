@@ -75,6 +75,7 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     entityApplicationUniversalIdentifier:
       existingFlatViewToUpdate.applicationUniversalIdentifier,
     workspaceCustomApplicationUniversalIdentifier,
+    isSystemSideEffect: existingFlatViewToUpdate.isSystemSideEffect,
   });
 
   const { overrides, updatedEditableProperties } =

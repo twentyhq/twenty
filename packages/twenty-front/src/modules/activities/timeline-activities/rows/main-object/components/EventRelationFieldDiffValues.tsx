@@ -8,12 +8,8 @@ import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectReco
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRelationFieldDiffValuesProps = {
   fieldDiff: { before: unknown; after: unknown };

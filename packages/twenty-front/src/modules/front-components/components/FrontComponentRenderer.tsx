@@ -10,7 +10,7 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useContext, useEffect } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useQuery } from '@apollo/client/react';
 import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
@@ -39,6 +39,7 @@ export const FrontComponentRenderer = ({
       frontComponentId,
       commandMenuItemId,
       selectedRecordIds,
+      colorScheme,
     });
 
   const handleError = useCallback(

@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { A11Y_DEFER_COLOR_CONTRAST } from './a11yParameters';
 export { ComponentStorybookLayout } from './ComponentStorybookLayout';
 export type {
   CatalogDimension,

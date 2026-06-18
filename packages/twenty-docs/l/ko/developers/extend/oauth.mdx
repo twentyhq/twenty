@@ -1,0 +1,189 @@
+---
+title: OAuth
+icon: 키
+description: 서버 간 액세스를 위한 PKCE가 포함된 권한 부여 코드 플로우와 클라이언트 자격 증명.
+---
+
+Twenty는 사용자 대상 앱에는 권한 부여 코드 + PKCE를, 서버 간 액세스에는 클라이언트 자격 증명을 사용하여 OAuth 2.0을 구현합니다. 클라이언트는 [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591)에 따라 동적으로 등록되며 — 대시보드에서 수동 설정은 필요하지 않습니다.
+
+## OAuth 사용 시기
+
+| 시나리오                | 인증 방식                                                            |
+| ------------------- | ---------------------------------------------------------------- |
+| 내부 스크립트, 자동화        | [API 키](/l/ko/developers/extend/api#authentication)                   |
+| 사용자를 대신하여 동작하는 외부 앱 | **OAuth — 권한 부여 코드**                                             |
+| 서버 간, 사용자 컨텍스트 없음   | **OAuth — 클라이언트 자격 증명**                                          |
+| UI 확장이 포함된 Twenty 앱 | [앱](/l/ko/developers/extend/apps/getting-started) (OAuth는 자동으로 처리됩니다) |
+
+## 클라이언트 등록
+
+Twenty는 [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591)에 따라 **동적 클라이언트 등록**을 지원합니다. 수동 설정이 필요 없습니다 — 프로그래밍 방식으로 등록하세요:
+
+```bash
+POST /oauth/register
+Content-Type: application/json
+
+{
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"],
+  "grant_types": ["authorization_code"],
+  "token_endpoint_auth_method": "client_secret_post"
+}
+```
+
+**응답:**
+
+```json
+{
+  "client_id": "abc123",
+  "client_secret": "secret456",
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"]
+}
+```
+
+<Warning>
+`client_secret`을 안전하게 저장하세요 — 나중에 다시 조회할 수 없습니다.
+</Warning>
+
+## 범위
+
+| 범위    | 액세스                                  |
+| ----- | ------------------------------------ |
+| `api` | Core 및 Metadata API에 대한 전체 읽기/쓰기 액세스 |
+| `프로필` | 인증된 사용자의 프로필 정보 읽기                   |
+
+범위를 공백으로 구분된 문자열로 요청: `scope=api profile`
+
+## 권한 부여 코드 플로우
+
+앱이 Twenty 사용자를 대신해 동작할 때 이 플로우를 사용하세요.
+
+### 1. 사용자를 권한 부여 화면으로 리디렉션
+
+```
+GET /oauth/authorize?
+  client_id=YOUR_CLIENT_ID&
+  response_type=code&
+  redirect_uri=https://myapp.com/callback&
+  scope=api&
+  state=random_state_value&
+  code_challenge=CHALLENGE&
+  code_challenge_method=S256
+```
+
+| 매개변수                    | 필수  | 설명                                         |
+| ----------------------- | --- | ------------------------------------------ |
+| `client_id`             | 예   | 등록된 클라이언트 ID                               |
+| `response_type`         | 예   | 반드시 `code`여야 합니다                           |
+| `redirect_uri`          | 예   | 등록된 리디렉션 URI와 일치해야 합니다                     |
+| `scope`                 | 아니요 | 공백으로 구분된 범위(기본값은 `api`)                    |
+| `상태`                    | 권장  | CSRF 공격을 방지하기 위한 랜덤 문자열                    |
+| `code_challenge`        | 권장  | PKCE 챌린지(검증자 값의 SHA-256 해시, base64url 인코딩) |
+| `code_challenge_method` | 권장  | PKCE를 사용할 때는 `S256`이어야 합니다                 |
+
+사용자는 동의 화면을 보고 액세스를 승인하거나 거부합니다.
+
+### 2. 콜백 처리
+
+권한 부여 후, Twenty는 귀하의 `redirect_uri`로 다시 리디렉션합니다:
+
+```
+https://myapp.com/callback?code=AUTH_CODE&state=random_state_value
+```
+
+`state`가 보낸 값과 일치하는지 확인하세요.
+
+### 3. 코드를 토큰으로 교환
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&
+code=AUTH_CODE&
+redirect_uri=https://myapp.com/callback&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+code_verifier=YOUR_PKCE_VERIFIER
+```
+
+**응답:**
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "dGhpcyBpcyBh..."
+}
+```
+
+### 4. 액세스 토큰 사용
+
+```bash
+GET /rest/companies
+Authorization: Bearer ACCESS_TOKEN
+```
+
+### 5. 만료 시 갱신
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&
+refresh_token=YOUR_REFRESH_TOKEN&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET
+```
+
+## 클라이언트 자격 증명 플로우
+
+사용자 상호작용이 없는 서버 간 통합의 경우:
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+scope=api
+```
+
+반환된 토큰은 특정 사용자에 연결되지 않고 워크스페이스 수준의 액세스를 가집니다.
+
+## 서버 디스커버리
+
+Twenty는 표준 디스커버리 엔드포인트에서 OAuth 구성을 게시합니다:
+
+```
+GET /.well-known/oauth-authorization-server
+```
+
+이 엔드포인트는 모든 엔드포인트, 지원되는 그랜트 타입, 범위 및 기능을 반환하며 — 범용 OAuth 클라이언트를 구축하는 데 유용합니다.
+
+## API 엔드포인트 요약
+
+| 엔드포인트                                     | 목적             |
+| ----------------------------------------- | -------------- |
+| `/.well-known/oauth-authorization-server` | 서버 메타데이터 디스커버리 |
+| `/oauth/register`                         | 동적 클라이언트 등록    |
+| `/oauth/authorize`                        | 사용자 권한 부여      |
+| `/oauth/token`                            | 토큰 교환 및 갱신     |
+
+| 환경         | 기본 URL                   |
+| ---------- | ------------------------ |
+| **클라우드**   | `https://api.twenty.com` |
+| **셀프 호스팅** | `https://{your-domain}`  |
+
+## OAuth 대 API 키
+
+|               | API 키         | OAuth            |
+| ------------- | ------------- | ---------------- |
+| **설정**        | 설정에서 생성       | 클라이언트 등록, 플로우 구현 |
+| **사용자 컨텍스트**  | 없음(워크스페이스 수준) | 특정 사용자의 권한       |
+| **적합한 용도**    | 스크립트, 내부 도구   | 외부 앱, 다중 사용자 통합  |
+| **토큰 로테이션**   | 수동            | 리프레시 토큰으로 자동     |
+| **범위 지정 액세스** | 전체 API 액세스    | 범위를 통해 세분화된 액세스  |

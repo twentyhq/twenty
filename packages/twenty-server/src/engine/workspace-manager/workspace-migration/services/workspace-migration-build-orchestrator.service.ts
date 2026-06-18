@@ -229,12 +229,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
         workspaceMigrationFieldPermissionActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
-        ALL_METADATA_NAME.rolePermissionFlag,
-        workspaceMigrationRolePermissionFlagActionsBuilderService,
-      ),
-      createEntityActionsBuilderTask(
         ALL_METADATA_NAME.permissionFlag,
         workspaceMigrationPermissionFlagActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.rolePermissionFlag,
+        workspaceMigrationRolePermissionFlagActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.roleTarget,

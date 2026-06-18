@@ -3,15 +3,9 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  OverflowingTextWithTooltip,
-  type IconComponent,
-} from 'twenty-ui-deprecated/display';
-import { Card } from 'twenty-ui-deprecated/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { type IconComponent } from 'twenty-ui/icon';
+import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type TableItem = {
   Icon?: IconComponent;
