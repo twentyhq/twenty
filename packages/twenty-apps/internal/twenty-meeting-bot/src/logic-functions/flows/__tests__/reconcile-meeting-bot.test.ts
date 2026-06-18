@@ -821,7 +821,7 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
     ]);
   });
 
-  it('recreates the bot when the existing Recall bot no longer exists', async () => {
+  it('clears the stale bot id for the stale-state cron to re-create when the existing Recall bot no longer exists', async () => {
     rescheduleRecallBotMock.mockResolvedValue({
       ok: false,
       status: 404,
@@ -859,20 +859,12 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
     expect(rescheduleRecallBotMock).toHaveBeenCalledWith(
       expect.objectContaining({ externalBotId: 'recall-bot-stale' }),
     );
-    expect(scheduleRecallBotMock).toHaveBeenCalledWith({
-      meetingUrl: 'https://meet.example.com/customer-sync',
-      joinAt: FUTURE_STARTS_AT,
-      metadata: {
-        twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
-        twentyCalendarEventId: 'calendar-event-1',
-        twentyRealMeetingKey:
-          'link:meet.example.com/customer-sync:2026-01-01T13:00:00.000Z',
-      },
-    });
+    // The event path no longer re-creates the bot; the stale id is cleared and the cron heals the botless row.
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
         id: buildCustomerSyncCallRecordingId(),
-        externalBotId: 'recall-bot-1',
+        externalBotId: null,
       }),
     ]);
   });

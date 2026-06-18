@@ -7,7 +7,7 @@ import '@xyflow/react/dist/style.css';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 
 const JotaiInitializer = ({

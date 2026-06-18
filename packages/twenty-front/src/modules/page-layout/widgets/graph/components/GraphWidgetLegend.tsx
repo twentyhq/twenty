@@ -17,12 +17,9 @@ import {
   IconChevronLeft,
   IconChevronRight,
   OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type GraphWidgetLegendItem = {
   id: string;

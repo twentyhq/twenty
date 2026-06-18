@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 type LeftAxisTicksProps = {
   leftTickValues: (string | number)[];
   getLeftTickPosition: (value: string | number, index: number) => number;

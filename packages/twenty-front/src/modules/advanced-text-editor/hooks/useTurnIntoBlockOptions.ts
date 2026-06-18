@@ -6,7 +6,7 @@ import {
   IconH2,
   IconH3,
   IconPilcrow,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 export type TurnIntoBlockOptions = {
   title: string;

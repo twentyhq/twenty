@@ -10,7 +10,7 @@ import {
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 
 const meta: Meta<typeof SnackBar> = {
   title: 'UI/Feedback/SnackBarManager/SnackBar',

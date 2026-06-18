@@ -38,8 +38,8 @@ import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { IconX } from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconX } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldAvailableContainer = styled.div`
   color: ${themeCssVariables.font.color.light};

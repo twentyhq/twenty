@@ -20,6 +20,7 @@ export type CodeExecutionResult = {
 
 export type ExecutionContext = {
   env?: Record<string, string>;
+  sessionId?: string;
 };
 
 export type StreamCallbacks = {
@@ -35,4 +36,6 @@ export interface CodeInterpreterDriver {
     context?: ExecutionContext,
     callbacks?: StreamCallbacks,
   ): Promise<CodeExecutionResult>;
+  releaseSession?(sessionId: string): Promise<void>;
+  sweepExpiredSessions?(maxAgeMs: number): Promise<number>;
 }

@@ -19,10 +19,10 @@ import {
   IconTag,
   IconTrash,
   IconWorld,
-} from 'twenty-ui-deprecated/display';
-import { Button, SearchInput } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { RoundedLink, UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { Button, SearchInput } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { RoundedLink, UndecoratedLink } from 'twenty-ui/navigation';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';

@@ -10,10 +10,10 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize } from 'twenty-shared/utils';
-import { IconColorSwatch } from 'twenty-ui-deprecated/display';
-import { DEFAULT_COLOR_LABELS } from 'twenty-ui-deprecated/navigation';
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconColorSwatch } from 'twenty-ui/display';
+import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
+import { type ThemeColor } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const NAVIGATION_MENU_ITEM_COLOR_DROPDOWN_ID = 'navigation-menu-item-color';
 

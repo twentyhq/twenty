@@ -20,15 +20,11 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipVariant } from 'twenty-ui-deprecated/components';
-import { IconEye, IconEyeOff } from 'twenty-ui-deprecated/display';
-import {
-  Checkbox,
-  CheckboxVariant,
-  LightIconButton,
-} from 'twenty-ui-deprecated/input';
+import { ChipVariant } from 'twenty-ui/components';
+import { IconEye, IconEyeOff } from 'twenty-ui/display';
+import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
 
 const StyledCompactIconContainer = styled.div`
   align-items: center;

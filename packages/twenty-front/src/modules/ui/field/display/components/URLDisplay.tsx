@@ -1,10 +1,6 @@
 import { type MouseEvent } from 'react';
 
-import {
-  LinkType,
-  RoundedLink,
-  SocialLink,
-} from 'twenty-ui-deprecated/navigation';
+import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
 import { checkUrlType } from '~/utils/checkUrlType';
 import { getSafeUrl } from 'twenty-shared/utils';
 import { EllipsisDisplay } from './EllipsisDisplay';

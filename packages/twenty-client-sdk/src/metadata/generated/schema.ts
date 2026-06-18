@@ -682,6 +682,7 @@ export interface Workspace {
     billingSubscriptions: BillingSubscription[]
     installedApplications: Application[]
     currentBillingSubscription?: BillingSubscription
+    billingCustomer?: BillingCustomer
     billingEntitlements: BillingEntitlement[]
     hasValidSignedEnterpriseKey: Scalars['Boolean']
     hasValidEnterpriseValidityToken: Scalars['Boolean']
@@ -1017,6 +1018,7 @@ export interface ViewConfiguration {
 export interface RecordTableConfiguration {
     configurationType: WidgetConfigurationType
     viewId?: Scalars['String']
+    recordLimit?: Scalars['Int']
     __typename: 'RecordTableConfiguration'
 }
 
@@ -1209,6 +1211,12 @@ export interface BillingSubscriptionItem {
     stripePriceId: Scalars['String']
     billingProduct: BillingProductDTO
     __typename: 'BillingSubscriptionItem'
+}
+
+export interface BillingCustomer {
+    id: Scalars['UUID']
+    hasPaymentMethod?: Scalars['Boolean']
+    __typename: 'BillingCustomer'
 }
 
 export interface BillingSubscription {
@@ -1994,6 +2002,19 @@ export interface VerifyEmailAndGetLoginToken {
     __typename: 'VerifyEmailAndGetLoginToken'
 }
 
+export interface SubdomainAvailabilityDTO {
+    isValid: Scalars['Boolean']
+    available: Scalars['Boolean']
+    suggestedSubdomain: Scalars['String']
+    __typename: 'SubdomainAvailabilityDTO'
+}
+
+export interface WorkspaceCreationDefaultsDTO {
+    displayName: Scalars['String']
+    subdomain: Scalars['String']
+    __typename: 'WorkspaceCreationDefaultsDTO'
+}
+
 export interface ApiKeyToken {
     token: Scalars['String']
     __typename: 'ApiKeyToken'
@@ -2358,7 +2379,7 @@ export interface LineChartDataPoint {
 }
 
 export interface LineChartSeries {
-    id: Scalars['String']
+    key: Scalars['String']
     label: Scalars['String']
     data: LineChartDataPoint[]
     __typename: 'LineChartSeries'
@@ -2376,7 +2397,7 @@ export interface LineChartData {
 }
 
 export interface PieChartDataItem {
-    id: Scalars['String']
+    key: Scalars['String']
     value: Scalars['Float']
     __typename: 'PieChartDataItem'
 }
@@ -2699,6 +2720,8 @@ export interface Query {
     checkUserExists: CheckUserExist
     checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid
     findWorkspaceFromInviteHash: Workspace
+    checkWorkspaceSubdomainAvailability: SubdomainAvailabilityDTO
+    getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO
     validatePasswordResetToken: ValidatePasswordResetToken
     findApplicationRegistrationByClientId?: PublicApplicationRegistration
     findApplicationRegistrationByUniversalIdentifier?: ApplicationRegistration
@@ -3675,6 +3698,7 @@ export interface WorkspaceGenqlSelection{
     billingSubscriptions?: BillingSubscriptionGenqlSelection
     installedApplications?: ApplicationGenqlSelection
     currentBillingSubscription?: BillingSubscriptionGenqlSelection
+    billingCustomer?: BillingCustomerGenqlSelection
     billingEntitlements?: BillingEntitlementGenqlSelection
     hasValidSignedEnterpriseKey?: boolean | number
     hasValidEnterpriseValidityToken?: boolean | number
@@ -4027,6 +4051,7 @@ export interface ViewConfigurationGenqlSelection{
 export interface RecordTableConfigurationGenqlSelection{
     configurationType?: boolean | number
     viewId?: boolean | number
+    recordLimit?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4225,6 +4250,13 @@ export interface BillingSubscriptionItemGenqlSelection{
     quantity?: boolean | number
     stripePriceId?: boolean | number
     billingProduct?: BillingProductDTOGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface BillingCustomerGenqlSelection{
+    id?: boolean | number
+    hasPaymentMethod?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5067,6 +5099,21 @@ export interface VerifyEmailAndGetLoginTokenGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface SubdomainAvailabilityDTOGenqlSelection{
+    isValid?: boolean | number
+    available?: boolean | number
+    suggestedSubdomain?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface WorkspaceCreationDefaultsDTOGenqlSelection{
+    displayName?: boolean | number
+    subdomain?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApiKeyTokenGenqlSelection{
     token?: boolean | number
     __typename?: boolean | number
@@ -5452,7 +5499,7 @@ export interface LineChartDataPointGenqlSelection{
 }
 
 export interface LineChartSeriesGenqlSelection{
-    id?: boolean | number
+    key?: boolean | number
     label?: boolean | number
     data?: LineChartDataPointGenqlSelection
     __typename?: boolean | number
@@ -5472,7 +5519,7 @@ export interface LineChartDataGenqlSelection{
 }
 
 export interface PieChartDataItemGenqlSelection{
-    id?: boolean | number
+    key?: boolean | number
     value?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5750,7 +5797,7 @@ export interface QueryGenqlSelection{
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
     getInviteSuggestions?: InviteSuggestionGenqlSelection
     applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null)} })
+    billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null), forPaymentMethodUpdate?: (Scalars['Boolean'] | null)} })
     listPlans?: BillingPlanGenqlSelection
     getResourceCreditUsage?: BillingResourceCreditUsageGenqlSelection
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
@@ -5826,6 +5873,8 @@ export interface QueryGenqlSelection{
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     checkWorkspaceInviteHashIsValid?: (WorkspaceInviteHashValidGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
+    checkWorkspaceSubdomainAvailability?: (SubdomainAvailabilityDTOGenqlSelection & { __args: {subdomain: Scalars['String']} })
+    getWorkspaceCreationDefaults?: WorkspaceCreationDefaultsDTOGenqlSelection
     validatePasswordResetToken?: (ValidatePasswordResetTokenGenqlSelection & { __args: {passwordResetToken: Scalars['String']} })
     findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
     findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
@@ -6044,7 +6093,7 @@ export interface MutationGenqlSelection{
     getAuthTokensFromOTP?: (AuthTokensGenqlSelection & { __args: {otp: Scalars['String'], loginToken: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
     signUp?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInWorkspace?: (SignUpGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], workspaceId?: (Scalars['UUID'] | null), workspaceInviteHash?: (Scalars['String'] | null), workspacePersonalInviteToken?: (Scalars['String'] | null), captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
-    signUpInNewWorkspace?: SignUpGenqlSelection
+    signUpInNewWorkspace?: (SignUpGenqlSelection & { __args?: {input?: (SignUpInNewWorkspaceInput | null)} })
     generateTransientToken?: TransientTokenGenqlSelection
     getAuthTokensFromLoginToken?: (AuthTokensGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
     authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), redirectUrl: Scalars['String'], state?: (Scalars['String'] | null), scope?: (Scalars['String'] | null)} })
@@ -6441,6 +6490,8 @@ export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['
 export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
 
 export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
+
+export interface SignUpInNewWorkspaceInput {displayName?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null)}
 
 export interface CreateApplicationRegistrationInput {name: Scalars['String'],universalIdentifier?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null)}
 
@@ -7236,6 +7287,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const BillingCustomer_possibleTypes: string[] = ['BillingCustomer']
+    export const isBillingCustomer = (obj?: { __typename?: any } | null): obj is BillingCustomer => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingCustomer"')
+      return BillingCustomer_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const BillingSubscription_possibleTypes: string[] = ['BillingSubscription']
     export const isBillingSubscription = (obj?: { __typename?: any } | null): obj is BillingSubscription => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscription"')
@@ -7960,6 +8019,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isVerifyEmailAndGetLoginToken = (obj?: { __typename?: any } | null): obj is VerifyEmailAndGetLoginToken => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isVerifyEmailAndGetLoginToken"')
       return VerifyEmailAndGetLoginToken_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SubdomainAvailabilityDTO_possibleTypes: string[] = ['SubdomainAvailabilityDTO']
+    export const isSubdomainAvailabilityDTO = (obj?: { __typename?: any } | null): obj is SubdomainAvailabilityDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSubdomainAvailabilityDTO"')
+      return SubdomainAvailabilityDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceCreationDefaultsDTO_possibleTypes: string[] = ['WorkspaceCreationDefaultsDTO']
+    export const isWorkspaceCreationDefaultsDTO = (obj?: { __typename?: any } | null): obj is WorkspaceCreationDefaultsDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCreationDefaultsDTO"')
+      return WorkspaceCreationDefaultsDTO_possibleTypes.includes(obj.__typename)
     }
     
 

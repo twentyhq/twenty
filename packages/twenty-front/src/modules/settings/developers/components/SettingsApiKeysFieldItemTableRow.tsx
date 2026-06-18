@@ -7,8 +7,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { IconChevronRight } from 'twenty-ui-deprecated/display';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { IconChevronRight } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { type ApiKey } from '~/generated-metadata/graphql';
 
 const StyledEllipsisLabel = styled.div`

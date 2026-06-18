@@ -6,7 +6,7 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/sta
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type StepFilterGroup } from 'twenty-shared/types';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowStepFilterGroupColumnProps = {
   parentStepFilterGroup: StepFilterGroup;

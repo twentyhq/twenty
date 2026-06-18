@@ -31,9 +31,9 @@ import {
   IconHistory,
   IconMail,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
-import { Card, Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { Card, Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 

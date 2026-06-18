@@ -8,8 +8,8 @@ import { Select } from '@/ui/input/components/Select';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconUserPin, useIcons } from 'twenty-ui-deprecated/display';
-import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { H2Title, IconUserPin, useIcons } from 'twenty-ui/display';
+import { Card, Section } from 'twenty-ui/layout';
 import { useMutation } from '@apollo/client/react';
 import {
   type UpdateWorkspaceMutation,

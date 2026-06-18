@@ -5,7 +5,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventFieldDiffValueProps = {
   diffArtificialRecordStoreId: string;

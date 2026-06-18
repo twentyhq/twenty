@@ -4,12 +4,16 @@ import { isString } from '@sniptt/guards';
 import { isDefined, isValidVariable } from 'twenty-shared/utils';
 import {
   BaseOutputSchemaV2,
+  buildManualTriggerMetadataNode,
   BulkRecordsAvailability,
   extractRawVariableNamePart,
   GlobalAvailability,
   navigateOutputSchemaProperty,
   SingleRecordAvailability,
   TRIGGER_STEP_ID,
+  WORKFLOW_TRIGGER_METADATA_KEY,
+  WORKFLOW_TRIGGER_PAYLOAD_KEY,
+  WORKFLOW_TRIGGER_PAYLOAD_LABEL,
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
@@ -291,14 +295,28 @@ export class WorkflowSchemaWorkspaceService {
     workspaceId: string;
   }): Promise<OutputSchema> {
     if (availability.type === 'GLOBAL') {
-      return {};
+      return {
+        [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
+      };
     }
 
     if (availability.type === 'SINGLE_RECORD') {
-      return this.computeRecordOutputSchema({
+      const recordOutputSchema = await this.computeRecordOutputSchema({
         objectType: availability.objectNameSingular,
         workspaceId,
       });
+
+      const payload: Node = {
+        isLeaf: false,
+        type: 'object',
+        label: WORKFLOW_TRIGGER_PAYLOAD_LABEL,
+        value: recordOutputSchema,
+      };
+
+      return {
+        [WORKFLOW_TRIGGER_PAYLOAD_KEY]: payload,
+        [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
+      };
     }
 
     if (availability.type === 'BULK_RECORDS') {
@@ -308,14 +326,24 @@ export class WorkflowSchemaWorkspaceService {
           workspaceId,
         );
 
-      return {
-        [objectMetadataInfo.flatObjectMetadata.namePlural]: {
-          label: objectMetadataInfo.flatObjectMetadata.labelPlural,
-          isLeaf: true,
-          type: 'array',
-          value:
-            'Array of ' + objectMetadataInfo.flatObjectMetadata.labelPlural,
+      const payload: Node = {
+        isLeaf: false,
+        type: 'object',
+        label: WORKFLOW_TRIGGER_PAYLOAD_LABEL,
+        value: {
+          [objectMetadataInfo.flatObjectMetadata.namePlural]: {
+            label: objectMetadataInfo.flatObjectMetadata.labelPlural,
+            isLeaf: true,
+            type: 'array',
+            value:
+              'Array of ' + objectMetadataInfo.flatObjectMetadata.labelPlural,
+          },
         },
+      };
+
+      return {
+        [WORKFLOW_TRIGGER_PAYLOAD_KEY]: payload,
+        [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
       };
     }
 

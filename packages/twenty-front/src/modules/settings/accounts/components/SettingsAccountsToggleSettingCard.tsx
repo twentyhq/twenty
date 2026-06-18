@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { Card, CardContent } from 'twenty-ui-deprecated/layout';
+import { Card, CardContent } from 'twenty-ui/layout';
 import { Toggle } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type Parameter = {
   value: boolean;

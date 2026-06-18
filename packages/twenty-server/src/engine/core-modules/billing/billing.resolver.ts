@@ -71,12 +71,13 @@ export class BillingResolver {
   )
   async billingPortalSession(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args() { returnUrlPath }: BillingSessionInput,
+    @Args() { returnUrlPath, forPaymentMethodUpdate }: BillingSessionInput,
   ) {
     return {
       url: await this.billingPortalWorkspaceService.computeBillingPortalSessionURLOrThrow(
         workspace,
         returnUrlPath,
+        forPaymentMethodUpdate,
       ),
     };
   }

@@ -9,13 +9,13 @@ import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWo
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBrackets } from 'twenty-ui-deprecated/display';
+import { IconBrackets } from 'twenty-ui/display';
 import {
   type GetJsonNodeHighlighting,
   JsonNestedNode,
   JsonTreeContextProvider,
   type ShouldExpandNodeInitiallyProps,
-} from 'twenty-ui-deprecated/json-visualizer';
+} from 'twenty-ui/json-visualizer';
 import { type JsonValue } from 'type-fest';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

@@ -3,18 +3,15 @@ import { type MouseEvent, useContext, useState } from 'react';
 
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { IconPencil } from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { IconPencil } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 import {
   StyledHoverableMenuItemBase,
   StyledMenuItemIconCheck,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
-} from 'twenty-ui-deprecated/navigation';
-import {
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/navigation';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 const StyledTextContainer = styled.div`
   align-items: center;
   display: flex;

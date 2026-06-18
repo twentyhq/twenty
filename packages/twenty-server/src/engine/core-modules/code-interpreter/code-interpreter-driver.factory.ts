@@ -64,7 +64,13 @@ export class CodeInterpreterDriverFactory extends DriverFactoryBase<CodeInterpre
           );
         }
 
-        return new E2BDriver({ apiKey, timeoutMs });
+        return new E2BDriver({
+          apiKey,
+          timeoutMs,
+          idleTimeoutMs: this.twentyConfigService.get(
+            'CODE_INTERPRETER_IDLE_TIMEOUT_MS',
+          ),
+        });
       }
 
       default:

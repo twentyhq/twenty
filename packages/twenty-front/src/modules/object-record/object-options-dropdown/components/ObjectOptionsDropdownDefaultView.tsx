@@ -19,8 +19,8 @@ import {
   IconListDetails,
   IconLock,
   useIcons,
-} from 'twenty-ui-deprecated/display';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownDefaultView = () => {

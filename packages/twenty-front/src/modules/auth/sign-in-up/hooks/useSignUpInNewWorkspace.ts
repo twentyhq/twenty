@@ -17,9 +17,19 @@ export const useSignUpInNewWorkspace = () => {
     SignUpInNewWorkspaceDocument,
   );
 
-  const createWorkspace = async ({ newTab } = { newTab: true }) => {
+  const createWorkspace = async ({
+    displayName,
+    subdomain,
+    newTab = true,
+  }: {
+    displayName?: string;
+    subdomain?: string;
+    newTab?: boolean;
+  } = {}) => {
     try {
-      const { data } = await signUpInNewWorkspaceMutation();
+      const { data } = await signUpInNewWorkspaceMutation({
+        variables: { input: { displayName, subdomain } },
+      });
       assertIsDefinedOrThrow(data?.signUpInNewWorkspace);
       return await redirectToWorkspaceDomain(
         getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),

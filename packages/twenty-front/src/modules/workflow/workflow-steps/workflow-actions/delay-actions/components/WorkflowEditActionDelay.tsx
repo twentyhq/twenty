@@ -12,8 +12,8 @@ import {
   HorizontalSeparator,
   IconCalendar,
   IconHourglassHigh,
-} from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
 
 type WorkflowEditActionDelayProps = {
   action: WorkflowDelayAction;
