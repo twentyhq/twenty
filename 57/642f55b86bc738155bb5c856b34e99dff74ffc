@@ -1,0 +1,19 @@
+packages/twenty-server/src/engine/metadata-modules/message-folder/dtos/update-message-folder.input.ts
+  s_239cdc3f70d75f::t_d461499ce9202a 16-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "57642f55b86bc738155bb5c856b34e99dff74ffc",
+  "prompts": {},
+  "sessions": {
+    "s_239cdc3f70d75f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3c703fb8-441c-4521-b00c-5823343e2d29",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
