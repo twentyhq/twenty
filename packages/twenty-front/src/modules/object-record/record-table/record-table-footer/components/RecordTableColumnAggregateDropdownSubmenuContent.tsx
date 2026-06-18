@@ -6,7 +6,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useContext } from 'react';
-import { IconChevronLeft } from 'twenty-ui-deprecated/display';
+import { IconChevronLeft } from 'twenty-ui/display';
 
 export const RecordTableColumnAggregateFooterDropdownSubmenuContent = ({
   aggregateOperations,

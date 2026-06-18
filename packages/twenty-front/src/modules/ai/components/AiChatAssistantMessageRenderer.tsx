@@ -2,20 +2,17 @@ import { AiChatCompactionIndicator } from '@/ai/components/AiChatCompactionIndic
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
-import { IconDotsVertical } from 'twenty-ui-deprecated/display';
+import { IconDotsVertical } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
 import { styled } from '@linaria/react';
-import { isToolUIPart, type ToolUIPart } from 'ai';
+import { isToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;
@@ -78,13 +75,8 @@ const MessagePartRenderer = ({
         />
       );
     default:
-      if (isToolUIPart(part) === true && part.type !== 'dynamic-tool') {
-        return (
-          <ToolStepRenderer
-            toolPart={part as ToolUIPart}
-            isStreaming={isStreaming}
-          />
-        );
+      if (isToolUIPart(part)) {
+        return <ToolStepRenderer toolPart={part} isStreaming={isStreaming} />;
       }
       return null;
   }

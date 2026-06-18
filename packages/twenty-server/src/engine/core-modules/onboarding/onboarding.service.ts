@@ -94,12 +94,12 @@ export class OnboardingService {
       userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING) ===
       true;
 
-    if (isProfileCreationPending) {
-      return OnboardingStatus.PROFILE_CREATION;
-    }
-
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
+    }
+
+    if (isProfileCreationPending) {
+      return OnboardingStatus.PROFILE_CREATION;
     }
 
     if (isInviteTeamPending) {

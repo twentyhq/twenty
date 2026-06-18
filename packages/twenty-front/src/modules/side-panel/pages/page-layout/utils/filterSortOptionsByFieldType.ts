@@ -3,7 +3,7 @@ import {
   isFieldMetadataDateKind,
   isFieldMetadataSelectKind,
 } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { type IconComponent } from 'twenty-ui/display';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 export type SortOption = {

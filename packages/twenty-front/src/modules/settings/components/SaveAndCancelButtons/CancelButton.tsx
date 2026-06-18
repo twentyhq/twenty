@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { Button, LightButton } from 'twenty-ui-deprecated/input';
+import { Button, LightButton } from 'twenty-ui/input';
 
 type CancelButtonProps = {
   onCancel?: () => void;

@@ -2,14 +2,11 @@ import { styled } from '@linaria/react';
 
 import { type ReactNode, useContext } from 'react';
 import { t } from '@lingui/core/macro';
-import { Card, CardContent } from 'twenty-ui-deprecated/layout';
-import { IconChevronRight } from 'twenty-ui-deprecated/display';
-import { Pill } from 'twenty-ui-deprecated/components';
+import { Card, CardContent } from 'twenty-ui/layout';
+import { IconChevronRight } from 'twenty-ui/display';
+import { Pill } from 'twenty-ui/components';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsCardProps = {
   description?: string;
@@ -79,6 +76,7 @@ const StyledIconChevronRightContainer = styled.span`
 `;
 
 const StyledDescription = styled.div`
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   padding-bottom: ${themeCssVariables.spacing[2]};
   padding-left: ${themeCssVariables.spacing[7]};
 `;

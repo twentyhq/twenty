@@ -21,6 +21,7 @@ import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/applica
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
@@ -280,6 +281,17 @@ export class WorkspaceResolver {
     return this.billingSubscriptionService.getCurrentBillingSubscription({
       workspaceId: workspace.id,
     });
+  }
+
+  @ResolveField(() => BillingCustomerEntity, { nullable: true })
+  async billingCustomer(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<BillingCustomerEntity | null> {
+    if (!this.twentyConfigService.isBillingEnabled()) {
+      return null;
+    }
+
+    return this.billingSubscriptionService.getBillingCustomer(workspace.id);
   }
 
   @ResolveField(() => Number)

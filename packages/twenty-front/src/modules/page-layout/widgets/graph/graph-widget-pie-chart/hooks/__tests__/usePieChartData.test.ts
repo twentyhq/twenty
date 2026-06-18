@@ -2,7 +2,6 @@ import { usePieChartData } from '@/page-layout/widgets/graph/graph-widget-pie-ch
 import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graph-widget-pie-chart/types/PieChartDataItem';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
-import { type PieChartDataItem } from '~/generated-metadata/graphql';
 
 const mockUseAtomComponentStateValue = jest.fn();
 jest.mock(
@@ -58,9 +57,9 @@ describe('usePieChartData', () => {
   };
 
   const mockData: PieChartDataItemWithColor[] = [
-    { id: 'item1', value: 30 },
-    { id: 'item2', value: 50 },
-    { id: 'item3', value: 20 },
+    { key: 'item1', value: 30 },
+    { key: 'item2', value: 50 },
+    { key: 'item3', value: 20 },
   ];
 
   it('should enrich data with color schemes and percentages', () => {
@@ -74,7 +73,7 @@ describe('usePieChartData', () => {
 
     expect(result.current.enrichedData).toHaveLength(3);
     expect(result.current.enrichedData[0]).toMatchObject({
-      id: 'item1',
+      key: 'item1',
       value: 30,
       percentage: 30,
       colorScheme: mockColorRegistry.red,
@@ -96,7 +95,9 @@ describe('usePieChartData', () => {
   });
 
   it('should handle single data item', () => {
-    const singleData: PieChartDataItem[] = [{ id: 'single', value: 100 }];
+    const singleData: PieChartDataItemWithColor[] = [
+      { key: 'single', value: 100 },
+    ];
 
     const { result } = renderHook(() =>
       usePieChartData({
@@ -151,7 +152,7 @@ describe('usePieChartData', () => {
     );
 
     expect(result.current.enrichedData).toHaveLength(2);
-    expect(result.current.enrichedData.map((d) => d.id)).toEqual([
+    expect(result.current.enrichedData.map((item) => item.key)).toEqual([
       'item1',
       'item3',
     ]);

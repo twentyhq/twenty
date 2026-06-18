@@ -92,6 +92,7 @@ export const prefillFrontComponentCommandMenuItems = async ({
         pageLayoutId: definition.pageLayoutId ?? null,
         pageLayoutUniversalIdentifier: definition.pageLayoutId ?? null,
         isActive: true,
+        isSystemSideEffect: false,
         overrides: null,
         universalOverrides: null,
         createdAt: now,

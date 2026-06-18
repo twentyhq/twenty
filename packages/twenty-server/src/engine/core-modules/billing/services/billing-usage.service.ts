@@ -21,11 +21,8 @@ import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
-import { buildBillingUsageAvailableCreditsCacheKey } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-cache-key.util';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -45,8 +42,7 @@ export class BillingUsageService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineBillingUsage)
-    private readonly billingUsageCacheStorage: CacheStorageService,
+    private readonly billingUsageCacheService: BillingUsageCacheService,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -167,36 +163,6 @@ export class BillingUsageService {
     };
   }
 
-  async flushAvailableCreditsFromCache(workspaceId: string): Promise<void> {
-    await this.billingUsageCacheStorage.flushByPattern(
-      `available-credits:${workspaceId}:*`,
-    );
-  }
-
-  private async warmAvailableCreditsInCache(
-    workspaceId: string,
-    periodStart: Date | string,
-    periodEnd: Date | string,
-    availableCredits: number,
-  ): Promise<void> {
-    const ttlMs = Math.max(new Date(periodEnd).getTime() - Date.now(), 0);
-
-    await this.billingUsageCacheStorage.set(
-      buildBillingUsageAvailableCreditsCacheKey(workspaceId, periodStart),
-      availableCredits,
-      ttlMs,
-    );
-  }
-
-  private async getAvailableCreditsFromCache(
-    workspaceId: string,
-    periodStart: Date | string,
-  ): Promise<number | undefined> {
-    return this.billingUsageCacheStorage.get<number>(
-      buildBillingUsageAvailableCreditsCacheKey(workspaceId, periodStart),
-    );
-  }
-
   private async getAvailableCreditsFromClickHouse({
     workspaceId,
     currentPeriodStart,
@@ -300,10 +266,11 @@ export class BillingUsageService {
 
     const { currentPeriodStart, currentPeriodEnd } = currentBillingSubscription;
 
-    const cachedAvailableCredits = await this.getAvailableCreditsFromCache(
-      workspaceId,
-      currentPeriodStart,
-    );
+    const cachedAvailableCredits =
+      await this.billingUsageCacheService.getAvailableCredits(
+        workspaceId,
+        currentPeriodStart,
+      );
 
     const availableCredits = isDefined(cachedAvailableCredits)
       ? cachedAvailableCredits
@@ -313,7 +280,7 @@ export class BillingUsageService {
         });
 
     if (!isDefined(cachedAvailableCredits)) {
-      await this.warmAvailableCreditsInCache(
+      await this.billingUsageCacheService.warmAvailableCredits(
         workspaceId,
         currentPeriodStart,
         currentPeriodEnd,
@@ -322,12 +289,10 @@ export class BillingUsageService {
     }
 
     const decrementedAvailableCredits =
-      await this.billingUsageCacheStorage.incrBy(
-        buildBillingUsageAvailableCreditsCacheKey(
-          workspaceId,
-          currentPeriodStart,
-        ),
-        -usedCredits,
+      await this.billingUsageCacheService.decrementAvailableCredits(
+        workspaceId,
+        currentPeriodStart,
+        usedCredits,
       );
 
     const hasJustReachedCap =
@@ -341,15 +306,6 @@ export class BillingUsageService {
     }
 
     return decrementedAvailableCredits;
-  }
-
-  async invalidateAvailableCreditsInCache(
-    workspaceId: string,
-    periodStart: Date,
-  ): Promise<void> {
-    await this.billingUsageCacheStorage.del(
-      buildBillingUsageAvailableCreditsCacheKey(workspaceId, periodStart),
-    );
   }
 
   async hasAvailableCredits(workspaceId: string): Promise<boolean> {
@@ -380,7 +336,7 @@ export class BillingUsageService {
 
     const subscription = currentBillingSubscription;
 
-    const cached = await this.getAvailableCreditsFromCache(
+    const cached = await this.billingUsageCacheService.getAvailableCredits(
       subscription.workspaceId,
       subscription.currentPeriodStart,
     );
@@ -394,7 +350,7 @@ export class BillingUsageService {
       currentPeriodStart: subscription.currentPeriodStart,
     });
 
-    await this.warmAvailableCreditsInCache(
+    await this.billingUsageCacheService.warmAvailableCredits(
       subscription.workspaceId,
       subscription.currentPeriodStart,
       subscription.currentPeriodEnd,

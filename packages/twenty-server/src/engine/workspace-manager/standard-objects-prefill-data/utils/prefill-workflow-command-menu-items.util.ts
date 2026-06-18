@@ -71,6 +71,7 @@ export const prefillWorkflowCommandMenuItems = async ({
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     isActive: true,
+    isSystemSideEffect: false,
     overrides: null,
     universalOverrides: null,
     createdAt: now,

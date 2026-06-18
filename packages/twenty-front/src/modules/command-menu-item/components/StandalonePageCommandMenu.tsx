@@ -19,7 +19,7 @@ import {
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const StandalonePageCommandMenu = () => {

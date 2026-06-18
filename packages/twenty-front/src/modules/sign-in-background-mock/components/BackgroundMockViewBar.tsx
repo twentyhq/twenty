@@ -6,11 +6,8 @@ import {
   IconBuildingSkyscraper,
   IconChevronDown,
   TintedIconTile,
-} from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledViewPicker = styled.div`
   align-items: center;

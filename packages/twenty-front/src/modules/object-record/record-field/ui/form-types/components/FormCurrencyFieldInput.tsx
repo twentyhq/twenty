@@ -9,7 +9,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type CurrencyCode } from 'twenty-shared/constants';
-import { IconCircleOff } from 'twenty-ui-deprecated/display';
+import { IconCircleOff } from 'twenty-ui/display';
 
 type FormCurrencyFieldInputProps = {
   label?: string;

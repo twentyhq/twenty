@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { IconHelpCircle, IconSettings } from 'twenty-ui-deprecated/display';
-import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
+import { IconHelpCircle, IconSettings } from 'twenty-ui/display';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';

@@ -1,5 +1,5 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { type IconComponent } from 'twenty-ui/display';
 
 export type TableFieldMetadata<ItemType> = {
   fieldLabel: MessageDescriptor;

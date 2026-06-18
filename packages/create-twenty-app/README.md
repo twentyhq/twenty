@@ -49,7 +49,7 @@ Full documentation is available at **[docs.twenty.com/developers/extend/apps](ht
 ## Troubleshooting
 
 - Server not starting: check Docker is running (`docker info`), then try `yarn twenty docker:logs`.
-- Auth not working: run `yarn twenty remote:add --local` to re-authenticate.
+- Auth not working: run `yarn twenty remote:add` to re-authenticate.
 - Types not generated: ensure `yarn twenty dev` is running — it auto-generates the typed client.
 
 ## Contributing
