@@ -9,9 +9,6 @@ import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modul
   imports: [
     ConnectedAccountTokenEncryptionModule,
     SecretEncryptionModule,
-    // JwtModule provides JwtWrapperService, required by the 2.5
-    // encrypt-totp-secrets slow command to read legacy AES-CBC TOTP secrets
-    // during the cross-upgrade window. Drop once that command is retired.
     JwtModule,
   ],
   providers: [...INSTANCE_COMMANDS],
