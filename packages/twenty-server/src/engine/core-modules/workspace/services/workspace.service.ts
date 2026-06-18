@@ -350,27 +350,39 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       workspace.id,
     );
 
-    await this.workspaceManagerService.init({
-      workspace,
-      userId: user.id,
-    });
+    try {
+      await this.workspaceManagerService.init({
+        workspace,
+        userId: user.id,
+      });
 
-    await this.featureFlagService.enableFeatureFlags(
-      DEFAULT_FEATURE_FLAGS,
-      workspace.id,
-    );
+      await this.featureFlagService.enableFeatureFlags(
+        DEFAULT_FEATURE_FLAGS,
+        workspace.id,
+      );
 
-    await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
+      await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
-    await this.prefillCreatedWorkspaceRecords({
-      workspaceId: workspace.id,
-      schemaName: getWorkspaceSchemaName(workspace.id),
-    });
+      await this.prefillCreatedWorkspaceRecords({
+        workspaceId: workspace.id,
+        schemaName: getWorkspaceSchemaName(workspace.id),
+      });
 
-    await this.activateAndInitializeUpgradeState({
-      workspaceId: workspace.id,
-      displayName: data.displayName,
-    });
+      await this.activateAndInitializeUpgradeState({
+        workspaceId: workspace.id,
+        displayName: data.displayName,
+      });
+    } catch (error) {
+      await this.workspaceRepository.update(workspace.id, {
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      });
+      await this.coreEntityCacheService.invalidate(
+        'workspaceEntity',
+        workspace.id,
+      );
+
+      throw error;
+    }
 
     try {
       await this.sdkClientGenerationService.enqueueSdkClientGenerationForWorkspace(
