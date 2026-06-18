@@ -18,15 +18,11 @@ import { useContext, useMemo, useState } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  CommandBlock,
-  H2Title,
-  IconArrowUpRight,
-  IconChevronRight,
-  IconCopy,
-  InlineBanner,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { CommandBlock } from 'twenty-ui/data-display';
+import { InlineBanner } from 'twenty-ui/feedback';
+import { IconArrowUpRight, IconChevronRight, IconCopy } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {

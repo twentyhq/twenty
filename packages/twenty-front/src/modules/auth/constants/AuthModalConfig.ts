@@ -1,4 +1,4 @@
-import { type ModalOverlay, type ModalSize } from 'twenty-ui/layout';
+import { type ModalOverlay, type ModalSize } from 'twenty-ui/surfaces';
 import { AppPath } from 'twenty-shared/types';
 
 type AuthModalConfigType = {

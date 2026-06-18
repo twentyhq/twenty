@@ -6,14 +6,9 @@ import React, { useContext } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  Avatar,
-  IconChevronRight,
-  IconLock,
-  TooltipDelay,
-  useIcons,
-} from 'twenty-ui/display';
+import { Avatar } from 'twenty-ui/data-display';
+import { IconChevronRight, IconLock, useIcons } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';

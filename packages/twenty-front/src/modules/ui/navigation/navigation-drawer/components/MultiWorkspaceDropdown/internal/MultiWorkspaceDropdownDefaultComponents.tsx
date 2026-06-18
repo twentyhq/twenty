@@ -27,8 +27,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/data-display';
 import {
-  Avatar,
   IconDotsVertical,
   IconLogout,
   IconMessage,
@@ -36,7 +36,7 @@ import {
   IconSettings,
   IconSwitchHorizontal,
   IconUserPlus,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import {
   MenuItem,

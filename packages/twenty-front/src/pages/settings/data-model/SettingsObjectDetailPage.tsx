@@ -30,7 +30,7 @@ import {
   IconListDetails,
   IconPlus,
   IconSettings,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';

@@ -24,7 +24,7 @@ import {
   turnJSDateToPlainDate,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
-import { IconCalendarX } from 'twenty-ui/display';
+import { IconCalendarX } from 'twenty-ui/icon';
 import { MenuItemLeftContent } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

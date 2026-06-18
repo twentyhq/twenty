@@ -1,5 +1,6 @@
 import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
   defineApplicationRole,
 } from 'twenty-sdk/define';
 
@@ -10,7 +11,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default role`,
   description:
-    'Reads calendar events to decide whether the meeting bot should attend a meeting; writes the resulting CallRecording records.',
+    'Reads calendar events to decide whether the meeting bot should attend a meeting; writes the resulting CallRecording records, uploads recording media, and fills transcripts.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -38,4 +39,5 @@ export default defineApplicationRole({
     },
   ],
   fieldPermissions: [],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
 });

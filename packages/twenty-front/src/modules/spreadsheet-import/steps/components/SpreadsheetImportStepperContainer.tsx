@@ -8,7 +8,7 @@ import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spread
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ModalHeader } from 'twenty-ui/layout';
+import { ModalHeader } from 'twenty-ui/surfaces';
 import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 
 export const SpreadsheetImportStepperContainer = () => {

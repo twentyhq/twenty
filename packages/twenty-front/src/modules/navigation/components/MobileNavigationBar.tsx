@@ -20,7 +20,7 @@ import {
   IconList,
   IconMessageCirclePlus,
   IconSearch,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { NavigationBar } from 'twenty-ui/navigation';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 

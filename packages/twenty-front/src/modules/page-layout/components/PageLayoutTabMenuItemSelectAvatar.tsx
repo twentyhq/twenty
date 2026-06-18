@@ -3,7 +3,7 @@ import { type MouseEvent, useContext, useState } from 'react';
 
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { IconPencil } from 'twenty-ui/display';
+import { IconPencil } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import {
   StyledHoverableMenuItemBase,

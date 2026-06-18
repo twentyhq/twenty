@@ -25,12 +25,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import {
-  Avatar,
-  HorizontalSeparator,
-  IconChevronRight,
-  IconPlus,
-} from 'twenty-ui/display';
+import { Avatar } from 'twenty-ui/data-display';
+import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type AvailableWorkspace,

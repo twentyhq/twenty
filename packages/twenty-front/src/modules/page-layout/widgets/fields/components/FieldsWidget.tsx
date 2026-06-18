@@ -20,7 +20,7 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
+} from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 

@@ -6,7 +6,7 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconArrowDown, IconDotsVertical } from 'twenty-ui/display';
+import { IconArrowDown, IconDotsVertical } from 'twenty-ui/icon';
 
 const mockedPageInfo = {
   title: 'Initial Title',

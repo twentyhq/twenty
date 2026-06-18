@@ -9,14 +9,14 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
+import { ColorSample } from 'twenty-ui/data-display';
 import {
-  ColorSample,
   IconCheck,
   IconDotsVertical,
   IconGripVertical,
   IconTrash,
   IconX,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import {
   type ColorLabels,

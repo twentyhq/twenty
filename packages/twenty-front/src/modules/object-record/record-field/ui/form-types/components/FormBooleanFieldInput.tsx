@@ -11,7 +11,7 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconCircleOff, IconX } from 'twenty-ui/display';
+import { IconCheck, IconCircleOff, IconX } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type FormBooleanFieldInputProps = {

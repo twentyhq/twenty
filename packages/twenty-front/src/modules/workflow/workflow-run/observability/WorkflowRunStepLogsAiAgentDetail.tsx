@@ -10,7 +10,7 @@ import {
   IconCpu,
   IconTool,
   IconWorld,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { formatDuration } from '@/workflow/workflow-run/observability/workflowRunStepLogsFormatters';

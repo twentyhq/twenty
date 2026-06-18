@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { Label } from 'twenty-ui/display';
+import { Label } from 'twenty-ui/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
