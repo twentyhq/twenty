@@ -39,10 +39,45 @@ describe('finalizeDanglingToolParts', () => {
     expect(finalizeDanglingToolParts([part])).toEqual([part]);
   });
 
-  it('leaves an errored tool part untouched', () => {
+  it('leaves an errored tool part with an input untouched', () => {
     const part = buildToolPart('output-error', { errorText: 'boom' });
 
     expect(finalizeDanglingToolParts([part])).toEqual([part]);
+  });
+
+  it('backfills an empty input for an output-error part missing its input', () => {
+    const part = buildToolPart('output-error', {
+      input: undefined,
+      errorText: 'Invalid input for tool execute_tool: Type validation failed',
+    });
+
+    expect(finalizeDanglingToolParts([part])).toEqual([
+      {
+        type: 'tool-execute_tool',
+        toolCallId: 'call_1',
+        input: {},
+        state: 'output-error',
+        errorText:
+          'Invalid input for tool execute_tool: Type validation failed',
+      },
+    ]);
+  });
+
+  it('preserves the existing error message when backfilling input', () => {
+    const part = buildToolPart('output-error', {
+      input: null,
+      errorText: 'original validation error',
+    });
+
+    expect(finalizeDanglingToolParts([part])).toEqual([
+      {
+        type: 'tool-execute_tool',
+        toolCallId: 'call_1',
+        input: {},
+        state: 'output-error',
+        errorText: 'original validation error',
+      },
+    ]);
   });
 
   it('drops an input-streaming tool part with incomplete arguments', () => {

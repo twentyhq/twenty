@@ -59,7 +59,7 @@ export const SettingsProfile = () => {
             title={t`Name`}
             description={t`Your name as it will be displayed`}
           />
-          <NameFields />
+          <NameFields key={currentWorkspaceMember.id} />
         </Section>
         <Section>
           <H2Title
