@@ -82,6 +82,15 @@ const PUBLIC_SVG_BRAND_FILES = new Set([
   // <img> and fed through the halftone shader, not rendered as an icon glyph.
   'public/images/shared/halftone/twenty-logo.svg',
 ]);
+// Root README documentation assets: the repo's top-level README.md embeds
+// these SVGs by URL. They are not site UI (so not src/icons components) nor
+// third-party brand marks — they live here only so the README's relative
+// paths keep resolving once this package takes over the twenty-website
+// public/ path. A trailing slash matches a whole directory.
+const PUBLIC_SVG_README_DOC_PATHS = [
+  'public/images/core/logo.svg',
+  'public/images/readme/',
+];
 // Vertical rhythm rides margins ('& > * + *'), not row-gap: gap breaks
 // silently when a wrapper changes the child list. row-gap is allowed only
 // where layout is genuinely multi-axis (wrapping rows, multi-column
@@ -391,7 +400,10 @@ const walkPublic = (dir) => {
 };
 walkPublic('public');
 for (const svgPath of publicSvgs) {
-  if (!PUBLIC_SVG_BRAND_FILES.has(svgPath)) {
+  const isReadmeDocAsset = PUBLIC_SVG_README_DOC_PATHS.some((allowed) =>
+    allowed.endsWith('/') ? svgPath.startsWith(allowed) : svgPath === allowed,
+  );
+  if (!PUBLIC_SVG_BRAND_FILES.has(svgPath) && !isReadmeDocAsset) {
     failures.push(
       `${svgPath}: owned vector glyphs are components in src/icons — public/ svg files are third-party brand assets only (or add to PUBLIC_SVG_BRAND_FILES with a reason).`,
     );

@@ -13,6 +13,7 @@ const RESERVED_PREFIXES = [
   'fonts',
   'lottie',
   'models',
+  '.well-known',
 ];
 
 export const buildLocaleRewrites = (
