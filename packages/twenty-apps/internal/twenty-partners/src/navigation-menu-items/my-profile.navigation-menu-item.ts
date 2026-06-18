@@ -1,14 +1,14 @@
 import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
 
-import { OPEN_BRIEFS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/open-briefs.view';
+import { MY_PROFILE_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/my-profile.view';
 
 import { PARTNER_WORKSPACE_FOLDER_UNIVERSAL_IDENTIFIER } from './partner-workspace-folder.navigation-menu-item';
 
 export default defineNavigationMenuItem({
-  universalIdentifier: '1392ad4d-3792-4187-a1c5-ee05815dcfde',
+  universalIdentifier: '85c69095-516d-40b8-864d-f0a20f1ad88f',
   type: NavigationMenuItemType.VIEW,
-  icon: 'IconBuildingStore',
-  position: 0,
+  icon: 'IconUser',
+  position: 3,
   folderUniversalIdentifier: PARTNER_WORKSPACE_FOLDER_UNIVERSAL_IDENTIFIER,
-  viewUniversalIdentifier: OPEN_BRIEFS_VIEW_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: MY_PROFILE_VIEW_UNIVERSAL_IDENTIFIER,
 });

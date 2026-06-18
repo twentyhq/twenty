@@ -2,7 +2,7 @@ import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/def
 
 import { ALL_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/all-applications.view';
 
-// Pipeline folder (0b2e499a…), after the opportunity views.
+// Matching folder (0b2e499a…).
 export default defineNavigationMenuItem({
   universalIdentifier: '9170331a-e8b5-4b27-84fe-8929e5d458d1',
   type: NavigationMenuItemType.VIEW,
