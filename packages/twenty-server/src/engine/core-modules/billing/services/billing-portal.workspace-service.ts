@@ -210,14 +210,21 @@ export class BillingPortalWorkspaceService {
 
     const paymentIntent = this.findSubscriptionClientSecret(stripeSubscription);
 
-    if (!isDefined(paymentIntent)) {
-      throw new BillingException(
-        'Customer already has a non-canceled billing subscription',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
-      );
+    if (isDefined(paymentIntent)) {
+      return paymentIntent;
     }
 
-    return paymentIntent;
+    if (
+      stripeSubscription.status === 'incomplete' ||
+      stripeSubscription.status === 'incomplete_expired'
+    ) {
+      return null;
+    }
+
+    throw new BillingException(
+      'Customer already has a non-canceled billing subscription',
+      BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+    );
   }
 
   private extractSubscriptionClientSecret(subscription: Stripe.Subscription): {
