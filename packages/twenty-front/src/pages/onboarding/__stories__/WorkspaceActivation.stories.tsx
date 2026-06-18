@@ -6,7 +6,7 @@ import { within } from 'storybook/test';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { AppPath } from 'twenty-shared/types';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
-import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
+import { WorkspaceActivation } from '~/pages/onboarding/WorkspaceActivation';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -15,10 +15,10 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Onboarding/CreateWorkspace',
-  component: CreateWorkspace,
+  title: 'Pages/Onboarding/WorkspaceActivation',
+  component: WorkspaceActivation,
   decorators: [PageDecorator],
-  args: { routePath: AppPath.CreateWorkspace },
+  args: { routePath: AppPath.WorkspaceActivation },
   parameters: {
     msw: {
       handlers: [
@@ -39,10 +39,8 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof CreateWorkspace>;
+export type Story = StoryObj<typeof WorkspaceActivation>;
 
-// The name (and optional logo) are collected in the shared creation form, so
-// this onboarding step is now a pure activation loader.
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);

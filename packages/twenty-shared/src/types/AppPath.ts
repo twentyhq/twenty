@@ -7,7 +7,7 @@ export enum AppPath {
   ResetPassword = '/reset-password/:passwordResetToken',
 
   // Onboarding
-  CreateWorkspace = '/create/workspace',
+  WorkspaceActivation = '/workspace-activation',
   CreateProfile = '/create/profile',
   SyncEmails = '/sync/emails',
   InviteTeam = '/invite-team',

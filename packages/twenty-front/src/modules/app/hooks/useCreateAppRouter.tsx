@@ -48,9 +48,9 @@ const Authorize = lazy(() =>
   })),
 );
 
-const CreateWorkspace = lazy(() =>
-  import('~/pages/onboarding/CreateWorkspace').then((module) => ({
-    default: module.CreateWorkspace,
+const WorkspaceActivation = lazy(() =>
+  import('~/pages/onboarding/WorkspaceActivation').then((module) => ({
+    default: module.WorkspaceActivation,
   })),
 );
 
@@ -148,10 +148,10 @@ export const useCreateAppRouter = (
             }
           />
           <Route
-            path={AppPath.CreateWorkspace}
+            path={AppPath.WorkspaceActivation}
             element={
               <LazyRoute fallback={null}>
-                <CreateWorkspace />
+                <WorkspaceActivation />
               </LazyRoute>
             }
           />

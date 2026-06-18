@@ -44,7 +44,7 @@ const StyledActivationStep = styled.div`
   width: 100%;
 `;
 
-export const CreateWorkspace = () => {
+export const WorkspaceActivation = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();

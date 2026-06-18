@@ -117,12 +117,12 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION &&
     !someMatchingLocationOf([
-      AppPath.CreateWorkspace,
+      AppPath.WorkspaceActivation,
       AppPath.BookCallDecision,
       AppPath.BookCall,
     ])
   ) {
-    return AppPath.CreateWorkspace;
+    return AppPath.WorkspaceActivation;
   }
 
   if (
