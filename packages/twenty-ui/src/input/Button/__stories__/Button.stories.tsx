@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconReload, IconSearch } from '@ui/icon';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -22,8 +23,7 @@ export default meta;
 type Story = StoryObj<typeof Button>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   argTypes: {
     hotkeys: { control: false },
     Icon: { control: false },
@@ -61,8 +61,7 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
     isLoading: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
@@ -136,8 +135,7 @@ export const SoonCatalog: CatalogStory<Story, typeof Button> = {
     hotkeys: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
@@ -210,8 +208,7 @@ export const PositionCatalog: CatalogStory<Story, typeof Button> = {
     hotkeys: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
@@ -288,8 +285,7 @@ export const ShortcutCatalog: CatalogStory<Story, typeof Button> = {
     position: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [

@@ -1,5 +1,6 @@
 import {
   workflowActionSchema,
+  WorkflowActionType,
   workflowTriggerSchema,
 } from 'twenty-shared/workflow';
 import { v4 as uuidv4 } from 'uuid';
@@ -99,6 +100,7 @@ Common mistakes to avoid:
 - Missing the "objectRecord" field in CREATE_RECORD actions
 - Using "fieldsToUpdate" instead of "objectRecord" in CREATE_RECORD actions
 - Including CODE steps in this tool — this tool does NOT create the underlying logic function needed by CODE steps. Instead, create the workflow without CODE steps first, then add CODE steps individually using create_workflow_version_step (which properly creates the logic function), then call update_logic_function_source to define the code.
+- Including AI_AGENT steps in this tool — this tool does NOT create the underlying agent needed by AI_AGENT steps. Instead, create the workflow without AI_AGENT steps first, then add AI_AGENT steps individually using create_workflow_version_step (which properly creates the agent), then call update_agent to configure the agent.
 
 IMPORTANT: The tool schema provides comprehensive field descriptions, examples, and validation rules. Always refer to the schema for:
 - Field requirements and data types
@@ -131,6 +133,17 @@ The response includes a compact validation summary. For the full validation repo
       if (codeSteps.length > 0) {
         throw new WorkflowVersionStepException(
           'CODE steps cannot be created via create_complete_workflow because it does not create the underlying logic function. Use create_workflow_version_step instead.',
+          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        );
+      }
+
+      const aiAgentSteps = parameters.steps.filter(
+        (step) => step.type === WorkflowActionType.AI_AGENT,
+      );
+
+      if (aiAgentSteps.length > 0) {
+        throw new WorkflowVersionStepException(
+          'AI_AGENT steps cannot be created via create_complete_workflow because it does not create the underlying agent. Use create_workflow_version_step instead, then call update_agent to configure the agent.',
           WorkflowVersionStepExceptionCode.INVALID_REQUEST,
         );
       }

@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconCheckbox, IconNotes, IconTimelineEvent } from '@ui/icon';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -20,14 +21,16 @@ export default meta;
 type Story = StoryObj<typeof FloatingButtonGroup>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
   args: {
     size: 'small',
     children: [
-      <FloatingButton key="notes" Icon={IconNotes} />,
-      <FloatingButton key="checkbox" Icon={IconCheckbox} />,
-      <FloatingButton key="timeline" Icon={IconTimelineEvent} />,
+      <FloatingButton key="notes" Icon={IconNotes} ariaLabel="Notes" />,
+      <FloatingButton key="checkbox" Icon={IconCheckbox} ariaLabel="Tasks" />,
+      <FloatingButton
+        key="timeline"
+        Icon={IconTimelineEvent}
+        ariaLabel="Timeline"
+      />,
     ],
   },
   argTypes: {
@@ -39,9 +42,13 @@ export const Default: Story = {
 export const Catalog: CatalogStory<Story, typeof FloatingButtonGroup> = {
   args: {
     children: [
-      <FloatingButton key="notes" Icon={IconNotes} />,
-      <FloatingButton key="checkbox" Icon={IconCheckbox} />,
-      <FloatingButton key="timeline" Icon={IconTimelineEvent} />,
+      <FloatingButton key="notes" Icon={IconNotes} ariaLabel="Notes" />,
+      <FloatingButton key="checkbox" Icon={IconCheckbox} ariaLabel="Tasks" />,
+      <FloatingButton
+        key="timeline"
+        Icon={IconTimelineEvent}
+        ariaLabel="Timeline"
+      />,
     ],
   },
   argTypes: {
@@ -49,8 +56,7 @@ export const Catalog: CatalogStory<Story, typeof FloatingButtonGroup> = {
     children: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
