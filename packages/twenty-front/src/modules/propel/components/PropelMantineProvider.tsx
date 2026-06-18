@@ -21,6 +21,21 @@ const propelMantineTheme = createTheme({
   fontFamily: 'Inter, sans-serif',
   primaryColor: 'red',
   defaultRadius: 'md',
+  // Dropdowns must paint ABOVE Twenty's drawers/modals. The hero composer lives in
+  // a Twenty RightDrawer at z-index 1001, but Mantine's default dropdown z-index is
+  // 300 — so without this every Select/Combobox dropdown opens BEHIND the drawer and
+  // looks dead (the social composer's tone, image-aspect, and listing selects all hit
+  // this). 5000 clears Twenty's drawer/modal layers while staying below the floating
+  // dialer dock (~10002). Set on every dropdown-bearing component so any future Select
+  // inside a drawer/modal just works.
+  components: {
+    Combobox: { defaultProps: { zIndex: 5000 } },
+    Select: { defaultProps: { comboboxProps: { zIndex: 5000 } } },
+    MultiSelect: { defaultProps: { comboboxProps: { zIndex: 5000 } } },
+    Autocomplete: { defaultProps: { comboboxProps: { zIndex: 5000 } } },
+    Popover: { defaultProps: { zIndex: 5000 } },
+    Menu: { defaultProps: { zIndex: 5000 } },
+  },
   other: {
     // Twenty tokens, referenced as CSS variables so they re-resolve per scheme
     // (the var() indirection means we don't have to branch light/dark ourselves).
