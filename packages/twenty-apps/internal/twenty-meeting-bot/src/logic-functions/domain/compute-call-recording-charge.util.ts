@@ -1,9 +1,9 @@
 import { isUndefined } from '@sniptt/guards';
 
 import { CALL_RECORDING_MICRO_CREDITS_PER_HOUR } from 'src/logic-functions/constants/call-recording-micro-credits-per-hour';
+import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
 
 const MILLISECONDS_PER_HOUR = 3_600_000;
-const MILLISECONDS_PER_MINUTE = 60_000;
 
 export type CallRecordingCharge = {
   creditsUsedMicro: number;

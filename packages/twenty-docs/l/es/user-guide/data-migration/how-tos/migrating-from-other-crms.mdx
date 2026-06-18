@@ -59,17 +59,17 @@ Antes de importar datos, prepara tu espacio de trabajo en Twenty:
 4. Configura los ajustes de los campos (único, obligatorio, opciones de selección, etc.)
 
 <Warning>
-  **Los campos deben existir antes de la importación.**
+**Los campos deben existir antes de la importación.**
 
-  La importación de CSV crea registros, no campos. Crea todos los campos personalizados en Configuración → Modelo de datos antes de importar.
+La importación de CSV crea registros, no campos. Crea todos los campos personalizados en Configuración → Modelo de datos antes de importar.
 </Warning>
 
 ### Invita a tu equipo
 
 <Warning>
-  **Invita a los usuarios ANTES de importar datos.**
+**Invita a los usuarios ANTES de importar datos.**
 
-  Si tus datos incluyen referencias a usuarios (propietario de la cuenta, asignado, etc.), esos usuarios deben existir en Twenty antes de la importación. De lo contrario, esas relaciones no se podrán asignar.
+Si tus datos incluyen referencias a usuarios (propietario de la cuenta, asignado, etc.), esos usuarios deben existir en Twenty antes de la importación. De lo contrario, esas relaciones no se podrán asignar.
 </Warning>
 
 1. Ir a **Ajustes → Miembros**
@@ -116,9 +116,9 @@ Abre cada CSV exportado en una aplicación de hojas de cálculo y prepáralo par
 | **Campos de selección** | Usa nombres de API, no etiquetas visibles                |
 
 <Warning>
-  **El formato del dominio es fundamental.**
+**El formato del dominio es fundamental.**
 
-  Usa `https://domain.com` (no `domain.com` ni `www.domain.com`). Esto coincide con el formato de Twenty y evita duplicados cuando conectas la sincronización de correo/calendario.
+Usa `https://domain.com` (no `domain.com` ni `www.domain.com`). Esto coincide con el formato de Twenty y evita duplicados cuando conectas la sincronización de correo/calendario.
 </Warning>
 
 Consulta [Cómo preparar tus archivos CSV](/l/es/user-guide/data-migration/how-tos/prepare-your-csv-files) para conocer los requisitos de formato completos para todos los tipos de campos.
@@ -149,17 +149,16 @@ Consulta [Cómo preparar tus archivos CSV](/l/es/user-guide/data-migration/how-t
 ## Paso 6: Importa a Twenty
 
 <Warning>
-  **¡El orden de importación importa!**
+**¡El orden de importación importa!**
 
-  Importa siempre en este orden:
+Importa siempre en este orden:
+1. **Empresas** primero (sin dependencias)
+2. **Personas** en segundo lugar (enlazadas a Empresas)
+3. **Oportunidades** en tercer lugar (enlazadas a Empresas/Personas)
+4. **Notas y Tareas** (enlazadas a registros)
+5. **Objetos personalizados** siguiendo sus dependencias
 
-  1. **Empresas** primero (sin dependencias)
-  2. **Personas** en segundo lugar (enlazadas a Empresas)
-  3. **Oportunidades** en tercer lugar (enlazadas a Empresas/Personas)
-  4. **Notas y Tareas** (enlazadas a registros)
-  5. **Objetos personalizados** siguiendo sus dependencias
-
-  El registro padre debe existir antes de que puedas hacer referencia a él.
+El registro padre debe existir antes de que puedas hacer referencia a él.
 </Warning>
 
 ### Importa cada objeto
@@ -215,7 +214,7 @@ Después de importar los datos, completa la configuración de tu espacio de trab
 
 ### Configura roles y permisos
 
-* Configura los roles en **Configuración → Roles**
+* Configura los roles en **Configuración → Miembros → Roles**
 * Asigna a los usuarios a los roles adecuados
 
 ### Conecta el correo electrónico y el calendario

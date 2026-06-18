@@ -1,0 +1,94 @@
+---
+title: Roles y permisos
+description: Declara qué objetos y campos pueden leer y escribir las funciones de lógica y los componentes de interfaz de tu aplicación.
+icon: shield-halved
+---
+
+Un **rol** es un conjunto de permisos: qué objetos puede leer o escribir una aplicación, qué campos puede ver y qué capacidades a nivel de plataforma puede usar. Las funciones lógicas y los componentes de interfaz de cada aplicación heredan los permisos del rol marcado con `defineApplicationRole()` (consulta [El rol de función predeterminado](#the-default-function-role) más abajo).
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+});
+```
+
+## El rol de función predeterminado
+
+Cuando generas una nueva aplicación, la CLI crea un archivo de rol predeterminado declarado con `defineApplicationRole()`:
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlagUniversalIdentifiers: [],
+});
+```
+
+`defineApplicationRole()` es una envoltura ligera alrededor de `defineRole()` que marca **el** rol utilizado como predeterminado de tu aplicación en el momento de la instalación. La validación es idéntica a `defineRole`, pero la canalización de compilación conecta automáticamente su `universalIdentifier` con `defaultRoleUniversalIdentifier` del manifiesto de la aplicación, por lo que no necesitas hacer referencia a él desde [`defineApplication`](/l/es/developers/extend/apps/config/application).
+
+Notas:
+
+* Se permite exactamente **una** llamada a `defineApplicationRole(...)` por aplicación; la compilación del manifiesto fallará si encuentra más de una.
+* Usa `defineRole()` (no `defineApplicationRole()`) para cualquier rol **adicional** que distribuya tu aplicación.
+* Configurar `defaultRoleUniversalIdentifier` explícitamente en `defineApplication()` sigue siendo compatible por motivos de retrocompatibilidad, pero está en desuso en favor de `defineApplicationRole()`.
+
+## Mejores prácticas
+
+* Parte del rol generado automáticamente y luego restríngeelo progresivamente; el valor predeterminado concede un acceso amplio de lectura, lo cual rara vez es lo que quieres en producción.
+* Reemplaza `objectPermissions` y `fieldPermissions` con los objetos y campos que realmente necesitan tus funciones.
+* `permissionFlagUniversalIdentifiers` controla el acceso a capacidades a nivel de plataforma. Manténlos al mínimo.
+* Consulta un ejemplo funcional: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

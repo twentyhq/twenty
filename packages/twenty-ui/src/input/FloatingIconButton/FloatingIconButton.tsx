@@ -16,6 +16,7 @@ export type FloatingIconButtonPosition =
 export type FloatingIconButtonProps = {
   className?: string;
   Icon?: IconComponent;
+  ariaLabel?: string;
   size?: FloatingIconButtonSize;
   position?: FloatingIconButtonPosition;
   applyShadow?: boolean;
@@ -29,6 +30,7 @@ export type FloatingIconButtonProps = {
 export const FloatingIconButton = ({
   className,
   Icon,
+  ariaLabel,
   size = 'small',
   position = 'standalone',
   applyShadow = true,
@@ -43,6 +45,7 @@ export const FloatingIconButton = ({
   return (
     <button
       disabled={disabled}
+      aria-label={ariaLabel}
       className={clsx(styles.button, styles[size], className)}
       data-position={position}
       data-apply-shadow={applyShadow || undefined}

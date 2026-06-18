@@ -102,7 +102,7 @@ export default defineLogicFunction({
   name: 'reconcile-stale-bot-state',
   description:
     'Converges call recordings with Recall on a schedule: pulls stale bot statuses and overdue transcripts, finishes failed cancellations, schedules bots for recordings still missing one, and reaps unclaimed bots. Reads calendar events only to heal already-decided recordings, never to discover meetings.',
-  timeoutSeconds: 300,
+  timeoutSeconds: 250,
   handler: reconcileStaleBotStateHandler,
   cronTriggerSettings: {
     pattern: STALE_BOT_STATE_CRON_PATTERN,

@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconSearch } from '@ui/icon';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -22,8 +23,6 @@ export default meta;
 type Story = StoryObj<typeof IconButton>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
   args: {
     size: 'small',
     variant: 'primary',
@@ -32,12 +31,13 @@ export const Default: Story = {
     focus: false,
     position: 'standalone',
     Icon: IconSearch,
+    ariaLabel: 'Search',
   },
   decorators: [ComponentDecorator],
 };
 
 export const Catalog: CatalogStory<Story, typeof IconButton> = {
-  args: { Icon: IconSearch },
+  args: { Icon: IconSearch, ariaLabel: 'Search' },
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -48,8 +48,7 @@ export const Catalog: CatalogStory<Story, typeof IconButton> = {
     position: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'] },
     catalog: {
       dimensions: [
@@ -109,7 +108,7 @@ export const Catalog: CatalogStory<Story, typeof IconButton> = {
 };
 
 export const PositionCatalog: CatalogStory<Story, typeof IconButton> = {
-  args: { Icon: IconSearch },
+  args: { Icon: IconSearch, ariaLabel: 'Search' },
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -120,8 +119,7 @@ export const PositionCatalog: CatalogStory<Story, typeof IconButton> = {
     Icon: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'] },
     catalog: {
       dimensions: [

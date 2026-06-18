@@ -1,0 +1,50 @@
+---
+title: توسيع الكائنات
+description: أضِف حقولًا إلى كائنات Twenty القياسية (Person، Company، …) أو إلى كائنات من تطبيقات أخرى باستخدام defineField.
+icon: wand-magic-sparkles
+---
+
+استخدم `defineField()` لإضافة حقل إلى كائن لا تملكه — كائن Twenty قياسي مثل Person أو Company، أو كائن يتم توفيره بواسطة تطبيق آخر مُثبَّت. على خلاف الحقول المضمّنة داخل [`defineObject`](/l/ar/developers/extend/apps/data/objects)، تتطلّب الحقول المستقلة `objectUniversalIdentifier` لتحديد الكائن الذي تقوم بتوسيعه.
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+## النقاط الرئيسية
+
+* `objectUniversalIdentifier` يحدّد الكائن الهدف. بالنسبة لكائنات Twenty القياسية، استورد الثابت من `twenty-sdk`:
+
+  ```ts
+  import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier
+  // …
+  ```
+
+* عند تعريف الحقول بشكل مضمّن **داخل `defineObject()`**، **لا** تحتاج إلى `objectUniversalIdentifier` — إذ يُورَّث من الكائن الأب.
+
+* `defineField()` هي الطريقة الوحيدة لإضافة حقول إلى كائنات لم تُنشئها باستخدام `defineObject()`.
+
+* موقع الملف متروك لك. المتعارف عليه هو `src/fields/\<name>.field.ts`، لكن حزمة SDK تكتشف الحقول في أي مكان داخل `src/`.
+
+* لإضافة علامة تبويب إلى تخطيط صفحة قياسي (مثل صفحة تفاصيل Task أو Company)، استخدم [`definePageLayoutTab`](/l/ar/developers/extend/apps/layout/page-layouts#definepagelayouttab) مع `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` من `twenty-sdk/define`.
+
+## إضافة علاقة إلى كائن موجود
+
+لإضافة حقل علاقة (مثل ربط الكائن المخصّص بكائن قياسي `Person`)، استخدم `defineField()` مع `FieldType.RELATION`. النمط هو نفسه الخاص بالعلاقات المضمّنة لكن مع تعيين `objectUniversalIdentifier` صراحةً. اطّلع على [Relations](/l/ar/developers/extend/apps/data/relations) للنمط ثنائي الاتجاه.

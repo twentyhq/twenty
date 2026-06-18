@@ -19,6 +19,7 @@ export const RoundedIconButton = ({
   disabled,
   className,
   size = 'small',
+  'aria-label': ariaLabel,
 }: RoundedIconButtonProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -26,6 +27,7 @@ export const RoundedIconButton = ({
     <button
       className={clsx(styles.button, styles[size], className)}
       disabled={disabled}
+      aria-label={ariaLabel}
       onClick={onClick}
     >
       <Icon size={theme.icon.size.md} />

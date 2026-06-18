@@ -1,0 +1,55 @@
+---
+title: نظرة عامة
+description: TypeScript على جانب الخادم الذي يعمل داخل Twenty — يتم تشغيله بواسطة مسارات HTTP، وجداول كرون، وأحداث قاعدة البيانات، وأدوات الذكاء الاصطناعي، أو إجراءات سير العمل.
+icon: bolt
+---
+
+**طبقة المنطق** في تطبيق Twenty هي الشيفرة التي *تعمل* — معالِجات TypeScript على جانب الخادم تستجيب لطلبات HTTP، وجداول كرون، وتغييرات السجلات؛ ومهارات ووكلاء الذكاء الاصطناعي التي تعمل داخل مساحة العمل؛ واتصالات OAuth التي تتيح لدوالّك العمل نيابةً عن المستخدم في الخدمات الخارجية.
+
+```text
+            ┌─ HTTP route      ──┐
+            │  Cron schedule     │
+            │  Database event    │      ┌────────────────────┐
+  triggers ─┤  AI tool call      ├─────▶│ Logic function     │
+            │  Workflow action   │      │ (your handler)     │
+            │  Manual exec       │      └────────────────────┘
+            └────────────────────┘                │
+                                                  ▼
+                                  ┌────────────────────────────┐
+                                  │ Twenty API (records)       │
+                                  │ Third-party API            │
+                                  │   (via Connection token)   │
+                                  └────────────────────────────┘
+```
+
+## في هذا القسم
+
+<CardGroup cols={٢}>
+  <Card title="الوظائف المنطقية" icon="bolt" href="/l/ar/developers/extend/apps/logic/logic-functions">
+    لبنة البناء الأساسية — أنواع المشغلات، والحمولات، وعميل واجهة برمجة التطبيقات ذو الأنواع.
+  </Card>
+  <Card title="المهارات والوكلاء" icon="robot" href="/l/ar/developers/extend/apps/logic/skills-and-agents">
+    تعليمات قابلة لإعادة الاستخدام لوكلاء الذكاء الاصطناعي ومساعدين مع مطالبات نظام مخصّصة.
+  </Card>
+  <Card title="الاتصالات" icon="قابس" href="/l/ar/developers/extend/apps/logic/connections">
+    بيانات اعتماد OAuth التي يحتفظ بها تطبيقك للخدمات الخارجية — مثل Linear وGitHub وSlack وغيرها.
+  </Card>
+</CardGroup>
+
+## لمحة عن أنواع المشغلات
+
+دالة المنطق تختار واحدًا أو أكثر من المشغلات — كل إدخال أدناه هو حقل منفصل في `defineLogicFunction()`:
+
+| المشغّل                | متى يعمل                                                       | الإعداد                         |
+| ---------------------- | -------------------------------------------------------------- | ------------------------------- |
+| **مسار HTTP**          | طلب يصل إلى نقطة نهاية `/s/\<path>` الخاصة بك | `httpRouteTriggerSettings`      |
+| **كرون**               | عند تطابق تعبير CRON                                           | `cronTriggerSettings`           |
+| **حدث قاعدة البيانات** | يتم إنشاء سجل في مساحة العمل أو تحديثه أو حذفه                 | `databaseEventTriggerSettings`  |
+| **أداة ذكاء اصطناعي**  | ميزة ذكاء اصطناعي في Twenty تقرر استدعاء دالتك                 | `toolTriggerSettings`           |
+| **إجراء سير العمل**    | تستدعي خطوة في سير العمل دالتك                                 | `workflowActionTriggerSettings` |
+
+تعمل الدوال ضمن عمليات Node.js معزولة، وتصل إلى مساحة العمل عبر عميل واجهة برمجة تطبيقات مضبوط الأنواع ومحدّد النطاق بالدور المصرّح عنه في [`defineApplication()`](/l/ar/developers/extend/apps/config/application).
+
+<Note>
+**خطافات وقت التثبيت** — الشيفرة التي تعمل قبل التثبيت أو بعده — تشارك بيئة التشغيل هذه ولكنها تستخدم دوال تعريف خاصة بها وتوجد ضمن [Config → Install Hooks](/l/ar/developers/extend/apps/config/install-hooks).
+</Note>
