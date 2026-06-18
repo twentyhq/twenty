@@ -9,7 +9,7 @@ import { ALL_OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER } from 'src/constants/unive
 // All opportunities, every stage. Kept last in the Matching folder.
 export default defineView({
   universalIdentifier: ALL_OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER,
-  name: 'OPP all',
+  name: 'All Opportunities',
   icon: 'IconTargetArrow',
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
