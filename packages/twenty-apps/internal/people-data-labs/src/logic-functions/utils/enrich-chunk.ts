@@ -40,6 +40,137 @@ const writeErrorStatusWithBackoff = async <TNode, TData, TParams>({
     .catch(() => undefined);
 };
 
+type MatchedRecord = {
+  recordId: string;
+  mappedData: Record<string, unknown>;
+  persistData: Record<string, unknown>;
+};
+
+const recordMatchedRecords = async <TNode, TData, TParams>({
+  adapter,
+  client,
+  matchedRecords,
+  shouldPersist,
+  resultById,
+}: {
+  adapter: BatchEnrichmentAdapter<TNode, TData, TParams>;
+  client: CoreApiClient;
+  matchedRecords: MatchedRecord[];
+  shouldPersist: boolean;
+  resultById: Map<string, EnrichResult>;
+}): Promise<string[]> => {
+  if (matchedRecords.length === 0) {
+    return [];
+  }
+
+  if (!shouldPersist) {
+    for (const matchedRecord of matchedRecords) {
+      resultById.set(
+        matchedRecord.recordId,
+        buildMatchedResult({
+          recordId: matchedRecord.recordId,
+          updatedFields: [],
+          data: matchedRecord.mappedData,
+        }),
+      );
+    }
+
+    return [];
+  }
+
+  const settledWriteResults = await Promise.allSettled(
+    matchedRecords.map((matchedRecord) =>
+      adapter.updateOne({
+        client,
+        recordId: matchedRecord.recordId,
+        data: matchedRecord.persistData,
+      }),
+    ),
+  );
+
+  const failedRecordIds: string[] = [];
+  for (const [index, writeResult] of settledWriteResults.entries()) {
+    const matchedRecord = matchedRecords[index];
+    if (writeResult.status === 'rejected') {
+      resultById.set(
+        matchedRecord.recordId,
+        buildErrorResult({
+          recordId: matchedRecord.recordId,
+          error: toErrorMessage(writeResult.reason),
+        }),
+      );
+      failedRecordIds.push(matchedRecord.recordId);
+      continue;
+    }
+
+    resultById.set(
+      matchedRecord.recordId,
+      buildMatchedResult({
+        recordId: matchedRecord.recordId,
+        updatedFields: Object.keys(matchedRecord.persistData).filter(
+          (fieldName) => !INTERNAL_BOOKKEEPING_FIELDS.has(fieldName),
+        ),
+        data: matchedRecord.mappedData,
+      }),
+    );
+  }
+
+  return failedRecordIds;
+};
+
+const recordNotFoundRecords = async <TNode, TData, TParams>({
+  adapter,
+  client,
+  notFoundRecordIds,
+  shouldPersist,
+  enrichedAt,
+  resultById,
+}: {
+  adapter: BatchEnrichmentAdapter<TNode, TData, TParams>;
+  client: CoreApiClient;
+  notFoundRecordIds: string[];
+  shouldPersist: boolean;
+  enrichedAt: string;
+  resultById: Map<string, EnrichResult>;
+}): Promise<string[]> => {
+  if (notFoundRecordIds.length === 0) {
+    return [];
+  }
+
+  if (!shouldPersist) {
+    for (const recordId of notFoundRecordIds) {
+      resultById.set(recordId, buildNotFoundResult(recordId));
+    }
+
+    return [];
+  }
+
+  try {
+    await adapter.updateManyStatus({
+      client,
+      recordIds: notFoundRecordIds,
+      data: { pdlEnrichmentStatus: 'NOT_FOUND', pdlLastEnrichedAt: enrichedAt },
+    });
+    for (const recordId of notFoundRecordIds) {
+      resultById.set(recordId, buildNotFoundResult(recordId));
+    }
+
+    return [];
+  } catch (notFoundStatusWriteError) {
+    const notFoundStatusWriteErrorMessage = toErrorMessage(
+      notFoundStatusWriteError,
+    );
+    for (const recordId of notFoundRecordIds) {
+      resultById.set(
+        recordId,
+        buildErrorResult({ recordId, error: notFoundStatusWriteErrorMessage }),
+      );
+    }
+
+    return notFoundRecordIds;
+  }
+};
+
 export const enrichChunk = async <TNode, TData, TParams>({
   client,
   recordIds,
@@ -154,11 +285,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   });
 
   const notFoundRecordIds: string[] = [];
-  const matchedRecords: {
-    recordId: string;
-    mappedData: Record<string, unknown>;
-    persistData: Record<string, unknown>;
-  }[] = [];
+  const matchedRecords: MatchedRecord[] = [];
 
   for (let index = 0; index < recordsToEnrich.length; index++) {
     const { recordId, node: recordNode } = recordsToEnrich[index];
@@ -204,91 +331,24 @@ export const enrichChunk = async <TNode, TData, TParams>({
     }
   }
 
-  if (matchedRecords.length > 0) {
-    if (shouldPersist) {
-      const settledWriteResults = await Promise.allSettled(
-        matchedRecords.map((matchedRecord) =>
-          adapter.updateOne({
-            client,
-            recordId: matchedRecord.recordId,
-            data: matchedRecord.persistData,
-          }),
-        ),
-      );
+  const failedMatchedWriteRecordIds = await recordMatchedRecords({
+    adapter,
+    client,
+    matchedRecords,
+    shouldPersist,
+    resultById,
+  });
+  recordIdsToMarkAsError.push(...failedMatchedWriteRecordIds);
 
-      for (const [index, writeResult] of settledWriteResults.entries()) {
-        const matchedRecord = matchedRecords[index];
-        if (writeResult.status === 'fulfilled') {
-          resultById.set(
-            matchedRecord.recordId,
-            buildMatchedResult({
-              recordId: matchedRecord.recordId,
-              updatedFields: Object.keys(matchedRecord.persistData).filter(
-                (fieldName) => !INTERNAL_BOOKKEEPING_FIELDS.has(fieldName),
-              ),
-              data: matchedRecord.mappedData,
-            }),
-          );
-        } else {
-          resultById.set(
-            matchedRecord.recordId,
-            buildErrorResult({
-              recordId: matchedRecord.recordId,
-              error: toErrorMessage(writeResult.reason),
-            }),
-          );
-          recordIdsToMarkAsError.push(matchedRecord.recordId);
-        }
-      }
-    } else {
-      for (const matchedRecord of matchedRecords) {
-        resultById.set(
-          matchedRecord.recordId,
-          buildMatchedResult({
-            recordId: matchedRecord.recordId,
-            updatedFields: [],
-            data: matchedRecord.mappedData,
-          }),
-        );
-      }
-    }
-  }
-
-  if (notFoundRecordIds.length > 0) {
-    if (shouldPersist) {
-      try {
-        await adapter.updateManyStatus({
-          client,
-          recordIds: notFoundRecordIds,
-          data: {
-            pdlEnrichmentStatus: 'NOT_FOUND',
-            pdlLastEnrichedAt: enrichedAt,
-          },
-        });
-        for (const recordId of notFoundRecordIds) {
-          resultById.set(recordId, buildNotFoundResult(recordId));
-        }
-      } catch (notFoundStatusWriteError) {
-        const notFoundStatusWriteErrorMessage = toErrorMessage(
-          notFoundStatusWriteError,
-        );
-        for (const recordId of notFoundRecordIds) {
-          resultById.set(
-            recordId,
-            buildErrorResult({
-              recordId,
-              error: notFoundStatusWriteErrorMessage,
-            }),
-          );
-          recordIdsToMarkAsError.push(recordId);
-        }
-      }
-    } else {
-      for (const recordId of notFoundRecordIds) {
-        resultById.set(recordId, buildNotFoundResult(recordId));
-      }
-    }
-  }
+  const failedNotFoundWriteRecordIds = await recordNotFoundRecords({
+    adapter,
+    client,
+    notFoundRecordIds,
+    shouldPersist,
+    enrichedAt,
+    resultById,
+  });
+  recordIdsToMarkAsError.push(...failedNotFoundWriteRecordIds);
 
   if (shouldPersist) {
     await writeErrorStatusWithBackoff({
