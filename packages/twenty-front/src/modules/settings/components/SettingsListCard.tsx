@@ -3,8 +3,8 @@ import { type ComponentType, useContext } from 'react';
 
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
 
-import { type IconComponent, IconPlus } from 'twenty-ui/display';
-import { Card, CardFooter } from 'twenty-ui/layout';
+import { type IconComponent, IconPlus } from 'twenty-ui/icon';
+import { Card, CardFooter } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 

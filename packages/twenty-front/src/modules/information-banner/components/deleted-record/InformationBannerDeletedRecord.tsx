@@ -2,7 +2,7 @@ import { InformationBanner } from '@/information-banner/components/InformationBa
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconRefresh } from 'twenty-ui/display';
+import { IconRefresh } from 'twenty-ui/icon';
 
 const StyledInformationBannerDeletedRecord = styled.div`
   height: 40px;

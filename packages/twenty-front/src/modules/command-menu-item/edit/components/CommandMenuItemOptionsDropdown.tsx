@@ -8,7 +8,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconRefresh, IconTag } from 'twenty-ui/display';
+import { IconRefresh, IconTag } from 'twenty-ui/icon';
 import { MenuItem, MenuItemToggle } from 'twenty-ui/navigation';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 

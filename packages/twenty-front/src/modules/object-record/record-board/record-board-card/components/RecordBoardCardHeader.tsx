@@ -22,8 +22,8 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipVariant } from 'twenty-ui/components';
-import { IconEye, IconEyeOff } from 'twenty-ui/display';
+import { ChipVariant } from 'twenty-ui/data-display';
+import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
 
 const StyledCompactIconContainer = styled.div`

@@ -19,7 +19,7 @@ import {
   IconPencil,
   IconTrash,
   useIcons,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import {
   PermissionFlagType,

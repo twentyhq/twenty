@@ -21,9 +21,9 @@ import {
   IconLock,
   IconPlayerPause,
   IconPlayerPlay,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Button, IconButton } from 'twenty-ui/input';
-import { Card } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {

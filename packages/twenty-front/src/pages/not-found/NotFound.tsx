@@ -19,7 +19,7 @@ import {
   AnimatedPlaceholderErrorContainer,
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
-} from 'twenty-ui/layout';
+} from 'twenty-ui/feedback';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 
 const StyledBackDrop = styled.div`

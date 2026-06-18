@@ -4,10 +4,31 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
 
 const getRecallBotMock = vi.hoisted(() => vi.fn());
+const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
+const ingestCallRecordingMediaMock = vi.hoisted(() => vi.fn());
+const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
   getRecallBot: getRecallBotMock,
 }));
+
+vi.mock(
+  'src/logic-functions/recall-api/create-async-recall-transcript.util',
+  () => ({
+    createAsyncRecallTranscript: createAsyncRecallTranscriptMock,
+  }),
+);
+
+vi.mock('src/logic-functions/flows/ingest-call-recording-media.util', () => ({
+  ingestCallRecordingMedia: ingestCallRecordingMediaMock,
+}));
+
+vi.mock(
+  'src/logic-functions/flows/charge-completed-call-recording.util',
+  () => ({
+    chargeCompletedCallRecording: chargeCompletedCallRecordingMock,
+  }),
+);
 
 const NOW = new Date('2026-06-10T12:00:00.000Z');
 
@@ -18,33 +39,25 @@ class FakeCoreApiClient {
 
   constructor(private callRecordingNodes: CallRecordingNode[]) {}
 
-  async query(query: any): Promise<any> {
-    const callRecordingFilter = query.callRecordings.__args.filter
-      .or[0] as Record<string, any>;
-    const requestedRecordingRequestStatus =
-      callRecordingFilter.recordingRequestStatus.eq;
-    const requestedCallRecordingStatuses = callRecordingFilter.status.in;
-    const requiresExternalBotId =
-      callRecordingFilter.externalBotId.is === 'NOT_NULL';
-    const matchingCallRecordingNodes = this.callRecordingNodes.filter(
-      (callRecordingNode) =>
-        callRecordingNode.recordingRequestStatus ===
-          requestedRecordingRequestStatus &&
-        requestedCallRecordingStatuses.includes(callRecordingNode.status) &&
-        (!requiresExternalBotId ||
-          (callRecordingNode.externalBotId !== null &&
-            callRecordingNode.externalBotId !== undefined)),
-    );
-
+  async query(_query: any): Promise<any> {
     return {
       callRecordings: {
         pageInfo: { hasNextPage: false, endCursor: undefined },
-        edges: matchingCallRecordingNodes.map((node) => ({ node })),
+        edges: this.callRecordingNodes.map((node) => ({ node })),
       },
     };
   }
 
   async mutation(mutation: any): Promise<any> {
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const id = filter.id.eq;
+
+      this.mutations.push({ id, data });
+
+      return { updateCallRecordings: [{ id }] };
+    }
+
     const { id, data } = mutation.updateCallRecording.__args;
 
     this.mutations.push({ id, data });
@@ -61,11 +74,13 @@ const buildStuckRecordingNode = (
 ): CallRecordingNode => ({
   id: 'call-recording-1',
   status: 'RECORDING',
-  recordingRequestStatus: 'REQUESTED',
   startedAt: null,
   endedAt: null,
   externalBotId: 'recall-bot-1',
   externalRecordingId: null,
+  transcript: null,
+  audio: null,
+  video: null,
   createdAt: '2026-06-09T12:00:00.000Z',
   calendarEvent: { endsAt: '2026-06-09T13:00:00.000Z' },
   ...overrides,
@@ -75,9 +90,18 @@ describe('convergeDivergedCallRecordings', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     getRecallBotMock.mockReset();
+    createAsyncRecallTranscriptMock.mockReset();
+    createAsyncRecallTranscriptMock.mockResolvedValue({
+      ok: true,
+      transcriptId: 'recall-transcript-1',
+    });
+    ingestCallRecordingMediaMock.mockReset();
+    ingestCallRecordingMediaMock.mockResolvedValue({});
+    chargeCompletedCallRecordingMock.mockReset();
+    chargeCompletedCallRecordingMock.mockResolvedValue(undefined);
   });
 
-  it('fills timestamps and recording id for a stuck RECORDING record from the Recall bot state', async () => {
+  it('heals a stuck RECORDING record from the Recall bot state', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
@@ -105,7 +129,24 @@ describe('convergeDivergedCallRecordings', () => {
     expect(getRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'recall-bot-1',
     });
+    expect(ingestCallRecordingMediaMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      externalRecordingId: 'recall-recording-1',
+      hasAudio: false,
+      hasVideo: false,
+    });
     expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          transcript: {
+            recallTranscriptId: 'recall-transcript-1',
+            status: 'PENDING',
+            requestedAt: NOW.toISOString(),
+          },
+          externalRecordingId: 'recall-recording-1',
+        },
+      },
       {
         id: 'call-recording-1',
         data: {
@@ -113,9 +154,15 @@ describe('convergeDivergedCallRecordings', () => {
           startedAt: '2026-06-09T13:02:00.000Z',
           endedAt: '2026-06-09T14:00:00.000Z',
           externalRecordingId: 'recall-recording-1',
+          transcript: {
+            recallTranscriptId: 'recall-transcript-1',
+            status: 'PENDING',
+            requestedAt: NOW.toISOString(),
+          },
         },
       },
     ]);
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
     expect(result).toEqual({
       candidateCount: 1,
       updatedCallRecordingIds: ['call-recording-1'],
@@ -124,18 +171,34 @@ describe('convergeDivergedCallRecordings', () => {
     });
   });
 
-  it('converges a SCHEDULED record when Recall moved forward but webhooks were missed', async () => {
+  it('completes and charges when convergence lands the last artifact', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
         status_changes: [
-          { code: 'joining_call', created_at: '2026-06-09T13:01:00.000Z' },
-          { code: 'in_call_recording', created_at: '2026-06-09T13:02:00.000Z' },
+          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        ],
+        recordings: [
+          {
+            id: 'recall-recording-1',
+            started_at: '2026-06-09T13:02:00.000Z',
+            completed_at: '2026-06-09T14:00:00.000Z',
+          },
         ],
       },
     });
+    ingestCallRecordingMediaMock.mockResolvedValue({
+      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+      video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+    });
     const client = buildClient([
-      buildStuckRecordingNode({ status: 'SCHEDULED' }),
+      buildStuckRecordingNode({
+        status: 'PROCESSING',
+        startedAt: '2026-06-09T13:02:00.000Z',
+        endedAt: '2026-06-09T14:00:00.000Z',
+        externalRecordingId: 'recall-recording-1',
+        transcript: [{ participant: { id: 1 }, words: [] }],
+      }),
     ]);
 
     const result = await convergeDivergedCallRecordings({
@@ -143,19 +206,31 @@ describe('convergeDivergedCallRecordings', () => {
       now: NOW,
     });
 
-    expect(getRecallBotMock).toHaveBeenCalledWith({
-      externalBotId: 'recall-bot-1',
-    });
+    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
         data: {
-          status: 'RECORDING',
-          startedAt: '2026-06-09T13:02:00.000Z',
+          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+          video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
         },
       },
+      {
+        id: 'call-recording-1',
+        data: { status: 'COMPLETED' },
+      },
     ]);
-    expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(chargeCompletedCallRecordingMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      startedAt: '2026-06-09T13:02:00.000Z',
+      endedAt: '2026-06-09T14:00:00.000Z',
+    });
+    expect(result).toEqual({
+      candidateCount: 1,
+      updatedCallRecordingIds: ['call-recording-1'],
+      markedFailedCallRecordingIds: [],
+      unconvergeableCallRecordingIds: [],
+    });
   });
 
   it('skips records whose meeting may still be live', async () => {
@@ -198,7 +273,7 @@ describe('convergeDivergedCallRecordings', () => {
     expect(console.warn).toHaveBeenCalled();
   });
 
-  it('does not select COMPLETED records as convergence candidates', async () => {
+  it('does not downgrade a COMPLETED record when its bot 404s', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: false,
       status: 404,
@@ -208,6 +283,7 @@ describe('convergeDivergedCallRecordings', () => {
       buildStuckRecordingNode({
         status: 'COMPLETED',
         startedAt: '2026-06-09T13:02:00.000Z',
+        transcript: [{ participant: { id: 1 }, words: [] }],
       }),
     ]);
 
@@ -217,9 +293,7 @@ describe('convergeDivergedCallRecordings', () => {
     });
 
     expect(client.mutations).toEqual([]);
-    expect(result.candidateCount).toBe(0);
-    expect(result.unconvergeableCallRecordingIds).toEqual([]);
-    expect(getRecallBotMock).not.toHaveBeenCalled();
+    expect(result.unconvergeableCallRecordingIds).toEqual(['call-recording-1']);
   });
 
   it('logs candidates whose meeting ended before the lookback bound instead of converging them', async () => {
@@ -294,6 +368,66 @@ describe('convergeDivergedCallRecordings', () => {
         data: {
           startedAt: '2026-06-09T13:02:00.000Z',
           externalRecordingId: 'recall-recording-1',
+        },
+      },
+    ]);
+  });
+
+  it('requests a transcript for a COMPLETED candidate that has none', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        status_changes: [
+          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        ],
+        recordings: [
+          {
+            id: 'recall-recording-1',
+            started_at: '2026-06-09T13:02:00.000Z',
+            completed_at: '2026-06-09T14:00:00.000Z',
+          },
+        ],
+      },
+    });
+    const client = buildClient([
+      buildStuckRecordingNode({
+        status: 'COMPLETED',
+        startedAt: '2026-06-09T13:02:00.000Z',
+        externalRecordingId: 'recall-recording-1',
+      }),
+    ]);
+
+    await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(createAsyncRecallTranscriptMock).toHaveBeenCalledTimes(1);
+    expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
+      externalRecordingId: 'recall-recording-1',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          transcript: {
+            recallTranscriptId: 'recall-transcript-1',
+            status: 'PENDING',
+            requestedAt: NOW.toISOString(),
+          },
+          externalRecordingId: 'recall-recording-1',
+        },
+      },
+      {
+        id: 'call-recording-1',
+        data: {
+          endedAt: '2026-06-09T14:00:00.000Z',
+          externalRecordingId: 'recall-recording-1',
+          transcript: {
+            recallTranscriptId: 'recall-transcript-1',
+            status: 'PENDING',
+            requestedAt: NOW.toISOString(),
+          },
         },
       },
     ]);

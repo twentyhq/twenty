@@ -7,12 +7,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
-import {
-  IconChevronDown,
-  IconPlus,
-  IconVariable,
-  IconX,
-} from 'twenty-ui/display';
+import { IconChevronDown, IconPlus, IconVariable, IconX } from 'twenty-ui/icon';
 import { AnimatedLightIconButton, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';

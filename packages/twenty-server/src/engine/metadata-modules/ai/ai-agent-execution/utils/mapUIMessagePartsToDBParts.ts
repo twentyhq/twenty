@@ -82,7 +82,8 @@ export const mapUIMessagePartsToDBParts = (
               ...basePart,
               toolName: getToolName(part),
               toolCallId: part.toolCallId,
-              toolInput: part.input,
+              // A nullish input yields an invalid tool_use block (#21695).
+              toolInput: part.input ?? {},
               toolOutput: part.output,
               errorMessage: part.errorText,
               state: part.state,

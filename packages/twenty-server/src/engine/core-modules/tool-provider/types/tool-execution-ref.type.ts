@@ -1,4 +1,4 @@
-import { type DatabaseCrudOperation } from 'src/engine/core-modules/tool-provider/types/database-crud-operation.type';
+import { type DatabaseCrudOperation } from 'src/engine/core-modules/tool-provider/constants/database-crud-operation.const';
 
 export type ToolExecutionRef =
   | {

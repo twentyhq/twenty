@@ -14,7 +14,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type SidePanelPages } from 'twenty-shared/types';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 export type SidePanelNavigationStackItem = {

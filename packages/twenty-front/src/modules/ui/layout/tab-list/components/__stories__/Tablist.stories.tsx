@@ -9,7 +9,7 @@ import {
   IconMail,
   IconPhone,
   IconUser,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import {
   AVATAR_URL_MOCK,
   ComponentWithRouterDecorator,

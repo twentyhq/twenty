@@ -11,7 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
-import { ModalContent } from 'twenty-ui/layout';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';

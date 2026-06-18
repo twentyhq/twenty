@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import React from 'react';
-import type { IconComponent } from 'twenty-ui/display';
+import type { IconComponent } from 'twenty-ui/icon';
 import { FloatingIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

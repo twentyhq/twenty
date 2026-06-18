@@ -70,6 +70,23 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
     });
   });
 
+  it('defaults a missing tool input to an empty object on persist (issue #21695)', () => {
+    const [row] = mapUIMessagePartsToDBParts(
+      [
+        staticToolPart({
+          state: 'output-error',
+          input: undefined,
+          output: undefined,
+          errorText: 'Invalid input for tool execute_tool',
+        }),
+      ],
+      'message-1',
+      'workspace-1',
+    );
+
+    expect(row.toolInput).toEqual({});
+  });
+
   it('round-trips a dynamic-tool part through DB and back', () => {
     const original = dynamicToolPart();
 
