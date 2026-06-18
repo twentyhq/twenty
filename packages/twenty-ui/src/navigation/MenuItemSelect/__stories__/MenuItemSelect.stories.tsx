@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogDimension,
   type CatalogOptions,
@@ -20,8 +21,7 @@ export default meta;
 type Story = StoryObj<typeof MenuItemSelect>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     text: 'First option',
     LeftIcon: IconBell,
@@ -29,7 +29,14 @@ export const Default: Story = {
   argTypes: {
     className: { control: false },
   },
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => (
+      <div role="listbox" aria-label="Options">
+        <Story />
+      </div>
+    ),
+    ComponentDecorator,
+  ],
 };
 
 export const Catalog: CatalogStory<Story, typeof MenuItemSelect> = {
@@ -38,8 +45,7 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelect> = {
     className: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
@@ -87,5 +93,12 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelect> = {
       } as CatalogOptions,
     },
   },
-  decorators: [CatalogDecorator],
+  decorators: [
+    (Story) => (
+      <div role="listbox" aria-label="Options">
+        <Story />
+      </div>
+    ),
+    CatalogDecorator,
+  ],
 };

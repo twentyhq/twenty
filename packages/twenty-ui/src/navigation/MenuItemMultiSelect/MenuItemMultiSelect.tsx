@@ -41,7 +41,7 @@ export const MenuItemMultiSelect = ({
       onClick={handleOnClick}
     >
       <div className={styles.leftContentWithCheckboxContainer}>
-        <Checkbox checked={selected} />
+        <Checkbox checked={selected} aria-label={text} />
         {color ? (
           <Tag color={color} text={text} Icon={LeftIcon} />
         ) : (

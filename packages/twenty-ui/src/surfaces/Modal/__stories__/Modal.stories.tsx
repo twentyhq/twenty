@@ -4,7 +4,7 @@ import { IconX } from '@ui/icon';
 import { H1Title, H1TitleFontColor, H2Title } from '@ui/typography';
 import { Button, IconButton } from '@ui/input';
 import { Section, SectionAlignment, SectionFontColor } from '@ui/layout';
-import { ComponentDecorator } from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { Modal } from '@ui/surfaces/Modal/Modal';
 import { ModalContent } from '@ui/surfaces/ModalContent/ModalContent';
@@ -37,8 +37,7 @@ export default meta;
 type Story = StoryObj<typeof Modal>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     isOpen: true,
     size: 'medium',
@@ -46,7 +45,13 @@ export const Default: Story = {
     overlay: 'dark',
   },
   render: ({ isOpen, size, padding, overlay }) => (
-    <Modal isOpen={isOpen} size={size} padding={padding} overlay={overlay}>
+    <Modal
+      isOpen={isOpen}
+      size={size}
+      padding={padding}
+      overlay={overlay}
+      ariaLabel="Edit workspace"
+    >
       <ModalHeader>
         <H2Title
           title="Edit workspace"
@@ -68,8 +73,6 @@ export const Default: Story = {
 };
 
 export const Confirmation: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
   args: {
     isOpen: true,
     padding: 'large',
@@ -92,6 +95,7 @@ export const Confirmation: Story = {
       isOpen={isOpen}
       padding={padding}
       overlay={overlay}
+      ariaLabel="Delete record?"
       smallBorderRadius={smallBorderRadius}
       narrowWidth={narrowWidth}
       autoHeight={autoHeight}
@@ -122,8 +126,6 @@ export const Confirmation: Story = {
 };
 
 export const Small: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
   args: {
     isOpen: true,
     size: 'small',
@@ -131,7 +133,13 @@ export const Small: Story = {
     overlay: 'dark',
   },
   render: ({ isOpen, size, padding, overlay }) => (
-    <Modal isOpen={isOpen} size={size} padding={padding} overlay={overlay}>
+    <Modal
+      isOpen={isOpen}
+      size={size}
+      padding={padding}
+      overlay={overlay}
+      ariaLabel="Archive item"
+    >
       <ModalHeader>
         <H2Title title="Archive item" />
       </ModalHeader>
@@ -147,8 +155,7 @@ export const Small: Story = {
 };
 
 export const ExtraLarge: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     isOpen: true,
     size: 'extraLarge',
@@ -156,7 +163,13 @@ export const ExtraLarge: Story = {
     overlay: 'dark',
   },
   render: ({ isOpen, size, padding, overlay }) => (
-    <Modal isOpen={isOpen} size={size} padding={padding} overlay={overlay}>
+    <Modal
+      isOpen={isOpen}
+      size={size}
+      padding={padding}
+      overlay={overlay}
+      ariaLabel="Import contacts"
+    >
       <ModalHeader>
         <H2Title
           title="Import contacts"
