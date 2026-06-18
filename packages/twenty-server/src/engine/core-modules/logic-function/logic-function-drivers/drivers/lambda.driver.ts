@@ -222,11 +222,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         error instanceof Error && error.name === 'TimeoutError';
 
       if (isTimeoutError && currentPhase === LambdaExecutionPhase.INVOKE) {
-        // An invoke-phase timeout means the function used up its allotted
-        // execution time. This is a user/function-level outcome (like the
-        // Lambda's own timeout), not a platform failure, so return it as an
-        // ERROR result instead of throwing. That keeps it out of Sentry and
-        // records it like any other execution.
+        // User-level outcome (function ran too long), not a platform error: return, don't throw.
         this.logger.warn(
           `Logic function '${flatLogicFunction.id}' timed out during invoke [${phaseTiming}]`,
         );
@@ -247,9 +243,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       }
 
       if (isTimeoutError) {
-        // Build/fetch-phase timeouts are platform-side (executor build or code
-        // fetch ran too long, even for short user code) — keep throwing so they
-        // surface in Sentry with their phase timing.
+        // Build/fetch-phase timeouts are platform-side — keep throwing so they reach Sentry.
         const executor = await this.executorManager
           .getLambdaExecutor(flatLogicFunction)
           .catch(() => undefined);

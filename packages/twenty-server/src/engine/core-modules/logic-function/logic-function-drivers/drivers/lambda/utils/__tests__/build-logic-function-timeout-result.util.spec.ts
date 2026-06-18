@@ -2,7 +2,7 @@ import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-f
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
 describe('buildLogicFunctionTimeoutResult', () => {
-  it('returns an ERROR result rather than throwing, so a timeout is treated as a user-level outcome and stays out of Sentry', () => {
+  it('returns an ERROR result for a timeout', () => {
     const result = buildLogicFunctionTimeoutResult(30_000);
 
     expect(result.status).toBe(LogicFunctionExecutionStatus.ERROR);
@@ -14,7 +14,7 @@ describe('buildLogicFunctionTimeoutResult', () => {
     expect(result.duration).toBe(30_000);
   });
 
-  it('rounds the timeout to whole seconds in the message', () => {
+  it('rounds the timeout to whole seconds', () => {
     expect(buildLogicFunctionTimeoutResult(900_000).error?.errorMessage).toBe(
       'Function execution timed out after 900s',
     );
