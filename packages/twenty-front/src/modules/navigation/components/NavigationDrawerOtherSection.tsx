@@ -3,6 +3,7 @@ import { AppPath, SettingsPath } from 'twenty-shared/types';
 import {
   IconBroadcast,
   IconCalendarEvent,
+  IconFileText,
   IconHelpCircle,
   IconSettings,
   IconUsers,
@@ -87,6 +88,13 @@ export const NavigationDrawerOtherSection = () => {
             label="Weekly 1:1"
             to={AppPath.OneOnOneRunner}
             Icon={IconUsers}
+          />
+        )}
+        {PROPEL_MARKETING_HUB_ENABLED && (
+          <NavigationDrawerItem
+            label="A2A Studio"
+            to={AppPath.A2AStudio}
+            Icon={IconFileText}
           />
         )}
         <NavigationDrawerItem

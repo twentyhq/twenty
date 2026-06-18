@@ -58,6 +58,12 @@ const SocialCalendarPage = lazy(() =>
   })),
 );
 
+const A2AStudioPage = lazy(() =>
+  import('~/pages/propel/A2AStudioPage').then((module) => ({
+    default: module.A2AStudioPage,
+  })),
+);
+
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
     default: module.SignInUp,
@@ -293,6 +299,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <SocialCalendarPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.A2AStudio}
+            element={
+              <LazyRoute>
+                <A2AStudioPage />
               </LazyRoute>
             }
           />
