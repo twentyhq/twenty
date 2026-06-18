@@ -139,10 +139,6 @@ export const SidePanelToggleButton = () => {
   const isCommandMenuOpened =
     isSidePanelOpened && COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage);
 
-  const { theme } = useContext(ThemeContext);
-
-  const showAsOpen = false;
-
   const alignWithSidePanelTopBar =
     isMobile && isLayoutCustomizationModeEnabled && isSidePanelOpened;
 
@@ -164,7 +160,7 @@ export const SidePanelToggleButton = () => {
     <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>
       <div id="toggle-side-panel-button">
         <AnimatedButton
-          animatedSvg={<AnimatedIcon isSidePanelOpened={showAsOpen} />}
+          animatedSvg={<AnimatedIcon isSidePanelOpened={false} />}
           dataClickOutsideId={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
           dataTestId="page-header-side-panel-button"
           size={isMobile ? 'medium' : 'small'}
@@ -173,13 +169,6 @@ export const SidePanelToggleButton = () => {
           accent="default"
           ariaLabel={ariaLabel}
           onClick={openSidePanelMenu}
-          animate={{
-            rotate: showAsOpen ? 90 : 0,
-          }}
-          transition={{
-            duration: theme.animation.duration.normal,
-            ease: 'easeInOut',
-          }}
         />
       </div>
 
