@@ -29,6 +29,7 @@ import {
 import { assertWorkflowVersionHasSteps } from 'src/modules/workflow/common/utils/assert-workflow-version-has-steps';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -40,6 +41,7 @@ export class WorkflowVersionWorkspaceService {
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
     private readonly recordPositionService: RecordPositionService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   @WithLock('workflowId')
@@ -396,55 +398,37 @@ export class WorkflowVersionWorkspaceService {
     workflowVersionId: string;
     workspaceId: string;
   }) {
-    const authContext = buildSystemAuthContext(workspaceId);
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workspaceId,
+        workflowVersionId,
+      });
 
-    const positions =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workflowVersionRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-              workspaceId,
-              'workflowVersion',
-              { shouldBypassPermissionChecks: true },
-            );
+    assertWorkflowVersionIsDraft(workflowVersion);
 
-          const workflowVersion = await workflowVersionRepository.findOneOrFail(
-            {
-              where: {
-                id: workflowVersionId,
-              },
-            },
-          );
+    const steps = workflowVersion.steps ?? [];
 
-          assertWorkflowVersionIsDraft(workflowVersion);
+    const { childrenByStepId } = buildWorkflowGraph({
+      trigger: workflowVersion.trigger,
+      steps,
+    });
 
-          const steps = workflowVersion.steps ?? [];
+    const nodes = [
+      {
+        id: TRIGGER_STEP_ID,
+        ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
+      },
+      ...steps.map((step) => ({
+        id: step.id,
+        ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
+      })),
+    ];
 
-          const { childrenByStepId } = buildWorkflowGraph({
-            trigger: workflowVersion.trigger,
-            steps,
-          });
+    const edges = [...childrenByStepId.entries()].flatMap(([source, targets]) =>
+      targets.map((target) => ({ source, target })),
+    );
 
-          const nodes = [
-            {
-              id: TRIGGER_STEP_ID,
-              ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
-            },
-            ...steps.map((step) => ({
-              id: step.id,
-              ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
-            })),
-          ];
-
-          const edges = [...childrenByStepId.entries()].flatMap(
-            ([source, targets]) =>
-              targets.map((target) => ({ source, target })),
-          );
-
-          return computeWorkflowLayout({ nodes, edges });
-        },
-        authContext,
-      );
+    const positions = computeWorkflowLayout({ nodes, edges });
 
     await this.updateWorkflowVersionPositions({
       workflowVersionId,
