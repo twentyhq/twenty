@@ -123,7 +123,7 @@ const PreviewFrame = styled.div`
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   flex: 1;
-  min-height: 220px;
+  min-height: 160px;
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -206,7 +206,9 @@ export function MenuDropdown({ items }: MenuDropdownProps) {
             <NextImage
               alt={i18n._(activeItem.preview.imageAlt)}
               fill
-              sizes="360px"
+              // 2x the 360px frame: imageScale magnifies the raster, so the
+              // fine halftone needs the scaled resolution to stay crisp.
+              sizes="720px"
               src={activeItem.preview.image}
               style={{
                 objectFit: 'cover',
