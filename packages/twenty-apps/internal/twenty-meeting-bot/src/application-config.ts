@@ -47,7 +47,7 @@ export default defineApplication({
       universalIdentifier:
         RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
       description:
-        'How long the bot waits in a meeting lobby before giving up and leaving.',
+        'How many seconds the bot waits in a meeting lobby before giving up and leaving.',
       isSecret: false,
       value: String(RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS),
     },
@@ -55,7 +55,7 @@ export default defineApplication({
       universalIdentifier:
         RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
       description:
-        'How long the bot stays in an empty meeting when no one else ever joins.',
+        'How many seconds the bot stays in an empty meeting when no one else ever joins.',
       isSecret: false,
       value: String(RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS),
     },
@@ -63,7 +63,7 @@ export default defineApplication({
       universalIdentifier:
         RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
       description:
-        'How long the bot keeps recording after everyone else leaves the meeting.',
+        'How many seconds the bot keeps recording after everyone else leaves the meeting.',
       isSecret: false,
       value: String(RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS),
     },

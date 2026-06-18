@@ -33,9 +33,9 @@ A workspace admin can adjust bot behavior through application variables:
 | --- | --- | --- |
 | `RECALL_BOT_NAME` | `Twenty Meeting Bot` | Display name used when scheduling Recall.ai meeting bots. |
 | `RECALL_BOT_JOIN_EARLY_MINUTES` | `1` | How many minutes before the meeting start time the bot should join. Set to `0` to join at the scheduled start time. |
-| `RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS` | `1200` | How long the bot waits in a meeting lobby before giving up and leaving. |
-| `RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS` | `1200` | How long the bot stays in an empty meeting when no one else ever joins. |
-| `RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS` | `2` | How long the bot keeps recording after everyone else leaves the meeting. |
+| `RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS` | `1200` | How many seconds the bot waits in a meeting lobby before giving up and leaving. |
+| `RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS` | `1200` | How many seconds the bot stays in an empty meeting when no one else ever joins. |
+| `RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS` | `2` | How many seconds the bot keeps recording after everyone else leaves the meeting. |
 
 ### Configuring the webhook
 
