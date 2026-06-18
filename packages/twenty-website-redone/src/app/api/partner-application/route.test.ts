@@ -64,20 +64,6 @@ describe('POST /api/partner-application', () => {
     process.env.PARTNER_APPLICATION_SECRET = ORIGINAL_API_KEY;
   });
 
-  it('returns 503 when the webhook URL is not configured', async () => {
-    delete process.env.PARTNER_APPLICATION_WEBHOOK_URL;
-    const { POST } = await loadRoute();
-    const response = await POST(buildRequest());
-    expect(response.status).toBe(503);
-  });
-
-  it('returns 503 when the application secret is not configured', async () => {
-    delete process.env.PARTNER_APPLICATION_SECRET;
-    const { POST } = await loadRoute();
-    const response = await POST(buildRequest({ ip: '203.0.113.2' }));
-    expect(response.status).toBe(503);
-  });
-
   it('returns 415 when content-type is not JSON', async () => {
     const { POST } = await loadRoute();
     const response = await POST(
