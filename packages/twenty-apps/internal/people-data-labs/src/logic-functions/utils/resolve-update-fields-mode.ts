@@ -1,7 +1,5 @@
-import {
-  UPDATE_FIELDS_OPTIONS,
-  type UpdateFieldsOption,
-} from 'src/constants/update-fields-options';
+import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
+import { type UpdateFieldsOption } from 'src/types/update-fields-option';
 
 export const resolveUpdateFieldsMode = (
   updateFields?: UpdateFieldsOption,

@@ -1,6 +1,6 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { UPDATE_FIELDS_OPTION_VALUES } from 'src/constants/update-fields-options';
+import { UPDATE_FIELDS_OPTION_VALUES } from 'src/constants/update-fields-option-values';
 import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
 import { enrichCompanyCore } from 'src/logic-functions/handlers/enrich-company';
 import { type SingleEnrichInput } from 'src/types/single-enrich-input';

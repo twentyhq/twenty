@@ -1,4 +1,4 @@
-import { type UpdateFieldsOption } from 'src/constants/update-fields-options';
+import { type UpdateFieldsOption } from 'src/types/update-fields-option';
 
 export type RecordInput = string | { id?: string | null };
 
