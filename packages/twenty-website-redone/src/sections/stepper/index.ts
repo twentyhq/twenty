@@ -1,2 +1,2 @@
-export { Stepper } from './stepper';
-export { ProductStepper } from './product-stepper';
+export { Stepper } from './Stepper';
+export { ProductStepper } from './ProductStepper';

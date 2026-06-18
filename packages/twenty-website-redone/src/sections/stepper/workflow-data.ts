@@ -1,4 +1,4 @@
-import { type WorkflowIconName } from './workflow-icons';
+import { type WorkflowIconName } from './WorkflowIcons';
 
 export type WorkflowNodeDefinition = {
   badge?: string;

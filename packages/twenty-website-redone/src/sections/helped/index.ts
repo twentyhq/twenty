@@ -1,1 +1,1 @@
-export { Helped } from './helped';
+export { Helped } from './Helped';

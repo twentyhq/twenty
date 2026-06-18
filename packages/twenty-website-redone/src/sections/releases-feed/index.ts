@@ -1,1 +1,1 @@
-export { ReleasesFeed } from './releases-feed';
+export { ReleasesFeed } from './ReleasesFeed';

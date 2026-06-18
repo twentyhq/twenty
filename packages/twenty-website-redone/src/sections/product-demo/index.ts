@@ -1,1 +1,1 @@
-export { ProductDemo } from './product-demo';
+export { ProductDemo } from './ProductDemo';

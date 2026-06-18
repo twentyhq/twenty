@@ -3,7 +3,7 @@ import { type PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-step
 import {
   type DataModelFieldIcon,
   type DataModelHeaderIcon,
-} from './data-model-icons';
+} from './DataModelIcons';
 
 export type EntityTone = keyof typeof PRODUCT_STEPPER_SCENE.entityTones;
 

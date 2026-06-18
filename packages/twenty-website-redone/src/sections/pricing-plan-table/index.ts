@@ -1,1 +1,1 @@
-export { PlanTable } from './plan-table';
+export { PlanTable } from './PlanTable';

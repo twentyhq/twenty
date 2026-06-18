@@ -1,1 +1,1 @@
-export { Problem } from './problem';
+export { Problem } from './Problem';

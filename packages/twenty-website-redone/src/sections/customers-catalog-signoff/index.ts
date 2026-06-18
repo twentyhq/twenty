@@ -1,1 +1,1 @@
-export { CustomersCatalogSignoff } from './customers-catalog-signoff';
+export { CustomersCatalogSignoff } from './CustomersCatalogSignoff';

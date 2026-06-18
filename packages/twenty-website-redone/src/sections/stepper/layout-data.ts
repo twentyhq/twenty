@@ -3,7 +3,7 @@ import { type PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-step
 import {
   type LayoutFieldIconType,
   type LayoutNavIconType,
-} from './layout-icons';
+} from './LayoutIcons';
 
 type NavTint = keyof typeof PRODUCT_STEPPER_SCENE.navTints;
 

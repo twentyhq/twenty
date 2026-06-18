@@ -1,1 +1,1 @@
-export { PricingPlans } from './pricing-plans';
+export { PricingPlans } from './PricingPlans';

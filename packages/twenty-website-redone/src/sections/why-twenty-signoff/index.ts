@@ -1,1 +1,1 @@
-export { WhyTwentySignoff } from './why-twenty-signoff';
+export { WhyTwentySignoff } from './WhyTwentySignoff';

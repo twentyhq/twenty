@@ -1,11 +1,11 @@
 export {
   CaseStudyArticleNav,
   type CaseStudyArticleNavProps,
-} from './case-study-article-nav';
-export { CaseStudyBody, type CaseStudyBodyProps } from './case-study-body';
-export { CaseStudyHero, type CaseStudyHeroProps } from './case-study-hero';
+} from './CaseStudyArticleNav';
+export { CaseStudyBody, type CaseStudyBodyProps } from './CaseStudyBody';
+export { CaseStudyHero, type CaseStudyHeroProps } from './CaseStudyHero';
 export {
   CaseStudyHighlights,
   type CaseStudyHighlightsProps,
-} from './case-study-highlights';
-export { CustomersCaseStudySignoff } from './customers-case-study-signoff';
+} from './CaseStudyHighlights';
+export { CustomersCaseStudySignoff } from './CustomersCaseStudySignoff';

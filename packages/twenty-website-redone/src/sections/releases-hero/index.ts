@@ -1,1 +1,1 @@
-export { ReleasesHero } from './releases-hero';
+export { ReleasesHero } from './ReleasesHero';

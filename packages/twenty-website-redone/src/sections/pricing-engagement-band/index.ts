@@ -1,1 +1,1 @@
-export { PricingEngagementBand } from './pricing-engagement-band';
+export { PricingEngagementBand } from './PricingEngagementBand';
