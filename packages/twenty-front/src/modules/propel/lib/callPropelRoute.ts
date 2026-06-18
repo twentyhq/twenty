@@ -18,6 +18,26 @@ export const callPropelRoute = async <T>(
     return null;
   }
 
+  // Twenty's HTTP route trigger sets `event.body` to the parsed request JSON
+  // AS-IS (twenty-server build-logic-function-event.util.ts → extractBody). The
+  // logic-function routes read `event.body.<field>`, so the request JSON must
+  // carry the payload fields at the TOP level. Several callers historically
+  // wrapped the payload one level deep as `{ body: {...} }`, which made
+  // `event.body` === `{ body: {...} }` and every `event.body.<field>` read come
+  // back undefined — the source of "Unknown AI action", silent save no-ops, A2A
+  // actions that never fire, etc. Normalize a lone `{ body: <object> }` wrapper
+  // to its inner object before sending. This is unambiguous: the only routes
+  // that read `event.body.body` treat it as a STRING field (post / reply / wa
+  // message text), never an object, so no real payload is shaped `{ body: {} }`.
+  // PREFERRED convention going forward: pass the flat payload directly.
+  const wrapped =
+    Object.keys(body).length === 1 &&
+    'body' in body &&
+    typeof (body as { body: unknown }).body === 'object' &&
+    (body as { body: unknown }).body !== null &&
+    !Array.isArray((body as { body: unknown }).body);
+  const payload = wrapped ? (body as { body: object }).body : body;
+
   try {
     const response = await fetch(`${REACT_APP_SERVER_BASE_URL}/s${path}`, {
       method: 'POST',
@@ -25,7 +45,7 @@ export const callPropelRoute = async <T>(
         'content-type': 'application/json',
         authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
