@@ -349,7 +349,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       { activationStatus: WorkspaceActivationStatus.ONGOING_CREATION },
     );
 
-    if (activationLockResult.affected === 0) {
+    if ((activationLockResult.affected ?? 0) === 0) {
       throw new Error('Workspace is already being created');
     }
 
@@ -439,7 +439,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
     try {
       await queryRunner.manager.update(WorkspaceEntity, workspaceId, {
-        ...(displayName ? { displayName } : {}),
+        ...(displayName?.trim() ? { displayName: displayName.trim() } : {}),
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
 

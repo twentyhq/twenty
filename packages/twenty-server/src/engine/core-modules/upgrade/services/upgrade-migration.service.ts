@@ -167,7 +167,7 @@ export class UpgradeMigrationService {
       : this.upgradeMigrationRepository;
 
     const existingInitialMigration = await repository.findOne({
-      where: { name, attempt: 1, workspaceId },
+      where: { name, attempt: 1, workspaceId, isInitial: true },
     });
 
     if (isDefined(existingInitialMigration)) {
