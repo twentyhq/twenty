@@ -25,6 +25,7 @@ import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/l
 import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-executor-manager.service';
 import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
+import { computeLambdaInvokeAbortTimeoutMs } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-lambda-invoke-abort-timeout-ms.util';
 import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -176,7 +177,9 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       const invokeStart = Date.now();
       const result = await lambdaClient.send(command, {
-        abortSignal: AbortSignal.timeout(timeoutMs),
+        abortSignal: AbortSignal.timeout(
+          computeLambdaInvokeAbortTimeoutMs(timeoutMs),
+        ),
       });
       const invokeSendMs = Date.now() - invokeStart;
 

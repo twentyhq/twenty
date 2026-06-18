@@ -11,6 +11,11 @@ export const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;
 export const BUILDER_LAMBDA_MEMORY_MB = 512;
 export const EXECUTOR_LAMBDA_MEMORY_MB = 512;
 export const EXECUTOR_LAMBDA_TIMEOUT_SECONDS = 900;
+// Headroom added to the SDK abort when the requested timeout reaches the executor
+// Lambda's own limit, so the Lambda's timeout fires first and returns a proper
+// result instead of the client aborting mid-flight. Covers the request
+// round-trip and cold-start init, neither of which counts against the Lambda timeout.
+export const EXECUTOR_LAMBDA_INVOKE_ABORT_GRACE_PERIOD_MS = 15_000;
 export const LAMBDA_EPHEMERAL_STORAGE_MB = 4096;
 
 export const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
