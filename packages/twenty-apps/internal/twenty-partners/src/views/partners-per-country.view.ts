@@ -1,5 +1,6 @@
 import { ViewSortDirection, ViewType, defineView } from 'twenty-sdk/define';
 
+import { PARTNER_COUNTRY_VIEW_GROUPS } from 'src/constants/partner-country-view-groups';
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 const PARTNER_COUNTRY_FIELD_ID = 'a77d7fa6-c398-47db-af0f-036a5c719f20';
@@ -18,6 +19,8 @@ export default defineView({
   type: ViewType.TABLE,
   position: 1,
   mainGroupByFieldMetadataUniversalIdentifier: PARTNER_COUNTRY_FIELD_ID,
+  shouldHideEmptyGroups: true,
+  groups: [...PARTNER_COUNTRY_VIEW_GROUPS],
   fields: [
     {
       universalIdentifier: '7ba5125f-57ec-41c6-813e-d8d8e59cfe94',

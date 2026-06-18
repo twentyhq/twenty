@@ -1,6 +1,7 @@
 import { ViewFilterOperand, ViewType, defineView } from 'twenty-sdk/define';
 
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
 
 const PARTNER_COUNTRY_FIELD_ID = 'a77d7fa6-c398-47db-af0f-036a5c719f20';
 const PARTNER_INTRODUCTION_FIELD_ID = 'a0000009-0000-4000-8000-000000000009';
@@ -46,6 +47,13 @@ export default defineView({
       position: 3,
       isVisible: true,
       size: 180,
+    },
+    {
+      universalIdentifier: '0175e169-377c-4ff5-b0f0-c3359cac48d9',
+      fieldMetadataUniversalIdentifier: PARTNER_USER_ON_PARTNER_FIELD_ID,
+      position: 4,
+      isVisible: true,
+      size: 200,
     },
   ],
   filters: [

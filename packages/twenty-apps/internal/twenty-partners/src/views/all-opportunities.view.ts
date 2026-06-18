@@ -5,6 +5,7 @@ import {
 } from 'twenty-sdk/define';
 
 import { ALL_OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { OPPORTUNITY_IS_LISTED_FIELD_ID } from 'src/fields/opportunity-is-listed.field';
 
 // All opportunities, every stage. Kept last in the Matching folder.
 export default defineView({
@@ -40,6 +41,13 @@ export default defineView({
       position: 2,
       isVisible: true,
       size: 140,
+    },
+    {
+      universalIdentifier: 'be3a28db-152a-48be-ae21-91b175905ce4',
+      fieldMetadataUniversalIdentifier: OPPORTUNITY_IS_LISTED_FIELD_ID,
+      position: 3,
+      isVisible: true,
+      size: 90,
     },
   ],
 });
