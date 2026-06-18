@@ -23,6 +23,7 @@ import {
   IconAlertTriangle,
   IconCalendar,
   IconCheck,
+  IconId,
   IconInfoCircle,
   IconPhoto,
   IconShield,
@@ -39,6 +40,10 @@ import {
 } from '@/propel/components/calendar/composerStyles';
 import { CHANNEL_META } from '@/propel/lib/socialCalendarConfig';
 import { generateImage } from '@/propel/lib/socialAiImage';
+import {
+  fetchPhotoBytes,
+  makeBrandCard,
+} from '@/propel/lib/socialBrandCard';
 import { parseMediaRefs } from '@/propel/lib/socialPostDetail';
 import { type SocialImageAspect } from '@/propel/types/socialAiImage';
 import {
@@ -232,6 +237,8 @@ const ComposerBody = ({
   );
   // True while an AI draft/rewrite is in flight — shimmers the textarea (§15).
   const [aiGenerating, setAiGenerating] = useState(false);
+  // True while a branded card is compositing (gates the button + shimmers it, §15).
+  const [brandCardBusy, setBrandCardBusy] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOverAdd, setDragOverAdd] = useState(false);
   // The tile index a carousel drag started from. This is transient gesture state
@@ -357,6 +364,71 @@ const ComposerBody = ({
     [surfaceAiError],
   );
 
+  // Make a branded "Just Listed" card from the attached listing + the FIRST ready
+  // photo already on the post. DETERMINISTIC (not generative) — the route composites
+  // the real photo + real listing facts + Hub branding via the image-service
+  // sidecar and returns a stored URL we attach as a NEW media tile (the branded card
+  // sits ALONGSIDE the source photo; we never replace it). Same lifecycle as a file
+  // upload / generated image: insert a placeholder `uploading` tile immediately so
+  // validateForm's isUploadingMedia blocks Save until the card lands (no race), then
+  // resolve it to a ready image. brandCardBusy gates the button + drives the §15
+  // shimmer over it. The button only shows when a listing is attached AND a ready
+  // photo exists, so `sourcePhoto` is present whenever this fires.
+  const makeBrandCardFromListing = useCallback(async () => {
+    // form.listingId null/'' means no listing attached — the button is hidden then,
+    // but guard anyway (don't read hasListing here: it's declared later in render,
+    // and the empty-string + null check below is the same condition).
+    if (brandCardBusy || form.listingId === null || form.listingId === '') return;
+    const sourcePhoto = form.media.find(
+      (m) => m.status === 'ready' && m.kind === 'image' && m.url !== null,
+    );
+    if (!sourcePhoto || sourcePhoto.url === null) return;
+
+    setBrandCardBusy(true);
+    setSaveError(null);
+    const id = uid();
+    setForm((f) => ({
+      ...f,
+      media: [
+        ...f.media,
+        { id, url: null, objectUrl: null, kind: 'image', name: 'Making branded card…', status: 'uploading', error: null },
+      ],
+    }));
+
+    // Re-read the source photo's bytes from its (signed) public URL — the tile only
+    // retains the URL, not the original File.
+    const photo = await fetchPhotoBytes(sourcePhoto.url);
+    if (photo === null) {
+      setForm((f) => ({ ...f, media: f.media.filter((m) => m.id !== id) }));
+      surfaceAiError(
+        "Couldn't read the source photo to make a card.",
+        'Re-add the photo and try again.',
+      );
+      setBrandCardBusy(false);
+      return;
+    }
+
+    const res = await makeBrandCard({
+      listingId: form.listingId,
+      imageBytes: photo.base64,
+      contentType: photo.contentType,
+    });
+    if (res.ok) {
+      setForm((f) => ({
+        ...f,
+        media: f.media.map((m) =>
+          m.id === id
+            ? { ...m, url: res.url, kind: mediaKindOf('image/jpeg', res.url), name: 'Branded card', status: 'ready', error: null }
+            : m,
+        ),
+      }));
+    } else {
+      setForm((f) => ({ ...f, media: f.media.filter((m) => m.id !== id) }));
+      surfaceAiError(res.message, res.operatorAction);
+    }
+    setBrandCardBusy(false);
+  }, [brandCardBusy, form.listingId, form.media, surfaceAiError]);
+
   const onPickFiles = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) addFiles(e.target.files);
     e.target.value = ''; // allow re-selecting the same file
@@ -414,6 +486,14 @@ const ComposerBody = ({
     [listings],
   );
   const hasListing = form.listingId !== null && form.listingId !== '';
+
+  // "Make a branded card" is offered only when a listing is attached AND at least one
+  // READY photo is present — the card is composited from that real photo + the
+  // listing's real facts. (A video tile or a still-uploading tile doesn't qualify.)
+  const hasReadyPhoto = form.media.some(
+    (m) => m.status === 'ready' && m.kind === 'image' && m.url !== null,
+  );
+  const canMakeBrandCard = hasListing && hasReadyPhoto;
 
   // ── AI copy bundle wiring ──────────────────────────────────────────────────
   // The AI controls replace or extend the body; errors surface in the same inline
@@ -657,6 +737,49 @@ const ComposerBody = ({
             <div style={{ marginBottom: 8 }}>
               <AiImageControls onGenerate={generateBrandImage} />
             </div>
+
+            {/* "Make a branded card" (§15): DETERMINISTIC — composites the real
+                listing photo + facts + Hub branding into a "Just Listed" card and
+                attaches it as a NEW tile (alongside the source photo). Shown only
+                when a listing is attached AND a ready photo exists. While
+                compositing, the §15 shimmer rides over the button. */}
+            {canMakeBrandCard ? (
+              <div
+                style={{ marginBottom: 8, position: 'relative', display: 'inline-block' }}
+              >
+                <Tooltip
+                  label="Composite the listing photo + details into a branded “Just Listed” card"
+                  withArrow
+                  multiline
+                  w={240}
+                >
+                  <Button
+                    size="compact-xs"
+                    variant="light"
+                    color="red"
+                    leftSection={<IconId size={13} />}
+                    onClick={() => void makeBrandCardFromListing()}
+                    disabled={brandCardBusy}
+                    loading={brandCardBusy}
+                  >
+                    Make a branded card
+                  </Button>
+                </Tooltip>
+                <AnimatePresence>
+                  {brandCardBusy ? (
+                    <motion.div
+                      key="propel-brandcard-shimmer"
+                      className="propel-ai-shimmer"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, transition: { duration: 0.18 } }}
+                      transition={{ duration: 0.16 }}
+                      aria-hidden="true"
+                    />
+                  ) : null}
+                </AnimatePresence>
+              </div>
+            ) : null}
             <div className="propel-media-strip">
               <AnimatePresence initial={false}>
                 {form.media.map((m, index) => (
