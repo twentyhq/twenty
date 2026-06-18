@@ -23,7 +23,7 @@ export const getFieldMetadataItemInitialValues = (
   const currencyCode = isNonEmptyString(
     fieldMetadataItem.defaultValue?.currencyCode,
   )
-    ? fieldMetadataItem.defaultValue?.currencyCode
+    ? applySimpleQuotesToString(fieldMetadataItem.defaultValue?.currencyCode)
     : applySimpleQuotesToString(CurrencyCode.USD);
 
   const defaultValue = {
