@@ -42,6 +42,7 @@ jobs:
         uses: tj-actions/changed-files@48d8f15b2aaa3d255ca5af3eba4870f807ce6b3c # v45.0.9
         with:
           json: true
+          escape_json: false
           files: packages/twenty-apps/internal/**
 
       - name: Build matrix of changed apps
