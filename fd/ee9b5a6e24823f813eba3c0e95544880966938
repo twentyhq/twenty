@@ -1,0 +1,24 @@
+packages/twenty-server/src/engine/metadata-modules/message-folder/message-folder-metadata.service.ts
+  s_239cdc3f70d75f::t_37f7e50001b114 189
+  s_239cdc3f70d75f::t_d020278cbae3c6 199
+  s_239cdc3f70d75f::t_fe47623a707816 198,214-230,236-237,241-242
+  s_239cdc3f70d75f::t_9b32be66dc5fc7 200,202-203,205,231-235,238-240
+packages/twenty-server/src/engine/metadata-modules/message-folder/resolvers/message-folder.resolver.ts
+  s_239cdc3f70d75f::t_1a608da03ade22 89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "fdee9b5a6e24823f813eba3c0e95544880966938",
+  "prompts": {},
+  "sessions": {
+    "s_239cdc3f70d75f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3c703fb8-441c-4521-b00c-5823343e2d29",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
