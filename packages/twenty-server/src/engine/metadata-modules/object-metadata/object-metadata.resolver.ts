@@ -67,7 +67,12 @@ export class ObjectMetadataResolver {
 
   private async resolveStandardOverride(
     objectMetadata: ObjectMetadataDTO,
-    labelKey: 'color' | 'labelPlural' | 'labelSingular' | 'description' | 'icon',
+    labelKey:
+      | 'color'
+      | 'labelPlural'
+      | 'labelSingular'
+      | 'description'
+      | 'icon',
     context: { loaders: IDataloaders } & I18nContext,
     workspaceId: string,
   ): Promise<string> {

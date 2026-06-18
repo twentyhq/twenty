@@ -50,7 +50,8 @@ export class CommandMenuItemResolver {
         commandMenuItem,
         fieldName: 'label',
         objectMetadataLoader: context.loaders.objectMetadataLoader,
-        standardApplicationIdLoader: context.loaders.standardApplicationIdLoader,
+        standardApplicationIdLoader:
+          context.loaders.standardApplicationIdLoader,
         workspaceId: workspace.id,
         locale: context.req.locale,
       })) ?? ''

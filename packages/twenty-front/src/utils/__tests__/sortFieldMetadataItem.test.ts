@@ -5,8 +5,10 @@ import { sortFieldMetadataItem } from '~/utils/sortFieldMetadataItem';
 const WORKSPACE_CUSTOM_APPLICATION_ID = 'workspace-custom-application-id';
 const STANDARD_APPLICATION_ID = 'standard-application-id';
 
-const sortByCustomThenCreatedAt = (a: FieldMetadataItem, b: FieldMetadataItem) =>
-  sortFieldMetadataItem(a, b, WORKSPACE_CUSTOM_APPLICATION_ID);
+const sortByCustomThenCreatedAt = (
+  a: FieldMetadataItem,
+  b: FieldMetadataItem,
+) => sortFieldMetadataItem(a, b, WORKSPACE_CUSTOM_APPLICATION_ID);
 
 describe('sortFieldMetadataItem', () => {
   it('should return an empty array for an empty array', () => {

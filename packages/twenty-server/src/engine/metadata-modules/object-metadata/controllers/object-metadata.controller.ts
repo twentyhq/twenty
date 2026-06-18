@@ -188,7 +188,10 @@ export class ObjectMetadataController {
     const result: ObjectMetadataWithFieldsDTO = {
       ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
       fields: fields.map((field) =>
-        fromFieldMetadataEntityToFieldMetadataDto(field, uniqueFieldMetadataIds),
+        fromFieldMetadataEntityToFieldMetadataDto(
+          field,
+          uniqueFieldMetadataIds,
+        ),
       ),
     };
 
@@ -256,7 +259,10 @@ export class ObjectMetadataController {
     const result: ObjectMetadataWithFieldsDTO = {
       ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
       fields: fields.map((field) =>
-        fromFieldMetadataEntityToFieldMetadataDto(field, uniqueFieldMetadataIds),
+        fromFieldMetadataEntityToFieldMetadataDto(
+          field,
+          uniqueFieldMetadataIds,
+        ),
       ),
     };
 
@@ -307,7 +313,10 @@ export class ObjectMetadataController {
     return {
       ...fromObjectMetadataEntityToObjectMetadataDto(object),
       fields: fields.map((field) =>
-        fromFieldMetadataEntityToFieldMetadataDto(field, uniqueFieldMetadataIds),
+        fromFieldMetadataEntityToFieldMetadataDto(
+          field,
+          uniqueFieldMetadataIds,
+        ),
       ),
     };
   }

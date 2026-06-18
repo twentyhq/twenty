@@ -98,7 +98,8 @@ export const SettingsDataModelObjectAboutForm = ({
   const objectIconColor = watch('color');
 
   const apiNameTooltipText =
-    !isDefined(objectMetadataItem) || getIsMetadataItemCustom(objectMetadataItem)
+    !isDefined(objectMetadataItem) ||
+    getIsMetadataItemCustom(objectMetadataItem)
       ? isLabelSyncedWithName
         ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
         : t`Input must be in camel case and cannot start with a number`
