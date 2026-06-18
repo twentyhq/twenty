@@ -8,13 +8,11 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 
 type ActivateWorkspaceUtilArgs = {
   accessToken: string;
-  displayName: string;
   expectToFail?: boolean;
 };
 
 export const activateWorkspace = async ({
   accessToken,
-  displayName,
   expectToFail,
 }: ActivateWorkspaceUtilArgs): CommonResponseBody<{
   activateWorkspace: WorkspaceEntity;
@@ -36,9 +34,7 @@ export const activateWorkspace = async ({
     {
       query: mutation,
       variables: {
-        input: {
-          displayName,
-        },
+        input: {},
       },
     },
     accessToken,
