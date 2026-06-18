@@ -1,5 +1,6 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
+import { UPDATE_FIELDS_OPTION_VALUES } from 'src/constants/update-fields-options';
 import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
 import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person';
 import { type SingleEnrichInput } from 'src/types/single-enrich-input';
@@ -24,9 +25,10 @@ export default defineLogicFunction({
             type: 'string',
             label: 'Record',
           },
-          overrideExistingValues: {
-            type: 'boolean',
-            label: 'Override Existing Values',
+          updateFields: {
+            type: 'string',
+            label: 'Update fields',
+            enum: [...UPDATE_FIELDS_OPTION_VALUES],
           },
         },
       },
@@ -43,6 +45,7 @@ export default defineLogicFunction({
             items: { type: 'string' },
             label: 'Updated Fields',
           },
+          data: { type: 'object', label: 'Data' },
           message: { type: 'string', label: 'Message' },
         },
       },
@@ -56,10 +59,11 @@ export default defineLogicFunction({
           type: 'string',
           description: 'The id of the Person record to enrich.',
         },
-        overrideExistingValues: {
-          type: 'boolean',
+        updateFields: {
+          type: 'string',
+          enum: [...UPDATE_FIELDS_OPTION_VALUES],
           description:
-            'Overwrite existing field values with the enriched data instead of only filling empty fields.',
+            'Whether to write the enriched data back to the record. "Yes and overwrite" replaces existing values; "Yes and don\'t overwrite" only fills empty fields; "No" returns the enriched data without modifying the record.',
         },
       },
       required: ['recordId'],
