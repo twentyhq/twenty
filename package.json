@@ -74,6 +74,7 @@
       "packages/twenty-utils",
       "packages/twenty-zapier",
       "packages/twenty-website",
+      "packages/twenty-website-redone",
       "packages/twenty-docs",
       "packages/twenty-e2e-testing",
       "packages/twenty-shared",

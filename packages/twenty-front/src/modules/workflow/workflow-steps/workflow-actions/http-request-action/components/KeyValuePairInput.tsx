@@ -7,7 +7,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { IconTrash } from 'twenty-ui/display';
+import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

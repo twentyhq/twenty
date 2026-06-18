@@ -4,7 +4,7 @@ import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { ModalBackdrop } from 'twenty-ui/layout';
+import { ModalBackdrop } from 'twenty-ui/surfaces';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 

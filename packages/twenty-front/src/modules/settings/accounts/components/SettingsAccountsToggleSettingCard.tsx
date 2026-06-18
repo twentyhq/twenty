@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Card, CardContent } from 'twenty-ui/layout';
+import { Card, CardContent } from 'twenty-ui/surfaces';
 import { Toggle } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

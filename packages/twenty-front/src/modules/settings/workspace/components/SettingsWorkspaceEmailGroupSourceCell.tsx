@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { IconMail, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { IconMail } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNameCell = styled.div`

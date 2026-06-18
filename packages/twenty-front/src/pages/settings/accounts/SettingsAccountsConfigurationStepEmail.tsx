@@ -6,7 +6,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconChevronRight, IconPlus } from 'twenty-ui/display';
+import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 
 type SettingsAccountsConfigurationStepEmailProps = {

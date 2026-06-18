@@ -10,7 +10,7 @@ import {
   IconCopy,
   IconDownload,
   IconInfoCircle,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';

@@ -7,7 +7,7 @@ import { SettingsAdminSigningKeysTable } from '@/settings/admin-panel/signing-ke
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
