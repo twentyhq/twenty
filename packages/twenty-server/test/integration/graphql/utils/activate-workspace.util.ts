@@ -18,8 +18,8 @@ export const activateWorkspace = async ({
   activateWorkspace: WorkspaceEntity;
 }> => {
   const mutation = gql`
-    mutation ActivateWorkspace {
-      activateWorkspace {
+    mutation ActivateWorkspace($input: ActivateWorkspaceInput!) {
+      activateWorkspace(data: $input) {
         id
         displayName
         activationStatus
@@ -33,6 +33,9 @@ export const activateWorkspace = async ({
   const response = await makeMetadataAPIRequest(
     {
       query: mutation,
+      variables: {
+        input: {},
+      },
     },
     accessToken,
   );

@@ -77,7 +77,11 @@ export const WorkspaceActivation = () => {
     };
 
     try {
-      const result = await activateWorkspace();
+      const result = await activateWorkspace({
+        variables: {
+          input: {},
+        },
+      });
 
       if (isDefined(result.error)) {
         throw result.error;
