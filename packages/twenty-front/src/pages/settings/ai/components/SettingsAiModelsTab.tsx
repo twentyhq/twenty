@@ -21,15 +21,11 @@ import {
 } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconBolt,
-  IconBrain,
-  IconPrompt,
-  IconStar,
-} from 'twenty-ui/display';
+import { IconBolt, IconBrain, IconPrompt, IconStar } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { SearchInput } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';

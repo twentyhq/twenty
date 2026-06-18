@@ -9,7 +9,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useMemo, useState } from 'react';
-import { IconEyeOff, IconPlus } from 'twenty-ui/display';
+import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

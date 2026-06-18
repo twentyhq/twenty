@@ -15,7 +15,7 @@ import {
   IconRocket,
   IconTag,
   IconTarget,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 

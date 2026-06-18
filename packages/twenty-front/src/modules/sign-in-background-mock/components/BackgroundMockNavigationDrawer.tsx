@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconSearch, IconSettings } from 'twenty-ui/display';
+import { IconSearch, IconSettings } from 'twenty-ui/icon';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 
 import { BACKGROUND_MOCK_WORKSPACE_ITEMS } from '@/sign-in-background-mock/constants/BackgroundMockNavigationItems';

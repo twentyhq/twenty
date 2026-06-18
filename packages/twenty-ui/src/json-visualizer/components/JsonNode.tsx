@@ -9,7 +9,7 @@ import {
   IconCircleOff,
   IconNumber9,
   IconTypography,
-} from '@ui/display';
+} from '@ui/icon';
 import { JsonArrayNode } from '@ui/json-visualizer/components/JsonArrayNode';
 import { JsonObjectNode } from '@ui/json-visualizer/components/JsonObjectNode';
 import { JsonValueNode } from '@ui/json-visualizer/components/JsonValueNode';
