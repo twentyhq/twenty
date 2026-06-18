@@ -54,28 +54,28 @@ export const CatalogDecorator: Decorator = (Story, context) => {
     <div className={styles.container}>
       {dimension4.values.map((value4: any, index4: number) => (
         <div className={styles.columnContainer} key={`d4-${index4}`}>
-          <h1 className={styles.columnTitle}>
+          <div className={styles.columnTitle}>
             {dimension4.labels?.(value4) ??
               (isStringOrNumber(value4) ? value4 : '')}
-          </h1>
+          </div>
           {dimension3.values.map((value3: any, index3: number) => (
             <div className={styles.rowsContainer} key={`d3-${index3}`}>
-              <h2 className={styles.rowsTitle}>
+              <div className={styles.rowsTitle}>
                 {dimension3.labels?.(value3) ??
                   (isStringOrNumber(value3) ? value3 : '')}
-              </h2>
+              </div>
               {dimension2.values.map((value2: any, index2: number) => (
                 <div className={styles.rowContainer} key={`d2-${index2}`}>
-                  <h3 className={styles.rowTitle}>
+                  <div className={styles.rowTitle}>
                     {dimension2.labels?.(value2) ??
                       (isStringOrNumber(value2) ? value2 : '')}
-                  </h3>
+                  </div>
                   {dimension1.values.map((value1: any, index1: number) => {
                     return (
                       <div
                         className={styles.cellContainer}
                         key={`d1-${index1}`}
-                        id={value1}
+                        id={`catalog-cell-${index4}-${index3}-${index2}-${index1}`}
                       >
                         <span className={styles.elementTitle}>
                           {dimension1.labels?.(value1) ??

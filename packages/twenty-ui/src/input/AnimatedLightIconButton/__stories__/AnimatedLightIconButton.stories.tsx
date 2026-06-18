@@ -5,6 +5,7 @@ import {
   type LightIconButtonSize,
 } from '@ui/input/LightIconButton/LightIconButton';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -54,8 +55,7 @@ export const Catalog: CatalogStory<Story, typeof AnimatedLightIconButton> = {
     transition: { control: 'object' },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'] },
     catalog: {
       dimensions: [

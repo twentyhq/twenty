@@ -17,6 +17,7 @@ export type FloatingIconButtonGroupProps = Pick<
 > & {
   iconButtons: {
     Icon: IconComponent;
+    ariaLabel?: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onClick?: (event: MouseEvent<any>) => void;
     isActive?: boolean;
@@ -30,7 +31,7 @@ export const FloatingIconButtonGroup = ({
 }: FloatingIconButtonGroupProps) => {
   return (
     <div className={clsx(styles.container, className)}>
-      {iconButtons.map(({ Icon, onClick, isActive }, index) => {
+      {iconButtons.map(({ Icon, onClick, isActive, ariaLabel }, index) => {
         const position: FloatingIconButtonPosition =
           iconButtons.length === 1
             ? 'standalone'
@@ -46,6 +47,7 @@ export const FloatingIconButtonGroup = ({
             applyBlur={false}
             applyShadow={false}
             Icon={Icon}
+            ariaLabel={ariaLabel}
             onClick={onClick}
             position={position}
             size={size}
