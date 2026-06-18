@@ -218,13 +218,17 @@ export class LambdaDriver implements LogicFunctionDriver {
     } catch (error) {
       const phaseTiming = `phase=${currentPhase} buildMs=${buildExecutorMs} fetchCodeMs=${getBuiltCodeMs}`;
 
-      if (error instanceof Error && error.name === 'TimeoutError') {
-        // The function used up its allotted execution time. This is a
-        // user/function-level outcome (like the Lambda's own timeout), not a
-        // platform failure, so return it as an ERROR result instead of throwing.
-        // That keeps it out of Sentry and records it like any other execution.
+      const isTimeoutError =
+        error instanceof Error && error.name === 'TimeoutError';
+
+      if (isTimeoutError && currentPhase === LambdaExecutionPhase.INVOKE) {
+        // An invoke-phase timeout means the function used up its allotted
+        // execution time. This is a user/function-level outcome (like the
+        // Lambda's own timeout), not a platform failure, so return it as an
+        // ERROR result instead of throwing. That keeps it out of Sentry and
+        // records it like any other execution.
         this.logger.warn(
-          `Logic function '${flatLogicFunction.id}' timed out during ${currentPhase} [${phaseTiming}]`,
+          `Logic function '${flatLogicFunction.id}' timed out during invoke [${phaseTiming}]`,
         );
 
         return buildLogicFunctionTimeoutResult(timeoutMs);
@@ -239,6 +243,21 @@ export class LambdaDriver implements LogicFunctionDriver {
         throw new LogicFunctionException(
           `Function '${flatLogicFunction.id}' does not exist`,
           LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+        );
+      }
+
+      if (isTimeoutError) {
+        // Build/fetch-phase timeouts are platform-side (executor build or code
+        // fetch ran too long, even for short user code) — keep throwing so they
+        // surface in Sentry with their phase timing.
+        const executor = await this.executorManager
+          .getLambdaExecutor(flatLogicFunction)
+          .catch(() => undefined);
+        const functionState = executor?.Configuration?.State ?? 'unknown';
+
+        throw new LogicFunctionException(
+          `Lambda timed out for function '${flatLogicFunction.id}' during ${currentPhase} (functionState=${functionState}, ${phaseTiming})`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_TIMEOUT,
         );
       }
 
