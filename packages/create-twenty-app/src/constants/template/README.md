@@ -13,6 +13,9 @@ Run `yarn twenty help` to list all available commands.
 - `yarn twenty dev` - Start the development server and sync your app
 - `yarn twenty docker:status` - Check the local Twenty server status
 - `yarn twenty docker:start` - Start the local Twenty server
+- `yarn lint` - Lint the codebase
+- `yarn typecheck` - Type-check the codebase
+- `yarn test:unit` - Run unit tests
 - `yarn test` - Run integration tests
 
 ## Learn More
