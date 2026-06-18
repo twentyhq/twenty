@@ -1,7 +1,6 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useRelationField } from '@/object-record/record-field/ui/meta-types/hooks/useRelationField';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
@@ -50,20 +49,22 @@ export const RelationManyToOneFieldInput = () => {
         : null,
     });
 
-  const { objectMetadataItem: relationObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular:
-        fieldDefinition.metadata.relationObjectMetadataNameSingular,
-    });
+  const relationObjectMetadataNameSingular =
+    fieldDefinition.metadata.relationObjectMetadataNameSingular;
 
-  const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
+  const relationObjectMetadataItem = objectMetadataItems.find(
+    ({ nameSingular }) => nameSingular === relationObjectMetadataNameSingular,
+  );
+
+  const relationFieldMetadataItem = relationObjectMetadataItem?.fields.find(
     ({ id }) => id === fieldDefinition.metadata.relationFieldMetadataId,
   );
-  if (!relationFieldMetadataItem) {
-    throw new CustomError(
-      'Relation field metadata item not found',
-      'RELATION_FIELD_METADATA_ITEM_NOT_FOUND',
-    );
+
+  if (
+    !isDefined(relationObjectMetadataItem) ||
+    !isDefined(relationFieldMetadataItem)
+  ) {
+    return <></>;
   }
 
   const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
