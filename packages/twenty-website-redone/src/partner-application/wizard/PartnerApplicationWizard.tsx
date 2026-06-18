@@ -22,6 +22,7 @@ import {
   type PartnerApplicationController,
   usePartnerApplicationState,
 } from '../use-partner-application-state';
+import { validatePartnerApplicationStep } from '../validate-partner-application-step';
 import { PartnerApplicationSuccess } from './PartnerApplicationSuccess';
 import { CommercialsStep } from './steps/CommercialsStep';
 import { ExpertiseStep } from './steps/ExpertiseStep';
@@ -171,7 +172,9 @@ export function PartnerApplicationWizard({
     ? COPY.validation.invalidEmail
     : errorValues.includes('invalid_url')
       ? COPY.validation.invalidUrl
-      : COPY.validation.incompleteForm;
+      : errorValues.includes('invalid_amount')
+        ? COPY.validation.invalidAmount
+        : COPY.validation.incompleteForm;
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -181,6 +184,14 @@ export function PartnerApplicationWizard({
         return;
       }
       if (state.isSubmitting) return;
+
+      // Fail fast: gate the final step client-side before POSTing. goNext on the
+      // last step re-runs validation and surfaces the errors without advancing,
+      // so empty or invalid required fields never round-trip to the server.
+      if (Object.keys(validatePartnerApplicationStep(state)).length > 0) {
+        goNext();
+        return;
+      }
 
       const payload = buildPartnerApplicationRequestBody(state);
       setSubmitError(null);

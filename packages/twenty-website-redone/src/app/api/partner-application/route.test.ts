@@ -7,6 +7,9 @@ const VALID_PAYLOAD = {
   name: 'Ada Lovelace',
   company: 'Analytical Engines',
   website: 'https://analytical.example/',
+  city: 'London',
+  hourlyRate: 150,
+  projectBudgetMin: 5000,
 };
 
 const VALID_BODY = JSON.stringify(VALID_PAYLOAD);
@@ -169,6 +172,9 @@ describe('POST /api/partner-application', () => {
       lastName: 'Lovelace',
       companyName: 'Analytical Engines',
       domainName: 'https://analytical.example/',
+      city: 'London',
+      hourlyRate: 150,
+      projectBudgetMin: 5000,
     });
     expect(init.signal).toBeInstanceOf(AbortSignal);
   });

@@ -4,21 +4,21 @@ const minimalValid = {
   name: 'Ada Lovelace',
   email: 'ada@example.com',
   company: 'Analytical Engines Ltd',
+  website: 'https://analyticalengines.example',
+  city: 'London',
+  hourlyRate: 150,
+  projectBudgetMin: 5000,
 };
 
 const fullValid = {
   ...minimalValid,
-  website: 'https://analyticalengines.example',
   linkedin: 'https://www.linkedin.com/in/ada',
-  city: 'London',
   country: 'UNITED_KINGDOM',
   languages: ['ENGLISH', 'FRENCH'],
   typeOfTeam: 'SOLO',
   partnerScope: ['ADVISORY', 'SOLUTIONING'],
   skills: ['React', 'TypeScript'],
   applicationNotes: 'Workspace https://app.twenty.com/ws/ada · refs: Acme',
-  hourlyRate: 150,
-  projectBudgetMin: 5000,
   calendarLink: 'https://cal.com/ada',
 };
 
@@ -75,6 +75,26 @@ describe('partnerApplicationRequestSchema', () => {
     expect(
       partnerApplicationRequestSchema.safeParse({ email: 'ada@example.com' })
         .success,
+    ).toBe(false);
+  });
+
+  it('rejects when a newly-required field is missing', () => {
+    for (const field of ['website', 'city', 'hourlyRate', 'projectBudgetMin']) {
+      const withoutField = Object.fromEntries(
+        Object.entries(minimalValid).filter(([key]) => key !== field),
+      );
+      expect(
+        partnerApplicationRequestSchema.safeParse(withoutField).success,
+      ).toBe(false);
+    }
+  });
+
+  it('rejects a negative hourly rate', () => {
+    expect(
+      partnerApplicationRequestSchema.safeParse({
+        ...minimalValid,
+        hourlyRate: -5,
+      }).success,
     ).toBe(false);
   });
 });

@@ -14,7 +14,6 @@ const teamTypeValues = PARTNER_TEAM_TYPE_OPTIONS.map((option) => option.value);
 
 const optionalNonEmptyString = z.string().trim().min(1).optional();
 const optionalUrl = httpUrlFieldSchema.optional();
-const optionalNonNegativeNumber = z.number().nonnegative().optional();
 
 // The single source of truth for partner-application validation. The server
 // route parses against it; the client reducer reuses the field schemas above
@@ -24,17 +23,19 @@ export const partnerApplicationRequestSchema = z.strictObject({
   name: z.string().trim().min(1, { error: 'Name is required.' }),
   email: emailFieldSchema,
   company: z.string().trim().min(1, { error: 'Company is required.' }),
-  website: optionalUrl,
+  website: httpUrlFieldSchema,
   linkedin: optionalUrl,
-  city: optionalNonEmptyString,
+  city: z.string().trim().min(1, { error: 'City is required.' }),
   country: z.enum(countryValues).optional(),
   languages: z.array(z.enum(languageValues)).optional(),
   typeOfTeam: z.enum(teamTypeValues).optional(),
   partnerScope: z.array(z.enum(scopeValues)).optional(),
   skills: z.array(z.string().trim().min(1)).optional(),
   applicationNotes: optionalNonEmptyString,
-  hourlyRate: optionalNonNegativeNumber,
-  projectBudgetMin: optionalNonNegativeNumber,
+  hourlyRate: z.number({ error: 'Hourly rate is required.' }).nonnegative(),
+  projectBudgetMin: z
+    .number({ error: 'Minimum project budget is required.' })
+    .nonnegative(),
   calendarLink: optionalUrl,
 });
 
