@@ -2,7 +2,6 @@ import { type I18n } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 
 jest.mock('src/engine/core-modules/i18n/utils/generateMessageId');
@@ -31,16 +30,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
         color: 'blue',
         isCustom: true,
         standardOverrides: undefined,
-      } satisfies Pick<
-        ObjectMetadataDTO,
-        | 'color'
-        | 'labelPlural'
-        | 'labelSingular'
-        | 'description'
-        | 'icon'
-        | 'isCustom'
-        | 'standardOverrides'
-      >;
+      };
 
       const result = resolveObjectMetadataStandardOverride(
         objectMetadata,
@@ -62,16 +52,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
         color: 'blue',
         isCustom: true,
         standardOverrides: undefined,
-      } satisfies Pick<
-        ObjectMetadataDTO,
-        | 'color'
-        | 'labelPlural'
-        | 'labelSingular'
-        | 'description'
-        | 'icon'
-        | 'isCustom'
-        | 'standardOverrides'
-      >;
+      };
 
       mockGenerateMessageId.mockReturnValue('company.message.id');
       mockI18n._.mockReturnValue('Entreprise');
@@ -98,16 +79,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
         color: 'blue',
         isCustom: true,
         standardOverrides: undefined,
-      } satisfies Pick<
-        ObjectMetadataDTO,
-        | 'color'
-        | 'labelPlural'
-        | 'labelSingular'
-        | 'description'
-        | 'icon'
-        | 'isCustom'
-        | 'standardOverrides'
-      >;
+      };
 
       const result = resolveObjectMetadataStandardOverride(
         objectMetadata,
@@ -129,16 +101,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
         color: 'blue',
         isCustom: true,
         standardOverrides: undefined,
-      } satisfies Pick<
-        ObjectMetadataDTO,
-        | 'color'
-        | 'labelPlural'
-        | 'labelSingular'
-        | 'description'
-        | 'icon'
-        | 'isCustom'
-        | 'standardOverrides'
-      >;
+      };
 
       const result = resolveObjectMetadataStandardOverride(
         objectMetadata,
@@ -160,16 +123,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
         color: 'green',
         isCustom: true,
         standardOverrides: undefined,
-      } satisfies Pick<
-        ObjectMetadataDTO,
-        | 'color'
-        | 'labelPlural'
-        | 'labelSingular'
-        | 'description'
-        | 'icon'
-        | 'isCustom'
-        | 'standardOverrides'
-      >;
+      };
 
       const result = resolveObjectMetadataStandardOverride(
         objectMetadata,

@@ -62,9 +62,6 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   color?: string;
 
-  @HideField()
-  isCustom: boolean;
-
   @FilterableField()
   isRemote: boolean;
 

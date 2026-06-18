@@ -59,7 +59,6 @@ import {
   toLegacyObjectMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/object-metadata/utils/to-legacy-object-metadata-response.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
-import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 
 @Controller('rest/metadata/objects')
 @UseGuards(
@@ -95,17 +94,6 @@ export class ObjectMetadataController {
     return computeUniqueFieldMetadataIdsFromFlatIndexMaps(flatIndexMaps);
   }
 
-  private async loadStandardApplicationId(
-    workspaceId: string,
-  ): Promise<string> {
-    const { flatApplicationMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatApplicationMaps'] },
-      );
-
-    return getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
-  }
-
   @Get()
   async findMany(
     @Req() request: AuthenticatedRequest,
@@ -119,22 +107,19 @@ export class ObjectMetadataController {
       endingBefore: parseEndingBeforeRestRequest(request),
     });
 
-    const [fields, uniqueFieldMetadataIds, standardApplicationId] =
-      await Promise.all([
-        this.findFieldsForObjectIds(
-          workspaceId,
-          items.map((object) => object.id),
-        ),
-        this.loadUniqueFieldMetadataIds(workspaceId),
-        this.loadStandardApplicationId(workspaceId),
-      ]);
+    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+      this.findFieldsForObjectIds(
+        workspaceId,
+        items.map((object) => object.id),
+      ),
+      this.loadUniqueFieldMetadataIds(workspaceId),
+    ]);
 
     const data = items.map((object) =>
       this.toObjectWithFieldsDto(
         object,
         fields.get(object.id) ?? [],
         uniqueFieldMetadataIds,
-        standardApplicationId,
       ),
     );
 
@@ -165,20 +150,17 @@ export class ObjectMetadataController {
       );
     }
 
-    const [fields, uniqueFieldMetadataIds, standardApplicationId] =
-      await Promise.all([
-        this.fieldMetadataRepository.find({
-          where: { objectMetadataId: object.id, workspaceId },
-        }),
-        this.loadUniqueFieldMetadataIds(workspaceId),
-        this.loadStandardApplicationId(workspaceId),
-      ]);
+    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+      this.fieldMetadataRepository.find({
+        where: { objectMetadataId: object.id, workspaceId },
+      }),
+      this.loadUniqueFieldMetadataIds(workspaceId),
+    ]);
 
     const result = this.toObjectWithFieldsDto(
       object,
       fields,
       uniqueFieldMetadataIds,
-      standardApplicationId,
     );
 
     return (await this.isNewMetadataFormat(workspaceId))
@@ -196,23 +178,17 @@ export class ObjectMetadataController {
       workspaceId,
     });
 
-    const [fields, uniqueFieldMetadataIds, standardApplicationId] =
-      await Promise.all([
-        this.fieldMetadataRepository.find({
-          where: { objectMetadataId: flatObject.id, workspaceId },
-        }),
-        this.loadUniqueFieldMetadataIds(workspaceId),
-        this.loadStandardApplicationId(workspaceId),
-      ]);
+    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+      this.fieldMetadataRepository.find({
+        where: { objectMetadataId: flatObject.id, workspaceId },
+      }),
+      this.loadUniqueFieldMetadataIds(workspaceId),
+    ]);
 
     const result: ObjectMetadataWithFieldsDTO = {
       ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
       fields: fields.map((field) =>
-        fromFieldMetadataEntityToFieldMetadataDto(
-          field,
-          standardApplicationId,
-          uniqueFieldMetadataIds,
-        ),
+        fromFieldMetadataEntityToFieldMetadataDto(field, uniqueFieldMetadataIds),
       ),
     };
 
@@ -270,23 +246,17 @@ export class ObjectMetadataController {
       workspaceId,
     });
 
-    const [fields, uniqueFieldMetadataIds, standardApplicationId] =
-      await Promise.all([
-        this.fieldMetadataRepository.find({
-          where: { objectMetadataId: flatObject.id, workspaceId },
-        }),
-        this.loadUniqueFieldMetadataIds(workspaceId),
-        this.loadStandardApplicationId(workspaceId),
-      ]);
+    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+      this.fieldMetadataRepository.find({
+        where: { objectMetadataId: flatObject.id, workspaceId },
+      }),
+      this.loadUniqueFieldMetadataIds(workspaceId),
+    ]);
 
     const result: ObjectMetadataWithFieldsDTO = {
       ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
       fields: fields.map((field) =>
-        fromFieldMetadataEntityToFieldMetadataDto(
-          field,
-          standardApplicationId,
-          uniqueFieldMetadataIds,
-        ),
+        fromFieldMetadataEntityToFieldMetadataDto(field, uniqueFieldMetadataIds),
       ),
     };
 
@@ -333,19 +303,11 @@ export class ObjectMetadataController {
     object: ObjectMetadataEntity,
     fields: FieldMetadataEntity[],
     uniqueFieldMetadataIds: ReadonlySet<string>,
-    standardApplicationId: string,
   ): ObjectMetadataWithFieldsDTO {
     return {
-      ...fromObjectMetadataEntityToObjectMetadataDto(
-        object,
-        standardApplicationId,
-      ),
+      ...fromObjectMetadataEntityToObjectMetadataDto(object),
       fields: fields.map((field) =>
-        fromFieldMetadataEntityToFieldMetadataDto(
-          field,
-          standardApplicationId,
-          uniqueFieldMetadataIds,
-        ),
+        fromFieldMetadataEntityToFieldMetadataDto(field, uniqueFieldMetadataIds),
       ),
     };
   }
