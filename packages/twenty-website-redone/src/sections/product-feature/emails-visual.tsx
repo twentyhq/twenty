@@ -5,7 +5,7 @@ import { IconLock, IconPlus } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
-import { PersonAvatar } from '@/app-preview/primitives/person-avatar';
+import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { RecordTabHeader } from './record-tab-header';

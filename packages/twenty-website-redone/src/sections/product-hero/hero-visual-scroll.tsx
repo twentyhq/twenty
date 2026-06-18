@@ -10,7 +10,7 @@ import {
   useState,
 } from 'react';
 
-import { ProductVisual } from '@/app-preview/product-visual/product-visual';
+import { ProductVisual } from '@/app-preview/product-visual/ProductVisual';
 import {
   observeElementSize,
   useMediaQuery,

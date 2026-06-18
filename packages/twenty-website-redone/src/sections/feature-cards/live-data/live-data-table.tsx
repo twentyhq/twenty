@@ -11,7 +11,7 @@ import {
 import { useState } from 'react';
 
 import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
-import { Chip } from '@/app-preview/primitives/chip';
+import { Chip } from '@/app-preview/primitives/Chip';
 import { useHorizontalDragScroll } from '@/platform/motion';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 import { previewFontSize } from '@/app-preview/preview-font-size';

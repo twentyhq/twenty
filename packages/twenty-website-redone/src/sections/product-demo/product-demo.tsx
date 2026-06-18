@@ -3,7 +3,7 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
-import { AppPreview } from '@/app-preview/app-preview';
+import { AppPreview } from '@/app-preview/AppPreview';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
 import { HERO_COMPOSITION, spacing } from '@/tokens';

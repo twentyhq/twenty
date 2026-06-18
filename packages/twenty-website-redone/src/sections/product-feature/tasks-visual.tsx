@@ -5,8 +5,8 @@ import { IconCalendar, IconCheck } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
-import { Chip } from '@/app-preview/primitives/chip';
-import { PersonAvatar } from '@/app-preview/primitives/person-avatar';
+import { Chip } from '@/app-preview/primitives/Chip';
+import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { RecordTabHeader } from './record-tab-header';

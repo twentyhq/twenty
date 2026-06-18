@@ -23,10 +23,10 @@ import { useState } from 'react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
-import { Chip } from '@/app-preview/primitives/chip';
-import { FaviconLogo } from '@/app-preview/primitives/favicon-logo';
-import { PersonAvatar } from '@/app-preview/primitives/person-avatar';
-import { PreviewTag } from '@/app-preview/primitives/preview-tag';
+import { Chip } from '@/app-preview/primitives/Chip';
+import { FaviconLogo } from '@/app-preview/primitives/FaviconLogo';
+import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
+import { PreviewTag } from '@/app-preview/primitives/PreviewTag';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 import { useHorizontalDragScroll } from '@/platform/motion';
 import { EASING } from '@/tokens';

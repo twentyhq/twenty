@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-import { AppPreview } from '@/app-preview/app-preview';
+import { AppPreview } from '@/app-preview/AppPreview';
 import { TalkToUsButton } from '@/contact-cal';
 
 import { HeroBackdrop } from './hero-backdrop';
