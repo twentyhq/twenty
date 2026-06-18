@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { IconPlayerPlay } from 'twenty-ui/display';
+import { IconPlayerPlay } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type HeroPlayButtonProps = {

@@ -13,7 +13,7 @@ import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useG
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
+import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownCalendarFieldsContent = () => {

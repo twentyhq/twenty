@@ -15,6 +15,7 @@ describe('extractRecallBotConvergence', () => {
 
     // COMPLETED is reserved for full artifact ingestion, never bot state.
     expect(convergence.status).toBe('PROCESSING');
+    expect(convergence.isRecallRecordingDone).toBe(true);
   });
 
   it('uses created_at to find the latest status when Recall returns status changes out of order', () => {
@@ -49,6 +50,7 @@ describe('extractRecallBotConvergence', () => {
       startedAt: '2026-01-01T13:02:00.000Z',
       endedAt: '2026-01-01T14:00:00.000Z',
       externalRecordingId: 'recall-recording-1',
+      isRecallRecordingDone: true,
     });
   });
 
@@ -66,6 +68,7 @@ describe('extractRecallBotConvergence', () => {
       startedAt: '2026-01-01T13:02:00.000Z',
       endedAt: '2026-01-01T14:00:00.000Z',
       externalRecordingId: 'recall-recording-1',
+      isRecallRecordingDone: false,
     });
   });
 
@@ -93,6 +96,7 @@ describe('extractRecallBotConvergence', () => {
       startedAt: undefined,
       endedAt: undefined,
       externalRecordingId: undefined,
+      isRecallRecordingDone: false,
     });
   });
 
@@ -112,6 +116,7 @@ describe('extractRecallBotConvergence', () => {
       startedAt: '2026-01-01T13:02:00.000Z',
       endedAt: undefined,
       externalRecordingId: undefined,
+      isRecallRecordingDone: false,
     });
   });
 

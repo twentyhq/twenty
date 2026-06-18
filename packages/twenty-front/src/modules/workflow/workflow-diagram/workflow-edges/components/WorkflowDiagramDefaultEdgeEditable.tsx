@@ -15,7 +15,7 @@ import { useLingui } from '@lingui/react/macro';
 import { EdgeLabelRenderer } from '@xyflow/react';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus, IconTrash } from 'twenty-ui/display';
+import { IconPlus, IconTrash } from 'twenty-ui/icon';
 
 type WorkflowDiagramDefaultEdgeEditableProps =
   WorkflowDiagramEdgeComponentProps;

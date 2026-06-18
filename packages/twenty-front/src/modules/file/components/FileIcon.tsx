@@ -6,7 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { FILE_CATEGORIES, type FileCategory } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarOrIcon } from 'twenty-ui/components';
+import { AvatarOrIcon } from 'twenty-ui/data-display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FileIconSize = 'small' | 'medium';

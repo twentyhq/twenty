@@ -8,6 +8,8 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
@@ -17,6 +19,7 @@ describe('JwtAuthStrategy', () => {
   let userWorkspaceRepository: any;
   let jwtWrapperService: any;
   let permissionsService: any;
+  let twentyConfigService: any;
   let workspaceCacheService: any;
   let coreEntityCacheService: any;
 
@@ -50,6 +53,12 @@ describe('JwtAuthStrategy', () => {
 
     permissionsService = {
       userHasWorkspaceSettingPermission: jest.fn(),
+    };
+
+    twentyConfigService = {
+      get: jest.fn((key: string) =>
+        key === 'NODE_ENV' ? NodeEnvironment.DEVELOPMENT : undefined,
+      ),
     };
 
     workspaceCacheService = {
@@ -118,9 +127,12 @@ describe('JwtAuthStrategy', () => {
     new JwtAuthStrategy(
       jwtWrapperService,
       userWorkspaceRepository,
-      permissionsService,
       workspaceCacheService,
       coreEntityCacheService,
+      new ImpersonationAuthorizationService(
+        permissionsService,
+        twentyConfigService,
+      ),
     );
 
   describe('API_KEY validation', () => {

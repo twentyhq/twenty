@@ -15,15 +15,11 @@ import { useContext } from 'react';
 import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  H2Title,
-  HorizontalSeparator,
-  IconChartBar,
-  IconExternalLink,
-} from 'twenty-ui/display';
+import { IconChartBar, IconExternalLink } from 'twenty-ui/icon';
+import { HorizontalSeparator, Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/typography';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';

@@ -3,7 +3,7 @@ import {
   type IconComponent,
   IconLayoutKanban,
   IconTable,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 
 export { ViewType } from '~/generated-metadata/graphql';
 import { ViewType } from '~/generated-metadata/graphql';

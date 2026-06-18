@@ -22,7 +22,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/icon';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 

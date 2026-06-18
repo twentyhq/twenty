@@ -10,9 +10,9 @@ import {
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipSize } from 'twenty-ui/components';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { AnimatedContainer } from 'twenty-ui/utilities';
+import { ChipSize } from 'twenty-ui/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { AnimatedContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
