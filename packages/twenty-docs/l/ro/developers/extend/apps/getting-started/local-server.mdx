@@ -11,6 +11,7 @@ Folosiți `yarn twenty docker:*` pentru a controla containerul Twenty local:
 | Comandă                                | Ce face                                                      |
 | -------------------------------------- | ------------------------------------------------------------ |
 | `yarn twenty docker:start`             | Pornește serverul (descarcă imaginea dacă este necesar)      |
+| `yarn twenty docker:start 2.2.0`       | Pornește o anumită versiune a serverului                     |
 | `yarn twenty docker:start --port 3030` | Pornește pe un port personalizat                             |
 | `yarn twenty docker:stop`              | Oprește serverul (păstrează datele)                          |
 | `yarn twenty docker:status`            | Afișează URL-ul, versiunea și credențialele de autentificare |
@@ -20,6 +21,20 @@ Folosiți `yarn twenty docker:*` pentru a controla containerul Twenty local:
 | `yarn twenty docker:upgrade 2.2.0`     | Actualizează la o versiune specifică                         |
 
 Datele persistă între reporniri în două volume Docker (`twenty-app-dev-data` pentru PostgreSQL, `twenty-app-dev-storage` pentru fișiere). Folosiți `reset` pentru a șterge totul.
+
+## Fixarea versiunii serverului
+
+Când nu este transmisă nicio versiune, `docker:start` rezolvă versiunea din intervalul `engines.twenty` al aplicației tale din `package.json` — același interval față de care serverul validează când aplicația ta este instalată. Pornește cea mai nouă imagine publicată `twenty-app-dev` care satisface intervalul, revenind la `latest` atunci când câmpul lipsește sau nicio versiune publicată nu se potrivește:
+
+```json filename="package.json"
+{
+  "engines": {
+    "twenty": ">=2.2.0"
+  }
+}
+```
+
+Transmite explicit o versiune pentru a suprascrie intervalul pentru o singură rulare: `yarn twenty docker:start 2.3.0`. Dacă un container există deja pe o versiune diferită, `docker:start` îl actualizează pe loc (recreând containerul, dar păstrând volumele tale de date).
 
 ## Actualizarea imaginii serverului
 

@@ -7,6 +7,7 @@ type FailingApiResponse<TError = unknown> = {
   success: false;
   error?: TError;
   message?: string;
+  isAuthError?: boolean;
 };
 export type ApiResponse<TData = unknown, TError = unknown> =
   | SuccessfulApiResponse<TData>

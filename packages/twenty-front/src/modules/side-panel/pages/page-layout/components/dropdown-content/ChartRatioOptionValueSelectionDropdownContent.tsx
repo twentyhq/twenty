@@ -15,8 +15,8 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft } from 'twenty-ui-deprecated/display';
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { type ThemeColor } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 

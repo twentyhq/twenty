@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { SELECT_DAY_DROPDOWN_ID } from '@/ui/input/components/internal/date/constants/SelectDayDropdownId';
 import { type DayNameWithIndex } from '@/ui/input/components/internal/date/types/DayNameWithIndex';
 import { Select } from '@/ui/input/components/Select';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { type SelectOption } from 'twenty-ui/input';
 
 export const DaySelect = ({
   label,

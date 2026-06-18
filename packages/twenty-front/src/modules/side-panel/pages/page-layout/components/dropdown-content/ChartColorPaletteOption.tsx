@@ -5,14 +5,11 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { ColorSample } from 'twenty-ui-deprecated/display';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
-import { getMainColorNameFromPaletteColorName } from 'twenty-ui-deprecated/utilities';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
+import { ColorSample } from 'twenty-ui/data-display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
+import { getMainColorNameFromPaletteColorName } from 'twenty-ui/utilities';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor } from 'twenty-ui/theme';
 type ChartColorPaletteOptionProps = {
   selectedItemId: string | null;
   currentColor: string | null | undefined;

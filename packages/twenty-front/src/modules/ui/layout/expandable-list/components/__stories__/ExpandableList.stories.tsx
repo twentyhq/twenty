@@ -2,9 +2,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { Tag } from 'twenty-ui-deprecated/components';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
-import { MAIN_COLOR_NAMES } from 'twenty-ui-deprecated/theme';
+import { Tag } from 'twenty-ui/data-display';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 const meta: Meta<typeof ExpandableList> = {
   title: 'UI/Layout/ExpandableList/ExpandableList',

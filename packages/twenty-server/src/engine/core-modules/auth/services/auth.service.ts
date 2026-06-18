@@ -959,19 +959,15 @@ export class AuthService {
   ): Promise<string> {
     const email = rawEmail.toLowerCase();
 
-    const availableWorkspacesCount =
-      action === 'list-available-workspaces'
-        ? await this.countAvailableWorkspacesByEmail(email)
-        : 0;
-
     const existingUser =
       await this.userService.findUserByEmailWithWorkspaces(email);
 
+    // Route SSO sign-ins through the same create-or-select flow as credentials
+    // instead of landing straight on a workspace subdomain.
     if (
       !workspaceId &&
       !workspaceInviteHash &&
-      action === 'list-available-workspaces' &&
-      availableWorkspacesCount > 1
+      action === 'list-available-workspaces'
     ) {
       const user =
         existingUser ??

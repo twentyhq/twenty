@@ -4,7 +4,7 @@ import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/Tex
 import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
-import { IconExternalLink, IconLinkOff } from 'twenty-ui-deprecated/display';
+import { IconExternalLink, IconLinkOff } from 'twenty-ui/icon';
 import { getSafeUrl } from 'twenty-shared/utils';
 
 type LinkBubbleMenuProps = {

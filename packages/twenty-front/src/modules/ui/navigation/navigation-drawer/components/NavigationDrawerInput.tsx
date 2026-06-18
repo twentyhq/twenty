@@ -7,10 +7,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { type JSX, type FocusEvent, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type IconComponent,
-  type TablerIconsProps,
-} from 'twenty-ui-deprecated/display';
+import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
 
 type NavigationDrawerInputProps = {
   className?: string;

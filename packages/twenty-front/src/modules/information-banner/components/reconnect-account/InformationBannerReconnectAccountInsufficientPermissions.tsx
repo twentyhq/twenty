@@ -4,7 +4,7 @@ import { useDismissReconnectAccountBanner } from '@/information-banner/hooks/use
 import { InformationBannerKeys } from '@/information-banner/types/InformationBannerKeys';
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 import { t } from '@lingui/core/macro';
-import { IconRefresh } from 'twenty-ui-deprecated/display';
+import { IconRefresh } from 'twenty-ui/icon';
 
 const COMPONENT_INSTANCE_ID =
   'information-banner-reconnect-account-insufficient-permissions';

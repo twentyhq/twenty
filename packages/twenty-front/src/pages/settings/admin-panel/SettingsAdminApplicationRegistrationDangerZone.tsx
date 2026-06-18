@@ -8,21 +8,11 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import {
-  AppTooltip,
-  H1Title,
-  H1TitleFontColor,
-  H2Title,
-  IconShare,
-  IconTrash,
-  TooltipDelay,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui-deprecated/layout';
+import { IconShare, IconTrash } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { H1Title, H1TitleFontColor, H2Title } from 'twenty-ui/typography';
+import { Button } from 'twenty-ui/input';
+import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {
   type ApplicationRegistration,
   DeleteApplicationRegistrationDocument,
@@ -31,7 +21,7 @@ import {
   TransferApplicationRegistrationOwnershipDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   StyledAppModal,
   StyledAppModalButton,

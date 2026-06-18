@@ -3,7 +3,7 @@ import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/s
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconCalendarEvent } from 'twenty-ui-deprecated/display';
+import { IconCalendarEvent } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
 

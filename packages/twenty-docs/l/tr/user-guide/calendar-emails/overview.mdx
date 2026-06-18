@@ -25,14 +25,24 @@ description: E-posta ve takvim hesaplarınızı Twenty'ye bağlayın.
 6. Takvim eşitleme ayarlarını yapılandırın (görünürlük, otomatik oluşturma) → **Hesap Ekle**'ye tıklayın
 7. E-postalarınız ve takvim etkinlikleriniz otomatik olarak senkronize edilmeye başlayacaktır.
 
-### SMTP/CalDAV Ayarları (Diğer Sağlayıcılar)
+### IMAP/SMTP/CalDAV Ayarları (Diğer Sağlayıcılar)
 
 Diğer e-posta ve takvim sağlayıcıları için:
 
 1. **Ayarlar → Hesaplar** sekmesine gidin.
-2. E-posta için SMTP ayarlarını yapılandırın
+2. Gelen e-postaları eşitlemek için IMAP ayarlarını ve e-posta göndermek için SMTP ayarlarını yapılandırın
 3. Takvim için CalDAV ayarlarını yapılandırın
 4. Bağlantıyı test edin
+
+<Note>
+**Hava boşluklu veya dahili bir ağda kendi sunucunuzda barındırma**: Varsayılan olarak Twenty, özel/dahili IP adreslerine giden bağlantıları reddeder (SSRF koruması). Eğer e-posta veya takvim sunucunuz yerel/özel bir IP üzerinde çalışıyorsa (örneğin bir LAN üzerinde şirket içi bir sunucu), buna yönelik bağlantılar engellenecektir. Bunlara izin vermek için sunucuda aşağıdaki ortam değişkenini ayarlayın:
+
+```
+OUTBOUND_HTTP_SAFE_MODE_ENABLED=false
+```
+
+Bu, **tüm** giden istekler (HTTP iş akışı eylemleri, webhooks ve IMAP/SMTP/CalDAV bağlantıları) için güvenli kipi devre dışı bırakır; bu nedenle yalnızca SSRF korumasına ihtiyaç duyulmayan, güvenilir ve yalıtılmış ağlarda ayarlayın.
+</Note>
 
 ### Birden Fazla Posta Kutusu
 
@@ -59,9 +69,18 @@ E-postalarınız için farklı görünürlük seviyeleri seçin:
 * **Devre Dışı**: Otomatik kişi oluşturma yok
 * **Gönderilen ve alınan mesajlar için**: Tüm dış e-posta etkileşimleri için kişiler oluşturun
 * **Yalnızca gönderilen mesajlar için**: Yalnızca gönderdiğiniz e-postalar için kişi oluşturun
-* **Not**: Gizliliği korumak için dahili e-postalar (aynı etki alanı) asla senkronize edilmez
+* **Not**: Varsayılan olarak, gizliliği korumak için (tüm katılımcıların alan adınızı paylaştığı) dahili e-postalar eşitlenmez.
 
 <Note>Etkinleştirildiğinde, kişiler e-posta alan adlarına göre Şirket kayıtlarına otomatik olarak bağlanır. Şirket henüz mevcut değilse, Twenty onu sizin için oluşturur.</Note>
+
+<Note>
+**Dahili e-postaların eşitlenmesi**: "Dahili e-postalar eşitlenmez" davranışı varsayılandır, ancak kapatılabilir. Aç/Kapa anahtarı Gelişmiş ayarlarda bulunur:
+1. **Ayarlar**'ı açın ve ayarlar sayfasının en altındaki **Gelişmiş** aç/kapa anahtarını etkinleştirin
+2. **Genel → Güvenlik** bölümüne gidin
+3. Tüm katılımcıların aynı alan adını paylaştığı e-postaları dahil etmek için **Dahili E-postaları Eşitle** aç/kapa anahtarını etkinleştirin
+
+Bu, çalışma alanı genelinde bir ayardır (üniversiteler veya ortak alan adına sahip kuruluşlar için kullanışlıdır).
+</Note>
 
 ### Mesaj Klasörü Seçimi ile hangi e-postaların senkronize edileceğini kontrol edin
 
@@ -79,7 +98,7 @@ Bu, her şeyi senkronize etmeden CRM'inizde hangi e-postaların görüneceği ü
 **Neler Senkronize Edilir:**
 
 * **Dış E-postalar**: Seçilen klasörlerden dış iletişimlere sahip tüm e-postalar
-* **Dahili E-postalar**: Senkronize edilmez (aynı etki alanı e-postaları özel kalır)
+* **Dahili E-postalar**: Varsayılan olarak eşitlenmez (aynı alan adına sahip e-postalar özel kalır). **Ayarlar**'ın en altındaki **Gelişmiş** aç/kapa anahtarını etkinleştirin ve ardından çalışma alanı genelinde dahil etmek için **Genel → Güvenlik** altında **Dahili E-postaları Eşitle** aç/kapa anahtarını açın.
 * **Ekler**: 2026 Yılında Gelecek
 
 **Not**: Selektif senkronizasyon için bir CC e-posta adresi sağlamıyoruz. Bunun yerine, Twenty ile hangi e-postaların senkronize edileceği konusunda aynı kontrol seviyesini elde etmek için yukarıdaki Mesaj Klasörü özelliğini kullanın.

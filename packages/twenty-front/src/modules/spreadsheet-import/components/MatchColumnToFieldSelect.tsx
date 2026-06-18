@@ -11,11 +11,11 @@ import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHas
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown } from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { IconChevronDown } from 'twenty-ui/icon';
+import { type SelectOption } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 interface MatchColumnToFieldSelectProps {
   columnIndex: string;

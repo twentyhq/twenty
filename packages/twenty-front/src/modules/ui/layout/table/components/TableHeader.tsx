@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ComponentPropsWithoutRef, type Ref, forwardRef } from 'react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TableHeaderProps = Omit<ComponentPropsWithoutRef<'div'>, 'onClick'> & {
   align?: 'left' | 'center' | 'right';

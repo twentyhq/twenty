@@ -1,5 +1,5 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
-import { IconApps, type IconComponent } from 'twenty-ui-deprecated/display';
+import { IconApps, type IconComponent } from 'twenty-ui/icon';
 
 type IconPickerState = {
   Icon: IconComponent;

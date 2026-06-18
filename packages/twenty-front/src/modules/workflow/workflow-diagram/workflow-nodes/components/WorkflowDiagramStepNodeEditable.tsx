@@ -12,7 +12,7 @@ import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWor
 import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditableContent';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui-deprecated/display';
+import { useIcons } from 'twenty-ui/icon';
 
 export const WorkflowDiagramStepNodeEditable = ({
   id,

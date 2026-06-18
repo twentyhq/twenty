@@ -5,7 +5,7 @@ import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecora
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockedCompanyObjectMetadataItem =

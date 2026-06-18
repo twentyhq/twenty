@@ -8,9 +8,9 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { type DraggableProvided } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { StyledTabContainer, TabContent } from 'twenty-ui-deprecated/input';
-import { MenuItemSelectAvatar } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { StyledTabContainer, TabContent } from 'twenty-ui/input';
+import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 const StyledDraggableWrapper = styled.div`
   cursor: grab;
   display: flex;

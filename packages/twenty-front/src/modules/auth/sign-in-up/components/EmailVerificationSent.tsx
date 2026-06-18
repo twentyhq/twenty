@@ -10,15 +10,10 @@ import {
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { t } from '@lingui/core/macro';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import {
-  IconGmail,
-  IconMail,
-  IconMailX,
-  IconMicrosoft,
-} from 'twenty-ui-deprecated/display';
-import { MainButton } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui-deprecated/utilities';
+import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
+import { MainButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AnimatedEaseIn } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
   align-items: center;

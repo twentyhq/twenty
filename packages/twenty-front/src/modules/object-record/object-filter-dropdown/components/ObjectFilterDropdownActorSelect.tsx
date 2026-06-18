@@ -15,7 +15,7 @@ import {
   arrayOfUuidOrVariableSchema,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
-import { IconUserCircle } from 'twenty-ui-deprecated/display';
+import { IconUserCircle } from 'twenty-ui/icon';
 
 export const EMPTY_ACTOR_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,

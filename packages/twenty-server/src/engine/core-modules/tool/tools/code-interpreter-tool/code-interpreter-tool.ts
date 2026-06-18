@@ -42,7 +42,7 @@ export class CodeInterpreterTool implements Tool {
   private readonly logger = new Logger(CodeInterpreterTool.name);
 
   description =
-    'Execute Python code in a sandboxed environment for data analysis, CSV processing, calculations, and chart generation. Returns stdout, stderr, and generated files. Input files are available at /home/user/{filename}. Save output files (charts, reports) to /home/user/output/ using plt.savefig() for matplotlib charts.';
+    'Execute Python code in a sandboxed environment for data analysis, CSV processing, calculations, and chart generation. Returns stdout, stderr, and generated files. Input files are available at /home/user/{filename}. Save output files (charts, reports) to /home/user/output/ using plt.savefig() for matplotlib charts. The sandbox is reused across calls within the same conversation: variables, imports, and any files you write outside /home/user/output persist between calls, so build on earlier results instead of recomputing or re-downloading them. /home/user/output is cleared at the start of every call, so write the files you want returned in the same call that produces them.';
 
   inputSchema = CodeInterpreterInputZodSchema;
 
@@ -82,8 +82,13 @@ export class CodeInterpreterTool implements Tool {
     parameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const { workspaceId, userId, userWorkspaceId, onCodeExecutionUpdate } =
-      context;
+    const {
+      workspaceId,
+      userId,
+      userWorkspaceId,
+      threadId,
+      onCodeExecutionUpdate,
+    } = context;
     const { code, files } = parameters as CodeInterpreterInput;
     const executionId = v4();
     const startTime = Date.now();
@@ -128,6 +133,7 @@ export class CodeInterpreterTool implements Tool {
             TWENTY_SERVER_URL: serverUrl,
             TWENTY_API_TOKEN: sessionToken,
           },
+          sessionId: threadId ? `${workspaceId}:${threadId}` : undefined,
         },
         {
           onStdout: (line) => {

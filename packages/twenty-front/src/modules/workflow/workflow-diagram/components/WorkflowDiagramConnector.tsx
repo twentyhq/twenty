@@ -1,4 +1,4 @@
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 export const WorkflowDiagramConnector = () => {
   const { theme } = useContext(ThemeContext);

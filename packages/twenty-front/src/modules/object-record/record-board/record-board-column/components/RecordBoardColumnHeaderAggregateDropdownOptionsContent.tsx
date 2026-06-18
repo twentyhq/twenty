@@ -19,7 +19,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import isEmpty from 'lodash.isempty';
-import { IconCheck, IconChevronLeft } from 'twenty-ui-deprecated/display';
+import { IconCheck, IconChevronLeft } from 'twenty-ui/icon';
 
 export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
   availableAggregations,

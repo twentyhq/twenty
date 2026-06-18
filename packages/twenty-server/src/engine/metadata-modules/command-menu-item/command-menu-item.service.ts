@@ -356,6 +356,7 @@ export class CommandMenuItemService {
         flatCommandMenuItemToDelete.applicationUniversalIdentifier,
       workspaceCustomApplicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
+      isSystemSideEffect: flatCommandMenuItemToDelete.isSystemSideEffect,
     });
 
     const deactivatedFlatCommandMenuItem = {

@@ -65,6 +65,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     id: pageLayoutWidgetId,
     ...commonProperties,
     isActive: true,
+    isSystemSideEffect: false,
     workspaceId,
     createdAt,
     updatedAt: createdAt,
