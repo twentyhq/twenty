@@ -223,6 +223,10 @@ export class ViewResolver {
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
+    if (isDefined(view.viewFields)) {
+      return view.viewFields;
+    }
+
     return context.loaders.viewFieldsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,

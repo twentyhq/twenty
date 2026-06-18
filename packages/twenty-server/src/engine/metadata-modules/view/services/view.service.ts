@@ -120,12 +120,15 @@ export class ViewService {
         },
       );
 
-    return fromFlatViewToViewDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatViewToCreate.id,
-        flatEntityMaps: recomputedExistingFlatViewMaps,
-      }),
-    );
+    return {
+      ...fromFlatViewToViewDto(
+        findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: flatViewToCreate.id,
+          flatEntityMaps: recomputedExistingFlatViewMaps,
+        }),
+      ),
+      viewFields: [],
+    };
   }
 
   async updateOne({
