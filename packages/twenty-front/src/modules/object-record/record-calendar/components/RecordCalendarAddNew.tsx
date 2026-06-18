@@ -11,7 +11,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type Temporal } from 'temporal-polyfill';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

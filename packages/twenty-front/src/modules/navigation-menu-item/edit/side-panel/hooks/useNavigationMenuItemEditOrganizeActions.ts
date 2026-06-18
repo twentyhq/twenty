@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDotsVertical } from 'twenty-ui/display';
+import { IconDotsVertical } from 'twenty-ui/icon';
 
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';

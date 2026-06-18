@@ -1,4 +1,4 @@
-import { type IconComponent, useIcons } from 'twenty-ui/display';
+import { type IconComponent, useIcons } from 'twenty-ui/icon';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';

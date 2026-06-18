@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { AvatarOrIcon } from 'twenty-ui/components';
+import { AvatarOrIcon } from 'twenty-ui/data-display';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';

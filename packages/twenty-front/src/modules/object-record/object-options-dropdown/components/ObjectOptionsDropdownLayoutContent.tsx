@@ -33,8 +33,8 @@ import {
   IconLayoutNavbar,
   IconLayoutSidebarRight,
   IconTable,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
 import {
   ViewCalendarLayout,

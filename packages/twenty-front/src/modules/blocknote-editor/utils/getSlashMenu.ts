@@ -25,7 +25,7 @@ import {
   IconPilcrow,
   IconTable,
   IconVideo,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 
 const Icons: Record<string, IconComponent> = {
   'Heading 1': IconH1,

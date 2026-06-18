@@ -1,9 +1,10 @@
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
+import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import {
   extractRecallBotConvergence,
   type RecallBotConvergence,
@@ -13,8 +14,12 @@ import {
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
+import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
+import { requestTranscript } from 'src/logic-functions/flows/request-transcript.util';
+import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
 import {
   updateCallRecording,
   type CallRecordingUpdateFields,
@@ -37,6 +42,9 @@ type DivergedCallRecordingCandidate = {
   endedAt: string | undefined;
   externalBotId: string | undefined;
   externalRecordingId: string | undefined;
+  transcript: unknown;
+  audio: FilesFieldValue | undefined;
+  video: FilesFieldValue | undefined;
   createdAt: string | undefined;
   calendarEventEndsAt: string | undefined;
 };
@@ -48,6 +56,9 @@ type DivergedCallRecordingNode = {
   endedAt?: string | null;
   externalBotId?: string | null;
   externalRecordingId?: string | null;
+  transcript?: unknown;
+  audio?: FilesFieldValue | null;
+  video?: FilesFieldValue | null;
   createdAt?: string | null;
   calendarEvent?: { endsAt?: string | null } | null;
 };
@@ -107,6 +118,7 @@ export const convergeDivergedCallRecordings = async ({
       client,
       candidate,
       externalBotId: candidate.externalBotId,
+      now,
       result,
     });
   }
@@ -124,6 +136,10 @@ const fetchDivergedCallRecordingCandidates = async (
         recordingRequestStatus: { eq: CallRecordingRequestStatus.REQUESTED },
         status: { in: NON_TERMINAL_CALL_RECORDING_STATUSES },
         externalBotId: { is: 'NOT_NULL' },
+      },
+      {
+        status: { eq: CallRecordingStatus.COMPLETED },
+        or: [{ startedAt: { is: 'NULL' } }, { endedAt: { is: 'NULL' } }],
       },
     ],
   };
@@ -148,6 +164,9 @@ const fetchDivergedCallRecordingCandidates = async (
               endedAt: true,
               externalBotId: true,
               externalRecordingId: true,
+              transcript: true,
+              audio: { fileId: true },
+              video: { fileId: true },
               createdAt: true,
               calendarEvent: {
                 endsAt: true,
@@ -157,7 +176,7 @@ const fetchDivergedCallRecordingCandidates = async (
         },
       });
 
-      return queryResult.callRecordings as
+      return (queryResult.callRecordings ?? undefined) as
         | ConnectionPage<DivergedCallRecordingNode>
         | undefined;
     },
@@ -174,6 +193,9 @@ const fetchDivergedCallRecordingCandidates = async (
     externalRecordingId: isNonEmptyString(node.externalRecordingId)
       ? node.externalRecordingId
       : undefined,
+    transcript: node.transcript ?? undefined,
+    audio: node.audio ?? undefined,
+    video: node.video ?? undefined,
     createdAt: node.createdAt ?? undefined,
     calendarEventEndsAt: node.calendarEvent?.endsAt ?? undefined,
   }));
@@ -198,6 +220,7 @@ const isPossiblyStillLive = (
   candidate: DivergedCallRecordingCandidate,
   liveMeetingCutoff: Date,
 ): boolean =>
+  candidate.status !== CallRecordingStatus.COMPLETED &&
   !isUndefined(candidate.calendarEventEndsAt) &&
   new Date(candidate.calendarEventEndsAt).getTime() >
     liveMeetingCutoff.getTime();
@@ -206,11 +229,13 @@ const convergeCallRecording = async ({
   client,
   candidate,
   externalBotId,
+  now,
   result,
 }: {
   client: CoreApiClient;
   candidate: DivergedCallRecordingCandidate;
   externalBotId: string;
+  now: Date;
   result: ConvergeDivergedCallRecordingsResult;
 }): Promise<void> => {
   const botResult = await getRecallBot({ externalBotId });
@@ -237,13 +262,50 @@ const convergeCallRecording = async ({
   const convergence = extractRecallBotConvergence(botResult.bot);
   const updateData = buildConvergenceFieldUpdates({ candidate, convergence });
 
-  if (Object.keys(updateData).length === 0) {
+  const externalRecordingId =
+    candidate.externalRecordingId ?? convergence.externalRecordingId;
+
+  if (convergence.isRecallRecordingDone && !isUndefined(externalRecordingId)) {
+    if (isUndefined(candidate.transcript)) {
+      const transcriptMarker = await requestTranscript({
+        externalRecordingId,
+        requestedAt: now.toISOString(),
+      });
+
+      if (!isNull(transcriptMarker)) {
+        updateData.transcript = transcriptMarker;
+        updateData.externalRecordingId = externalRecordingId;
+        await updateCallRecording(client, {
+          id: candidate.id,
+          data: { transcript: transcriptMarker, externalRecordingId },
+        });
+      }
+    }
+
+    Object.assign(
+      updateData,
+      await ingestCallRecordingMedia({
+        callRecordingId: candidate.id,
+        externalRecordingId,
+        hasAudio: isNonEmptyArray(candidate.audio),
+        hasVideo: isNonEmptyArray(candidate.video),
+      }),
+    );
+  }
+
+  const completesIngestion = shouldCompleteCallRecordingIngestion({
+    current: candidate,
+    updateData,
+  });
+
+  if (Object.keys(updateData).length === 0 && !completesIngestion) {
     return;
   }
 
-  await updateCallRecording(client, {
+  await persistCallRecordingProgress(client, {
     id: candidate.id,
-    data: updateData,
+    current: candidate,
+    updateData,
   });
 
   result.updatedCallRecordingIds.push(candidate.id);

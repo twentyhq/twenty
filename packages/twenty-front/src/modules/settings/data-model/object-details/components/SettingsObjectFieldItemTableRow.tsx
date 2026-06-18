@@ -23,7 +23,7 @@ import {
   IconMinus,
   IconPlus,
   useIcons,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

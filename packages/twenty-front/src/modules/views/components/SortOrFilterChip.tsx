@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext, type ReactNode } from 'react';
-import { type IconComponent, IconX } from 'twenty-ui/display';
+import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 

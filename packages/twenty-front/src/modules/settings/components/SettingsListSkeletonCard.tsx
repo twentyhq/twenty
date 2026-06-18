@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Card } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCardContainer = styled.div`

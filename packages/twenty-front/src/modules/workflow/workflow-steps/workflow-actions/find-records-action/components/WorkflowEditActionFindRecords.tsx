@@ -6,7 +6,7 @@ import { isNumber } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator } from 'twenty-ui/display';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 

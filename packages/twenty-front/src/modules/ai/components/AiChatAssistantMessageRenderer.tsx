@@ -2,7 +2,7 @@ import { AiChatCompactionIndicator } from '@/ai/components/AiChatCompactionIndic
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
-import { IconDotsVertical } from 'twenty-ui/display';
+import { IconDotsVertical } from 'twenty-ui/icon';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';

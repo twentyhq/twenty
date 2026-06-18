@@ -10,7 +10,7 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconForbid } from 'twenty-ui/display';
+import { IconForbid } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordChipContainer = styled.div`

@@ -29,6 +29,10 @@ export type BaseWorkflowActionSettings = {
   };
 };
 
+export type WithExpectedOutputSchema = {
+  expectedOutputSchema?: object;
+};
+
 export type WorkflowActionSettings =
   | WorkflowLogicFunctionActionSettings
   | WorkflowSendEmailActionSettings

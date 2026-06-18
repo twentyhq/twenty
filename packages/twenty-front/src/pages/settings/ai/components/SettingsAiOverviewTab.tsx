@@ -9,13 +9,8 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Fragment, useContext, useState } from 'react';
-import {
-  H2Title,
-  IconMessage,
-  IconRobot,
-  IconSparkles,
-  IconTool,
-} from 'twenty-ui/display';
+import { IconMessage, IconRobot, IconSparkles, IconTool } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { SettingsPath } from 'twenty-shared/types';

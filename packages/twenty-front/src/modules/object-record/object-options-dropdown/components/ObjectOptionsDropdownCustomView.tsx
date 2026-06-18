@@ -24,14 +24,14 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useLingui } from '@lingui/react/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
-  AppTooltip,
   IconCalendar,
   IconCalendarWeek,
   IconLayoutList,
   IconListDetails,
   IconShare,
   IconTrash,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { AppTooltip } from 'twenty-ui/surfaces';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 

@@ -14,6 +14,9 @@ export type CallRecordingUpdateFields = Partial<{
   // null clears the field on cancel/eject; the only field we ever write null to.
   externalBotId: string | null;
   externalRecordingId: string;
+  transcript: Record<string, unknown>;
+  audio: { fileId: string; label: string }[];
+  video: { fileId: string; label: string }[];
 }>;
 
 export const updateCallRecording = async (

@@ -14,7 +14,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 

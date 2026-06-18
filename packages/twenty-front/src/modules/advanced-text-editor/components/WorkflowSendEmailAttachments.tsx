@@ -11,7 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowEmailFiles } from 'twenty-shared/workflow';
-import { IconUpload } from 'twenty-ui/display';
+import { IconUpload } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowSendEmailAttachmentsProps = {

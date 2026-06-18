@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
+import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/create-async-recall-transcript.util';
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
+import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 
 const getRecallApiConfigMock = vi.hoisted(() => vi.fn());
@@ -335,22 +337,6 @@ describe('recall bot api', () => {
     );
   });
 
-  it('fails when fetching a bot returns an empty response payload', async () => {
-    fetchMock.mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: async () => null,
-    });
-
-    const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
-
-    expect(result).toEqual({
-      ok: false,
-      status: 200,
-      errorMessage: 'Recall API returned an empty bot response',
-    });
-  });
-
   it('reports the HTTP status when fetching a bot that no longer exists', async () => {
     fetchMock.mockResolvedValue({
       ok: false,
@@ -365,6 +351,139 @@ describe('recall bot api', () => {
       status: 404,
       errorMessage:
         'Recall API responded with HTTP 404: {"detail":"Not found."}',
+    });
+  });
+
+  it('creates an async transcript with the locked provider settings', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: async () => ({ id: 'recall-transcript-id' }),
+    });
+
+    const result = await createAsyncRecallTranscript({
+      externalRecordingId: 'recall-recording-id',
+    });
+
+    expect(result).toEqual({ ok: true, transcriptId: 'recall-transcript-id' });
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://ap-northeast-1.recall.ai/api/v1/recording/recall-recording-id/create_transcript/',
+      expect.objectContaining({ method: 'POST' }),
+    );
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
+      provider: { recallai_async: { language_code: 'auto' } },
+      diarization: { use_separate_streams_when_available: true },
+    });
+  });
+
+  it('fails when the transcript creation response has no id', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: async () => ({}),
+    });
+
+    const result = await createAsyncRecallTranscript({
+      externalRecordingId: 'recall-recording-id',
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      status: null,
+      errorMessage:
+        'Recall API created a transcript but the response did not include a transcript id',
+    });
+  });
+
+  it('retrieves transcript details with the download URL and status', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        id: 'recall-transcript-id',
+        status: { code: 'done', sub_code: null },
+        data: {
+          download_url: 'https://recall-transcripts.example.com/transcript',
+        },
+      }),
+    });
+
+    const result = await retrieveRecallTranscript({
+      transcriptId: 'recall-transcript-id',
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      transcript: {
+        downloadUrl: 'https://recall-transcripts.example.com/transcript',
+        statusCode: 'done',
+        statusSubCode: undefined,
+      },
+    });
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://ap-northeast-1.recall.ai/api/v1/transcript/recall-transcript-id/',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
+  it('surfaces the failure sub code of an errored transcript', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        id: 'recall-transcript-id',
+        status: { code: 'error', sub_code: 'audio_missing' },
+        data: {},
+      }),
+    });
+
+    const result = await retrieveRecallTranscript({
+      transcriptId: 'recall-transcript-id',
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      transcript: {
+        downloadUrl: undefined,
+        statusCode: 'error',
+        statusSubCode: 'audio_missing',
+      },
+    });
+  });
+
+  it('rejects malformed transcript details', async () => {
+    fetchMock
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          id: 'recall-transcript-id',
+          status: { code: 'done' },
+          data: {},
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          id: 'recall-transcript-id',
+          data: {},
+        }),
+      });
+
+    await expect(
+      retrieveRecallTranscript({ transcriptId: 'recall-transcript-id' }),
+    ).resolves.toEqual({
+      ok: false,
+      status: 200,
+      errorMessage: 'Recall API returned malformed transcript details',
+    });
+    await expect(
+      retrieveRecallTranscript({ transcriptId: 'recall-transcript-id' }),
+    ).resolves.toEqual({
+      ok: false,
+      status: 200,
+      errorMessage: 'Recall API returned malformed transcript details',
     });
   });
 

@@ -9,7 +9,7 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, H3Title } from 'twenty-ui/display';
+import { H2Title, H3Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';

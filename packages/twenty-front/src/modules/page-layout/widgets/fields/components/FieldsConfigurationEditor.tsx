@@ -25,7 +25,7 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconNewSection } from 'twenty-ui/display';
+import { IconNewSection } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledGroupsDroppable = styled.div`

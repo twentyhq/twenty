@@ -7,7 +7,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconDeviceFloppy } from 'twenty-ui/display';
+import { IconDeviceFloppy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 
 type SettingsAccountsConfigurationStepCalendarProps = {

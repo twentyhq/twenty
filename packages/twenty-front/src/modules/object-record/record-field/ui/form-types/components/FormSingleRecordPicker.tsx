@@ -22,7 +22,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useContext, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
-import { IconChevronDown, IconForbid } from 'twenty-ui/display';
+import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
