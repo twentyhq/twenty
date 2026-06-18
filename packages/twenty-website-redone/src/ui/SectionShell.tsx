@@ -11,7 +11,7 @@ import {
   spacing,
 } from '@/tokens';
 
-import { Container } from './container';
+import { Container } from './Container';
 
 // The only place a <section> exists. Every section gets its vertical rhythm
 // from a named token class and resolves its semantic colors from its scheme —

@@ -14,7 +14,7 @@ import {
   REDUCED_MOTION,
 } from '@/tokens';
 
-import { ButtonShape } from './button-shape';
+import { ButtonShape } from './ButtonShape';
 
 const BUTTON_HEIGHT_PX: Record<ButtonSize, number> = {
   regular: 40,

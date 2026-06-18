@@ -3,10 +3,10 @@ import { type ReactNode } from 'react';
 
 import { mediaUp, type Scheme, spacing } from '@/tokens';
 
-import { Body } from './body';
-import { GuideCrosshair } from './guide-crosshair';
-import { Heading } from './heading';
-import { SectionShell } from './section-shell';
+import { Body } from './Body';
+import { GuideCrosshair } from './GuideCrosshair';
+import { Heading } from './Heading';
+import { SectionShell } from './SectionShell';
 
 type SignoffCrosshairSide = 'left' | 'right';
 

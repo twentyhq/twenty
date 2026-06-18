@@ -63,8 +63,8 @@ const failures = [];
 const LITERAL_ALLOWLIST = new Set([]);
 // Files allowed to set the new-tab security attributes themselves.
 const EXTERNAL_LINK_OWNERS = new Set([
-  'src/ui/external-link.tsx',
-  'src/ui/button.tsx',
+  'src/ui/ExternalLink.tsx',
+  'src/ui/Button.tsx',
 ]);
 
 // Owned vector glyphs are React components in src/icons — never .svg
@@ -323,11 +323,11 @@ function walk(directory) {
     // SectionShell is the only owner of <section>: it is where vertical
     // rhythm and surface schemes live, so no other file may create one.
     if (
-      relativePath !== path.join('ui', 'section-shell.tsx') &&
+      relativePath !== path.join('ui', 'SectionShell.tsx') &&
       /<section[\s>]|styled\.section/.test(content)
     ) {
       failures.push(
-        `src/${relativePath}: <section> may only be rendered by ui/section-shell.tsx.`,
+        `src/${relativePath}: <section> may only be rendered by ui/SectionShell.tsx.`,
       );
     }
     const isNextContractFile =
