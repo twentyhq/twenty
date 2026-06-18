@@ -455,46 +455,27 @@ export class EnterprisePlanService implements OnModuleInit {
     }
   }
 
-  // Best-effort diagnostic metadata for the license validation channel. Every
-  // lookup is isolated so a failure degrades to null and never prevents a
-  // license refresh or seat report. Only sent when an ENTERPRISE_KEY is present.
+  // Best-effort only: must never throw and fail a license refresh.
   private async gatherInstanceMetadata(): Promise<EnterpriseInstanceMetadata> {
-    const metadata: EnterpriseInstanceMetadata = {
-      serverId: null,
-      serverUrl: null,
-      appVersion: null,
-      nodeEnv: null,
-      telemetryEnabled: null,
-      workspaceCount: null,
-      activeUserWorkspaceCount: null,
-      distinctUserCount: null,
-      adminContactEmail: null,
+    return {
+      serverId: this.twentyConfigService.get('SERVER_ID') ?? null,
+      serverUrl: this.twentyConfigService.get('SERVER_URL') ?? null,
+      appVersion: this.twentyConfigService.get('APP_VERSION') ?? null,
+      nodeEnv: this.twentyConfigService.get('NODE_ENV') ?? null,
+      telemetryEnabled:
+        this.twentyConfigService.get('TELEMETRY_ENABLED') ?? null,
+      workspaceCount: await this.safeCount(() =>
+        this.workspaceRepository.count(),
+      ),
+      activeUserWorkspaceCount: await this.safeCount(() =>
+        this.userWorkspaceRepository.count({ where: { deletedAt: IsNull() } }),
+      ),
+      distinctUserCount: await this.safeCount(() =>
+        this.userRepository.count({ where: { deletedAt: IsNull() } }),
+      ),
+      adminContactEmail: await this.getAdminContactEmail(),
       sentAt: new Date().toISOString(),
     };
-
-    try {
-      metadata.serverId = this.twentyConfigService.get('SERVER_ID') ?? null;
-      metadata.serverUrl = this.twentyConfigService.get('SERVER_URL') ?? null;
-      metadata.appVersion = this.twentyConfigService.get('APP_VERSION') ?? null;
-      metadata.nodeEnv = this.twentyConfigService.get('NODE_ENV') ?? null;
-      metadata.telemetryEnabled =
-        this.twentyConfigService.get('TELEMETRY_ENABLED') ?? null;
-    } catch {
-      // keep nulls on config read failure
-    }
-
-    metadata.workspaceCount = await this.safeCount(() =>
-      this.workspaceRepository.count(),
-    );
-    metadata.activeUserWorkspaceCount = await this.safeCount(() =>
-      this.userWorkspaceRepository.count({ where: { deletedAt: IsNull() } }),
-    );
-    metadata.distinctUserCount = await this.safeCount(() =>
-      this.userRepository.count({ where: { deletedAt: IsNull() } }),
-    );
-    metadata.adminContactEmail = await this.getAdminContactEmail();
-
-    return metadata;
   }
 
   private async safeCount(
@@ -507,10 +488,6 @@ export class EnterprisePlanService implements OnModuleInit {
     }
   }
 
-  // Single administrative contact (the oldest active user, i.e. the operator who
-  // set the instance up) for license administration. Spoofable, so it is not an
-  // abuse signal; the authoritative licensee contact is the checkout/billing
-  // email keyed by subscription.
   private async getAdminContactEmail(): Promise<string | null> {
     try {
       const user = await this.userRepository.findOne({
