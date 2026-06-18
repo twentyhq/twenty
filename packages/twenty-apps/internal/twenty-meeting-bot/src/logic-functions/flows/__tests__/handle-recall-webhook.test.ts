@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { handleRecallWebhook } from 'src/logic-functions/flows/handle-recall-webhook.util';
 
 const getRecallBotMock = vi.hoisted(() => vi.fn());
+const listRecallTranscriptsMock = vi.hoisted(() => vi.fn());
 const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
 const retrieveRecallTranscriptMock = vi.hoisted(() => vi.fn());
 const ingestCallRecordingMediaMock = vi.hoisted(() => vi.fn());
@@ -11,6 +12,10 @@ const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
   getRecallBot: getRecallBotMock,
+}));
+
+vi.mock('src/logic-functions/recall-api/list-recall-transcripts.util', () => ({
+  listRecallTranscripts: listRecallTranscriptsMock,
 }));
 
 vi.mock(
@@ -127,6 +132,11 @@ describe('handleRecallWebhook', () => {
       ok: false,
       status: null,
       errorMessage: 'bot fetch disabled in test',
+    });
+    listRecallTranscriptsMock.mockReset();
+    listRecallTranscriptsMock.mockResolvedValue({
+      ok: true,
+      transcripts: [],
     });
     createAsyncRecallTranscriptMock.mockReset();
     createAsyncRecallTranscriptMock.mockResolvedValue({
@@ -731,19 +741,9 @@ describe('handleRecallWebhook', () => {
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledTimes(1);
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
       externalRecordingId: 'recall-recording-1',
+      callRecordingId: 'call-recording-1',
     });
     expect(client.mutations).toEqual([
-      {
-        id: 'call-recording-1',
-        data: {
-          transcript: {
-            recallTranscriptId: 'recall-transcript-1',
-            status: 'PENDING',
-            requestedAt: expect.any(String),
-          },
-          externalRecordingId: 'recall-recording-1',
-        },
-      },
       {
         id: 'call-recording-1',
         data: {
@@ -760,7 +760,7 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
-  it('does not re-request a transcript on a redelivered done event', async () => {
+  it('does not re-request a transcript on a redelivered done event while Recall list is stale', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -789,6 +789,12 @@ describe('handleRecallWebhook', () => {
     });
 
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(listRecallTranscriptsMock).toHaveBeenCalledWith({
+      externalRecordingId: 'recall-recording-1',
+    });
+    expect(retrieveRecallTranscriptMock).toHaveBeenCalledWith({
+      transcriptId: 'recall-transcript-1',
+    });
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
@@ -844,32 +850,17 @@ describe('handleRecallWebhook', () => {
     });
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
       externalRecordingId: 'recall-recording-9',
+      callRecordingId: 'call-recording-1',
     });
     expect(client.mutations).toEqual([
-      {
+      expect.objectContaining({
         id: 'call-recording-1',
-        data: {
-          transcript: {
-            recallTranscriptId: 'recall-transcript-9',
-            status: 'PENDING',
-            requestedAt: expect.any(String),
-          },
-          externalRecordingId: 'recall-recording-9',
-        },
-      },
-      {
-        id: 'call-recording-1',
-        data: {
+        data: expect.objectContaining({
           status: 'PROCESSING',
           externalBotId: 'recall-bot-1',
           externalRecordingId: 'recall-recording-9',
-          transcript: {
-            recallTranscriptId: 'recall-transcript-9',
-            status: 'PENDING',
-            requestedAt: expect.any(String),
-          },
-        },
-      },
+        }),
+      }),
     ]);
   });
 
@@ -971,32 +962,20 @@ describe('handleRecallWebhook', () => {
       },
     });
 
+    expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
+      externalRecordingId: 'recall-recording-1',
+      callRecordingId: 'call-recording-1',
+    });
     expect(client.mutations).toEqual([
-      {
+      expect.objectContaining({
         id: 'call-recording-1',
-        data: {
-          transcript: {
-            recallTranscriptId: 'recall-transcript-1',
-            status: 'PENDING',
-            requestedAt: expect.any(String),
-          },
-          externalRecordingId: 'recall-recording-1',
-        },
-      },
-      {
-        id: 'call-recording-1',
-        data: {
+        data: expect.objectContaining({
           status: 'PROCESSING',
           externalBotId: 'recall-bot-1',
           externalRecordingId: 'recall-recording-1',
-          transcript: {
-            recallTranscriptId: 'recall-transcript-1',
-            status: 'PENDING',
-            requestedAt: expect.any(String),
-          },
           audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-        },
-      },
+        }),
+      }),
     ]);
     expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
   });
