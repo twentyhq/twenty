@@ -7,6 +7,8 @@ import { v4 } from 'uuid';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
@@ -33,6 +35,7 @@ import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/u
 import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
+import { seedTwoFactorAuthenticationMethods } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-two-factor-authentication-methods.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
@@ -64,6 +67,7 @@ export class DevSeederService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly prefillFrontComponentService: PrefillFrontComponentService,
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
+    private readonly secretEncryptionService: SecretEncryptionService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
@@ -310,6 +314,15 @@ export class DevSeederService {
       await seedServerId({ queryRunner, schemaName });
       await seedUsers({ queryRunner, schemaName });
       await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
+      await seedTwoFactorAuthenticationMethods({
+        queryRunner,
+        schemaName,
+        workspaceId,
+        encryptedSecret: this.secretEncryptionService.encryptVersioned(
+          'seed-totp-secret-test-fixture' as PlaintextString,
+          { workspaceId },
+        ),
+      });
 
       await this.applicationService.createTwentyStandardApplication(
         {
