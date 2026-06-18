@@ -1,0 +1,111 @@
+---
+title: Synchronisation et récupération
+description: Quelle commande utiliser et quand, comment lire la sortie de synchronisation, et une échelle de récupération pour les cas où les métadonnées locales dérivent — avant d'en arriver à une réinitialisation complète.
+icon: boussole
+---
+
+Le développement local d'applications tourne autour de la **synchronisation** : le CLI reconstruit votre manifeste et le serveur applique uniquement la différence entre celui-ci et les métadonnées déjà présentes dans votre espace de travail. Cette page explique vers quelle commande se tourner, comment lire ce qu'une synchronisation a modifié, et quoi faire — dans l'ordre — lorsque l'état local semble incohérent.
+
+## Quelle commande, quand
+
+<Note>
+Pour l'itération locale au quotidien, vous voudrez presque toujours `yarn twenty dev`. Le déploiement et la publication servent à livrer des versions, **pas** pour la boucle locale.
+</Note>
+
+| Vous souhaitez…                                         | Commande                            | Notes                                                                                                                                   |
+| ------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Itérer localement avec la synchronisation en direct     | `yarn twenty dev`                   | Surveille vos fichiers et synchronise à chaque modification.                                                                            |
+| Synchroniser une fois puis quitter (CI, scripts, hooks) | `yarn twenty dev --once`            | Effectue une compilation + synchronisation, puis quitte.                                                                                |
+| Prévisualiser les changements **sans les appliquer**    | `yarn twenty dev --once --dry-run`  | Calcule et affiche le diff ; n'écrit rien.                                                                                              |
+| Retirer l'application de l'espace de travail            | `yarn twenty app:uninstall`         | Ajoutez `--yes` pour ignorer la confirmation.                                                                                           |
+| Envoyer une archive tarball vers un serveur             | `yarn twenty app:publish --private` | Nécessite une version de `package.json` **strictement supérieure** — voir [Publication](/l/fr/developers/extend/apps/operations/publishing). |
+| Publier sur la place de marché (npm)                    | `yarn twenty app:publish`           | —                                                                                                                                       |
+| Installer / mettre à niveau une version déployée        | `yarn twenty app:install`           | Installe la version actuellement déployée.                                                                                              |
+| Effacer le serveur local et repartir de zéro            | `yarn twenty docker:reset`          | Supprime **toutes** les données locales — en dernier recours.                                                                           |
+
+### La synchronisation locale n'a pas besoin d'un incrément de version
+
+La règle de `version` strictement croissante (`VERSION_ALREADY_EXISTS` lors du déploiement, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` lors de l'installation) s'applique à **`app:publish` / `app:install`** — le chemin de mise en production. `yarn twenty dev` synchronise votre manifeste sur place et ne nécessite jamais de changement de version, vous n'avez donc pas besoin de toucher à `package.json` pour itérer. Si vous vous surprenez à incrémenter la version pour tester un changement local, c'est que vous utilisez le chemin de mise en production alors que vous voulez la boucle de développement.
+
+## Lire la sortie de synchronisation
+
+Chaque synchronisation affiche les changements de métadonnées qu'elle a appliqués (ou appliquerait, avec `--dry-run`) :
+
+```text filename="Terminal"
+Metadata changes: 2 created, 1 updated, 1 deleted
+  created objectMetadata rocket
+  created fieldMetadata timelineActivities
+  updated fieldMetadata launchedAt
+  deleted pageLayout legacyTab
+✓ Synced
+```
+
+C'est votre premier diagnostic : il vous indique exactement quels objets, champs et mises en page ont changé, afin que vous puissiez confirmer qu'une synchronisation a fait ce que vous attendiez avant de vérifier l'interface utilisateur.
+
+Lorsqu'une synchronisation échoue sur une seule entité, l'erreur nomme l'entité en cause et son `universalIdentifier`, par exemple :
+
+```text
+Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337) failed
+```
+
+Utilisez cet identifiant pour trouver l'entité dans votre manifeste (et, si nécessaire, dans l'espace de travail) plutôt que de deviner laquelle est en conflit.
+
+## Prévisualiser les changements (dry run)
+
+`yarn twenty dev --once --dry-run` construit votre manifeste, demande au serveur le plan de migration et l'affiche — **sans rien appliquer**. C'est le moyen sûr de répondre « que changerait cette synchronisation ? » avant de s'y engager.
+
+```bash filename="Terminal"
+yarn twenty dev --once --dry-run
+```
+
+```text filename="Terminal"
+Building manifest...
+Computing metadata diff (dry run, nothing will be applied)...
+Metadata changes: 1 created, 1 updated
+  created fieldMetadata timelineActivities
+  updated objectMetadata rocket
+✓ Dry run complete for My App — no changes were applied
+```
+
+Un dry run :
+
+* **N'écrit rien** — aucune migration de métadonnées, aucune mise à jour de l'enregistrement d'application, aucun changement de rôle/onglet par défaut, et aucune génération de client d'API.
+* Renvoie le **même diff** qu'une synchronisation réelle appliquerait, afin que vous puissiez examiner à l'avance les entités créées/mises à jour/supprimées.
+* Est utile avant un changement risqué, lors de la révision d'un changement généré par une IA, ou dans un script qui doit échouer si un changement inattendu est sur le point d'être appliqué.
+
+<Note>
+Un dry run ne prévisualise que les changements de **métadonnées**, et il nécessite que l'application ait été synchronisée au moins une fois (pour que l'espace de travail la connaisse). Si vous l'exécutez sur une application qui n'a jamais été synchronisée, le serveur indique que l'application n'est pas installée — exécutez d'abord une fois `yarn twenty dev`.
+</Note>
+
+## Échelle de récupération
+
+Lorsque les métadonnées locales semblent incorrectes, augmentez le niveau de manière progressive dans cet ordre et arrêtez-vous dès que vous êtes débloqué. Chaque étape est plus perturbatrice que la précédente.
+
+1. **Resynchroniser.** Exécutez à nouveau `yarn twenty dev --once`. Les synchronisations sont idempotentes — réexécuter un manifeste propre est sûr et résout souvent un incident passager.
+2. **Prévisualiser le plan.** Exécutez `yarn twenty dev --once --dry-run` pour voir exactement ce que la prochaine synchronisation compte changer, sans l'appliquer.
+3. **Lire l'erreur nommée.** Si une synchronisation échoue, relevez le type de métadonnées et l'`universalIdentifier` dans le message (voir ci-dessus) et localisez cette entité dans votre manifeste. Un conflit pointe généralement vers un identifiant dupliqué ou réutilisé.
+4. **Désinstaller et réinstaller.** `yarn twenty app:uninstall`, puis synchronisez à nouveau (`yarn twenty dev`). Cette opération reconstruit les métadonnées de l'application à partir d'une base saine tout en gardant le reste de votre espace de travail intact.
+5. **Réinitialisation complète (en dernier recours).** `yarn twenty docker:reset`, puis réinjectez des données et resynchronisez.
+
+<Warning>
+`yarn twenty docker:reset` supprime **toutes** les données de votre instance locale — chaque espace de travail, enregistrement et application. Ne l'utilisez que lorsque les étapes précédentes ont échoué.
+</Warning>
+
+<Note>
+Vous avez rencontré une erreur de métadonnées ? Veuillez [ouvrir un ticket](https://github.com/twentyhq/twenty/issues/new/choose) et inclure le message d'échec de migration (avec son type de métadonnées et son `universalIdentifier`), la sortie `Metadata changes` de la synchronisation, ainsi que les commandes que vous avez exécutées.
+</Note>
+
+## Éviter les synchronisations concurrentes sur un même espace de travail
+
+La synchronisation applique des migrations de métadonnées. Exécuter plusieurs opérations de synchronisation, de déploiement ou d'installation contre le **même espace de travail au même moment** — par exemple, plusieurs terminaux ou agents IA qui itèrent en parallèle — peut entrelacer ces migrations et laisser les métadonnées dans un état partiellement appliqué.
+
+Le serveur sérialise les synchronisations par espace de travail pour éviter cela, mais vous devriez tout de même faire transiter les opérations sensibles sur les métadonnées par un **processus unique** plutôt que de les lancer en concurrence. Si vous orchestrez le développement avec plusieurs agents, faites passer leurs appels de synchronisation/déploiement/installation par une file unique afin qu'un seul s'exécute à la fois.
+
+## Distinguer les types d'échecs
+
+Lorsque quelque chose se passe mal, le diff de métadonnées et les erreurs nommées vous permettent de localiser l'échec :
+
+* **Erreur de construction du manifeste** — le CLI échoue avant la synchronisation (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`) ; corrigez le code source de votre application.
+* **Erreur de synchronisation / migration** — la construction réussit mais l'application du diff échoue, en nommant l'entité et son `universalIdentifier` ; corrigez les métadonnées en conflit.
+* **Erreur d’exécution du code de l’application** — la synchronisation réussit, mais vos fonctions logiques ou composants se comportent mal à l’exécution ; consultez les [journaux de fonctions](/l/fr/developers/extend/apps/operations/cli).
+* **État local de l’instance** — aucun des cas ci-dessus et l’espace de travail semble toujours incorrect ; descendez l’échelle de récupération.

@@ -31,6 +31,18 @@ A partire da **v1.22**, Twenty supporta gli aggiornamenti tra versioni. Puoi pas
 
 Ad esempio, l'aggiornamento da v1.22 direttamente a v2.0 è pienamente supportato.
 
+## Aggiornamento alla v2.5+ — envelope di crittografia dei dati a riposo
+
+A partire dalla **v2.5**, Twenty memorizza i segreti a riposo (token OAuth, variabili dell'applicazione, chiavi private di firma, valori di configurazione sensibili, segreti TOTP) all'interno di un envelope versionato `enc:v2:` crittografato con `ENCRYPTION_KEY` (o `APP_SECRET` se `ENCRYPTION_KEY` non è impostata).
+
+Il primo avvio su v2.5 esegue comandi di aggiornamento lenti che popolano retroattivamente le righe esistenti nel nuovo envelope. Sono idempotenti — se si interrompe e si riavvia il server, riprende da dove si era interrotto — ma possono richiedere tempo su database di grandi dimensioni. Puoi monitorare l'avanzamento con `upgrade:status`.
+
+Dovresti impostare un `ENCRYPTION_KEY` dedicato **prima** dell'aggiornamento a v2.5, in modo che il popolamento retroattivo scriva fin dall'inizio le righe sotto tale chiave. Cambiare chiave dopo il popolamento retroattivo richiede una [rotazione](/l/it/developers/self-host/capabilities/key-rotation).
+
+## Rotazione di segreti e chiavi di firma
+
+Per le attività operative quotidiane come ruotare `ENCRYPTION_KEY`, ruotare la chiave di firma JWT o revocare una chiave di firma compromessa, vedi la [Guida alla rotazione delle chiavi](/l/it/developers/self-host/capabilities/key-rotation) dedicata.
+
 ## Verifica dello stato dell'aggiornamento
 
 Il comando `upgrade:status` consente di ispezionare lo stato corrente della tua istanza e delle migrazioni degli spazi di lavoro. È utile per eseguire il debug di problemi di aggiornamento o quando si apre una richiesta di assistenza.

@@ -1,0 +1,14 @@
+---
+title: استكشاف الأخطاء وإصلاحها
+description: مشكلات التشغيل الأول الشائعة — Docker، إصدار Node، Yarn، والتبعيات.
+icon: wrench
+---
+
+* **أخطاء Docker** — تأكّد من أن Docker Desktop (أو الـ daemon) قيد التشغيل قبل `yarn twenty docker:start`. ستعرض رسالة الخطأ أمر البدء المناسب لنظام التشغيل لديك.
+* **إصدار Node غير صحيح** — نحتاج 24 أو أحدث. تحقّق باستخدام `node -v`.
+* **Yarn 4 غير موجود** — شغّل `corepack enable`.
+* **تبعيات تالفة** — `rm -rf node_modules && yarn install`.
+* **أخطاء `twenty-sdk` بعد الترقية إلى v2.8.0** — تم نقله من `dependencies` إلى `devDependencies` في الإصدار v2.8.0. انظر إلى [بنية المشروع → التبعيات](/l/ar/developers/extend/apps/getting-started/project-structure#dependencies).
+* **`twenty build` يُصدر تحذيرًا بشأن `twenty-client-sdk` تحت `dependencies`** — يتم توفيره في وقت التشغيل بواسطة Twenty، لذلك يجب نقله إلى `devDependencies` جنبًا إلى جنب مع `twenty-sdk`. انظر إلى [بنية المشروع → التبعيات](/l/ar/developers/extend/apps/getting-started/project-structure#dependencies).
+
+هل علِقت؟ اطلب المساعدة على [خادم Twenty على Discord](https://discord.com/channels/1130383047699738754/1130386664812982322).

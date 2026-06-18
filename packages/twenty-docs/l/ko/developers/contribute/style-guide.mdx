@@ -1,0 +1,176 @@
+---
+title: 스타일 가이드
+icon: 페인트 브러시
+description: Twenty에 기여하기 위한 코드 컨벤션과 모범 사례.
+---
+
+## 리액트
+
+### 함수형 컴포넌트만 사용
+
+항상 네임드 export가 있는 TSX 함수형 컴포넌트를 사용하십시오.
+
+```tsx
+// ❌ Bad
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+export default MyComponent;
+
+// ✅ Good
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### 프로퍼티
+
+이름이 `{ComponentName}Props`인 타입을 생성하십시오. 구조 분해 할당을 사용하십시오. `React.FC`를 사용하지 마십시오.
+
+```tsx
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+### 단일 변수 prop 스프레딩 금지
+
+```tsx
+// ❌ Bad
+const MyComponent = (props: MyComponentProps) => <Other {...props} />;
+
+// ✅ Good
+const MyComponent = ({ prop1, prop2 }: MyComponentProps) => <Other {...{ prop1, prop2 }} />;
+```
+
+## 상태 관리
+
+### 전역 상태를 위한 Jotai 아톰
+
+```tsx
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
+  key: 'myAtomState',
+  defaultValue: 'default value',
+});
+```
+
+* prop 드릴링보다 아톰을 선호하십시오.
+* 상태에는 `useRef`를 사용하지 말고 — `useState` 또는 아톰을 사용하십시오
+* 목록에는 아톰 패밀리와 셀렉터를 사용하십시오
+
+### 불필요한 리렌더링을 피하십시오
+
+* `useEffect`와 데이터 패칭을 형제 사이드카 컴포넌트로 분리하십시오
+* `useEffect`보다 이벤트 핸들러(`handleClick`, `handleChange`)를 선호하십시오
+* `React.memo()`를 사용하지 말고 — 근본 원인을 수정하십시오
+* `useCallback` / `useMemo` 사용을 제한하십시오
+
+```tsx
+// ❌ Bad — useEffect in the same component causes re-renders
+export const Page = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <div>{data}</div>;
+};
+
+// ✅ Good — extract into sibling
+export const PageData = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <></>;
+};
+export const Page = () => {
+  const [data] = useAtomState(dataState);
+  return <div>{data}</div>;
+};
+```
+
+## 타입스크립트
+
+* **`interface`보다 `type`** — 더 유연하고 조합하기 쉽습니다
+* **열거형보다 문자열 리터럴** — GraphQL codegen enum 및 내부 라이브러리 API는 예외
+* **`any` 금지** — 엄격한 TypeScript를 강제합니다
+* **타입 import 금지** — 일반 import를 사용하십시오 (Oxlint `typescript/consistent-type-imports`로 강제)
+* **[Zod](https://github.com/colinhacks/zod)을 사용**하여 타입이 없는 객체를 런타임에 검증하십시오
+
+## 자바스크립트
+
+```tsx
+// Use nullish-coalescing (??) instead of ||
+const value = process.env.MY_VALUE ?? 'default';
+
+// Use optional chaining
+onClick?.();
+```
+
+## 이름 지정
+
+* **변수**: camelCase, 의미를 잘 드러내도록 작성 (`value`가 아닌 `email`, `fm`이 아닌 `fieldMetadata`)
+* **상수**: SCREAMING_SNAKE_CASE
+* **타입/클래스**: PascalCase
+* **파일/디렉터리**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
+* **이벤트 핸들러**: `handleClick` (핸들러 함수 이름은 `onClick`이 아님)
+* **컴포넌트 props**: 컴포넌트 이름을 접두사로 붙이십시오 (`ButtonProps`)
+* **스타일드 컴포넌트**: `Styled` 접두사를 붙이십시오 (`StyledTitle`)
+
+## 스타일링
+
+[Linaria](https://github.com/callstack/linaria) 스타일드 컴포넌트를 사용하십시오. 테마 값을 사용하십시오 — 하드코딩된 `px`, `rem` 또는 색상은 피하십시오.
+
+```tsx
+// ❌ Bad
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  margin-left: 4px;
+`;
+
+// ✅ Good
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+`;
+```
+
+## 가져오기
+
+상대 경로 대신 별칭을 사용하십시오:
+
+```tsx
+// ❌ Bad
+import { Foo } from '../../../../../testing/decorators/Foo';
+
+// ✅ Good
+import { Foo } from '~/testing/decorators/Foo';
+import { Bar } from '@/modules/bar/components/Bar';
+```
+
+## 폴더 구조
+
+```
+front
+└── modules/         # Feature modules
+│   └── module1/
+│       ├── components/
+│       ├── constants/
+│       ├── contexts/
+│       ├── graphql/  (fragments, queries, mutations)
+│       ├── hooks/
+│       ├── states/   (atoms, selectors)
+│       ├── types/
+│       └── utils/
+└── pages/           # Route-level components
+└── ui/              # Reusable UI components (display, input, feedback, ...)
+```
+
+* 모듈은 다른 모듈에서 import할 수 있지만, `ui/`는 의존성이 없어야 합니다
+* 모듈 전용 코드는 `internal/` 하위 폴더를 사용하십시오
+* 컴포넌트는 300줄 이하, 서비스는 500줄 이하

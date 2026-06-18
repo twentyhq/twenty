@@ -9,32 +9,38 @@ title: Migaja de pan
 Renderiza una barra de navegación de migas de pan.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { BrowserRouter } from "react-router-dom";
-    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+<Tab title="Uso">
 
-    export const MyComponent = () => {
-      const breadcrumbLinks = [
-        { children: "Home", href: "/" },
-        { children: "Category", href: "/category" },
-        { children: "Subcategory", href: "/category/subcategory" },
-        { children: "Current Page" },
-      ];
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
 
-      return (
-        <BrowserRouter>
-          <Breadcrumb className links={breadcrumbLinks} />
-        </BrowserRouter>
-        )
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
 
-  <Tab title="Props">
-    | Props         | Tipo   | Descripción                                                                                                                                                                                                                        |
-    | ------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | nombreDeClase | cadena | Nombre de clase opcional para estilos adicionales                                                                                                                                                                                  |
-    | enlaces       | matriz | An array of objects, each representing a breadcrumb link. Cada objeto tiene una propiedad `children` (el contenido de texto del enlace) y una propiedad `href` opcional (la URL a la que navegar cuando se hace clic en el enlace) |
-  </Tab>
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+
+| Props         | Tipo   | Descripción                                                                                                                                                                                                                        |
+| ------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nombreDeClase | cadena | Nombre de clase opcional para estilos adicionales                                                                                                                                                                                  |
+| enlaces       | matriz | An array of objects, each representing a breadcrumb link. Cada objeto tiene una propiedad `children` (el contenido de texto del enlace) y una propiedad `href` opcional (la URL a la que navegar cuando se hace clic en el enlace) |
+
+
+
+</Tab>
 </Tabs>

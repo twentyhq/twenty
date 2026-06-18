@@ -1,0 +1,111 @@
+---
+title: Synchronizace a obnovení
+description: Který příkaz kdy použít, jak číst výstup synchronizace a jak postupovat po jednotlivých krocích při obnově v případě odchýlení lokálních metadat — ještě předtím, než sáhnete k úplnému resetu.
+icon: kompas
+---
+
+Lokální vývoj aplikací se točí kolem **synchronizace**: CLI znovu sestaví váš manifest a server aplikuje pouze rozdíly mezi ním a metadaty, která už jsou ve vašem pracovním prostoru. Tato stránka popisuje, po kterém příkazu sáhnout, jak číst, co synchronizace změnila, a co dělat — v daném pořadí — když lokální stav vypadá nekonzistentně.
+
+## Jaký příkaz, kdy
+
+<Note>
+Pro každodenní lokální iteraci téměř vždy chcete `yarn twenty dev`. Nasazování a publikování slouží k vydávání verzí, **ne** pro lokální vývojovou smyčku.
+</Note>
+
+| Chcete…                                                   | Příkaz                              | Poznámky                                                                                                             |
+| --------------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Iterujte lokálně s živou synchronizací                    | `yarn twenty dev`                   | Sleduje vaše soubory a při každé změně spustí synchronizaci.                                                         |
+| Jednorázová synchronizace a ukončení (CI, skripty, hooky) | `yarn twenty dev --once`            | Provede jedno sestavení + synchronizaci a skončí.                                                                    |
+| Náhled změn **bez jejich aplikování**                     | `yarn twenty dev --once --dry-run`  | Spočítá a vypíše rozdíly; nic nezapisuje.                                                                            |
+| Odebrat aplikaci z pracovního prostoru                    | `yarn twenty app:uninstall`         | Přidejte `--yes` pro přeskočení výzvy.                                                                               |
+| Odeslat tarball na server                                 | `yarn twenty app:publish --private` | Vyžaduje **přísně vyšší** verzi v `package.json` — viz [Publikování](/l/cs/developers/extend/apps/operations/publishing). |
+| Publikovat na marketplace (npm)                           | `yarn twenty app:publish`           | —                                                                                                                    |
+| Nainstalovat / aktualizovat nasazenou verzi               | `yarn twenty app:install`           | Nainstaluje aktuálně nasazenou verzi.                                                                                |
+| Vymazat lokální server a začít znovu                      | `yarn twenty docker:reset`          | Smaže **všechna** lokální data — krajní řešení.                                                                      |
+
+### Lokální synchronizace nevyžaduje zvýšení verze
+
+Pravidlo striktně rostoucí `version` (`VERSION_ALREADY_EXISTS` při nasazení, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` při instalaci) platí pro **`app:publish` / `app:install`** — cestu vydání. `yarn twenty dev` synchronizuje váš manifest na místě a nikdy nevyžaduje změnu verze, takže kvůli iteraci nemusíte sahat na `package.json`. Pokud zvyšujete verzi, abyste otestovali lokální změnu, používáte cestu vydání, i když chcete vývojovou smyčku.
+
+## Čtení výstupu synchronizace
+
+Každá synchronizace vypíše změny metadat, které aplikovala (nebo by aplikovala s `--dry-run`):
+
+```text filename="Terminal"
+Metadata changes: 2 created, 1 updated, 1 deleted
+  created objectMetadata rocket
+  created fieldMetadata timelineActivities
+  updated fieldMetadata launchedAt
+  deleted pageLayout legacyTab
+✓ Synced
+```
+
+To je váš první diagnostický nástroj: přesně ukazuje, které objekty, pole a rozložení se změnily, takže si můžete ověřit, že synchronizace udělala to, co jste očekávali, ještě před kontrolou v UI.
+
+Když synchronizace selže na jedné entitě, chyba uvede problematickou entitu a její `universalIdentifier`, například:
+
+```text
+Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337) failed
+```
+
+Tento identifikátor použijte k nalezení entity ve vašem manifestu (a případně v pracovním prostoru) místo hádání, která je v konfliktu.
+
+## Náhled změn (dry run)
+
+`yarn twenty dev --once --dry-run` sestaví váš manifest, požádá server o migrační plán a vypíše ho — aniž by cokoli aplikoval. Je to bezpečný způsob, jak si předem zodpovědět otázku „co by tato synchronizace změnila?“ ještě předtím, než se k ní zavážete.
+
+```bash filename="Terminal"
+yarn twenty dev --once --dry-run
+```
+
+```text filename="Terminal"
+Building manifest...
+Computing metadata diff (dry run, nothing will be applied)...
+Metadata changes: 1 created, 1 updated
+  created fieldMetadata timelineActivities
+  updated objectMetadata rocket
+✓ Dry run complete for My App — no changes were applied
+```
+
+Spuštění nanečisto:
+
+* **Nic nezapisuje** — žádná migrace metadat, žádná aktualizace záznamu aplikace, žádné změny výchozí role / karty a žádná generace API klienta.
+* Vrací **stejný diff**, jaký by aplikovala skutečná synchronizace, takže můžete předem zkontrolovat vytvořené / aktualizované / smazané entity.
+* Je užitečný před rizikovou změnou, při kontrole změny vygenerované pomocí AI nebo ve skriptu, který má selhat, pokud se má provést neočekávaná změna.
+
+<Note>
+Režim dry run zobrazuje pouze náhled změn **metadat** a vyžaduje, aby byla aplikace alespoň jednou synchronizovaná (aby o ní pracovní prostor věděl). Pokud jej spustíte proti aplikaci, která nikdy nebyla synchronizovaná, server ohlásí, že aplikace není nainstalovaná — nejprve jednou spusťte `yarn twenty dev`.
+</Note>
+
+## Postup obnovy
+
+Když lokální metadata vypadají špatně, postupujte v tomto pořadí a zastavte se, jakmile se problém vyřeší. Každý další krok je rušivější než ten předchozí.
+
+1. **Znovu synchronizujte.** Znovu spusťte `yarn twenty dev --once`. Synchronizace jsou idempotentní — znovu spuštěný čistý manifest je bezpečný a často vyřeší přechodný problém.
+2. **Prohlédněte si plán.** Spusťte `yarn twenty dev --once --dry-run`, abyste přesně viděli, co chce další synchronizace změnit, aniž by to aplikovala.
+3. **Přečtěte si pojmenovanou chybu.** Pokud synchronizace selže, poznamenejte si typ metadat a `universalIdentifier` ve zprávě (viz výše) a tuto entitu najděte ve svém manifestu. Konflikt obvykle ukazuje na duplicitní nebo znovu použitý identifikátor.
+4. **Odinstalujte a znovu nainstalujte.** `yarn twenty app:uninstall`, poté znovu synchronizujte (`yarn twenty dev`). Tím znovu vybudujete metadata aplikace z čistého stavu, zatímco zbytek vašeho pracovního prostoru zůstane nedotčený.
+5. **Úplný reset (krajní řešení).** `yarn twenty docker:reset`, poté znovu naplňte data a synchronizujte.
+
+<Warning>
+`yarn twenty docker:reset` smaže **veškerá** data ve vaší lokální instanci — každý pracovní prostor, záznam i aplikaci. Použijte jej až tehdy, když selžou předchozí kroky.
+</Warning>
+
+<Note>
+Nastala chyba v metadatech? Prosíme, [vytvořte issue](https://github.com/twentyhq/twenty/issues/new/choose) a přiložte chybovou zprávu selhané migrace (s typem metadat a `universalIdentifier`), výstup `Metadata changes` ze synchronizace a příkazy, které jste spustili.
+</Note>
+
+## Vyhněte se souběžným synchronizacím v jednom pracovním prostoru
+
+Synchronizace aplikuje migrace metadat. Spouštění několika synchronizačních, nasazovacích nebo instalačních operací proti **stejnému pracovnímu prostoru ve stejnou dobu** — například z víc terminálů nebo od více AI agentů iterujících paralelně — může tyto migrace prokládat a zanechat metadata v částečně aplikovaném stavu.
+
+Server serializuje synchronizace pro každý pracovní prostor, aby tomu zabránil, ale přesto byste citlivé operace s metadaty měli směrovat přes **jeden jediný** proces místo toho, abyste je spouštěli souběžně. Pokud orchestrujete vývoj s více agenty, směrujte jejich volání sync/deploy/install přes jednu frontu, aby vždy běžel jen jeden proces.
+
+## Rozlišení typů selhání
+
+Když se něco pokazí, diff metadat a pojmenované chyby vám umožní lokalizovat selhání:
+
+* **Chyba sestavení manifestu** — CLI selže ještě před synchronizací (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); opravte zdrojový kód své aplikace.
+* **Chyba synchronizace / migrace** — sestavení proběhne úspěšně, ale aplikování diffu selže a uvede entitu a `universalIdentifier`; opravte konfliktní metadata.
+* **Chyba za běhu aplikačního kódu** — synchronizace proběhne úspěšně, ale vaše logické funkce nebo komponenty se za běhu chovají nesprávně; zkontrolujte [protokoly funkcí](/l/cs/developers/extend/apps/operations/cli).
+* **Lokální stav instance** — neplatí nic z výše uvedeného a pracovní prostor stále vypadá chybně; pokračujte dolů po žebříčku obnovy.

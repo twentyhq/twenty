@@ -43,10 +43,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true # predefinito
 
 <Warning>
 Ogni variabile è documentata con descrizioni nel tuo pannello di amministrazione in **Impostazioni → Pannello di Amministrazione → Variabili di Configurazione**.
-Alcune impostazioni infrastrutturali come connessioni al database (`PG_DATABASE_URL`), URL del server (`SERVER_URL`) e segreti dell'app (`APP_SECRET`) possono essere configurati solo tramite file `.env`.
+Alcune impostazioni infrastrutturali come connessioni al database (`PG_DATABASE_URL`), URL del server (`SERVER_URL`) e segreti (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) possono essere configurate solo tramite file `.env`.
 
 [Riferimento tecnico completo →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## Chiavi di crittografia
+
+Twenty utilizza due chiavi di crittografia disponibili solo tramite variabili d'ambiente:
+
+| Variabile                 | Scopo                                                                                                                                                                                               | Obbligatorio                                                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `ENCRYPTION_KEY`          | Chiave primaria utilizzata per crittografare i segreti a riposo (token OAuth, variabili dell'applicazione, chiavi private delle chiavi di firma, segreti TOTP, valori di configurazione sensibili). | Sì per le nuove installazioni (le installazioni legacy possono invece fare affidamento su `APP_SECRET` — vedi sotto) |
+| `FALLBACK_ENCRYPTION_KEY` | Chiave utilizzata solo per la verifica. Impostata durante una rotazione alla *precedente* `ENCRYPTION_KEY` in modo che le righe esistenti rimangano decifrabili.                                    | Solo durante la rotazione                                                                                            |
+
+Per garantire la retrocompatibilità, se `ENCRYPTION_KEY` non è impostata, Twenty torna a utilizzare `APP_SECRET` per la crittografia a riposo, in modo da rispecchiare il comportamento legacy delle distribuzioni meno recenti. Le nuove installazioni dovrebbero sempre impostare una `ENCRYPTION_KEY` dedicata.
+
+Genera i valori con `openssl rand -base64 32` e conservali in un luogo sicuro (un secrets manager, configurazioni sigillate, ecc.). Perdere `ENCRYPTION_KEY` significa perdere l'accesso a ogni segreto memorizzato nel database.
+
+Per ruotare `ENCRYPTION_KEY` senza tempi di inattività, consulta la [guida alla rotazione delle chiavi](/l/it/developers/self-host/capabilities/key-rotation).
 
 ## 2. Configurazione Solo-Ambiente
 
