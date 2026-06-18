@@ -1,36 +1,32 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { type CallRecordingUpdateFields } from 'src/logic-functions/data/update-call-recording.util';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
+import { buildPendingTranscriptMarker } from 'src/logic-functions/domain/build-pending-transcript-marker.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/create-async-recall-transcript.util';
 import {
   listRecallTranscripts,
-  type RecallTranscriptSummary,
 } from 'src/logic-functions/recall-api/list-recall-transcripts.util';
+import { type RecallTranscriptSummary } from 'src/logic-functions/recall-api/recall-transcript-summary.type';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
+import { type ReconcileCallRecordingTranscriptArtifactResult } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact-result.type';
 
-type CallRecordingTranscriptArtifactUpdateFields = Pick<
-  CallRecordingUpdateFields,
-  'status' | 'transcript'
->;
-
-export type ReconcileCallRecordingTranscriptArtifactResult = {
-  updateData: CallRecordingTranscriptArtifactUpdateFields;
-  requestedTranscript: boolean;
-};
+type CallRecordingTranscriptArtifactUpdateFields =
+  ReconcileCallRecordingTranscriptArtifactResult['updateData'];
 
 export const reconcileCallRecordingTranscriptArtifact = async ({
   callRecordingId,
   currentStatus,
   externalRecordingId,
+  requestedAt,
   transcript,
 }: {
   callRecordingId: string;
   currentStatus: string | undefined;
   externalRecordingId: string;
+  requestedAt: string;
   transcript: unknown;
 }): Promise<ReconcileCallRecordingTranscriptArtifactResult> => {
   const existingTranscriptMarker = parseTranscriptMarker(transcript);
@@ -60,8 +56,17 @@ export const reconcileCallRecordingTranscriptArtifact = async ({
   const transcriptArtifact = selectRecallTranscriptArtifact(
     listResult.transcripts,
   );
+  const pendingTranscriptMarkerRecallTranscriptId =
+    existingTranscriptMarker?.status === 'PENDING'
+      ? (existingTranscriptMarker.recallTranscriptId ?? undefined)
+      : undefined;
+  const transcriptIdToDownload =
+    transcriptArtifact?.id ?? pendingTranscriptMarkerRecallTranscriptId;
 
-  if (isUndefined(transcriptArtifact)) {
+  if (
+    isUndefined(transcriptArtifact) &&
+    isUndefined(pendingTranscriptMarkerRecallTranscriptId)
+  ) {
     const createResult = await createAsyncRecallTranscript({
       externalRecordingId,
       callRecordingId,
@@ -75,12 +80,21 @@ export const reconcileCallRecordingTranscriptArtifact = async ({
       return buildEmptyTranscriptArtifactResult();
     }
 
-    return { updateData: {}, requestedTranscript: true };
+    return {
+      updateData: {
+        transcript: buildPendingTranscriptMarker({
+          recallTranscriptId: createResult.transcriptId,
+          requestedAt,
+        }),
+      },
+      requestedTranscript: true,
+    };
   }
 
   if (
-    transcriptArtifact.statusCode === 'failed' ||
-    transcriptArtifact.statusCode === 'error'
+    !isUndefined(transcriptArtifact) &&
+    (transcriptArtifact.statusCode === 'failed' ||
+      transcriptArtifact.statusCode === 'error')
   ) {
     return {
       updateData: buildTranscriptFailureUpdate({
@@ -92,12 +106,19 @@ export const reconcileCallRecordingTranscriptArtifact = async ({
     };
   }
 
-  if (transcriptArtifact.statusCode !== 'done') {
+  if (
+    !isUndefined(transcriptArtifact) &&
+    transcriptArtifact.statusCode !== 'done'
+  ) {
+    return buildEmptyTranscriptArtifactResult();
+  }
+
+  if (isUndefined(transcriptIdToDownload)) {
     return buildEmptyTranscriptArtifactResult();
   }
 
   const downloadResult = await downloadTranscript({
-    transcriptId: transcriptArtifact.id,
+    transcriptId: transcriptIdToDownload,
   });
 
   if (downloadResult.outcome === 'filled') {
@@ -113,7 +134,7 @@ export const reconcileCallRecordingTranscriptArtifact = async ({
     return {
       updateData: buildTranscriptFailureUpdate({
         currentStatus,
-        transcriptId: transcriptArtifact.id,
+        transcriptId: transcriptIdToDownload,
         subCode: downloadResult.subCode,
       }),
       requestedTranscript: false,

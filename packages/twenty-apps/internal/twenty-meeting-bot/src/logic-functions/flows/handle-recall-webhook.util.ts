@@ -353,6 +353,7 @@ const buildTranscriptArtifactUpdate = async ({
       callRecordingId: callRecording.id,
       currentStatus: callRecording.status,
       externalRecordingId,
+      requestedAt: new Date().toISOString(),
       transcript: callRecording.transcript,
     });
 

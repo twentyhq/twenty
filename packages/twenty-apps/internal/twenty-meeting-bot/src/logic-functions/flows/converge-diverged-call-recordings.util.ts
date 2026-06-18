@@ -19,6 +19,7 @@ import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-ca
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
 import { reconcileCallRecordingTranscriptArtifact } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact.util';
+import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
 import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
 import {
   updateCallRecording,
@@ -61,15 +62,6 @@ type DivergedCallRecordingNode = {
   video?: FilesFieldValue | null;
   createdAt?: string | null;
   calendarEvent?: { startsAt?: string | null; endsAt?: string | null } | null;
-};
-
-export type ConvergeDivergedCallRecordingsResult = {
-  candidateCount: number;
-  updatedCallRecordingIds: string[];
-  markedFailedCallRecordingIds: string[];
-  requestedTranscriptCallRecordingIds: string[];
-  unconvergeableCallRecordingIds: string[];
-  skippedNotStartedCallRecordingIds: string[];
 };
 
 // Webhook deliveries get lost; this pull pass re-derives state from Recall.
@@ -119,6 +111,7 @@ export const convergeDivergedCallRecordings = async ({
       client,
       candidate,
       externalBotId: candidate.externalBotId,
+      now,
       result,
     });
   }
@@ -229,11 +222,13 @@ const convergeCallRecording = async ({
   client,
   candidate,
   externalBotId,
+  now,
   result,
 }: {
   client: CoreApiClient;
   candidate: DivergedCallRecordingCandidate;
   externalBotId: string;
+  now: Date;
   result: ConvergeDivergedCallRecordingsResult;
 }): Promise<void> => {
   const botResult = await getRecallBot({ externalBotId });
@@ -269,6 +264,7 @@ const convergeCallRecording = async ({
         callRecordingId: candidate.id,
         currentStatus: candidate.status,
         externalRecordingId,
+        requestedAt: now.toISOString(),
         transcript: candidate.transcript,
       });
 

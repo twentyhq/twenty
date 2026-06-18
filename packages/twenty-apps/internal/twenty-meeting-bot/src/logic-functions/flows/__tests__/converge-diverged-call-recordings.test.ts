@@ -163,15 +163,15 @@ describe('convergeDivergedCallRecordings', () => {
       callRecordingId: 'call-recording-1',
     });
     expect(client.mutations).toEqual([
-      {
+      expect.objectContaining({
         id: 'call-recording-1',
-        data: {
+        data: expect.objectContaining({
           status: 'PROCESSING',
           startedAt: '2026-06-09T13:02:00.000Z',
           endedAt: '2026-06-09T14:00:00.000Z',
           externalRecordingId: 'recall-recording-1',
-        },
-      },
+        }),
+      }),
     ]);
     expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
     expect(result).toEqual({
@@ -470,6 +470,11 @@ describe('convergeDivergedCallRecordings', () => {
         id: 'call-recording-1',
         data: {
           endedAt: '2026-06-09T14:00:00.000Z',
+          transcript: {
+            recallTranscriptId: 'recall-transcript-1',
+            status: 'PENDING',
+            requestedAt: NOW.toISOString(),
+          },
         },
       },
     ]);

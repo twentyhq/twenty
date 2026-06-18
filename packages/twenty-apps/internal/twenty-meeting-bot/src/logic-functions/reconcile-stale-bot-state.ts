@@ -5,8 +5,8 @@ import { STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constan
 import { STALE_BOT_STATE_CRON_PATTERN } from 'src/logic-functions/constants/stale-bot-state-cron-pattern';
 import {
   convergeDivergedCallRecordings,
-  type ConvergeDivergedCallRecordingsResult,
 } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
+import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
 import {
   healCallRecordingsMissingBot,
   type HealCallRecordingsMissingBotResult,
@@ -22,7 +22,7 @@ const REAPER_JOIN_AT_LOOKAHEAD_HOURS = 24;
 
 type StepFailure = { error: string };
 
-export const reconcileStaleBotStateHandler = async (): Promise<object> => {
+const reconcileStaleBotStateHandler = async (): Promise<object> => {
   const now = new Date();
   const client = new CoreApiClient();
 

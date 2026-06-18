@@ -5,15 +5,7 @@ import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
-
-export type RecallTranscriptSummary = {
-  id: string;
-  createdAt: string | undefined;
-  downloadUrl: string | undefined;
-  provider: string | undefined;
-  statusCode: string | undefined;
-  statusSubCode: string | undefined;
-};
+import { type RecallTranscriptSummary } from 'src/logic-functions/recall-api/recall-transcript-summary.type';
 
 type ListRecallTranscriptsResult =
   | { ok: true; transcripts: RecallTranscriptSummary[] }
