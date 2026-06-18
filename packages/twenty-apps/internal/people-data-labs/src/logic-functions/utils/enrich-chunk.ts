@@ -216,7 +216,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
         ),
       );
 
-      settledWriteResults.forEach((writeResult, index) => {
+      for (const [index, writeResult] of settledWriteResults.entries()) {
         const matchedRecord = matchedRecords[index];
         if (writeResult.status === 'fulfilled') {
           resultById.set(
@@ -239,7 +239,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
           );
           recordIdsToMarkAsError.push(matchedRecord.recordId);
         }
-      });
+      }
     } else {
       for (const matchedRecord of matchedRecords) {
         resultById.set(
