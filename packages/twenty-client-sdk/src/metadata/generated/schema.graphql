@@ -479,7 +479,6 @@ type Field {
   description: String
   icon: String
   standardOverrides: StandardOverrides
-  isCustom: Boolean @deprecated(reason: "isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application.")
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
@@ -650,7 +649,6 @@ type Object {
   standardOverrides: ObjectStandardOverrides
   shortcut: String
   color: String
-  isCustom: Boolean! @deprecated(reason: "isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application.")
   isRemote: Boolean!
   isActive: Boolean!
   isSystem: Boolean!
@@ -2994,7 +2992,6 @@ type MinimalObjectMetadata {
   labelPlural: String!
   icon: String
   color: String
-  isCustom: Boolean!
   isActive: Boolean!
   isSystem: Boolean!
   isRemote: Boolean!
@@ -4289,7 +4286,6 @@ input CreateFieldInput {
   label: String!
   description: String
   icon: String
-  isCustom: Boolean
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
