@@ -8,7 +8,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, QueryRunner, Repository } from 'typeorm';
+import { DataSource, LessThan, QueryRunner, Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -75,6 +75,12 @@ import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+// A workspace stuck in ONGOING_CREATION for longer than this is treated as a
+// crashed activation (the process died before the catch block could reset it to
+// PENDING_CREATION) and may be retried. It is far longer than a real activation
+// takes, so a genuinely in-progress activation is never reclaimed.
+const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -329,25 +335,33 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     workspace: WorkspaceEntity,
     data: ActivateWorkspaceInput,
   ) {
-    if (
-      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
-    ) {
-      throw new Error('Workspace is already being created');
-    }
-
-    if (
-      workspace.activationStatus !== WorkspaceActivationStatus.PENDING_CREATION
-    ) {
-      throw new Error('Workspace is not pending creation');
-    }
-
-    const activationLockResult = await this.workspaceRepository.update(
+    // Acquire the activation lock by atomically moving the workspace to
+    // ONGOING_CREATION. First try the normal case (PENDING_CREATION). If nothing
+    // matches, the workspace may be stuck in ONGOING_CREATION from a prior
+    // attempt that was killed before the catch block could reset it — reclaim it,
+    // but only once the lock is stale, so a genuinely concurrent activation is
+    // never interrupted. Postgres row locking serializes concurrent reclaims, and
+    // repository.update bumps updatedAt, so a reclaimed lock is immediately fresh.
+    let activationLockResult = await this.workspaceRepository.update(
       {
         id: workspace.id,
         activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
       },
       { activationStatus: WorkspaceActivationStatus.ONGOING_CREATION },
     );
+
+    if ((activationLockResult.affected ?? 0) === 0) {
+      activationLockResult = await this.workspaceRepository.update(
+        {
+          id: workspace.id,
+          activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
+          updatedAt: LessThan(
+            new Date(Date.now() - WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS),
+          ),
+        },
+        { activationStatus: WorkspaceActivationStatus.ONGOING_CREATION },
+      );
+    }
 
     if ((activationLockResult.affected ?? 0) === 0) {
       throw new Error('Workspace is already being created');

@@ -951,7 +951,6 @@ export class AuthService {
       workspaceInviteHash,
       workspaceId,
       billingCheckoutSessionState,
-      action,
       locale,
       returnToPath,
     }: MicrosoftRequest['user'] | GoogleRequest['user'],
@@ -1006,15 +1005,12 @@ export class AuthService {
       return url.toString();
     }
 
-    const currentWorkspace =
-      action === 'create-new-workspace'
-        ? undefined
-        : await this.findWorkspaceForSignInUp({
-            workspaceId,
-            workspaceInviteHash,
-            email,
-            authProvider,
-          });
+    const currentWorkspace = await this.findWorkspaceForSignInUp({
+      workspaceId,
+      workspaceInviteHash,
+      email,
+      authProvider,
+    });
 
     try {
       const invitation =

@@ -49,7 +49,9 @@ export const WorkspaceActivation = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { loadCurrentUser } = useLoadCurrentUser();
-  const [activateWorkspace] = useMutation(ActivateWorkspaceDocument);
+  const [activateWorkspace, { loading: isActivating }] = useMutation(
+    ActivateWorkspaceDocument,
+  );
   const [activationStep, setActivationStep] =
     useState<ActivationStep>('pending');
   const [hasFailed, setHasFailed] = useState(false);
@@ -144,6 +146,7 @@ export const WorkspaceActivation = () => {
               onClick={() => {
                 void activate();
               }}
+              disabled={isActivating}
               fullWidth
             />
           </StyledButtonContainer>
