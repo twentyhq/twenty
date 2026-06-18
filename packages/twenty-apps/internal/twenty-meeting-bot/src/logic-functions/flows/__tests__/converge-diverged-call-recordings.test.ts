@@ -504,9 +504,6 @@ describe('convergeDivergedCallRecordings', () => {
       transcripts: [
         {
           id: 'recall-transcript-1',
-          createdAt: '2026-06-09T14:06:00.000Z',
-          downloadUrl: undefined,
-          provider: 'recallai_async',
           statusCode: 'processing',
           statusSubCode: undefined,
         },
@@ -563,9 +560,6 @@ describe('convergeDivergedCallRecordings', () => {
       transcripts: [
         {
           id: 'recall-transcript-1',
-          createdAt: '2026-06-09T14:06:00.000Z',
-          downloadUrl: 'https://recall-transcripts.example.com/transcript',
-          provider: 'recallai_async',
           statusCode: 'done',
           statusSubCode: undefined,
         },
@@ -639,9 +633,6 @@ describe('convergeDivergedCallRecordings', () => {
       transcripts: [
         {
           id: 'recall-transcript-1',
-          createdAt: '2026-06-09T14:06:00.000Z',
-          downloadUrl: undefined,
-          provider: 'recallai_async',
           statusCode: 'failed',
           statusSubCode: 'audio_missing',
         },

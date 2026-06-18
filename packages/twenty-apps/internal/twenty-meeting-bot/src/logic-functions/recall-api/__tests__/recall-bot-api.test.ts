@@ -355,7 +355,7 @@ describe('recall bot api', () => {
     });
   });
 
-  it('lists transcripts for a recording id and normalizes Recall artifact fields', async () => {
+  it('lists transcripts for a recording id and normalizes status fields', async () => {
     fetchMock.mockResolvedValue({
       ok: true,
       status: 200,
@@ -364,13 +364,7 @@ describe('recall bot api', () => {
         results: [
           {
             id: 'recall-transcript-id',
-            created_at: '2026-01-01T13:05:00.000Z',
-            provider: { recallai_async: { language_code: 'auto' } },
             status: { code: 'done', sub_code: null },
-            data: {
-              download_url:
-                'https://recall-transcripts.example.com/transcript',
-            },
           },
         ],
       }),
@@ -385,9 +379,6 @@ describe('recall bot api', () => {
       transcripts: [
         {
           id: 'recall-transcript-id',
-          createdAt: '2026-01-01T13:05:00.000Z',
-          downloadUrl: 'https://recall-transcripts.example.com/transcript',
-          provider: 'recallai_async',
           statusCode: 'done',
           statusSubCode: undefined,
         },
@@ -409,9 +400,7 @@ describe('recall bot api', () => {
           results: [
             {
               id: 'recall-transcript-id-1',
-              provider: { recallai_async: {} },
               status: { code: 'processing' },
-              data: {},
             },
           ],
         }),
@@ -424,9 +413,7 @@ describe('recall bot api', () => {
           results: [
             {
               id: 'recall-transcript-id-2',
-              provider: { assembly_ai_async: {} },
               status: { code: 'failed', sub_code: 'audio_missing' },
-              data: {},
             },
           ],
         }),
@@ -441,17 +428,11 @@ describe('recall bot api', () => {
       transcripts: [
         {
           id: 'recall-transcript-id-1',
-          createdAt: undefined,
-          downloadUrl: undefined,
-          provider: 'recallai_async',
           statusCode: 'processing',
           statusSubCode: undefined,
         },
         {
           id: 'recall-transcript-id-2',
-          createdAt: undefined,
-          downloadUrl: undefined,
-          provider: 'assembly_ai_async',
           statusCode: 'failed',
           statusSubCode: 'audio_missing',
         },

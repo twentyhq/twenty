@@ -118,30 +118,13 @@ const extractRecallTranscriptSummary = (
     return undefined;
   }
 
-  const data = asRecord(transcriptRecord.data);
   const status = asRecord(transcriptRecord.status);
 
   return {
     id: transcriptId,
-    createdAt: getString(transcriptRecord.created_at),
-    downloadUrl: getString(data?.download_url),
-    provider: extractTranscriptProvider(transcriptRecord.provider),
     statusCode: getString(status?.code),
     statusSubCode: getString(status?.sub_code),
   };
-};
-
-const extractTranscriptProvider = (provider: unknown): string | undefined => {
-  const providerRecord = asRecord(provider);
-
-  if (isUndefined(providerRecord)) {
-    return undefined;
-  }
-
-  return Object.entries(providerRecord).find(
-    ([, providerConfiguration]) =>
-      !isUndefined(providerConfiguration) && providerConfiguration !== null,
-  )?.[0];
 };
 
 const extractNextPath = (

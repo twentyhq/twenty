@@ -6,9 +6,7 @@ import { buildPendingTranscriptMarker } from 'src/logic-functions/domain/build-p
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/create-async-recall-transcript.util';
-import {
-  listRecallTranscripts,
-} from 'src/logic-functions/recall-api/list-recall-transcripts.util';
+import { listRecallTranscripts } from 'src/logic-functions/recall-api/list-recall-transcripts.util';
 import { type RecallTranscriptSummary } from 'src/logic-functions/recall-api/recall-transcript-summary.type';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
 import { type ReconcileCallRecordingTranscriptArtifactResult } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact-result.type';
@@ -159,65 +157,7 @@ const buildEmptyTranscriptArtifactResult =
 const selectRecallTranscriptArtifact = (
   transcripts: RecallTranscriptSummary[],
 ): RecallTranscriptSummary | undefined =>
-  transcripts
-    .filter((transcript) => transcript.statusCode !== 'deleted')
-    .sort(compareRecallTranscriptArtifacts)[0];
-
-const compareRecallTranscriptArtifacts = (
-  firstTranscript: RecallTranscriptSummary,
-  secondTranscript: RecallTranscriptSummary,
-): number => {
-  const firstProviderPriority = getTranscriptProviderPriority(firstTranscript);
-  const secondProviderPriority = getTranscriptProviderPriority(secondTranscript);
-
-  if (firstProviderPriority !== secondProviderPriority) {
-    return firstProviderPriority - secondProviderPriority;
-  }
-
-  const firstStatusPriority = getTranscriptStatusPriority(firstTranscript);
-  const secondStatusPriority = getTranscriptStatusPriority(secondTranscript);
-
-  if (firstStatusPriority !== secondStatusPriority) {
-    return firstStatusPriority - secondStatusPriority;
-  }
-
-  return (
-    getTranscriptCreatedAtTime(secondTranscript) -
-    getTranscriptCreatedAtTime(firstTranscript)
-  );
-};
-
-const getTranscriptProviderPriority = ({
-  provider,
-}: RecallTranscriptSummary): number => (provider === 'recallai_async' ? 0 : 1);
-
-const getTranscriptStatusPriority = ({
-  statusCode,
-}: RecallTranscriptSummary): number => {
-  switch (statusCode) {
-    case 'done':
-      return 0;
-    case 'processing':
-      return 1;
-    case 'failed':
-    case 'error':
-      return 2;
-    default:
-      return 3;
-  }
-};
-
-const getTranscriptCreatedAtTime = ({
-  createdAt,
-}: RecallTranscriptSummary): number => {
-  if (isUndefined(createdAt)) {
-    return 0;
-  }
-
-  const createdAtTime = new Date(createdAt).getTime();
-
-  return Number.isNaN(createdAtTime) ? 0 : createdAtTime;
-};
+  transcripts.find((transcript) => transcript.statusCode !== 'deleted');
 
 const buildTranscriptFailureUpdate = ({
   currentStatus,
