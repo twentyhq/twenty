@@ -251,6 +251,64 @@ describe('Successful user and workspace creation', () => {
     createdUserAccessToken = undefined;
   });
 
+  it('should be idempotent when re-activating an already-active workspace', async () => {
+    const uniqueEmail = `test-idempotent-${randomUUID()}@example.com`;
+
+    const { data } = await signUp({
+      input: {
+        email: uniqueEmail,
+        password: 'Test123!@#',
+      },
+      expectToFail: false,
+    });
+
+    createdUserAccessToken =
+      data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    await testDataSource.query(
+      'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+      [uniqueEmail],
+    );
+
+    const {
+      data: { signUpInNewWorkspace: signUpInNewWorkspaceData },
+    } = await signUpInNewWorkspace({
+      accessToken: createdUserAccessToken,
+      expectToFail: false,
+    });
+
+    const {
+      data: { getAuthTokensFromLoginToken: authTokensData },
+    } = await getAuthTokensFromLoginToken({
+      origin: signUpInNewWorkspaceData.workspace.workspaceUrls.subdomainUrl,
+      loginToken: signUpInNewWorkspaceData.loginToken.token,
+      expectToFail: false,
+    });
+
+    const newWorkspaceAccessToken =
+      authTokensData.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    await activateWorkspace({
+      accessToken: newWorkspaceAccessToken,
+      displayName: 'Idempotent workspace',
+      expectToFail: false,
+    });
+
+    // A second activation (e.g. the client lost the first response and retried)
+    // must succeed idempotently instead of throwing "already being created".
+    const {
+      data: { activateWorkspace: secondActivation },
+    } = await activateWorkspace({
+      accessToken: newWorkspaceAccessToken,
+      displayName: 'Idempotent workspace',
+      expectToFail: false,
+    });
+
+    expect(secondActivation.activationStatus).toBe(
+      WorkspaceActivationStatus.ACTIVE,
+    );
+  });
+
   it('should suspend and soft-delete workspace when last user is deleted', async () => {
     const uniqueEmail = `test-delete-${randomUUID()}@example.com`;
 

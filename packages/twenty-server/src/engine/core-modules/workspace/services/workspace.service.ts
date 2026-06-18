@@ -364,6 +364,20 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     }
 
     if ((activationLockResult.affected ?? 0) === 0) {
+      // Activation is idempotent for the terminal state: if a prior attempt
+      // already completed (e.g. the client lost the response and retried),
+      // return the active workspace instead of failing. Otherwise another
+      // activation is genuinely in progress and must not be interrupted.
+      const existingWorkspace = await this.workspaceRepository.findOneBy({
+        id: workspace.id,
+      });
+
+      if (
+        existingWorkspace?.activationStatus === WorkspaceActivationStatus.ACTIVE
+      ) {
+        return existingWorkspace;
+      }
+
       throw new Error('Workspace is already being created');
     }
 
