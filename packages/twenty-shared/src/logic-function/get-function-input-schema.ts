@@ -38,11 +38,12 @@ const getObjectUniversalIdentifierFromTypeArgument = (
   return undefined;
 };
 
-const buildArraySchemaFromItems = (
-  items: InputJsonSchema,
-): InputJsonSchema =>
+const buildArraySchemaFromItems = (items: InputJsonSchema): InputJsonSchema =>
   items.type === 'record'
-    ? { type: 'records', objectUniversalIdentifier: items.objectUniversalIdentifier }
+    ? {
+        type: 'records',
+        objectUniversalIdentifier: items.objectUniversalIdentifier,
+      }
     : { type: 'array', items };
 
 const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
