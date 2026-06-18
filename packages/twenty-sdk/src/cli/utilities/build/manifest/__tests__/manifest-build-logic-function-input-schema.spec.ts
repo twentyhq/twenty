@@ -25,12 +25,12 @@ describe('buildManifest logic function input schema inference', () => {
       {
         type: 'object',
         properties: {
-          company: {
+          companyId: {
             type: 'object',
             objectUniversalIdentifier:
               STANDARD_OBJECTS.company.universalIdentifier,
           },
-          postCards: {
+          postCardIds: {
             type: 'array',
             items: {
               type: 'object',

@@ -1,4 +1,8 @@
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray } from '@sniptt/guards';
+import {
+  isRecordArraySchema,
+  isRecordObjectSchema,
+} from 'twenty-shared/logic-function';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type InputSchemaProperty } from 'twenty-shared/workflow';
@@ -18,18 +22,11 @@ export const getWorkflowCodeFieldsLeafKind = (
     return 'text';
   }
 
-  if (
-    property.type === 'object' &&
-    isNonEmptyString(property.objectUniversalIdentifier)
-  ) {
+  if (isRecordObjectSchema(property)) {
     return 'record';
   }
 
-  if (
-    property.type === 'array' &&
-    property.items?.type === 'object' &&
-    isNonEmptyString(property.items.objectUniversalIdentifier)
-  ) {
+  if (isRecordArraySchema(property)) {
     return 'record-array';
   }
 

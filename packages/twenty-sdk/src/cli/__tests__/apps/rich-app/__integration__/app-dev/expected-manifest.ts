@@ -1674,12 +1674,12 @@ export const EXPECTED_MANIFEST: Manifest = {
           {
             type: 'object',
             properties: {
-              company: {
+              companyId: {
                 type: 'object',
                 objectUniversalIdentifier:
                   '20202020-b374-4779-a561-80086cb2e17f',
               },
-              postCards: {
+              postCardIds: {
                 type: 'array',
                 items: {
                   type: 'object',

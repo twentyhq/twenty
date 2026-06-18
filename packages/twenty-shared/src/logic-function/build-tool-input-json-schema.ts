@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
+import { isRecordObjectSchema } from '@/logic-function/is-record-input-schema';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type ResolveObjectLabel = (
@@ -11,10 +12,7 @@ export const buildToolInputJsonSchema = (
   jsonSchema: InputJsonSchema,
   resolveObjectLabel?: ResolveObjectLabel,
 ): InputJsonSchema => {
-  if (
-    jsonSchema.type === 'object' &&
-    isNonEmptyString(jsonSchema.objectUniversalIdentifier)
-  ) {
+  if (isRecordObjectSchema(jsonSchema)) {
     const objectLabel = resolveObjectLabel?.(
       jsonSchema.objectUniversalIdentifier,
     );

@@ -27,12 +27,12 @@ object's universal identifier as a string literal:
 import { defineLogicFunction, type TwentyRecord } from 'twenty-sdk/define';
 
 const handler = async (params: {
-  company: TwentyRecord<'20202020-b374-4779-a561-80086cb2e17f'>;
-  postCards: TwentyRecord<'54b589ca-eeed-4950-a176-358418b85c05'>[];
+  companyId: TwentyRecord<'20202020-b374-4779-a561-80086cb2e17f'>;
+  postCardIds: TwentyRecord<'54b589ca-eeed-4950-a176-358418b85c05'>[];
 }) => {
   return {
-    companyId: params.company,
-    postCardCount: params.postCards.length,
+    companyId: params.companyId,
+    postCardCount: params.postCardIds.length,
   };
 };
 ```
@@ -52,8 +52,8 @@ a non-literal argument, is treated as an unknown input.
 
 ## What the handler receives
 
-`TwentyRecord<TUid>` is a branded `string`: `company` is a record id, and
-`postCards` is an array of record ids. This matches what the runtime delivers —
+`TwentyRecord<TUid>` is a branded `string`: `companyId` is a record id, and
+`postCardIds` is an array of record ids. This matches what the runtime delivers —
 the workflow action passes the selected record ids (or the value a bound
 `{{variable}}` resolves to) straight to the handler. Handlers must therefore
 accept ids. The People Data Labs functions model this:

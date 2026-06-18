@@ -1,7 +1,7 @@
 import { type InputSchema, type FunctionInput } from '@/workflow';
 import { type InputJsonSchema } from '@/logic-function';
+import { isRecordObjectSchema } from '@/logic-function/is-record-input-schema';
 import { isDefined } from '@/utils';
-import { isNonEmptyString } from '@sniptt/guards';
 
 export const getFunctionInputFromInputSchema = (
   inputSchema: InputSchema | InputJsonSchema[],
@@ -13,7 +13,7 @@ export const getFunctionInputFromInputSchema = (
     ) {
       return param.enum && param.enum.length > 0 ? param.enum[0] : null;
     } else if (param.type === 'object') {
-      if (isNonEmptyString(param.objectUniversalIdentifier)) {
+      if (isRecordObjectSchema(param)) {
         return null;
       }
       const result: FunctionInput = {};
