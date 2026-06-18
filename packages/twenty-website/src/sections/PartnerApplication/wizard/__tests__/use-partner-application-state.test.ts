@@ -178,4 +178,30 @@ describe('partnerApplicationReducer', () => {
     expect(blocked.fieldErrors.hourlyRate).toBe('required');
     expect(blocked.fieldErrors.projectBudgetMin).toBe('required');
   });
+
+  it('flags Commercials amounts that are non-empty but unparseable (e.g. ".")', () => {
+    const onCommercials: PartnerApplicationState = {
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      stepIndex: 3,
+      hourlyRate: '.',
+      projectBudgetMin: '5000',
+    };
+    const blocked = partnerApplicationReducer(onCommercials, {
+      type: 'GO_NEXT',
+    });
+    expect(blocked.stepIndex).toBe(3);
+    expect(blocked.fieldErrors.hourlyRate).toBe('invalid_amount');
+    expect(blocked.fieldErrors.projectBudgetMin).toBeUndefined();
+  });
+
+  it('accepts valid Commercials amounts', () => {
+    const onCommercials: PartnerApplicationState = {
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      stepIndex: 3,
+      hourlyRate: '120',
+      projectBudgetMin: '5000',
+    };
+    const next = partnerApplicationReducer(onCommercials, { type: 'GO_NEXT' });
+    expect(next.fieldErrors).toEqual({});
+  });
 });

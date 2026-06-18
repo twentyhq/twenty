@@ -3,6 +3,7 @@ import { useReducer, useCallback } from 'react';
 import {
   emailFieldSchema,
   httpUrlFieldSchema,
+  nonNegativeAmountStringSchema,
   type PartnerApplicationRequest,
 } from '@/sections/PartnerApplication/partner-application-field-schemas';
 import {
@@ -110,9 +111,18 @@ function isEmpty(value: unknown): boolean {
 // exactly what the server route schema rejects. The empty/required gate above
 // owns "is it filled in"; these only run on non-empty values.
 type FieldFormatCheck = {
-  field: 'email' | 'website' | 'linkedin' | 'calendarLink';
-  schema: typeof emailFieldSchema | typeof httpUrlFieldSchema;
-  errorCode: 'invalid_email' | 'invalid_url';
+  field:
+    | 'email'
+    | 'website'
+    | 'linkedin'
+    | 'calendarLink'
+    | 'hourlyRate'
+    | 'projectBudgetMin';
+  schema:
+    | typeof emailFieldSchema
+    | typeof httpUrlFieldSchema
+    | typeof nonNegativeAmountStringSchema;
+  errorCode: 'invalid_email' | 'invalid_url' | 'invalid_amount';
 };
 
 const STEP_FORMAT_CHECKS: Partial<
@@ -126,6 +136,16 @@ const STEP_FORMAT_CHECKS: Partial<
     { field: 'linkedin', schema: httpUrlFieldSchema, errorCode: 'invalid_url' },
   ],
   commercials: [
+    {
+      field: 'hourlyRate',
+      schema: nonNegativeAmountStringSchema,
+      errorCode: 'invalid_amount',
+    },
+    {
+      field: 'projectBudgetMin',
+      schema: nonNegativeAmountStringSchema,
+      errorCode: 'invalid_amount',
+    },
     {
       field: 'calendarLink',
       schema: httpUrlFieldSchema,

@@ -20,6 +20,7 @@ export const PARTNER_APPLICATION_MODAL_COPY = {
     incompleteForm: msg`Please complete all required fields before continuing.`,
     invalidEmail: msg`Enter a valid email address.`,
     invalidUrl: msg`Enter a valid URL (starting with http:// or https://).`,
+    invalidAmount: msg`Enter a valid amount using numbers only.`,
     submitFailed: msg`We could not submit your application. Please try again in a moment.`,
   },
 } as const;

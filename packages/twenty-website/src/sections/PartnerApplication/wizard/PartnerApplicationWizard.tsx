@@ -193,7 +193,9 @@ export function PartnerApplicationWizard({
     ? PARTNER_APPLICATION_MODAL_COPY.validation.invalidEmail
     : errorValues.includes('invalid_url')
       ? PARTNER_APPLICATION_MODAL_COPY.validation.invalidUrl
-      : PARTNER_APPLICATION_MODAL_COPY.validation.incompleteForm;
+      : errorValues.includes('invalid_amount')
+        ? PARTNER_APPLICATION_MODAL_COPY.validation.invalidAmount
+        : PARTNER_APPLICATION_MODAL_COPY.validation.incompleteForm;
 
   const stepLabelNode = (
     <>
