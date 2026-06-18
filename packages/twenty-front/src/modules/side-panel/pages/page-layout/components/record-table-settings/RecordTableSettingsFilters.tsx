@@ -10,7 +10,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFilterSettingsContainer = styled.div`
   display: flex;

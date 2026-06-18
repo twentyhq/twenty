@@ -5,7 +5,6 @@ description: Importe y exporte sus datos de CRM mediante archivos CSV o la API.
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-
 ## Métodos de importación
 
 Twenty admite dos métodos principales para importar datos:
@@ -40,16 +39,15 @@ Puede importar relaciones entre objetos utilizando la función de importación C
 <Note>**Los registros eliminados cuentan para la unicidad.** Los registros eliminados lógicamente (visibles en Menú de comandos → Ver registros eliminados) se incluyen en las comprobaciones de unicidad. Si importa un registro con el mismo valor único que un registro eliminado, el registro eliminado se restaurará.</Note>
 
 <Warning>
-  **¡Importa el orden de importación!**
+**¡Importa el orden de importación!**
 
-  Al importar objetos relacionados, cargue los archivos en este orden:
+Al importar objetos relacionados, cargue los archivos en este orden:
+1. **Empresas** primero (el lado "uno" de las relaciones)
+2. **Personas** segundo (vinculadas a empresas mediante companyId)
+3. **Oportunidades** tercero (vinculadas a empresas/personas)
+4. **Objetos personalizados** con relaciones al final
 
-  1. **Empresas** primero (el lado "uno" de las relaciones)
-  2. **Personas** segundo (vinculadas a empresas mediante companyId)
-  3. **Oportunidades** tercero (vinculadas a empresas/personas)
-  4. **Objetos personalizados** con relaciones al final
-
-  ¿Por qué? El lado "uno" de una relación de uno a muchos debe existir antes de que pueda hacer referencia a él. Por ejemplo, el registro de Empresa debe existir antes de importar una Persona con el ID de esa empresa.
+¿Por qué? El lado "uno" de una relación de uno a muchos debe existir antes de que pueda hacer referencia a él. Por ejemplo, el registro de Empresa debe existir antes de importar una Persona con el ID de esa empresa.
 </Warning>
 
 Consulte [este artículo](/l/es/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) para ver una guía paso a paso sobre cómo proceder.

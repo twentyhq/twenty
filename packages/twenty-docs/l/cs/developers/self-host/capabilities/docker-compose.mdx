@@ -51,7 +51,7 @@ Postupujte podle těchto kroků pro ruční nastavení.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **Vygenerujte tajné tokeny**
+2. **Vygenerujte šifrovací klíč**
 
    Spusťte následující příkaz k generování jedinečného náhodného řetězce:
 
@@ -59,15 +59,17 @@ Postupujte podle těchto kroků pro ruční nastavení.
    openssl rand -base64 32
    ```
 
-   **Důležité:** Udržujte tuto hodnotu v tajnosti / nesdílejte ji.
+   **Důležité:** Udržujte tuto hodnotu v tajnosti / nesdílejte ji. Ztráta `ENCRYPTION_KEY` znamená ztrátu přístupu ke všem tajným údajům uloženým v databázi (OAuth tokeny, aplikační proměnné, TOTP tajemství atd.).
 
 3. **Aktualizujte `.env` soubor**
 
    Nahraďte místoblokovou hodnotu ve svém .env souboru vygenerovaným tokenem:
 
    ```ini
-   APP_SECRET=první_náhodný_řetězec
+   ENCRYPTION_KEY=random_string
    ```
+
+   Podívejte se na [průvodce rotací klíče](/l/cs/developers/self-host/capabilities/key-rotation) pro pokyny, jak jej rotovat bez prostojů.
 
 4. **Nastavte Heslo pro Postgres**
 

@@ -15,17 +15,14 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { PageFocusId } from '@/types/PageFocusId';
-import { ModalContent } from 'twenty-ui-deprecated/layout';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
-import { IconGoogle, IconMicrosoft } from 'twenty-ui-deprecated/display';
-import { MainButton } from 'twenty-ui-deprecated/input';
-import { ClickToActionLink } from 'twenty-ui-deprecated/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
+import { MainButton } from 'twenty-ui/input';
+import { ClickToActionLink } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import {
   CalendarChannelVisibility,

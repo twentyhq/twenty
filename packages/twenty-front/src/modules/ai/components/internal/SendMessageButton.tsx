@@ -6,8 +6,8 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { IconArrowUp, IconPlayerStop } from 'twenty-ui-deprecated/display';
-import { RoundedIconButton } from 'twenty-ui-deprecated/input';
+import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
+import { RoundedIconButton } from 'twenty-ui/input';
 
 type SendMessageButtonProps = {
   onSend: () => void;

@@ -7,21 +7,21 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import {
-  H2Title,
   IconBrandX,
   IconBriefcase,
   IconTransform,
   type IconComponent,
   useIcons,
-} from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import coverDark from '~/pages/settings/community/assets/cover-dark.png';
 import coverLight from '~/pages/settings/community/assets/cover-light.png';
 

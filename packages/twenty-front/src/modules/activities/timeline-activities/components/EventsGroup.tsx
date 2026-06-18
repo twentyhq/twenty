@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { EventRow } from '@/activities/timeline-activities/components/EventRow';
 import { type EventGroup } from '@/activities/timeline-activities/utils/groupEventsByMonth';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventsGroupProps = {
   group: EventGroup;

@@ -14,9 +14,9 @@ import {
   IconLink,
   IconMicrosoft,
   IconPassword,
-} from 'twenty-ui-deprecated/display';
-import { Card } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import {
   type AuthProviders,

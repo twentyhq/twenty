@@ -21,8 +21,8 @@ import {
   IconHandMove,
   IconSortAZ,
   IconSortZA,
-} from 'twenty-ui-deprecated/display';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/icon';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   const { currentContentId, onContentChange } = useObjectOptionsDropdown();

@@ -10,11 +10,8 @@ import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/Ste
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconVariablePlus } from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconVariablePlus } from 'twenty-ui/icon';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownVariableButtonContainer = styled.div<{
   disabled?: boolean;

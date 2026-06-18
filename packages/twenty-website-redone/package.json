@@ -1,0 +1,48 @@
+{
+  "name": "twenty-website-redone",
+  "private": true,
+  "scripts": {
+    "dev": "npx next dev --port 3004",
+    "build": "npx next build",
+    "start": "npx next start --port 3004",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy:dev": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env dev",
+    "deploy:prod": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env prod",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.27.6",
+    "@base-ui/react": "^1.3.0",
+    "@calcom/embed-react": "^1.5.3",
+    "@linaria/core": "^7.0.0",
+    "@linaria/react": "^7.0.1",
+    "@lingui/core": "^5.1.2",
+    "@lingui/react": "^5.1.2",
+    "@lottiefiles/dotlottie-react": "^0.18.10",
+    "@tabler/icons-react": "^3.41.1",
+    "@wyw-in-js/babel-preset": "^0.8.1",
+    "@wyw-in-js/transform": "^0.8.1",
+    "next": "^16.2.6",
+    "next-with-linaria": "^1.3.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "server-only": "^0.0.1",
+    "stripe": "^20.3.1",
+    "three": "^0.184.0",
+    "twenty-shared": "workspace:*",
+    "twenty-ui": "workspace:*",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@lingui/cli": "^5.1.2",
+    "@lingui/conf": "5.1.2",
+    "@lingui/format-po": "5.1.2",
+    "@lingui/swc-plugin": "^5.11.0",
+    "@opennextjs/cloudflare": "^1.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/three": "^0.184.1",
+    "wrangler": "^4.0.0"
+  }
+}

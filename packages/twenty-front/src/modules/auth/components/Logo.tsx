@@ -2,9 +2,9 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath } from 'twenty-shared/types';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui-deprecated/display';
-import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Avatar } from 'twenty-ui/data-display';
+import { UndecoratedLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useRedirectToDefaultDomain } from '~/modules/domain-manager/hooks/useRedirectToDefaultDomain';
 
@@ -78,7 +78,7 @@ export const Logo = ({
       {isUsingDefaultLogo ? (
         <UndecoratedLink
           to={AppPath.SignInUp}
-          onClick={redirectToDefaultDomain}
+          onClick={() => redirectToDefaultDomain()}
         >
           <StyledPrimaryLogo
             style={{ backgroundImage: `url(${primaryLogoUrl})` }}

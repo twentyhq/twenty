@@ -24,7 +24,7 @@ import {
   IconArrowRight,
   IconEyeOff,
   IconSettings,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

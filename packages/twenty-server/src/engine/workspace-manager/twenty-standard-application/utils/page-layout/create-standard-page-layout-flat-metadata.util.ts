@@ -3,7 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { type PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 import { type StandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { type StandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
@@ -119,6 +119,7 @@ export const createStandardPageLayoutFlatMetadata = ({
     type,
     objectMetadataId,
     objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+    isSystemSideEffect: type === PageLayoutType.RECORD_PAGE,
     tabIds: [],
     tabUniversalIdentifiers: [],
     createdAt: now,

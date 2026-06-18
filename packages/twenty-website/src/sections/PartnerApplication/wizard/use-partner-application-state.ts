@@ -3,6 +3,7 @@ import { useReducer, useCallback } from 'react';
 import {
   emailFieldSchema,
   httpUrlFieldSchema,
+  nonNegativeAmountStringSchema,
   type PartnerApplicationRequest,
 } from '@/sections/PartnerApplication/partner-application-field-schemas';
 import {
@@ -92,6 +93,7 @@ export type PartnerApplicationAction =
   | { type: 'TOGGLE_SCOPE'; value: PartnerScopeValue }
   | { type: 'TOGGLE_LANGUAGE'; value: PartnerLanguageValue }
   | { type: 'SET_SKILLS'; value: string[] }
+  | { type: 'SET_FIELD_ERRORS'; errors: Partial<Record<string, string>> }
   | { type: 'GO_NEXT' }
   | { type: 'GO_BACK' }
   | { type: 'SET_SUBMITTING'; value: boolean }
@@ -109,9 +111,18 @@ function isEmpty(value: unknown): boolean {
 // exactly what the server route schema rejects. The empty/required gate above
 // owns "is it filled in"; these only run on non-empty values.
 type FieldFormatCheck = {
-  field: 'email' | 'website' | 'linkedin' | 'calendarLink';
-  schema: typeof emailFieldSchema | typeof httpUrlFieldSchema;
-  errorCode: 'invalid_email' | 'invalid_url';
+  field:
+    | 'email'
+    | 'website'
+    | 'linkedin'
+    | 'calendarLink'
+    | 'hourlyRate'
+    | 'projectBudgetMin';
+  schema:
+    | typeof emailFieldSchema
+    | typeof httpUrlFieldSchema
+    | typeof nonNegativeAmountStringSchema;
+  errorCode: 'invalid_email' | 'invalid_url' | 'invalid_amount';
 };
 
 const STEP_FORMAT_CHECKS: Partial<
@@ -125,6 +136,16 @@ const STEP_FORMAT_CHECKS: Partial<
     { field: 'linkedin', schema: httpUrlFieldSchema, errorCode: 'invalid_url' },
   ],
   commercials: [
+    {
+      field: 'hourlyRate',
+      schema: nonNegativeAmountStringSchema,
+      errorCode: 'invalid_amount',
+    },
+    {
+      field: 'projectBudgetMin',
+      schema: nonNegativeAmountStringSchema,
+      errorCode: 'invalid_amount',
+    },
     {
       field: 'calendarLink',
       schema: httpUrlFieldSchema,
@@ -194,6 +215,8 @@ export function partnerApplicationReducer(
     }
     case 'SET_SKILLS':
       return { ...state, skills: action.value };
+    case 'SET_FIELD_ERRORS':
+      return { ...state, fieldErrors: action.errors };
     case 'GO_NEXT': {
       const errors = validateStep(state);
       if (Object.keys(errors).length > 0) {
@@ -270,6 +293,15 @@ export function usePartnerApplicationState() {
   );
   const reset = useCallback(() => dispatch({ type: 'RESET' }), []);
 
+  // Validate the current step on demand. The final step submits directly and
+  // never passes through GO_NEXT's gate, so the wizard calls this before POSTing
+  // to catch empty required fields client-side instead of round-tripping.
+  const validateCurrentStep = useCallback(() => {
+    const errors = validateStep(state);
+    dispatch({ type: 'SET_FIELD_ERRORS', errors });
+    return Object.keys(errors).length === 0;
+  }, [state]);
+
   return {
     state,
     setField,
@@ -282,6 +314,7 @@ export function usePartnerApplicationState() {
     setSubmitError,
     setSubmitted,
     reset,
+    validateCurrentStep,
   };
 }
 
@@ -305,11 +338,13 @@ export function buildPartnerApplicationRequestBody(
     name: state.name.trim(),
     email: state.email.trim(),
     company: state.company.trim(),
+    website: state.website.trim(),
+    city: state.city.trim(),
+    hourlyRate: parseFloat(state.hourlyRate),
+    projectBudgetMin: parseFloat(state.projectBudgetMin),
   };
 
-  if (state.website.trim()) body.website = state.website.trim();
   if (state.linkedin.trim()) body.linkedin = state.linkedin.trim();
-  if (state.city.trim()) body.city = state.city.trim();
   if (state.country !== '') body.country = state.country;
   if (state.languages.length > 0) body.languages = state.languages;
   if (state.typeOfTeam !== '') body.typeOfTeam = state.typeOfTeam;
@@ -317,15 +352,6 @@ export function buildPartnerApplicationRequestBody(
   if (state.skills.length > 0) body.skills = state.skills;
   if (state.applicationNotes.trim())
     body.applicationNotes = state.applicationNotes.trim();
-
-  const hourlyRate = parseFloat(state.hourlyRate);
-  if (Number.isFinite(hourlyRate) && hourlyRate >= 0)
-    body.hourlyRate = hourlyRate;
-
-  const projectBudgetMin = parseFloat(state.projectBudgetMin);
-  if (Number.isFinite(projectBudgetMin) && projectBudgetMin >= 0)
-    body.projectBudgetMin = projectBudgetMin;
-
   if (state.calendarLink.trim()) body.calendarLink = state.calendarLink.trim();
 
   return body;

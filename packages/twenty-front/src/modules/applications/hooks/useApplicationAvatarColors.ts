@@ -3,7 +3,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 
 export type ApplicationAvatarColors = {

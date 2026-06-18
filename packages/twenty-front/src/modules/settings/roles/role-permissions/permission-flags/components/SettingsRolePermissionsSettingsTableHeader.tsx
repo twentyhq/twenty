@@ -1,14 +1,14 @@
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
-import { Checkbox } from 'twenty-ui-deprecated/input';
+import { Checkbox } from 'twenty-ui/input';
 
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { v4 } from 'uuid';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsRolePermissionsSettingsTableHeaderProps = {
   roleId: string;

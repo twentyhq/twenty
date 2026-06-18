@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { IconChevronLeft } from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsWizardStepBarProps = {
   label: ReactNode;

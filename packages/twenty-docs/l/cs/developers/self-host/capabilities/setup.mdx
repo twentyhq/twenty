@@ -43,10 +43,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # výchozí
 
 <Warning>
 Každá proměnná je dokumentována s popisy ve vašem administračním panelu v sekci **Nastavení → Admin panel → Konfigurační proměnné**.
-Některá nastavení infrastruktury, jako připojení k databázi (`PG_DATABASE_URL`), URL serveru (`SERVER_URL`) a tajemství aplikace (`APP_SECRET`), lze konfigurovat pouze prostřednictvím souboru `.env`.
+Některá nastavení infrastruktury, jako připojení k databázi (`PG_DATABASE_URL`), URL serveru (`SERVER_URL`) a tajné klíče (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`), lze konfigurovat pouze prostřednictvím souboru `.env`.
 
 [Kompletní technická referenční příručka →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## Šifrovací klíče
+
+Twenty používá dva šifrovací klíče dostupné pouze přes proměnné prostředí:
+
+| Proměnná                  | Účel                                                                                                                                                                                 | Povinné                                                                                           |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `ENCRYPTION_KEY`          | Primární klíč používaný k šifrování tajných hodnot „v klidu“ (tokeny OAuth, aplikační proměnné, privátní klíče podepisovacích klíčů, TOTP tajné kódy, citlivé konfigurační hodnoty). | Ano pro nové instalace (starší instalace se mohou místo toho spoléhat na `APP_SECRET` — viz níže) |
+| `FALLBACK_ENCRYPTION_KEY` | Klíč používaný pouze k ověřování. Během rotace se nastavuje na *předchozí* hodnotu `ENCRYPTION_KEY`, aby bylo možné dešifrovat stávající řádky.                                      | Pouze během rotace                                                                                |
+
+Kvůli zpětné kompatibilitě, pokud `ENCRYPTION_KEY` není nastaven, Twenty používá pro šifrování „v klidu“ záložně `APP_SECRET`, což odpovídá původnímu chování starších nasazení. Nové instalace by vždy měly nastavit dedikovaný `ENCRYPTION_KEY`.
+
+Hodnoty vygenerujte pomocí `openssl rand -base64 32` a uložte je na bezpečné místo (správce tajných klíčů, zapečetěná konfigurace apod.). Ztráta `ENCRYPTION_KEY` znamená ztrátu přístupu ke všem tajným hodnotám uloženým v databázi.
+
+Jak provést rotaci `ENCRYPTION_KEY` bez výpadku, najdete v [průvodci rotací klíče](/l/cs/developers/self-host/capabilities/key-rotation).
 
 ## 2. Konfigurace pouze přes prostředí
 

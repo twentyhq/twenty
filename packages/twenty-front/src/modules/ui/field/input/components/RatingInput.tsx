@@ -5,11 +5,8 @@ import { useContext, useState } from 'react';
 import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
 import { RATING_VALUES } from 'twenty-shared/constants';
 import { type FieldRatingValue } from 'twenty-shared/types';
-import { IconTwentyStarFilled } from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconTwentyStarFilled } from 'twenty-ui/icon';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;

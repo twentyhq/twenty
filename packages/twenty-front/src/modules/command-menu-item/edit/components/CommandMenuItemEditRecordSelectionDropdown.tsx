@@ -12,16 +12,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import {
-  IconChevronDown,
-  IconSquareCheck,
-  IconSquareX,
-} from 'twenty-ui-deprecated/display';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconChevronDown, IconSquareCheck, IconSquareX } from 'twenty-ui/icon';
+import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';
 

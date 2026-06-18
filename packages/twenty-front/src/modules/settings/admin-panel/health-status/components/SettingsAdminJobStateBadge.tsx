@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
-import { Tag, type TagColor } from 'twenty-ui-deprecated/components';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Tag, type TagColor } from 'twenty-ui/data-display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { JobState } from '~/generated-admin/graphql';
 
 type SettingsAdminJobStateBadgeProps = {

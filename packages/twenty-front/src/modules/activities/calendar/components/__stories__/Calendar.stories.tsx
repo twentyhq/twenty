@@ -6,7 +6,7 @@ import { CalendarEventsCard } from '@/activities/calendar/components/CalendarEve
 import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromCompanyId';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';

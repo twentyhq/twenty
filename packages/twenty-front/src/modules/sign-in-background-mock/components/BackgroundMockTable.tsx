@@ -5,17 +5,10 @@ import { BackgroundMockTableRow } from '@/sign-in-background-mock/components/Bac
 import { BACKGROUND_MOCK_COLUMNS } from '@/sign-in-background-mock/constants/BackgroundMockColumns';
 import { BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
-import {
-  IconChevronDown,
-  IconPlus,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui-deprecated/display';
-import { Checkbox } from 'twenty-ui-deprecated/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconChevronDown, IconPlus, useIcons } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { Checkbox } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTableWrapper = styled.div`
   display: flex;

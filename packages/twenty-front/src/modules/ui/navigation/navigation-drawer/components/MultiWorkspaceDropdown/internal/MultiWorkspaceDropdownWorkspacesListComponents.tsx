@@ -8,7 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useState } from 'react';
-import { IconChevronLeft } from 'twenty-ui-deprecated/display';
+import { IconChevronLeft } from 'twenty-ui/icon';
 
 import { WorkspacesForSignIn } from './components/WorkspacesForSignIn';
 import { WorkspacesForSignUp } from './components/WorkspacesForSignUp';

@@ -1,0 +1,1 @@
+export const RECALL_BOT_NAME_ENV_VAR_NAME = 'RECALL_BOT_NAME';

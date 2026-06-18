@@ -15,7 +15,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { ViewType } from '@/views/types/ViewType';
 import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';

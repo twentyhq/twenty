@@ -20,7 +20,7 @@ import { SPLIT_MULTI_VALUE_FIELDS_X_SETTING } from '@/side-panel/pages/page-layo
 import { SPLIT_MULTI_VALUE_FIELDS_Y_SETTING } from '@/side-panel/pages/page-layout/constants/settings/SplitMultiValueFieldsYSetting';
 import { STACKED_BARS_SETTING } from '@/side-panel/pages/page-layout/constants/settings/StackedBarsSetting';
 import { type ChartSettingsGroup } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
-import { IconAxisX, IconAxisY } from 'twenty-ui-deprecated/display';
+import { IconAxisX, IconAxisY } from 'twenty-ui/icon';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export const getBarChartSettings = (

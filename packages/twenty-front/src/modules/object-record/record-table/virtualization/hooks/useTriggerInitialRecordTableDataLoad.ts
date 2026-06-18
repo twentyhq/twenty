@@ -1,6 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexTableLazyQuery } from '@/object-record/record-index/hooks/useRecordIndexTableLazyQuery';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import {
@@ -38,6 +39,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useTriggerInitialRecordTableDataLoad = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
+
+  const { recordLimit } = useRecordIndexContextOrThrow();
 
   const { findManyRecordsLazy } =
     useRecordIndexTableLazyQuery(objectNameSingular);
@@ -184,7 +187,12 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         records = findManyRecords;
         totalCount = findManyTotalCount;
 
-        store.set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
+        store.set(
+          totalNumberOfRecordsToVirtualizeCallbackState,
+          isDefined(recordLimit)
+            ? Math.min(totalCount, recordLimit)
+            : totalCount,
+        );
 
         if (isDefined(records)) {
           upsertRecordsInStore({ partialRecords: records });
@@ -255,6 +263,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       loadRecordsToVirtualRows,
       reapplyRowSelection,
       recordTableId,
+      recordLimit,
     ],
   );
 

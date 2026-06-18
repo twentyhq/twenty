@@ -10,7 +10,6 @@ import {
   NAVIGATION_INTERPOLATED_LABEL,
   NAVIGATION_INTERPOLATED_SHORT_LABEL,
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const NAVIGATION_COMMAND_UUID_NAMESPACE =
   'b31830da-2ae0-48eb-a915-12fa4ab96dd3';
@@ -26,6 +25,7 @@ const baseArgs = {
   objectMetadata: baseObjectMetadata,
   commandMenuItemId: 'cmd-id-1',
   applicationId: 'app-id-1',
+  applicationUniversalIdentifier: 'app-universal-1',
   workspaceId: 'ws-id-1',
   position: 5,
   now: '2026-01-01T00:00:00.000Z',
@@ -86,12 +86,10 @@ describe('buildNavigationFlatCommandMenuItem', () => {
     expect(result.position).toBe(5);
   });
 
-  it('should set applicationUniversalIdentifier from TWENTY_STANDARD_APPLICATION', () => {
+  it('should set applicationUniversalIdentifier from the provided argument', () => {
     const result = buildNavigationFlatCommandMenuItem(baseArgs);
 
-    expect(result.applicationUniversalIdentifier).toBe(
-      TWENTY_STANDARD_APPLICATION.universalIdentifier,
-    );
+    expect(result.applicationUniversalIdentifier).toBe('app-universal-1');
   });
 
   it('should set engineComponentKey to NAVIGATION', () => {

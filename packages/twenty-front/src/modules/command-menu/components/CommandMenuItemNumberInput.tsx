@@ -9,7 +9,7 @@ import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,

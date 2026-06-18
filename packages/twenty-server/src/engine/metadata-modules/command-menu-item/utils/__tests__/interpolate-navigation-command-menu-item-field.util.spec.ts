@@ -35,6 +35,7 @@ const baseCommandMenuItem = {
   payload: { objectMetadataItemId: 'obj-id-1' },
   workspaceId: 'ws-id-1',
   isActive: true,
+  isSystemSideEffect: false,
   createdAt: new Date(),
   updatedAt: new Date(),
 };

@@ -4,8 +4,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
-import { IconAlertTriangle } from 'twenty-ui-deprecated/display';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { IconAlertTriangle } from 'twenty-ui/icon';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type VariableChipProps = {
   rawVariableName: string;

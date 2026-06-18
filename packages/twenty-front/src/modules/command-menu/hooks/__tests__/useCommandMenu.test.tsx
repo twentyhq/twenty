@@ -10,7 +10,7 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconDotsVertical } from 'twenty-ui-deprecated/display';
+import { IconDotsVertical } from 'twenty-ui/icon';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <JotaiProvider store={jotaiStore}>

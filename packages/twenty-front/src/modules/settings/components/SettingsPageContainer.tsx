@@ -6,7 +6,7 @@ import { type ReactNode, useMemo } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const SETTINGS_CONTENT_MAX_WIDTH = 760;
 

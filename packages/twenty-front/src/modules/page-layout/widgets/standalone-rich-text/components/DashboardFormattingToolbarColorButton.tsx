@@ -18,7 +18,7 @@ import { extractColorFromProps } from '@/page-layout/widgets/standalone-rich-tex
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledColorButton = styled.button`
   align-items: center;

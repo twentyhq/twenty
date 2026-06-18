@@ -133,14 +133,14 @@ export const main = async (params: { deals: any }) => {
 
 ### 常见转换
 
-| 源格式                  | 目标格式             | 代码                                         |
-| -------------------- | ---------------- | ------------------------------------------ |
-| `"true"` / `"false"` | `true` / `false` | `v === true \\|\\| v === \"true\"`         |
-| `\"123.45\"`         | `123.45`         | `parseFloat(value)`                        |
-| `\"active\"`         | `\"ACTIVE\"`     | `value.toUpperCase()`                      |
-| `1704067200` (Unix)  | ISO 日期           | `new Date(v * 1000).toISOString()`         |
-| `\"$1,234.56\"`      | `1234.56`        | `parseFloat(v.replace(/[^0-9.-]/g, \"\"))` |
-| `null` / `undefined` | `\"\"`           | `value \\|\\| \"\"`                        |
+| 源格式                  | 目标格式             | 代码                                       |
+| -------------------- | ---------------- | ---------------------------------------- |
+| `"true"` / `"false"` | `true` / `false` | `v === true \\|\\| v === "true"`         |
+| `"123.45"`           | `123.45`         | `parseFloat(value)`                      |
+| `"active"`           | `"ACTIVE"`       | `value.toUpperCase()`                    |
+| `1704067200` (Unix)  | ISO 日期           | `new Date(v * 1000).toISOString()`       |
+| `"$1,234.56"`        | `1234.56`        | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
+| `null` / `undefined` | `""`             | `value \\|\\| ""`                        |
 
 ## 步骤 4：遍历产品
 

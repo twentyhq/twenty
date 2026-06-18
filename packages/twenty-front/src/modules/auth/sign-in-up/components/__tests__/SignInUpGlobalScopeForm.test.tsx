@@ -1,9 +1,10 @@
+import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ThemeProvider } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
 import {
@@ -93,13 +94,15 @@ describe('SignInUpGlobalScopeForm', () => {
     });
 
     render(
-      <JotaiProvider store={jotaiStore}>
-        <ThemeProvider colorScheme="light">
-          <I18nProvider i18n={i18n}>
-            <SignInUpGlobalScopeForm />
-          </I18nProvider>
-        </ThemeProvider>
-      </JotaiProvider>,
+      <MockedProvider mocks={[]}>
+        <JotaiProvider store={jotaiStore}>
+          <ThemeProvider colorScheme="light">
+            <I18nProvider i18n={i18n}>
+              <SignInUpGlobalScopeForm />
+            </I18nProvider>
+          </ThemeProvider>
+        </JotaiProvider>
+      </MockedProvider>,
     );
 
     const forgotPasswordLink = screen.getByText('Forgot your password?');

@@ -2625,6 +2625,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-meeting-bot@workspace:."
   dependencies:
+    "@sniptt/guards": "npm:^0.2.0"
     "@types/node": "npm:^24.7.2"
     "@types/react": "npm:^19.0.0"
     oxlint: "npm:^0.16.0"

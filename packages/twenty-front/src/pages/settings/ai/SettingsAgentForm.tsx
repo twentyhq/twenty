@@ -22,9 +22,9 @@ import {
   IconListCheck,
   IconLock,
   IconSettings,
-} from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
   type CreateAgentInput,

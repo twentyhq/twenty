@@ -31,12 +31,9 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
-import {
-  IconChevronLeft,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui-deprecated/display';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowDropdownStepOutputItemsProps = {
   stepFilter: StepFilter;

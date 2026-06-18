@@ -9,7 +9,7 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventListProps = {
   targetableObject: ActivityTargetableObject;

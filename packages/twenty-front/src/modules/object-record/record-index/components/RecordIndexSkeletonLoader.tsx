@@ -1,7 +1,7 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
 import Skeleton from 'react-loading-skeleton';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 
 const StyledSecondaryBar = styled.div`

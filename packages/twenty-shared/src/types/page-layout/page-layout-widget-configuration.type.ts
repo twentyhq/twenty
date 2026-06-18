@@ -90,6 +90,7 @@ export type ViewConfiguration = {
 export type RecordTableConfiguration = {
   configurationType: 'RECORD_TABLE';
   viewId?: string;
+  recordLimit?: number;
 };
 
 export type FieldConfiguration = {

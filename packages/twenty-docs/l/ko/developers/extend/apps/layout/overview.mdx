@@ -1,0 +1,56 @@
+---
+title: 개요
+description: Twenty의 UI에 앱을 배치하세요 — 사이드바 항목, 저장된 보기, 레코드 페이지 탭, 샌드박스된 React 컴포넌트.
+icon: table-columns
+---
+
+Twenty 앱의 **레이아웃 레이어**는 사용자가 보는 모든 것을 의미합니다. 앱이 사이드바 어디에 노출되는지, 어떤 목록 보기를 제공하는지, 레코드 상세 페이지가 어떻게 구성되는지, 그리고 어떤 커스텀 React 컴포넌트가 해당 페이지 내부에 렌더링되는지가 여기에 포함됩니다.
+
+```text
+   Sidebar               Record list            Record detail page
+   ───────               ───────────            ──────────────────
+   [📋 My View]    ────▶ ┌──────────┐          ┌─────────────────────┐
+   [📋 Drafts ]          │ Companies│          │ Tabs: [Overview ]   │
+   [📋 Inbox  ]          │ ──────── │          │       [Notes    ]   │
+        ▲                │  Apple   │          │       [Hello    ]◀──── definePageLayoutTab
+        │                │  Acme    │          │                     │   adds a tab...
+        └ defineNavi-    │  …       │          │  ┌────────────────┐ │
+          gationMenu-    └────▲─────┘          │  │                │ │
+          Item points         │                │  │   React UI     │◀── …with a
+          to a defineView     │                │  │  (sandboxed in │ │   defineFrontComponent
+                              └ defineView     │  │   a Worker)    │ │   widget inside
+                                picks columns  │  └────────────────┘ │
+                                and filters    └─────────────────────┘
+```
+
+## 이 섹션에서 다루는 내용
+
+<CardGroup cols={2}>
+  <Card title="보기" icon="list" href="/l/ko/developers/extend/apps/layout/views">
+    `defineView` — 표시 열, 필터, 그룹을 포함한 저장된 목록 구성입니다.
+  </Card>
+  <Card title="내비게이션 메뉴 항목" icon="bars" href="/l/ko/developers/extend/apps/layout/navigation-menu-items">
+    `defineNavigationMenuItem` — 보기 또는 외부 URL을 가리키는 사이드바 항목입니다.
+  </Card>
+  <Card title="페이지 레이아웃" icon="table-columns" href="/l/ko/developers/extend/apps/layout/page-layouts">
+    `definePageLayout` 및 `definePageLayoutTab` — 레코드 상세 페이지의 탭과 위젯을 정의합니다.
+  </Card>
+  <Card title="프런트 컴포넌트" icon="window-maximize" href="/l/ko/developers/extend/apps/layout/front-components">
+    `defineFrontComponent` — Twenty 내부에서 렌더링되는 샌드박스된 React 컴포넌트입니다.
+  </Card>
+  <Card title="명령 메뉴 항목" icon="터미널" href="/l/ko/developers/extend/apps/layout/command-menu-items">
+    `defineCommandMenuItem` — 프런트 컴포넌트를 Cmd+K 항목과 빠른 작업으로 등록합니다.
+  </Card>
+</CardGroup>
+
+## 앱이 노출되는 위치
+
+| 표시 위치             | 제어하는 항목                                 | 엔터티                                       |
+| ----------------- | --------------------------------------- | ----------------------------------------- |
+| **사이드바**          | 저장된 보기 또는 외부 URL에 연결되는 커스텀 항목           | `defineNavigationMenuItem`                |
+| **레코드 목록**        | 오브젝트에 대한 저장된 구성 — 표시되는 열, 정렬 순서, 필터, 그룹 | `defineView`                              |
+| **레코드 상세 페이지**    | 레코드 페이지(사용자 정의 오브젝트 또는 표준 오브젝트)의 탭과 위젯  | `definePageLayout`, `definePageLayoutTab` |
+| **위의 어느 위치 내부**   | 커스텀 React 위젯 — 버튼, 폼, 대시보드, 통합 기능       | `defineFrontComponent`                    |
+| **명령 메뉴 (Cmd+K)** | 고정된 빠른 작업 또는 숨겨진 명령                     | `defineCommandMenuItem`                   |
+
+프런트 컴포넌트는 Remote DOM을 사용하는 격리된 Web Worker 내부에서 실행됩니다. 이들은 페이지 안에서 네이티브하게 렌더링되지만(iframe 내부가 아님), 호스트 페이지나 DOM에 직접 접근할 수는 없습니다. Twenty와의 통신은 메시지 전달 호스트 API를 통해 이루어집니다.

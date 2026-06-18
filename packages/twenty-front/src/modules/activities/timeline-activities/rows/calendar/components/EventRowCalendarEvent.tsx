@@ -8,7 +8,7 @@ import { EventCardToggleButton } from '@/activities/timeline-activities/rows/com
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowCalendarEventProps = EventRowDynamicComponentProps;
 

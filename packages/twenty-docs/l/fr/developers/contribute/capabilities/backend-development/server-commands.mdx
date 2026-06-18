@@ -1,5 +1,6 @@
 ---
 title: Commandes Backend
+icon: terminal
 ---
 
 ## Commandes utiles
@@ -43,6 +44,13 @@ npx nx run twenty-server:database:reset
 ```
 
 ### Migrations
+
+#### Pour les objets dans les schémas Core/Metadata (TypeORM)
+
+```bash
+npx nx run twenty-server:database:migrate:generate
+```
+
 ## Écosystème Tech
 
 Twenty utilise principalement NestJS pour le backend.

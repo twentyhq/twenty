@@ -19,7 +19,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui-deprecated/display';
+import { IconPlus } from 'twenty-ui/icon';
 
 export type SingleRecordPickerMenuItemsWithSearchProps = {
   excludedRecordIds?: string[];

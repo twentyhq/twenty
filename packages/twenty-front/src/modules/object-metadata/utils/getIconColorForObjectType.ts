@@ -1,4 +1,4 @@
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const getIconColorForObjectType = (objectType: string): string => {
   switch (objectType) {
