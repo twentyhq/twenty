@@ -94,6 +94,22 @@ describe('useWorkspaceSubdomainField', () => {
     expect(result.current.isAvailable).toBe(true);
   });
 
+  it('skips availability checks when the subdomain field is disabled', () => {
+    const { result } = renderHook(
+      () => useWorkspaceSubdomainField({ isSubdomainEnabled: false }),
+      { wrapper: createWrapper([]) },
+    );
+
+    act(() => {
+      result.current.handleWorkspaceNameChange('Apple');
+    });
+
+    // The name is still tracked, but no subdomain is derived and no lookup runs.
+    expect(result.current.workspaceName).toBe('Apple');
+    expect(result.current.subdomain).toBe('');
+    expect(result.current.status).toBe('idle');
+  });
+
   it('reports an unavailable manual address and offers a suggestion', async () => {
     const { result } = renderHook(() => useWorkspaceSubdomainField(), {
       wrapper: createWrapper([
