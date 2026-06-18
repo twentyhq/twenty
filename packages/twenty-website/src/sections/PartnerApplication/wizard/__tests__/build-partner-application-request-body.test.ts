@@ -9,6 +9,10 @@ const minimalState: PartnerApplicationState = {
   name: 'Ada Lovelace',
   email: 'ada@example.com',
   company: 'Analytical Engines Ltd',
+  website: 'https://analyticalengines.example',
+  city: 'London',
+  hourlyRate: '150',
+  projectBudgetMin: '5000',
 };
 
 describe('buildPartnerApplicationRequestBody', () => {
@@ -18,6 +22,10 @@ describe('buildPartnerApplicationRequestBody', () => {
       name: 'Ada Lovelace',
       email: 'ada@example.com',
       company: 'Analytical Engines Ltd',
+      website: 'https://analyticalengines.example',
+      city: 'London',
+      hourlyRate: 150,
+      projectBudgetMin: 5000,
     });
   });
 
@@ -27,24 +35,24 @@ describe('buildPartnerApplicationRequestBody', () => {
       name: '  Ada Lovelace  ',
       email: '  ada@example.com  ',
       company: '  Analytical Engines Ltd  ',
+      website: '  https://analyticalengines.example  ',
+      city: '  London  ',
     });
     expect(body.name).toBe('Ada Lovelace');
     expect(body.email).toBe('ada@example.com');
     expect(body.company).toBe('Analytical Engines Ltd');
+    expect(body.website).toBe('https://analyticalengines.example');
+    expect(body.city).toBe('London');
   });
 
   it('omits optional string fields that are blank or whitespace-only', () => {
     const body = buildPartnerApplicationRequestBody({
       ...minimalState,
-      website: '   ',
       linkedin: '',
-      city: '  ',
       applicationNotes: '',
       calendarLink: '   ',
     });
-    expect('website' in body).toBe(false);
     expect('linkedin' in body).toBe(false);
-    expect('city' in body).toBe(false);
     expect('applicationNotes' in body).toBe(false);
     expect('calendarLink' in body).toBe(false);
   });
@@ -52,15 +60,11 @@ describe('buildPartnerApplicationRequestBody', () => {
   it('trims optional string fields when present', () => {
     const body = buildPartnerApplicationRequestBody({
       ...minimalState,
-      website: '  https://analyticalengines.example  ',
       linkedin: '  https://www.linkedin.com/in/ada  ',
-      city: '  London  ',
       applicationNotes: '  refs: Acme  ',
       calendarLink: '  https://cal.com/ada  ',
     });
-    expect(body.website).toBe('https://analyticalengines.example');
     expect(body.linkedin).toBe('https://www.linkedin.com/in/ada');
-    expect(body.city).toBe('London');
     expect(body.applicationNotes).toBe('refs: Acme');
     expect(body.calendarLink).toBe('https://cal.com/ada');
   });
@@ -96,25 +100,5 @@ describe('buildPartnerApplicationRequestBody', () => {
     });
     expect(body.hourlyRate).toBe(150);
     expect(body.projectBudgetMin).toBe(5000);
-  });
-
-  it('omits numeric fields that are blank or not parseable', () => {
-    const body = buildPartnerApplicationRequestBody({
-      ...minimalState,
-      hourlyRate: '',
-      projectBudgetMin: 'abc',
-    });
-    expect('hourlyRate' in body).toBe(false);
-    expect('projectBudgetMin' in body).toBe(false);
-  });
-
-  it('omits negative numeric values', () => {
-    const body = buildPartnerApplicationRequestBody({
-      ...minimalState,
-      hourlyRate: '-5',
-      projectBudgetMin: '-1',
-    });
-    expect('hourlyRate' in body).toBe(false);
-    expect('projectBudgetMin' in body).toBe(false);
   });
 });
