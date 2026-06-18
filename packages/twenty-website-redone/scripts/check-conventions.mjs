@@ -143,6 +143,9 @@ function walk(directory) {
     // an owl gap deliberately with the specific 'margin-top: 0' instead.
     if (
       posixPath !== 'app/[locale]/layout.tsx' &&
+      // The /halftone generator bakes standalone HTML whose own '* { margin: 0 }'
+      // reset is required — the downloaded file has no global reset to inherit.
+      !posixPath.startsWith('platform/visuals/halftone-studio/') &&
       !relativePath.includes('.test.') &&
       /^[ \t]*margin:[ \t]*0;[ \t]*$/m.test(content)
     ) {
