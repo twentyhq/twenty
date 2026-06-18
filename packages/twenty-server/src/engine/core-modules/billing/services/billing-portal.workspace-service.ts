@@ -62,8 +62,6 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
-    this.assertNoActiveSubscription(customer);
-
     const checkoutSession =
       await this.stripeCheckoutService.createCheckoutSession({
         user,
@@ -104,7 +102,17 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
-    this.assertNoActiveSubscription(customer);
+    if (
+      isNonEmptyArray(customer?.billingSubscriptions) &&
+      customer.billingSubscriptions.some(
+        (subscription) => subscription.status !== SubscriptionStatus.Canceled,
+      )
+    ) {
+      throw new BillingException(
+        'Customer already has a non-canceled billing subscription',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+      );
+    }
 
     const stripeSubscription =
       await this.stripeCheckoutService.createDirectSubscription({
@@ -174,22 +182,6 @@ export class BillingPortalWorkspaceService {
     );
 
     return paymentIntent;
-  }
-
-  private assertNoActiveSubscription(
-    customer: BillingCustomerEntity | null,
-  ): void {
-    if (
-      isNonEmptyArray(customer?.billingSubscriptions) &&
-      customer.billingSubscriptions.some(
-        (subscription) => subscription.status !== SubscriptionStatus.Canceled,
-      )
-    ) {
-      throw new BillingException(
-        'Customer already has a non-canceled billing subscription',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
-      );
-    }
   }
 
   private async findResumableSubscriptionPaymentIntent(
