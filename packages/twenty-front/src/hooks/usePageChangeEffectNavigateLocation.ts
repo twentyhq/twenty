@@ -2,6 +2,7 @@ import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPa
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
@@ -32,6 +33,7 @@ const readReturnToPathFromUrlSearchParams = (): string | null => {
 
 export const usePageChangeEffectNavigateLocation = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const onboardingStatus = useOnboardingStatus();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
@@ -75,7 +77,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     : readReturnToPathFromUrlSearchParams();
 
   if (
-    (!hasAccessTokenPair || (hasAccessTokenPair && !isOnAWorkspace)) &&
+    (!hasAccessTokenPair || !isOnAWorkspace || !isDefined(currentWorkspace)) &&
     !someMatchingLocationOf([
       ...ONGOING_USER_CREATION_PATHS,
       AppPath.ResetPassword,

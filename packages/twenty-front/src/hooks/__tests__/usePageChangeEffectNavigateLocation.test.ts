@@ -84,9 +84,11 @@ const setupMockState = (
   verifyEmailRedirectPath?: string,
   calendarBookingPageId?: string | null,
   returnToPath?: string,
+  currentWorkspace: object | null = { id: 'mock-workspace-id' },
 ) => {
   jest
     .mocked(useAtomStateValue)
+    .mockReturnValueOnce(currentWorkspace)
     .mockReturnValueOnce(calendarBookingPageId ?? 'mock-calendar-id')
     .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }])
     .mockReturnValueOnce(verifyEmailRedirectPath)
@@ -423,4 +425,22 @@ describe('usePageChangeEffectNavigateLocation', () => {
       );
     });
   });
+});
+
+describe('usePageChangeEffectNavigateLocation — authenticated with no current workspace', () => {
+  it.each([AppPath.Index, AppPath.TasksPage, AppPath.SettingsCatchAll])(
+    'redirects to SignInUp from %s when authenticated with no current workspace',
+    (loc) => {
+      setupMockIsMatchingLocation(loc);
+      setupMockOnboardingStatus(undefined);
+      setupMockIsWorkspaceActivationStatusEqualsTo(false);
+      setupMockHasAccessTokenPair(true);
+      setupMockIsOnAWorkspace(true);
+      setupMockUseQuery();
+      setupMockUseParams();
+      setupMockState(undefined, undefined, undefined, undefined, null);
+
+      expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SignInUp);
+    },
+  );
 });
