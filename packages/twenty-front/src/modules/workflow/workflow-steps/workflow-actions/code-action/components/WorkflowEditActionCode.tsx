@@ -16,6 +16,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { WorkflowExpectedOutputBodyInput } from '@/workflow/workflow-steps/components/WorkflowExpectedOutputBodyInput';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { WorkflowCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor';
@@ -201,6 +202,22 @@ export const WorkflowEditActionCode = ({
           ...action.settings.input,
           logicFunctionInput: updatedFunctionInput,
         },
+      },
+    });
+  };
+
+  const handleExpectedOutputBodyChange = (
+    parsedValue: Record<string, unknown>,
+  ) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
+    updateAction({
+      ...action,
+      settings: {
+        ...action.settings,
+        expectedOutputSchema: parsedValue,
       },
     });
   };
@@ -401,6 +418,11 @@ export const WorkflowEditActionCode = ({
                 }}
                 readonly={actionOptions.readonly}
                 onEnterFullScreen={handleEnterFullScreen}
+              />
+              <WorkflowExpectedOutputBodyInput
+                defaultValue={action.settings.expectedOutputSchema}
+                onChange={handleExpectedOutputBodyChange}
+                readonly={actionOptions.readonly}
               />
             </>
           )}
