@@ -23,8 +23,7 @@ export const VIEW_TYPE_LABELS = {
 export const getViewTypeLabel = (
   viewType: ViewTypeLabelKey = ViewType.TABLE,
 ): MessageDescriptor =>
-  VIEW_TYPE_LABELS[viewType] ??
-  VIEW_TYPE_LABELS[ViewType.TABLE];
+  VIEW_TYPE_LABELS[viewType] ?? VIEW_TYPE_LABELS[ViewType.TABLE];
 
 const VIEW_TYPE_ICON_MAPPING = [
   { icon: IconLayoutKanban, value: ViewType.KANBAN },
