@@ -185,9 +185,9 @@ const PostCardPreview = () => {
 
   return (
     <CardDisplay
-      name={postCard!.name}
-      content={postCard!.content}
-      status={postCard!.status}
+      name={postCard.name}
+      content={postCard.content}
+      status={postCard.status}
     />
   );
 };
