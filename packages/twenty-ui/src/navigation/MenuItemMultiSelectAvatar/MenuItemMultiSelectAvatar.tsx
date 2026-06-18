@@ -41,7 +41,10 @@ export const MenuItemMultiSelectAvatar = ({
       isKeySelected={isKeySelected}
     >
       <div className={styles.leftContentWithCheckboxContainer}>
-        <Checkbox checked={selected} aria-label={text} />
+        <Checkbox
+          checked={selected}
+          aria-label={text ?? contextualText ?? 'Select item'}
+        />
         <StyledMenuItemLeftContent>
           {avatar}
           <div className={styles.textContainer}>
