@@ -270,9 +270,9 @@ export class GraphqlQueryFilterFieldParser {
 
       if (isFirst && index === 0) {
         queryBuilder.where(sql, params);
+      } else {
+        queryBuilder.andWhere(sql, params);
       }
-
-      queryBuilder.andWhere(sql, params);
     });
   }
 }

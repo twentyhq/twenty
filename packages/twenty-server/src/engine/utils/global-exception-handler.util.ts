@@ -40,7 +40,17 @@ export const graphQLErrorCodesToFilter = [
   ErrorCode.CONFLICT,
   ErrorCode.BAD_USER_INPUT,
   ErrorCode.METADATA_VALIDATION_FAILED,
+  'SCHEMA_VERSION_MISMATCH',
+  'APP_VERSION_MISMATCH',
 ];
+
+const getGraphQLErrorCode = (exception: GraphQLError): string | undefined => {
+  if (typeof exception.extensions?.code === 'string') {
+    return exception.extensions.code;
+  }
+
+  return undefined;
+};
 
 export const handleExceptionAndConvertToGraphQLError = (
   exception: Error,
@@ -62,11 +72,19 @@ export const shouldCaptureException = (
   exception: Error,
   statusCode?: number,
 ): boolean => {
-  if (
-    exception instanceof GraphQLError &&
-    (exception?.extensions?.http?.status ?? 500) < 500
-  ) {
-    return false;
+  if (exception instanceof GraphQLError) {
+    const graphQLErrorCode = getGraphQLErrorCode(exception);
+
+    if (
+      graphQLErrorCode &&
+      graphQLErrorCodesToFilter.includes(graphQLErrorCode)
+    ) {
+      return false;
+    }
+
+    if ((exception.extensions?.http?.status ?? 500) < 500) {
+      return false;
+    }
   }
 
   if (
