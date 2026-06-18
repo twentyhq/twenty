@@ -144,8 +144,6 @@ export class BillingResolver {
     }
   }
 
-  // Onboarding inline flow: creates the subscription server-side and returns the
-  // client secret so the frontend can collect the card with the Payment Element.
   @Mutation(() => BillingPaymentIntentDTO)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
   async createSubscriptionPaymentIntent(

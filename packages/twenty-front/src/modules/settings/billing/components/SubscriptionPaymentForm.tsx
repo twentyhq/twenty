@@ -55,7 +55,6 @@ const SubscriptionPaymentFormContent = ({
   const { enqueueErrorSnackBar } = useSnackBar();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Prefill the email so Stripe Link can recognize returning customers.
   const customerEmail = useAtomStateValue(currentUserState)?.email;
 
   const [createSubscriptionPaymentIntent] = useMutation(
@@ -83,7 +82,6 @@ const SubscriptionPaymentFormContent = ({
         return;
       }
 
-      // Fresh key per attempt so a retry never collides with a prior attempt in Stripe.
       const idempotencyKey = crypto.randomUUID();
       const { data } = await createSubscriptionPaymentIntent({
         variables: { recurringInterval, plan, idempotencyKey },
@@ -103,8 +101,6 @@ const SubscriptionPaymentFormContent = ({
         window.location.origin,
       ).toString();
 
-      // A free trial yields a SetupIntent (no upfront charge); otherwise the
-      // first invoice yields a PaymentIntent.
       const { error } =
         paymentIntent.paymentIntentType === 'setup'
           ? await stripe.confirmSetup({
@@ -118,8 +114,6 @@ const SubscriptionPaymentFormContent = ({
               confirmParams: { return_url: returnUrl },
             });
 
-      // Only reached on an immediate error; otherwise Stripe redirects to
-      // `return_url`.
       if (isDefined(error)) {
         enqueueErrorSnackBar({
           message:

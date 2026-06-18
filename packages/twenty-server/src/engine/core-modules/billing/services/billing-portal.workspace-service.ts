@@ -126,8 +126,6 @@ export class BillingPortalWorkspaceService {
     return successUrl;
   }
 
-  // Creates the onboarding subscription and returns the client secret needed to
-  // confirm the payment method inline with the Stripe Payment Element.
   async createSubscriptionPaymentIntent({
     user,
     workspace,
@@ -162,8 +160,6 @@ export class BillingPortalWorkspaceService {
         },
       );
 
-    // Validate the Stripe response before persisting, so a malformed response
-    // doesn't leave a synced subscription that blocks the user from retrying.
     const paymentIntent =
       this.extractSubscriptionClientSecret(stripeSubscription);
 

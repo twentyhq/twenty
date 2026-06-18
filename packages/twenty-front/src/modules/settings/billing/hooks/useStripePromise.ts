@@ -4,8 +4,6 @@ import { type Stripe } from '@stripe/stripe-js';
 import { loadStripe } from '@stripe/stripe-js/pure';
 import { isDefined } from 'twenty-shared/utils';
 
-// Cache the Stripe.js instance per publishable key at module scope so the SDK
-// loads once per page session rather than on every mount of the payment form.
 const stripePromiseByKey = new Map<string, Promise<Stripe | null>>();
 
 const getStripePromise = (publishableKey: string): Promise<Stripe | null> => {

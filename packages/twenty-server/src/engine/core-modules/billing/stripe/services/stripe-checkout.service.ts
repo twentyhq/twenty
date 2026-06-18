@@ -129,9 +129,6 @@ export class StripeCheckoutService {
     return await this.stripe.subscriptions.create(subscriptionParams);
   }
 
-  // Creates the subscription with the payment method deferred to the Stripe
-  // Payment Element. With a trial there is no upfront charge, so Stripe attaches
-  // a pending SetupIntent; without one, the first invoice yields a PaymentIntent.
   async createSubscriptionWithPaymentMethodCollection({
     user,
     workspace,
@@ -174,13 +171,9 @@ export class StripeCheckoutService {
           save_default_payment_method: 'on_subscription',
         },
         ...this.getStripeSubscriptionTrialPeriodConfig(withTrialPeriod, true),
-        // Tax needs a billing address, which we don't collect inline to keep
-        // onboarding friction low; enable it once an address is gathered.
         automatic_tax: { enabled: false },
         expand: ['pending_setup_intent', 'latest_invoice.confirmation_secret'],
       },
-      // Client-generated key per attempt so a double-submit reuses one subscription;
-      // a fresh attempt sends a new key, avoiding Stripe's 24h response caching.
       { idempotencyKey: `onboarding-subscription-${workspace.id}-${idempotencyKey}` },
     );
   }
