@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -24,6 +25,7 @@ import { createDeleteWorkflowVersionEdgeTool } from 'src/modules/workflow/workfl
 import { createDeleteWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-step.tool';
 import { createGetWorkflowCurrentVersionTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-current-version.tool';
 import { createListLogicFunctionToolsTool } from 'src/modules/workflow/workflow-tools/tools/list-logic-function-tools.tool';
+import { createUpdateAgentTool } from 'src/modules/workflow/workflow-tools/tools/update-agent.tool';
 import { createUpdateLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/update-logic-function-source.tool';
 import { createUpdateWorkflowVersionPositionsTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-positions.tool';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
@@ -48,6 +50,7 @@ export class WorkflowToolWorkspaceService {
     recordPositionService: RecordPositionService,
     logicFunctionFromSourceService: LogicFunctionFromSourceService,
     flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    agentService: AgentService,
   ) {
     this.deps = {
       workflowVersionStepService,
@@ -61,6 +64,7 @@ export class WorkflowToolWorkspaceService {
       recordPositionService,
       logicFunctionFromSourceService,
       flatEntityMapsCacheService,
+      agentService,
     };
   }
 
@@ -128,6 +132,7 @@ export class WorkflowToolWorkspaceService {
       this.deps,
       context,
     );
+    const updateAgent = createUpdateAgentTool(this.deps, context);
     const validateWorkflow = createValidateWorkflowTool(this.deps, context);
 
     return {
@@ -146,6 +151,7 @@ export class WorkflowToolWorkspaceService {
       [getWorkflowCurrentVersion.name]: getWorkflowCurrentVersion,
       [updateLogicFunctionSource.name]: updateLogicFunctionSource,
       [listLogicFunctionTools.name]: listLogicFunctionTools,
+      [updateAgent.name]: updateAgent,
       [validateWorkflow.name]: validateWorkflow,
     };
   }
