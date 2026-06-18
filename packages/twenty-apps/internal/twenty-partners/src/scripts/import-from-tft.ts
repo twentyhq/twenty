@@ -57,17 +57,17 @@ const tftQuery = async (query: string): Promise<any> => {
   return json.data;
 };
 
-// TFT opportunity.stage -> our matchStatus (the 4 early stages collapse to TO_BE_MATCHED)
-const STAGE_TO_MATCH_STATUS: Record<string, string> = {
-  INTRODUCED_TO_A_PARTNER: 'INTRODUCED_TO_A_PARTNER',
-  WORKING_WITH_A_PARTNER: 'WORKING_WITH_A_PARTNER',
-  WON: 'WON',
-  LOST: 'LOST',
-  RECONNECT_LATER: 'RECONNECT_LATER',
-  IDENTIFIED: 'TO_BE_MATCHED',
-  MET: 'TO_BE_MATCHED',
-  SOLUTIONING: 'TO_BE_MATCHED',
-  ADVANCED: 'TO_BE_MATCHED',
+// TFT opportunity.stage -> our standard Opportunity.stage (early TFT stages -> NEW)
+const TFT_STAGE_TO_STAGE: Record<string, string> = {
+  INTRODUCED_TO_A_PARTNER: 'SCREENING',
+  WORKING_WITH_A_PARTNER: 'PROPOSAL',
+  WON: 'CUSTOMER',
+  LOST: 'NEW',
+  RECONNECT_LATER: 'NEW',
+  IDENTIFIED: 'NEW',
+  MET: 'SCREENING',
+  SOLUTIONING: 'MEETING',
+  ADVANCED: 'PROPOSAL',
 };
 
 // TFT person.partnerStage -> our Partner.validationStage
@@ -427,7 +427,7 @@ async function main() {
     const data: Record<string, unknown> = {
       name: o.name,
       tftOpportunityId: o.id,
-      matchStatus: STAGE_TO_MATCH_STATUS[o.stage] ?? 'TO_BE_MATCHED',
+      stage: TFT_STAGE_TO_STAGE[o.stage] ?? 'NEW',
       ...(o.numberOfSeats != null ? { numberOfSeats: o.numberOfSeats } : {}),
       ...(o.useCase ? { useCase: o.useCase } : {}),
       ...(o.hostingType ? { hostingType: o.hostingType } : {}),
@@ -495,14 +495,14 @@ async function main() {
   report('partnerScope', distinct(tftPeople, (p: any) => p.partnerScope), 'partnerScope');
   report('typeOfTeam', distinct(tftPeople, (p: any) => p.partnerTypeOfTeam), 'typeOfTeam');
   report('partnerTimezone (-> region map)', timezones);
-  report('opp stage (-> matchStatus map)', oppStages);
+  report('opp stage (-> stage map)', oppStages);
   report('hostingType', distinct(tftOpps, (o: any) => o.hostingType), 'hostingType');
   report('subscriptionType', distinct(tftOpps, (o: any) => o.subscriptionType), 'subscriptionType');
   report('subscriptionFrequency', distinct(tftOpps, (o: any) => o.subscriptionFrequence), 'subscriptionFrequency');
   report('quote status', distinct(contentRecords, (c: any) => c.status), 'quoteStatus');
   report('customerContent typeCustom', distinct(contentRecords, (c: any) => c.typeCustom));
   const unmappedStages = partnerStages.filter((s) => !(s in PARTNER_STAGE_TO_VALIDATION));
-  const unmappedOpps = oppStages.filter((s) => !(s in STAGE_TO_MATCH_STATUS));
+  const unmappedOpps = oppStages.filter((s) => !(s in TFT_STAGE_TO_STAGE));
   const unmappedTz = timezones.filter((t) => !(t in TIMEZONE_TO_REGION));
   if (unmappedStages.length) console.log(`[preflight] ⚠️ partnerStage not mapped: ${unmappedStages.join(', ')}`);
   if (unmappedOpps.length) console.log(`[preflight] ⚠️ opp stage not mapped: ${unmappedOpps.join(', ')}`);

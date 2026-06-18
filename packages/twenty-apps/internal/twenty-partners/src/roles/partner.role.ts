@@ -2,7 +2,6 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, defineRole } from 'twenty-sdk/de
 
 import {
   INTRO_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
-  MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
@@ -151,12 +150,6 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
       fieldUniversalIdentifier: PARTNER_USER_ON_OPPORTUNITY_FIELD_ID,
-      canUpdateFieldValue: false,
-    },
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
       canUpdateFieldValue: false,
     },
     {
