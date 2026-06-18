@@ -8,20 +8,18 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 
 type ActivateWorkspaceUtilArgs = {
   accessToken: string;
-  displayName: string;
   expectToFail?: boolean;
 };
 
 export const activateWorkspace = async ({
   accessToken,
-  displayName,
   expectToFail,
 }: ActivateWorkspaceUtilArgs): CommonResponseBody<{
   activateWorkspace: WorkspaceEntity;
 }> => {
   const mutation = gql`
-    mutation ActivateWorkspace($input: ActivateWorkspaceInput!) {
-      activateWorkspace(data: $input) {
+    mutation ActivateWorkspace {
+      activateWorkspace {
         id
         displayName
         activationStatus
@@ -35,11 +33,6 @@ export const activateWorkspace = async ({
   const response = await makeMetadataAPIRequest(
     {
       query: mutation,
-      variables: {
-        input: {
-          displayName,
-        },
-      },
     },
     accessToken,
   );

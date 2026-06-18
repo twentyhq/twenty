@@ -42,7 +42,6 @@ import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/se
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -330,11 +329,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     return updatedWorkspace;
   }
 
-  async activateWorkspace(
-    user: AuthContextUser,
-    workspace: WorkspaceEntity,
-    data: ActivateWorkspaceInput,
-  ) {
+  async activateWorkspace(user: AuthContextUser, workspace: WorkspaceEntity) {
     // Acquire the activation lock by atomically moving the workspace to
     // ONGOING_CREATION. First try the normal case (PENDING_CREATION). If nothing
     // matches, the workspace may be stuck in ONGOING_CREATION from a prior
@@ -406,7 +401,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
       await this.activateAndInitializeUpgradeState({
         workspaceId: workspace.id,
-        displayName: data.displayName,
       });
     } catch (error) {
       await this.workspaceRepository.update(workspace.id, {
@@ -443,11 +437,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   }
 
   private async activateAndInitializeUpgradeState({
-    displayName,
     workspaceId,
   }: {
     workspaceId: string;
-    displayName?: string;
   }): Promise<void> {
     const lastAttemptedInstanceCommand =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
@@ -467,7 +459,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
     try {
       await queryRunner.manager.update(WorkspaceEntity, workspaceId, {
-        ...(displayName?.trim() ? { displayName: displayName.trim() } : {}),
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
 

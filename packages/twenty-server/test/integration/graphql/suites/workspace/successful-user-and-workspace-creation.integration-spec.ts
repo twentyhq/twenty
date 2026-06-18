@@ -72,7 +72,6 @@ describe('Successful user and workspace creation', () => {
       data: { activateWorkspace: activateWorkspaceData },
     } = await activateWorkspace({
       accessToken: newWorkspaceAccessToken,
-      displayName: '42 answer',
       expectToFail: false,
     });
 
@@ -182,7 +181,6 @@ describe('Successful user and workspace creation', () => {
       data: { activateWorkspace: activateWorkspaceData },
     } = await activateWorkspace({
       accessToken: newWorkspaceAccessToken,
-      displayName: 'Reclaimed workspace',
       expectToFail: false,
     });
 
@@ -239,7 +237,6 @@ describe('Successful user and workspace creation', () => {
 
     const { errors } = await activateWorkspace({
       accessToken: newWorkspaceAccessToken,
-      displayName: 'Concurrent activation',
       expectToFail: true,
     });
 
@@ -290,7 +287,6 @@ describe('Successful user and workspace creation', () => {
 
     await activateWorkspace({
       accessToken: newWorkspaceAccessToken,
-      displayName: 'Idempotent workspace',
       expectToFail: false,
     });
 
@@ -300,7 +296,6 @@ describe('Successful user and workspace creation', () => {
       data: { activateWorkspace: secondActivation },
     } = await activateWorkspace({
       accessToken: newWorkspaceAccessToken,
-      displayName: 'Idempotent workspace',
       expectToFail: false,
     });
 
@@ -351,7 +346,6 @@ describe('Successful user and workspace creation', () => {
 
     await activateWorkspace({
       accessToken: newWorkspaceAccessToken,
-      displayName: 'Test Workspace for Deletion',
       expectToFail: false,
     });
 
