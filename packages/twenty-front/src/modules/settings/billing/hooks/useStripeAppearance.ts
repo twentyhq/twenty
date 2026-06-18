@@ -20,6 +20,7 @@ const toStripeColor = (color: string): string => {
   const toByte = (value: string) => Math.round(Number(value) * 255);
   const rgb = `${toByte(red)}, ${toByte(green)}, ${toByte(blue)}`;
 
+  // oxlint-disable-next-line twenty/no-hardcoded-colors
   return isDefined(alpha) ? `rgba(${rgb}, ${alpha})` : `rgb(${rgb})`;
 };
 
