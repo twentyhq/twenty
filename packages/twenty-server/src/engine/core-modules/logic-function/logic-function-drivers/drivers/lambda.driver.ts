@@ -25,7 +25,7 @@ import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/l
 import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-executor-manager.service';
 import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
-import { computeLambdaInvokeAbortTimeoutMs } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-lambda-invoke-abort-timeout-ms.util';
+import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
 import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -177,9 +177,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       const invokeStart = Date.now();
       const result = await lambdaClient.send(command, {
-        abortSignal: AbortSignal.timeout(
-          computeLambdaInvokeAbortTimeoutMs(timeoutMs),
-        ),
+        abortSignal: AbortSignal.timeout(timeoutMs),
       });
       const invokeSendMs = Date.now() - invokeStart;
 
@@ -220,6 +218,18 @@ export class LambdaDriver implements LogicFunctionDriver {
     } catch (error) {
       const phaseTiming = `phase=${currentPhase} buildMs=${buildExecutorMs} fetchCodeMs=${getBuiltCodeMs}`;
 
+      if (error instanceof Error && error.name === 'TimeoutError') {
+        // The function used up its allotted execution time. This is a
+        // user/function-level outcome (like the Lambda's own timeout), not a
+        // platform failure, so return it as an ERROR result instead of throwing.
+        // That keeps it out of Sentry and records it like any other execution.
+        this.logger.warn(
+          `Logic function '${flatLogicFunction.id}' timed out during ${currentPhase} [${phaseTiming}]`,
+        );
+
+        return buildLogicFunctionTimeoutResult(timeoutMs);
+      }
+
       this.logger.error(
         `Lambda invocation failed for function ${flatLogicFunction.id} [${phaseTiming}]: ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
@@ -229,18 +239,6 @@ export class LambdaDriver implements LogicFunctionDriver {
         throw new LogicFunctionException(
           `Function '${flatLogicFunction.id}' does not exist`,
           LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-        );
-      }
-
-      if (error instanceof Error && error.name === 'TimeoutError') {
-        const executor = await this.executorManager
-          .getLambdaExecutor(flatLogicFunction)
-          .catch(() => undefined);
-        const functionState = executor?.Configuration?.State ?? 'unknown';
-
-        throw new LogicFunctionException(
-          `Lambda timed out for function '${flatLogicFunction.id}' during ${currentPhase} (functionState=${functionState}, ${phaseTiming})`,
-          LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_TIMEOUT,
         );
       }
 
