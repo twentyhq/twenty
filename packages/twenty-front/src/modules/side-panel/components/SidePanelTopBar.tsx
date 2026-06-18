@@ -142,8 +142,6 @@ export const SidePanelTopBar = () => {
 
   const shouldShowBackButton = canGoBack;
 
-  const shouldShowCloseButton = !isMobile;
-
   const lastChip = contextChips.at(-1);
 
   return (
@@ -182,15 +180,6 @@ export const SidePanelTopBar = () => {
       </StyledContentContainer>
       <StyledRightControlsContainer>
         <SidePanelTopBarRightCornerIcon />
-        {shouldShowCloseButton && (
-          <IconButton
-            Icon={IconX}
-            size="small"
-            variant="secondary"
-            onClick={closeSidePanelMenu}
-            ariaLabel={t`Close side panel`}
-          />
-        )}
       </StyledRightControlsContainer>
     </StyledInputContainer>
   );
