@@ -1,3 +1,4 @@
+import { type JSX } from 'react';
 import { Text } from '@react-email/components';
 
 import { emailTheme } from 'src/common-style';

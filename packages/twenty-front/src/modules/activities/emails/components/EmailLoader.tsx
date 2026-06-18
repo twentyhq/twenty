@@ -4,8 +4,8 @@ import {
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui-deprecated/layout';
-import { Loader } from 'twenty-ui-deprecated/feedback';
+  Loader,
+} from 'twenty-ui/feedback';
 
 export const EmailLoader = ({ loadingText }: { loadingText?: string }) => (
   <AnimatedPlaceholderEmptyContainer>

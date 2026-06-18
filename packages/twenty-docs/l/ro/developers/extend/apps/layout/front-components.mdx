@@ -338,13 +338,14 @@ export default defineFrontComponent({
 
 Hook-uri disponibile:
 
-| Hook                                          | Returnează          | Descriere                                                                           |
-| --------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` sau `null` | ID-ul utilizatorului curent                                                         |
-| `useSelectedRecordIds()`                      | `string[]`          | Toate ID-urile înregistrărilor selectate (array gol dacă nu este selectată niciuna) |
-| `useRecordId()`                               | `string` sau `null` | **Învechit.** Folosiți `useSelectedRecordIds()` în schimb                           |
-| `useFrontComponentId()`                       | `string`            | ID-ul acestei instanțe de componentă                                                |
-| `useFrontComponentExecutionContext(selector)` | variază             | Accesați întregul context de execuție cu o funcție selector                         |
+| Hook                                          | Returnează             | Descriere                                                                                 |
+| --------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` sau `null`    | ID-ul utilizatorului curent                                                               |
+| `useSelectedRecordIds()`                      | `string[]`             | Toate ID-urile înregistrărilor selectate (array gol dacă nu este selectată niciuna)       |
+| `useRecordId()`                               | `string` sau `null`    | **Învechit.** Folosiți `useSelectedRecordIds()` în schimb                                 |
+| `useFrontComponentId()`                       | `string`               | ID-ul acestei instanțe de componentă                                                      |
+| `useColorScheme()`                            | `'light'` sau `'dark'` | Schema de culori activă a interfeței de utilizator a gazdei (`System` este deja rezolvat) |
+| `useFrontComponentExecutionContext(selector)` | variază                | Accesați întregul context de execuție cu o funcție selector                               |
 
 ## Variabile de aplicație
 

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useRecordId } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
+
+import { CARD_TEST_IDS } from './card-test-ids';
 
 export const CARD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
   '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7';
@@ -30,7 +32,10 @@ const CardDisplay = ({
   status: string;
 }) => {
   return (
-    <div style={{ padding: '24px', fontFamily: 'sans-serif' }}>
+    <div
+      data-testid={CARD_TEST_IDS.root}
+      style={{ padding: '24px', fontFamily: 'sans-serif' }}
+    >
       <div
         style={{
           display: 'flex',
@@ -39,10 +44,14 @@ const CardDisplay = ({
           marginBottom: '16px',
         }}
       >
-        <span style={{ fontSize: '15px', fontWeight: 600, color: '#333' }}>
+        <span
+          data-testid={CARD_TEST_IDS.name}
+          style={{ fontSize: '15px', fontWeight: 600, color: '#333' }}
+        >
           {name || 'Untitled'}
         </span>
         <span
+          data-testid={CARD_TEST_IDS.status}
           style={{
             fontSize: '11px',
             fontWeight: 600,
@@ -57,6 +66,7 @@ const CardDisplay = ({
       </div>
 
       <p
+        data-testid={CARD_TEST_IDS.content}
         style={{
           fontSize: '14px',
           lineHeight: '1.6',
@@ -165,7 +175,7 @@ const PostCardPreview = () => {
         <div style={{ marginTop: '8px', fontSize: '11px', color: '#ccc' }}>
           recordId: {recordId ?? 'null'} | apiUrl:{' '}
           {process.env.TWENTY_API_URL ? 'set' : 'missing'} | token:{' '}
-          {process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY
+          {(process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY)
             ? 'set'
             : 'missing'}
         </div>

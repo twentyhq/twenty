@@ -12,7 +12,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsAiUsageUserDetail = () => {
   const { t: tLingui } = useLingui();

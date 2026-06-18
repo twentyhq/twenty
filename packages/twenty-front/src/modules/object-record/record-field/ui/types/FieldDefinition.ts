@@ -1,6 +1,6 @@
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import { type FieldMetadata } from './FieldMetadata';
 
 export type FieldDefinition<T extends FieldMetadata> = {
@@ -13,5 +13,5 @@ export type FieldDefinition<T extends FieldMetadata> = {
   metadata: T;
   defaultValue?: any;
   editButtonIcon?: IconComponent;
-  isUIReadOnly?: boolean;
+  isUIEditable?: boolean;
 };

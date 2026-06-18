@@ -1,5 +1,5 @@
 import { createContext, type ReactElement, useContext } from 'react';
-import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { type IconComponent } from 'twenty-ui/icon';
 
 export type RecordInlineCellContextProps = {
   readonly?: boolean;

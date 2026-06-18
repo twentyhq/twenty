@@ -4,7 +4,7 @@ import { getPageLayoutIcon } from '@/side-panel/pages/page-layout/utils/getPageL
 import { getPageLayoutPageTitle } from '@/side-panel/pages/page-layout/utils/getPageLayoutPageTitle';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { type IconComponent } from 'twenty-ui/icon';
 
 type NavigatePageLayoutSidePanelProps = {
   sidePanelPage: PageLayoutSidePanelPage;

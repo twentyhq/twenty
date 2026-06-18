@@ -17,7 +17,7 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { useEffect, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDifferentZonedDateTime } from '~/utils/dates/isDifferentZonedDateTime';
 
 const StyledInputContainer = styled.div`

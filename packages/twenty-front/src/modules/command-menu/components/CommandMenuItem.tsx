@@ -1,10 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
-import {
-  IconArrowUpRight,
-  type IconComponent,
-} from 'twenty-ui-deprecated/display';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { IconArrowUpRight, type IconComponent } from 'twenty-ui/icon';
+import { MenuItem } from 'twenty-ui/navigation';
 
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';

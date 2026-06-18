@@ -17,7 +17,8 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   isSystem?: boolean;
   isSearchable?: boolean;
   isAuditLogged?: boolean;
-  isUIReadOnly?: boolean;
+  isUIEditable?: boolean;
+  isUICreatable?: boolean;
   shortcut?: string | null;
   duplicateCriteria?: string[][] | null;
   labelIdentifierFieldMetadataName: AllStandardObjectFieldName<O>;
@@ -45,7 +46,8 @@ export const createStandardObjectFlatMetadata = <
     isSystem = false,
     isSearchable = false,
     isAuditLogged = true,
-    isUIReadOnly = false,
+    isUIEditable = true,
+    isUICreatable = true,
     shortcut = null,
     duplicateCriteria = null,
     labelIdentifierFieldMetadataName,
@@ -86,7 +88,8 @@ export const createStandardObjectFlatMetadata = <
     isSystem,
     isSearchable,
     isAuditLogged,
-    isUIReadOnly,
+    isUIEditable,
+    isUICreatable,
     isLabelSyncedWithName: false,
     standardOverrides: null,
     duplicateCriteria,

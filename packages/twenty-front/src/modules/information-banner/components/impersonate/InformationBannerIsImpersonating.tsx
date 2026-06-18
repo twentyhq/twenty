@@ -5,7 +5,7 @@ import { InformationBanner } from '@/information-banner/components/InformationBa
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLogout } from 'twenty-ui-deprecated/display';
+import { IconLogout } from 'twenty-ui/icon';
 
 export const InformationBannerIsImpersonating = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);

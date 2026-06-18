@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
+import { expectedOutputSchemaShape } from './expected-output-schema-shape';
 
 export const workflowHttpRequestActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
@@ -21,4 +22,5 @@ export const workflowHttpRequestActionSettingsSchema =
         .or(z.string())
         .optional(),
     }),
+    ...expectedOutputSchemaShape,
   });

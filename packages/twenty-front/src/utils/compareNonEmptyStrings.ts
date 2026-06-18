@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type Nullable } from 'twenty-ui-deprecated/utilities';
+import { type Nullable } from 'twenty-ui/utilities';
 
 export const compareNonEmptyStrings = (
   valueA: Nullable<string>,

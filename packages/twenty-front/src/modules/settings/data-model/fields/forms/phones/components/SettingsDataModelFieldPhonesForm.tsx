@@ -15,7 +15,7 @@ import {
   IconCircleOff,
   IconMap,
   type IconComponentProps,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';

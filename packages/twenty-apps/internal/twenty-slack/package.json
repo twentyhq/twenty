@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@slack/web-api": "^7.8.0",
-    "twenty-sdk": "2.10.1"
+    "twenty-sdk": "2.13.0"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
@@ -30,6 +30,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.6"
+    "vitest": "^4.0.0"
   }
 }

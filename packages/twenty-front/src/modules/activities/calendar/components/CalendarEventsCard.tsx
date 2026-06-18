@@ -15,7 +15,7 @@ import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { H3Title } from 'twenty-ui-deprecated/display';
+import { H3Title } from 'twenty-ui/typography';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -23,9 +23,9 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  Section,
-} from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/feedback';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineCalendarEventsWithTotal } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 

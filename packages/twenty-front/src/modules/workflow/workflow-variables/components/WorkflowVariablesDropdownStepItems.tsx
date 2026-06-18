@@ -17,18 +17,16 @@ import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItem
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronLeft,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui-deprecated/display';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;
   onSelect: (value: string) => void;
   onBack: () => void;
   shouldDisplayRecordObjects: boolean;
+  objectNameSingularsToSelect?: string[];
 };
 
 export const WorkflowVariablesDropdownStepItems = ({
@@ -36,6 +34,7 @@ export const WorkflowVariablesDropdownStepItems = ({
   onSelect,
   onBack,
   shouldDisplayRecordObjects,
+  objectNameSingularsToSelect,
 }: WorkflowVariablesDropdownStepItemsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -97,8 +96,18 @@ export const WorkflowVariablesDropdownStepItems = ({
     : true;
 
   const objectLabel = displayedSubStepObjectMetadata?.labelSingular;
+
+  const isSubStepObjectSelectable =
+    !isDefined(objectNameSingularsToSelect) ||
+    (isDefined(displayedSubStepObjectMetadata) &&
+      objectNameSingularsToSelect.includes(
+        displayedSubStepObjectMetadata.nameSingular,
+      ));
+
   const shouldDisplaySubStepObject =
-    shouldDisplayRecordObjects && isObjectFoundThroughSearch;
+    shouldDisplayRecordObjects &&
+    isObjectFoundThroughSearch &&
+    isSubStepObjectSelectable;
 
   const displayedSubStepObjectIconProps = isDefined(
     displayedSubStepObjectMetadata,

@@ -20,7 +20,10 @@ const FIELD_STRIP_WHEN_NULLISH = [
   'deletedAt',
 ];
 
-const FIELD_STRIP_WHEN_FALSE = ['isLabelSyncedWithName', 'isUIReadOnly'];
+const FIELD_STRIP_WHEN_FALSE = ['isLabelSyncedWithName'];
+
+// isUIEditable defaults to true, so only the non-default false value is informative
+const FIELD_STRIP_WHEN_TRUE = ['isUIEditable'];
 
 const GetFieldMetadataInputSchema = z.object({
   id: z
@@ -176,6 +179,7 @@ export class FieldMetadataToolsFactory {
                 {
                   stripWhenNullish: FIELD_STRIP_WHEN_NULLISH,
                   stripWhenFalse: FIELD_STRIP_WHEN_FALSE,
+                  stripWhenTrue: FIELD_STRIP_WHEN_TRUE,
                 },
               );
             });

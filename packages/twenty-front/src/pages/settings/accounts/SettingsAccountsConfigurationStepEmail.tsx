@@ -6,8 +6,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconChevronRight, IconPlus } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
+import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
 
 type SettingsAccountsConfigurationStepEmailProps = {
   messageChannel: MessageChannel;

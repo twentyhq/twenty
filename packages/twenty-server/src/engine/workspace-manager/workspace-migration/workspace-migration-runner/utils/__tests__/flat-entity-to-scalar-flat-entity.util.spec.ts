@@ -28,7 +28,7 @@ describe('flatEntityToScalarFlatEntity', () => {
       settings: null,
       universalSettings: null,
       isSystem: false,
-      isUIReadOnly: false,
+      isUIEditable: true,
       isNullable: true,
       relationTargetFieldMetadataId: 'relation-target-field-id',
       relationTargetFieldMetadataUniversalIdentifier:
@@ -58,7 +58,8 @@ describe('flatEntityToScalarFlatEntity', () => {
   "isLabelSyncedWithName": false,
   "isNullable": true,
   "isSystem": false,
-  "isUIReadOnly": false,
+  "isSystemSideEffect": false,
+  "isUIEditable": true,
   "isUnique": false,
   "label": "Test Label",
   "morphId": null,

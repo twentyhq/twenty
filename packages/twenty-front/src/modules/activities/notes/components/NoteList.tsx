@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactElement } from 'react';
 
 import { type Note } from '@/activities/types/Note';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NoteTile } from './NoteTile';
 

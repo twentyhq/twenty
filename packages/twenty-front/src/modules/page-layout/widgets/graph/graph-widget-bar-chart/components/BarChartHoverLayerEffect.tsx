@@ -4,7 +4,7 @@ import { renderSliceHighlight } from '@/page-layout/widgets/graph/graph-widget-b
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { type RefObject, useContext, useEffect, useState } from 'react';
 import { BarChartLayout } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type BarChartHoverLayerEffectProps = {
   hoveredSlice: BarChartSlice | null;
@@ -12,7 +12,7 @@ type BarChartHoverLayerEffectProps = {
   chartHeight: number;
   margins: ChartMargins;
   layout: BarChartLayout;
-  canvasRef: RefObject<HTMLCanvasElement>;
+  canvasRef: RefObject<HTMLCanvasElement | null>;
 };
 
 export const BarChartHoverLayerEffect = ({

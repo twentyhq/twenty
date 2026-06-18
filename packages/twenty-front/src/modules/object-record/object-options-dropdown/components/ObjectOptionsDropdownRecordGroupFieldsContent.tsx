@@ -23,16 +23,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronLeft,
-  IconSettings,
-  useIcons,
-} from 'twenty-ui-deprecated/display';
+import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
 import {
   MenuItem,
   MenuItemSelect,
   UndecoratedLink,
-} from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {

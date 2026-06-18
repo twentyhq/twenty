@@ -243,6 +243,7 @@ export class IndexMetadataService {
           indexWhereClause: null,
           isCustom: true,
           isUnique: false,
+          isSystemSideEffect: false,
           objectMetadataUniversalIdentifier:
             flatObjectMetadata.universalIdentifier,
           universalIdentifier: indexMetadataUniversalIdentifier,

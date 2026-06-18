@@ -14,9 +14,9 @@ import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans } from '@lingui/react/macro';
-import { H1Title, H1TitleFontColor } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type TimelineThread,
   type TimelineThreadsWithTotal,

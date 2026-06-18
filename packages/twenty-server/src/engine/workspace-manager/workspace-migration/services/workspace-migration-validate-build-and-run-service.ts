@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import {
   AllMetadataName,
@@ -7,6 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -53,9 +54,6 @@ type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
 
 @Injectable()
 export class WorkspaceMigrationValidateBuildAndRunService {
-  private readonly logger = new Logger(
-    WorkspaceMigrationValidateBuildAndRunService.name,
-  );
   private readonly isDebugEnabled: boolean;
 
   constructor(
@@ -63,6 +61,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     private readonly workspaceMigrationBuildOrchestratorService: WorkspaceMigrationBuildOrchestratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metadataEventEmitter: MetadataEventEmitter,
+    private readonly logger: LoggerService,
     twentyConfigService: TwentyConfigService,
   ) {
     const logLevels = twentyConfigService.get('LOG_LEVELS');
@@ -369,13 +368,15 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const { idByUniversalIdentifierByMetadataName, dryRun, ...buildArgs } =
       args;
 
-    // TODO(install-perf): temporary, remove.
     const buildStart = performance.now();
     const validateAndBuildResult =
       await this.workspaceMigrationBuildOrchestratorService
         .buildWorkspaceMigration(buildArgs)
         .catch((error) => {
-          this.logger.error(error);
+          this.logger.error(
+            error,
+            WorkspaceMigrationValidateBuildAndRunService.name,
+          );
           throw new WorkspaceMigrationV2Exception(
             error.message,
             WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR,
@@ -383,13 +384,17 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         });
     const buildMs = performance.now() - buildStart;
 
-    this.logger.log(
+    this.logger.perf(
       `[install-perf] buildWorkspaceMigration took ${buildMs.toFixed(1)}ms (status=${validateAndBuildResult.status})`,
+      WorkspaceMigrationValidateBuildAndRunService.name,
     );
 
     if (validateAndBuildResult.status === 'fail') {
       if (this.isDebugEnabled) {
-        this.logger.debug(JSON.stringify(validateAndBuildResult, null, 2));
+        this.logger.debug?.(
+          JSON.stringify(validateAndBuildResult, null, 2),
+          WorkspaceMigrationValidateBuildAndRunService.name,
+        );
       }
 
       return validateAndBuildResult;
@@ -418,8 +423,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         (actionCountsByTypeAndMetadataName[key] ?? 0) + 1;
     }
 
-    this.logger.log(
+    this.logger.perf(
       `[install-perf] validateBuildAndRunWorkspaceMigrationFromTo running ${workspaceMigration.actions.length} actions: ${JSON.stringify(actionCountsByTypeAndMetadataName)}`,
+      WorkspaceMigrationValidateBuildAndRunService.name,
     );
 
     const runStart = performance.now();
@@ -430,8 +436,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       });
     const runMs = performance.now() - runStart;
 
-    this.logger.log(
+    this.logger.perf(
       `[install-perf] workspaceMigrationRunnerService.run took ${runMs.toFixed(1)}ms for ${workspaceMigration.actions.length} actions`,
+      WorkspaceMigrationValidateBuildAndRunService.name,
     );
 
     this.metadataEventEmitter.emitMetadataEvents({

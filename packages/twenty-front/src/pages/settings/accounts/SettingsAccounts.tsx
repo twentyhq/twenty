@@ -8,8 +8,8 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsAccounts = () => {
   const { t } = useLingui();

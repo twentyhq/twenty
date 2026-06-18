@@ -338,13 +338,14 @@ export default defineFrontComponent({
 
 可用的 hooks：
 
-| 钩子                                            | 返回值               | 描述                                    |
-| --------------------------------------------- | ----------------- | ------------------------------------- |
-| `useUserId()`                                 | `string` 或 `null` | 当前用户的 ID                              |
-| `useSelectedRecordIds()`                      | `字符串[]`           | 所有已选择的记录 ID（如果未选择，则为空数组）              |
-| `useRecordId()`                               | `string` 或 `null` | **已弃用。** 请改用 `useSelectedRecordIds()` |
-| `useFrontComponentId()`                       | `string`          | 此组件实例的 ID                             |
-| `useFrontComponentExecutionContext(selector)` | 因情况而异             | 使用选择器函数访问完整的执行上下文                     |
+| 钩子                                            | 返回值                  | 描述                                    |
+| --------------------------------------------- | -------------------- | ------------------------------------- |
+| `useUserId()`                                 | `string` 或 `null`    | 当前用户的 ID                              |
+| `useSelectedRecordIds()`                      | `字符串[]`              | 所有已选择的记录 ID（如果未选择，则为空数组）              |
+| `useRecordId()`                               | `string` 或 `null`    | **已弃用。** 请改用 `useSelectedRecordIds()` |
+| `useFrontComponentId()`                       | `string`             | 此组件实例的 ID                             |
+| `useColorScheme()`                            | `'light'` 或 `'dark'` | 宿主 UI 当前的配色方案（`System` 已解析）           |
+| `useFrontComponentExecutionContext(selector)` | 因情况而异                | 使用选择器函数访问完整的执行上下文                     |
 
 ## 应用程序变量
 

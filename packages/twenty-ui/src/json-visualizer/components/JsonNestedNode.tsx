@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type JsonValue } from 'type-fest';
 
-import { type IconComponent } from '@ui/display';
+import { type IconComponent } from '@ui/icon';
 import { JsonArrow } from '@ui/json-visualizer/components/internal/JsonArrow';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeValue';

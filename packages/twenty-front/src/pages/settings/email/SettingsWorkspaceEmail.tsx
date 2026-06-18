@@ -1,19 +1,31 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { isEmailGroupEnabledState } from '@/client-config/states/isEmailGroupEnabledState';
+import { billingState } from '@/client-config/states/billingState';
+import { isEmailingDomainInDemoModeState } from '@/client-config/states/isEmailingDomainInDemoModeState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
+import { SettingsWorkspaceUnsubscribeTopicSection } from '@/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
-import { SettingsWorkspaceEmailingDomainsSection } from '@/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { IconArrowUp, IconLock } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
+import { Card } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsWorkspaceEmail = () => {
   const { t } = useLingui();
+  const navigateSettings = useNavigateSettings();
 
-  const isEmailGroupEnabled = useAtomStateValue(isEmailGroupEnabledState);
+  const isEmailingDomainInDemoMode = useAtomStateValue(
+    isEmailingDomainInDemoModeState,
+  );
+  const billing = useAtomStateValue(billingState);
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   );
@@ -21,8 +33,6 @@ export const SettingsWorkspaceEmail = () => {
   if (!isEmailGroupFeatureEnabled) {
     return null;
   }
-
-  const showEmailGroupSection = isEmailGroupEnabled;
 
   return (
     <SettingsPageLayout
@@ -36,8 +46,36 @@ export const SettingsWorkspaceEmail = () => {
       ]}
     >
       <SettingsPageContainer>
-        {showEmailGroupSection && <SettingsWorkspaceEmailGroupSection />}
-        <SettingsWorkspaceEmailingDomainsSection />
+        {isEmailingDomainInDemoMode && (
+          <Card
+            rounded
+            backgroundColor={themeCssVariables.background.secondary}
+          >
+            <SettingsOptionCardContentButton
+              Icon={IconLock}
+              title={t`Emailing is in demo mode`}
+              description={t`Emails are logged, not sent. Sending requires the AWS SES driver with an Enterprise license, or Twenty Cloud.`}
+              Button={
+                <Button
+                  title={t`Upgrade`}
+                  variant="primary"
+                  accent="blue"
+                  size="small"
+                  Icon={IconArrowUp}
+                  onClick={() =>
+                    navigateSettings(
+                      isBillingEnabled
+                        ? SettingsPath.Billing
+                        : SettingsPath.AdminPanelEnterprise,
+                    )
+                  }
+                />
+              }
+            />
+          </Card>
+        )}
+        <SettingsWorkspaceEmailGroupSection />
+        <SettingsWorkspaceUnsubscribeTopicSection />
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

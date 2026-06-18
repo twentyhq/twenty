@@ -7,11 +7,39 @@
  *                              |___/
  */
 
-export { Loader } from './loader/components/Loader';
-export { CircularProgressBar } from './progress-bar/components/CircularProgressBar';
+export type { AnimatedPlaceholderType } from './AnimatedPlaceholder/AnimatedPlaceholder';
+export { AnimatedPlaceholder } from './AnimatedPlaceholder/AnimatedPlaceholder';
+export { BACKGROUND } from './AnimatedPlaceholder/constants/Background';
+export { DARK_BACKGROUND } from './AnimatedPlaceholder/constants/DarkBackground';
+export { DARK_MOVING_IMAGE } from './AnimatedPlaceholder/constants/DarkMovingImage';
+export { MOVING_IMAGE } from './AnimatedPlaceholder/constants/MovingImage';
+export type { BannerColor, BannerVariant } from './Banner/Banner';
+export { Banner } from './Banner/Banner';
+export type { CalloutVariant, CalloutProps } from './Callout/Callout';
+export { Callout } from './Callout/Callout';
+export { CircularProgressBar } from './CircularProgressBar/CircularProgressBar';
+export {
+  AnimatedPlaceholderEmptyContainer,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  AnimatedPlaceholderEmptySubTitle,
+} from './EmptyPlaceholderStyled/EmptyPlaceholderStyled';
+export {
+  AnimatedPlaceholderErrorContainer,
+  AnimatedPlaceholderErrorTextContainer,
+  AnimatedPlaceholderErrorTitle,
+  AnimatedPlaceholderErrorSubTitle,
+} from './ErrorPlaceholderStyled/ErrorPlaceholderStyled';
+export type { InfoAccent, InfoProps } from './Info/Info';
+export { Info } from './Info/Info';
+export { InlineBanner } from './InlineBanner/InlineBanner';
+export { Loader } from './Loader/Loader';
+export { useProgressAnimation } from './ProgressBar/hooks/useProgressAnimation';
 export type {
   ProgressBarProps,
   StyledBarProps,
-} from './progress-bar/components/ProgressBar';
-export { ProgressBar } from './progress-bar/components/ProgressBar';
-export { useProgressAnimation } from './progress-bar/hooks/useProgressAnimation';
+} from './ProgressBar/ProgressBar';
+export { ProgressBar } from './ProgressBar/ProgressBar';
+export type { SidePanelInformationBannerProps } from './SidePanelInformationBanner/SidePanelInformationBanner';
+export { SidePanelInformationBanner } from './SidePanelInformationBanner/SidePanelInformationBanner';
