@@ -8,7 +8,7 @@ import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { fetchLiveMarketplacePartners } from '@/partners-marketplace/fetch-live-marketplace-partners';
 import { getMarketplacePartnerBySlug } from '@/partners-marketplace/get-marketplace-partner-by-slug';
-import { PartnerProfile } from '@/partners-marketplace/partner-profile';
+import { PartnerProfile } from '@/partners-marketplace/PartnerProfile';
 import { buildBreadcrumbListJsonLd, JsonLd } from '@/platform/seo';
 import { Menu } from '@/sections/menu';
 

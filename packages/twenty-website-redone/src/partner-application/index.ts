@@ -1,3 +1,3 @@
-export { BecomePartnerButton } from './become-partner-button';
-export { PartnerApplicationModalRoot } from './partner-application-modal-root';
-export { PartnerApplicationWizard } from './wizard/partner-application-wizard';
+export { BecomePartnerButton } from './BecomePartnerButton';
+export { PartnerApplicationModalRoot } from './PartnerApplicationModalRoot';
+export { PartnerApplicationWizard } from './wizard/PartnerApplicationWizard';

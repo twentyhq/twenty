@@ -22,11 +22,11 @@ import {
   type PartnerApplicationController,
   usePartnerApplicationState,
 } from '../use-partner-application-state';
-import { PartnerApplicationSuccess } from './partner-application-success';
-import { CommercialsStep } from './steps/commercials-step';
-import { ExpertiseStep } from './steps/expertise-step';
-import { IdentityStep } from './steps/identity-step';
-import { ProfileStep } from './steps/profile-step';
+import { PartnerApplicationSuccess } from './PartnerApplicationSuccess';
+import { CommercialsStep } from './steps/CommercialsStep';
+import { ExpertiseStep } from './steps/ExpertiseStep';
+import { IdentityStep } from './steps/IdentityStep';
+import { ProfileStep } from './steps/ProfileStep';
 
 const COPY = PARTNER_APPLICATION_COPY;
 const STEPS = PARTNER_APPLICATION_STEP_IDS;

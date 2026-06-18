@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { mediaUp, spacing } from '@/tokens';
 
 import { type MarketplacePartner } from './marketplace-partner';
-import { PartnerCard } from './partner-card';
+import { PartnerCard } from './PartnerCard';
 
 const CardGrid = styled.div`
   display: grid;

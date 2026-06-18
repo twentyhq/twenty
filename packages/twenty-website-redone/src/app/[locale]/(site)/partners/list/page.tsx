@@ -7,8 +7,8 @@ import {
 } from '@/platform/i18n/get-route-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { fetchLiveMarketplacePartners } from '@/partners-marketplace/fetch-live-marketplace-partners';
-import { MarketplaceClient } from '@/partners-marketplace/marketplace-client';
-import { MarketplaceHeader } from '@/partners-marketplace/marketplace-header';
+import { MarketplaceClient } from '@/partners-marketplace/MarketplaceClient';
+import { MarketplaceHeader } from '@/partners-marketplace/MarketplaceHeader';
 import {
   buildBreadcrumbListJsonLd,
   buildRouteMetadata,

@@ -34,7 +34,7 @@ function WizardLoadingFallback() {
 // modal first opens, never on a page load where the visitor does not apply.
 const PartnerApplicationWizard = dynamic(
   () =>
-    import('./wizard/partner-application-wizard').then((mod) => ({
+    import('./wizard/PartnerApplicationWizard').then((mod) => ({
       default: mod.PartnerApplicationWizard,
     })),
   { loading: () => <WizardLoadingFallback />, ssr: false },

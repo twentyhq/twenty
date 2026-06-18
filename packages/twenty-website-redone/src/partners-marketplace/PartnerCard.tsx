@@ -23,9 +23,9 @@ import { Button, ExternalLink } from '@/ui';
 
 import { isSafeHttpUrl } from './is-safe-http-url';
 import { type MarketplacePartner } from './marketplace-partner';
-import { PartnerAvatar } from './partner-avatar';
-import { PartnerChipRow } from './partner-chip-row';
-import { PartnerMoneyRow } from './partner-money-row';
+import { PartnerAvatar } from './PartnerAvatar';
+import { PartnerChipRow } from './PartnerChipRow';
+import { PartnerMoneyRow } from './PartnerMoneyRow';
 import { PARTNER_SCOPE_LABELS } from './partner-scope-labels';
 import { SERVED_GEO_LABELS } from './served-geo-labels';
 import { SPOKEN_LANGUAGE_LABELS } from './spoken-language-labels';

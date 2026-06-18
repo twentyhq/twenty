@@ -13,7 +13,7 @@ import {
 } from '@/tokens';
 
 import { formatUsdRate } from './format-usd-rate';
-import { ProfileEyebrow } from './profile-eyebrow';
+import { ProfileEyebrow } from './ProfileEyebrow';
 
 // A quiet fact list, not a card: a single hairline separates it from the CTAs
 // above, and values stay modest so rates read as a footnote, not a headline.

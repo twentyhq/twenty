@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from 'react';
 
-import { ContactCalModal } from './contact-cal-modal';
+import { ContactCalModal } from './ContactCalModal';
 import { ContactCalModalContext } from './contact-cal-modal-context';
 
 export function ContactCalModalRoot({ children }: { children: ReactNode }) {

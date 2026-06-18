@@ -32,10 +32,7 @@ export { TextareaField } from './TextareaField';
 export { NumberField } from './NumberField';
 export { TagInput } from './TagInput';
 export { Select, type SelectOption } from './Select';
-export {
-  CategoryCardSelect,
-  type CategoryOption,
-} from './CategoryCardSelect';
+export { CategoryCardSelect, type CategoryOption } from './CategoryCardSelect';
 export { ChipMultiSelect, type ChipOption } from './ChipMultiSelect';
 export { StepIndicator } from './StepIndicator';
 export { SectionIntro } from './SectionIntro';

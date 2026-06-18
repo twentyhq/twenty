@@ -87,18 +87,18 @@ const PUBLIC_SVG_BRAND_FILES = new Set([
 // where layout is genuinely multi-axis (wrapping rows, multi-column
 // tracks) — listed here explicitly.
 const ROW_GAP_MULTI_AXIS_FILES = new Set([
-  'sections/case-study-detail/case-study-hero.tsx',
-  'sections/faq/faq.tsx',
-  'sections/faq/faq-items.tsx',
-  'sections/pricing-plans/pricing-board.tsx',
-  'sections/problem/problem.tsx',
-  'sections/releases-feed/releases-feed.tsx',
-  'sections/stepper/product-stepper.tsx',
-  'sections/stepper/stepper.tsx',
-  'sections/testimonials/partner-testimonials-carousel.tsx',
-  'sections/testimonials/testimonials-carousel.tsx',
-  'sections/trusted-by/trusted-by.tsx',
-  'sections/why-twenty-editorial/editorial.tsx',
+  'sections/case-study-detail/CaseStudyHero.tsx',
+  'sections/faq/Faq.tsx',
+  'sections/faq/FaqItems.tsx',
+  'sections/pricing-plans/PricingBoard.tsx',
+  'sections/problem/Problem.tsx',
+  'sections/releases-feed/ReleasesFeed.tsx',
+  'sections/stepper/ProductStepper.tsx',
+  'sections/stepper/Stepper.tsx',
+  'sections/testimonials/PartnerTestimonialsCarousel.tsx',
+  'sections/testimonials/TestimonialsCarousel.tsx',
+  'sections/trusted-by/TrustedBy.tsx',
+  'sections/why-twenty-editorial/Editorial.tsx',
 ]);
 
 const LITERAL_PATTERNS = [
@@ -312,12 +312,20 @@ function walk(directory) {
       failures.push(`src/${relativePath}: 'use client' in a pure layer.`);
     }
 
-    // kebab-case filenames (compiled locale catalogs are generated).
+    // .tsx files are PascalCase (named after their React component); .ts
+    // files are kebab-case. Next.js route files (page/layout/...) and the
+    // compiled locale catalogs are exempt.
     if (
-      !relativePath.startsWith('locales' + path.sep) &&
-      /[A-Z]/.test(entry.name)
+      !NEXT_CONTRACT_FILES.has(entry.name) &&
+      !relativePath.startsWith('locales' + path.sep)
     ) {
-      failures.push(`src/${relativePath}: filenames are kebab-case.`);
+      if (entry.name.endsWith('.tsx')) {
+        if (!/^[A-Z][A-Za-z0-9]*\.tsx$/.test(entry.name)) {
+          failures.push(`src/${relativePath}: .tsx filenames are PascalCase.`);
+        }
+      } else if (/[A-Z]/.test(entry.name)) {
+        failures.push(`src/${relativePath}: .ts filenames are kebab-case.`);
+      }
     }
 
     // SectionShell is the only owner of <section>: it is where vertical

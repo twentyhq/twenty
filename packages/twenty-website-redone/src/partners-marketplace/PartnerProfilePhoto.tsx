@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { color, radius } from '@/tokens';
 
 import { isSafeHttpUrl } from './is-safe-http-url';
-import { PartnerAvatar } from './partner-avatar';
+import { PartnerAvatar } from './PartnerAvatar';
 
 // Squared tile, not a circle: it reads as a studio/brand image and matches the
 // rectangular rail + crosshair geometry instead of fighting it.

@@ -17,15 +17,15 @@ import {
 } from '@/tokens';
 import { GuideCrosshair, SectionShell } from '@/ui';
 
-import { BackToMarketplaceLink } from './back-to-marketplace-link';
+import { BackToMarketplaceLink } from './BackToMarketplaceLink';
 import { type MarketplacePartner } from './marketplace-partner';
-import { PartnerFactsList } from './partner-facts-list';
-import { PartnerProfileCtas } from './partner-profile-ctas';
-import { PartnerProfileHeader } from './partner-profile-header';
-import { PartnerProfileIntro } from './partner-profile-intro';
-import { PartnerProfilePhoto } from './partner-profile-photo';
-import { PartnerRatesPanel } from './partner-rates-panel';
-import { ProfileEyebrow } from './profile-eyebrow';
+import { PartnerFactsList } from './PartnerFactsList';
+import { PartnerProfileCtas } from './PartnerProfileCtas';
+import { PartnerProfileHeader } from './PartnerProfileHeader';
+import { PartnerProfileIntro } from './PartnerProfileIntro';
+import { PartnerProfilePhoto } from './PartnerProfilePhoto';
+import { PartnerRatesPanel } from './PartnerRatesPanel';
+import { ProfileEyebrow } from './ProfileEyebrow';
 
 const GradientBackdrop = styled.div`
   background: ${GRADIENT.heroGlow};

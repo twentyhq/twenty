@@ -14,7 +14,7 @@ import {
 } from '@/tokens';
 
 import { type MarketplacePartner } from './marketplace-partner';
-import { ProfileEyebrow } from './profile-eyebrow';
+import { ProfileEyebrow } from './ProfileEyebrow';
 import { SERVED_GEO_LABELS } from './served-geo-labels';
 
 const Wrapper = styled.div`

@@ -8,7 +8,7 @@ import { spacing } from '@/tokens';
 import { Button } from '@/ui';
 
 import { isSafeHttpUrl } from './is-safe-http-url';
-import { ProfileEyebrow } from './profile-eyebrow';
+import { ProfileEyebrow } from './ProfileEyebrow';
 
 // Where "Contact partner" enquiries route when a partner has no direct channel
 // (calendar / LinkedIn) of their own.

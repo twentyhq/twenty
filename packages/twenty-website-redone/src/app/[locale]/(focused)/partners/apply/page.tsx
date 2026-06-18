@@ -4,7 +4,7 @@ import {
 } from '@/platform/i18n/get-route-i18n';
 import { buildRouteMetadata } from '@/platform/seo';
 
-import { PartnerApplicationPageContent } from './partner-application-page-content';
+import { PartnerApplicationPageContent } from './PartnerApplicationPageContent';
 
 export const generateMetadata = buildRouteMetadata('partnersApply');
 

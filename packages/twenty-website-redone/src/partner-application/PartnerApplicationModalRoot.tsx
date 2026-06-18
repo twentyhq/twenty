@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from 'react';
 
-import { PartnerApplicationModal } from './partner-application-modal';
+import { PartnerApplicationModal } from './PartnerApplicationModal';
 import { PartnerApplicationModalContext } from './partner-application-modal-context';
 
 export function PartnerApplicationModalRoot({

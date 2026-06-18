@@ -6,10 +6,10 @@ import { useMemo } from 'react';
 import { spacing } from '@/tokens';
 import { SectionShell } from '@/ui';
 
-import { MarketplaceEmptyState } from './empty-state';
-import { FilterBar } from './filter-bar';
+import { MarketplaceEmptyState } from './EmptyState';
+import { FilterBar } from './FilterBar';
 import { filterPartners } from './filter-partners';
-import { MarketplaceGrid } from './marketplace-grid';
+import { MarketplaceGrid } from './MarketplaceGrid';
 import { type MarketplacePartner } from './marketplace-partner';
 import { useMarketplaceFilterState } from './use-marketplace-filter-state';
 

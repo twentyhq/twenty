@@ -7,9 +7,9 @@ import { styled } from '@linaria/react';
 import { fontFamily, fontSize, semanticColor, spacing } from '@/tokens';
 import { Button } from '@/ui';
 
-import { ActiveFilterPills, type ActivePill } from './active-filter-pills';
+import { ActiveFilterPills, type ActivePill } from './ActiveFilterPills';
 import { type FilterCriteria } from './filter-criteria';
-import { FilterDropdown } from './filter-dropdown';
+import { FilterDropdown } from './FilterDropdown';
 import { PARTNER_SCOPE_LABELS } from './partner-scope-labels';
 import { PARTNER_SCOPES, type PartnerScope } from './partner-scopes';
 import { SERVED_GEO_LABELS } from './served-geo-labels';
