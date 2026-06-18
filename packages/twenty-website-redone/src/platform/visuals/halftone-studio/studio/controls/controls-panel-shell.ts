@@ -58,6 +58,18 @@ const ShapeRow = styled.div`
   grid-template-columns: ${TAB_LABEL_WIDTH}px minmax(0, 1fr) auto;
 `;
 
+const ColorControlRow = styled.div`
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: ${TAB_LABEL_WIDTH}px minmax(0, 1fr);
+`;
+
+const ColorControlLabel = styled.span`
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+`;
+
 const UploadButton = styled.button`
   align-items: center;
   background: rgba(255, 255, 255, 0.06);
@@ -192,6 +204,8 @@ export const CONTROLS_PANEL_SHELL = {
   ControlGrid,
   ValueDisplay,
   ShapeRow,
+  ColorControlRow,
+  ColorControlLabel,
   UploadButton,
   ExportNameInput,
   ExportPreview,
