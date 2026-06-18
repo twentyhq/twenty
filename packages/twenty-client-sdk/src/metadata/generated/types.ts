@@ -913,9 +913,6 @@ export default {
             "standardOverrides": [
                 43
             ],
-            "isCustom": [
-                6
-            ],
             "isActive": [
                 6
             ],
@@ -1241,9 +1238,6 @@ export default {
             ],
             "color": [
                 1
-            ],
-            "isCustom": [
-                6
             ],
             "isRemote": [
                 6
@@ -5895,9 +5889,6 @@ export default {
             ],
             "color": [
                 1
-            ],
-            "isCustom": [
-                6
             ],
             "isActive": [
                 6
@@ -10947,9 +10938,6 @@ export default {
             ],
             "icon": [
                 1
-            ],
-            "isCustom": [
-                6
             ],
             "isActive": [
                 6

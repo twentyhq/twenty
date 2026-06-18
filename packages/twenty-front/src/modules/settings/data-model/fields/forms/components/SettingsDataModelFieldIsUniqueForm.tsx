@@ -46,12 +46,7 @@ export const SettingsDataModelFieldIsUniqueForm = ({
       ),
   );
 
-  if (
-    !canBeUnique({
-      type: fieldType,
-      isCustom: fieldMetadataItem?.isCustom ?? true,
-    })
-  ) {
+  if (!canBeUnique({ type: fieldType })) {
     return null;
   }
 
