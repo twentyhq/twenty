@@ -444,4 +444,58 @@ describe('UpgradeCommandRegistryService', () => {
       `${VERSION_A}_SlowMigration1780000000000_1780000000000`,
     ]);
   });
+
+  describe('getLastCommandForVersion', () => {
+    it('should return the last workspace command when the bundle has workspace commands', async () => {
+      const service = await buildRegistryService([
+        new MigrationA1770000000000(),
+        new WorkspaceCommandA(),
+        new WorkspaceCommandB(),
+      ]);
+
+      expect(service.getLastCommandForVersion(VERSION_A)?.name).toBe(
+        `${VERSION_A}_WorkspaceCommandB_1774000000000`,
+      );
+    });
+
+    it('should fall back to the last slow instance command when the bundle has no workspace command', async () => {
+      @RegisteredInstanceCommand(VERSION_B, 1768500000000, { type: 'slow' })
+      class SlowMigrationB1768500000000 implements SlowInstanceCommand {
+        name = 'SlowMigrationB1768500000000';
+
+        async runDataMigration(_dataSource: DataSource): Promise<void> {}
+        async up(): Promise<void> {}
+        async down(): Promise<void> {}
+      }
+
+      const service = await buildRegistryService([
+        new WorkspaceCommandA(),
+        new MigrationD1769000000000(),
+        new SlowMigrationB1768500000000(),
+      ]);
+
+      expect(service.getLastCommandForVersion(VERSION_B)?.name).toBe(
+        `${VERSION_B}_SlowMigrationB1768500000000_1768500000000`,
+      );
+    });
+
+    it('should fall back to the last fast instance command when the bundle has only fast instance commands', async () => {
+      const service = await buildRegistryService([
+        new WorkspaceCommandA(),
+        new MigrationD1769000000000(),
+      ]);
+
+      expect(service.getLastCommandForVersion(VERSION_B)?.name).toBe(
+        `${VERSION_B}_MigrationD1769000000000_1769000000000`,
+      );
+    });
+
+    it('should return undefined for a version with no commands', async () => {
+      const service = await buildRegistryService([new WorkspaceCommandA()]);
+
+      expect(
+        service.getLastCommandForVersion('99.0.0' as typeof VERSION_A),
+      ).toBeUndefined();
+    });
+  });
 });

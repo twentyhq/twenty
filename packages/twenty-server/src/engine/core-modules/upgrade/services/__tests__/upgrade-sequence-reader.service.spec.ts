@@ -296,4 +296,95 @@ describe('UpgradeSequenceReaderService', () => {
       expect(result).toEqual({ name: 'Ic1', status: 'failed' });
     });
   });
+
+  describe('isCursorAtOrPastStep', () => {
+    // Models a 2.14 → 2.15 sequence. The previous-version boundary is the last
+    // 2.14 command (Wc_2.14c). 2.15 adds an instance command then a workspace command.
+    const buildBoundaryService = () =>
+      buildServiceWithMockedSequence([
+        makeFastInstance('Ic_2.14'),
+        makeWorkspace('Wc_2.14a'),
+        makeWorkspace('Wc_2.14b'),
+        makeWorkspace('Wc_2.14c'),
+        makeFastInstance('Ic_2.15'),
+        makeWorkspace('Wc_2.15a'),
+      ]);
+
+    it('should accept a cursor strictly after the boundary (workspace created on the newer version)', async () => {
+      const service = await buildBoundaryService();
+
+      expect(
+        service.isCursorAtOrPastStep({
+          cursor: { name: 'Wc_2.15a', status: 'completed' },
+          requiredStepName: 'Wc_2.14c',
+        }),
+      ).toBe(true);
+    });
+
+    it('should accept a cursor after the boundary even when its latest step failed', async () => {
+      const service = await buildBoundaryService();
+
+      expect(
+        service.isCursorAtOrPastStep({
+          cursor: { name: 'Wc_2.15a', status: 'failed' },
+          requiredStepName: 'Wc_2.14c',
+        }),
+      ).toBe(true);
+    });
+
+    it('should accept an instance-command cursor positioned after the boundary', async () => {
+      const service = await buildBoundaryService();
+
+      expect(
+        service.isCursorAtOrPastStep({
+          cursor: { name: 'Ic_2.15', status: 'completed' },
+          requiredStepName: 'Wc_2.14c',
+        }),
+      ).toBe(true);
+    });
+
+    it('should accept a cursor exactly on the boundary when completed', async () => {
+      const service = await buildBoundaryService();
+
+      expect(
+        service.isCursorAtOrPastStep({
+          cursor: { name: 'Wc_2.14c', status: 'completed' },
+          requiredStepName: 'Wc_2.14c',
+        }),
+      ).toBe(true);
+    });
+
+    it('should reject a cursor exactly on the boundary when not completed', async () => {
+      const service = await buildBoundaryService();
+
+      expect(
+        service.isCursorAtOrPastStep({
+          cursor: { name: 'Wc_2.14c', status: 'failed' },
+          requiredStepName: 'Wc_2.14c',
+        }),
+      ).toBe(false);
+    });
+
+    it('should reject a cursor before the boundary', async () => {
+      const service = await buildBoundaryService();
+
+      expect(
+        service.isCursorAtOrPastStep({
+          cursor: { name: 'Wc_2.14b', status: 'completed' },
+          requiredStepName: 'Wc_2.14c',
+        }),
+      ).toBe(false);
+    });
+
+    it('should reject a cursor that predates the supported sequence window', async () => {
+      const service = await buildBoundaryService();
+
+      expect(
+        service.isCursorAtOrPastStep({
+          cursor: { name: 'Wc_2.13_unknown', status: 'completed' },
+          requiredStepName: 'Wc_2.14c',
+        }),
+      ).toBe(false);
+    });
+  });
 });
