@@ -173,13 +173,13 @@ export class BillingPortalWorkspaceService {
         },
       );
 
-    const paymentIntent =
-      this.extractSubscriptionClientSecret(stripeSubscription);
-
     await this.billingSubscriptionService.syncSubscriptionToDatabase(
       workspace.id,
       stripeSubscription.id,
     );
+
+    const paymentIntent =
+      this.extractSubscriptionClientSecret(stripeSubscription);
 
     return paymentIntent;
   }

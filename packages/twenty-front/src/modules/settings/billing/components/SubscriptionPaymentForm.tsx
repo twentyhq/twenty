@@ -3,6 +3,7 @@ import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearanc
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -122,10 +123,14 @@ const SubscriptionPaymentFormContent = ({
         });
         setIsSubmitting(false);
       }
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Subscription error. Please retry or contact Twenty team`,
-      });
+    } catch (error) {
+      if (CombinedGraphQLErrors.is(error)) {
+        enqueueErrorSnackBar({ apolloError: error });
+      } else {
+        enqueueErrorSnackBar({
+          message: t`Subscription error. Please retry or contact Twenty team`,
+        });
+      }
       setIsSubmitting(false);
     }
   };
