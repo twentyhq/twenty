@@ -38,8 +38,8 @@ export type FooterSocialLink = {
   icon: IconComponent;
 };
 
-// Sitemap now includes Product and Customers — both pages exist in the nav
-// but were missing from the old footer.
+// Sitemap includes Customers — it exists in the nav but was missing from the
+// old footer.
 export const FOOTER: {
   navGroups: readonly FooterNavGroup[];
   socialLinks: readonly FooterSocialLink[];
@@ -50,7 +50,6 @@ export const FOOTER: {
       title: msg`Sitemap`,
       links: [
         { label: msg`Home`, href: '/' },
-        { label: msg`Product`, href: '/product' },
         { label: msg`Pricing`, href: '/pricing' },
         { label: msg`Customers`, href: '/customers' },
         { label: msg`Partners`, href: '/partners' },

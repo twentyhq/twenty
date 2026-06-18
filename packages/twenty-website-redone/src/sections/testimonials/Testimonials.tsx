@@ -7,6 +7,7 @@ export function Testimonials() {
   return (
     <SectionShell
       background={<NotchedCardShape />}
+      fullBleedBackground
       rhythm="spacious"
       scheme="muted"
     >

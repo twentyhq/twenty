@@ -82,6 +82,7 @@ export function HomeHero() {
           <HeroBackdrop />
         </GradientBackdrop>
       }
+      fullBleedBackground
       rhythm="hero"
       scheme="muted"
     >

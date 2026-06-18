@@ -55055,6 +55055,7 @@ __metadata:
     "@lingui/react": "npm:^5.1.2"
     "@lingui/swc-plugin": "npm:^5.11.0"
     "@lottiefiles/dotlottie-react": "npm:^0.18.10"
+    "@opennextjs/cloudflare": "npm:^1.0.0"
     "@tabler/icons-react": "npm:^3.41.1"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
@@ -55071,6 +55072,7 @@ __metadata:
     three: "npm:^0.184.0"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
+    wrangler: "npm:^4.0.0"
     zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
