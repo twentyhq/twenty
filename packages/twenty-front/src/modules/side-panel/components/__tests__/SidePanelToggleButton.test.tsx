@@ -98,7 +98,7 @@ describe('SidePanelToggleButton', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('hides the navbar command menu button when the side panel has back history', () => {
+  it('hides the navbar command menu button when the side panel has command-menu history', () => {
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
       sidePanelPage: SidePanelPages.ViewRecord,
@@ -121,6 +121,29 @@ describe('SidePanelToggleButton', () => {
     expect(
       screen.queryByTestId('page-header-side-panel-button'),
     ).not.toBeInTheDocument();
+  });
+
+  it('keeps the navbar command menu button on unrelated side-panel drill-down pages', () => {
+    renderSidePanelToggleButton({
+      isSidePanelOpened: true,
+      sidePanelPage: SidePanelPages.WorkflowStepCreate,
+      sidePanelNavigationStack: [
+        {
+          page: SidePanelPages.WorkflowStepEdit,
+          pageTitle: 'Edit step',
+          pageIcon: IconDotsVertical,
+          pageId: 'workflow-step-edit',
+        },
+        {
+          page: SidePanelPages.WorkflowStepCreate,
+          pageTitle: 'Create step',
+          pageIcon: IconDotsVertical,
+          pageId: 'workflow-step-create',
+        },
+      ],
+    });
+
+    expect(screen.getByTestId('page-header-side-panel-button')).toBeVisible();
   });
 
   it('replaces a directly opened side-panel page with the root command menu', () => {

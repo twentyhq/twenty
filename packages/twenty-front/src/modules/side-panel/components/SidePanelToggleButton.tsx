@@ -146,9 +146,13 @@ export const SidePanelToggleButton = () => {
   const alignWithSidePanelTopBar =
     isMobile && isLayoutCustomizationModeEnabled && isSidePanelOpened;
 
+  const hasCommandMenuPageInNavigationStack = sidePanelNavigationStack.some(
+    ({ page }) => COMMAND_MENU_SIDE_PANEL_PAGES.includes(page),
+  );
+
   const shouldHideButton =
     isCommandMenuOpened ||
-    (isSidePanelOpened && sidePanelNavigationStack.length > 1);
+    (isSidePanelOpened && hasCommandMenuPageInNavigationStack);
 
   if (shouldHideButton) {
     return null;
