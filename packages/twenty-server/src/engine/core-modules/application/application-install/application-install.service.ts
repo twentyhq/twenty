@@ -494,47 +494,55 @@ export class ApplicationInstallService {
     universalIdentifier: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const application = await this.applicationService.findByUniversalIdentifier({
-      universalIdentifier: params.universalIdentifier,
-      workspaceId: params.workspaceId,
-    });
+    const lockKey = `app-setup:${params.workspaceId}:${params.universalIdentifier}`;
 
-    if (!application) {
-      throw new ApplicationException(
-        `Application with universalIdentifier ${params.universalIdentifier} not found`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
+    return this.cacheLockService.withLock(
+      async () => {
+        const application = await this.applicationService.findByUniversalIdentifier({
+          universalIdentifier: params.universalIdentifier,
+          workspaceId: params.workspaceId,
+        });
 
-    if (application.setupStatus === ApplicationSetupStatus.COMPLETE) {
-      return true;
-    }
+        if (!application) {
+          throw new ApplicationException(
+            `Application with universalIdentifier ${params.universalIdentifier} not found`,
+            ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+          );
+        }
 
-    const manifestContent = await this.fileStorageService.readFile({
-      applicationUniversalIdentifier: params.universalIdentifier,
-      fileFolder: FileFolder.Source,
-      resourcePath: 'manifest.json',
-      workspaceId: params.workspaceId,
-    });
+        if (application.setupStatus === ApplicationSetupStatus.COMPLETE) {
+          return true;
+        }
 
-    const manifestBuffer = await streamToBuffer(manifestContent);
-    const manifest = JSON.parse(manifestBuffer.toString('utf-8')) as Manifest;
+        const manifestContent = await this.fileStorageService.readFile({
+          applicationUniversalIdentifier: params.universalIdentifier,
+          fileFolder: FileFolder.Source,
+          resourcePath: 'manifest.json',
+          workspaceId: params.workspaceId,
+        });
 
-    // Run post install hook
-    await this.runPostInstallHook({
-      manifest,
-      workspaceId: params.workspaceId,
-      newVersion: application.version || '0.0.0', // We might not have previous version
-      isVersionUpgrade: false, // For now, assume finish setup is for new install
-      universalIdentifier: params.universalIdentifier,
-    });
+        const manifestBuffer = await streamToBuffer(manifestContent);
+        const manifest = JSON.parse(manifestBuffer.toString('utf-8')) as Manifest;
 
-    await this.applicationService.update(application.id, {
-      setupStatus: ApplicationSetupStatus.COMPLETE,
-      workspaceId: params.workspaceId,
-    });
+        // Run post install hook
+        await this.runPostInstallHook({
+          manifest,
+          workspaceId: params.workspaceId,
+          newVersion: application.version || '0.0.0', // We might not have previous version
+          isVersionUpgrade: false, // For now, assume finish setup is for new install
+          universalIdentifier: params.universalIdentifier,
+        });
 
-    return true;
+        await this.applicationService.update(application.id, {
+          setupStatus: ApplicationSetupStatus.COMPLETE,
+          workspaceId: params.workspaceId,
+        });
+
+        return true;
+      },
+      lockKey,
+      { ttl: 60_000, ms: 500, maxRetries: 120 },
+    );
   }
 
   private async writeFilesToStorage(
