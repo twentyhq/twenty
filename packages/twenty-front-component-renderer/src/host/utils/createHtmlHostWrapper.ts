@@ -17,6 +17,7 @@ import {
   FrontComponentInputFocusContext,
   type SetEditableFocused,
 } from '@/host/contexts/FrontComponentInputFocusContext';
+import { armClipboardWriteFromUserGesture } from '@/host/utils/frontComponentClipboardGate';
 import { sanitizeIframeSandbox } from '@/host/utils/sanitizeIframeSandbox';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
@@ -280,8 +281,17 @@ const serializeEvent = (event: unknown): SerializedEventData => {
   return serialized;
 };
 
+const ACTIVATION_EVENT_TYPES = new Set(['click', 'pointerup', 'touchend']);
+
 const wrapEventHandler = (handler: (detail: SerializedEventData) => void) => {
   return (event: unknown) => {
+    if (isObject(event)) {
+      const eventType = (event as Record<string, unknown>).type;
+      if (isString(eventType) && ACTIVATION_EVENT_TYPES.has(eventType)) {
+        armClipboardWriteFromUserGesture();
+      }
+    }
+
     handler(serializeEvent(event));
   };
 };

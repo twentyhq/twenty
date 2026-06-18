@@ -92,6 +92,10 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
   }),
 }));
 
+jest.mock('twenty-front-component-renderer', () => ({
+  fulfillClipboardWriteFromUserGesture: jest.fn(() => null),
+}));
+
 const renderUseFrontComponentExecutionContext = (
   params: Omit<
     Parameters<typeof useFrontComponentExecutionContext>[0],

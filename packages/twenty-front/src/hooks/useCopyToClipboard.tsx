@@ -1,14 +1,24 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, IconExclamationCircle } from 'twenty-ui/display';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+
+type CopyToClipboardOptions = {
+  writePromise?: Promise<void> | null;
+};
+
 export const useCopyToClipboard = () => {
   const { theme } = useContext(ThemeContext);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
-  const copyToClipboard = async (valueAsString: string, message?: string) => {
+  const copyToClipboard = async (
+    valueAsString: string,
+    message?: string,
+    options?: CopyToClipboardOptions,
+  ) => {
     if (!window.isSecureContext) {
       enqueueErrorSnackBar({
         message: t`Clipboard requires a secure connection (HTTPS). Please access this app over HTTPS to enable copying.`,
@@ -22,7 +32,10 @@ export const useCopyToClipboard = () => {
     }
 
     try {
-      await navigator.clipboard.writeText(valueAsString);
+      const writePromise = options?.writePromise;
+      await (isDefined(writePromise)
+        ? writePromise
+        : navigator.clipboard.writeText(valueAsString));
 
       enqueueSuccessSnackBar({
         message: message || t`Copied to clipboard`,

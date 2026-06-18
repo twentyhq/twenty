@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
+  fulfillClipboardWriteFromUserGesture,
 } from 'twenty-front-component-renderer';
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
@@ -191,10 +192,16 @@ export const useFrontComponentExecutionContext = ({
           ? `${text.slice(0, FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH)}…`
           : text;
 
-      await copyToClipboardWithSnackbar(
-        text,
-        t`Application copied "${preview}" to your clipboard`,
-      );
+      const message = t`Application copied "${preview}" to your clipboard`;
+      const gestureWrite = fulfillClipboardWriteFromUserGesture(text);
+
+      if (isDefined(gestureWrite)) {
+        await copyToClipboardWithSnackbar(text, message, {
+          writePromise: gestureWrite,
+        });
+      } else {
+        await copyToClipboardWithSnackbar(text, message);
+      }
     };
 
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
