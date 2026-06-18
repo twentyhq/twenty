@@ -11,7 +11,7 @@ import {
   IconNotes,
   IconTable,
   IconUsers,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const StyledContainer = styled.div`

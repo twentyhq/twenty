@@ -12,7 +12,7 @@ import {
   IconTargetArrow,
   IconUser,
   IconUserCircle,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 export type BackgroundMockNavigationItem = {

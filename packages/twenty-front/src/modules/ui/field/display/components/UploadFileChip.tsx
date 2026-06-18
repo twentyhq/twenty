@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { IconArrowUp } from 'twenty-ui/display';
+import { IconArrowUp } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

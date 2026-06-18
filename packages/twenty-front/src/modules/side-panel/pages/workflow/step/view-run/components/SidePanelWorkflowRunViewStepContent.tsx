@@ -32,7 +32,7 @@ import {
   IconLogout,
   IconStepInto,
   IconTerminal,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`

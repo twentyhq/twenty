@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext, type ReactNode } from 'react';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
