@@ -144,7 +144,12 @@ export class BillingPortalWorkspaceService {
         billingPricesPerPlan,
       });
 
-    this.assertNoActiveSubscription(customer);
+    const resumablePaymentIntent =
+      await this.findResumableSubscriptionPaymentIntent(customer);
+
+    if (isDefined(resumablePaymentIntent)) {
+      return resumablePaymentIntent;
+    }
 
     const stripeSubscription =
       await this.stripeCheckoutService.createSubscriptionWithPaymentMethodCollection(
@@ -187,10 +192,54 @@ export class BillingPortalWorkspaceService {
     }
   }
 
+  private async findResumableSubscriptionPaymentIntent(
+    customer: BillingCustomerEntity | null,
+  ): Promise<{ clientSecret: string; paymentIntentType: string } | null> {
+    const existingSubscription = customer?.billingSubscriptions?.find(
+      (subscription) => subscription.status !== SubscriptionStatus.Canceled,
+    );
+
+    if (!isDefined(existingSubscription)) {
+      return null;
+    }
+
+    const stripeSubscription =
+      await this.stripeCheckoutService.retrieveSubscriptionForResume(
+        existingSubscription.stripeSubscriptionId,
+      );
+
+    const paymentIntent = this.findSubscriptionClientSecret(stripeSubscription);
+
+    if (!isDefined(paymentIntent)) {
+      throw new BillingException(
+        'Customer already has a non-canceled billing subscription',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+      );
+    }
+
+    return paymentIntent;
+  }
+
   private extractSubscriptionClientSecret(subscription: Stripe.Subscription): {
     clientSecret: string;
     paymentIntentType: string;
   } {
+    const paymentIntent = this.findSubscriptionClientSecret(subscription);
+
+    if (!isDefined(paymentIntent)) {
+      throw new BillingException(
+        'Error: missing subscription client secret',
+        BillingExceptionCode.BILLING_STRIPE_ERROR,
+      );
+    }
+
+    return paymentIntent;
+  }
+
+  private findSubscriptionClientSecret(subscription: Stripe.Subscription): {
+    clientSecret: string;
+    paymentIntentType: string;
+  } | null {
     const pendingSetupIntent = subscription.pending_setup_intent;
 
     if (
@@ -220,10 +269,7 @@ export class BillingPortalWorkspaceService {
       };
     }
 
-    throw new BillingException(
-      'Error: missing subscription client secret',
-      BillingExceptionCode.BILLING_STRIPE_ERROR,
-    );
+    return null;
   }
 
   private async prepareSubscriptionParameters({

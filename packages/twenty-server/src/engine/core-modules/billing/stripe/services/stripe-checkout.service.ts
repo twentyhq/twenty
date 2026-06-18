@@ -178,6 +178,14 @@ export class StripeCheckoutService {
     );
   }
 
+  async retrieveSubscriptionForResume(
+    stripeSubscriptionId: string,
+  ): Promise<Stripe.Subscription> {
+    return this.stripe.subscriptions.retrieve(stripeSubscriptionId, {
+      expand: ['pending_setup_intent', 'latest_invoice.confirmation_secret'],
+    });
+  }
+
   private async getOrCreateStripeCustomerId({
     user,
     workspace,
