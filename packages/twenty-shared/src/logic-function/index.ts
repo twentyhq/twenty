@@ -15,8 +15,6 @@ export { getOutputSchemaFromValue } from './get-output-schema-from-value';
 export { getOutputSchemaMismatchIssues } from './get-output-schema-mismatch-issues';
 export type { InputJsonSchema } from './input-json-schema.type';
 export { inputSchemaToOutputSchema } from './input-schema-to-output-schema';
-export {
-  isRecordObjectSchema,
-  isRecordArraySchema,
-} from './is-record-input-schema';
+export { isRecordArraySchema } from './is-record-array-schema';
+export { isRecordObjectSchema } from './is-record-object-schema';
 export { jsonSchemaToInputSchema } from './json-schema-to-input-schema';

@@ -10,7 +10,14 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { getWorkflowCodeFieldsEnumSelectOptions } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsEnumSelectOptions';
 import { getWorkflowCodeFieldsLeafKind } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsLeafKind';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import {
+  isBoolean,
+  isNonEmptyArray,
+  isNonEmptyString,
+  isNull,
+  isNumber,
+  isString,
+} from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type InputSchemaProperty } from 'twenty-shared/workflow';
 
@@ -54,11 +61,7 @@ export const WorkflowEditActionCodeFieldLeaf = ({
         return (
           <FormSingleRecordPicker
             label={label}
-            defaultValue={
-              typeof inputValue === 'string' && inputValue.length > 0
-                ? inputValue
-                : undefined
-            }
+            defaultValue={isNonEmptyString(inputValue) ? inputValue : undefined}
             onChange={onChange}
             objectNameSingulars={[recordObjectMetadataItem.nameSingular]}
             disabled={readonly}
@@ -73,8 +76,8 @@ export const WorkflowEditActionCodeFieldLeaf = ({
           label={label}
           defaultValue={
             Array.isArray(inputValue) ||
-            typeof inputValue === 'string' ||
-            inputValue === null
+            isString(inputValue) ||
+            isNull(inputValue)
               ? inputValue
               : undefined
           }
@@ -92,8 +95,7 @@ export const WorkflowEditActionCodeFieldLeaf = ({
       <FormBooleanFieldInput
         label={label}
         defaultValue={
-          typeof inputValue === 'boolean' ||
-          isStandaloneVariableString(inputValue)
+          isBoolean(inputValue) || isStandaloneVariableString(inputValue)
             ? inputValue
             : undefined
         }
@@ -109,9 +111,7 @@ export const WorkflowEditActionCodeFieldLeaf = ({
       <FormNumberFieldInput
         label={label}
         defaultValue={
-          typeof inputValue === 'number' || typeof inputValue === 'string'
-            ? inputValue
-            : undefined
+          isNumber(inputValue) || isString(inputValue) ? inputValue : undefined
         }
         readonly={readonly}
         onChange={onChange}
@@ -130,7 +130,7 @@ export const WorkflowEditActionCodeFieldLeaf = ({
           defaultValue={
             !isDefined(inputValue)
               ? undefined
-              : typeof inputValue === 'string'
+              : isString(inputValue)
                 ? inputValue
                 : String(inputValue)
           }

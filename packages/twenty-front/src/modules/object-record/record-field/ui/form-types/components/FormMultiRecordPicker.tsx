@@ -23,10 +23,11 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useId, useState } from 'react';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
-import { IconChevronDown } from 'twenty-ui/display';
+import { IconChevronDown } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
@@ -97,7 +98,7 @@ export const FormMultiRecordPicker = ({
     objectNameSingular,
     filter: { id: { in: staticRecordIds } },
     limit: Math.min(staticRecordIds.length, QUERY_MAX_RECORDS),
-    skip: staticRecordIds.length === 0,
+    skip: !isNonEmptyArray(staticRecordIds),
     withSoftDeleted: true,
   });
 

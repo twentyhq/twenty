@@ -1,6 +1,6 @@
 import { type InputSchema, type FunctionInput } from '@/workflow';
 import { type InputJsonSchema } from '@/logic-function';
-import { isRecordObjectSchema } from '@/logic-function/is-record-input-schema';
+import { isRecordObjectSchema } from '@/logic-function/is-record-object-schema';
 import { isDefined } from '@/utils';
 
 export const getFunctionInputFromInputSchema = (

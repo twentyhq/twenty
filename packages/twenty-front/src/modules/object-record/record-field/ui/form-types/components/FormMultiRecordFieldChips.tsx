@@ -7,6 +7,7 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChipsContainer = styled.div`
@@ -52,7 +53,7 @@ export const FormMultiRecordFieldChips = ({
     isStandaloneVariableString(entry),
   );
 
-  if (selectedRecords.length === 0 && staticVariables.length === 0) {
+  if (!isNonEmptyArray(selectedRecords) && !isNonEmptyArray(staticVariables)) {
     return (
       <StyledChipsContainer>
         <FormFieldPlaceholder>{t`Select`}</FormFieldPlaceholder>
