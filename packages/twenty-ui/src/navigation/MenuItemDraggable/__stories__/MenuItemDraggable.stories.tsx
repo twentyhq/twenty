@@ -3,6 +3,7 @@ import { action } from 'storybook/actions';
 
 import { IconBell, IconMinus } from '@ui/icon';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogDimension,
   type CatalogOptions,
@@ -21,12 +22,13 @@ export default meta;
 type Story = StoryObj<typeof MenuItemDraggable>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     LeftIcon: IconBell,
     accent: 'default',
-    iconButtons: [{ Icon: IconMinus, onClick: action('Clicked') }],
+    iconButtons: [
+      { Icon: IconMinus, onClick: action('Clicked'), ariaLabel: 'Remove' },
+    ],
     onClick: action('Clicked'),
     text: 'Menu item draggable',
     isDragDisabled: false,
@@ -41,8 +43,7 @@ export const Catalog: Story = {
     iconButtons: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'] },
     catalog: {
       dimensions: [
@@ -99,6 +100,7 @@ export const Catalog: Story = {
                     {
                       Icon: IconMinus,
                       onClick: action('Clicked on minus icon button'),
+                      ariaLabel: 'Remove',
                     },
                   ],
                 };
@@ -118,20 +120,17 @@ export const Catalog: Story = {
 };
 
 export const Grip: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: { ...Default.args, gripMode: 'always', isDragDisabled: false },
 };
 
 export const GripOnHover: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: { ...Default.args, gripMode: 'onHover', isDragDisabled: false },
 };
 
 export const GripOnHoverWithIconContainer: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     ...Default.args,
     gripMode: 'onHover',
@@ -141,7 +140,6 @@ export const GripOnHoverWithIconContainer: Story = {
 };
 
 export const HoverDisabled: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: { ...Default.args, isHoverDisabled: true },
 };

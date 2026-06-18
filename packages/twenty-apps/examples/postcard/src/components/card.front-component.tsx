@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useRecordId } from 'twenty-sdk/front-component';
-import { isDefined } from 'twenty-shared/utils';
 
+import { isDefined } from 'src/utils/isDefined';
 import { CARD_TEST_IDS } from './card-test-ids';
 
 export const CARD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =

@@ -3,6 +3,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconUser } from '@ui/icon/components/TablerIcons';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -45,8 +46,7 @@ export const WithLongText: Story = {
     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     container: { width: 100 },
   },
 };
@@ -59,8 +59,7 @@ export const WithIcon: Story = {
     Icon: IconUser,
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     container: { width: 100 },
   },
 };
@@ -73,8 +72,7 @@ export const DontShrink: Story = {
     preventShrink: true,
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     container: { width: 100 },
   },
 };
@@ -84,8 +82,7 @@ export const Catalog: CatalogStory<Story, typeof Tag> = {
     color: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {

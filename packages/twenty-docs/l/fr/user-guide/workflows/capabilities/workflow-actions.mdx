@@ -10,9 +10,9 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 Les actions définissent ce qui se passe après le déclenchement d'un déclencheur. Vous pouvez enchaîner plusieurs actions pour créer des automatisations complexes.
 
 <Tip>
-  * Utilisez le sélecteur de variables (cliquez sur l'icône `(x+)`) pour parcourir les données disponibles provenant des étapes précédentes
-  * Survolez n'importe quel champ de saisie pour voir de quelle étape provient une variable — utile lorsque le même champ (par ex., ID) existe dans plusieurs étapes précédentes
-  * Donnez à chaque action un nom explicite pour faciliter la maintenance
+* Utilisez le sélecteur de variables (cliquez sur l'icône `(x+)`) pour parcourir les données disponibles provenant des étapes précédentes
+* Survolez n'importe quel champ de saisie pour voir de quelle étape provient une variable — utile lorsque le même champ (par ex., ID) existe dans plusieurs étapes précédentes
+* Donnez à chaque action un nom explicite pour faciliter la maintenance
 </Tip>
 
 ## Actions sur les enregistrements
@@ -71,7 +71,7 @@ Trouve des enregistrements dans un objet sélectionné en utilisant des conditio
 **Sortie**: Renvoie les enregistrements correspondants qui peuvent être utilisés dans les étapes suivantes.
 
 <Note>
-  **Limite**: Search Records renvoie un maximum de **200 enregistrements**. Si vous devez en traiter davantage, ajoutez des filtres spécifiques pour réduire les résultats ou utilisez des workflows planifiés pour traiter par lots.
+**Limite**: Search Records renvoie un maximum de **200 enregistrements**. Si vous devez en traiter davantage, ajoutez des filtres spécifiques pour réduire les résultats ou utilisez des workflows planifiés pour traiter par lots.
 </Note>
 
 **Meilleure pratique**: Utilisez [branches](/l/fr/user-guide/workflows/capabilities/workflow-branches) après Search Records pour gérer les scénarios "trouvé" vs "non trouvé".
@@ -89,7 +89,7 @@ Crée un nouvel enregistrement ou met à jour un enregistrement existant en fonc
 * Renseignez les valeurs des champs. N'oubliez pas de renseigner au moins un des identifiants uniques.
 
 <Note>
-  **La correspondance fonctionne généralement encore mieux lorsque vous n'ajoutez qu'un seul identifiant unique.** Par exemple, la capture d'écran ci-dessous fera correspondre les entreprises en fonction de leur domaine. L'ID n'est pas forcément nécessaire.
+**La correspondance fonctionne généralement encore mieux lorsque vous n'ajoutez qu'un seul identifiant unique.** Par exemple, la capture d'écran ci-dessous fera correspondre les entreprises en fonction de leur domaine. L'ID n'est pas forcément nécessaire.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
@@ -116,8 +116,8 @@ Crée un nouvel enregistrement ou met à jour un enregistrement existant en fonc
 * Définissez les actions à effectuer sur chaque enregistrement dans la boucle.
 
 <Note>
-  - Vous pouvez ajouter plusieurs actions au sein d'un itérateur.
-  - Lorsque vous utilisez des branches à l'intérieur d'un itérateur, assurez-vous que la dernière étape de chaque branche revient à l'itérateur pour fermer la boucle.
+- Vous pouvez ajouter plusieurs actions au sein d'un itérateur.
+- Lorsque vous utilisez des branches à l'intérieur d'un itérateur, assurez-vous que la dernière étape de chaque branche revient à l'itérateur pour fermer la boucle.
 </Note>
 
 * Accéder aux champs `Current Item`: pour utiliser les champs de l'enregistrement en cours de traitement, cliquez sur l'étape **Iterator**, puis sélectionnez **Current item**. La liste des champs disponibles de cet enregistrement s'affichera et pourra être sélectionnée pour une utilisation dans les actions suivantes.
@@ -135,8 +135,8 @@ Filtre les enregistrements selon des conditions spécifiées, ne laissant passer
 * Configurez quels enregistrements doivent passer aux étapes suivantes
 
 <Note>
-  1. **Sortie**: Les nœuds de filtre ne renvoient pas de données — ils agissent comme des portes. Si les conditions sont remplies, le flux de travail continue. Sinon, le flux de travail s'arrête à cette branche.
-  2. L'opérateur `IS` peut être utilisé avec des champs numériques. Il équivaut à `EQUAL`.
+1. **Sortie**: Les nœuds de filtre ne renvoient pas de données — ils agissent comme des portes. Si les conditions sont remplies, le flux de travail continue. Sinon, le flux de travail s'arrête à cette branche.
+2. L'opérateur `IS` peut être utilisé avec des champs numériques. Il équivaut à `EQUAL`.
 </Note>
 
 ### Délai
@@ -167,7 +167,7 @@ Met en pause l'exécution du flux de travail pendant une durée spécifiée ou j
 * Planifier des actions pendant les heures ouvrées
 
 <Note>
-  La date planifiée ne peut pas être dans le passé. Si un champ de date d'une étape précédente est utilisé et que la date est déjà passée, le flux de travail échouera.
+La date planifiée ne peut pas être dans le passé. Si un champ de date d'une étape précédente est utilisé et que la date est déjà passée, le flux de travail échouera.
 </Note>
 
 **Limites et crédits**:
@@ -190,7 +190,7 @@ Ne convient pas aux newsletters (qui nécessitent un formatage plus riche) ni au
 * Sélectionnez le compte e-mail de l'expéditeur
 
 <Note>
-  Vous pouvez uniquement envoyer des e-mails à partir de boîtes aux lettres synchronisées avec votre propre compte Twenty. L'envoi depuis les boîtes aux lettres d'autres membres de l'équipe (par ex., l'e-mail du propriétaire du compte) est sur la feuille de route.
+Vous pouvez uniquement envoyer des e-mails à partir de boîtes aux lettres synchronisées avec votre propre compte Twenty. L'envoi depuis les boîtes aux lettres d'autres membres de l'équipe (par ex., l'e-mail du propriétaire du compte) est sur la feuille de route.
 </Note>
 
 Pour toutes les étapes suivantes, vous pouvez référencer des variables des étapes précédentes pour la personnalisation.
@@ -198,14 +198,14 @@ Pour toutes les étapes suivantes, vous pouvez référencer des variables des é
 * Entrez l'adresse e-mail du destinataire.
 
 <Note>
-  Un seul destinataire est possible pour le moment.
+Un seul destinataire est possible pour le moment.
 </Note>
 
 * Définissez la ligne d'objet.
 * Rédigez le corps du message. Vous pouvez formater des liens, créer des listes numérotées, des listes à puces, ajouter des pièces jointes.
 
 <Note>
-  L'ajout de signatures HTML n'est pas possible pour le moment.
+L'ajout de signatures HTML n'est pas possible pour le moment.
 </Note>
 
 ### Formulaire
@@ -213,7 +213,7 @@ Pour toutes les étapes suivantes, vous pouvez référencer des variables des é
 Affiche un formulaire lors de l'exécution du flux de travail pour recueillir les saisies de l'utilisateur. Les réponses peuvent ensuite être utilisées dans les étapes suivantes pour créer des enregistrements, envoyer des e-mails ou exécuter toute autre action selon la saisie.
 
 <Warning>
-  **Les formulaires sont conçus uniquement pour les déclencheurs manuels**. Pour les flux de travail avec d'autres déclencheurs (Enregistrement créé, mis à jour, etc.), les formulaires ne sont accessibles que via l'interface de l'exécution de flux de travail, ce qui n'est pas l'expérience utilisateur attendue. Un centre de notifications sera lancé en 2026 pour supporter correctement les formulaires dans les flux de travail automatisés.
+**Les formulaires sont conçus uniquement pour les déclencheurs manuels**. Pour les flux de travail avec d'autres déclencheurs (Enregistrement créé, mis à jour, etc.), les formulaires ne sont accessibles que via l'interface de l'exécution de flux de travail, ce qui n'est pas l'expérience utilisateur attendue. Un centre de notifications sera lancé en 2026 pour supporter correctement les formulaires dans les flux de travail automatisés.
 </Warning>
 
 **Configuration**:
@@ -234,7 +234,7 @@ Affiche un formulaire lors de l'exécution du flux de travail pour recueillir le
 * Remplissez le formulaire affiché dans le panneau latéral et cliquez sur `Submit`.
 
 <Note>
-  Les champs ne peuvent pas être rendus obligatoires.
+Les champs ne peuvent pas être rendus obligatoires.
 </Note>
 
 <VimeoEmbed videoId="1147277989" title="Démonstration vidéo" />
@@ -256,15 +256,15 @@ Exécute du JavaScript personnalisé dans votre flux de travail.
 * Testez le code directement dans l'étape
 
 <Note>
-  Si vous devez utiliser des clés d'API externes dans votre code, vous devez les saisir directement dans le corps de la fonction. Vous ne pouvez pas configurer des clés d'API ailleurs et les référencer dans la fonction logique.
+Si vous devez utiliser des clés d'API externes dans votre code, vous devez les saisir directement dans le corps de la fonction. Vous ne pouvez pas configurer des clés d'API ailleurs et les référencer dans la fonction logique.
 </Note>
 
 <Tip>
-  **Vous travaillez avec des tableaux ?** Les tableaux provenant de systèmes externes ou d'étapes précédentes peuvent arriver sous forme de chaînes de caractères. Voir [Gérer les tableaux dans les actions Code](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) pour la solution.
+**Vous travaillez avec des tableaux ?** Les tableaux provenant de systèmes externes ou d'étapes précédentes peuvent arriver sous forme de chaînes de caractères. Voir [Gérer les tableaux dans les actions Code](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) pour la solution.
 </Tip>
 
 <Tip>
-  Cliquez sur l'icône carrée en haut à droite de l'éditeur de code pour l'afficher en plein écran — utile car la largeur par défaut de l'éditeur est limitée.
+Cliquez sur l'icône carrée en haut à droite de l'éditeur de code pour l'afficher en plein écran — utile car la largeur par défaut de l'éditeur est limitée.
 </Tip>
 
 ### Requête HTTP
@@ -303,9 +303,9 @@ Exécute un agent IA au sein de votre flux de travail pour effectuer des tâches
 **Sortie**: La réponse de l'agent IA est disponible pour une utilisation dans les étapes suivantes. Si l'agent a un schéma de sortie structuré, la réponse suivra ce format.
 
 <Note>
-  Les actions d'agent IA consomment des crédits de flux de travail en fonction du modèle d'IA utilisé. Voir [Crédits de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-credits) pour plus de détails.
+Les actions d'agent IA consomment des crédits de flux de travail en fonction du modèle d'IA utilisé. Voir [Crédits de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-credits) pour plus de détails.
 </Note>
 
 <Note>
-  Les agents IA respectent les autorisations basées sur les rôles. Vous pouvez attribuer des rôles spécifiques aux agents dans **Paramètres → Rôles** pour contrôler les données auxquelles ils peuvent accéder. Voir [Autorisations](/l/fr/user-guide/permissions-access/capabilities/permissions) pour plus de détails.
+Les agents IA respectent les autorisations basées sur les rôles. Vous pouvez attribuer des rôles spécifiques aux agents dans **Paramètres → Membres → Rôles** pour contrôler les données auxquelles ils peuvent accéder. Voir [Autorisations](/l/fr/user-guide/permissions-access/capabilities/permissions) pour plus de détails.
 </Note>

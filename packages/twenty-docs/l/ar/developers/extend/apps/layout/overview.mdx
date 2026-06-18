@@ -1,0 +1,56 @@
+---
+title: نظرة عامة
+description: ضع تطبيقك داخل واجهة مستخدم Twenty — إدخالات الشريط الجانبي، العروض المحفوظة، علامات تبويب صفحة السجل، ومكوّنات React المعزولة (sandboxed).
+icon: table-columns
+---
+
+تمثّل **طبقة التخطيط** في تطبيق Twenty كل ما يراه المستخدم: مكان ظهور التطبيق في الشريط الجانبي، العروض القائِمية التي يوفّرها، كيفية ترتيب صفحات تفاصيل السجل، وأي مكوّنات React مخصّصة يتم عرضها داخل تلك الصفحات.
+
+```text
+   Sidebar               Record list            Record detail page
+   ───────               ───────────            ──────────────────
+   [📋 My View]    ────▶ ┌──────────┐          ┌─────────────────────┐
+   [📋 Drafts ]          │ Companies│          │ Tabs: [Overview ]   │
+   [📋 Inbox  ]          │ ──────── │          │       [Notes    ]   │
+        ▲                │  Apple   │          │       [Hello    ]◀──── definePageLayoutTab
+        │                │  Acme    │          │                     │   adds a tab...
+        └ defineNavi-    │  …       │          │  ┌────────────────┐ │
+          gationMenu-    └────▲─────┘          │  │                │ │
+          Item points         │                │  │   React UI     │◀── …with a
+          to a defineView     │                │  │  (sandboxed in │ │   defineFrontComponent
+                              └ defineView     │  │   a Worker)    │ │   widget inside
+                                picks columns  │  └────────────────┘ │
+                                and filters    └─────────────────────┘
+```
+
+## في هذا القسم
+
+<CardGroup cols={2}>
+  <Card title="العروض" icon="list" href="/l/ar/developers/extend/apps/layout/views">
+    `defineView` — تكوينات قوائم محفوظة: الأعمدة الظاهرة، وعوامل التصفية، والمجموعات.
+  </Card>
+  <Card title="عناصر قائمة التنقّل" icon="bars" href="/l/ar/developers/extend/apps/layout/navigation-menu-items">
+    `defineNavigationMenuItem` — إدخالات في الشريط الجانبي تشير إلى العروض أو عناوين URL الخارجية.
+  </Card>
+  <Card title="تخطيطات الصفحات" icon="table-columns" href="/l/ar/developers/extend/apps/layout/page-layouts">
+    `definePageLayout` و`definePageLayoutTab` — علامات التبويب والويدجتات في صفحة تفاصيل السجل.
+  </Card>
+  <Card title="المكوّنات الأمامية" icon="window-maximize" href="/l/ar/developers/extend/apps/layout/front-components">
+    `defineFrontComponent` — مكوّنات React معزولة (sandboxed) يتم عرضها داخل Twenty.
+  </Card>
+  <Card title="عناصر قائمة الأوامر" icon="terminal" href="/l/ar/developers/extend/apps/layout/command-menu-items">
+    `defineCommandMenuItem` — تسجيل مكوّنات الواجهة الأمامية كإدخالات Cmd+K وإجراءات سريعة.
+  </Card>
+</CardGroup>
+
+## أين يظهر التطبيق
+
+| موضع الظهور               | ما الذي يتحكّم فيه                                                        | كيان                                      |
+| ------------------------- | ------------------------------------------------------------------------- | ----------------------------------------- |
+| **الشريط الجانبي**        | إدخال مخصّص يربط بعرض محفوظ أو عنوان URL خارجي                            | `defineNavigationMenuItem`                |
+| **قائمة السجلات**         | تكوين محفوظ لكائن — الأعمدة الظاهرة، والترتيب، وعوامل التصفية، والمجموعات | `defineView`                              |
+| **صفحة تفاصيل السجل**     | علامات التبويب والويدجتات في صفحة السجل (لكائنك الخاص أو لكائن قياسي)     | `definePageLayout`, `definePageLayoutTab` |
+| **داخل أي مما سبق**       | ويدجت React مخصّص — أزرار، نماذج، لوحات بيانات، تكاملات                   | `defineFrontComponent`                    |
+| **قائمة الأوامر (Cmd+K)** | إجراء سريع مُثبّت أو أمر مخفي                                             | `defineCommandMenuItem`                   |
+
+تعمل مكوّنات الواجهة الأمامية داخل Web Worker معزول باستخدام Remote DOM — يتم عرضها بشكل أصيل داخل الصفحة (وليس داخل iframe)، لكنها لا تستطيع الوصول مباشرةً إلى صفحة المضيف أو إلى DOM. يحدث التواصل مع Twenty من خلال واجهة API للمضيف تعتمد تمرير الرسائل.

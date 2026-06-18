@@ -8,6 +8,7 @@ import { useState } from 'react';
 
 import { ArrowUpRight } from '@/icons';
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
+import { useUnlocalizedPathname } from '@/platform/i18n/use-unlocalized-pathname';
 import { ExternalLink } from '@/ui';
 import {
   EASING,
@@ -66,6 +67,10 @@ const IconWrap = styled.span`
   justify-content: center;
   position: relative;
   width: 32px;
+
+  ${DropdownLink}[data-active] & {
+    color: ${color('blue')};
+  }
 `;
 
 const ExternalBadge = styled.span`
@@ -100,6 +105,24 @@ const ItemLabel = styled.span`
   letter-spacing: 0;
   line-height: 1.1;
   text-transform: uppercase;
+
+  &::before {
+    background: ${color('blue')};
+    content: '';
+    display: none;
+    height: 2px;
+    margin-right: ${spacing(1.5)};
+    vertical-align: middle;
+    width: 8px;
+  }
+
+  ${DropdownLink}[data-active] & {
+    color: ${color('blue')};
+  }
+
+  ${DropdownLink}[data-active] &::before {
+    display: inline-block;
+  }
 `;
 
 const ItemDescription = styled.span`
@@ -123,7 +146,7 @@ const PreviewFrame = styled.div`
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   flex: 1;
-  min-height: 220px;
+  min-height: 160px;
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -159,6 +182,7 @@ export type MenuDropdownProps = {
 
 export function MenuDropdown({ items }: MenuDropdownProps) {
   const { i18n } = useLingui();
+  const pathname = useUnlocalizedPathname();
   const [activeHref, setActiveHref] = useState(items[0]?.href ?? '');
   const activeItem =
     items.find((item) => item.href === activeHref) ?? items[0] ?? null;
@@ -168,6 +192,9 @@ export function MenuDropdown({ items }: MenuDropdownProps) {
       <DropdownList>
         {items.map((child) => {
           const IconComponent = child.icon;
+          const isCurrentPage =
+            child.external !== true &&
+            (pathname === child.href || pathname.startsWith(`${child.href}/`));
           return (
             <li
               key={child.href}
@@ -175,6 +202,7 @@ export function MenuDropdown({ items }: MenuDropdownProps) {
               onMouseEnter={() => setActiveHref(child.href)}
             >
               <DropdownLink
+                data-active={isCurrentPage ? '' : undefined}
                 render={
                   child.external === true ? (
                     <ExternalLink href={child.href} />
@@ -206,7 +234,7 @@ export function MenuDropdown({ items }: MenuDropdownProps) {
             <NextImage
               alt={i18n._(activeItem.preview.imageAlt)}
               fill
-              sizes="360px"
+              sizes="720px"
               src={activeItem.preview.image}
               style={{
                 objectFit: 'cover',

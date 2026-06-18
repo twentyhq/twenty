@@ -19,7 +19,7 @@ import {
 } from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
-import { requestTranscript } from 'src/logic-functions/flows/request-transcript.util';
+import { reconcileCallRecordingTranscriptArtifact } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact.util';
 import {
   updateCallRecording,
   type CallRecordingUpdateFields,
@@ -138,20 +138,13 @@ const handleRecallStatusEvent = async ({
   };
 
   if (isRecallRecordingDoneSignal({ event, statusCode })) {
-    if (isTranscriptUnset(callRecording)) {
-      const transcriptRequestUpdate = await buildTranscriptRequestUpdate({
+    Object.assign(
+      updateData,
+      await buildTranscriptArtifactUpdate({
         callRecording,
         webhookEvent,
-      });
-
-      if (Object.keys(transcriptRequestUpdate).length > 0) {
-        await updateCallRecording(client, {
-          id: callRecording.id,
-          data: transcriptRequestUpdate,
-        });
-        Object.assign(updateData, transcriptRequestUpdate);
-      }
-    }
+      }),
+    );
 
     Object.assign(
       updateData,
@@ -335,7 +328,7 @@ const buildMediaIngestionUpdate = async ({
   });
 };
 
-const buildTranscriptRequestUpdate = async ({
+const buildTranscriptArtifactUpdate = async ({
   callRecording,
   webhookEvent,
 }: {
@@ -349,24 +342,26 @@ const buildTranscriptRequestUpdate = async ({
 
   if (isUndefined(externalRecordingId)) {
     console.warn(
-      `[twenty-meeting-bot] cannot request transcript for call recording ${callRecording.id}: no Recall recording id available`,
+      `[twenty-meeting-bot] cannot reconcile transcript for call recording ${callRecording.id}: no Recall recording id available`,
     );
 
     return {};
   }
 
-  const transcriptMarker = await requestTranscript({
-    externalRecordingId,
-    requestedAt: new Date().toISOString(),
-  });
-
-  if (isNull(transcriptMarker)) {
-    return {};
-  }
+  const transcriptArtifactResult =
+    await reconcileCallRecordingTranscriptArtifact({
+      callRecordingId: callRecording.id,
+      currentStatus: callRecording.status,
+      externalRecordingId,
+      requestedAt: new Date().toISOString(),
+      transcript: callRecording.transcript,
+    });
 
   return {
-    transcript: transcriptMarker,
-    externalRecordingId,
+    ...(isUndefined(callRecording.externalRecordingId)
+      ? { externalRecordingId }
+      : {}),
+    ...transcriptArtifactResult.updateData,
   };
 };
 

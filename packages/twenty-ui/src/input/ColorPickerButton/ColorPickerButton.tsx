@@ -21,6 +21,7 @@ export const ColorPickerButton = ({
       <LightIconButton
         size="medium"
         Icon={() => <ColorSample colorName={colorName} />}
+        aria-label={`Select ${colorName} color`}
         onClick={onClick}
       />
     </div>

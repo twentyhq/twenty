@@ -71,25 +71,54 @@ export const PARTNER_SCOPE_OPTIONS: ReadonlyArray<{
   },
 ];
 
+// Shown as ghost chips by default. Technical skills COMPLEMENT "What you cover"
+// (the service categories): they name the specific tools, technologies and
+// industries a partner brings, not the service itself. No competitor CRMs —
+// a migration off any tool is just "CRM migration".
 export const PARTNER_SKILL_SUGGESTIONS: ReadonlyArray<string> = [
+  'CRM migration',
+  'n8n',
+  'Zapier',
+  'Make',
+  'AI agents',
+  'Shopify',
+  'Stripe',
+  'Real estate',
+  'E-commerce',
+];
+
+// Searchable-only (autocomplete) — the rest of the tools, stack and verticals,
+// not shown as chips. Surfaced when the applicant types a match. Excludes
+// competitor CRMs (Salesforce, HubSpot, Attio, …) and anything already covered
+// by the "What you cover" service categories.
+export const PARTNER_SKILL_POOL: ReadonlyArray<string> = [
+  // Stack
   'React',
   'TypeScript',
   'Node.js',
   'Python',
   'PostgreSQL',
   'GraphQL',
-  'n8n',
-  'Zapier',
-  'Make',
-  'Salesforce',
-  'HubSpot',
-  'SAP',
-  'Shopify',
-  'Stripe',
+  // Infrastructure
   'Docker',
   'Kubernetes',
   'AWS',
   'GCP',
+  'Azure',
+  'DevOps',
+  // Tools & platforms
+  'SAP',
+  'WhatsApp',
+  // Specializations
+  'AI automations',
+  'Data enrichment',
+  'Cyber security',
+  // Verticals
+  'Fintech',
+  'B2B SaaS',
+  'Non-profit / NGO',
+  'Tax & accounting',
+  'Healthcare',
 ];
 
 export const PARTNER_COUNTRY_VALUES = [
@@ -538,8 +567,8 @@ export const PARTNER_APPLICATION_STEP_REQUIRED_FIELDS: Record<
   PartnerApplicationStepId,
   ReadonlyArray<keyof PartnerApplicationState>
 > = {
-  identity: ['name', 'email', 'company'],
-  profile: ['country', 'typeOfTeam'],
+  identity: ['name', 'email', 'company', 'website'],
+  profile: ['country', 'typeOfTeam', 'city'],
   expertise: ['partnerScope'],
-  commercials: [],
+  commercials: ['hourlyRate', 'projectBudgetMin'],
 };

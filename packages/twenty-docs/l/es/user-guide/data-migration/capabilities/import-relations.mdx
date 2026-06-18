@@ -44,12 +44,12 @@ Aquí, el Proyecto está en el lado de "uno". Varios registros de diferentes obj
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Limitación de importación/exportación**: Las relaciones que apuntan a varios tipos de objeto (como Notas → Personas/Empresas/Oportunidades) **aún no son compatibles** en la importación o exportación de CSV.
+**Limitación de importación/exportación**: Las relaciones que apuntan a varios tipos de objeto (como Notas → Personas/Empresas/Oportunidades) **aún no son compatibles** en la importación o exportación de CSV.
 
-  * **Importación**: Solo se pueden importar relaciones de uno a muchos que apunten a un único tipo de objeto en cada lado
-  * **Exportación**: Actualmente, las columnas de relaciones que apuntan a varios tipos de objeto se dejan vacías
+* **Importación**: Solo se pueden importar relaciones de uno a muchos que apunten a un único tipo de objeto en cada lado
+* **Exportación**: Actualmente, las columnas de relaciones que apuntan a varios tipos de objeto se dejan vacías
 
-  Esto está en nuestra hoja de ruta.
+Esto está en nuestra hoja de ruta.
 </Warning>
 
 ### Qué no es compatible hoy
@@ -137,12 +137,12 @@ Si no existe:
 ## Regla de orden de importación
 
 <Warning>
-  **¡Importa siempre primero el lado de "uno"!**
+**¡Importa siempre primero el lado de "uno"!**
 
-  1. **Empresas** primero (sin dependencias)
-  2. **Personas** en segundo lugar (vinculadas a Empresas)
-  3. **Oportunidades** en tercer lugar (vinculadas a Empresas/Personas)
-  4. **Objetos personalizados** según sus dependencias
+1. **Empresas** primero (sin dependencias)
+2. **Personas** en segundo lugar (vinculadas a Empresas)
+3. **Oportunidades** en tercer lugar (vinculadas a Empresas/Personas)
+4. **Objetos personalizados** según sus dependencias
 
-  El registro padre debe existir antes de que puedas hacer referencia a él.
+El registro padre debe existir antes de que puedas hacer referencia a él.
 </Warning>

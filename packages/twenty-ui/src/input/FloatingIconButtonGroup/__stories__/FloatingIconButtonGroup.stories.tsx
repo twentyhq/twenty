@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconCheckbox, IconNotes, IconTimelineEvent } from '@ui/icon';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -13,9 +14,9 @@ const meta: Meta<typeof FloatingIconButtonGroup> = {
   component: FloatingIconButtonGroup,
   args: {
     iconButtons: [
-      { Icon: IconNotes },
-      { Icon: IconCheckbox },
-      { Icon: IconTimelineEvent },
+      { Icon: IconNotes, ariaLabel: 'Notes' },
+      { Icon: IconCheckbox, ariaLabel: 'Tasks' },
+      { Icon: IconTimelineEvent, ariaLabel: 'Timeline' },
     ],
   },
   argTypes: {
@@ -27,8 +28,6 @@ export default meta;
 type Story = StoryObj<typeof FloatingIconButtonGroup>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
   args: {
     size: 'small',
   },
@@ -40,8 +39,7 @@ export const Catalog: CatalogStory<Story, typeof FloatingIconButtonGroup> = {
     size: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [

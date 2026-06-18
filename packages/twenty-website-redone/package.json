@@ -4,7 +4,11 @@
   "scripts": {
     "dev": "npx next dev --port 3004",
     "build": "npx next build",
-    "start": "npx next start --port 3004"
+    "start": "npx next start --port 3004",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy:dev": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env dev",
+    "deploy:prod": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env prod",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.27.6",
@@ -34,9 +38,11 @@
     "@lingui/conf": "5.1.2",
     "@lingui/format-po": "5.1.2",
     "@lingui/swc-plugin": "^5.11.0",
+    "@opennextjs/cloudflare": "^1.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/three": "^0.184.1"
+    "@types/three": "^0.184.1",
+    "wrangler": "^4.0.0"
   }
 }

@@ -1,36 +1,30 @@
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import Dagre from '@dagrejs/dagre';
+import { computeWorkflowLayout } from 'twenty-shared/workflow';
 
 export const getOrganizedDiagram = (
   diagram: WorkflowDiagram,
 ): WorkflowDiagram => {
-  const graph = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  graph.setGraph({
-    ranksep: 80, // Vertical distance between 2 nodes
-    nodesep: 200, // Horizontal distance between 2 nodes
-    rankdir: 'TB',
-  });
-
-  diagram.edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
-  diagram.nodes.forEach((node) =>
-    graph.setNode(node.id, {
+  const positions = computeWorkflowLayout({
+    nodes: diagram.nodes.map((node) => ({
+      id: node.id,
       width: node.measured?.width ?? 0,
       height: node.measured?.height ?? 0,
-    }),
-  );
+    })),
+    edges: diagram.edges.map((edge) => ({
+      source: edge.source,
+      target: edge.target,
+    })),
+  });
 
-  Dagre.layout(graph);
+  const positionByNodeId = new Map(
+    positions.map((position) => [position.id, position.position]),
+  );
 
   return {
     nodes: diagram.nodes.map((node) => {
-      const position = graph.node(node.id);
+      const position = positionByNodeId.get(node.id);
 
-      // We are shifting the dagre node position (anchor=center center) to the top left
-      // so it matches the React Flow node anchor point (top left).
-      const x = position.x - position.width / 2;
-      const y = position.y - position.height / 2;
-
-      return { ...node, position: { x, y } };
+      return position ? { ...node, position } : node;
     }),
     edges: diagram.edges,
   };
