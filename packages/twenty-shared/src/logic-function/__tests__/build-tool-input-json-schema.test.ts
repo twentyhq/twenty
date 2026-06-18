@@ -49,6 +49,33 @@ describe('buildToolInputJsonSchema', () => {
     });
   });
 
+  it('should collapse a record type to an id string', () => {
+    expect(
+      buildToolInputJsonSchema(
+        {
+          type: 'record',
+          objectUniversalIdentifier: 'company-universal-identifier',
+        },
+        () => 'Company',
+      ),
+    ).toEqual({ type: 'string', description: 'Id of the Company record' });
+  });
+
+  it('should collapse a records type to an array of id strings', () => {
+    expect(
+      buildToolInputJsonSchema(
+        {
+          type: 'records',
+          objectUniversalIdentifier: 'person-universal-identifier',
+        },
+        () => 'Person',
+      ),
+    ).toEqual({
+      type: 'array',
+      items: { type: 'string', description: 'Id of the Person record' },
+    });
+  });
+
   it('should strip custom keywords recursively while keeping standard ones', () => {
     const result = buildToolInputJsonSchema(
       {

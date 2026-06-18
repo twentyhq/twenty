@@ -35,11 +35,8 @@ describe('getInputSchemaFromSourceCode', () => {
       type: 'object',
       properties: {
         companies: {
-          type: 'array',
-          items: {
-            type: 'object',
-            objectUniversalIdentifier: 'company-universal-identifier',
-          },
+          type: 'records',
+          objectUniversalIdentifier: 'company-universal-identifier',
         },
       },
     });

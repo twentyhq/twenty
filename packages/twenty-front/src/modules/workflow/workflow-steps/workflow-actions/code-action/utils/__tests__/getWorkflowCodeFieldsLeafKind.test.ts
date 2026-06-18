@@ -34,7 +34,22 @@ describe('getWorkflowCodeFieldsLeafKind', () => {
     expect(getWorkflowCodeFieldsLeafKind(undefined)).toBe('text');
   });
 
-  it('should map record-typed schema properties to record kinds', () => {
+  it('should map record/records types to record kinds', () => {
+    expect(
+      getWorkflowCodeFieldsLeafKind({
+        type: 'record',
+        objectUniversalIdentifier: 'company-universal-identifier',
+      }),
+    ).toBe('record');
+    expect(
+      getWorkflowCodeFieldsLeafKind({
+        type: 'records',
+        objectUniversalIdentifier: 'person-universal-identifier',
+      }),
+    ).toBe('record-array');
+  });
+
+  it('should map the legacy object/array+marker form to record kinds', () => {
     expect(
       getWorkflowCodeFieldsLeafKind({
         type: 'object',

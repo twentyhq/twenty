@@ -6,7 +6,9 @@ export type InputJsonSchema = {
     | 'object'
     | 'array'
     | 'integer'
-    | 'null';
+    | 'null'
+    | 'record'
+    | 'records';
   description?: string;
   enum?: unknown[];
   items?: InputJsonSchema;

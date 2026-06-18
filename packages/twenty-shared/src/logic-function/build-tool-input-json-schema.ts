@@ -8,18 +8,41 @@ type ResolveObjectLabel = (
   objectUniversalIdentifier: string,
 ) => string | undefined;
 
+const buildRecordIdDescription = (
+  objectUniversalIdentifier: string | undefined,
+  resolveObjectLabel?: ResolveObjectLabel,
+): string => {
+  const objectLabel = isNonEmptyString(objectUniversalIdentifier)
+    ? resolveObjectLabel?.(objectUniversalIdentifier)
+    : undefined;
+
+  return `Id of the ${isNonEmptyString(objectLabel) ? objectLabel : 'linked'} record`;
+};
+
 export const buildToolInputJsonSchema = (
   jsonSchema: InputJsonSchema,
   resolveObjectLabel?: ResolveObjectLabel,
 ): InputJsonSchema => {
   if (isRecordObjectSchema(jsonSchema)) {
-    const objectLabel = resolveObjectLabel?.(
-      jsonSchema.objectUniversalIdentifier,
-    );
-
     return {
       type: 'string',
-      description: `Id of the ${isNonEmptyString(objectLabel) ? objectLabel : 'linked'} record`,
+      description: buildRecordIdDescription(
+        jsonSchema.objectUniversalIdentifier,
+        resolveObjectLabel,
+      ),
+    };
+  }
+
+  if (jsonSchema.type === 'records') {
+    return {
+      type: 'array',
+      items: {
+        type: 'string',
+        description: buildRecordIdDescription(
+          jsonSchema.objectUniversalIdentifier,
+          resolveObjectLabel,
+        ),
+      },
     };
   }
 

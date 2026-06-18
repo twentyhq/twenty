@@ -44,9 +44,8 @@ export const WorkflowEditActionCodeFieldLeaf = ({
 
   if (leafKind === 'record' || leafKind === 'record-array') {
     const objectUniversalIdentifier =
-      leafKind === 'record'
-        ? schemaProperty?.objectUniversalIdentifier
-        : schemaProperty?.items?.objectUniversalIdentifier;
+      schemaProperty?.objectUniversalIdentifier ??
+      schemaProperty?.items?.objectUniversalIdentifier;
 
     const recordObjectMetadataItem = isNonEmptyString(objectUniversalIdentifier)
       ? objectMetadataItems.find(

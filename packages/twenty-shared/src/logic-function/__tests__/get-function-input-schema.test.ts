@@ -103,22 +103,16 @@ describe('getFunctionInputSchema', () => {
         type: 'object',
         properties: {
           company: {
-            type: 'object',
+            type: 'record',
             objectUniversalIdentifier: 'company-universal-identifier',
           },
           companies: {
-            type: 'array',
-            items: {
-              type: 'object',
-              objectUniversalIdentifier: 'company-universal-identifier',
-            },
+            type: 'records',
+            objectUniversalIdentifier: 'company-universal-identifier',
           },
           otherCompanies: {
-            type: 'array',
-            items: {
-              type: 'object',
-              objectUniversalIdentifier: 'company-universal-identifier',
-            },
+            type: 'records',
+            objectUniversalIdentifier: 'company-universal-identifier',
           },
         },
       },

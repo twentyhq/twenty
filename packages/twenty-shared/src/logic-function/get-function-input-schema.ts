@@ -38,6 +38,13 @@ const getObjectUniversalIdentifierFromTypeArgument = (
   return undefined;
 };
 
+const buildArraySchemaFromItems = (
+  items: InputJsonSchema,
+): InputJsonSchema =>
+  items.type === 'record'
+    ? { type: 'records', objectUniversalIdentifier: items.objectUniversalIdentifier }
+    : { type: 'array', items };
+
 const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
   switch (typeNode.kind) {
     case SyntaxKind.NumberKeyword:
@@ -47,10 +54,9 @@ const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
     case SyntaxKind.BooleanKeyword:
       return { type: 'boolean' };
     case SyntaxKind.ArrayType:
-      return {
-        type: 'array',
-        items: getTypeString((typeNode as ArrayTypeNode).elementType),
-      };
+      return buildArraySchemaFromItems(
+        getTypeString((typeNode as ArrayTypeNode).elementType),
+      );
     case SyntaxKind.TypeReference: {
       const typeReferenceNode = typeNode as TypeReferenceNode;
       const typeName =
@@ -61,10 +67,9 @@ const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
       if (typeName === 'Array' || typeName === 'ReadonlyArray') {
         const elementType = typeReferenceNode.typeArguments?.[0];
 
-        return {
-          type: 'array',
-          items: isDefined(elementType) ? getTypeString(elementType) : {},
-        };
+        return buildArraySchemaFromItems(
+          isDefined(elementType) ? getTypeString(elementType) : {},
+        );
       }
 
       if (typeName === TWENTY_RECORD_TYPE_NAME) {
@@ -72,7 +77,7 @@ const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
           getObjectUniversalIdentifierFromTypeArgument(typeReferenceNode);
 
         if (isDefined(objectUniversalIdentifier)) {
-          return { type: 'object', objectUniversalIdentifier };
+          return { type: 'record', objectUniversalIdentifier };
         }
       }
 

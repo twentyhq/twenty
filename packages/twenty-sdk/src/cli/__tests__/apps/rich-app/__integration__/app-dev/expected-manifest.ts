@@ -1675,17 +1675,14 @@ export const EXPECTED_MANIFEST: Manifest = {
             type: 'object',
             properties: {
               companyId: {
-                type: 'object',
+                type: 'record',
                 objectUniversalIdentifier:
                   '20202020-b374-4779-a561-80086cb2e17f',
               },
               postCardIds: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  objectUniversalIdentifier:
-                    '54b589ca-eeed-4950-a176-358418b85c05',
-                },
+                type: 'records',
+                objectUniversalIdentifier:
+                  '54b589ca-eeed-4950-a176-358418b85c05',
               },
             },
           },

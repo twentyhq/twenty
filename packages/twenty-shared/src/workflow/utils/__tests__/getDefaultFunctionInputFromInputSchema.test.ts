@@ -86,4 +86,26 @@ describe('getDefaultFunctionInputFromInputSchema', () => {
       },
     ]);
   });
+
+  it('should init record/records types with null and empty array', () => {
+    const inputSchema = [
+      {
+        type: 'object',
+        properties: {
+          company: {
+            type: 'record',
+            objectUniversalIdentifier: 'company-universal-identifier',
+          },
+          people: {
+            type: 'records',
+            objectUniversalIdentifier: 'person-universal-identifier',
+          },
+        },
+      },
+    ] as InputSchema;
+
+    expect(getFunctionInputFromInputSchema(inputSchema)).toEqual([
+      { company: null, people: [] },
+    ]);
+  });
 });

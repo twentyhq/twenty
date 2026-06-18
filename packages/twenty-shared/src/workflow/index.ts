@@ -94,6 +94,7 @@ export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
 export type { EmailRecipients } from './types/EmailRecipients';
 export type { FunctionInput } from './types/FunctionInput';
 export type {
+  RecordSchemaType,
   InputSchemaPropertyType,
   InputSchemaProperty,
   InputSchema,
