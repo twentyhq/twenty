@@ -161,6 +161,16 @@ describe('SidePanelTopBar', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('does not show the close button on mobile', () => {
+    mockIsMobile = true;
+
+    renderSidePanelCommandMenu();
+
+    expect(
+      screen.queryByRole('button', { name: 'Close side panel' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('renders the close button after the command menu content', () => {
     renderSidePanelCommandMenu();
 
