@@ -56,10 +56,6 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
     });
   }
 
-  // Irreversible external deletes (S3 source folder, S3 built handler, runtime
-  // resource) drained best-effort after commit: failures are only logged, so
-  // resources can be left orphaned.
-  // TODO: move to a worker job to retry orphaned cleanups.
   protected override getAfterCommitSideEffects(
     context: WorkspaceMigrationActionRunnerContext<FlatDeleteLogicFunctionAction>,
   ): AfterCommitSideEffect[] {
