@@ -4,10 +4,9 @@ import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 describe('destroyMany / deleteMany empty filter guard', () => {
   const seedPeople = async () => {
@@ -65,10 +64,7 @@ describe('destroyMany / deleteMany empty filter guard', () => {
     const response = await makeGraphqlAPIRequest(destroyGraphqlOperation);
 
     expect(response.body.data).toStrictEqual({ destroyPeople: null });
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].extensions.code).toBe(
-      ErrorCode.BAD_USER_INPUT,
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
 
     const remainingIds = await findPeopleByIds([personId1, personId2]);
 
@@ -92,10 +88,7 @@ describe('destroyMany / deleteMany empty filter guard', () => {
     const response = await makeGraphqlAPIRequest(deleteGraphqlOperation);
 
     expect(response.body.data).toStrictEqual({ deletePeople: null });
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].extensions.code).toBe(
-      ErrorCode.BAD_USER_INPUT,
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
 
     const remainingIds = await findPeopleByIds([personId1, personId2]);
 

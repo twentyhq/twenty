@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`destroyMany / deleteMany empty filter guard should reject deleteMany with an empty filter and not soft-delete any record 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_QUERY_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "A non-empty filter is required",
+}
+`;
+
+exports[`destroyMany / deleteMany empty filter guard should reject destroyMany with an empty filter and not delete any record 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_QUERY_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "A non-empty filter is required",
+}
+`;
