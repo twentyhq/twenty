@@ -8,6 +8,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
+import { isNonEmptyString } from 'twenty-shared/utils';
 import { IconChevronDown, IconPlus, IconVariable, IconX } from 'twenty-ui/icon';
 import { AnimatedLightIconButton, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
@@ -150,7 +151,10 @@ export const WorkflowOutputSchemaBuilder = ({
   };
 
   const getVariableNameError = (name: string): string | undefined => {
-    if (name === '' || isValidAgentResponseSchemaPropertyKey(name)) {
+    if (
+      !isNonEmptyString(name) ||
+      isValidAgentResponseSchemaPropertyKey(name)
+    ) {
       return undefined;
     }
 
