@@ -6,12 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
-import {
-  CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
+import { assertRecordFilterIsNotEmpty } from 'src/engine/api/common/common-query-runners/utils/is-empty-record-filter.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -138,13 +134,7 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     assertMutationNotOnRemoteObject(flatObjectMetadata);
 
-    if (!isDefined(args.filter) || Object.keys(args.filter).length === 0) {
-      throw new CommonQueryRunnerException(
-        'A non-empty filter is required',
-        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-      );
-    }
+    assertRecordFilterIsNotEmpty(args.filter);
 
     args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
   }

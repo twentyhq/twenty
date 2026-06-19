@@ -99,6 +99,40 @@ describe('destroyMany / deleteMany empty filter guard', () => {
     await cleanupPeople([personId1, personId2]);
   });
 
+  it.each([
+    ['an empty "and" array', { and: [] }],
+    ['an empty "or" array', { or: [] }],
+    ['an "and" of empty sub-filters', { and: [{}] }],
+  ])(
+    'should reject destroyMany with %s and not delete any record',
+    async (_label, filter) => {
+      const { personId1, personId2 } = await seedPeople();
+
+      const destroyGraphqlOperation = destroyManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        filter,
+      });
+
+      const response = await makeGraphqlAPIRequest(destroyGraphqlOperation);
+
+      expect(response.body.data).toStrictEqual({ destroyPeople: null });
+      expect(response.body.errors).toHaveLength(1);
+      expect(response.body.errors[0].extensions.code).not.toBe(
+        'INTERNAL_SERVER_ERROR',
+      );
+
+      const remainingIds = await findPeopleByIds([personId1, personId2]);
+
+      expect(remainingIds).toEqual(
+        expect.arrayContaining([personId1, personId2]),
+      );
+
+      await cleanupPeople([personId1, personId2]);
+    },
+  );
+
   it('should still destroy records when a valid filter is provided', async () => {
     const { personId1, personId2 } = await seedPeople();
 

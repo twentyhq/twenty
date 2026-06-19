@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`updateMany empty filter guard should reject updateMany with an empty filter and not update any record 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_QUERY_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "A non-empty filter is required",
+}
+`;

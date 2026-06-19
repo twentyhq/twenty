@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`restoreMany empty filter guard should reject restoreMany with an empty filter and not restore any record 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_QUERY_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "A non-empty filter is required",
+}
+`;
