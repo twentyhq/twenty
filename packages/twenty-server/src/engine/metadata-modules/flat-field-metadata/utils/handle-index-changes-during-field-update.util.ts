@@ -148,15 +148,25 @@ const handleExistingIndexes = ({
       flatObjectMetadata,
     });
 
-    const uniqueIndexToDelete = relatedIndexes.find(
+    const uniqueIndexByName = relatedIndexes.find(
       (index) => index.name === expectedUniqueIndex.name,
     );
 
+    const indexToDelete =
+      uniqueIndexByName ??
+      relatedIndexes.find(
+        (index) =>
+          index.isUnique &&
+          index.flatIndexFieldMetadatas.length === 1 &&
+          index.flatIndexFieldMetadatas[0].fieldMetadataId ===
+            fromFlatFieldMetadata.id,
+      );
+
     if (
-      isDefined(uniqueIndexToDelete) &&
-      ((isDefined(uniqueIndexToDelete.applicationId) &&
-        uniqueIndexToDelete.applicationId !== flatApplication.id) ||
-        !uniqueIndexToDelete.isCustom)
+      isDefined(indexToDelete) &&
+      ((isDefined(indexToDelete.applicationId) &&
+        indexToDelete.applicationId !== flatApplication.id) ||
+        !indexToDelete.isCustom)
     ) {
       return {
         status: 'fail',
@@ -175,9 +185,7 @@ const handleExistingIndexes = ({
       status: 'success',
       result: {
         ...FIELD_METADATA_UPDATE_INDEX_SIDE_EFFECT,
-        flatIndexMetadatasToDelete: uniqueIndexToDelete
-          ? [uniqueIndexToDelete]
-          : [],
+        flatIndexMetadatasToDelete: indexToDelete ? [indexToDelete] : [],
       },
     };
   }
