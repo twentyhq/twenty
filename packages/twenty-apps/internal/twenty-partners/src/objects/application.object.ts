@@ -26,6 +26,8 @@ export const APPLICATIONS_AS_PARTNER_USER_FIELD_ID =
   '1010f214-ab3f-43aa-a19e-d351bddc2d61';
 export const APPLICATION_STATE_FIELD_ID =
   'c686db4f-f0e9-41a0-bdb3-3b4024ff59b6';
+export const APPLICATION_INTRO_SENT_AT_FIELD_ID =
+  '7d3e9a10-5c2b-4e8f-9a11-2b3c4d5e6f70';
 
 export default defineObject({
   universalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -134,6 +136,14 @@ export default defineObject({
       name: 'lastActivityAt',
       label: 'Last Activity At',
       icon: 'IconClock',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: APPLICATION_INTRO_SENT_AT_FIELD_ID,
+      type: FieldType.DATE_TIME,
+      name: 'introSentAt',
+      label: 'Intro Sent At',
+      icon: 'IconMailForward',
       isNullable: true,
     },
   ],

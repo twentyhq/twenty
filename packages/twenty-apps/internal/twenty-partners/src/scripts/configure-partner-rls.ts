@@ -73,6 +73,7 @@ const APPLICATION_FIELD_LOCK_EXPECTED = new Set([
   'partnerUser',
   'state',
   'lastActivityAt',
+  'introSentAt',
 ]);
 
 // Application fields that must NOT be locked: system columns, pitch + opportunity

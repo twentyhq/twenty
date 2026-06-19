@@ -1,11 +1,11 @@
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, defineRole } from 'twenty-sdk/define';
 
 import {
-  INTRO_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import {
+  APPLICATION_INTRO_SENT_AT_FIELD_ID,
   APPLICATION_NAME_FIELD_ID,
   APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   APPLICATION_PARTNER_FIELD_ID,
@@ -13,6 +13,7 @@ import {
   APPLICATION_STATE_FIELD_ID,
   APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
 } from 'src/objects/application.object';
+import { OPPORTUNITY_PARTNERS_PRESENTED_AT_FIELD_ID } from 'src/fields/opportunity-partners-presented-at.field';
 import { OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID } from 'src/fields/opportunity-design-doc-status.field';
 import { OPPORTUNITY_DESIGN_DOC_URL_FIELD_ID } from 'src/fields/opportunity-design-doc-url.field';
 import { OPPORTUNITY_HOSTING_TYPE_FIELD_ID } from 'src/fields/opportunity-hosting-type.field';
@@ -185,7 +186,7 @@ export default defineRole({
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: INTRO_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: OPPORTUNITY_PARTNERS_PRESENTED_AT_FIELD_ID,
       canUpdateFieldValue: false,
     },
     {
@@ -298,11 +299,6 @@ export default defineRole({
       fieldUniversalIdentifier: 'a0000011-0000-4000-8000-000000000011',
       canUpdateFieldValue: false,
     },
-    {
-      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: 'a0000010-0000-4000-8000-000000000010',
-      canUpdateFieldValue: false,
-    },
     // Relation locks — the FK relations the Partner record itself owns. partnerUser is the
     // RLS pivot: clearing or repointing it would drop the partner's own record out of scope
     // (an orphan only admins can see). company is read-only as an object, so its link must
@@ -344,6 +340,11 @@ export default defineRole({
     {
       objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: 'b184ac02-51b2-4442-9505-2b06f5c94112',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: APPLICATION_INTRO_SENT_AT_FIELD_ID,
       canUpdateFieldValue: false,
     },
   ],
