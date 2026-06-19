@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Request } from 'express';
-import { type WebhookIngressManifest } from 'twenty-shared/application';
+import { type IngressTriggerSettings } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { validate as uuidValidate } from 'uuid';
 
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -17,13 +17,9 @@ import { resolveWorkspaceIdFromRequest } from 'src/engine/core-modules/applicati
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
-  LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
-import {
-  RouteTriggerResponse,
-  buildRouteTriggerResponse,
-} from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
+import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
+import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 const WEBHOOK_WORKSPACE_ID_SOURCES = new Set(['body', 'query', 'header']);
@@ -36,17 +32,17 @@ export class ApplicationRegistrationWebhookService {
 
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
-    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly logicFunctionTriggerService: LogicFunctionTriggerService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
-  private getWorkspaceIdResolverOrThrow(
-    webhookIngress: WebhookIngressManifest | undefined,
-  ): WebhookIngressManifest['workspaceId'] {
-    const resolver = webhookIngress?.workspaceId;
+  private getIngressTriggerSettingsOrThrow(
+    settings: IngressTriggerSettings | undefined,
+  ): IngressTriggerSettings {
+    const resolver = settings?.workspaceId;
 
     if (
       !isDefined(resolver) ||
@@ -55,12 +51,12 @@ export class ApplicationRegistrationWebhookService {
       resolver.path.length === 0
     ) {
       throw new ApplicationRegistrationWebhookException(
-        'Webhook ingress is not configured for this application registration',
+        'Ingress trigger is not configured for this logic function',
         ApplicationRegistrationWebhookExceptionCode.WEBHOOK_INGRESS_NOT_CONFIGURED,
       );
     }
 
-    return resolver;
+    return settings as IngressTriggerSettings;
   }
 
   async handle({
@@ -84,12 +80,18 @@ export class ApplicationRegistrationWebhookService {
       );
     }
 
-    const workspaceIdResolver = this.getWorkspaceIdResolverOrThrow(
-      applicationRegistration.manifest?.application?.webhookIngress,
+    const logicFunctionManifest =
+      applicationRegistration.manifest?.logicFunctions?.find(
+        (candidate) =>
+          candidate.universalIdentifier === logicFunctionUniversalIdentifier,
+      );
+
+    const ingressTriggerSettings = this.getIngressTriggerSettingsOrThrow(
+      logicFunctionManifest?.ingressTriggerSettings,
     );
 
     const workspaceId = resolveWorkspaceIdFromRequest({
-      resolver: workspaceIdResolver,
+      resolver: ingressTriggerSettings.workspaceId,
       request,
     });
 
@@ -119,32 +121,27 @@ export class ApplicationRegistrationWebhookService {
         workspaceId,
         applicationId: application.id,
         universalIdentifier: logicFunctionUniversalIdentifier,
-        httpRouteTriggerSettings: Not(IsNull()),
       },
     });
 
     if (!isDefined(logicFunction)) {
       throw new ApplicationRegistrationWebhookException(
-        `No webhook-triggerable logic function ${logicFunctionUniversalIdentifier} found`,
+        `Logic function ${logicFunctionUniversalIdentifier} is not installed in workspace ${workspaceId}`,
         ApplicationRegistrationWebhookExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
       );
     }
 
-    const event = buildLogicFunctionEvent({
-      request,
-      pathParameters: {},
-      forwardedRequestHeaders:
-        logicFunction.httpRouteTriggerSettings?.forwardedRequestHeaders ?? [],
-      userWorkspaceId: null,
-    });
-
-    let result;
+    let outcome;
 
     try {
-      result = await this.logicFunctionExecutorService.execute({
-        logicFunctionId: logicFunction.id,
-        workspaceId,
-        payload: event,
+      outcome = await this.logicFunctionTriggerService.run({
+        logicFunction,
+        request,
+        pathParameters: {},
+        forwardedRequestHeaders:
+          ingressTriggerSettings.forwardedRequestHeaders ?? [],
+        userId: null,
+        userWorkspaceId: null,
       });
     } catch (error) {
       if (error instanceof ApplicationRegistrationWebhookException) {
@@ -162,18 +159,14 @@ export class ApplicationRegistrationWebhookService {
       );
     }
 
-    if (!isDefined(result)) {
-      return buildRouteTriggerResponse(result);
-    }
-
-    if (result.error) {
+    if (outcome.kind === 'userError') {
       throw new ApplicationRegistrationWebhookException(
-        result.error.errorMessage,
+        outcome.errorMessage,
         ApplicationRegistrationWebhookExceptionCode.WEBHOOK_USER_UNCAUGHT_ERROR,
       );
     }
 
-    return buildRouteTriggerResponse(result.data);
+    return outcome.response;
   }
 
   private mapErrorToWebhookCode(

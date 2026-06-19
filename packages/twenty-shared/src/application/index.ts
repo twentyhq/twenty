@@ -39,6 +39,10 @@ export type {
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
 export type {
+  WebhookWorkspaceIdSource,
+  IngressTriggerSettings,
+} from './ingressTriggerSettingsType';
+export type {
   LogicFunctionManifest,
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
@@ -83,8 +87,4 @@ export type {
   ViewSortManifest,
   ViewManifest,
 } from './viewManifestType';
-export type {
-  WebhookWorkspaceIdSource,
-  WebhookIngressManifest,
-} from './webhookIngressManifestType';
 export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSettingsType';

@@ -1,8 +1,9 @@
 export type WebhookWorkspaceIdSource = 'body' | 'query' | 'header';
 
-export type WebhookIngressManifest = {
+export type IngressTriggerSettings = {
   workspaceId: {
     source: WebhookWorkspaceIdSource;
     path: string;
   };
+  forwardedRequestHeaders?: string[];
 };

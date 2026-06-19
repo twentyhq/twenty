@@ -1,5 +1,5 @@
 import { type Request } from 'express';
-import { type WebhookIngressManifest } from 'twenty-shared/application';
+import { type IngressTriggerSettings } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { extractBody } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
@@ -31,7 +31,7 @@ const asString = (value: unknown): string | undefined => {
 };
 
 const getResolverRoot = (
-  source: WebhookIngressManifest['workspaceId']['source'],
+  source: IngressTriggerSettings['workspaceId']['source'],
   request: Request,
 ): Record<string, unknown> | undefined => {
   switch (source) {
@@ -50,7 +50,7 @@ export const resolveWorkspaceIdFromRequest = ({
   resolver,
   request,
 }: {
-  resolver: WebhookIngressManifest['workspaceId'];
+  resolver: IngressTriggerSettings['workspaceId'];
   request: Request;
 }): string | undefined => {
   const segments = resolver.path.split('.');

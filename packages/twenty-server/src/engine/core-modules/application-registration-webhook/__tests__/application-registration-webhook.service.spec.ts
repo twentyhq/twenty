@@ -5,7 +5,7 @@ import { ApplicationRegistrationWebhookService } from 'src/engine/core-modules/a
 import { ApplicationRegistrationWebhookExceptionCode } from 'src/engine/core-modules/application-registration-webhook/exceptions/application-registration-webhook.exception';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { type LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 const REGISTRATION_UID = 'reg-universal-id';
@@ -29,14 +29,17 @@ type RegistrationResult = Awaited<
 const asRegistration = (value: object): RegistrationResult =>
   value as unknown as RegistrationResult;
 
-const REGISTRATION_WITH_INGRESS = asRegistration({
+const REGISTRATION_WITH_TRIGGER = asRegistration({
   id: 'reg-1',
   manifest: {
-    application: {
-      webhookIngress: {
-        workspaceId: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    logicFunctions: [
+      {
+        universalIdentifier: LOGIC_FUNCTION_UID,
+        ingressTriggerSettings: {
+          workspaceId: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+        },
       },
-    },
+    ],
   },
 });
 
@@ -45,8 +48,8 @@ describe('ApplicationRegistrationWebhookService', () => {
   let applicationRegistrationService: jest.Mocked<
     Pick<ApplicationRegistrationService, 'findOneByUniversalIdentifier'>
   >;
-  let logicFunctionExecutorService: jest.Mocked<
-    Pick<LogicFunctionExecutorService, 'execute'>
+  let logicFunctionTriggerService: jest.Mocked<
+    Pick<LogicFunctionTriggerService, 'run'>
   >;
   let logicFunctionRepository: jest.Mocked<
     Pick<Repository<LogicFunctionEntity>, 'findOne'>
@@ -55,7 +58,9 @@ describe('ApplicationRegistrationWebhookService', () => {
     Pick<Repository<ApplicationEntity>, 'findOne'>
   >;
 
-  const handle = (body: object | null = { metadata: { twentyWorkspaceId: WORKSPACE_ID } }) =>
+  const handle = (
+    body: object | null = { metadata: { twentyWorkspaceId: WORKSPACE_ID } },
+  ) =>
     service.handle({
       request: buildRequest(body),
       applicationRegistrationUniversalIdentifier: REGISTRATION_UID,
@@ -66,16 +71,16 @@ describe('ApplicationRegistrationWebhookService', () => {
     applicationRegistrationService = {
       findOneByUniversalIdentifier: jest
         .fn()
-        .mockResolvedValue(REGISTRATION_WITH_INGRESS),
+        .mockResolvedValue(REGISTRATION_WITH_TRIGGER),
     };
-    logicFunctionExecutorService = {
-      execute: jest.fn().mockResolvedValue({ data: { ok: true } }),
+    logicFunctionTriggerService = {
+      run: jest.fn().mockResolvedValue({
+        kind: 'response',
+        response: { statusCode: 200, headers: {}, body: { ok: true } },
+      }),
     };
     logicFunctionRepository = {
-      findOne: jest.fn().mockResolvedValue({
-        id: 'lf-1',
-        httpRouteTriggerSettings: { forwardedRequestHeaders: [] },
-      }),
+      findOne: jest.fn().mockResolvedValue({ id: 'lf-1' }),
     };
     applicationRepository = {
       findOne: jest
@@ -85,23 +90,20 @@ describe('ApplicationRegistrationWebhookService', () => {
 
     service = new ApplicationRegistrationWebhookService(
       applicationRegistrationService as unknown as ApplicationRegistrationService,
-      logicFunctionExecutorService as unknown as LogicFunctionExecutorService,
+      logicFunctionTriggerService as unknown as LogicFunctionTriggerService,
       logicFunctionRepository as unknown as Repository<LogicFunctionEntity>,
       applicationRepository as unknown as Repository<ApplicationEntity>,
     );
   });
 
-  it('resolves the workspace and executes the function synchronously', async () => {
+  it('resolves the workspace and runs the function synchronously', async () => {
     const result = await handle();
 
     expect(applicationRepository.findOne).toHaveBeenCalledWith({
       where: { workspaceId: WORKSPACE_ID, applicationRegistrationId: 'reg-1' },
     });
-    expect(logicFunctionExecutorService.execute).toHaveBeenCalledWith(
-      expect.objectContaining({
-        logicFunctionId: 'lf-1',
-        workspaceId: WORKSPACE_ID,
-      }),
+    expect(logicFunctionTriggerService.run).toHaveBeenCalledWith(
+      expect.objectContaining({ logicFunction: { id: 'lf-1' } }),
     );
     expect(result).toEqual({ statusCode: 200, headers: {}, body: { ok: true } });
   });
@@ -116,9 +118,9 @@ describe('ApplicationRegistrationWebhookService', () => {
     });
   });
 
-  it('throws when webhook ingress is not configured', async () => {
+  it('throws when the logic function has no webhook trigger settings', async () => {
     applicationRegistrationService.findOneByUniversalIdentifier.mockResolvedValue(
-      asRegistration({ id: 'reg-1', manifest: { application: {} } }),
+      asRegistration({ id: 'reg-1', manifest: { logicFunctions: [] } }),
     );
 
     await expect(handle()).rejects.toMatchObject({
@@ -142,7 +144,7 @@ describe('ApplicationRegistrationWebhookService', () => {
     });
   });
 
-  it('throws when no webhook-triggerable function matches the universalIdentifier', async () => {
+  it('throws when the function is not installed in the workspace', async () => {
     logicFunctionRepository.findOne.mockResolvedValue(null);
 
     await expect(handle()).rejects.toMatchObject({
@@ -151,9 +153,10 @@ describe('ApplicationRegistrationWebhookService', () => {
   });
 
   it('surfaces a user uncaught error from the function', async () => {
-    logicFunctionExecutorService.execute.mockResolvedValue({
-      error: { errorMessage: 'boom' },
-    } as Awaited<ReturnType<LogicFunctionExecutorService['execute']>>);
+    logicFunctionTriggerService.run.mockResolvedValue({
+      kind: 'userError',
+      errorMessage: 'boom',
+    });
 
     await expect(handle()).rejects.toMatchObject({
       code: ApplicationRegistrationWebhookExceptionCode.WEBHOOK_USER_UNCAUGHT_ERROR,

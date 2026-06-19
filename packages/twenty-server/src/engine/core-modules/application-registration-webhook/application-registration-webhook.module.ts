@@ -5,14 +5,14 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationWebhookController } from 'src/engine/core-modules/application-registration-webhook/application-registration-webhook.controller';
 import { ApplicationRegistrationWebhookService } from 'src/engine/core-modules/application-registration-webhook/application-registration-webhook.service';
-import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.module';
+import { LogicFunctionTriggerModule } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.module';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([LogicFunctionEntity, ApplicationEntity]),
     ApplicationRegistrationModule,
-    LogicFunctionExecutorModule,
+    LogicFunctionTriggerModule,
   ],
   controllers: [ApplicationRegistrationWebhookController],
   providers: [ApplicationRegistrationWebhookService],

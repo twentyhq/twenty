@@ -60,6 +60,7 @@ To invoke a route-triggered logic function from a (headless) front component, se
 - **cron**: Runs your function on a schedule using a CRON expression.
 - **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
 > e.g. `person.updated`, `*.created`, `company.*`
+- **ingress**: Receives inbound webhooks from a third-party service (Stripe, GitHub, Svix, …) at a single registration-scoped endpoint and resolves the target workspace from the payload. See [Ingress trigger](#ingress-trigger).
 
 <Note>
 You can also manually execute a function using the CLI:
@@ -170,6 +171,90 @@ For security reasons, response headers are restricted to an allow-list. Any head
 
 <Note>
 The status code must be a valid HTTP status code (between 100 and 599). Response header names are matched case-insensitively.
+</Note>
+
+#### Ingress trigger
+
+`httpRouteTriggerSettings` exposes a function under `/s/` and resolves the workspace from the request host — which works when each workspace has its own domain. Third-party providers, however, deliver every tenant's events to **one** webhook URL. For that case, use `ingressTriggerSettings`: the function is reachable at a registration-scoped endpoint and the workspace is resolved from the payload.
+
+```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  // Verify the signature yourself before doing anything (see below).
+  // Return a non-2xx Response to make the provider retry.
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-provider-webhook',
+  handler,
+  ingressTriggerSettings: {
+    workspaceId: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  },
+});
+```
+
+The function is reachable at:
+
+```
+POST https://your-twenty-server.com/webhooks/application-registrations/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+```
+
+Both identifiers are the `universalIdentifier`s from your manifest — the application registration's and this logic function's. Register that URL with the provider.
+
+**Workspace resolution.** Because one endpoint serves every workspace, your integration must put the target `workspaceId` somewhere in the delivery, and `workspaceId.{ source, path }` tells the platform where to read it:
+
+| Field | Values | Notes |
+|-------|--------|-------|
+| `source` | `body` \| `query` \| `header` | `body` reads the parsed JSON. `query` is the most universal — you usually control the callback URL you register, so append `?twentyWorkspaceId=…`. |
+| `path` | dot-path, e.g. `metadata.twentyWorkspaceId` | Restricted to alphanumeric / `_` / `-` segments; prototype keys are rejected. |
+
+The resolved value must be a valid workspace UUID **and** your app must be installed in that workspace, otherwise the request is rejected before the function runs.
+
+<Warning>
+**Signature verification is your responsibility.** The platform does not verify webhook signatures for this trigger — it only resolves the workspace and runs your function. Your handler must verify the signature itself using `event.rawBody` and the headers you listed in `forwardedRequestHeaders`, comparing against a secret stored as a server/application variable. Always verify **before** any side effect, and use a constant-time comparison.
+</Warning>
+
+Most providers sign with HMAC-SHA256; the parts that differ are the header name, the digest encoding, and the signed-payload string. A few examples:
+
+| Provider | Headers to forward | Signed string | Digest |
+|----------|--------------------|---------------|--------|
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (secret is base64 after stripping `whsec_`) |
+| Stripe | `stripe-signature` | `{timestamp}.{rawBody}` | hex |
+| GitHub | `x-hub-signature-256` | `{rawBody}` | hex (prefixed `sha256=`) |
+| Shopify | `x-shopify-hmac-sha256` | `{rawBody}` | base64 |
+| Slack | `x-slack-signature`, `x-slack-request-timestamp` | `v0:{timestamp}:{rawBody}` | hex (prefixed `v0=`) |
+
+```ts
+import { createHmac, timingSafeEqual } from 'crypto';
+
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
+      .update(event.rawBody ?? '')
+      .digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    return new Response({ error: 'invalid signature' }, { status: 401 });
+  }
+
+  // ...handle the verified event
+  return { received: true };
+};
+```
+
+<Note>
+The function runs **synchronously** and your returned value becomes the HTTP response, so providers see your status code and can retry on non-2xx. Keep handlers fast — some providers (e.g. Slack) time out in a few seconds. Because the function runs before the signature is checked, protect this endpoint with rate limiting at your edge.
 </Note>
 
 #### Database event trigger payload
