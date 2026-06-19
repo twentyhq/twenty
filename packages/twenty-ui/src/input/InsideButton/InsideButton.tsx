@@ -31,7 +31,7 @@ export const InsideButton = ({
       disabled={disabled}
       data-disabled={disabled || undefined}
     >
-      {Icon && <Icon size={theme.icon.size.sm} aria-hidden />}
+      {Icon && <Icon size={theme.icon.size.sm} aria-hidden={!!ariaLabel} />}
     </button>
   );
 };

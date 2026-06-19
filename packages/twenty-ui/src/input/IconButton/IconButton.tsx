@@ -58,7 +58,7 @@ export const IconButton = ({
       // to the DOM as an inert attribute. Keep forwarding it for DOM parity.
       {...{ to }}
     >
-      {Icon && <Icon size={theme.icon.size.md} aria-hidden />}
+      {Icon && <Icon size={theme.icon.size.md} aria-hidden={!!ariaLabel} />}
     </button>
   );
 };

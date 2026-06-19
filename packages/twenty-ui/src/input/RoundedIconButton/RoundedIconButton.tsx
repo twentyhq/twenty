@@ -30,7 +30,7 @@ export const RoundedIconButton = ({
       aria-label={ariaLabel}
       onClick={onClick}
     >
-      <Icon size={theme.icon.size.md} aria-hidden />
+      <Icon size={theme.icon.size.md} aria-hidden={!!ariaLabel} />
     </button>
   );
 };

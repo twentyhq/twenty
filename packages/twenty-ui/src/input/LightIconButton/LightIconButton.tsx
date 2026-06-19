@@ -53,7 +53,7 @@ export const LightIconButton = ({
       {Icon && (
         <Icon
           size={size === 'medium' ? theme.icon.size.md : theme.icon.size.sm}
-          aria-hidden
+          aria-hidden={!!ariaLabel}
         />
       )}
     </button>

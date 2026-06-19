@@ -24,8 +24,6 @@
   position: relative;
   transition: background calc(var(--t-animation-duration-instant) * 1s) ease;
   white-space: nowrap;
-
-  @include focus-ring;
 }
 
 .small {
@@ -83,6 +81,10 @@
 
 .button:focus {
   outline: none;
+}
+
+.button {
+  @include focus-ring;
 }
 
 // data-focus is gated by !disabled in the component, like the legacy

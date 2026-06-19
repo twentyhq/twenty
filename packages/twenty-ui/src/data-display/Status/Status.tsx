@@ -32,7 +32,6 @@ export const Status = ({
     <h3
       className={clsx(styles.status, styles[weight], className)}
       onClick={onClick}
-      role={isDefined(onClick) ? 'button' : undefined}
       tabIndex={isDefined(onClick) ? 0 : undefined}
       onKeyDown={handleClickableElementKeyDown}
       data-loader-visible={isLoaderVisible || undefined}

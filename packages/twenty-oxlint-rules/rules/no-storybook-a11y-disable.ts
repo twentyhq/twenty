@@ -41,7 +41,7 @@ export const rule = defineRule({
   },
   create: (context) => ({
     Property: (node: any) => {
-      if (getPropertyKeyName(node) !== 'a11y') {
+      if (getPropertyKeyName(node) !== 'parameters') {
         return;
       }
 
@@ -49,7 +49,17 @@ export const rule = defineRule({
         return;
       }
 
-      const disablingProperty = node.value.properties.find(
+      const a11yProperty = node.value.properties.find(
+        (property: any) =>
+          getPropertyKeyName(property) === 'a11y' &&
+          property.value.type === 'ObjectExpression',
+      );
+
+      if (a11yProperty === undefined) {
+        return;
+      }
+
+      const disablingProperty = a11yProperty.value.properties.find(
         isDisablingTestProperty,
       );
 

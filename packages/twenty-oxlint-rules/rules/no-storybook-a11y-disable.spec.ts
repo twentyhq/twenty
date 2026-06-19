@@ -18,6 +18,10 @@ ruleTester.run(RULE_NAME, rule, {
       code: "const config = { test: 'todo' };",
       filename: 'Component.stories.tsx',
     },
+    {
+      code: "const meta = { args: { a11y: { test: 'off' } } };",
+      filename: 'Component.stories.tsx',
+    },
   ],
   invalid: [
     {
