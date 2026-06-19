@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { RecordingTranscript } from 'src/front-components/components/RecordingTranscript';
 import { RecordingVideoPlayer } from 'src/front-components/components/RecordingVideoPlayer';
 import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
 import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
 import { useCalendarEventRecording } from 'src/front-components/hooks/use-calendar-event-recording';
-import { getVideoFileExtension } from 'src/front-components/utils/get-video-file-extension.util';
+
+const TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS = 0.25;
 
 const StyledStateContainer = styled.div`
   box-sizing: border-box;
@@ -40,6 +41,21 @@ export const CalendarEventRecordingContent = ({
   calendarEventId,
 }: CalendarEventRecordingContentProps) => {
   const [currentTimeSeconds, setCurrentTimeSeconds] = useState(0);
+  const updateCurrentTimeSeconds = useCallback(
+    (videoCurrentTimeSeconds: number) => {
+      const nextCurrentTimeSeconds =
+        Math.floor(
+          videoCurrentTimeSeconds / TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS,
+        ) * TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS;
+
+      setCurrentTimeSeconds((previousCurrentTimeSeconds) =>
+        previousCurrentTimeSeconds === nextCurrentTimeSeconds
+          ? previousCurrentTimeSeconds
+          : nextCurrentTimeSeconds,
+      );
+    },
+    [],
+  );
 
   const {
     transcript,
@@ -48,16 +64,26 @@ export const CalendarEventRecordingContent = ({
     errorMessage,
   } = useCalendarEventRecording(calendarEventId);
 
-  if (isCalendarEventRecordingQueryLoading) {
-    return <StyledCenteredState>Loading recording…</StyledCenteredState>;
-  }
-
   if (!isUndefined(errorMessage)) {
     return (
       <TranscriptErrorBox
         title="Failed to load the recording"
         description={errorMessage}
       />
+    );
+  }
+
+  const videoFileUrl = videoFile?.url ?? undefined;
+  const hasVideo = !isUndefined(videoFileUrl);
+
+  if (isCalendarEventRecordingQueryLoading) {
+    return (
+      <StyledRecordingContainer>
+        <RecordingVideoPlayer
+          src={undefined}
+          onTimeUpdate={updateCurrentTimeSeconds}
+        />
+      </StyledRecordingContainer>
     );
   }
 
@@ -69,20 +95,12 @@ export const CalendarEventRecordingContent = ({
     );
   }
 
-  const videoFileUrl = videoFile?.url ?? undefined;
-  const videoFileExtension = isUndefined(videoFile)
-    ? undefined
-    : getVideoFileExtension(videoFile);
-  const hasVideo =
-    !isUndefined(videoFileUrl) && !isUndefined(videoFileExtension);
-
   return (
     <StyledRecordingContainer>
       {hasVideo && (
         <RecordingVideoPlayer
           src={videoFileUrl}
-          extension={videoFileExtension}
-          onTimeUpdate={setCurrentTimeSeconds}
+          onTimeUpdate={updateCurrentTimeSeconds}
         />
       )}
       <RecordingTranscript

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
+import { useMemo } from 'react';
 
 import { TranscriptEntryList } from 'src/front-components/components/TranscriptEntryList';
 import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
@@ -27,6 +28,12 @@ export const RecordingTranscript = ({
   transcript,
   currentTimeSeconds,
 }: RecordingTranscriptProps) => {
+  const marker = useMemo(() => parseTranscriptMarker(transcript), [transcript]);
+  const entries = useMemo(
+    () => parseTranscriptEntries(transcript),
+    [transcript],
+  );
+
   if (isUndefined(transcript)) {
     return (
       <StyledTranscriptCenteredState>
@@ -34,8 +41,6 @@ export const RecordingTranscript = ({
       </StyledTranscriptCenteredState>
     );
   }
-
-  const marker = parseTranscriptMarker(transcript);
 
   if (marker?.status === 'PENDING') {
     return (
@@ -57,8 +62,6 @@ export const RecordingTranscript = ({
       />
     );
   }
-
-  const entries = parseTranscriptEntries(transcript);
 
   if (isUndefined(entries)) {
     return (
