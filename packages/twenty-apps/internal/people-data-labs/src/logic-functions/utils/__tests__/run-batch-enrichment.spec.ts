@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { chargeCredits } from 'twenty-sdk/billing';
 
+import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { runBatchEnrichment } from 'src/logic-functions/utils/run-batch-enrichment';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
@@ -86,12 +87,17 @@ const buildHarness = (configs: RecordConfig[]) => {
   const updateManyStatus = vi.fn(async () => undefined);
 
   const buildMatchedData = vi.fn(
-    async ({ node }: BuildMatchedDataArgs): Promise<Record<string, unknown>> => {
+    async ({
+      node,
+    }: BuildMatchedDataArgs): Promise<{
+      mappedData: Record<string, unknown>;
+      persistData: Record<string, unknown>;
+    }> => {
       if (byId.get(node.id)?.buildFails === true) {
         throw new Error('build failed');
       }
 
-      return { value: node.id };
+      return { mappedData: { mapped: node.id }, persistData: { value: node.id } };
     },
   );
 
@@ -203,21 +209,21 @@ describe('runBatchEnrichment', () => {
     expect(result).toMatchObject({ skipped: 1, matched: 1 });
   });
 
-  it('passes overrideExistingValues through to buildMatchedData', async () => {
+  it('maps "Yes and overwrite" to overrideExistingValues and persisting', async () => {
     const harness = buildHarness([{ id: 'a' }]);
 
     await runBatchEnrichment({
       client: CLIENT,
-      input: { records: records('a'), overrideExistingValues: true },
+      input: { records: records('a'), updateFields: UPDATE_FIELDS_OPTIONS.overwrite },
       adapter: harness.adapter,
     });
 
     expect(harness.buildMatchedData).toHaveBeenCalledWith(
-      expect.objectContaining({ overrideExistingValues: true }),
+      expect.objectContaining({ overrideExistingValues: true, shouldPersist: true }),
     );
   });
 
-  it('defaults overrideExistingValues to false when omitted', async () => {
+  it('defaults to fill-empty persisting when updateFields is omitted', async () => {
     const harness = buildHarness([{ id: 'a' }]);
 
     await runBatchEnrichment({
@@ -227,8 +233,36 @@ describe('runBatchEnrichment', () => {
     });
 
     expect(harness.buildMatchedData).toHaveBeenCalledWith(
-      expect.objectContaining({ overrideExistingValues: false }),
+      expect.objectContaining({
+        overrideExistingValues: false,
+        shouldPersist: true,
+      }),
     );
+  });
+
+  it('returns mapped data without writing anything when updateFields is "No"', async () => {
+    const harness = buildHarness([
+      { id: 'a' },
+      { id: 'b', outcome: { outcome: 'not_found', httpStatus: 404 } },
+    ]);
+
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a', 'b'), updateFields: UPDATE_FIELDS_OPTIONS.no },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.buildMatchedData).toHaveBeenCalledWith(
+      expect.objectContaining({ shouldPersist: false }),
+    );
+    expect(harness.updateOne).not.toHaveBeenCalled();
+    expect(harness.updateManyStatus).not.toHaveBeenCalled();
+
+    const matched = result.results.find((entry) => entry.recordId === 'a');
+    expect(matched?.status).toBe('MATCHED');
+    expect(matched?.updatedFields).toEqual([]);
+    expect(matched?.data).toEqual({ mapped: 'a' });
+    expect(result).toMatchObject({ matched: 1, notFound: 1 });
   });
 
   it('marks missing records as ERROR without enriching them', async () => {

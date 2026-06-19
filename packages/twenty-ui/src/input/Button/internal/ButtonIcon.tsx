@@ -23,7 +23,7 @@ export const ButtonIcon = ({
       )}
       {Icon && (
         <div className={styles.icon} data-loading={isLoading || undefined}>
-          <Icon size={theme.icon.size.sm} />
+          <Icon size={theme.icon.size.sm} aria-hidden />
         </div>
       )}
     </div>

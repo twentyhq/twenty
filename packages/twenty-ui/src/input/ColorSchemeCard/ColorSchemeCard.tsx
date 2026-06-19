@@ -3,10 +3,12 @@ import React from 'react';
 import { clsx } from 'clsx';
 import { type AnimationControls } from 'framer-motion';
 
+import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { Checkmark } from '@ui/data-display/Checkmark/Checkmark';
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
 import { GRAY_SCALE_DARK } from '@ui/theme/constants/GrayScaleDark';
 import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './ColorSchemeCard.module.scss';
 
@@ -40,7 +42,11 @@ const ColorSchemeSegment = ({
           ...style,
         } as React.CSSProperties
       }
+      role={isDefined(onClick) ? 'button' : undefined}
+      tabIndex={isDefined(onClick) ? 0 : undefined}
+      aria-label={isDefined(onClick) ? variant : undefined}
       onClick={onClick}
+      onKeyDown={handleClickableElementKeyDown}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -62,7 +68,14 @@ export const ColorSchemeCard = ({
   if (variant === 'System') {
     return (
       <div className={styles.container}>
-        <div className={styles.mixedColorSchemeSegment} onClick={onClick}>
+        <div
+          className={styles.mixedColorSchemeSegment}
+          role={isDefined(onClick) ? 'button' : undefined}
+          tabIndex={isDefined(onClick) ? 0 : undefined}
+          aria-label={isDefined(onClick) ? variant : undefined}
+          onClick={onClick}
+          onKeyDown={handleClickableElementKeyDown}
+        >
           <ColorSchemeSegment
             style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
             variant="Light"

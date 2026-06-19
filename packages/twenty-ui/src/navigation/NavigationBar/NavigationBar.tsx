@@ -6,7 +6,12 @@ import styles from './NavigationBar.module.scss';
 
 type NavigationBarProps = {
   activeItemName: string;
-  items: { name: string; Icon: IconComponent; onClick: () => void }[];
+  items: {
+    name: string;
+    label: string;
+    Icon: IconComponent;
+    onClick: () => void;
+  }[];
 };
 
 export const NavigationBar = ({
@@ -15,12 +20,13 @@ export const NavigationBar = ({
 }: NavigationBarProps) => {
   return (
     <div className={styles.container}>
-      {items.map(({ Icon, name, onClick }) => (
+      {items.map(({ Icon, name, label, onClick }) => (
         <NavigationBarItem
           key={name}
           Icon={Icon}
           isActive={activeItemName === name}
           onClick={onClick}
+          ariaLabel={label}
         />
       ))}
     </div>

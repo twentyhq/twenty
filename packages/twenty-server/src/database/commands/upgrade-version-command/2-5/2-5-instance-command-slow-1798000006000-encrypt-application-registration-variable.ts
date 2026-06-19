@@ -57,9 +57,10 @@ export class EncryptApplicationRegistrationVariableSlowInstanceCommand
           continue;
         }
 
-        const plaintext = this.secretEncryptionService.decryptVersioned(
-          row.encryptedValue as EncryptedString,
-        );
+        const plaintext =
+          this.secretEncryptionService.legacyDecryptVersionedWithFallback(
+            row.encryptedValue as EncryptedString,
+          );
 
         if (!isDefined(plaintext)) {
           continue;

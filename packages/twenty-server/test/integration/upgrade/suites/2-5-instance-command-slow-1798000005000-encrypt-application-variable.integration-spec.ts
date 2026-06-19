@@ -147,7 +147,9 @@ describe('2-5 slow instance command 1798000005000 - EncryptApplicationVariableSl
       true,
     );
     expect(
-      secretEncryptionService.decryptVersioned(row.value, { workspaceId }),
+      secretEncryptionService.decryptVersionedOrThrow(row.value, {
+        workspaceId,
+      }),
     ).toBe(plaintext);
   });
 
@@ -181,7 +183,9 @@ describe('2-5 slow instance command 1798000005000 - EncryptApplicationVariableSl
       true,
     );
     expect(
-      secretEncryptionService.decryptVersioned(row.value, { workspaceId }),
+      secretEncryptionService.decryptVersionedOrThrow(row.value, {
+        workspaceId,
+      }),
     ).toBe(plaintext);
   });
 

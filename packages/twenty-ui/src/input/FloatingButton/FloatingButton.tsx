@@ -57,7 +57,7 @@ export const FloatingButton = ({
       data-focus={(focus && !disabled) || undefined}
       to={to}
     >
-      {Icon && <Icon size={theme.icon.size.sm} />}
+      {Icon && <Icon size={theme.icon.size.sm} aria-hidden />}
       {title}
     </ButtonComponent>
   );

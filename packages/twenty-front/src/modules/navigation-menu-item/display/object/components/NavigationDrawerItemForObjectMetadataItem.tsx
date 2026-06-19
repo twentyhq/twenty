@@ -85,11 +85,12 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const hasNavigationMenuItem = isRecord || isView || isObject;
 
   const navigationPath = hasNavigationMenuItem
-    ? getNavigationMenuItemComputedLink(
-        navigationMenuItem!,
+    ? getNavigationMenuItemComputedLink({
+        item: navigationMenuItem!,
         objectMetadataItems,
         views,
-      )
+        lastVisitedViewPerObjectMetadataItem,
+      })
     : getAppPath(
         AppPath.RecordIndexPage,
         { objectNamePlural: objectMetadataItem.namePlural },

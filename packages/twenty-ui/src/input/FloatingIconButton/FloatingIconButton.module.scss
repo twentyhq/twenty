@@ -83,6 +83,10 @@
   outline: none;
 }
 
+.button {
+  @include focus-ring;
+}
+
 // data-focus is gated by !disabled in the component, like the legacy
 // call-site passing focus={focus && !disabled}.
 .button[data-focus] {

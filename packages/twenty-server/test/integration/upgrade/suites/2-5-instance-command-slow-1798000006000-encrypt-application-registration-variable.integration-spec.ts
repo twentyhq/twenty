@@ -157,9 +157,9 @@ describe('2-5 slow instance command 1798000006000 - EncryptApplicationRegistrati
     expect(
       row.encryptedValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX),
     ).toBe(true);
-    expect(secretEncryptionService.decryptVersioned(row.encryptedValue)).toBe(
-      plaintext,
-    );
+    expect(
+      secretEncryptionService.decryptVersionedOrThrow(row.encryptedValue),
+    ).toBe(plaintext);
   });
 
   it('leaves unfilled rows (encryptedValue = "") untouched', async () => {

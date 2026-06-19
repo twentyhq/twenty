@@ -1,0 +1,166 @@
+name: CI Internal Apps
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      application:
+        description: 'Internal app folder name to test (e.g. "twenty-linear"). Leave empty to test all non-excluded apps. Runs even if in CI_EXCLUDED_APPLICATIONS.'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  discover:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      has_apps: ${{ steps.set-matrix.outputs.has_apps }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - name: Ensure no .github folder inside app folders
+        run: |
+          offenders=$(find packages/twenty-apps/internal -mindepth 2 -maxdepth 2 -type d -name .github)
+          if [ -n "$offenders" ]; then
+            echo "::error::Internal apps must not define their own .github folder. Offenders:"
+            echo "$offenders"
+            exit 1
+          fi
+
+      - name: Detect changed files
+        id: changed-files
+        if: github.event_name != 'workflow_dispatch'
+        uses: tj-actions/changed-files@48d8f15b2aaa3d255ca5af3eba4870f807ce6b3c # v45.0.9
+        with:
+          json: true
+          escape_json: false
+          files: packages/twenty-apps/internal/**
+
+      - name: Build matrix of changed apps
+        id: set-matrix
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          APPLICATION_INPUT: ${{ inputs.application }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const root = 'packages/twenty-apps/internal';
+          // CI_EXCLUDED_APPLICATIONS is temporary: it skips applications from CI to
+          // keep this PR small while the remaining apps are made CI-ready. Remove an
+          // app from this list once its checks pass, and delete the list entirely
+          // once every application is covered.
+          const CI_EXCLUDED_APPLICATIONS = ['call-recording', 'exa', 'people-data-labs', 'self-hosting', 'twenty-discord', 'twenty-fireflies', 'twenty-for-twenty', 'twenty-linear', 'twenty-meeting-bot', 'twenty-partners', 'twenty-slack'];
+          const eventName = process.env.EVENT_NAME;
+          const changedFiles = JSON.parse(process.env.CHANGED_FILES || '[]');
+          const changedApps = new Set();
+          for (const file of changedFiles) {
+            const match = file.match(/^packages\/twenty-apps\/internal\/([^/]+)\//);
+            if (match) changedApps.add(match[1]);
+          }
+          const requestedApp = (process.env.APPLICATION_INPUT || '').trim();
+          const matrix = fs.readdirSync(root, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory() && entry.name !== 'node_modules')
+            .map((entry) => entry.name)
+            .filter((name) => fs.existsSync(path.join(root, name, 'package.json')))
+            .filter((name) => {
+              if (eventName === 'workflow_dispatch') {
+                return requestedApp ? name === requestedApp : !CI_EXCLUDED_APPLICATIONS.includes(name);
+              }
+              return !CI_EXCLUDED_APPLICATIONS.includes(name) && changedApps.has(name);
+            })
+            .map((name) => {
+              const appPath = path.join(root, name);
+              const scripts = JSON.parse(fs.readFileSync(path.join(appPath, 'package.json'), 'utf8')).scripts || {};
+              return {
+                name,
+                path: appPath,
+                hasTypecheck: Boolean(scripts.typecheck),
+                hasUnit: Boolean(scripts['test:unit']),
+                hasIntegration: Boolean(scripts.test),
+              };
+            });
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `matrix=${JSON.stringify(matrix)}\n`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `has_apps=${matrix.length > 0}\n`);
+          NODE
+
+  ci:
+    needs: discover
+    if: needs.discover.outputs.has_apps == 'true'
+    name: ${{ matrix.app.name }}
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.discover.outputs.matrix) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.app.path }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: '.nvmrc'
+          cache: yarn
+          cache-dependency-path: ${{ matrix.app.path }}/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Typecheck
+        if: matrix.app.hasTypecheck
+        run: yarn typecheck
+
+      - name: Unit tests
+        if: matrix.app.hasUnit
+        run: yarn test:unit
+
+      - name: Spawn Twenty test instance
+        id: twenty
+        if: matrix.app.hasIntegration
+        uses: ./.github/actions/spawn-twenty-app-dev-test
+        with:
+          twenty-version: latest
+
+      - name: Integration tests
+        if: matrix.app.hasIntegration
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.api-key }}
+
+  ci-internal-apps-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [discover, ci]
+    steps:
+      - name: Fail job if any needs failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1

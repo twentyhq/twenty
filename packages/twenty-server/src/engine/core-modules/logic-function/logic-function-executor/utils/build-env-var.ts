@@ -16,7 +16,7 @@ export const buildEnvVar = (
       // the else branch into an invariant violation for non-empty values.
       acc[flatApplicationVariable.key] =
         isNonEmptyString(value) && isEncryptedString(value)
-          ? secretEncryptionService.decryptVersioned(value, {
+          ? secretEncryptionService.decryptVersionedOrThrow(value, {
               workspaceId: flatApplicationVariable.workspaceId,
             })
           : value;

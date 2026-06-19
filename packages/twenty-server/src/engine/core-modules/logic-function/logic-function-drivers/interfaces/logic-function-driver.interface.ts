@@ -43,8 +43,16 @@ export type LogicFunctionTranspileResult = {
   builtCode: string;
 };
 
+export type LogicFunctionDeleteApplicationResourcesParams = {
+  workspaceId: string;
+  applicationUniversalIdentifier: string;
+};
+
 export interface LogicFunctionDriver {
   delete(flatLogicFunction: FlatLogicFunction): Promise<void>;
+  deleteApplicationResources(
+    params: LogicFunctionDeleteApplicationResourcesParams,
+  ): Promise<void>;
   execute(
     params: LogicFunctionExecuteParams,
   ): Promise<LogicFunctionExecuteResult>;
