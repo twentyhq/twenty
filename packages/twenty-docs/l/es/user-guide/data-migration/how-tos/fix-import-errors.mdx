@@ -71,12 +71,12 @@ Un campo único (correo electrónico, dominio) ya sea:
 3. Twenty actualizará el registro existente en lugar de crear un duplicado
 
 <Note>
-  **También puedes actualizar campos únicos.**
+**También puedes actualizar campos únicos.**
 
-  * Si mantienes el `id` pero cambias el `email` → se actualizará el correo electrónico
-  * Si mantienes el `email` pero cambias el `id` → se actualizará el id
+* Si mantienes el `id` pero cambias el `email` → se actualizará el correo electrónico
+* Si mantienes el `email` pero cambias el `id` → se actualizará el id
 
-  Siempre que uno de los identificadores únicos coincida, Twenty actualiza el registro.
+Siempre que uno de los identificadores únicos coincida, Twenty actualiza el registro.
 </Note>
 
 ### Cómo evitar este error
@@ -88,9 +88,9 @@ Antes de importar:
 3. Comprueba si los registros ya existen en Twenty
 
 <Warning>
-  **Los registros eliminados lógicamente cuentan para la unicidad.**
+**Los registros eliminados lógicamente cuentan para la unicidad.**
 
-  Consulta el Menú de comandos → Ver registros eliminados. Los registros allí aún aplican la unicidad. Elimínalos permanentemente o restáuralos y actualízalos.
+Consulta el Menú de comandos → Ver registros eliminados. Los registros allí aún aplican la unicidad. Elimínalos permanentemente o restáuralos y actualízalos.
 </Warning>
 
 Para más detalles: [Restricciones de unicidad](/l/es/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -140,12 +140,12 @@ Los datos no coinciden con el formato esperado para ese tipo de campo.
 #### Fecha
 
 **Problema:** Formato de fecha no reconocido
-**Solución:** Usa un formato consistente en todo el archivo
+**Solución:** Usa el formato `YYYY-MM-DD` de forma consistente en todo el archivo
 
 ```
-✓ 2024-03-15        (YYYY-MM-DD - recomendado)
-✓ 03/15/2024        (MM/DD/YYYY)
-✓ 15/03/2024        (DD/MM/YYYY)
+✓ 2024-03-15        (YYYY-MM-DD)
+❌ 03/15/2024        (MM/DD/YYYY)
+❌ 15/03/2024        (DD/MM/YYYY)
 ```
 
 #### Teléfono
@@ -296,9 +296,9 @@ Estás intentando vincular a un registro que no existe en Twenty.
    * Comprueba posibles errores tipográficos y diferencias entre mayúsculas y minúsculas
 
 <Warning>
-  **La importación fallará si se hace referencia a un registro inexistente.**
+**La importación fallará si se hace referencia a un registro inexistente.**
 
-  Importa siempre los objetos padre antes que los objetos hijo.
+Importa siempre los objetos padre antes que los objetos hijo.
 </Warning>
 
 Para más detalles: [Importar relaciones](/l/es/user-guide/data-migration/capabilities/import-relations)
@@ -372,9 +372,9 @@ Estás intentando asignar un registro a un usuario (Propietario, Asignado) pero 
 3. Usa el mismo correo que utilizaron para unirse a Twenty
 
 <Warning>
-  **Los usuarios deben aceptar las invitaciones antes de importar.**
+**Los usuarios deben aceptar las invitaciones antes de importar.**
 
-  Si un usuario no ha aceptado su invitación, los registros que lo referencian tendrán relaciones de usuario vacías.
+Si un usuario no ha aceptado su invitación, los registros que lo referencian tendrán relaciones de usuario vacías.
 </Warning>
 
 ---

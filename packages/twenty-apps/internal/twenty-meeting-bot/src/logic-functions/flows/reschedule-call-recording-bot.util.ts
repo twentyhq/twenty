@@ -3,6 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotMetadata } from 'src/logic-functions/domain/build-recall-bot-metadata.util';
+import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
@@ -19,11 +20,13 @@ export const rescheduleCallRecordingBot = async (
   }
 
   const meetingUrl = calendarEvent.conferenceLinkUrl;
-  const joinAt = calendarEvent.startsAt;
+  const meetingStartsAt = calendarEvent.startsAt;
 
-  if (isUndefined(meetingUrl) || isUndefined(joinAt)) {
+  if (isUndefined(meetingUrl) || isUndefined(meetingStartsAt)) {
     return;
   }
+
+  const joinAt = computeRecallBotJoinAt(meetingStartsAt);
 
   const rescheduleResult = await rescheduleRecallBot({
     externalBotId,
@@ -36,7 +39,7 @@ export const rescheduleCallRecordingBot = async (
     return;
   }
 
-  // The caller re-runs ensureMeetingBot so this botless REQUESTED row is re-created by the single writer.
+  // The bot vanished externally; drop the id so the stale-state cron re-creates it as the single writer.
   if (rescheduleResult.status === RECALL_BOT_NOT_FOUND_STATUS) {
     await updateCallRecording(client, {
       id: callRecording.id,

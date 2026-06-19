@@ -1,0 +1,5 @@
+Contact: https://github.com/twentyhq/twenty/issues/new
+Contact: security@twenty.com
+Preferred-Languages: en
+Canonical: https://twenty.com/.well-known/security.txt
+Policy: https://github.com/twentyhq/twenty/security/policy

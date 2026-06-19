@@ -9,7 +9,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type JSX, lazy, Suspense, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDownload, IconX } from 'twenty-ui/display';
+import { IconDownload, IconX } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -1,45 +1,52 @@
 ---
 title: Barra de navegación
+icon: bars
 ---
-
 
 Renderiza una barra de navegación que contiene varios componentes `NavigationBarItem`.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
-    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+<Tab title="Uso">
 
-    export const MyComponent = () => {
+```jsx
+import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
 
-       const navigationItems = [
-         {
-           name: "Inicio",
-           Icon: IconHome,
-           onClick: () => console.log("Se hizo clic en Inicio"),
-         },
-         {
-           name: "Perfil",
-           Icon: IconUser,
-           onClick: () => console.log("Se hizo clic en Perfil"),
-         },
-         {
-           name: "Configuración",
-           Icon: IconSettings,
-           onClick: () => console.log("Se hizo clic en Configuración"),
-         },
-       ];
+export const MyComponent = () => {
 
-      return <NavigationBar activeItemName="Inicio" items={navigationItems}/>;
-    };
-    ```
-  </Tab>
+   const navigationItems = [
+     {
+       name: "Inicio",
+       Icon: IconHome,
+       onClick: () => console.log("Se hizo clic en Inicio"),
+     },
+     {
+       name: "Perfil",
+       Icon: IconUser,
+       onClick: () => console.log("Se hizo clic en Perfil"),
+     },
+     {
+       name: "Configuración",
+       Icon: IconSettings,
+       onClick: () => console.log("Se hizo clic en Configuración"),
+     },
+   ];
 
-  <Tab title="Props">
-    | Props                   | Tipo   | Descripción                                                                                                                                                                                                                   |
-    | ----------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | nombreDelElementoActivo | cadena | El nombre del elemento de navegación actualmente activo                                                                                                                                                                       |
-    | elementos               | matriz | Una matriz de objetos que representan cada elemento de navegación. Cada objeto contiene el `nombre` del elemento, el componente `Icono` a mostrar y una función `cuandoHagaClick` que se llamará al hacer clic en el elemento |
-  </Tab>
+  return <NavigationBar activeItemName="Inicio" items={navigationItems}/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+
+| Props                   | Tipo   | Descripción                                                                                                                                                                                                                   |
+| ----------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nombreDelElementoActivo | cadena | El nombre del elemento de navegación actualmente activo                                                                                                                                                                       |
+| elementos               | matriz | Una matriz de objetos que representan cada elemento de navegación. Cada objeto contiene el `nombre` del elemento, el componente `Icono` a mostrar y una función `cuandoHagaClick` que se llamará al hacer clic en el elemento |
+
+
+
+
+</Tab>
 </Tabs>

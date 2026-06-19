@@ -2,12 +2,10 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
-  IconLink,
-  IconWorld,
   StyledTintedIconTileContainer,
   getIconTileColorShades,
-  useIcons,
-} from 'twenty-ui/display';
+} from 'twenty-ui/data-display';
+import { IconLink, IconWorld, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 

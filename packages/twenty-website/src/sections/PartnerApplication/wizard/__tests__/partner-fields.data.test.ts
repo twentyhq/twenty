@@ -2,6 +2,7 @@ import {
   PARTNER_SCOPE_VALUES,
   PARTNER_SCOPE_OPTIONS,
   PARTNER_SKILL_SUGGESTIONS,
+  PARTNER_SKILL_POOL,
   PARTNER_APPLICATION_STEP_REQUIRED_FIELDS,
 } from '@/sections/PartnerApplication/wizard/partner-fields.data';
 
@@ -29,16 +30,38 @@ describe('partner-fields.data', () => {
 
   it('ships a non-empty starter skills suggestion pool', () => {
     expect(PARTNER_SKILL_SUGGESTIONS.length).toBeGreaterThan(0);
-    expect(PARTNER_SKILL_SUGGESTIONS).toContain('React');
+    expect(PARTNER_SKILL_SUGGESTIONS).toContain('CRM migration');
   });
 
-  it('requires country + typeOfTeam on profile, partnerScope on expertise', () => {
+  it('ships a non-empty searchable skill pool containing technical entries', () => {
+    expect(PARTNER_SKILL_POOL.length).toBeGreaterThan(0);
+    expect(PARTNER_SKILL_POOL).toContain('React');
+  });
+
+  it('never suggests a competitor CRM as a skill', () => {
+    const all = [...PARTNER_SKILL_SUGGESTIONS, ...PARTNER_SKILL_POOL];
+    const competitor = /salesforce|hubspot|attio|pipedrive|zoho/i;
+    expect(all.filter((skill) => competitor.test(skill))).toEqual([]);
+  });
+
+  it('requires country, typeOfTeam, and city on profile, partnerScope on expertise', () => {
+    expect([...PARTNER_APPLICATION_STEP_REQUIRED_FIELDS.identity]).toEqual([
+      'name',
+      'email',
+      'company',
+      'website',
+    ]);
     expect([...PARTNER_APPLICATION_STEP_REQUIRED_FIELDS.profile]).toEqual([
       'country',
       'typeOfTeam',
+      'city',
     ]);
     expect([...PARTNER_APPLICATION_STEP_REQUIRED_FIELDS.expertise]).toEqual([
       'partnerScope',
+    ]);
+    expect([...PARTNER_APPLICATION_STEP_REQUIRED_FIELDS.commercials]).toEqual([
+      'hourlyRate',
+      'projectBudgetMin',
     ]);
   });
 });

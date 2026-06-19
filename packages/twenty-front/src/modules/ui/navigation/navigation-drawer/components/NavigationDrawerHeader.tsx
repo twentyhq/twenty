@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconSearch } from 'twenty-ui/display';
+import { IconSearch } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 

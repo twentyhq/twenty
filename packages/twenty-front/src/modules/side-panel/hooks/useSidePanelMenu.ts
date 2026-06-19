@@ -17,7 +17,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconColumnInsertRight, IconDotsVertical } from 'twenty-ui/display';
+import { IconColumnInsertRight, IconDotsVertical } from 'twenty-ui/icon';
 
 export const useSidePanelMenu = () => {
   const store = useStore();
@@ -60,6 +60,9 @@ export const useSidePanelMenu = () => {
   const openSidePanelMenu = useCallback(() => {
     emitSidePanelOpenEvent();
     closeAnyOpenDropdown();
+    store.set(sidePanelSearchState.atom, '');
+    store.set(sidePanelSearchObjectFilterState.atom, null);
+
     const isLayoutCustomizationModeEnabled = store.get(
       isLayoutCustomizationModeEnabledState.atom,
     );

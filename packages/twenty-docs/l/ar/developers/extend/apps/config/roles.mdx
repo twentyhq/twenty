@@ -1,0 +1,94 @@
+---
+title: الأدوار والصلاحيات
+description: حدِّد الكائنات والحقول التي يمكن لوظائف منطق تطبيقك ومكوّنات الواجهة الأمامية قراءتها وكتابتها.
+icon: shield-halved
+---
+
+**الدور** هو مجموعة من الأذونات: الكائنات التي يمكن لتطبيق ما قراءتها أو كتابتها، والحقول التي يمكنه رؤيتها، والقدرات على مستوى المنصّة التي يمكنه استخدامها. ترث جميع وظائف منطق كل تطبيق ومكوّنات الواجهة الأمامية الأذونات الخاصة بالدور المُعلَّم باستخدام `defineApplicationRole()` (انظر [دور الدالة الافتراضي](#the-default-function-role) أدناه).
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+});
+```
+
+## الدور الافتراضي للوظيفة
+
+عند إنشاء هيكل لتطبيق جديد، ينشئ CLI ملف دور افتراضي مُصرَّحًا به باستخدام `defineApplicationRole()`:
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlagUniversalIdentifiers: [],
+});
+```
+
+تُعد `defineApplicationRole()` غلافًا بسيطًا حول `defineRole()` يشير إلى الدور المستخدم كإعداد افتراضي لتطبيقك وقت التثبيت. يتطابق التحقق من الصحة مع `defineRole`، لكن خط تجميع البناء يربط تلقائيًا قيمة `universalIdentifier` بصفة `defaultRoleUniversalIdentifier` في بيان التطبيق (manifest)، وبالتالي لا تحتاج إلى الإشارة إليه من [`defineApplication`](/l/ar/developers/extend/apps/config/application) بنفسك.
+
+الملاحظات:
+
+* يُسمح بوجود **استدعاء واحد فقط** لـ `defineApplicationRole(...)` لكل تطبيق — سيفشل إنشاء بيان التطبيق (manifest) إذا عثر على أكثر من واحد.
+* استخدم `defineRole()` (وليس `defineApplicationRole()`) لأي أدوار **إضافية** يأتي بها تطبيقك.
+* لا يزال تعيين `defaultRoleUniversalIdentifier` صراحةً على `defineApplication()` مدعومًا للتوافق مع الإصدارات السابقة، ولكنه مُهمَل لصالح `defineApplicationRole()`.
+
+## أفضل الممارسات
+
+* ابدأ من الدور المُنشأ تلقائيًا، ثم قم بتقييده تدريجيًا — إذ يمنح الإعداد الافتراضي صلاحيات قراءة واسعة، وهو ما نادرًا ما تريده في بيئة الإنتاج.
+* استبدل `objectPermissions` و`fieldPermissions` بالكائنات والحقول الدقيقة التي تحتاجها وظائفك فعليًا.
+* `permissionFlagUniversalIdentifiers` تتحكم في الوصول إلى القدرات على مستوى المنصة. اجعلها في حدّها الأدنى.
+* اطّلع على مثال عملي: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

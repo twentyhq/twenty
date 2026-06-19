@@ -10,14 +10,13 @@ Les flux de travail commencent toujours par un seul déclencheur qui définit qu
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Des objets avancés sont pris en charge !** Au-delà des objets CRM standard (Personnes, Entreprises, Opportunités), vous pouvez aussi déclencher des flux de travail et effectuer des actions sur :
+**Des objets avancés sont pris en charge !** Au-delà des objets CRM standard (Personnes, Entreprises, Opportunités), vous pouvez aussi déclencher des flux de travail et effectuer des actions sur :
+* Membres de l'espace de travail
+* Événements de calendrier
+* Messages (e-mails)
+* Tâches, notes et de nombreux autres objets système
 
-  * Membres de l'espace de travail
-  * Événements de calendrier
-  * Messages (e-mails)
-  * Tâches, notes et de nombreux autres objets système
-
-  Cela permet des automatisations puissantes, comme avertir les membres de l'équipe lorsque des événements de calendrier sont créés, ou traiter automatiquement les e-mails entrants.
+Cela permet des automatisations puissantes, comme avertir les membres de l'équipe lorsque des événements de calendrier sont créés, ou traiter automatiquement les e-mails entrants.
 </Tip>
 
 ## Un enregistrement est créé
@@ -27,9 +26,9 @@ Démarre le flux de travail lorsqu'un nouvel enregistrement est créé dans un o
 **Configuration**: Sélectionnez le type d'objet à surveiller pour les nouveaux enregistrements.
 
 <Note>
-  * Ce déclencheur est idéal pour les enregistrements créés via csv, la synchronisation de la boîte aux lettres et du calendrier, ou l'API.
-  * **Il n'est pas recommandé pour les enregistrements créés manuellement** : avec ce déclencheur, les flux de travail démarrent dès que l'enregistrement est créé. Comme l'interface Twenty propose l'enregistrement automatique à la volée (il n'y a pas de mode édition suivi d'une validation pour enregistrer les enregistrements), le flux de travail sera déclenché avant que l'utilisateur ne renseigne tous les champs.
-    Pour déclencher ce flux de travail sur des enregistrements créés manuellement, il est recommandé d'utiliser plutôt le déclencheur `Record is created or updated`.
+* Ce déclencheur est idéal pour les enregistrements créés via csv, la synchronisation de la boîte aux lettres et du calendrier, ou l'API.
+* **Il n'est pas recommandé pour les enregistrements créés manuellement** : avec ce déclencheur, les flux de travail démarrent dès que l'enregistrement est créé. Comme l'interface Twenty propose l'enregistrement automatique à la volée (il n'y a pas de mode édition suivi d'une validation pour enregistrer les enregistrements), le flux de travail sera déclenché avant que l'utilisateur ne renseigne tous les champs.
+  Pour déclencher ce flux de travail sur des enregistrements créés manuellement, il est recommandé d'utiliser plutôt le déclencheur `Record is created or updated`.
 </Note>
 
 ## Un enregistrement est mis à jour
@@ -82,7 +81,7 @@ Choisissez comment le flux de travail doit gérer la sélection des enregistreme
 * **En masse** : Les enregistrements sélectionnés seront passés à votre flux de travail. Cela est configuré pour un objet donné. Plusieurs enregistrements peuvent être sélectionnés avant de déclencher le flux de travail. Le flux de travail s'exécutera une fois, en fournissant la liste entière des enregistrements comme entrée. Cela signifie que le flux de travail doit contenir une [Action d'itération](/l/fr/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
-  C'est plus avancé, et idéal pour les personnes qui souhaitent optimiser le nombre d'exécutions de flux de travail.
+C'est plus avancé, et idéal pour les personnes qui souhaitent optimiser le nombre d'exécutions de flux de travail.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
@@ -108,7 +107,7 @@ Démarre le flux de travail sur une base récurrente que vous définissez.
 * Entrez une valeur ou utilisez des expressions cron personnalisées pour une planification avancée
 
 <Note>
-  **Fuseau horaire** : Les flux de travail planifiés s'exécutent en **UTC**. Lors de la définition des heures pour les plannings quotidiens, convertissez votre heure locale en UTC.
+**Fuseau horaire** : Les flux de travail planifiés s'exécutent en **UTC**. Lors de la définition des heures pour les plannings quotidiens, convertissez votre heure locale en UTC.
 </Note>
 
 ## Déclencheur externe : Webhook

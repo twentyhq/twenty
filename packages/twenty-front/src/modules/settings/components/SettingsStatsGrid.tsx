@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { Fragment, useContext } from 'react';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsStatRow = {

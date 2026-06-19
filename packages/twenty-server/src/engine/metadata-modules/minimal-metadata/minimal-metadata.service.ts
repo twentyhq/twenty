@@ -78,7 +78,7 @@ export class MinimalMetadataService {
       .filter(isDefined)
       .filter((flatObjectMetadata) => flatObjectMetadata.isActive === true)
       .map((flatObjectMetadata) => {
-        const isCustom = !belongsToTwentyStandardApp(flatObjectMetadata);
+        const isStandardApp = belongsToTwentyStandardApp(flatObjectMetadata);
 
         const objectMetadataForOverride = {
           labelPlural: flatObjectMetadata.labelPlural,
@@ -86,7 +86,6 @@ export class MinimalMetadataService {
           description: flatObjectMetadata.description ?? undefined,
           icon: flatObjectMetadata.icon ?? undefined,
           color: flatObjectMetadata.color ?? undefined,
-          isCustom,
           standardOverrides: flatObjectMetadata.standardOverrides ?? undefined,
         };
 
@@ -99,15 +98,16 @@ export class MinimalMetadataService {
             'labelSingular',
             safeLocale,
             i18nInstance,
+            isStandardApp,
           ),
           labelPlural: resolveObjectMetadataStandardOverride(
             objectMetadataForOverride,
             'labelPlural',
             safeLocale,
             i18nInstance,
+            isStandardApp,
           ),
           icon: flatObjectMetadata.icon ?? undefined,
-          isCustom,
           isActive: flatObjectMetadata.isActive,
           isSystem: flatObjectMetadata.isSystem,
           isRemote: flatObjectMetadata.isRemote,

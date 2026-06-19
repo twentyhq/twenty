@@ -166,7 +166,6 @@ export class FlatPermissionFlagValidatorService {
     flatEntityToValidate: { universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPermissionFlagMaps: optimisticFlatPermissionFlagMaps,
-      flatRolePermissionFlagMaps: optimisticFlatRolePermissionFlagMaps,
     },
     buildOptions,
   }: UniversalFlatEntityValidationArgs<
@@ -206,23 +205,6 @@ export class FlatPermissionFlagValidatorService {
         code: PermissionFlagExceptionCode.PERMISSION_FLAG_IS_STANDARD,
         message: t`Cannot delete standard permission flag definition`,
         userFriendlyMessage: msg`Cannot delete standard permission flag definition`,
-      });
-    }
-
-    const isPermissionFlagInUse = Object.values(
-      optimisticFlatRolePermissionFlagMaps.byUniversalIdentifier,
-    ).some(
-      (rolePermissionFlag) =>
-        isDefined(rolePermissionFlag) &&
-        rolePermissionFlag.permissionFlagUniversalIdentifier ===
-          existing.universalIdentifier,
-    );
-
-    if (isPermissionFlagInUse) {
-      validationResult.errors.push({
-        code: PermissionFlagExceptionCode.PERMISSION_FLAG_IN_USE,
-        message: t`Permission flag definition with key ${existing.key} is still assigned to a role`,
-        userFriendlyMessage: msg`Remove this permission from all roles before deleting it`,
       });
     }
 

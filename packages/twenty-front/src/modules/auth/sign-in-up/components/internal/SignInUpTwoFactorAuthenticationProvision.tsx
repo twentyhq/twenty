@@ -7,15 +7,18 @@ import {
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import QRCode from 'react-qr-code';
+import QRCodeModule from 'react-qr-code';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { IconCopy } from 'twenty-ui/display';
+import { IconCopy } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { resolveCjsModuleDefaultExport } from '~/utils/resolveCjsModuleDefaultExport';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+
+const QRCode = resolveCjsModuleDefaultExport(QRCodeModule);
 
 const StyledMainContentContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[8]};

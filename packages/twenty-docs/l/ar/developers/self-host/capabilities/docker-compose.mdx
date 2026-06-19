@@ -51,7 +51,7 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **إنشاء رموز سرية**
+2. **إنشاء مفتاح تشفير**
 
    قم بتشغيل الأمر التالي لإنشاء سلسلة عشوائية فريدة:
 
@@ -59,15 +59,17 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
    openssl rand -base64 32
    ```
 
-   **مهم:** احتفظ بهذه القيمة سرية ولا تشاركها.
+   **مهم:** احتفظ بهذه القيمة سرية ولا تشاركها. فقدان `ENCRYPTION_KEY` يعني فقدان الوصول إلى كل سر مخزَّن في قاعدة البيانات (رموز OAuth، متغيرات التطبيق، أسرار TOTP، إلخ).
 
 3. **تحديث الـ `.env`**
 
    استبدل قيمة النائب في ملف .env بالقيمة الرمزية المولدة:
 
    ```ini
-   APP_SECRET=first_random_string
+   ENCRYPTION_KEY=random_string
    ```
+
+   راجع [دليل تدوير المفاتيح](/l/ar/developers/self-host/capabilities/key-rotation) للحصول على إرشادات حول تدويره بدون توقّف عن العمل.
 
 4. **تعيين كلمة مرور PostgreSQL**
 

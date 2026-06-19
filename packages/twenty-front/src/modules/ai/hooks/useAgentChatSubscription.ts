@@ -20,10 +20,12 @@ import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMess
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { BillingProductKey } from '~/generated-metadata/graphql';
 
 const THROTTLE_MS = 100;
 
@@ -324,6 +326,35 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'credits-exhausted': {
+          //TODO : add real time on currentUser
+          store.set(currentWorkspaceState.atom, (currentWorkspace) => {
+            const currentBillingSubscription =
+              currentWorkspace?.currentBillingSubscription;
+            const billingSubscriptionItems =
+              currentBillingSubscription?.billingSubscriptionItems;
+
+            if (
+              !isDefined(currentWorkspace) ||
+              !isDefined(currentBillingSubscription) ||
+              !isDefined(billingSubscriptionItems)
+            ) {
+              return currentWorkspace;
+            }
+
+            return {
+              ...currentWorkspace,
+              currentBillingSubscription: {
+                ...currentBillingSubscription,
+                billingSubscriptionItems: billingSubscriptionItems.map((item) =>
+                  item.billingProduct.metadata?.['productKey'] ===
+                  BillingProductKey.RESOURCE_CREDIT
+                    ? { ...item, hasReachedCurrentPeriodCap: true }
+                    : item,
+                ),
+              },
+            };
+          });
+
           const noMoreCreditsError = new Error(
             'Chat stopped: no more available credits.',
           ) as Error & { code?: string };

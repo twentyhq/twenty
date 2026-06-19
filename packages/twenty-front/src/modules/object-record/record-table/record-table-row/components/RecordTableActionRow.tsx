@@ -16,7 +16,7 @@ import {
   findByProperty,
   sumByProperty,
 } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 

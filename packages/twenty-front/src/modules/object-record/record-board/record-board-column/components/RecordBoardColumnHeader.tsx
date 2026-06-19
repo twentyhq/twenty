@@ -20,8 +20,8 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { Tag } from 'twenty-ui/components';
-import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
+import { Tag } from 'twenty-ui/data-display';
+import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
 const StyledHeader = styled.div`

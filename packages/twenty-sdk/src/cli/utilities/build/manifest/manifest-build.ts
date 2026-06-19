@@ -279,11 +279,6 @@ export const buildManifest = async (
 
         const { handler: _, ...rest } = extract.config;
 
-        const relativeFilePath = relative(appPath, filePath);
-
-        // Auto-infer inputSchema for any trigger that opts in but omits one.
-        // For the AI tool surface we use the JSON schema directly; for the
-        // workflow action surface we convert to Twenty's InputSchema.
         const inferredJsonSchema =
           (rest.toolTriggerSettings && !rest.toolTriggerSettings.inputSchema) ||
           (rest.workflowActionTriggerSettings &&
@@ -319,8 +314,8 @@ export const buildManifest = async (
             ? { workflowActionTriggerSettings }
             : {}),
           handlerName: 'default.config.handler',
-          sourceHandlerPath: relativeFilePath,
-          builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
+          sourceHandlerPath: relativePath,
+          builtHandlerPath: relativePath.replace(/\.tsx?$/, '.mjs'),
           builtHandlerChecksum: '[default-checksum]',
         };
 

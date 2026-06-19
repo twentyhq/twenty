@@ -29,10 +29,7 @@ import {
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  type PieChartConfiguration,
-  type PieChartDataItem,
-} from '~/generated-metadata/graphql';
+import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 
 type GraphWidgetPieChartProps = {
   data: PieChartDataItemWithColor[];
@@ -46,7 +43,9 @@ type GraphWidgetPieChartProps = {
   showCenterMetric?: boolean;
 } & GraphValueFormatOptions;
 
-const emptyStateData: PieChartDataItemWithColor[] = [{ id: 'empty', value: 1 }];
+const emptyStateData: PieChartDataItemWithColor[] = [
+  { key: 'empty', value: 1 },
+];
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -194,8 +193,10 @@ export const GraphWidgetPieChart = ({
             enableArcLabels={false}
             tooltip={() => null}
             layers={[ArcsLayer, 'arcLinkLabels']}
-            id={(datum: PieChartDataItem) => `${id}:${String(datum.id)}`}
-            arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
+            id={(datum: PieChartDataItemWithColor) =>
+              `${id}:${String(datum.key)}`
+            }
+            arcLinkLabel={(datum: ComputedDatum<PieChartDataItemWithColor>) => {
               const formattedValue = getPieChartFormattedValue({
                 datum,
                 enrichedData,

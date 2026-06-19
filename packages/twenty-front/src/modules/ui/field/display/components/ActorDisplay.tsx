@@ -2,7 +2,7 @@ import { type FieldActorValue } from '@/object-record/record-field/ui/types/Fiel
 
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/components';
+import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/data-display';
 import {
   IconApi,
   IconCalendar,
@@ -17,7 +17,7 @@ import {
   IconUpload,
   IconWebhook,
   type IconComponent,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 
 type ActorDisplayProps = Partial<FieldActorValue> & {
   avatarUrl?: string | null;

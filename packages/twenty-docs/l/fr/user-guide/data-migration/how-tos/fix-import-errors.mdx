@@ -71,12 +71,12 @@ Un champ unique (e-mail, domaine) :
 3. Twenty mettra à jour l'enregistrement existant au lieu de créer un doublon
 
 <Note>
-  **Vous pouvez aussi mettre à jour les champs uniques.**
+**Vous pouvez aussi mettre à jour les champs uniques.**
 
-  * Si vous conservez l'`id` mais changez l'`email` → l'adresse e-mail sera mise à jour
-  * Si vous conservez l'`email` mais changez l'`id` → l'id sera mis à jour
+* Si vous conservez l'`id` mais changez l'`email` → l'adresse e-mail sera mise à jour
+* Si vous conservez l'`email` mais changez l'`id` → l'id sera mis à jour
 
-  Tant qu'un identifiant unique correspond, Twenty met à jour l'enregistrement.
+Tant qu'un identifiant unique correspond, Twenty met à jour l'enregistrement.
 </Note>
 
 ### Comment éviter cette erreur
@@ -88,9 +88,9 @@ Avant l'importation :
 3. Vérifiez si des enregistrements existent déjà dans Twenty
 
 <Warning>
-  **Les enregistrements supprimés de façon logique comptent pour l'unicité.**
+**Les enregistrements supprimés de façon logique comptent pour l'unicité.**
 
-  Vérifiez le menu Commande → Voir les enregistrements supprimés. Les enregistrements qui s'y trouvent imposent toujours l'unicité. Supprimez-les définitivement ou restaurez-les et mettez-les à jour.
+Vérifiez le menu Commande → Voir les enregistrements supprimés. Les enregistrements qui s'y trouvent imposent toujours l'unicité. Supprimez-les définitivement ou restaurez-les et mettez-les à jour.
 </Warning>
 
 Pour plus de détails : [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -140,12 +140,12 @@ Les données ne correspondent pas au format attendu pour ce type de champ.
 #### Date
 
 **Problème :** Format de date non reconnu
-**Solution :** Utilisez un format cohérent dans tout le fichier
+**Solution :** Utilisez le format `YYYY-MM-DD` de façon cohérente dans tout le fichier
 
 ```
-✓ 2024-03-15        (YYYY-MM-DD - recommended)
-✓ 03/15/2024        (MM/DD/YYYY)
-✓ 15/03/2024        (DD/MM/YYYY)
+✓ 2024-03-15        (YYYY-MM-DD)
+❌ 03/15/2024        (MM/DD/YYYY)
+❌ 15/03/2024        (DD/MM/YYYY)
 ```
 
 #### Téléphone
@@ -296,9 +296,9 @@ Vous essayez de lier un enregistrement qui n'existe pas dans Twenty.
    * Vérifiez les fautes de frappe et la casse
 
 <Warning>
-  **L'importation échouera si une référence est faite à un enregistrement inexistant.**
+**L'importation échouera si une référence est faite à un enregistrement inexistant.**
 
-  Importez toujours les objets parents avant les objets enfants.
+Importez toujours les objets parents avant les objets enfants.
 </Warning>
 
 Pour plus de détails : [Import des relations](/l/fr/user-guide/data-migration/capabilities/import-relations)
@@ -372,9 +372,9 @@ Vous essayez d'assigner un enregistrement à un utilisateur (Propriétaire, Assi
 3. Utilisez la même adresse e-mail que celle utilisée pour rejoindre Twenty
 
 <Warning>
-  **Les utilisateurs doivent accepter les invitations avant l'importation.**
+**Les utilisateurs doivent accepter les invitations avant l'importation.**
 
-  Si un utilisateur n'a pas accepté son invitation, les enregistrements qui s'y réfèrent auront des relations utilisateur vides.
+Si un utilisateur n'a pas accepté son invitation, les enregistrements qui s'y réfèrent auront des relations utilisateur vides.
 </Warning>
 
 ---

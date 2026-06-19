@@ -13,8 +13,7 @@ import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useG
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { isFieldMetadataDateKind } from 'twenty-shared/utils';
-import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
+import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownCalendarFieldsContent = () => {
@@ -27,13 +26,11 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
 
   const { currentView } = useGetCurrentViewOnly();
   const { updateCurrentView } = useUpdateCurrentView();
-  const { navigateToDateFieldSettings } = useGetAvailableFieldsForCalendar();
+  const { availableFieldsForCalendar, navigateToDateFieldSettings } =
+    useGetAvailableFieldsForCalendar();
 
   const setRecordIndexCalendarFieldMetadataId = useSetAtomState(
     recordIndexCalendarFieldMetadataIdState,
-  );
-  const availableFieldsForCalendar = objectMetadataItem.fields.filter((field) =>
-    isFieldMetadataDateKind(field.type),
   );
 
   const calendarFieldMetadata = currentView?.calendarFieldMetadataId

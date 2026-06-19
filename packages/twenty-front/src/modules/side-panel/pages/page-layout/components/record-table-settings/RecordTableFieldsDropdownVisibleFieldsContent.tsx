@@ -13,7 +13,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { type DropResult } from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconEyeOff, useIcons } from 'twenty-ui/display';
+import { IconEyeOff, useIcons } from 'twenty-ui/icon';
 import { MenuItemDraggable, MenuItemNavigate } from 'twenty-ui/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 

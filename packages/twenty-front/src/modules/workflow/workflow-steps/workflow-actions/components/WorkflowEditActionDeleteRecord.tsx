@@ -12,7 +12,7 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
-import { HorizontalSeparator } from 'twenty-ui/display';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';

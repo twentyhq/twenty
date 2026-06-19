@@ -177,6 +177,7 @@ export function PartnerApplicationWizard({
     setSubmitError,
     setSubmitted,
     reset,
+    validateCurrentStep,
   } = controller;
 
   useEffect(() => {
@@ -192,7 +193,9 @@ export function PartnerApplicationWizard({
     ? PARTNER_APPLICATION_MODAL_COPY.validation.invalidEmail
     : errorValues.includes('invalid_url')
       ? PARTNER_APPLICATION_MODAL_COPY.validation.invalidUrl
-      : PARTNER_APPLICATION_MODAL_COPY.validation.incompleteForm;
+      : errorValues.includes('invalid_amount')
+        ? PARTNER_APPLICATION_MODAL_COPY.validation.invalidAmount
+        : PARTNER_APPLICATION_MODAL_COPY.validation.incompleteForm;
 
   const stepLabelNode = (
     <>
@@ -214,6 +217,9 @@ export function PartnerApplicationWizard({
         return;
       }
       if (state.isSubmitting) return;
+      // Fail fast: the final step bypasses GO_NEXT's gate, so validate its
+      // required fields here before hitting the server.
+      if (!validateCurrentStep()) return;
 
       const payload = buildPartnerApplicationRequestBody(state);
 
@@ -244,6 +250,7 @@ export function PartnerApplicationWizard({
     [
       isLastStep,
       goNext,
+      validateCurrentStep,
       state,
       setSubmitError,
       setSubmitting,

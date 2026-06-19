@@ -1,0 +1,94 @@
+---
+title: 역할 및 권한
+description: 앱의 로직 함수와 프런트 컴포넌트가 어떤 객체와 필드를 읽고 쓸 수 있는지 선언합니다.
+icon: shield-halved
+---
+
+\*\*역할(role)\*\*은 권한 집합입니다. 즉, 앱이 어떤 객체를 읽거나 쓸 수 있는지, 어떤 필드를 볼 수 있는지, 그리고 어떤 플랫폼 수준 기능을 사용할 수 있는지를 정의합니다. 모든 앱의 로직 함수와 프런트 컴포넌트는 `defineApplicationRole()`로 표시된 역할의 권한을 상속받습니다(아래 [기본 함수 역할](#the-default-function-role)을 참조하세요).
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+});
+```
+
+## 기본 함수 역할
+
+새 앱을 스캐폴딩하면, CLI가 `defineApplicationRole()`로 선언된 기본 역할 파일을 생성합니다:
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlagUniversalIdentifiers: [],
+});
+```
+
+`defineApplicationRole()`는 설치 시 애플리케이션의 기본 역할로 사용할 역할을 표시하는, `defineRole()`에 대한 간단한 래퍼입니다. 검증 방식은 `defineRole`과 동일하지만, 빌드 파이프라인이 애플리케이션 매니페스트의 `defaultRoleUniversalIdentifier`에 해당 역할의 `universalIdentifier`를 자동으로 연결하므로, [`defineApplication`](/l/ko/developers/extend/apps/config/application)에서 직접 참조할 필요가 없습니다.
+
+노트:
+
+* 앱당 정확히 **하나의** `defineApplicationRole(...)`만 허용되며, 둘 이상 발견되면 매니페스트 빌드가 실패합니다.
+* 앱에서 제공하는 **추가** 역할에는 `defineApplicationRole()`가 아니라 `defineRole()`을 사용하세요.
+* 호환성을 위해 `defineApplication()`에서 `defaultRoleUniversalIdentifier`를 명시적으로 설정하는 방식도 여전히 지원되지만, 이제는 `defineApplicationRole()` 방식이 권장되며 이전 방식은 더 이상 권장되지 않습니다.
+
+## 모범 사례
+
+* 스캐폴딩된 역할에서 시작한 다음 점진적으로 권한을 제한하세요. 기본 설정은 광범위한 읽기 액세스를 부여하는데, 이는 프로덕션 환경에서 원하는 경우가 거의 없습니다.
+* `objectPermissions`와 `fieldPermissions`를 함수에 실제로 필요한 정확한 객체와 필드로 교체하세요.
+* `permissionFlagUniversalIdentifiers`는 플랫폼 수준 기능에 대한 액세스를 제어합니다. 최소한으로 유지하세요.
+* 동작 예제를 참조하세요: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

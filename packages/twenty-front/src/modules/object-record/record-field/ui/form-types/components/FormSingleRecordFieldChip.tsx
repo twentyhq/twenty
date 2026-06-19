@@ -3,14 +3,14 @@ import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types
 import {
   type RecordId,
   type Variable,
-} from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+} from '@/object-record/record-field/ui/form-types/types/RecordPickerValue';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconForbid } from 'twenty-ui/display';
+import { IconForbid } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordChipContainer = styled.div`

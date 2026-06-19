@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { IconTrash, useIcons } from 'twenty-ui/display';
+import { IconTrash, useIcons } from 'twenty-ui/icon';
 import { IconButton, type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type SettingsObjectNewIndexFormValues } from '~/pages/settings/data-model/new-index/SettingsObjectNewIndexFormValues';

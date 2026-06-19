@@ -11,7 +11,6 @@ export const getInputSchemaFromSourceCode = async (
     await import('./get-function-input-schema');
   const inputSchema = getFunctionInputSchema(sourceCode);
 
-  // Logic functions take a single params object
   const firstParam = inputSchema[0];
 
   if (firstParam?.type === 'object' && isDefined(firstParam.properties)) {
