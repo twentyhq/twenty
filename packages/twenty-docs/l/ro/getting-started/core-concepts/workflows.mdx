@@ -1,6 +1,6 @@
 ---
 title: Fluxuri de lucru
-description: Automatizați-vă procesele de business cu constructorul vizual de fluxuri de lucru al Twenty.
+description: Automatizați-vă procesele de afaceri cu constructorul vizual de fluxuri de lucru al Twenty.
 icon: bolt
 ---
 
@@ -22,16 +22,16 @@ Fiecare flux de lucru are trei părți:
 
 | Declanșator                   | Când este declanșat                                                                                            |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Eveniment de înregistrare** | O înregistrare este creată, actualizată, ștearsă sau upsertată                                                 |
+| **Eveniment de înregistrare** | O înregistrare este creată, actualizată, ștearsă sau inserată ori actualizată (upsert)                         |
 | **Manual**                    | Un utilizator face clic pe un buton (pe o singură înregistrare, pe mai multe înregistrări sau la nivel global) |
-| **Programare**                | La un interval recurent (sintaxă cron)                                                                         |
-| **Webhook**                   | Un sistem extern trimite un HTTP POST                                                                          |
+| **Program**                   | La un interval recurent (sintaxă cron)                                                                         |
+| **Webhook**                   | Un sistem extern trimite o solicitare HTTP POST                                                                |
 
 ## Acțiuni
 
-Fluxurile de lucru pot lega în lanț orice combinație de:
+Fluxurile de lucru pot înlănțui orice combinație de:
 
-* **Operațiuni pe înregistrări** — Crearea, actualizarea, căutarea, ștergerea sau upsertarea înregistrărilor
+* **Operațiuni pe înregistrări** — Crearea, actualizarea, căutarea, ștergerea sau inserarea ori actualizarea (upsert) a înregistrărilor
 * **Trimitere e-mail** — Trimiteți sau redactați e-mailuri din conturile conectate
 * **Solicitare HTTP** — Apelați orice API extern
 * **Cod** — Rulați JavaScript personalizat pentru logică complexă
@@ -39,13 +39,13 @@ Fluxurile de lucru pot lega în lanț orice combinație de:
 * **Iterator** — Parcurgeți în buclă tablouri de date
 * **Agent AI** — Lăsați un agent AI să proceseze datele în mod autonom
 * **Întârziere** — Așteptați înainte de a continua
-* **Formular** — Colectați input-ul utilizatorului la mijlocul fluxului de lucru
+* **Formular** — Colectați date de la utilizator în mijlocul fluxului de lucru
 
 ## Ce puteți construi
 
-* Trimiteți alerte Slack când un deal ajunge într-o anumită etapă
-* Îmbogățiți automat noii contacte cu date din API-uri externe
-* Detectați oportunitățile învechite și notificați deținătorul
+* Trimiteți alerte Slack când o oportunitate ajunge într-o anumită etapă
+* Îmbogățiți automat noile contacte cu date din API-uri externe
+* Detectați oportunitățile învechite și notificați proprietarul
 * Sincronizați datele între Twenty și sistemul dvs. de facturare
 * Generați PDF-uri sau facturi din datele înregistrărilor
 * Răspundeți automat la e-mailurile primite care corespund anumitor criterii

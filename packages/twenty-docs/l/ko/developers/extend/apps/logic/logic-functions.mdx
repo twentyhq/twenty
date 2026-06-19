@@ -348,12 +348,52 @@ export default defineLogicFunction({
 });
 ```
 
+매개 변수를 **한 번만** 선언하고 두 환경 모두에서 사용하려면, 단일 JSON Schema(`InputJsonSchema`)를 정의한 후 `twenty-sdk/logic-function`의 `jsonSchemaToInputSchema`를 사용해 워크플로 작업용으로 변환하세요. `toolTriggerSettings.inputSchema`는 JSON Schema를 그대로 사용하지만, `workflowActionTriggerSettings.inputSchema`는 Twenty의 `InputSchema`를 기대합니다:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **좋은 `description`을 작성하세요.** AI 에이전트는 도구를 언제 사용할지 결정하기 위해 함수의 `description` 필드에 의존합니다. 도구가 무엇을 하는지와 언제 호출해야 하는지 구체적으로 작성하세요.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**런타임 헬퍼.** `twenty-sdk/utils` 는 작은 런타임 헬퍼들을 재노출(re-export)하여, 핸들러가 `twenty-shared` 를 직접 import 하지 않도록 합니다. 예를 들어, `isDefined(value)` 는 `null` 과 `undefined` 모두에 대해 `false` 를 반환합니다. 이를 사용하면 선택적 핸들러 입력을 안전하게 좁힐 수 있습니다. 이러한 입력은 타입이 `T | undefined` 로 지정되어 있더라도, 런타임에는 `null` 로 전달될 수 있습니다.
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **설치 훅** — 사전 설치 및 사후 설치 핸들러 — 는 이 런타임을 공유하지만, 각각의 `define` 함수로 선언되며 트리거 설정을 받지 않습니다. `definePreInstallLogicFunction` 및 `definePostInstallLogicFunction` 에 대해서는 [설치 훅](/l/ko/developers/extend/apps/config/install-hooks)을 참고하세요.

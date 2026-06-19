@@ -349,12 +349,52 @@ export default defineLogicFunction({
 });
 ```
 
+Pour déclarer vos paramètres **une seule fois** et les utiliser sur les deux surfaces, définissez un seul schéma JSON (`InputJsonSchema`) et convertissez-le pour l’action de workflow avec `jsonSchemaToInputSchema` depuis `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` prend directement le schéma JSON, tandis que `workflowActionTriggerSettings.inputSchema` attend le `InputSchema` de Twenty :
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **Rédigez une bonne `description`.** Les agents IA s'appuient sur le champ `description` de la fonction pour décider quand utiliser l'outil. Soyez précis sur ce que fait l'outil et quand il doit être appelé.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**Aides à l’exécution.** `twenty-sdk/utils` réexporte de petites aides à l’exécution afin que les gestionnaires n’importent jamais directement depuis `twenty-shared`. Par exemple, `isDefined(value)` renvoie `false` à la fois pour `null` et `undefined` — utilisez-le pour restreindre en toute sécurité les entrées de gestionnaire optionnelles, qui peuvent arriver sous forme de `null` à l’exécution même lorsqu’elles sont typées `T | undefined` :
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **Hooks d'installation** — les gestionnaires de pré-installation et de post-installation — partagent ce runtime mais sont déclarés avec leurs propres fonctions define et ne prennent pas de paramètres de déclenchement. Voir [hooks d'installation](/l/fr/developers/extend/apps/config/install-hooks) pour `definePreInstallLogicFunction` et `definePostInstallLogicFunction`.

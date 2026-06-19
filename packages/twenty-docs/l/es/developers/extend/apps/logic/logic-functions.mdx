@@ -349,12 +349,52 @@ export default defineLogicFunction({
 });
 ```
 
+Para declarar tus parámetros **una sola vez** y atender ambas superficies, define un único JSON Schema (`InputJsonSchema`) y conviértelo para la acción de workflow con `jsonSchemaToInputSchema` de `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` usa directamente el JSON Schema, mientras que `workflowActionTriggerSettings.inputSchema` espera el `InputSchema` de Twenty:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **Escribe una buena `description`.** Los agentes de IA dependen del campo `description` de la función para decidir cuándo usar la herramienta. Sé específico acerca de lo que hace la herramienta y cuándo debe invocarse.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**Utilidades en tiempo de ejecución.** `twenty-sdk/utils` vuelve a exportar pequeñas utilidades en tiempo de ejecución para que los handlers nunca importen directamente desde `twenty-shared`. Por ejemplo, `isDefined(value)` devuelve `false` tanto para `null` como para `undefined` — utilízalo para acotar de forma segura las entradas opcionales de los handlers, que pueden llegar como `null` en tiempo de ejecución incluso cuando están tipadas como `T | undefined`:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **Hooks de instalación** — los controladores de preinstalación y postinstalación — comparten este entorno de ejecución, pero se declaran con sus propias funciones 'define' y no aceptan configuraciones de disparador. Consulta [Hooks de instalación](/l/es/developers/extend/apps/config/install-hooks) para `definePreInstallLogicFunction` y `definePostInstallLogicFunction`.

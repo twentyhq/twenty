@@ -348,12 +348,52 @@ export default defineLogicFunction({
 });
 ```
 
+Per dichiarare i tuoi parametri **una sola volta** e servire entrambe le superfici, definisci un unico JSON Schema (`InputJsonSchema`) e convertilo per l'azione del workflow con `jsonSchemaToInputSchema` da `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` accetta direttamente il JSON Schema, mentre `workflowActionTriggerSettings.inputSchema` si aspetta l'`InputSchema` di Twenty:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description` della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e quando dovrebbe essere invocato.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**Helper di runtime.** `twenty-sdk/utils` riesporta piccoli helper di runtime in modo che gli handler non importino mai direttamente da `twenty-shared`. Per esempio, `isDefined(value)` restituisce `false` sia per `null` che per `undefined` — usalo per restringere in modo sicuro gli input opzionali degli handler, che possono arrivare come `null` a runtime anche quando sono tipizzati come `T | undefined`:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **Hook di installazione** — i gestori di pre-installazione e post-installazione — condividono questo runtime, ma sono dichiarati con le proprie funzioni di definizione e non accettano impostazioni dei trigger. Consulta [Hook di installazione](/l/it/developers/extend/apps/config/install-hooks) per `definePreInstallLogicFunction` e `definePostInstallLogicFunction`.
