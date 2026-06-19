@@ -14,17 +14,12 @@ import type { CustomException } from 'src/utils/custom-exception';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 
 @Catch(IngressTriggerException)
-export class IngressTriggerRestApiExceptionFilter
-  implements ExceptionFilter
-{
+export class IngressTriggerRestApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
   ) {}
 
-  catch(
-    exception: IngressTriggerException,
-    host: ArgumentsHost,
-  ) {
+  catch(exception: IngressTriggerException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 

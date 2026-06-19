@@ -105,7 +105,11 @@ describe('IngressTriggerService', () => {
     expect(logicFunctionTriggerService.run).toHaveBeenCalledWith(
       expect.objectContaining({ logicFunction: { id: 'lf-1' } }),
     );
-    expect(result).toEqual({ statusCode: 200, headers: {}, body: { ok: true } });
+    expect(result).toEqual({
+      statusCode: 200,
+      headers: {},
+      body: { ok: true },
+    });
   });
 
   it('throws when the application registration does not exist', async () => {

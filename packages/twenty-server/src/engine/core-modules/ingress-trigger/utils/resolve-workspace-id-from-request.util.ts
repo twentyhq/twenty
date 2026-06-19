@@ -59,7 +59,8 @@ export const resolveWorkspaceIdFromRequest = ({
     segments.length === 0 ||
     segments.some(
       (segment) =>
-        !SAFE_PATH_SEGMENT.test(segment) || FORBIDDEN_PATH_SEGMENTS.has(segment),
+        !SAFE_PATH_SEGMENT.test(segment) ||
+        FORBIDDEN_PATH_SEGMENTS.has(segment),
     )
   ) {
     return undefined;

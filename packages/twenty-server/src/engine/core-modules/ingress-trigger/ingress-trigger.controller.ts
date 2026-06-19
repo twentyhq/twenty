@@ -20,11 +20,11 @@ import { sendRouteTriggerResponse } from 'src/engine/core-modules/logic-function
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 @UseFilters(IngressTriggerRestApiExceptionFilter)
 export class IngressTriggerController {
-  constructor(
-    private readonly ingressTriggerService: IngressTriggerService,
-  ) {}
+  constructor(private readonly ingressTriggerService: IngressTriggerService) {}
 
-  @Post(':applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier')
+  @Post(
+    ':applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier',
+  )
   async post(
     @Param('applicationRegistrationUniversalIdentifier')
     applicationRegistrationUniversalIdentifier: string,

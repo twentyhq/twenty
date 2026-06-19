@@ -59,6 +59,9 @@ export class LogicFunctionTriggerService {
       return { kind: 'userError', errorMessage: result.error.errorMessage };
     }
 
-    return { kind: 'response', response: buildRouteTriggerResponse(result.data) };
+    return {
+      kind: 'response',
+      response: buildRouteTriggerResponse(result.data),
+    };
   }
 }

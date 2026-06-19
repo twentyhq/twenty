@@ -26,9 +26,7 @@ const WEBHOOK_WORKSPACE_ID_SOURCES = new Set(['body', 'query', 'header']);
 
 @Injectable()
 export class IngressTriggerService {
-  private readonly logger = new Logger(
-    IngressTriggerService.name,
-  );
+  private readonly logger = new Logger(IngressTriggerService.name);
 
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
@@ -169,12 +167,11 @@ export class IngressTriggerService {
     return outcome.response;
   }
 
-  private mapErrorToWebhookCode(
-    error: unknown,
-  ): IngressTriggerExceptionCode {
+  private mapErrorToWebhookCode(error: unknown): IngressTriggerExceptionCode {
     if (
       error instanceof LogicFunctionExecutionException &&
-      error.code === LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+      error.code ===
+        LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
     ) {
       return IngressTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
     }
