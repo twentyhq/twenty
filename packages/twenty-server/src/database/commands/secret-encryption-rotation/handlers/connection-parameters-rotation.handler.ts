@@ -16,11 +16,6 @@ import {
   type EncryptedImapSmtpCaldavParams,
   type ImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
-import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
-import {
-  SecretEncryptionException,
-  SecretEncryptionExceptionCode,
-} from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
@@ -145,15 +140,6 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
 
       if (!isDefined(params)) {
         continue;
-      }
-
-      // Refuse non-enc:v2 values up front: decryptVersioned would otherwise
-      // fall through to unauthenticated legacy CTR and corrupt the password.
-      if (!params.password.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) {
-        throw new SecretEncryptionException(
-          `${protocol} password is not a versioned envelope (expected '${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}…'), refusing to rotate.`,
-          SecretEncryptionExceptionCode.MALFORMED_ENVELOPE,
-        );
       }
 
       const plaintext = this.secretEncryptionService.decryptVersionedOrThrow(
