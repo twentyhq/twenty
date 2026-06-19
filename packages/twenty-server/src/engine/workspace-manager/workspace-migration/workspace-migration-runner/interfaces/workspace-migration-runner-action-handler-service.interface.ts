@@ -286,16 +286,16 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       allFlatEntityMaps: context.allFlatEntityMaps,
     });
 
+    const afterCommitSideEffects = this.getAfterCommitSideEffects({
+      ...context,
+      flatAction,
+    });
+
     const partialOptimisticCache =
       this.optimisticallyApplyActionOnAllFlatEntityMaps({
         flatAction,
         allFlatEntityMaps: context.allFlatEntityMaps,
       });
-
-    const afterCommitSideEffects = this.getAfterCommitSideEffects({
-      ...context,
-      flatAction,
-    });
 
     return { partialOptimisticCache, metadataEvents, afterCommitSideEffects };
   }

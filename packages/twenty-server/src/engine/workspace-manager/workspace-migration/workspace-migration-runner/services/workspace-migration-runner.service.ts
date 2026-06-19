@@ -440,7 +440,9 @@ export class WorkspaceMigrationRunnerService {
     );
 
     const sideEffectResults = await Promise.allSettled(
-      allAfterCommitSideEffects.map((sideEffect) => sideEffect.run()),
+      allAfterCommitSideEffects.map((sideEffect) =>
+        Promise.resolve().then(() => sideEffect.run()),
+      ),
     );
 
     sideEffectResults.forEach((result, index) => {
