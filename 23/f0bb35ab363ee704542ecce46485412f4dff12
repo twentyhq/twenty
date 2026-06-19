@@ -1,0 +1,23 @@
+packages/twenty-front/src/modules/settings/accounts/components/message-folders/utils/__tests__/computeFolderIdsForSyncToggle.test.ts
+  s_35892942d7e0a6::t_f8f15a1c3c5aee 4-5,7,10-11,13-14,16-17,19-20,22-23,25-28,30-31,33-35,37-38,40-42
+packages/twenty-front/src/modules/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle.ts
+  s_35892942d7e0a6::t_1c5689186c2e4e 5
+packages/twenty-front/src/modules/settings/accounts/components/message-folders/utils/__tests__/isFolderTreePartiallySelected.test.ts
+  s_35892942d7e0a6::t_7c48e04eab51d3 1-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "23f0bb35ab363ee704542ecce46485412f4dff12",
+  "prompts": {},
+  "sessions": {
+    "s_35892942d7e0a6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa469098-23d2-4e87-9b82-23f0c53dd368",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "RISHAV DEWAN <rishavdewan10@gmail.com>"
+    }
+  }
+}
