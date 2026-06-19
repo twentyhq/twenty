@@ -23231,14 +23231,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:*":
-  version: 4.17.15
-  resolution: "@types/lodash@npm:4.17.15"
-  checksum: 10c0/2eb2dc6d231f5fb4603d176c08c8d7af688f574d09af47466a179cd7812d9f64144ba74bb32ca014570ffdc544eedc51b7a5657212bad083b6eecbd72223f9bb
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:^4.17.15":
+"@types/lodash@npm:*, @types/lodash@npm:^4.17.24":
   version: 4.17.24
   resolution: "@types/lodash@npm:4.17.24"
   checksum: 10c0/b72f60d4daacdad1fa643edb3faba204c02a01eb1ac00a83ff73496a6d236fc55e459c06106e8ced42277dba932d087d8fc090f8de4ef590d3f91e6d6f7ce85a
@@ -54324,7 +54317,7 @@ __metadata:
   resolution: "twenty-client-sdk@workspace:packages/twenty-client-sdk"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
-    "@types/lodash": "npm:^4.17.15"
+    "@types/lodash": "npm:^4.17.24"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
