@@ -1,0 +1,19 @@
+packages/twenty-front/src/modules/settings/accounts/components/message-folders/utils/__tests__/isFolderTreePartiallySelected.test.ts
+  s_35892942d7e0a6::t_e77a5f6fbdca47 6,46-49,55-58,64-67,86-89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "0c0ab3928c76836aa661efd03a5d6eb67589d6b5",
+  "prompts": {},
+  "sessions": {
+    "s_35892942d7e0a6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa469098-23d2-4e87-9b82-23f0c53dd368",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "RISHAV DEWAN <rishavdewan10@gmail.com>"
+    }
+  }
+}
