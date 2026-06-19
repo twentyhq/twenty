@@ -114,8 +114,6 @@ export const SettingsAccountsMessageFoldersCard = () => {
     const isSynced = !folderToToggle.isSynced;
     const folderIdsToToggle = computeFolderIdsForSyncToggle({
       folderId: folderToToggle.id,
-      allFolders: messageFolders,
-      isSynced,
     });
 
     try {
