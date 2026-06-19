@@ -107,16 +107,16 @@ describe('shouldDisplayFormField', () => {
     expect(result).toBe(false);
   });
 
-  it('returns true for WATCH_FIELDS with non UI editable field', () => {
+  it('returns true for DATABASE_EVENT with non UI editable field', () => {
     const field = { ...baseField, isUIEditable: false } as FieldMetadataItem;
     const result = shouldDisplayFormField({
       fieldMetadataItem: field,
-      actionType: 'WATCH_FIELDS',
+      actionType: 'DATABASE_EVENT',
     });
     expect(result).toBe(true);
   });
 
-  it('returns false for WATCH_FIELDS with hidden system field', () => {
+  it('returns false for DATABASE_EVENT with hidden system field', () => {
     const field = {
       ...baseField,
       isSystem: true,
@@ -124,12 +124,12 @@ describe('shouldDisplayFormField', () => {
     } as FieldMetadataItem;
     const result = shouldDisplayFormField({
       fieldMetadataItem: field,
-      actionType: 'WATCH_FIELDS',
+      actionType: 'DATABASE_EVENT',
     });
     expect(result).toBe(false);
   });
 
-  it('returns false for WATCH_FIELDS with RELATION not MANY_TO_ONE', () => {
+  it('returns false for DATABASE_EVENT with RELATION not MANY_TO_ONE', () => {
     const field = {
       ...baseField,
       type: FieldMetadataType.RELATION,
@@ -137,7 +137,7 @@ describe('shouldDisplayFormField', () => {
     } as FieldMetadataItem;
     const result = shouldDisplayFormField({
       fieldMetadataItem: field,
-      actionType: 'WATCH_FIELDS',
+      actionType: 'DATABASE_EVENT',
     });
     expect(result).toBe(false);
   });
