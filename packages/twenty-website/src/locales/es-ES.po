@@ -19,7 +19,7 @@ msgid "-33% off"
 msgstr ""
 
 #. js-lingui-id: AGZHx4
-#: src/sections/product-hero/product-hero.tsx
+#: src/sections/product-hero/ProductHero.tsx
 msgid "...with AI that actually helps you *work faster*"
 msgstr ""
 
@@ -31,29 +31,29 @@ msgstr ""
 
 #. js-lingui-id: sGt3Jm
 #. placeholder {0}: i18n._(card.attribution.company)
-#: src/sections/three-cards/illustration-card.tsx
+#: src/sections/three-cards/IllustrationCard.tsx
 msgid "{0} case study"
 msgstr ""
 
 #. js-lingui-id: jC5JCB
-#: src/sections/case-study-promo/case-study-promo.tsx
+#: src/sections/case-study-promo/CaseStudyPromo.tsx
 msgid "{count} Case Studies"
 msgstr ""
 
 #. js-lingui-id: NSO/FI
-#: src/partners-marketplace/partner-rates-panel.tsx
-#: src/partners-marketplace/partner-money-row.tsx
+#: src/partners-marketplace/PartnerRatesPanel.tsx
+#: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "{hourly}/hr"
 msgstr ""
 
 #. js-lingui-id: rAP+km
-#: src/partners-marketplace/filter-dropdown.tsx
+#: src/partners-marketplace/FilterDropdown.tsx
 msgid "{labelText} filter"
 msgstr ""
 
 #. js-lingui-id: 7hlEpj
 #. placeholder {0}: selected.size
-#: src/partners-marketplace/filter-dropdown.tsx
+#: src/partners-marketplace/FilterDropdown.tsx
 msgid "{labelText} filter, {0} selected"
 msgstr ""
 
@@ -85,7 +85,7 @@ msgid "/user/month"
 msgstr ""
 
 #. js-lingui-id: UEDohT
-#: src/sections/footer/footer-bottom.tsx
+#: src/sections/footer/FooterBottom.tsx
 msgid "© {year} – Twenty"
 msgstr ""
 
@@ -95,7 +95,7 @@ msgid "← Back"
 msgstr ""
 
 #. js-lingui-id: 9j/bUt
-#: src/partners-marketplace/back-to-marketplace-link.tsx
+#: src/partners-marketplace/BackToMarketplaceLink.tsx
 msgid "← Twenty partners"
 msgstr ""
 
@@ -129,7 +129,7 @@ msgid ""
 msgstr ""
 
 #. js-lingui-id: iK+ikF
-#: src/sections/trusted-by/trusted-by.tsx
+#: src/sections/trusted-by/TrustedBy.tsx
 msgid "+10k others"
 msgstr ""
 
@@ -142,17 +142,17 @@ msgid ""
 msgstr ""
 
 #. js-lingui-id: BmAWVq
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "<0>App Health Check</0>: Added a health check feature to the admin panel. Now shows real-time status and key metrics. <1>Environment Variables</1>: Admin panel now has read-only access to environment variables. Better transparency, easier config management."
 msgstr ""
 
 #. js-lingui-id: pQcyVv
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "<0>Edit Kanban Stages:</0> You can now edit Kanban stages directly from the app, not just from the settings. This makes it easier to manage and customize your workflow on the fly. <1>\"No Value\" Column:</1> Cards that are not assigned to a specific value will now appear in a \"No Value\" column. This column can be shown or hidden as needed, ensuring no cards are overlooked."
 msgstr ""
 
 #. js-lingui-id: cCqojY
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "<0>Quick Access to Records</0>: Side panel lets you view and edit records without leaving your current page. <1>Keyboard Navigation</1>: Navigate the side panel with keyboard for better accessibility and faster workflows. <2>Pinned Actions</2>: More actions now displayed directly in the navbar for easier access."
 msgstr ""
 
@@ -299,7 +299,7 @@ msgid "A business that does not fit a template"
 msgstr ""
 
 #. js-lingui-id: SR9TmK
-#: src/sections/product-hero/product-hero.tsx
+#: src/sections/product-hero/ProductHero.tsx
 msgid "A CRM for teams that *move fast*"
 msgstr ""
 
@@ -333,27 +333,27 @@ msgid "A CRM they actually own"
 msgstr ""
 
 #. js-lingui-id: HSyZ9R
-#: src/sections/problem/problem.tsx
+#: src/sections/problem/Problem.tsx
 msgid "A custom CRM gives your org an edge, *but building one* comes with *tradeoffs*"
 msgstr ""
 
 #. js-lingui-id: Ll7vsZ
-#: src/sections/product-demo/product-demo.tsx
+#: src/sections/product-demo/ProductDemo.tsx
 msgid "A demo worth a *thousand words*"
 msgstr ""
 
 #. js-lingui-id: uNIo/j
-#: src/sections/three-cards/product-three-cards.tsx
+#: src/sections/three-cards/ProductThreeCards.tsx
 msgid "A modern CRM with *an intuitive interface*"
 msgstr ""
 
 #. js-lingui-id: sDJ4rX
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "A new breadcrumb navigation across the app, improved keyboard menu navigation, and a new focus state for table views."
 msgstr ""
 
 #. js-lingui-id: aYUQpm
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "A new maintenance mode helps admins pause workspace changes during sensitive operations."
 msgstr ""
 
@@ -390,7 +390,7 @@ msgid "A year ago, customizing your CRM meant hiring a Salesforce consultant, le
 msgstr ""
 
 #. js-lingui-id: H1lDvm
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Ability to set User and Admin permissions for each user. Admins can edit workspace settings, while Users can only edit records. Custom permission creation will be available in a future update."
 msgstr ""
 
@@ -431,32 +431,32 @@ msgid "Activate your Twenty enterprise license after checkout and copy your key 
 msgstr ""
 
 #. js-lingui-id: muhZ+X
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Activating your enterprise license…"
 msgstr ""
 
 #. js-lingui-id: +cggij
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Activation failed. Please try again."
 msgstr ""
 
 #. js-lingui-id: trCWSt
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Activation response was incomplete."
 msgstr ""
 
 #. js-lingui-id: Yyn/dP
-#: src/partners-marketplace/active-filter-pills.tsx
+#: src/partners-marketplace/ActiveFilterPills.tsx
 msgid "Active filters"
 msgstr ""
 
 #. js-lingui-id: iNSn2+
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Add files directly to records so documents, screenshots, and other assets stay attached to the right work."
 msgstr ""
 
 #. js-lingui-id: x0pZJy
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Add filters between workflow steps with conditions and only let data continue if it meets the criteria you define."
 msgstr ""
 
@@ -466,17 +466,17 @@ msgid "Add objects and fields"
 msgstr ""
 
 #. js-lingui-id: ZuoQMi
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Add records to filtered views"
 msgstr ""
 
 #. js-lingui-id: l3+wiC
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Add rich text directly inside layouts with the new dedicated field widget."
 msgstr ""
 
 #. js-lingui-id: ced+/c
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Add Several emails for one contact"
 msgstr ""
 
@@ -486,17 +486,17 @@ msgid "Add-ons"
 msgstr ""
 
 #. js-lingui-id: U4glZw
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Added \"Group By\" in tables to better organize entries, like grouping companies by industry for clearer data visualization. This feature is available in the table Options menu."
 msgstr ""
 
 #. js-lingui-id: 6u4D5m
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Address Field Type"
 msgstr ""
 
 #. js-lingui-id: g1in8j
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Admin Panel"
 msgstr ""
 
@@ -506,22 +506,22 @@ msgid "Adoption"
 msgstr ""
 
 #. js-lingui-id: SUk0w7
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Advanced Email and Calendar Settings"
 msgstr ""
 
 #. js-lingui-id: dePx/O
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Advanced filter enables precise database content filtering through nested conditional operators (AND/OR), multiple field filters, and customizable filter groups for complex query construction."
 msgstr ""
 
 #. js-lingui-id: c0acMS
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Advanced filters"
 msgstr ""
 
 #. js-lingui-id: JiIKww
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Advanced Settings"
 msgstr ""
 
@@ -552,7 +552,7 @@ msgid "Aggregate, bar, line, and pie widgets"
 msgstr ""
 
 #. js-lingui-id: HURF9k
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Aggregates"
 msgstr ""
 
@@ -588,17 +588,17 @@ msgid "AI Agents with custom skills"
 msgstr ""
 
 #. js-lingui-id: JHi+LN
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "AI agents, chats, and MCP"
 msgstr ""
 
 #. js-lingui-id: n2fhCy
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "AI chat"
 msgstr ""
 
 #. js-lingui-id: YeA2Ox
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "AI Chat is easier to use with a cleaner experience and clearer model choices."
 msgstr ""
 
@@ -684,12 +684,12 @@ msgid "Antigua & Barbuda 🇦🇬"
 msgstr ""
 
 #. js-lingui-id: BfeCSx
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Any Field filter"
 msgstr ""
 
 #. js-lingui-id: aGCcXe
-#: src/sections/faq/faq.tsx
+#: src/sections/faq/Faq.tsx
 msgid "Any Questions?"
 msgstr ""
 
@@ -778,12 +778,12 @@ msgid "Armenia 🇦🇲"
 msgstr ""
 
 #. js-lingui-id: S+Q+1d
-#: src/sections/product-hero/product-hero.tsx
+#: src/sections/product-hero/ProductHero.tsx
 msgid "Ask questions, automate tasks, and get insights with AI that understands your data and helps you move faster every day, end to end across teams."
 msgstr ""
 
 #. js-lingui-id: 7UGCGX
-#: src/sections/three-cards/three-cards.tsx
+#: src/sections/three-cards/ThreeCards.tsx
 msgid "Assemble, iterate and adapt a robust CRM, *that's quick to flex*"
 msgstr ""
 
@@ -793,7 +793,7 @@ msgid "Assign owners and due dates"
 msgstr ""
 
 #. js-lingui-id: awzjg/
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Attachment Visualizer"
 msgstr ""
 
@@ -833,7 +833,7 @@ msgid "Azerbaijan 🇦🇿"
 msgstr ""
 
 #. js-lingui-id: iH8pgl
-#: src/sections/case-study-detail/case-study-hero.tsx
+#: src/sections/case-study-detail/CaseStudyHero.tsx
 msgid "Back"
 msgstr ""
 
@@ -858,7 +858,7 @@ msgid "Barbados 🇧🇧"
 msgstr ""
 
 #. js-lingui-id: RownlY
-#: src/partners-marketplace/partner-facts-list.tsx
+#: src/partners-marketplace/PartnerFactsList.tsx
 msgid "Based in"
 msgstr ""
 
@@ -888,7 +888,7 @@ msgid "Because Twenty's API is fully open, I could connect it to every other too
 msgstr ""
 
 #. js-lingui-id: kWm0dC
-#: src/sections/partner-hero/partner-hero.tsx
+#: src/sections/partner-hero/PartnerHero.tsx
 msgid ""
 "Become\n"
 "*our partner*"
@@ -900,8 +900,8 @@ msgid "become a genius!"
 msgstr ""
 
 #. js-lingui-id: 6ZCRfT
-#: src/sections/partner-signoff/partner-signoff.tsx
-#: src/sections/partner-hero/partner-hero.tsx
+#: src/sections/partner-signoff/PartnerSignoff.tsx
+#: src/sections/partner-hero/PartnerHero.tsx
 msgid "Become a partner"
 msgstr ""
 
@@ -966,7 +966,7 @@ msgid "Bhutan 🇧🇹"
 msgstr ""
 
 #. js-lingui-id: 8tzR0k
-#: src/sections/pricing-plans/billing-toggle.tsx
+#: src/sections/pricing-plans/BillingToggle.tsx
 msgid "Billing period"
 msgstr ""
 
@@ -981,7 +981,7 @@ msgid "Bolivia 🇧🇴"
 msgstr ""
 
 #. js-lingui-id: MkvsWx
-#: src/partners-marketplace/partner-profile-ctas.tsx
+#: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Book a call"
 msgstr ""
 
@@ -1011,7 +1011,7 @@ msgid "Brunei 🇧🇳"
 msgstr ""
 
 #. js-lingui-id: s4FVHa
-#: src/sections/why-twenty-signoff/why-twenty-signoff.tsx
+#: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
 msgid ""
 "Build a CRM your\n"
 "competitors *can't buy.*"
@@ -1028,7 +1028,7 @@ msgid "Build a pipeline board grouped by stage"
 msgstr ""
 
 #. js-lingui-id: 3+uH0v
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Build an app"
 msgstr ""
 
@@ -1048,12 +1048,12 @@ msgid "Build on an open platform"
 msgstr ""
 
 #. js-lingui-id: yEKs3h
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Build with your favorite tools"
 msgstr ""
 
 #. js-lingui-id: 2FDUkV
-#: src/sections/home-hero/home-hero.tsx
+#: src/sections/home-hero/HomeHero.tsx
 msgid "Build your Enterprise CRM *at AI Speed*"
 msgstr ""
 
@@ -1068,7 +1068,7 @@ msgid "Bulgaria 🇧🇬"
 msgstr ""
 
 #. js-lingui-id: Lze0QH
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Bulk Deletion"
 msgstr ""
 
@@ -1093,7 +1093,7 @@ msgid "Calendar / booking link"
 msgstr ""
 
 #. js-lingui-id: 6DqzR/
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Calendar View for Objects"
 msgstr ""
 
@@ -1128,13 +1128,13 @@ msgid "Cape Verde 🇨🇻"
 msgstr ""
 
 #. js-lingui-id: qLBo3s
-#: src/sections/testimonials/testimonials-carousel.tsx
-#: src/sections/testimonials/partner-testimonials-carousel.tsx
+#: src/sections/testimonials/TestimonialsCarousel.tsx
+#: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
 msgid "carousel"
 msgstr ""
 
 #. js-lingui-id: C6wh0T
-#: src/sections/case-study-catalog/case-study-card.tsx
+#: src/sections/case-study-catalog/CaseStudyCard.tsx
 msgid "Case"
 msgstr ""
 
@@ -1144,9 +1144,9 @@ msgid "Catalan"
 msgstr ""
 
 #. js-lingui-id: NUrY9o
-#: src/partners-marketplace/partner-facts-list.tsx
-#: src/partners-marketplace/partner-card.tsx
-#: src/partners-marketplace/filter-bar.tsx
+#: src/partners-marketplace/PartnerFactsList.tsx
+#: src/partners-marketplace/PartnerCard.tsx
+#: src/partners-marketplace/FilterBar.tsx
 msgid "Categories"
 msgstr ""
 
@@ -1161,7 +1161,7 @@ msgid "Chad 🇹🇩"
 msgstr ""
 
 #. js-lingui-id: +DEogc
-#: src/sections/footer/locale-switcher.tsx
+#: src/sections/footer/LocaleSwitcher.tsx
 msgid "Change language"
 msgstr ""
 
@@ -1187,28 +1187,28 @@ msgid "Chinese"
 msgstr ""
 
 #. js-lingui-id: s2oWpP
-#: src/sections/footer/locale-switcher.tsx
+#: src/sections/footer/LocaleSwitcher.tsx
 msgid "Choose a language"
 msgstr ""
 
 #. js-lingui-id: AZNxzv
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose a role directly when inviting a teammate to a workspace."
 msgstr ""
 
 #. js-lingui-id: geiXTM
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose exactly which Gmail labels or Outlook folders to sync on your workspace. This gives you more control over your email data and better privacy by importing only the folders you need."
 msgstr ""
 
 #. js-lingui-id: TNVfAe
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose how to display dates in any field using a universal Unicode date format that best suits your use case."
 msgstr ""
 
-#. js-lingui-id: 3wV73y
+#. js-lingui-id: lAAXeW
 #: src/partner-application/partner-application-copy.ts
-msgid "City"
+msgid "City *"
 msgstr ""
 
 #. js-lingui-id: ZbCD7v
@@ -1217,28 +1217,28 @@ msgid "Classic never dies. It just gets extended one more time."
 msgstr ""
 
 #. js-lingui-id: u8JHrO
-#: src/partners-marketplace/filter-bar.tsx
-#: src/partners-marketplace/empty-state.tsx
+#: src/partners-marketplace/FilterBar.tsx
+#: src/partners-marketplace/EmptyState.tsx
 msgid "Clear filters"
 msgstr ""
 
 #. js-lingui-id: yz7wBu
-#: src/app-preview/stage/traffic-lights.tsx
+#: src/app-preview/stage/TrafficLights.tsx
 msgid "Close"
 msgstr ""
 
 #. js-lingui-id: cu6iol
-#: src/sections/pricing-salesfarce/salesfarce-wrong-choice-popup.tsx
+#: src/sections/pricing-salesfarce/SalesfarceWrongChoicePopup.tsx
 msgid "Close dialog"
 msgstr ""
 
 #. js-lingui-id: vcpc5o
-#: src/sections/menu/menu.tsx
+#: src/sections/menu/Menu.tsx
 msgid "Close menu"
 msgstr ""
 
 #. js-lingui-id: oLsrmd
-#: src/sections/pricing-salesfarce/salesfarce-window.tsx
+#: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 msgid "Close pricing window"
 msgstr ""
 
@@ -1301,7 +1301,7 @@ msgstr ""
 
 #. js-lingui-id: chL5IG
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/menu/menu-social.tsx
+#: src/sections/menu/MenuSocial.tsx
 msgid "Community"
 msgstr ""
 
@@ -1321,7 +1321,7 @@ msgid "Company or brand *"
 msgstr ""
 
 #. js-lingui-id: Fkb+LW
-#: src/sections/three-cards/three-cards.tsx
+#: src/sections/three-cards/ThreeCards.tsx
 msgid "Compose your CRM and internal apps with a single extensibility toolkit."
 msgstr ""
 
@@ -1351,7 +1351,7 @@ msgid "Connect Google or Microsoft accounts and see emails and events linked to 
 msgstr ""
 
 #. js-lingui-id: dGwMkb
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Connect your Gmail account to automatically associate emails with relevant 'People' and 'Companies'. Contacts you've emailed will be automatically added to 'People', excluding non-personal emails like ﻿support@ and ﻿team@. Control your privacy by selecting the information you share with your team."
 msgstr ""
 
@@ -1366,7 +1366,7 @@ msgid "Consulting"
 msgstr ""
 
 #. js-lingui-id: GsUBlG
-#: src/partners-marketplace/partner-profile-ctas.tsx
+#: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Contact {partnerName}"
 msgstr ""
 
@@ -1386,12 +1386,12 @@ msgid "Continue iteration *without friction*"
 msgstr ""
 
 #. js-lingui-id: LqyWsJ
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Contributors now have their very own hall of fame."
 msgstr ""
 
 #. js-lingui-id: qVH+kL
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Contributors page"
 msgstr ""
 
@@ -1416,27 +1416,27 @@ msgid "Control without the overhead"
 msgstr ""
 
 #. js-lingui-id: PiH3UR
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Copied!"
 msgstr ""
 
 #. js-lingui-id: he3ygx
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Copy"
 msgstr ""
 
 #. js-lingui-id: 7qTWwB
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Copy the enterprise key above."
 msgstr ""
 
 #. js-lingui-id: PXnj76
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Copy this key and paste it into your Twenty self-hosted instance settings."
 msgstr ""
 
 #. js-lingui-id: FapWIq
-#: src/sections/product-feature/product-feature.tsx
+#: src/sections/product-feature/ProductFeature.tsx
 msgid "Core Features"
 msgstr ""
 
@@ -1456,7 +1456,7 @@ msgid "Country *"
 msgstr ""
 
 #. js-lingui-id: kCu+Rq
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Create a Kanban view on any object and streamline processes like recruitment or onboarding."
 msgstr ""
 
@@ -1466,12 +1466,12 @@ msgid "Create a workflow"
 msgstr ""
 
 #. js-lingui-id: +kFrvb
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Create and manage custom roles. Grant or revoke access for each object to Read/Create/Edit/Delete records. Give granular access to settings like the ability to manage users, data models or APIs."
 msgstr ""
 
 #. js-lingui-id: t9znrt
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Create and organize sidebar items more easily with a cleaner navigation setup."
 msgstr ""
 
@@ -1488,22 +1488,22 @@ msgid "Create custom apps"
 msgstr ""
 
 #. js-lingui-id: 20ZdFp
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Create custom charts and visualizations using your workspace data with the new Dashboards feature. Available in Labs, this beta feature lets you build powerful analytics and insights to monitor your business metrics."
 msgstr ""
 
 #. js-lingui-id: YxktRb
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Create fields and edit field widgets more directly from record pages."
 msgstr ""
 
 #. js-lingui-id: RRfcjH
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Create flexible relationships where a single field can connect to multiple different object types. For example, an Opportunity can now relate to either a Person or a Company, giving you more versatile data modeling capabilities."
 msgstr ""
 
 #. js-lingui-id: qCRCtk
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Create more flexible relationships between objects, including more advanced many-to-many setups."
 msgstr ""
 
@@ -1518,12 +1518,12 @@ msgid "Create tasks, assign owners, and attach rich notes directly from any reco
 msgstr ""
 
 #. js-lingui-id: egTba/
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Created By"
 msgstr ""
 
 #. js-lingui-id: ppNnWO
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Creating records on filtered views now applies the view filter to the newly created record. This feature is compatible with Text, Date_Time, Date, Number, Select, Rating, Multi_Select, Array, and Boolean fields."
 msgstr ""
 
@@ -1549,7 +1549,7 @@ msgid "CRM Engineer, AC&T Education Migration"
 msgstr ""
 
 #. js-lingui-id: b7vNti
-#: src/sections/why-twenty-hero/why-twenty-hero.tsx
+#: src/sections/why-twenty-hero/WhyTwentyHero.tsx
 msgid "CRM was a database you filled on Fridays. AI turned it into the system that runs your go-to-market. To differentiate, you have to build what your competitors can't buy."
 msgstr ""
 
@@ -1579,7 +1579,7 @@ msgid "CSV import flow"
 msgstr ""
 
 #. js-lingui-id: zyTj4q
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "CSV import now supports 2,000+ rows, sub-fields such as labels and secondary phone numbers, and automatic field matching. Validations, layout, and upserts are improved for smoother, more accurate imports."
 msgstr ""
 
@@ -1589,7 +1589,7 @@ msgid "Cuba 🇨🇺"
 msgstr ""
 
 #. js-lingui-id: auudI+
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Currency Field"
 msgstr ""
 
@@ -1610,7 +1610,7 @@ msgid "Custom Apps · Scripts · AI/agent integrations"
 msgstr ""
 
 #. js-lingui-id: onPW5H
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Custom date formats"
 msgstr ""
 
@@ -1661,7 +1661,7 @@ msgid "Custom layout"
 msgstr ""
 
 #. js-lingui-id: RuYs9T
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Custom layouts"
 msgstr ""
 
@@ -1671,7 +1671,7 @@ msgid "Custom objects"
 msgstr ""
 
 #. js-lingui-id: y5pLQH
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Custom sidebar"
 msgstr ""
 
@@ -1681,23 +1681,23 @@ msgid "Custom views"
 msgstr ""
 
 #. js-lingui-id: 5xK1jE
-#: src/sections/helped/helped-scene.tsx
-#: src/sections/case-study-catalog/case-study-catalog-grid.tsx
+#: src/sections/helped/HelpedScene.tsx
+#: src/sections/case-study-catalog/CaseStudyCatalogGrid.tsx
 msgid "Customer stories"
 msgstr ""
 
 #. js-lingui-id: YjXLAQ
-#: src/sections/case-study-promo/case-study-promo.tsx
+#: src/sections/case-study-promo/CaseStudyPromo.tsx
 msgid "Customer Stories"
 msgstr ""
 
 #. js-lingui-id: BavWCk
-#: src/sections/case-study-promo/case-study-promo.tsx
+#: src/sections/case-study-promo/CaseStudyPromo.tsx
 msgid "Customer stories preview"
 msgstr ""
 
 #. js-lingui-id: 0fgCyk
-#: src/sections/case-study-detail/case-study-hero.tsx
+#: src/sections/case-study-detail/CaseStudyHero.tsx
 msgid "Customer story"
 msgstr ""
 
@@ -1713,7 +1713,7 @@ msgid "Customers"
 msgstr ""
 
 #. js-lingui-id: qqLY+j
-#: src/sections/stepper/product-stepper-content.tsx
+#: src/sections/stepper/ProductStepperContent.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Customization"
 msgstr ""
@@ -1724,7 +1724,7 @@ msgid "Customizations"
 msgstr ""
 
 #. js-lingui-id: dy0yuR
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Customize your sub-domain"
 msgstr ""
 
@@ -1754,7 +1754,7 @@ msgid "Danish"
 msgstr ""
 
 #. js-lingui-id: aebTao
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Dashboards in Labs (Beta)"
 msgstr ""
 
@@ -1769,7 +1769,7 @@ msgid "Data model"
 msgstr ""
 
 #. js-lingui-id: ZEsvS2
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Data Model Diagram"
 msgstr ""
 
@@ -1779,7 +1779,7 @@ msgid "Data modeling · Migrations · No-code workflows · Dashboards · SSO/SCI
 msgstr ""
 
 #. js-lingui-id: dSuMNg
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Datetime Field"
 msgstr ""
 
@@ -1794,12 +1794,12 @@ msgid "Denmark 🇩🇰"
 msgstr ""
 
 #. js-lingui-id: tqbpyT
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Designed specifically for financial data, the <0>Currency Field</0> ensures correct calculation and standard formatting for monetary figures. <1>Example Use Case</1>: Record and manage global transactions in their original currencies while maintaining precision in financial reporting."
 msgstr ""
 
 #. js-lingui-id: X5B6sd
-#: src/sections/helped/helped-scene.tsx
+#: src/sections/helped/HelpedScene.tsx
 msgid "Dev teams power company-wide *change with Twenty*"
 msgstr ""
 
@@ -1811,12 +1811,12 @@ msgid "Developers"
 msgstr ""
 
 #. js-lingui-id: 5atXgh
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Developers can now take advantage of the new array field type to store non-predefined values."
 msgstr ""
 
 #. js-lingui-id: canH5K
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Developers can now use webhooks to synchronize customer data updates in real-time across applications."
 msgstr ""
 
@@ -1842,12 +1842,12 @@ msgstr ""
 #. js-lingui-id: 30qcNY
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
-#: src/sections/case-study-detail/case-study-article-nav.tsx
+#: src/sections/case-study-detail/CaseStudyArticleNav.tsx
 msgid "Discord (opens in new tab)"
 msgstr ""
 
 #. js-lingui-id: old0Lj
-#: src/sections/releases-hero/releases-hero.tsx
+#: src/sections/releases-hero/ReleasesHero.tsx
 msgid "Discover the newest features and improvements in Twenty, the #1 Open Source CRM."
 msgstr ""
 
@@ -1897,7 +1897,7 @@ msgid "Draft a workflow for an email sequence"
 msgstr ""
 
 #. js-lingui-id: q7M3jo
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Drag and drop widgets to build record pages, dashboards, and layout pages that match the way your team actually works."
 msgstr ""
 
@@ -1912,23 +1912,23 @@ msgstr ""
 msgid "Dutch"
 msgstr ""
 
-#. js-lingui-id: 6r6pDf
+#. js-lingui-id: FJ+YsO
 #: src/partner-application/partner-application-copy.ts
-msgid "e.g. React, Postgres, n8n…"
+msgid "e.g. n8n, Shopify, Real estate…"
 msgstr ""
 
 #. js-lingui-id: a35sCN
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Each workspace now gets a dedicated sub-domain for a more secure experience. And soon you will be able to set your own domain."
 msgstr ""
 
 #. js-lingui-id: s+5p5k
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier field editing"
 msgstr ""
 
 #. js-lingui-id: nKXMzJ
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier layouts"
 msgstr ""
 
@@ -1978,7 +1978,7 @@ msgid "Email & Calendar"
 msgstr ""
 
 #. js-lingui-id: jTgK6B
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
 msgstr ""
 
@@ -1988,7 +1988,7 @@ msgid "Email and Chat"
 msgstr ""
 
 #. js-lingui-id: rc8HEz
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Email replies"
 msgstr ""
 
@@ -1998,7 +1998,7 @@ msgid "Email sharing"
 msgstr ""
 
 #. js-lingui-id: 7o9obN
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Email thread widgets and an inline reply composer make it easier to work directly from messaging records."
 msgstr ""
 
@@ -2023,12 +2023,12 @@ msgid "empty"
 msgstr ""
 
 #. js-lingui-id: ZxDrUL
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Enable beta features using the new Labs tab in settings. The first beta release introduces our workflow engine. Enjoy!"
 msgstr ""
 
 #. js-lingui-id: jkaFcU
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Enabled two-factor authentication with authenticator apps like 1Password, Authy, or Microsoft Authenticator to add an extra layer of security at sign-in."
 msgstr ""
 
@@ -2049,33 +2049,38 @@ msgid "English"
 msgstr ""
 
 #. js-lingui-id: pNNVhg
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Enhance your contact management by adding many email addresses for a single contact. All emails sent to these addresses will be automatically synced with the contact, ensuring you never miss an important communication."
 msgstr ""
 
 #. js-lingui-id: kZ17+i
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Enhance your data handling capabilities with the addition of four new field types:"
 msgstr ""
 
 #. js-lingui-id: CVqFAV
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Enhanced Kanban Board"
 msgstr ""
 
 #. js-lingui-id: LKTMHa
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Enhanced One-to-Many Relations Editing"
 msgstr ""
 
 #. js-lingui-id: ovz6sZ
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Enhanced Timeline"
 msgstr ""
 
 #. js-lingui-id: Ijh+h+
 #: src/sections/stepper/stepper.data.ts
 msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
+msgstr ""
+
+#. js-lingui-id: y3l1fN
+#: src/partner-application/partner-application-copy.ts
+msgid "Enter a valid amount using numbers only."
 msgstr ""
 
 #. js-lingui-id: xoqD/n
@@ -2089,7 +2094,7 @@ msgid "Enter a valid URL (starting with http:// or https://)."
 msgstr ""
 
 #. js-lingui-id: 87BcPj
-#: src/sections/enterprise-activate/enterprise-activate-hero.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 msgid "Enterprise *activation*"
 msgstr ""
 
@@ -2160,17 +2165,17 @@ msgid "Everything updates in real time, with AI chat always ready to help you mo
 msgstr ""
 
 #. js-lingui-id: /g9UKY
-#: src/sections/product-feature/product-feature.tsx
+#: src/sections/product-feature/ProductFeature.tsx
 msgid "Everything you need, *out of the box*"
 msgstr ""
 
 #. js-lingui-id: 2NGXKo
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Expanded support for 30+ languages, so users can navigate and use the software in their preferred language."
 msgstr ""
 
 #. js-lingui-id: 14xdUh
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Experience a more compact and intuitive settings layout, now featuring a breadcrumb navigation for easier access and better organization."
 msgstr ""
 
@@ -2185,7 +2190,7 @@ msgid "Expertise & experience"
 msgstr ""
 
 #. js-lingui-id: JTM5zS
-#: src/sections/case-study-promo/case-study-promo.tsx
+#: src/sections/case-study-promo/CaseStudyPromo.tsx
 msgid "Explore customer stories"
 msgstr ""
 
@@ -2195,7 +2200,7 @@ msgid "Extended run!"
 msgstr ""
 
 #. js-lingui-id: tX4pRm
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Failed to activate enterprise key. Please try again."
 msgstr ""
 
@@ -2215,17 +2220,17 @@ msgid "Fast path to action"
 msgstr ""
 
 #. js-lingui-id: idFRAo
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Faster field setup"
 msgstr ""
 
 #. js-lingui-id: 3qy0z4
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Favorites now live in the navigation menu, making the sidebar easier to organize and customize."
 msgstr ""
 
 #. js-lingui-id: JrTb6F
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Favorites Views and Favorites Folders"
 msgstr ""
 
@@ -2235,22 +2240,22 @@ msgid "feature"
 msgstr ""
 
 #. js-lingui-id: hXRm6J
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Field Level Permission"
 msgstr ""
 
 #. js-lingui-id: 3Y3//3
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
 msgstr ""
 
 #. js-lingui-id: QDxnW/
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets are easier to configure directly from the page where you use them."
 msgstr ""
 
 #. js-lingui-id: 5SV9rS
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets now support more relation types, so custom layouts work better across more objects."
 msgstr ""
 
@@ -2270,22 +2275,22 @@ msgid "Files"
 msgstr ""
 
 #. js-lingui-id: jxbpA9
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Files in records"
 msgstr ""
 
 #. js-lingui-id: 1t0xRH
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter by Multi-Select"
 msgstr ""
 
 #. js-lingui-id: bOidm7
-#: src/partners-marketplace/filter-bar.tsx
+#: src/partners-marketplace/FilterBar.tsx
 msgid "Filter partners"
 msgstr ""
 
 #. js-lingui-id: kUUNrw
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter the content a webhook is returning so it only pings your URL when a specific action occurs, such as on creating a company."
 msgstr ""
 
@@ -2300,9 +2305,9 @@ msgid "Find a certified Twenty partner to migrate, customise, and operate your o
 msgstr ""
 
 #. js-lingui-id: TJ7HQl
-#: src/sections/pricing-engagement-band/pricing-engagement-band.tsx
-#: src/sections/partner-signoff/partner-signoff.tsx
-#: src/sections/partner-hero/partner-hero.tsx
+#: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
+#: src/sections/partner-signoff/PartnerSignoff.tsx
+#: src/sections/partner-hero/PartnerHero.tsx
 msgid "Find a partner"
 msgstr ""
 
@@ -2317,12 +2322,12 @@ msgid "Find a Twenty Partner — Open Source CRM Marketplace"
 msgstr ""
 
 #. js-lingui-id: wHyJkT
-#: src/sections/pricing-engagement-band/pricing-engagement-band.tsx
+#: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
 msgid "Find the right partner to implement, customize, and tailor Twenty to your team."
 msgstr ""
 
 #. js-lingui-id: 5asqas
-#: src/partners-marketplace/marketplace-header.tsx
+#: src/partners-marketplace/MarketplaceHeader.tsx
 msgid "Find your *Twenty partner*"
 msgstr ""
 
@@ -2342,7 +2347,7 @@ msgid "Flexibility"
 msgstr ""
 
 #. js-lingui-id: YsFkku
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Flexible relations"
 msgstr ""
 
@@ -2379,7 +2384,7 @@ msgid "Folder/Label import"
 msgstr ""
 
 #. js-lingui-id: qwJuVW
-#: src/sections/footer/footer-nav.tsx
+#: src/sections/footer/FooterNav.tsx
 msgid "Footer"
 msgstr ""
 
@@ -2423,7 +2428,7 @@ msgid "French"
 msgstr ""
 
 #. js-lingui-id: weRlb1
-#: src/partners-marketplace/partner-money-row.tsx
+#: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "from {minBudget}"
 msgstr ""
 
@@ -2524,15 +2529,15 @@ msgid "Germany 🇩🇪"
 msgstr ""
 
 #. js-lingui-id: ZDIydz
-#: src/sections/why-twenty-signoff/why-twenty-signoff.tsx
-#: src/sections/product-hero/product-hero.tsx
-#: src/sections/menu/menu.tsx
-#: src/sections/menu/menu.tsx
-#: src/sections/home-hero/home-hero.tsx
+#: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
+#: src/sections/product-hero/ProductHero.tsx
+#: src/sections/menu/Menu.tsx
+#: src/sections/menu/Menu.tsx
+#: src/sections/home-hero/HomeHero.tsx
 #: src/sections/footer/footer.data.ts
-#: src/sections/faq/faq.tsx
-#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
-#: src/sections/case-study-detail/customers-case-study-signoff.tsx
+#: src/sections/faq/Faq.tsx
+#: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
+#: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
 msgid "Get started"
 msgstr ""
 
@@ -2544,17 +2549,17 @@ msgstr ""
 #. js-lingui-id: 3QRTgQ
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
-#: src/sections/case-study-detail/case-study-article-nav.tsx
+#: src/sections/case-study-detail/CaseStudyArticleNav.tsx
 msgid "GitHub (opens in new tab)"
 msgstr ""
 
 #. js-lingui-id: wuH0g5
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Gmail integration"
 msgstr ""
 
 #. js-lingui-id: n8waaJ
-#: src/sections/stepper/product-stepper-content.tsx
+#: src/sections/stepper/ProductStepperContent.tsx
 msgid "Go the extra mile *with no-code*"
 msgstr ""
 
@@ -2564,7 +2569,7 @@ msgid "Good choice!"
 msgstr ""
 
 #. js-lingui-id: opD7oA
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Google Calendar Integration"
 msgstr ""
 
@@ -2574,7 +2579,7 @@ msgid "Grab 30 minutes so we can get to know your team."
 msgstr ""
 
 #. js-lingui-id: 1W3PAd
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Granular Email Folder Sync"
 msgstr ""
 
@@ -2634,7 +2639,7 @@ msgid "Halftone Generator | Twenty"
 msgstr ""
 
 #. js-lingui-id: c3XJ18
-#: src/sections/pricing-salesfarce/salesfarce-window.tsx
+#: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 #: src/sections/footer/footer.data.ts
 msgid "Help"
 msgstr ""
@@ -2645,12 +2650,12 @@ msgid "Help center"
 msgstr ""
 
 #. js-lingui-id: LiWOgh
-#: src/partners-marketplace/partner-profile-ctas.tsx
+#: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Hey, I'm interested in meeting. Here's my project:"
 msgstr ""
 
 #. js-lingui-id: EhWatX
-#: src/app-preview/terminal/diff/diff-pill.tsx
+#: src/app-preview/terminal/diff/DiffPill.tsx
 msgid "Hide changes"
 msgstr ""
 
@@ -2666,7 +2671,7 @@ msgid "His approach was unconventional. Instead of mapping fields manually, scri
 msgstr ""
 
 #. js-lingui-id: i0qMbr
-#: src/sections/menu/menu.tsx
+#: src/sections/menu/Menu.tsx
 #: src/sections/footer/footer.data.ts
 msgid "Home"
 msgstr ""
@@ -2703,13 +2708,13 @@ msgid "Hosting & Infrastructure"
 msgstr ""
 
 #. js-lingui-id: SHZNBm
-#: src/partners-marketplace/partner-rates-panel.tsx
+#: src/partners-marketplace/PartnerRatesPanel.tsx
 msgid "Hourly"
 msgstr ""
 
-#. js-lingui-id: Ivq5+7
+#. js-lingui-id: +puxRS
 #: src/partner-application/partner-application-copy.ts
-msgid "Hourly rate"
+msgid "Hourly rate *"
 msgstr ""
 
 #. js-lingui-id: XnFo3G
@@ -2743,7 +2748,7 @@ msgid "How Nine Dots Ventures rebuilt a Singapore real estate agency on Twenty w
 msgstr ""
 
 #. js-lingui-id: 5sWcC0
-#: src/sections/case-study-promo/case-study-promo.tsx
+#: src/sections/case-study-promo/CaseStudyPromo.tsx
 msgid ""
 "How teams\n"
 "*built with Twenty*"
@@ -2780,7 +2785,7 @@ msgid "Identity"
 msgstr ""
 
 #. js-lingui-id: Grur3I
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "IMAP"
 msgstr ""
 
@@ -2800,17 +2805,17 @@ msgid "Implementation partners"
 msgstr ""
 
 #. js-lingui-id: 9P1c4k
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Implemented skeleton loading to improve user experience by displaying placeholder content while data is being fetched."
 msgstr ""
 
 #. js-lingui-id: WxaeWx
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Import Relations"
 msgstr ""
 
 #. js-lingui-id: BHNxPe
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Import V2"
 msgstr ""
 
@@ -2820,12 +2825,12 @@ msgid "Import your data with field mapping, including relations. Export anytime 
 msgstr ""
 
 #. js-lingui-id: cCwGqi
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Improved Onboarding Experience"
 msgstr ""
 
 #. js-lingui-id: 86Q2Qb
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Improved Performance"
 msgstr ""
 
@@ -2835,7 +2840,7 @@ msgid "In June 2025, Justin learned Twenty v1 had shipped. Within two or three d
 msgstr ""
 
 #. js-lingui-id: d1Aru8
-#: src/sections/helped/helped-scene.tsx
+#: src/sections/helped/HelpedScene.tsx
 msgid "In production."
 msgstr ""
 
@@ -2867,7 +2872,7 @@ msgid "Indonesian"
 msgstr ""
 
 #. js-lingui-id: S8gy7K
-#: src/sections/case-study-detail/case-study-highlights.tsx
+#: src/sections/case-study-detail/CaseStudyHighlights.tsx
 msgid "Industry"
 msgstr ""
 
@@ -2897,17 +2902,17 @@ msgid "Interactive halftone generator exported from Twenty."
 msgstr ""
 
 #. js-lingui-id: +83cJG
-#: src/partners-marketplace/partner-profile-ctas.tsx
+#: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Interested in meeting {partnerName}"
 msgstr ""
 
 #. js-lingui-id: MAqMna
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Internal Email Privacy"
 msgstr ""
 
 #. js-lingui-id: 0ysJ3C
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Internal team emails won't sync, protecting privacy by preventing access to internal discussions."
 msgstr ""
 
@@ -2917,32 +2922,32 @@ msgid "Internet accounts per user"
 msgstr ""
 
 #. js-lingui-id: 87rKhU
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Introduced a \"Data Model Diagram\" feature that allows users to visualize the relationships between different objects within the CRM."
 msgstr ""
 
 #. js-lingui-id: vJncsm
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Introduced a feature to calculate and display data summaries, such as sums and latest entries, for quick insights and streamlined data analysis."
 msgstr ""
 
 #. js-lingui-id: TR1ici
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Introduced a new design for notifications featuring lighter colors."
 msgstr ""
 
 #. js-lingui-id: 5G37wD
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Introduced a new Link Field type to add and manage one or several external URLs on any object. Available in custom objects starting today."
 msgstr ""
 
 #. js-lingui-id: 5BnBV4
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Introducing workflows, a powerful way to let you automate actions with form triggers, conditions, HTTP requests, webhooks, and serverless functions!"
 msgstr ""
 
 #. js-lingui-id: KBwqIW
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Invite roles"
 msgstr ""
 
@@ -3030,18 +3035,18 @@ msgid "Join our ecosystem and help businesses take control of their customer dat
 msgstr ""
 
 #. js-lingui-id: 1qiriB
-#: src/sections/testimonials/partner-testimonials-carousel.tsx
+#: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
 msgid "Join our growing partner ecosystem"
 msgstr ""
 
 #. js-lingui-id: VQIurp
-#: src/sections/partner-signoff/partner-signoff.tsx
+#: src/sections/partner-signoff/PartnerSignoff.tsx
 msgid "Join our partner ecosystem and help businesses take control of their CRM."
 msgstr ""
 
 #. js-lingui-id: m/pXki
-#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
-#: src/sections/case-study-detail/customers-case-study-signoff.tsx
+#: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
+#: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
 msgid "Join the teams that chose to own their CRM. Start building with Twenty today."
 msgstr ""
 
@@ -3051,7 +3056,7 @@ msgid "Jordan 🇯🇴"
 msgstr ""
 
 #. js-lingui-id: VnZMnC
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "JSON Field"
 msgstr ""
 
@@ -3081,7 +3086,7 @@ msgid "Justin's broader mission at Elevate has been to move the company off stat
 msgstr ""
 
 #. js-lingui-id: 3LDjR0
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Kanbans on any object"
 msgstr ""
 
@@ -3126,15 +3131,15 @@ msgid "Kyrgyzstan 🇰🇬"
 msgstr ""
 
 #. js-lingui-id: 8QgJZb
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Labs"
 msgstr ""
 
 #. js-lingui-id: GAmD3h
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/partners-marketplace/partner-facts-list.tsx
-#: src/partners-marketplace/partner-card.tsx
-#: src/partners-marketplace/filter-bar.tsx
+#: src/partners-marketplace/PartnerFactsList.tsx
+#: src/partners-marketplace/PartnerCard.tsx
+#: src/partners-marketplace/FilterBar.tsx
 msgid "Languages"
 msgstr ""
 
@@ -3154,7 +3159,7 @@ msgid "LATAM"
 msgstr ""
 
 #. js-lingui-id: WvrtRi
-#: src/sections/releases-hero/releases-hero.tsx
+#: src/sections/releases-hero/ReleasesHero.tsx
 msgid ""
 "Latest\n"
 "*Releases*"
@@ -3201,7 +3206,7 @@ msgid "Libya 🇱🇾"
 msgstr ""
 
 #. js-lingui-id: tHFTlp
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Licensee:"
 msgstr ""
 
@@ -3211,12 +3216,12 @@ msgid "Liechtenstein 🇱🇮"
 msgstr ""
 
 #. js-lingui-id: ESTOTK
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Like any regular object, add some custom fields to your tasks and companies or create some custom views to better organize your content."
 msgstr ""
 
 #. js-lingui-id: kvxPie
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr ""
 
@@ -3228,7 +3233,7 @@ msgstr ""
 #. js-lingui-id: 3hSKC5
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
-#: src/sections/case-study-detail/case-study-article-nav.tsx
+#: src/sections/case-study-detail/CaseStudyArticleNav.tsx
 msgid "LinkedIn (opens in new tab)"
 msgstr ""
 
@@ -3249,7 +3254,7 @@ msgstr ""
 
 #. js-lingui-id: GObQuL
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Live updates"
 msgstr ""
 
@@ -3259,17 +3264,17 @@ msgid "Live updates are unavailable, which is almost more honest."
 msgstr ""
 
 #. js-lingui-id: ObPscj
-#: src/sections/enterprise-activate/enterprise-activate-panel.tsx
+#: src/sections/enterprise-activate/EnterpriseActivatePanel.tsx
 msgid "Loading activation…"
 msgstr ""
 
 #. js-lingui-id: Oyf4mg
-#: src/contact-cal/contact-cal-modal.tsx
+#: src/contact-cal/ContactCalModal.tsx
 msgid "Loading form…"
 msgstr ""
 
 #. js-lingui-id: Pwqkdw
-#: src/partner-application/partner-application-modal.tsx
+#: src/partner-application/PartnerApplicationModal.tsx
 msgid "Loading…"
 msgstr ""
 
@@ -3285,8 +3290,8 @@ msgid "Lock-in"
 msgstr ""
 
 #. js-lingui-id: sQia9P
-#: src/sections/menu/menu.tsx
-#: src/sections/menu/menu-drawer.tsx
+#: src/sections/menu/MenuDrawer.tsx
+#: src/sections/menu/Menu.tsx
 msgid "Log in"
 msgstr ""
 
@@ -3306,12 +3311,12 @@ msgid "Madagascar 🇲🇬"
 msgstr ""
 
 #. js-lingui-id: /hmUGb
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Maintenance mode"
 msgstr ""
 
 #. js-lingui-id: BNd15Z
-#: src/sections/feature-cards/feature-cards.tsx
+#: src/sections/feature-cards/FeatureCards.tsx
 msgid "Make your GTM team happy with *a CRM they'll love*"
 msgstr ""
 
@@ -3351,7 +3356,7 @@ msgid "Management Consulting"
 msgstr ""
 
 #. js-lingui-id: TMZPkv
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Manual trigger workflows now support bulk selection, allowing you to select multiple records at once to pass into your workflow. This is particularly useful when combined with the iterator node to process several records in one workflow run."
 msgstr ""
 
@@ -3366,7 +3371,7 @@ msgid "Maps view"
 msgstr ""
 
 #. js-lingui-id: Zt5PUS
-#: src/partners-marketplace/marketplace-header.tsx
+#: src/partners-marketplace/MarketplaceHeader.tsx
 msgid "Marketplace"
 msgstr ""
 
@@ -3401,7 +3406,7 @@ msgid "Meet the certified agencies and consultants implementing Twenty for teams
 msgstr ""
 
 #. js-lingui-id: ujYZ+f
-#: src/sections/case-study-promo/case-study-promo.tsx
+#: src/sections/case-study-promo/CaseStudyPromo.tsx
 msgid "Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks."
 msgstr ""
 
@@ -3411,7 +3416,7 @@ msgid "MENA"
 msgstr ""
 
 #. js-lingui-id: +9RIKB
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Merge Records"
 msgstr ""
 
@@ -3431,7 +3436,7 @@ msgid "Micronesia 🇫🇲"
 msgstr ""
 
 #. js-lingui-id: YeVpda
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Microsoft o365 Integration"
 msgstr ""
 
@@ -3446,17 +3451,17 @@ msgid "Mike Babiy"
 msgstr ""
 
 #. js-lingui-id: 3TSz9S
-#: src/app-preview/stage/traffic-lights.tsx
+#: src/app-preview/stage/TrafficLights.tsx
 msgid "Minimize"
 msgstr ""
 
-#. js-lingui-id: FFFENV
+#. js-lingui-id: 5IvRfo
 #: src/partner-application/partner-application-copy.ts
-msgid "Minimum project budget"
+msgid "Minimum project budget *"
 msgstr ""
 
 #. js-lingui-id: 179i38
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Model your data, add business logic, and design layouts — everything you need to ship an app on top of Twenty, in one place."
 msgstr ""
 
@@ -3481,17 +3486,17 @@ msgid "Montenegro 🇲🇪"
 msgstr ""
 
 #. js-lingui-id: +8Nek/
-#: src/sections/pricing-plans/billing-toggle.tsx
+#: src/sections/pricing-plans/BillingToggle.tsx
 msgid "Monthly"
 msgstr ""
 
 #. js-lingui-id: paxFAm
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "More field relations"
 msgstr ""
 
 #. js-lingui-id: kHdAOE
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "More Field Types, More Power"
 msgstr ""
 
@@ -3501,7 +3506,7 @@ msgid "More options available!"
 msgstr ""
 
 #. js-lingui-id: AZrhlt
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "More powerful search"
 msgstr ""
 
@@ -3511,7 +3516,7 @@ msgid "Morocco 🇲🇦"
 msgstr ""
 
 #. js-lingui-id: E4h9+U
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Morph Many Relationships"
 msgstr ""
 
@@ -3526,17 +3531,17 @@ msgid "Multi-file upload on records"
 msgstr ""
 
 #. js-lingui-id: 4nwdYp
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Multi-Record Workflow Triggers"
 msgstr ""
 
 #. js-lingui-id: S5w2Q/
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Multi-Select Field"
 msgstr ""
 
 #. js-lingui-id: Gorywi
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Multi-Workspace"
 msgstr ""
 
@@ -3561,22 +3566,22 @@ msgid "Nauru 🇳🇷"
 msgstr ""
 
 #. js-lingui-id: Akl9+2
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Navigate more quickly with our revamped record page navbar: Navigate directly from one record page to another. View the total number of records within a view. Easily return to the corresponding index view with a new \"Close\" button."
 msgstr ""
 
 #. js-lingui-id: TizFpt
-#: src/sections/menu/menu-drawer.tsx
+#: src/sections/menu/MenuDrawer.tsx
 msgid "Navigation menu"
 msgstr ""
 
 #. js-lingui-id: LfNsfa
-#: src/sections/stepper/product-stepper-content.tsx
+#: src/sections/stepper/ProductStepperContent.tsx
 msgid "Need a quick change? Skip the engineering ticket. Customize your workspace in minutes."
 msgstr ""
 
 #. js-lingui-id: 4sbgPq
-#: src/sections/pricing-engagement-band/pricing-engagement-band.tsx
+#: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
 msgid "Need help with customization?"
 msgstr ""
 
@@ -3611,22 +3616,22 @@ msgid "NetZero works with the agro-industry, serving clients from multinationals
 msgstr ""
 
 #. js-lingui-id: zgjuZq
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "New Array field type"
 msgstr ""
 
 #. js-lingui-id: cU1+gU
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "New record page"
 msgstr ""
 
 #. js-lingui-id: pAKqTG
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "New Settings layout"
 msgstr ""
 
 #. js-lingui-id: a54odP
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "New Side Panel"
 msgstr ""
 
@@ -3641,13 +3646,13 @@ msgid "Next →"
 msgstr ""
 
 #. js-lingui-id: KqojOL
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Next steps"
 msgstr ""
 
 #. js-lingui-id: awYrJD
-#: src/sections/testimonials/testimonials-carousel.tsx
-#: src/sections/testimonials/partner-testimonials-carousel.tsx
+#: src/sections/testimonials/TestimonialsCarousel.tsx
+#: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
 msgid "Next testimonial"
 msgstr ""
 
@@ -3682,7 +3687,7 @@ msgid "Nine Dots Ventures"
 msgstr ""
 
 #. js-lingui-id: 1UzENP
-#: src/sections/pricing-plan-table/plan-table-content.tsx
+#: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "No"
 msgstr ""
 
@@ -3702,12 +3707,12 @@ msgid "No more renting someone else's structure"
 msgstr ""
 
 #. js-lingui-id: UxK4so
-#: src/partners-marketplace/empty-state.tsx
+#: src/partners-marketplace/EmptyState.tsx
 msgid "No partners match your filters"
 msgstr ""
 
 #. js-lingui-id: nDjC8E
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "No session ID provided. Please complete the checkout first."
 msgstr ""
 
@@ -3742,12 +3747,12 @@ msgid "Norwegian"
 msgstr ""
 
 #. js-lingui-id: YfzRVa
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Notes and Tasks standard objects"
 msgstr ""
 
 #. js-lingui-id: iDNBZe
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Notifications"
 msgstr ""
 
@@ -3782,12 +3787,12 @@ msgid "On a single CRM"
 msgstr ""
 
 #. js-lingui-id: w5ATz2
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "On record pages, you can now expand relation cards to view their fields without navigating to their individual record pages. For example, on a Company record page, you can expand an employee card to view their job title. This feature applies to all types of objects, including custom ones."
 msgstr ""
 
 #. js-lingui-id: XhXmzW
-#: src/sections/case-study-detail/case-study-article-nav.tsx
+#: src/sections/case-study-detail/CaseStudyArticleNav.tsx
 msgid "On this page"
 msgstr ""
 
@@ -3817,17 +3822,17 @@ msgid "Only $5 for SSO. Practically a charity program."
 msgstr ""
 
 #. js-lingui-id: GSr0rF
-#: src/sections/menu/menu.tsx
+#: src/sections/menu/Menu.tsx
 msgid "Open menu"
 msgstr ""
 
 #. js-lingui-id: pkXQA+
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Open your Twenty self-hosted instance Settings → Enterprise."
 msgstr ""
 
 #. js-lingui-id: 5RkmVr
-#: src/sections/why-twenty-signoff/why-twenty-signoff.tsx
+#: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
 msgid "Open-source, AI-ready, and yours to shape."
 msgstr ""
 
@@ -3838,12 +3843,12 @@ msgid "Organization"
 msgstr ""
 
 #. js-lingui-id: nDTfhz
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Other improvements"
 msgstr ""
 
 #. js-lingui-id: 3PlK59
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Our onboarding process has been streamlined to let you import your calendar and emails seamlessly. You can now also configure your privacy settings directly during onboarding, allowing you to choose between sharing content with your team or keeping it hidden."
 msgstr ""
 
@@ -3914,12 +3919,12 @@ msgid "Paraguay 🇵🇾"
 msgstr ""
 
 #. js-lingui-id: cLitIC
-#: src/partner-application/partner-application-modal.tsx
+#: src/partner-application/PartnerApplicationModal.tsx
 msgid "Partner application"
 msgstr ""
 
 #. js-lingui-id: mYGIvm
-#: src/partners-marketplace/partner-profile.tsx
+#: src/partners-marketplace/PartnerProfile.tsx
 msgid "Partner facts and contact"
 msgstr ""
 
@@ -3929,7 +3934,7 @@ msgid "Partner not found — Twenty Partners"
 msgstr ""
 
 #. js-lingui-id: dRIK0d
-#: src/sections/testimonials/partner-testimonials-carousel.tsx
+#: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
 msgid "Partner testimonials"
 msgstr ""
 
@@ -3940,27 +3945,27 @@ msgid "Partners"
 msgstr ""
 
 #. js-lingui-id: 9yo8NN
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Paste the key and click Activate."
 msgstr ""
 
 #. js-lingui-id: TMErUt
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Percentage in number fields"
 msgstr ""
 
 #. js-lingui-id: v1i9+n
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Performance Improvements"
 msgstr ""
 
 #. js-lingui-id: JjOHl8
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Permissions V1"
 msgstr ""
 
 #. js-lingui-id: kJQ+gL
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Permissions V2"
 msgstr ""
 
@@ -3980,7 +3985,7 @@ msgid "Pick every category that applies."
 msgstr ""
 
 #. js-lingui-id: KEEuJt
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Pick your model, build agents that write emails or enrich records inside workflows, and expose your workspace to any MCP-compatible client."
 msgstr ""
 
@@ -4010,7 +4015,7 @@ msgid "Polish"
 msgstr ""
 
 #. js-lingui-id: /LAeug
-#: src/sections/testimonials/partner-testimonials-carousel.tsx
+#: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
 msgid "Portrait of {authorName}"
 msgstr ""
 
@@ -4025,14 +4030,9 @@ msgstr ""
 msgid "Portuguese"
 msgstr ""
 
-#. js-lingui-id: z87IFG
-#: src/partner-application/partner-application-copy.ts
-msgid "Press Enter or comma to add a skill."
-msgstr ""
-
 #. js-lingui-id: LZoO8F
-#: src/sections/testimonials/testimonials-carousel.tsx
-#: src/sections/testimonials/partner-testimonials-carousel.tsx
+#: src/sections/testimonials/TestimonialsCarousel.tsx
+#: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
 msgid "Previous testimonial"
 msgstr ""
 
@@ -4044,13 +4044,13 @@ msgstr ""
 #. js-lingui-id: aHCEmh
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
-#: src/partners-marketplace/partner-money-row.tsx
+#: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "Pricing"
 msgstr ""
 
 #. js-lingui-id: T/R+Qz
-#: src/sections/menu/menu-nav.tsx
-#: src/sections/menu/menu-drawer.tsx
+#: src/sections/menu/MenuNav.tsx
+#: src/sections/menu/MenuDrawer.tsx
 msgid "Primary"
 msgstr ""
 
@@ -4088,12 +4088,6 @@ msgstr ""
 msgid "Pro"
 msgstr ""
 
-#. js-lingui-id: K47k8R
-#: src/sections/menu/menu.data.ts
-#: src/sections/footer/footer.data.ts
-msgid "Product"
-msgstr ""
-
 #. js-lingui-id: kIGKva
 #: src/sections/three-cards/three-cards.data.ts
 msgid "Production grade quality"
@@ -4110,7 +4104,7 @@ msgid "Programs that previously needed heavy manual coordination now run end-to-
 msgstr ""
 
 #. js-lingui-id: PaHxQd
-#: src/partners-marketplace/partner-rates-panel.tsx
+#: src/partners-marketplace/PartnerRatesPanel.tsx
 msgid "Project minimum"
 msgstr ""
 
@@ -4140,27 +4134,27 @@ msgid "Qatar 🇶🇦"
 msgstr ""
 
 #. js-lingui-id: OialmJ
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Quickly identify who created a given record and what was the origin of the creation, whether it was through a CSV import, an API, or manual input."
 msgstr ""
 
 #. js-lingui-id: 3XOwjg
-#: src/partners-marketplace/partner-rates-panel.tsx
+#: src/partners-marketplace/PartnerRatesPanel.tsx
 msgid "Rates"
 msgstr ""
 
 #. js-lingui-id: zXRspj
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Rating field"
 msgstr ""
 
 #. js-lingui-id: DnWJal
-#: src/partners-marketplace/partner-profile-ctas.tsx
+#: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Reach out"
 msgstr ""
 
 #. js-lingui-id: gSQVmr
-#: src/sections/helped/helped-card.tsx
+#: src/sections/helped/HelpedCard.tsx
 msgid "Read the case"
 msgstr ""
 
@@ -4170,15 +4164,15 @@ msgid "Read/Edit/Delete permissions"
 msgstr ""
 
 #. js-lingui-id: /6qiAz
-#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
+#: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
 msgid ""
 "Ready to build\n"
 "*your own story?*"
 msgstr ""
 
 #. js-lingui-id: TqQ08B
-#: src/sections/partner-signoff/partner-signoff.tsx
-#: src/sections/case-study-detail/customers-case-study-signoff.tsx
+#: src/sections/partner-signoff/PartnerSignoff.tsx
+#: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
 msgid ""
 "Ready to grow\n"
 "*with Twenty?*"
@@ -4195,7 +4189,7 @@ msgid "Real Estate"
 msgstr ""
 
 #. js-lingui-id: CH+Ona
-#: src/sections/customers-hero/customers-hero.tsx
+#: src/sections/customers-hero/CustomersHero.tsx
 msgid "Real stories from real teams about how they shaped Twenty to fit their workflow and accelerated their growth."
 msgstr ""
 
@@ -4216,7 +4210,7 @@ msgid "Real-time is a state of mind, not a feature."
 msgstr ""
 
 #. js-lingui-id: P7gVBH
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Record is created or updated trigger"
 msgstr ""
 
@@ -4231,18 +4225,18 @@ msgid "Records"
 msgstr ""
 
 #. js-lingui-id: q45OlW
-#: src/partners-marketplace/partner-card.tsx
-#: src/partners-marketplace/filter-bar.tsx
+#: src/partners-marketplace/PartnerCard.tsx
+#: src/partners-marketplace/FilterBar.tsx
 msgid "Regions"
 msgstr ""
 
 #. js-lingui-id: GtQZI0
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Relation Fields on Record Page"
 msgstr ""
 
 #. js-lingui-id: plY6Rp
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Relations on Record Pages"
 msgstr ""
 
@@ -4252,14 +4246,14 @@ msgid "Release Notes"
 msgstr ""
 
 #. js-lingui-id: 5icoS1
-#: src/sections/releases-feed/releases-feed.tsx
+#: src/sections/releases-feed/ReleasesFeed.tsx
 #: src/sections/menu/menu.data.ts
 msgid "Releases"
 msgstr ""
 
 #. js-lingui-id: BkBq/5
 #. placeholder {0}: pill.text
-#: src/partners-marketplace/active-filter-pills.tsx
+#: src/partners-marketplace/ActiveFilterPills.tsx
 msgid "Remove {0} filter"
 msgstr ""
 
@@ -4284,17 +4278,17 @@ msgid "Reports & Dashboards"
 msgstr ""
 
 #. js-lingui-id: TD9BOQ
-#: src/app-preview/terminal/terminal-send-button.tsx
+#: src/app-preview/terminal/TerminalSendButton.tsx
 msgid "Reset conversation"
 msgstr ""
 
 #. js-lingui-id: ZYyPd8
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Reset layouts to default, pick tab icons, and connect shortcuts to specific page layouts."
 msgstr ""
 
 #. js-lingui-id: tpLAlL
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Resize navbar and side panel"
 msgstr ""
 
@@ -4319,22 +4313,22 @@ msgid "Retro 2015"
 msgstr ""
 
 #. js-lingui-id: H0dEn+
-#: src/app-preview/stage/flying-traffic-lights.tsx
+#: src/app-preview/stage/FlyingTrafficLights.tsx
 msgid "Return traffic light"
 msgstr ""
 
 #. js-lingui-id: k2x4+M
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Revamp View Options Menu"
 msgstr ""
 
 #. js-lingui-id: 7xiRJz
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Revamped Navigation Bar"
 msgstr ""
 
 #. js-lingui-id: lHXjXQ
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Revamped Side Panel"
 msgstr ""
 
@@ -4344,7 +4338,7 @@ msgid "Rich notes attached to records"
 msgstr ""
 
 #. js-lingui-id: i4ofLR
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Rich text layouts"
 msgstr ""
 
@@ -4427,17 +4421,17 @@ msgid "Salesforce migration"
 msgstr ""
 
 #. js-lingui-id: CADlRK
-#: src/sections/why-twenty-marquee/why-twenty-marquee.tsx
+#: src/sections/why-twenty-marquee/WhyTwentyMarquee.tsx
 msgid "Same CRM"
 msgstr ""
 
 #. js-lingui-id: 60i6S+
-#: src/sections/why-twenty-marquee/why-twenty-marquee.tsx
+#: src/sections/why-twenty-marquee/WhyTwentyMarquee.tsx
 msgid "Same output"
 msgstr ""
 
 #. js-lingui-id: xl2tJ9
-#: src/sections/why-twenty-marquee/why-twenty-marquee.tsx
+#: src/sections/why-twenty-marquee/WhyTwentyMarquee.tsx
 msgid "Same results"
 msgstr ""
 
@@ -4473,7 +4467,7 @@ msgid "Saved / month"
 msgstr ""
 
 #. js-lingui-id: h3C5H8
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Scaffold components, workflows, and skills directly from Claude Code, Cursor, or the CLI, and commit them back to your workspace."
 msgstr ""
 
@@ -4498,7 +4492,7 @@ msgid "Search a country…"
 msgstr ""
 
 #. js-lingui-id: +yNkue
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Search in field pickers and add-column menus makes table and layout customization faster."
 msgstr ""
 
@@ -4513,7 +4507,7 @@ msgid "Security"
 msgstr ""
 
 #. js-lingui-id: nmVU/t
-#: src/sections/customers-hero/customers-hero.tsx
+#: src/sections/customers-hero/CustomersHero.tsx
 msgid ""
 "See how teams\n"
 "build *on Twenty*"
@@ -4537,12 +4531,12 @@ msgstr ""
 
 #. js-lingui-id: 02ePaq
 #. placeholder {0}: company.name
-#: src/sections/product-feature/contacts-visual.tsx
+#: src/sections/product-feature/ContactsVisual.tsx
 msgid "Select {0}"
 msgstr ""
 
 #. js-lingui-id: wgNoIs
-#: src/sections/pricing-salesfarce/salesfarce-window.tsx
+#: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 msgid "Select all"
 msgstr ""
 
@@ -4572,7 +4566,7 @@ msgid "Self-hosted *means control*"
 msgstr ""
 
 #. js-lingui-id: zuU9UU
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Self-hosted billing"
 msgstr ""
 
@@ -4587,14 +4581,14 @@ msgid "Self-hosted means control"
 msgstr ""
 
 #. js-lingui-id: WxVgfh
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Self-hosted workspaces can now track usage more cleanly with usage-based billing support."
 msgstr ""
 
 #. js-lingui-id: GrBvv/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/enterprise-activate/enterprise-activate-hero.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 msgid "Self-hosting"
 msgstr ""
 
@@ -4604,17 +4598,17 @@ msgid "Self-hosting, now for rent!"
 msgstr ""
 
 #. js-lingui-id: uVBq8r
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Self-Onboarding"
 msgstr ""
 
 #. js-lingui-id: NaHz2o
-#: src/sections/pricing-plans/self-host-toggle.tsx
+#: src/sections/pricing-plans/SelfHostToggle.tsx
 msgid "Selfhosting"
 msgstr ""
 
 #. js-lingui-id: pi1oME
-#: src/app-preview/terminal/terminal-send-button.tsx
+#: src/app-preview/terminal/TerminalSendButton.tsx
 msgid "Send message"
 msgstr ""
 
@@ -4639,7 +4633,7 @@ msgid "Ship a product on Twenty"
 msgstr ""
 
 #. js-lingui-id: Ta0ts5
-#: src/app-preview/terminal/diff/diff-pill.tsx
+#: src/app-preview/terminal/diff/DiffPill.tsx
 msgid "Show changes"
 msgstr ""
 
@@ -4649,17 +4643,17 @@ msgid "Show less"
 msgstr ""
 
 #. js-lingui-id: RhU4bB
-#: src/partners-marketplace/filter-bar.tsx
+#: src/partners-marketplace/FilterBar.tsx
 msgid "Showing {visibleCount} of {totalCount} partners"
 msgstr ""
 
 #. js-lingui-id: I89wN/
-#: src/partners-marketplace/filter-bar.tsx
+#: src/partners-marketplace/FilterBar.tsx
 msgid "Showing all {totalCount} partners"
 msgstr ""
 
 #. js-lingui-id: 9k9PMD
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Sidebar items"
 msgstr ""
 
@@ -4674,7 +4668,7 @@ msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larg
 msgstr ""
 
 #. js-lingui-id: qTFDyz
-#: src/sections/pricing-plans/pricing-intro.tsx
+#: src/sections/pricing-plans/PricingIntro.tsx
 msgid ""
 "Simple\n"
 "*Pricing*"
@@ -4691,17 +4685,17 @@ msgid "Sitemap"
 msgstr ""
 
 #. js-lingui-id: c+cRP3
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Skeleton Loading"
 msgstr ""
 
 #. js-lingui-id: PCSkw2
-#: src/partners-marketplace/partner-profile.tsx
+#: src/partners-marketplace/PartnerProfile.tsx
 msgid "Skills"
 msgstr ""
 
 #. js-lingui-id: t6ComU
-#: src/sections/feature-cards/feature-cards.tsx
+#: src/sections/feature-cards/FeatureCards.tsx
 msgid "Skip the clunky UX that always comes with custom."
 msgstr ""
 
@@ -4716,7 +4710,7 @@ msgid "Slovenia 🇸🇮"
 msgstr ""
 
 #. js-lingui-id: 1v/aHN
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Smart ⌘K"
 msgstr ""
 
@@ -4726,17 +4720,17 @@ msgid "Smart patterns, shortcuts, and layouts make everyday tasks faster and eas
 msgstr ""
 
 #. js-lingui-id: GUqjZ0
-#: src/sections/footer/footer-bottom.tsx
+#: src/sections/footer/FooterBottom.tsx
 msgid "Social media"
 msgstr ""
 
 #. js-lingui-id: b+F/Ih
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Soft Delete"
 msgstr ""
 
 #. js-lingui-id: L58Ivq
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Soft delete feature added: Deleted records are now hidden from view but recoverable from the \"Deleted record\" option in any object options menu. No more drama!"
 msgstr ""
 
@@ -4772,7 +4766,7 @@ msgid "Some call this enterprise pricing. We prefer a CRM where API access, webh
 msgstr ""
 
 #. js-lingui-id: Lllsp+
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Some teammate changes now appear right away, so collaboration feels faster and more up to date."
 msgstr ""
 
@@ -4830,12 +4824,12 @@ msgid "Start automating at huge scale!"
 msgstr ""
 
 #. js-lingui-id: XO628f
-#: src/sections/pricing-plans/plan-card.tsx
+#: src/sections/pricing-plans/PlanCard.tsx
 msgid "Start for free"
 msgstr ""
 
 #. js-lingui-id: sBOFB0
-#: src/sections/pricing-plans/pricing-intro.tsx
+#: src/sections/pricing-plans/PricingIntro.tsx
 msgid ""
 "Start your free trial today\n"
 "without credit card."
@@ -4862,28 +4856,28 @@ msgid "Step-by-step guides and playbooks to help your team get the most out of t
 msgstr ""
 
 #. js-lingui-id: jKt86V
-#: src/sections/faq/faq.tsx
+#: src/sections/faq/Faq.tsx
 msgid "Stop fighting custom. *Start building, with Twenty*"
 msgstr ""
 
 #. js-lingui-id: UCLArd
-#: src/sections/three-cards/three-cards.tsx
-#: src/sections/three-cards/product-three-cards.tsx
+#: src/sections/three-cards/ThreeCards.tsx
+#: src/sections/three-cards/ProductThreeCards.tsx
 msgid "Stop settling for trade-offs."
 msgstr ""
 
 #. js-lingui-id: hjgBcp
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Stop Workflow Button"
 msgstr ""
 
 #. js-lingui-id: 3QIOGT
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Sub-field Filtering"
 msgstr ""
 
 #. js-lingui-id: eVPr22
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Sub-field filtering is now supported for currency, address, name, email, link, phone, and actor fields. For example, you can filter by the amount in a currency without needing the full field."
 msgstr ""
 
@@ -4974,18 +4968,18 @@ msgid "Tajikistan 🇹🇯"
 msgstr ""
 
 #. js-lingui-id: jYsF4G
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Take control of your running workflows with the new Stop Workflow button. When a workflow is in progress, you can now immediately halt its execution, giving you the flexibility to cancel operations that are no longer needed or troubleshoot issues in real-time."
 msgstr ""
 
 #. js-lingui-id: JAKtcG
-#: src/sections/product-hero/product-hero.tsx
-#: src/sections/home-hero/home-hero.tsx
+#: src/sections/product-hero/ProductHero.tsx
+#: src/sections/home-hero/HomeHero.tsx
 #: src/sections/footer/footer.data.ts
-#: src/sections/faq/faq.tsx
-#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
-#: src/sections/case-study-detail/customers-case-study-signoff.tsx
-#: src/contact-cal/contact-cal-modal.tsx
+#: src/sections/faq/Faq.tsx
+#: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
+#: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
+#: src/contact-cal/ContactCalModal.tsx
 msgid "Talk to us"
 msgstr ""
 
@@ -5010,7 +5004,7 @@ msgid "Team up with a Twenty expert"
 msgstr ""
 
 #. js-lingui-id: vsdUaL
-#: src/sections/releases-hero/releases-hero.tsx
+#: src/sections/releases-hero/ReleasesHero.tsx
 msgid "Technical notes"
 msgstr ""
 
@@ -5020,7 +5014,7 @@ msgid "Technical skills"
 msgstr ""
 
 #. js-lingui-id: Hevu8X
-#: src/app-preview/terminal/terminal-toggle.tsx
+#: src/app-preview/terminal/TerminalToggle.tsx
 msgid "Terminal mode"
 msgstr ""
 
@@ -5040,7 +5034,7 @@ msgid "Terms of Service | Twenty"
 msgstr ""
 
 #. js-lingui-id: VUZDlr
-#: src/sections/testimonials/testimonials-carousel.tsx
+#: src/sections/testimonials/TestimonialsCarousel.tsx
 msgid "Testimonials"
 msgstr ""
 
@@ -5077,12 +5071,12 @@ msgid "The #1 Open Source CRM for modern teams. Modular, scalable, and built to 
 msgstr ""
 
 #. js-lingui-id: K1T7Mn
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "The <0>JSON Field</0> allows for the storage of complex, structured data within a single field, thus expanding the capabilities for data customisation and integration. <1>Example Use Case</1>: Store configurable data for a product, such as feature flags or customization options, directly within a CRM record."
 msgstr ""
 
 #. js-lingui-id: KzqOXm
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "The <0>Multi-Select Field</0> allows for tagging a record with multiple attributes, providing a flexible way to classify and filter data. <1>Example Use Case</1>: Tag a company record with multiple industries such as \"Retail,\" \"Technology,\" and \"Finance,\" enabling more nuanced segmentation and analysis."
 msgstr ""
 
@@ -5143,7 +5137,7 @@ msgid "The full rollout landed in July 2025. Since then, Nine Dots built a Smart
 msgstr ""
 
 #. js-lingui-id: SW9clW
-#: src/sections/why-twenty-hero/why-twenty-hero.tsx
+#: src/sections/why-twenty-hero/WhyTwentyHero.tsx
 msgid "The future of CRM is built, *not bought.*"
 msgstr ""
 
@@ -5163,12 +5157,12 @@ msgid "The key decision was not to build everything from scratch. Twenty covers 
 msgstr ""
 
 #. js-lingui-id: nf1NnD
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "The new <0>Address Field</0> Type enables entry of a full address in one field, while structurally storing each address part - such as street name and number - in separate subfields."
 msgstr ""
 
 #. js-lingui-id: tADBQB
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "The new Rating field represents a numeric value from zero to five, it can be useful for various use-cases such as scoring leads."
 msgstr ""
 
@@ -5177,18 +5171,13 @@ msgstr ""
 msgid "The opportunity"
 msgstr ""
 
-#. js-lingui-id: 80f4ed
-#: src/sections/menu/menu.data.ts
-msgid "The principles and product philosophy behind the open source CRM."
-msgstr ""
-
 #. js-lingui-id: 2NJdyz
-#: src/sections/problem/problem.tsx
+#: src/sections/problem/Problem.tsx
 msgid "The Problem."
 msgstr ""
 
 #. js-lingui-id: GTy93s
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "The record page now features a clearer layout with increased space for content"
 msgstr ""
 
@@ -5218,12 +5207,12 @@ msgid "The right foundation"
 msgstr ""
 
 #. js-lingui-id: g8h2v+
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "The search feature now includes ranking scores. This helps you find the most relevant results faster."
 msgstr ""
 
 #. js-lingui-id: 9CCRtB
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "The search node now lets you customize the result limit above 1, enabling you to retrieve multiple records in a single search operation. This enhancement works seamlessly with the iterator node for processing search results."
 msgstr ""
 
@@ -5238,7 +5227,7 @@ msgid "The shift"
 msgstr ""
 
 #. js-lingui-id: iW6MjB
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "The side panel now opens next to your content rather than above it, giving you a better overview while configuring workflows or viewing record details. This new layout is especially handy for workflows and the upcoming dashboards feature."
 msgstr ""
 
@@ -5247,23 +5236,18 @@ msgstr ""
 msgid "The situation"
 msgstr ""
 
-#. js-lingui-id: gXGp3Q
-#: src/sections/menu/menu.data.ts
-msgid "The story behind Twenty"
-msgstr ""
-
 #. js-lingui-id: axo4rg
 #: src/platform/routing/static-website-routes.ts
 msgid "The terms governing your use of Twenty and its open source CRM services."
 msgstr ""
 
 #. js-lingui-id: xCAT8U
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "The timeline on every record page has been significantly improved. It now provides detailed updates for: Record creations Field updates Received emails Created calendar events"
 msgstr ""
 
 #. js-lingui-id: u0uFxg
-#: src/sections/testimonials/testimonials-carousel.tsx
+#: src/sections/testimonials/TestimonialsCarousel.tsx
 msgid "They are the real sales"
 msgstr ""
 
@@ -5288,12 +5272,12 @@ msgid "They evaluated Salesforce, Zoho, Pipedrive, and SuiteCRM. Each came with 
 msgstr ""
 
 #. js-lingui-id: AUV+TY
-#: src/app-preview/terminal/thinking-indicator.tsx
+#: src/app-preview/terminal/ThinkingIndicator.tsx
 msgid "Thinking"
 msgstr ""
 
 #. js-lingui-id: 8gek0+
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "This feature gives you the ability to merge two records into one. This combines their information and keeps linked data, helping you remove duplicates and keep records accurate."
 msgstr ""
 
@@ -5303,12 +5287,12 @@ msgid "Timor-Leste 🇹🇱"
 msgstr ""
 
 #. js-lingui-id: WwTFtc
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "To enhance privacy, you can now add specific email addresses to a blocklist within the \"Accounts\" settings. This feature prevents sensitive content from being synced to the CRM when corresponding with certain individuals. This can be particularly useful when managing sensitive deals."
 msgstr ""
 
 #. js-lingui-id: ijf9QM
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "To maintain the simplicity of Twenty, we are introducing \"Advanced Settings.\" This option consolidates all settings intended for advanced use cases, often preferred by developers, such as API and function settings or security settings."
 msgstr ""
 
@@ -5327,6 +5311,11 @@ msgstr ""
 msgid "Tool integration"
 msgstr ""
 
+#. js-lingui-id: H9QaNY
+#: src/partner-application/partner-application-copy.ts
+msgid "Tools, technologies and industries you specialize in. Press Enter or comma to add."
+msgstr ""
+
 #. js-lingui-id: xv7HSr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "total per month with fixed cost"
@@ -5343,7 +5332,7 @@ msgid "Track every release with changelogs, highlights and demos of the newest f
 msgstr ""
 
 #. js-lingui-id: 6vHPh9
-#: src/sections/product-hero/product-hero.tsx
+#: src/sections/product-hero/ProductHero.tsx
 msgid "Track relationships, manage pipelines, and take action quickly with an intuitive CRM that helps your team move faster from day one with confidence."
 msgstr ""
 
@@ -5358,7 +5347,7 @@ msgid "Training, Adoption & Support"
 msgstr ""
 
 #. js-lingui-id: VhVAzf
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Translation in 30+ Languages"
 msgstr ""
 
@@ -5373,32 +5362,32 @@ msgid "Trust Center"
 msgstr ""
 
 #. js-lingui-id: HlusPQ
-#: src/sections/pricing-salesfarce/pricing-salesfarce.tsx
+#: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 msgid "Trust the n°1 CRM, *or not!*"
 msgstr ""
 
 #. js-lingui-id: KtyN0b
-#: src/sections/trusted-by/trusted-by.tsx
+#: src/sections/trusted-by/TrustedBy.tsx
 msgid "trusted by"
 msgstr ""
 
 #. js-lingui-id: QZdPWP
-#: src/sections/trusted-by/trusted-by.tsx
+#: src/sections/trusted-by/TrustedBy.tsx
 msgid "Trusted by leading organizations"
 msgstr ""
 
 #. js-lingui-id: eslLQF
-#: src/sections/product-demo/product-demo.tsx
+#: src/sections/product-demo/ProductDemo.tsx
 msgid "Try it live"
 msgstr ""
 
 #. js-lingui-id: qhmtws
-#: src/partners-marketplace/empty-state.tsx
+#: src/partners-marketplace/EmptyState.tsx
 msgid "Try removing some filters or browse all partners."
 msgstr ""
 
 #. js-lingui-id: E/hGy3
-#: src/sections/product-demo/product-demo.tsx
+#: src/sections/product-demo/ProductDemo.tsx
 msgid "Try Twenty Cloud"
 msgstr ""
 
@@ -5485,7 +5474,7 @@ msgid "Twenty gave us the flexibility to model the entire interview lifecycle as
 msgstr ""
 
 #. js-lingui-id: 0qyMhk
-#: src/sections/home-hero/home-hero.tsx
+#: src/sections/home-hero/HomeHero.tsx
 msgid "Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves."
 msgstr ""
 
@@ -5548,12 +5537,12 @@ msgid "Twenty user guide preview"
 msgstr ""
 
 #. js-lingui-id: KsFvUt
-#: src/partners-marketplace/marketplace-header.tsx
+#: src/partners-marketplace/MarketplaceHeader.tsx
 msgid "Twenty's certified partners help teams migrate, customise, and operate the open source CRM across regions, languages, and deployment models. Browse profiles and book a call."
 msgstr ""
 
 #. js-lingui-id: tuvLv1
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Two Factor Authentication"
 msgstr ""
 
@@ -5568,7 +5557,7 @@ msgid "Type of team *"
 msgstr ""
 
 #. js-lingui-id: P+R1Lc
-#: src/partners-marketplace/partner-rates-panel.tsx
+#: src/partners-marketplace/PartnerRatesPanel.tsx
 msgid "Typical project"
 msgstr ""
 
@@ -5643,7 +5632,7 @@ msgid "Unlimited"
 msgstr ""
 
 #. js-lingui-id: q7vKOJ
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Unlisted Views"
 msgstr ""
 
@@ -5653,7 +5642,7 @@ msgid "Up to 5 workspaces"
 msgstr ""
 
 #. js-lingui-id: KQsreu
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Updated by"
 msgstr ""
 
@@ -5663,7 +5652,7 @@ msgid "Upfront consulting, scoping, strategy."
 msgstr ""
 
 #. js-lingui-id: WLb3m4
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Upgraded Search"
 msgstr ""
 
@@ -5699,7 +5688,7 @@ msgid "User Guide"
 msgstr ""
 
 #. js-lingui-id: 9iX1i3
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "User impersonation"
 msgstr ""
 
@@ -5734,7 +5723,7 @@ msgid "Venezuela 🇻🇪"
 msgstr ""
 
 #. js-lingui-id: fDWr8s
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Version control"
 msgstr ""
 
@@ -5750,22 +5739,22 @@ msgstr ""
 
 #. js-lingui-id: BRBSny
 #. placeholder {0}: partner.name
-#: src/partners-marketplace/partner-card.tsx
+#: src/partners-marketplace/PartnerCard.tsx
 msgid "View {0} on LinkedIn"
 msgstr ""
 
 #. js-lingui-id: V4nZs/
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "View Groups"
 msgstr ""
 
 #. js-lingui-id: ITdNGt
-#: src/partners-marketplace/partner-profile-ctas.tsx
+#: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "View on LinkedIn"
 msgstr ""
 
 #. js-lingui-id: 73lp8c
-#: src/partners-marketplace/partner-card.tsx
+#: src/partners-marketplace/PartnerCard.tsx
 msgid "View profile"
 msgstr ""
 
@@ -5831,7 +5820,7 @@ msgid "W3villa used Twenty as a production-grade framework for the data model, p
 msgstr ""
 
 #. js-lingui-id: k1Pevc
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "We are pleased to reopen the cloud subscription to everyone. No more waiting!"
 msgstr ""
 
@@ -5851,48 +5840,48 @@ msgid "We didn't want to patch over the problem. We wanted to build something in
 msgstr ""
 
 #. js-lingui-id: GVxbgf
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "We have improved app performance, shaving off over 500ms on each page."
 msgstr ""
 
 #. js-lingui-id: 6C4xTI
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "We have significantly enhanced our search performance, making it feel instantaneous when searching for records such as people, companies, or tasks."
 msgstr ""
 
 #. js-lingui-id: l7iJRt
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "We started a major ⌘K revamp that now understands the context to display appropriate actions. For example, on a record page, you can add the record as a favorite, or if you select multiple records on an index, you can export them as a CSV."
 msgstr ""
 
 #. js-lingui-id: d5CWI6
-#: src/sections/partner-hero/partner-hero.tsx
+#: src/sections/partner-hero/PartnerHero.tsx
 msgid "We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us."
 msgstr ""
 
 #. js-lingui-id: DFlq8J
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "We’ve added an \"any field search\" filter that lets you search across all fields at once. For example, it can allow you to locate a customer by their phone number, whether it's stored in the \"Mobile,\" \"Office,\" or \"Direct Line\" field."
 msgstr ""
 
 #. js-lingui-id: kenNyf
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "We’ve added IMAP support to let you connect email accounts for receiving messages. You can also set up SMTP to send emails and CalDAV to sync calendars."
 msgstr ""
 
 #. js-lingui-id: 5CT1rV
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "We’ve cut key load and interaction times by over 3,000ms, which means pages now load 2x faster!"
 msgstr ""
 
 #. js-lingui-id: xBnjMX
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "We've introduced advanced settings for email and calendar management: <0>Auto-Create Contact Options:</0> Choose when an email interaction should automatically create a contact. Options include: People I've sent emails to and received emails from People I've sent emails to Don't auto create contact <1>Email Exclusions:</1> Ability to exclude non-professional emails (e.g., Gmail, Outlook) and team emails (e.g., support@, team@) from being synced to the CRM. <2>Calendar Events:</2> Auto-contact creation settings are now available for calendar events as well."
 msgstr ""
 
 #. js-lingui-id: v1kQyJ
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Webhooks"
 msgstr ""
 
@@ -5902,18 +5891,18 @@ msgid "Webhooks (Change Data Capture)"
 msgstr ""
 
 #. js-lingui-id: K4G86X
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Webhooks filter"
 msgstr ""
 
 #. js-lingui-id: FaPmsq
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Webhooks multi-object filtering"
 msgstr ""
 
-#. js-lingui-id: hgDePr
+#. js-lingui-id: 7kkV4O
 #: src/partner-application/partner-application-copy.ts
-msgid "Website or GitHub"
+msgid "Website or GitHub *"
 msgstr ""
 
 #. js-lingui-id: Lx0cVD
@@ -5948,7 +5937,7 @@ msgid "What is planned is significant. NetZero has a data lake, online forms, an
 msgstr ""
 
 #. js-lingui-id: kRfFDB
-#: src/partners-marketplace/partner-profile.tsx
+#: src/partners-marketplace/PartnerProfile.tsx
 msgid "What they do"
 msgstr ""
 
@@ -5973,7 +5962,7 @@ msgid "When a student registers via QR at a campus event, the system assigns a p
 msgstr ""
 
 #. js-lingui-id: chISDP
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "When importing records, you can now import relations between records. For example, you can import a CSV file that includes a column for related records, such as linking contacts to companies or tasks to projects."
 msgstr ""
 
@@ -6015,7 +6004,7 @@ msgid "When your CRM is the product: W3Grads on Twenty | W3villa Technologies"
 msgstr ""
 
 #. js-lingui-id: 2O07UN
-#: src/partners-marketplace/partner-profile.tsx
+#: src/partners-marketplace/PartnerProfile.tsx
 msgid "Where & how"
 msgstr ""
 
@@ -6029,11 +6018,6 @@ msgstr ""
 msgid "Why"
 msgstr ""
 
-#. js-lingui-id: mrxgOV
-#: src/sections/menu/menu.data.ts
-msgid "Why teams choose Twenty"
-msgstr ""
-
 #. js-lingui-id: 4sOVu+
 #: src/sections/footer/footer.data.ts
 msgid "Why Twenty"
@@ -6044,23 +6028,18 @@ msgstr ""
 msgid "Why Twenty — The Open Source CRM Built to Be Customised"
 msgstr ""
 
-#. js-lingui-id: tetjz4
-#: src/sections/menu/menu.data.ts
-msgid "Why Twenty illustration"
-msgstr ""
-
 #. js-lingui-id: 7KJZ0z
-#: src/app-preview/stage/traffic-lights.tsx
+#: src/app-preview/stage/TrafficLights.tsx
 msgid "Window controls"
 msgstr ""
 
 #. js-lingui-id: V+BOYT
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "With Google Calendar integration, you can track all your team's events with a company or person in your CRM. Choose the information level visible to your teammates for better control."
 msgstr ""
 
 #. js-lingui-id: edwOmb
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "With the <0>Datetime Field</0>, you can effectively track events, deadlines, and activities with enhanced accuracy, improving time management and scheduling. <1>Example Use Case</1>: Precisely track and set reminders for project milestones and deadlines."
 msgstr ""
 
@@ -6075,43 +6054,43 @@ msgid "Work email *"
 msgstr ""
 
 #. js-lingui-id: 5VGHpF
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflow branches"
 msgstr ""
 
 #. js-lingui-id: 9MLcn+
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflow branches allow workflows to split paths, enabling conditional logic and multiple outcome flows in automation."
 msgstr ""
 
 #. js-lingui-id: XYIks/
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflow Bulk Select"
 msgstr ""
 
 #. js-lingui-id: gDMfQI
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflow Filters"
 msgstr ""
 
 #. js-lingui-id: aNVMLK
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflow improvements"
 msgstr ""
 
 #. js-lingui-id: EnPi2W
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflow Iterator Node"
 msgstr ""
 
 #. js-lingui-id: jN2u/p
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflow Search Node Limit"
 msgstr ""
 
 #. js-lingui-id: woYYQq
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflows"
 msgstr ""
 
@@ -6138,12 +6117,12 @@ msgstr ""
 #. js-lingui-id: p3ZD6C
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
-#: src/sections/case-study-detail/case-study-article-nav.tsx
+#: src/sections/case-study-detail/CaseStudyArticleNav.tsx
 msgid "X (opens in new tab)"
 msgstr ""
 
 #. js-lingui-id: zkWmBh
-#: src/sections/pricing-plans/billing-toggle.tsx
+#: src/sections/pricing-plans/BillingToggle.tsx
 msgid "Yearly"
 msgstr ""
 
@@ -6194,7 +6173,7 @@ msgstr ""
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-content.tsx
+#: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "Yes"
 msgstr ""
 
@@ -6219,102 +6198,102 @@ msgid "Yes. Twenty is the #1 Open Source CRM on GitHub. You can self-host to ful
 msgstr ""
 
 #. js-lingui-id: Q3GDrw
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now add your views to favorites for quick access and organize your favorites into folders for better management."
 msgstr ""
 
 #. js-lingui-id: wvm+7M
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now control which fields a role can view or edit. This adds more granular access control on top of existing object-level permissions."
 msgstr ""
 
 #. js-lingui-id: Wg/o59
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now create number fields that display a percentage instead of a regular number."
 msgstr ""
 
 #. js-lingui-id: BAWUUs
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now create personal views that stay out of the shared Workspace section and appear instead under a separate <0>My unlisted views</0> section in the view picker. These unlisted views are only listed for their creator, but can still be opened by teammates via direct link."
 msgstr ""
 
 #. js-lingui-id: nbc7CM
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now delete up to 10,000 records at once. (For when you want to Marie Kondo your database! 🧹)"
 msgstr ""
 
 #. js-lingui-id: dCaNPC
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now edit one-to-many relations directly from the \"many side\". This means you can assign people to a company directly from the company list view, instead of having to navigate to each individual person's profile to assign them a company."
 msgstr ""
 
 #. js-lingui-id: HX2309
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now filter an object (People, Companies, Opportunities, etc.) using any multiselect field."
 msgstr ""
 
 #. js-lingui-id: /eqpqH
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now filter multiple actions simultaneously with a single webhook. For example, you can create a webhook that triggers only when a person or company is updated or created."
 msgstr ""
 
 #. js-lingui-id: HeaQGk
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now impersonate a workspace user as an admin. This allows you to see the workspace as that user would, which is useful for troubleshooting issues or understanding user experience."
 msgstr ""
 
 #. js-lingui-id: l2z97k
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now link your Microsoft account to easily manage your messages and events right within your workspace."
 msgstr ""
 
 #. js-lingui-id: QN6ytb
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now loop through items in your workflows using the new iterator node. This powerful feature allows you to process multiple records sequentially, performing actions on each item in a collection."
 msgstr ""
 
 #. js-lingui-id: pYoGew
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now navigate from one object to another directly from the record detail page."
 msgstr ""
 
 #. js-lingui-id: mpOPSr
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now preview file attachments without downloading them."
 msgstr ""
 
 #. js-lingui-id: PoxYsC
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now rename a view and change its type between kanban or table directly from the view options menu located to the right of the filter and sort buttons."
 msgstr ""
 
 #. js-lingui-id: S4LCu8
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now resize the side panel and navigation menu to view content more easily. This is especially useful on record pages with long content."
 msgstr ""
 
 #. js-lingui-id: uS4RtA
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now run workflows on many records at once. Previously, manual workflows could only be triggered one record at a time. This change improves productivity for bulk operations. With the ability to trigger workflows on many records, you can now: Send bulk emails to selected contacts Update many records with the same workflow logic Process batches of data more efficiently"
 msgstr ""
 
 #. js-lingui-id: px+QAM
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now see who last updated a record"
 msgstr ""
 
 #. js-lingui-id: OVoVQg
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now switch between workspaces by clicking your workspace name at the top left of the screen. This feature will only appear if you have been invited to join another workspace."
 msgstr ""
 
 #. js-lingui-id: eheMXY
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now trigger workflows when a record is created or updated."
 msgstr ""
 
 #. js-lingui-id: XEEpNj
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now visualize your records in a monthly calendar view. This new view type makes it easy to track time-based data like events, deadlines, and scheduled activities directly within any object."
 msgstr ""
 
@@ -6324,22 +6303,22 @@ msgid "You don't buy your deployment pipeline off the shelf. You don't rent your
 msgstr ""
 
 #. js-lingui-id: AUzqeZ
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "You now have the ability to duplicate nodes, change node types, and use a streamlined filter design in your workflows."
 msgstr ""
 
 #. js-lingui-id: SfJVcK
-#: src/sections/enterprise-activate/enterprise-activate-hero.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 msgid "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
 msgstr ""
 
 #. js-lingui-id: krHgj1
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Your enterprise key"
 msgstr ""
 
 #. js-lingui-id: +dxjCu
-#: src/sections/enterprise-activate/enterprise-activate-client.tsx
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Your enterprise license has been activated successfully."
 msgstr ""
 
@@ -6354,7 +6333,7 @@ msgid "Your network, fully mapped."
 msgstr ""
 
 #. js-lingui-id: sgod9b
-#: src/platform/releases/release-notes.tsx
+#: src/platform/releases/ReleaseNotes.tsx
 msgid "Your workspace is backed by a git repo, so you can branch, review in pull requests, and roll back changes the same way you ship code."
 msgstr ""
 
@@ -6379,6 +6358,6 @@ msgid "Zimbabwe 🇿🇼"
 msgstr ""
 
 #. js-lingui-id: ACjxWW
-#: src/app-preview/stage/traffic-lights.tsx
+#: src/app-preview/stage/TrafficLights.tsx
 msgid "Zoom"
 msgstr ""
