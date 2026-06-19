@@ -1,3 +1,4 @@
+import { isArray, isObject, isString } from '@sniptt/guards';
 import { type Request } from 'express';
 import { type IngressTriggerSettings } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,22 +13,19 @@ const FORBIDDEN_PATH_SEGMENTS = new Set([
 ]);
 
 const asRecord = (value: unknown): Record<string, unknown> | undefined =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
+  isObject(value) && !isArray(value)
     ? (value as Record<string, unknown>)
     : undefined;
 
+const asNonEmptyString = (value: unknown): string | undefined =>
+  isString(value) && value.length > 0 ? value : undefined;
+
 const asString = (value: unknown): string | undefined => {
-  if (typeof value === 'string' && value.length > 0) {
-    return value;
+  if (isArray(value)) {
+    return asNonEmptyString(value[0]);
   }
 
-  if (Array.isArray(value)) {
-    const first = value[0];
-
-    return typeof first === 'string' && first.length > 0 ? first : undefined;
-  }
-
-  return undefined;
+  return asNonEmptyString(value);
 };
 
 const getResolverRoot = (
