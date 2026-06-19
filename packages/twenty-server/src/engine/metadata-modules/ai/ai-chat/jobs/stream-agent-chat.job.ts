@@ -234,6 +234,7 @@ export class StreamAgentChatJob {
               messages: data.messages,
               browsingContext: data.browsingContext,
               modelId: data.modelId,
+              agentId: data.agentId,
               onCodeExecutionUpdate,
               onCompaction,
               abortSignal,

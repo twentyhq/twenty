@@ -40,6 +40,7 @@ type StreamAgentChatOptions = {
   text: string;
   browsingContext: BrowsingContextType | null;
   modelId?: string;
+  agentId?: string;
   messageId?: string;
   fileAttachments?: AiChatFileAttachment[];
 };
@@ -68,6 +69,7 @@ export class AgentChatStreamingService {
     browsingContext,
     modelId,
     messageId,
+    agentId,
     fileAttachments,
   }: StreamAgentChatOptions): Promise<{ streamId: string; messageId: string }> {
     const thread = await this.threadRepository.findOne(workspace.id, {
@@ -97,6 +99,7 @@ export class AgentChatStreamingService {
     const savedUserMessage = await this.agentChatService.addMessage({
       threadId,
       id: messageId,
+      agentId,
       uiMessage: {
         role: AgentMessageRole.USER,
         parts: userMessageParts,
@@ -129,6 +132,7 @@ export class AgentChatStreamingService {
         browsingContext,
         modelId,
         lastUserMessageText: text,
+        agentId,
         lastUserMessageParts: userMessageParts,
         hasTitle: !!thread.title,
         conversationSizeTokens: thread.conversationSize,

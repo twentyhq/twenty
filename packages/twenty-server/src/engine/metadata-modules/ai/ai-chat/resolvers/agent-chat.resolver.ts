@@ -131,6 +131,8 @@ export class AgentChatResolver {
     browsingContext: BrowsingContextType | null,
     @Args('modelId', { type: () => String, nullable: true })
     modelId: string | undefined,
+    @Args('agentId', { type: () => UUIDScalarType, nullable: true })
+    agentId: string | undefined,
     @Args('fileAttachments', {
       type: () => [FileAttachmentInput],
       nullable: true,
@@ -197,6 +199,7 @@ export class AgentChatResolver {
       threadId,
       browsingContext: browsingContext ?? null,
       modelId,
+      agentId,
       userWorkspaceId,
       workspace,
       text,
