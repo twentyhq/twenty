@@ -1,0 +1,23 @@
+packages/twenty-front/src/modules/command-menu-item/engine-command/record/components/PermanentlyDeleteRecordsCommand.tsx
+  s_35892942d7e0a6::t_dc9fcd72524745 1,3-5
+packages/twenty-front/src/modules/command-menu-item/engine-command/record/components/BaseDestroyRecordsCommand.tsx
+  s_35892942d7e0a6::t_9670dd7ed8f80a 1-113
+packages/twenty-front/src/modules/command-menu-item/engine-command/record/components/DestroyRecordsCommand.tsx
+  s_35892942d7e0a6::t_0e73aeb5f44199 1,3-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "0a430cad864b9c0b15ad5646d13a64c6f4fe6596",
+  "prompts": {},
+  "sessions": {
+    "s_35892942d7e0a6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa469098-23d2-4e87-9b82-23f0c53dd368",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "RISHAV DEWAN <rishavdewan10@gmail.com>"
+    }
+  }
+}
