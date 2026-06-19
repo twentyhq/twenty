@@ -7,42 +7,54 @@ import {
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
-const readRelativeTimestamp = (timestamp: unknown): number | undefined => {
-  const relativeTimestamp = asRecord(timestamp)?.relative;
+type TranscriptRecord = NonNullable<ReturnType<typeof asRecord>>;
+
+const isTranscriptRecord = (
+  candidate: TranscriptRecord | undefined,
+): candidate is TranscriptRecord => !isUndefined(candidate);
+
+const readRelativeTimestamp = (
+  timestamp: TranscriptRecord | undefined,
+): number | undefined => {
+  const relativeTimestamp = timestamp?.relative;
 
   return isNumber(relativeTimestamp) && Number.isFinite(relativeTimestamp)
     ? relativeTimestamp
     : undefined;
 };
 
-const readTranscriptWord = (word: unknown): TranscriptWord | undefined => {
-  const candidate = asRecord(word);
-
-  if (isUndefined(candidate) || !isNonEmptyString(candidate.text)) {
+const readTranscriptWord = (
+  candidate: TranscriptRecord,
+): TranscriptWord | undefined => {
+  if (!isNonEmptyString(candidate.text)) {
     return undefined;
   }
 
   return {
     text: candidate.text.trim(),
-    startSeconds: readRelativeTimestamp(candidate.start_timestamp),
-    endSeconds: readRelativeTimestamp(candidate.end_timestamp),
+    startSeconds: readRelativeTimestamp(asRecord(candidate.start_timestamp)),
+    endSeconds: readRelativeTimestamp(asRecord(candidate.end_timestamp)),
   };
 };
 
-const readSpeakerName = (participant: unknown): string => {
-  const name = asRecord(participant)?.name;
+const readSpeakerName = (
+  participant: TranscriptRecord | undefined,
+): string => {
+  const name = participant?.name;
 
   return isNonEmptyString(name) ? name.trim() : 'Unknown speaker';
 };
 
-const readTranscriptEntry = (entry: unknown): TranscriptEntry | undefined => {
-  const candidate = asRecord(entry);
-
-  if (isUndefined(candidate) || !isArray(candidate.words)) {
+const readTranscriptEntry = (
+  candidate: TranscriptRecord,
+): TranscriptEntry | undefined => {
+  if (!isArray(candidate.words)) {
     return undefined;
   }
 
   const words = candidate.words
+    .map(asRecord)
+    .filter(isTranscriptRecord)
     .map(readTranscriptWord)
     .filter((word): word is TranscriptWord => !isUndefined(word));
 
@@ -51,7 +63,7 @@ const readTranscriptEntry = (entry: unknown): TranscriptEntry | undefined => {
   }
 
   return {
-    speakerName: readSpeakerName(candidate.participant),
+    speakerName: readSpeakerName(asRecord(candidate.participant)),
     startSeconds: words[0].startSeconds,
     endSeconds: words[words.length - 1].endSeconds,
     text: words.map((word) => word.text).join(' '),
@@ -68,6 +80,8 @@ export const parseTranscriptEntries = (
   }
 
   return transcript
+    .map(asRecord)
+    .filter(isTranscriptRecord)
     .map(readTranscriptEntry)
     .filter((entry): entry is TranscriptEntry => !isUndefined(entry));
 };

@@ -5,7 +5,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 type CalendarEventRecordingState = {
   transcript: unknown;
   videoFile: CalendarEventRecordingVideoFile | undefined;
-  loading: boolean;
+  isCalendarEventRecordingQueryLoading: boolean;
   errorMessage: string | undefined;
 };
 
@@ -22,7 +22,12 @@ type CalendarEventRecordingCallRecordingNode = {
   video: CalendarEventRecordingVideoFile[] | null;
 };
 
+type CalendarEventRecordingCallRecordingEdge = {
+  node: CalendarEventRecordingCallRecordingNode;
+};
+
 const CALENDAR_EVENT_RECORDING_LOOKUP_LIMIT = 10;
+const CALENDAR_EVENT_RECORDING_ERROR_MESSAGE = 'Please try again later.';
 
 export const useCalendarEventRecording = (
   calendarEventId: string | undefined,
@@ -30,7 +35,7 @@ export const useCalendarEventRecording = (
   const [state, setState] = useState<CalendarEventRecordingState>({
     transcript: undefined,
     videoFile: undefined,
-    loading: !isUndefined(calendarEventId),
+    isCalendarEventRecordingQueryLoading: !isUndefined(calendarEventId),
     errorMessage: undefined,
   });
 
@@ -39,7 +44,7 @@ export const useCalendarEventRecording = (
       setState({
         transcript: undefined,
         videoFile: undefined,
-        loading: false,
+        isCalendarEventRecordingQueryLoading: false,
         errorMessage: undefined,
       });
       return;
@@ -51,7 +56,7 @@ export const useCalendarEventRecording = (
       setState({
         transcript: undefined,
         videoFile: undefined,
-        loading: true,
+        isCalendarEventRecordingQueryLoading: true,
         errorMessage: undefined,
       });
 
@@ -83,9 +88,11 @@ export const useCalendarEventRecording = (
           return;
         }
 
-        const callRecordingNodes = (queryResult.callRecordings?.edges ?? []).map(
-          (edge) => edge.node,
-        ) as CalendarEventRecordingCallRecordingNode[];
+        const callRecordingEdges = (queryResult.callRecordings?.edges ??
+          []) as CalendarEventRecordingCallRecordingEdge[];
+        const callRecordingNodes = callRecordingEdges.map(
+          (callRecordingEdge) => callRecordingEdge.node,
+        );
         const callRecordingNode = selectCalendarEventRecording(
           callRecordingNodes,
         );
@@ -95,10 +102,10 @@ export const useCalendarEventRecording = (
           videoFile: isUndefined(callRecordingNode)
             ? undefined
             : getVideoFile(callRecordingNode),
-          loading: false,
+          isCalendarEventRecordingQueryLoading: false,
           errorMessage: undefined,
         });
-      } catch (fetchError) {
+      } catch {
         if (cancelled) {
           return;
         }
@@ -106,11 +113,8 @@ export const useCalendarEventRecording = (
         setState({
           transcript: undefined,
           videoFile: undefined,
-          loading: false,
-          errorMessage:
-            fetchError instanceof Error
-              ? fetchError.message
-              : 'Failed to load the recording',
+          isCalendarEventRecordingQueryLoading: false,
+          errorMessage: CALENDAR_EVENT_RECORDING_ERROR_MESSAGE,
         });
       }
     };

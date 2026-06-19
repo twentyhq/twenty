@@ -6,6 +6,7 @@ import {
   type TranscriptEntry,
   type TranscriptWord,
 } from 'src/front-components/types/transcript-entry.type';
+import { findActiveTranscriptEntryIndex } from 'src/front-components/utils/find-active-transcript-entry-index.util';
 import { formatTranscriptTimestamp } from 'src/front-components/utils/format-transcript-timestamp.util';
 
 const StyledTranscriptContainer = styled.div`
@@ -69,7 +70,10 @@ export const TranscriptEntryList = ({
   entries,
   currentTimeSeconds,
 }: TranscriptEntryListProps) => {
-  const activeEntryIndex = findActiveEntryIndex(entries, currentTimeSeconds);
+  const activeEntryIndex = findActiveTranscriptEntryIndex(
+    entries,
+    currentTimeSeconds,
+  );
 
   return (
     <StyledTranscriptContainer>
@@ -101,28 +105,6 @@ export const TranscriptEntryList = ({
       ))}
     </StyledTranscriptContainer>
   );
-};
-
-const findActiveEntryIndex = (
-  entries: TranscriptEntry[],
-  currentTimeSeconds: number,
-): number => {
-  for (let entryIndex = entries.length - 1; entryIndex >= 0; entryIndex--) {
-    const entry = entries[entryIndex];
-
-    if (isUndefined(entry.startSeconds)) {
-      continue;
-    }
-
-    if (
-      currentTimeSeconds >= entry.startSeconds &&
-      (isUndefined(entry.endSeconds) || currentTimeSeconds <= entry.endSeconds)
-    ) {
-      return entryIndex;
-    }
-  }
-
-  return -1;
 };
 
 const isWordSpoken = ({
