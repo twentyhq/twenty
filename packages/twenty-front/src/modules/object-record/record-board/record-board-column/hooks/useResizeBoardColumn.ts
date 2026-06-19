@@ -10,6 +10,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { clampRecordBoardColumnWidth } from '@/object-record/record-board/utils/clampRecordBoardColumnWidth';
 import { setRecordBoardColumnWidthCssVariable } from '@/object-record/record-board/utils/setRecordBoardColumnWidthCssVariable';
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -23,6 +24,8 @@ export const useResizeBoardColumn = () => {
 
   const { updateViewKanbanColumnWidth } = useUpdateViewKanbanColumnWidth();
 
+  const { setDragSelectionStartEnabled } = useDragSelect();
+
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
   >(null);
@@ -31,11 +34,10 @@ export const useResizeBoardColumn = () => {
 
   const handleResizeStart = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
-      // Prevents text selection / the board horizontal drag-select from kicking in.
-      event.preventDefault();
+      setDragSelectionStartEnabled(false);
       setInitialPointerPositionX(event.clientX);
     },
-    [],
+    [setDragSelectionStartEnabled],
   );
 
   const handleResizeMove = useCallback<PointerEventListener>(
@@ -50,6 +52,7 @@ export const useResizeBoardColumn = () => {
       // committed width) instead of leaving it stuck.
       if ('buttons' in event && event.buttons === 0) {
         setInitialPointerPositionX(null);
+        setDragSelectionStartEnabled(true);
         setRecordBoardColumnWidthCssVariable(
           recordBoardId,
           recordIndexKanbanColumnWidth,
@@ -64,7 +67,12 @@ export const useResizeBoardColumn = () => {
         ),
       );
     },
-    [initialPointerPositionX, recordIndexKanbanColumnWidth, recordBoardId],
+    [
+      initialPointerPositionX,
+      recordIndexKanbanColumnWidth,
+      recordBoardId,
+      setDragSelectionStartEnabled,
+    ],
   );
 
   const handleResizeEnd = useCallback<PointerEventListener>(
@@ -74,6 +82,7 @@ export const useResizeBoardColumn = () => {
       }
 
       setInitialPointerPositionX(null);
+      setDragSelectionStartEnabled(true);
 
       const nextWidth = Math.round(
         clampRecordBoardColumnWidth(
@@ -91,6 +100,7 @@ export const useResizeBoardColumn = () => {
       recordIndexKanbanColumnWidth,
       setRecordIndexKanbanColumnWidth,
       updateViewKanbanColumnWidth,
+      setDragSelectionStartEnabled,
     ],
   );
 
