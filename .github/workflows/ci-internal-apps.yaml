@@ -67,7 +67,6 @@ jobs:
           // app from this list once its checks pass, and delete the list entirely
           // once every application is covered.
           const CI_EXCLUDED_APPLICATIONS = ['call-recording', 'exa', 'people-data-labs', 'self-hosting', 'twenty-discord', 'twenty-fireflies', 'twenty-for-twenty', 'twenty-last-contact', 'twenty-linear', 'twenty-meeting-bot', 'twenty-partners', 'twenty-slack'];
-          const rootNodeVersion = fs.existsSync('.nvmrc') ? fs.readFileSync('.nvmrc', 'utf8').trim() : '24';
           const eventName = process.env.EVENT_NAME;
           const changedFiles = JSON.parse(process.env.CHANGED_FILES || '[]');
           const changedApps = new Set();
@@ -89,11 +88,9 @@ jobs:
             .map((name) => {
               const appPath = path.join(root, name);
               const scripts = JSON.parse(fs.readFileSync(path.join(appPath, 'package.json'), 'utf8')).scripts || {};
-              const nvmrc = path.join(appPath, '.nvmrc');
               return {
                 name,
                 path: appPath,
-                nodeVersion: fs.existsSync(nvmrc) ? fs.readFileSync(nvmrc, 'utf8').trim() : rootNodeVersion,
                 hasTypecheck: Boolean(scripts.typecheck),
                 hasUnit: Boolean(scripts['test:unit']),
                 hasIntegration: Boolean(scripts.test),
@@ -126,7 +123,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: ${{ matrix.app.nodeVersion }}
+          node-version-file: '.nvmrc'
           cache: yarn
           cache-dependency-path: ${{ matrix.app.path }}/yarn.lock
 
