@@ -1,90 +1,20 @@
 import { gql } from '@apollo/client';
 
+import { OBJECT_METADATA_FRAGMENT } from '@/object-metadata/graphql/fragment';
+
+// Selects the full ObjectMetadataFields shape (same as the bootstrap query) so
+// the created object written to the metadata store is complete. addToDraft
+// replaces store entries by id, so a reduced response here would overwrite the
+// fuller record delivered over SSE and leave object-level flags such as
+// isUICreatable/isUIEditable undefined — making the new object read-only (no
+// "create record" affordance in its table view) until a hard refresh.
 export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
   mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
     createOneObject(input: $input) {
-      id
-      nameSingular
-      namePlural
-      labelSingular
-      labelPlural
-      description
-      icon
-      color
-      isActive
-      isSearchable
-      createdAt
-      updatedAt
-      labelIdentifierFieldMetadataId
-      imageIdentifierFieldMetadataId
-      isLabelSyncedWithName
-      applicationId
-      fieldsList {
-        id
-        universalIdentifier
-        type
-        name
-        label
-        description
-        icon
-        isActive
-        isSystem
-        isUIEditable
-        isNullable
-        isUnique
-        createdAt
-        updatedAt
-        defaultValue
-        options
-        settings
-        isLabelSyncedWithName
-        morphId
-        applicationId
-        relation {
-          type
-          sourceObjectMetadata {
-            id
-            nameSingular
-            namePlural
-          }
-          targetObjectMetadata {
-            id
-            nameSingular
-            namePlural
-          }
-          sourceFieldMetadata {
-            id
-            name
-          }
-          targetFieldMetadata {
-            id
-            name
-          }
-        }
-        morphRelations {
-          type
-          sourceObjectMetadata {
-            id
-            nameSingular
-            namePlural
-          }
-          targetObjectMetadata {
-            id
-            nameSingular
-            namePlural
-          }
-          sourceFieldMetadata {
-            id
-            name
-          }
-          targetFieldMetadata {
-            id
-            name
-          }
-        }
-      }
+      ...ObjectMetadataFields
     }
   }
+  ${OBJECT_METADATA_FRAGMENT}
 `;
 
 export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
