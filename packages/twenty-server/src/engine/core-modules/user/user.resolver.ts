@@ -581,11 +581,6 @@ export class UserResolver {
       return workspace;
     }
 
-    // The auth context workspace can be a stale cache snapshot right after
-    // activateWorkspace ran on another instance (#20322). Refresh it so the
-    // client gets the freshest activationStatus, consistent with the
-    // onboardingStatus field, and isn't left on an onboarding step (e.g.
-    // SyncEmails) that expects an active workspace and never loads.
     return this.userService.refreshWorkspaceIfPendingOrOngoingCreation(
       workspace,
     );
