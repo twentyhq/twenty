@@ -1,4 +1,4 @@
-import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
+import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
@@ -44,8 +44,8 @@ export const RecordTableCellFieldContextGeneric = ({
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
   const updateRecord = useContext(RecordTableUpdateContext);
-
-  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const getIsMetadataItemFromStandardApplication =
+    useGetIsMetadataItemFromStandardApplication();
 
   let hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 
@@ -113,9 +113,10 @@ export const RecordTableCellFieldContextGeneric = ({
           isRecordFieldReadOnly({
             isRecordReadOnly: isRecordReadOnly ?? false,
             isSystemObject: objectMetadataItem.isSystem,
-            isFieldCustom: getIsMetadataItemCustom({
-              applicationId: fieldDefinition.metadata.applicationId,
-            }),
+            isFieldFromStandardApplication:
+              getIsMetadataItemFromStandardApplication({
+                applicationId: fieldDefinition.metadata.applicationId,
+              }),
             objectPermissions,
             fieldMetadataItem: {
               id: fieldDefinition.fieldMetadataId,
