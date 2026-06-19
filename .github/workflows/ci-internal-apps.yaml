@@ -6,6 +6,12 @@ on:
       - main
   pull_request:
   workflow_dispatch:
+    inputs:
+      application:
+        description: 'Internal app folder name to test (e.g. "twenty-linear"). Leave empty to test all non-excluded apps. Runs even if in CI_EXCLUDED_APPLICATIONS.'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: read
@@ -50,6 +56,7 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          APPLICATION_INPUT: ${{ inputs.application }}
         run: |
           node <<'NODE'
           const fs = require('fs');
@@ -60,7 +67,6 @@ jobs:
           // app from this list once its checks pass, and delete the list entirely
           // once every application is covered.
           const CI_EXCLUDED_APPLICATIONS = ['call-recording', 'exa', 'people-data-labs', 'self-hosting', 'twenty-discord', 'twenty-fireflies', 'twenty-for-twenty', 'twenty-last-contact', 'twenty-linear', 'twenty-meeting-bot', 'twenty-partners', 'twenty-slack'];
-          const rootNodeVersion = fs.existsSync('.nvmrc') ? fs.readFileSync('.nvmrc', 'utf8').trim() : '24';
           const eventName = process.env.EVENT_NAME;
           const changedFiles = JSON.parse(process.env.CHANGED_FILES || '[]');
           const changedApps = new Set();
@@ -68,20 +74,23 @@ jobs:
             const match = file.match(/^packages\/twenty-apps\/internal\/([^/]+)\//);
             if (match) changedApps.add(match[1]);
           }
+          const requestedApp = (process.env.APPLICATION_INPUT || '').trim();
           const matrix = fs.readdirSync(root, { withFileTypes: true })
             .filter((entry) => entry.isDirectory() && entry.name !== 'node_modules')
             .map((entry) => entry.name)
             .filter((name) => fs.existsSync(path.join(root, name, 'package.json')))
-            .filter((name) => !CI_EXCLUDED_APPLICATIONS.includes(name))
-            .filter((name) => eventName === 'workflow_dispatch' || changedApps.has(name))
+            .filter((name) => {
+              if (eventName === 'workflow_dispatch') {
+                return requestedApp ? name === requestedApp : !CI_EXCLUDED_APPLICATIONS.includes(name);
+              }
+              return !CI_EXCLUDED_APPLICATIONS.includes(name) && changedApps.has(name);
+            })
             .map((name) => {
               const appPath = path.join(root, name);
               const scripts = JSON.parse(fs.readFileSync(path.join(appPath, 'package.json'), 'utf8')).scripts || {};
-              const nvmrc = path.join(appPath, '.nvmrc');
               return {
                 name,
                 path: appPath,
-                nodeVersion: fs.existsSync(nvmrc) ? fs.readFileSync(nvmrc, 'utf8').trim() : rootNodeVersion,
                 hasTypecheck: Boolean(scripts.typecheck),
                 hasUnit: Boolean(scripts['test:unit']),
                 hasIntegration: Boolean(scripts.test),
@@ -114,7 +123,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: ${{ matrix.app.nodeVersion }}
+          node-version-file: '.nvmrc'
           cache: yarn
           cache-dependency-path: ${{ matrix.app.path }}/yarn.lock
 
