@@ -6,6 +6,7 @@ import {
 } from 'twenty-sdk/define';
 
 import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-on-opportunity.field';
+import { APPLICATIONS_ON_OPPORTUNITY_FIELD_ID } from 'src/objects/application.object';
 
 export const DEALS_BOARD_VIEW_UNIVERSAL_IDENTIFIER =
   '39c3ffbc-e91a-46b9-a9c6-4d186d5b3dcf';
@@ -83,6 +84,12 @@ export default defineView({
       fieldMetadataUniversalIdentifier: OPPORTUNITY_STAGE_FIELD_ID,
       position: 3,
       isVisible: false,
+    },
+    {
+      universalIdentifier: '48d052c0-b00f-40e7-81fa-d30d01a5e784',
+      fieldMetadataUniversalIdentifier: APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
+      position: 4,
+      isVisible: true,
     },
   ],
   filters: [
