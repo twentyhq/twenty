@@ -5,11 +5,11 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import {
-  FormSingleRecordPicker,
   type RecordId,
   type Variable,
-} from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+} from '@/object-record/record-field/ui/form-types/types/RecordPickerValue';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { InputLabel } from '@/ui/input/components/InputLabel';

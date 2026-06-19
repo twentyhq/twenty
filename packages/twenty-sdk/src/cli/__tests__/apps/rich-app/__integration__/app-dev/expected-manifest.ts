@@ -1661,6 +1661,37 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
     {
       builtHandlerChecksum: '[checksum]',
+      builtHandlerPath: 'src/logic-functions/enrich-post-cards.function.mjs',
+      description: 'Enrich post cards of a company',
+      handlerName: 'default.config.handler',
+      name: 'enrich-post-cards',
+      sourceHandlerPath: 'src/logic-functions/enrich-post-cards.function.ts',
+      timeoutSeconds: 5,
+      workflowActionTriggerSettings: {
+        label: 'Enrich Post Cards',
+        icon: 'IconMail',
+        inputSchema: [
+          {
+            type: 'object',
+            properties: {
+              companyId: {
+                type: 'record',
+                objectUniversalIdentifier:
+                  '20202020-b374-4779-a561-80086cb2e17f',
+              },
+              postCardIds: {
+                type: 'records',
+                objectUniversalIdentifier:
+                  '54b589ca-eeed-4950-a176-358418b85c05',
+              },
+            },
+          },
+        ],
+      },
+      universalIdentifier: 'a1b2c3d4-ac10-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      builtHandlerChecksum: '[checksum]',
       builtHandlerPath: 'src/logic-functions/on-post-card-created.function.mjs',
       databaseEventTriggerSettings: {
         eventName: 'postCard.created',
