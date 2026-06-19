@@ -33,6 +33,34 @@ export const handler = async (
   const partnerId = partnerRes.partners?.edges?.[0]?.node?.id;
   if (!partnerId) return {}; // creator isn't a partner (e.g. admin) — leave it
 
+  const opportunityId = after.opportunityId;
+  if (opportunityId) {
+    const existingRes = await client.query({
+      applications: {
+        __args: {
+          filter: {
+            opportunityId: { eq: opportunityId },
+            partnerId: { eq: partnerId },
+          },
+          first: 1,
+        },
+        edges: { node: { id: true } },
+      },
+    });
+    const existingId = existingRes.applications?.edges?.find(
+      (edge) => edge.node?.id && edge.node.id !== applicationId,
+    )?.node?.id;
+    if (existingId) {
+      await client.mutation({
+        deleteApplication: {
+          __args: { id: applicationId },
+          id: true,
+        },
+      });
+      return { duplicate: true, keptExisting: existingId };
+    }
+  }
+
   const now = new Date().toISOString();
   await client.mutation({
     updateApplication: {
@@ -48,7 +76,7 @@ export const handler = async (
       id: true,
     },
   });
-  // ponytail: double-clicking Apply creates duplicate applications; add idempotency if it bites.
+  // ponytail: dedupe by (opportunity, partner) above; two near-simultaneous creates could still both pass before either stamps — acceptable.
   return { applied: true, partnerId };
 };
 
