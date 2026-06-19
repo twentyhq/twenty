@@ -38,9 +38,10 @@ describe('getNavigationMenuItemComputedLink', () => {
     expect(link).toBe('/objects/people?viewId=view-custom');
   });
 
-  // Regression for the bug where returning to an object reset the URL to the
-  // unfiltered index view: without a last visited view, the link must stay bare
-  // so the context store can restore the last visited (filtered) view.
+  // Regression: the link used to always force ?viewId=<index view>, which
+  // overrode the last-visited-view restoration in MainContextStoreProvider.
+  // With no recorded last visited view the link must stay bare so the context
+  // store resolves the view instead of this util forcing the index one.
   it('should link an object item to the bare path when no last visited view is recorded', () => {
     const link = getNavigationMenuItemComputedLink({
       item: objectItem,

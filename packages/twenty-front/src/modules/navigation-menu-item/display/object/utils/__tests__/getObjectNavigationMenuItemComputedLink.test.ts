@@ -1,12 +1,14 @@
 import { getObjectNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemComputedLink';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
-const mockObjectMetadataItems: EnrichedObjectMetadataItem[] = [
+const mockObjectMetadataItems: Pick<
+  EnrichedObjectMetadataItem,
+  'id' | 'namePlural'
+>[] = [
   {
     id: 'metadata-1',
-    nameSingular: 'person',
     namePlural: 'people',
-  } as EnrichedObjectMetadataItem,
+  },
 ];
 
 describe('getObjectNavigationMenuItemComputedLink', () => {

@@ -5,7 +5,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getObjectNavigationMenuItemComputedLink = (
   item: Pick<NavigationMenuItem, 'targetObjectMetadataId'>,
-  objectMetadataItems: EnrichedObjectMetadataItem[],
+  objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id' | 'namePlural'>[],
   lastVisitedViewId?: string,
 ): string => {
   const objectMetadataItem = objectMetadataItems.find(
