@@ -25,6 +25,7 @@ import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { WebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription.service';
 
 export type StartChannelSyncInput = {
   connectedAccountId: string;
@@ -44,6 +45,7 @@ export class ChannelSyncService {
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    private readonly webhookSubscriptionService: WebhookSubscriptionService,
   ) {}
 
   async startChannelSync(input: StartChannelSyncInput): Promise<void> {
@@ -82,6 +84,12 @@ export class ChannelSyncService {
             messageChannelId: messageChannel.id,
           },
         );
+
+        await this.webhookSubscriptionService.createSubscription({
+          channelId: messageChannel.id,
+          channelType: 'messaging',
+          workspaceId,
+        });
       }
     }, authContext);
   }
@@ -118,6 +126,12 @@ export class ChannelSyncService {
             calendarChannelId: calendarChannel.id,
           },
         );
+
+        await this.webhookSubscriptionService.createSubscription({
+          channelId: calendarChannel.id,
+          channelType: 'calendar',
+          workspaceId,
+        });
       }
     }, authContext);
   }
