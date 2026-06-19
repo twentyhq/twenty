@@ -1,0 +1,47 @@
+---
+title: Model de date
+description: Înțelege cum Twenty îți structurează datele cu obiecte, câmpuri și relații.
+icon: database
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Totul în Twenty este construit în jurul **obiectelor** și **câmpurilor** — elementele de bază ale modelului tău de date.
+
+## Obiecte
+
+Obiectele sunt tabelele care îți conțin datele. Twenty include obiecte standard din start:
+
+* **Companies** — organizații cu care derulezi afaceri
+* **People** — contacte individuale
+* **Opportunities** — oferte în pipeline-ul tău
+* **Tasks** — elemente de acțiune pentru echipa ta
+* **Notes** — text liber asociat înregistrărilor
+
+Poți de asemenea să creezi **obiecte personalizate** pentru orice are nevoie afacerea ta — proiecte, tichete de suport, produse, contracte sau orice altceva.
+
+## Câmpuri
+
+Câmpurile sunt proprietățile fiecărui obiect. Twenty acceptă o gamă largă de tipuri de câmpuri:
+
+| Category     | Tipuri                                                                               |
+| ------------ | ------------------------------------------------------------------------------------ |
+| **De bază**  | Text, Number, Boolean, Date, Currency, Rating, Select                                |
+| **Compuse**  | Adresă (stradă, oraș, județ, cod poștal), Nume complet, Linkuri, Telefoane, Emailuri |
+| **Speciale** | Relație, atașament de fișier, JSON, Actor (cine a creat/modificat)                   |
+
+Fiecare obiect primește, de asemenea, câmpuri de sistem automate: `id`, `createdAt`, `updatedAt`, `createdBy` și `position`.
+
+## Relații
+
+Obiectele se conectează între ele prin relații. O Company are multe People, o Opportunity aparține unei Company și așa mai departe. Poți crea relații personalizate între orice obiecte, inclusiv relații de tip many-to-many.
+
+## De ce este asta puternic
+
+Spre deosebire de CRM-urile tradiționale, unde ești limitat la câmpuri predefinite pe obiecte predefinite, Twenty îți permite să modelezi datele exact așa cum funcționează afacerea ta. Obiectele personalizate primesc același tratament de prim rang ca și cele încorporate — inclusiv endpoint-uri API, vizualizări, permisiuni și declanșatoare de fluxuri de lucru.
+
+<Card title="Analiză detaliată a modelului de date" icon="arrow-right" href="/l/ro/user-guide/data-model/overview">
+  Referință completă despre obiecte, câmpuri, relații și cum să le configurezi.
+</Card>
+
+<VimeoEmbed videoId="1185511827" title="Model de date" />

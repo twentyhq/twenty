@@ -1,0 +1,55 @@
+---
+title: Flussi di lavoro
+description: Automatizza i processi aziendali con il builder di workflow visivi di Twenty.
+icon: bolt
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+I workflow ti permettono di automatizzare attività ripetitive e collegare Twenty a strumenti esterni, senza scrivere codice (anche se puoi farlo se vuoi).
+
+<VimeoEmbed videoId="1185511711" title="Workflow" />
+
+## Come funzionano i workflow
+
+Ogni workflow è composto da tre parti:
+
+1. **Trigger** — Cosa avvia il workflow
+2. **Steps** — Cosa succede dopo (una o più azioni in sequenza)
+3. **Variables** — Dati che fluiscono tra gli step
+
+## Trigger
+
+| Scatenante       | Quando viene attivato                                                                      |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| **Record event** | Un record viene creato, aggiornato, eliminato o eseguito come upsert                       |
+| **Manuale**      | Un utente fa clic su un pulsante (su un singolo record, su più record o a livello globale) |
+| **Schedule**     | A intervalli ricorrenti (sintassi cron)                                                    |
+| **Webhook**      | Un sistema esterno invia una HTTP POST                                                     |
+
+## Azioni
+
+I workflow possono concatenare qualsiasi combinazione di:
+
+* **Record operations** — Crea, aggiorna, trova, elimina o esegui upsert sui record
+* **Send email** — Invia o prepara bozze di email dagli account collegati
+* **HTTP request** — Chiama qualsiasi API esterna
+* **Code** — Esegui JavaScript personalizzato per logiche complesse
+* **Branches** — Condizioni if/else per dividere il percorso del workflow
+* **Iterator** — Itera sugli array di dati
+* **AI Agent** — Consenti a un agente AI di elaborare i dati in modo autonomo
+* **Delay** — Attendi prima di continuare
+* **Form** — Raccogli input dell’utente a metà workflow
+
+## Cosa puoi creare
+
+* Invia avvisi Slack quando un deal raggiunge una certa fase
+* Arricchisci automaticamente i nuovi contatti con dati provenienti da API esterne
+* Rileva le opportunità inattive e avvisa il proprietario
+* Sincronizza i dati tra Twenty e il tuo sistema di fatturazione
+* Genera PDF o fatture dai dati dei record
+* Invia risposte automatiche alle email in arrivo che corrispondono a determinati criteri
+
+<Card title="Guida completa ai workflow" icon="arrow-right" href="/l/it/user-guide/workflows/overview">
+  Riferimento dettagliato su trigger, azioni, variabili e casi d’uso reali di automazione.
+</Card>
