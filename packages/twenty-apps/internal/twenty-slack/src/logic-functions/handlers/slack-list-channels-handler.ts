@@ -1,4 +1,3 @@
-import { isUndefined } from '@sniptt/guards';
 import {
   type SlackChannelType,
   type SlackListChannelsInput
@@ -62,7 +61,7 @@ export const slackListChannelsHandler = async (
           break;
         }
 
-        if (isUndefined(channel.id) || isUndefined(channel.name)) {
+        if (channel.id == null || channel.name == null) {
           continue;
         }
 
@@ -80,7 +79,7 @@ export const slackListChannelsHandler = async (
 
       const nextCursor = response.response_metadata?.next_cursor;
 
-      if (isUndefined(nextCursor) || nextCursor.length === 0) {
+      if (nextCursor == null || nextCursor.length === 0) {
         break;
       }
 

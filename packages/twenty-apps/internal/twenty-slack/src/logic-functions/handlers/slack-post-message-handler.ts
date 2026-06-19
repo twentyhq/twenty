@@ -1,4 +1,3 @@
-import { isUndefined } from '@sniptt/guards';
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
@@ -31,7 +30,7 @@ export const slackPostMessageHandler = async (
     const data = await client.chat.postMessage({
       channel: parameters.slackChannelId,
       thread_ts:
-        !isUndefined(parentTimestamp) && parentTimestamp.trim().length > 0
+        parentTimestamp != null && parentTimestamp.trim().length > 0
           ? parentTimestamp.trim()
           : undefined,
       ...bodyFields,
