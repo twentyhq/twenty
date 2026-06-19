@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,6 +26,9 @@ type VersionedOptions = {
 
 @Injectable()
 export class SecretEncryptionService {
+  private readonly logger = new Logger(SecretEncryptionService.name);
+  private hasLoggedLegacyCtrDecryption = false;
+
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
   ) {}
@@ -88,7 +91,7 @@ export class SecretEncryptionService {
     }
 
     return this.maskDecryptedValue(
-      this.decryptVersioned(value, { workspaceId }),
+      this.decryptVersionedOrThrow(value, { workspaceId }),
       mask,
     );
   }
@@ -128,7 +131,37 @@ export class SecretEncryptionService {
     }) as EncryptedString;
   }
 
-  public decryptVersioned(
+  /**
+   * @deprecated Tolerates legacy unprefixed AES-CTR ciphertext by falling back
+   * to `decrypt`. Kept only for the cross-upgrade batch commands (encryption
+   * backfill and key rotation) that may still encounter un-backfilled rows.
+   * Runtime services must call `decryptVersionedOrThrow`, which rejects any
+   * value that is not an `enc:v2` envelope.
+   */
+  public decryptVersionedWithLegacyFallback(
+    value: EncryptedString,
+    opts: VersionedOptions = {},
+  ): PlaintextString {
+    if (!isDefined(value)) {
+      return value;
+    }
+
+    const parsed = parseSecretEncryptionEnvelopeOrThrow({ value });
+
+    if (parsed.version !== 2) {
+      this.warnLegacyCtrDecryptionOnce();
+
+      return this.decrypt(value) as PlaintextString;
+    }
+
+    return this.decryptVersionedOrThrow(value, opts);
+  }
+
+  // Strict enc:v2-only read path. Unlike `decryptVersionedWithLegacyFallback`, this throws on any
+  // non-versioned ciphertext, ensuring runtime callers fail loudly if the
+  // encryption backfill migration has not run rather than silently reading
+  // legacy AES-CTR rows.
+  public decryptVersionedOrThrow(
     value: EncryptedString,
     opts: VersionedOptions = {},
   ): PlaintextString {
@@ -158,5 +191,16 @@ export class SecretEncryptionService {
       rawKey,
       workspaceId: opts.workspaceId,
     }) as PlaintextString;
+  }
+
+  private warnLegacyCtrDecryptionOnce(): void {
+    if (this.hasLoggedLegacyCtrDecryption) {
+      return;
+    }
+
+    this.hasLoggedLegacyCtrDecryption = true;
+    this.logger.warn(
+      'Decrypted a legacy unprefixed AES-CTR ciphertext. These rows should be re-encrypted into the enc:v2 envelope in a follow-up migration.',
+    );
   }
 }

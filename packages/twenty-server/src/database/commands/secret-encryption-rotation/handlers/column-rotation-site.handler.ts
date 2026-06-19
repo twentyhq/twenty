@@ -133,7 +133,7 @@ export class ColumnRotationSiteHandler<
       : undefined;
 
     try {
-      const plaintext = this.secretEncryptionService.decryptVersioned(
+      const plaintext = this.secretEncryptionService.decryptVersionedWithLegacyFallback(
         currentValue,
         cryptoOptions,
       );

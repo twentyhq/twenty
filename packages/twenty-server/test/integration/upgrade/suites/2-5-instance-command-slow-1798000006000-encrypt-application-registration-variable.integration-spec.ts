@@ -157,7 +157,7 @@ describe('2-5 slow instance command 1798000006000 - EncryptApplicationRegistrati
     expect(
       row.encryptedValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX),
     ).toBe(true);
-    expect(secretEncryptionService.decryptVersioned(row.encryptedValue)).toBe(
+    expect(secretEncryptionService.decryptVersionedWithLegacyFallback(row.encryptedValue)).toBe(
       plaintext,
     );
   });
@@ -182,7 +182,7 @@ describe('2-5 slow instance command 1798000006000 - EncryptApplicationRegistrati
     expect(
       row.encryptedValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX),
     ).toBe(true);
-    expect(secretEncryptionService.decryptVersioned(row.encryptedValue)).toBe(
+    expect(secretEncryptionService.decryptVersionedWithLegacyFallback(row.encryptedValue)).toBe(
       plaintext,
     );
   });

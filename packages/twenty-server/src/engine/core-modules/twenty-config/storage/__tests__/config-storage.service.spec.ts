@@ -82,7 +82,7 @@ describe('ConfigStorageService', () => {
         {
           provide: SecretEncryptionService,
           useValue: {
-            decryptVersioned: jest.fn((value) => value),
+            decryptVersionedWithLegacyFallback: jest.fn((value) => value),
             encryptVersioned: jest.fn((value) => value),
           },
         },
@@ -197,7 +197,7 @@ describe('ConfigStorageService', () => {
       const result = await service.get(key);
 
       expect(result).toBe(encryptedValue);
-      expect(secretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
+      expect(secretEncryptionService.decryptVersionedWithLegacyFallback).toHaveBeenCalledWith(
         encryptedValue,
       );
     });
@@ -572,7 +572,7 @@ describe('ConfigStorageService', () => {
       expect(result.get('NORMAL_CONFIG' as keyof ConfigVariables)).toBe(
         'normal-value',
       );
-      expect(secretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
+      expect(secretEncryptionService.decryptVersionedWithLegacyFallback).toHaveBeenCalledWith(
         'enc:v2:deadbeef:sensitive-value',
       );
     });

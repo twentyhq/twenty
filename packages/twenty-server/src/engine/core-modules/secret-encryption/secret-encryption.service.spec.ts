@@ -239,4 +239,54 @@ describe('SecretEncryptionService', () => {
       ).toBeUndefined();
     });
   });
+
+  describe('decryptVersionedOrThrow', () => {
+    it('round-trips a v2 envelope', () => {
+      const secret = 'sk-strict-v2-secret';
+      const encrypted = service.encryptVersioned(secret as PlaintextString);
+
+      expect(service.decryptVersionedOrThrow(encrypted)).toBe(secret);
+    });
+
+    it('throws on a legacy unprefixed AES-CTR value instead of falling back', () => {
+      const legacyCiphertext = service.encrypt(
+        'legacy-ctr-value',
+      ) as EncryptedString;
+
+      expect(() => service.decryptVersionedOrThrow(legacyCiphertext)).toThrow(
+        'enc:v2 ciphertext envelope',
+      );
+    });
+
+    it('returns null/undefined values as-is', () => {
+      expect(
+        service.decryptVersionedOrThrow(null as unknown as EncryptedString),
+      ).toBeNull();
+      expect(
+        service.decryptVersionedOrThrow(
+          undefined as unknown as EncryptedString,
+        ),
+      ).toBeUndefined();
+    });
+  });
+
+  describe('decryptVersionedWithLegacyFallback (deprecated legacy fallback)', () => {
+    it('round-trips a v2 envelope', () => {
+      const secret = 'sk-deprecated-v2-secret';
+      const encrypted = service.encryptVersioned(secret as PlaintextString);
+
+      expect(service.decryptVersionedWithLegacyFallback(encrypted)).toBe(
+        secret,
+      );
+    });
+
+    it('falls back to legacy AES-CTR for unversioned ciphertext', () => {
+      const plaintext = 'legacy-ctr-value';
+      const legacyCiphertext = service.encrypt(plaintext) as EncryptedString;
+
+      expect(service.decryptVersionedWithLegacyFallback(legacyCiphertext)).toBe(
+        plaintext,
+      );
+    });
+  });
 });

@@ -47,7 +47,7 @@ export class TwoFactorAuthenticationService {
     storedSecret: EncryptedString;
     workspaceId: string;
   }): PlaintextString {
-    return this.secretEncryptionService.decryptVersioned(storedSecret, {
+    return this.secretEncryptionService.decryptVersionedOrThrow(storedSecret, {
       workspaceId,
     });
   }

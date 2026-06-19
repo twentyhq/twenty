@@ -54,7 +54,7 @@ const expectAllPasswordsDecryptTo = ({
     expect(params).toBeDefined();
     expect(params?.password).toMatch(V2_ENVELOPE_REGEX);
 
-    const decrypted = secretEncryption.decryptVersioned(params!.password, {
+    const decrypted = secretEncryption.decryptVersionedWithLegacyFallback(params!.password, {
       workspaceId: row.workspaceId,
     });
 

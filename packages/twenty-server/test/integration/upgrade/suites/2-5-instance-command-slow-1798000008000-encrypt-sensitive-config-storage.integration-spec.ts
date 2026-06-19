@@ -103,7 +103,7 @@ describe('2-5 slow instance command 1798000008000 - EncryptSensitiveConfigStorag
 
     expect(value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)).toBe(true);
     expect(
-      secretEncryptionService.decryptVersioned(
+      secretEncryptionService.decryptVersionedWithLegacyFallback(
         value as EncryptedString,
       ),
     ).toBe(plaintext);
@@ -143,7 +143,7 @@ describe('2-5 slow instance command 1798000008000 - EncryptSensitiveConfigStorag
 
     expect(value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)).toBe(true);
     expect(
-      secretEncryptionService.decryptVersioned(value as EncryptedString),
+      secretEncryptionService.decryptVersionedWithLegacyFallback(value as EncryptedString),
     ).toBe(plaintext);
   });
 });

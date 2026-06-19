@@ -44,7 +44,7 @@ describe('ApplicationVariableEntityService', () => {
               (value: string, opts?: { workspaceId?: string }) =>
                 `enc:v2:deadbeef:${value}|${opts?.workspaceId ?? 'instance'}`,
             ),
-            decryptVersioned: jest.fn(
+            decryptVersionedWithLegacyFallback: jest.fn(
               (value: string, _opts?: { workspaceId?: string }) =>
                 value.replace(/^enc:v2:[0-9a-f]+:/, '').replace(/\|.*$/, ''),
             ),

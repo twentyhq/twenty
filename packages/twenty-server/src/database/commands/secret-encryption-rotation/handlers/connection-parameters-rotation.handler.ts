@@ -147,7 +147,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
         continue;
       }
 
-      // Refuse non-enc:v2 values up front: decryptVersioned would otherwise
+      // Refuse non-enc:v2 values up front: decryptVersionedWithLegacyFallback would otherwise
       // fall through to unauthenticated legacy CTR and corrupt the password.
       if (!params.password.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) {
         throw new SecretEncryptionException(
@@ -156,7 +156,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
         );
       }
 
-      const plaintext = this.secretEncryptionService.decryptVersioned(
+      const plaintext = this.secretEncryptionService.decryptVersionedWithLegacyFallback(
         params.password,
         { workspaceId },
       );

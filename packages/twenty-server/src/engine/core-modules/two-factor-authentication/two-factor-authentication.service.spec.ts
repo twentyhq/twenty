@@ -93,7 +93,7 @@ describe('TwoFactorAuthenticationService', () => {
           provide: SecretEncryptionService,
           useValue: {
             encryptVersioned: jest.fn(),
-            decryptVersioned: jest.fn(),
+            decryptVersionedWithLegacyFallback: jest.fn(),
           },
         },
       ],
@@ -283,7 +283,7 @@ describe('TwoFactorAuthenticationService', () => {
       };
 
       repository.findOne.mockResolvedValue(existingMethod);
-      secretEncryptionService.decryptVersioned.mockReturnValue(rawSecret);
+      secretEncryptionService.decryptVersionedWithLegacyFallback.mockReturnValue(rawSecret);
 
       const expectedUri =
         'otpauth://totp/test@example.com?secret=RAW_OTP_SECRET&issuer=Twenty%20-%20Test%20Workspace';
@@ -296,7 +296,7 @@ describe('TwoFactorAuthenticationService', () => {
       );
 
       expect(uri).toBe(expectedUri);
-      expect(secretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
+      expect(secretEncryptionService.decryptVersionedWithLegacyFallback).toHaveBeenCalledWith(
         encryptedSecret,
         { workspaceId: workspace.id },
       );
@@ -354,7 +354,7 @@ describe('TwoFactorAuthenticationService', () => {
       repository.findOne.mockResolvedValue(existingMethod);
       const decryptionError = new Error('Decryption failed');
 
-      secretEncryptionService.decryptVersioned.mockImplementation(() => {
+      secretEncryptionService.decryptVersionedWithLegacyFallback.mockImplementation(() => {
         throw decryptionError;
       });
 
@@ -419,7 +419,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should successfully validate a valid token', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      secretEncryptionService.decryptVersioned.mockReturnValue(rawSecret);
+      secretEncryptionService.decryptVersionedWithLegacyFallback.mockReturnValue(rawSecret);
 
       totpStrategyMocks.validate.mockReturnValue({
         isValid: true,
@@ -433,7 +433,7 @@ describe('TwoFactorAuthenticationService', () => {
         TwoFactorAuthenticationStrategy.TOTP,
       );
 
-      expect(secretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
+      expect(secretEncryptionService.decryptVersionedWithLegacyFallback).toHaveBeenCalledWith(
         encryptedSecret,
         { workspaceId: workspace.id },
       );
@@ -452,7 +452,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should throw if the token is invalid', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      secretEncryptionService.decryptVersioned.mockReturnValue(rawSecret);
+      secretEncryptionService.decryptVersionedWithLegacyFallback.mockReturnValue(rawSecret);
       totpStrategyMocks.validate.mockReturnValue({
         isValid: false,
         context: mock2FAMethod,
@@ -515,7 +515,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should handle secret decryption errors', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      secretEncryptionService.decryptVersioned.mockImplementation(() => {
+      secretEncryptionService.decryptVersionedWithLegacyFallback.mockImplementation(() => {
         throw new Error('Secret decryption failed');
       });
 
@@ -542,7 +542,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should successfully verify and return success', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      secretEncryptionService.decryptVersioned.mockReturnValue(rawSecret);
+      secretEncryptionService.decryptVersionedWithLegacyFallback.mockReturnValue(rawSecret);
 
       totpStrategyMocks.validate.mockReturnValue({
         isValid: true,
@@ -572,7 +572,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should throw if the token is invalid', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      secretEncryptionService.decryptVersioned.mockReturnValue(rawSecret);
+      secretEncryptionService.decryptVersionedWithLegacyFallback.mockReturnValue(rawSecret);
       totpStrategyMocks.validate.mockReturnValue({
         isValid: false,
         context: mock2FAMethod,

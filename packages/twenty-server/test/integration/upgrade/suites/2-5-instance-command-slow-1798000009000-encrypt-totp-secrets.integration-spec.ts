@@ -185,7 +185,7 @@ describe('2-5 slow instance command 1798000009000 - EncryptTotpSecretsSlowInstan
       true,
     );
     expect(
-      secretEncryptionService.decryptVersioned(row.secret, { workspaceId }),
+      secretEncryptionService.decryptVersionedWithLegacyFallback(row.secret, { workspaceId }),
     ).toBe(plaintext);
   });
 

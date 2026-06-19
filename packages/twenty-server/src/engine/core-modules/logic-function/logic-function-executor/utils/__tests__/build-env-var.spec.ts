@@ -12,7 +12,7 @@ describe('buildEnvVar', () => {
       (value: string, opts?: { workspaceId?: string }) =>
         `enc:v2:deadbeef:${value}|${opts?.workspaceId ?? 'instance'}`,
     ),
-    decryptVersioned: jest.fn(
+    decryptVersionedWithLegacyFallback: jest.fn(
       (value: string, _opts?: { workspaceId?: string }) =>
         value.replace(/^enc:v2:[0-9a-f]+:/, '').replace(/\|.*$/, ''),
     ),
@@ -79,7 +79,7 @@ describe('buildEnvVar', () => {
       API_SECRET: 'secret-123',
       DEBUG: 'true',
     });
-    expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledTimes(
+    expect(mockSecretEncryptionService.decryptVersionedWithLegacyFallback).toHaveBeenCalledTimes(
       3,
     );
   });
@@ -116,11 +116,11 @@ describe('buildEnvVar', () => {
 
     buildEnvVar(flatVariables, mockSecretEncryptionService);
 
-    expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
+    expect(mockSecretEncryptionService.decryptVersionedWithLegacyFallback).toHaveBeenCalledWith(
       `enc:v2:deadbeef:value-a|${workspaceA}`,
       { workspaceId: workspaceA },
     );
-    expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
+    expect(mockSecretEncryptionService.decryptVersionedWithLegacyFallback).toHaveBeenCalledWith(
       `enc:v2:deadbeef:value-b|${workspaceB}`,
       { workspaceId: workspaceB },
     );

@@ -71,7 +71,7 @@ export class ConnectedAccountTokenEncryptionService {
       );
     }
 
-    return this.secretEncryptionService.decryptVersioned(ciphertext, {
+    return this.secretEncryptionService.decryptVersionedOrThrow(ciphertext, {
       workspaceId,
     });
   }
