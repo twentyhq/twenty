@@ -36,7 +36,10 @@ export type {
 
 export type { RoutePayload } from '@/sdk/define/logic-functions/triggers/route-payload-type';
 
-export { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-shared/logic-function';
+export {
+  jsonSchemaToInputSchema,
+  type InputJsonSchema,
+} from 'twenty-shared/logic-function';
 
 export { getConnection } from '@/sdk/logic-function/connections/get-connection';
 export { listConnections } from '@/sdk/logic-function/connections/list-connections';
