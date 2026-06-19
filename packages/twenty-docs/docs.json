@@ -469,32 +469,6 @@
         "language": "fr",
         "tabs": [
           {
-            "tab": "Prise en main",
-            "groups": [
-              {
-                "group": "Bienvenue",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "Concepts clés",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
-          {
             "tab": "Guide de l'utilisateur",
             "groups": [
               {
@@ -901,32 +875,6 @@
       {
         "language": "ar",
         "tabs": [
-          {
-            "tab": "البدء",
-            "groups": [
-              {
-                "group": "مرحبًا",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "المفاهيم الأساسية",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
           {
             "tab": "دليل المستخدم",
             "groups": [
@@ -1335,32 +1283,6 @@
         "language": "cs",
         "tabs": [
           {
-            "tab": "Začínáme",
-            "groups": [
-              {
-                "group": "Vítejte",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "Základní pojmy",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
-          {
             "tab": "Uživatelská příručka",
             "groups": [
               {
@@ -1767,32 +1689,6 @@
       {
         "language": "de",
         "tabs": [
-          {
-            "tab": "Erste Schritte",
-            "groups": [
-              {
-                "group": "Willkommen",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "Kernkonzepte",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
           {
             "tab": "Benutzerhandbuch",
             "groups": [
@@ -2201,32 +2097,6 @@
         "language": "es",
         "tabs": [
           {
-            "tab": "Primeros pasos",
-            "groups": [
-              {
-                "group": "Bienvenido",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "Conceptos clave",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
-          {
             "tab": "Guía de usuario",
             "groups": [
               {
@@ -2633,32 +2503,6 @@
       {
         "language": "it",
         "tabs": [
-          {
-            "tab": "Per iniziare",
-            "groups": [
-              {
-                "group": "Benvenuto",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "Concetti chiave",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
           {
             "tab": "Guida utente",
             "groups": [
@@ -3067,32 +2911,6 @@
         "language": "ja",
         "tabs": [
           {
-            "tab": "Getting Started",
-            "groups": [
-              {
-                "group": "Welcome",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "Core Concepts",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
-          {
             "tab": "ユーザーガイド",
             "groups": [
               {
@@ -3215,8 +3033,7 @@
                           "l/ja/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/ja/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
-                          "user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
+                          "l/ja/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
                         ]
                       },
                       {
@@ -3272,11 +3089,9 @@
                 "group": "Layout",
                 "icon": "table-columns",
                 "pages": [
-                  "user-guide/layout/overview",
                   {
                     "group": "Reference",
                     "pages": [
-                      "user-guide/layout/capabilities/navigation",
                       {
                         "group": "Views",
                         "pages": [
@@ -3287,8 +3102,7 @@
                           "l/ja/user-guide/views-pipelines/capabilities/fields-and-columns",
                           "l/ja/user-guide/views-pipelines/capabilities/view-settings"
                         ]
-                      },
-                      "user-guide/layout/capabilities/record-pages"
+                      }
                     ]
                   },
                   {
@@ -3403,79 +3217,6 @@
                 ]
               },
               {
-                "group": "Apps",
-                "pages": [
-                  {
-                    "group": "Getting Started",
-                    "pages": [
-                      "developers/extend/apps/getting-started/quick-start",
-                      "developers/extend/apps/getting-started/concepts",
-                      "developers/extend/apps/getting-started/project-structure",
-                      "developers/extend/apps/getting-started/local-server",
-                      "developers/extend/apps/getting-started/scaffolding",
-                      "developers/extend/apps/getting-started/troubleshooting"
-                    ]
-                  },
-                  {
-                    "group": "Config",
-                    "pages": [
-                      "developers/extend/apps/config/overview",
-                      "developers/extend/apps/config/application",
-                      "developers/extend/apps/config/roles",
-                      "developers/extend/apps/config/install-hooks",
-                      "developers/extend/apps/config/public-assets"
-                    ]
-                  },
-                  {
-                    "group": "Data",
-                    "pages": [
-                      "developers/extend/apps/data/overview",
-                      "developers/extend/apps/data/objects",
-                      "developers/extend/apps/data/extending-objects",
-                      "developers/extend/apps/data/relations"
-                    ]
-                  },
-                  {
-                    "group": "Logic",
-                    "pages": [
-                      "developers/extend/apps/logic/overview",
-                      "developers/extend/apps/logic/logic-functions",
-                      "developers/extend/apps/logic/skills-and-agents",
-                      "developers/extend/apps/logic/connections"
-                    ]
-                  },
-                  {
-                    "group": "Layout",
-                    "pages": [
-                      "developers/extend/apps/layout/overview",
-                      "developers/extend/apps/layout/views",
-                      "developers/extend/apps/layout/navigation-menu-items",
-                      "developers/extend/apps/layout/page-layouts",
-                      "developers/extend/apps/layout/front-components",
-                      "developers/extend/apps/layout/command-menu-items"
-                    ]
-                  },
-                  {
-                    "group": "Operations",
-                    "pages": [
-                      "developers/extend/apps/operations/overview",
-                      "developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
-                      "developers/extend/apps/operations/testing",
-                      "developers/extend/apps/operations/publishing"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "API",
-                "pages": [
-                  "developers/extend/api",
-                  "developers/extend/webhooks",
-                  "developers/extend/oauth"
-                ]
-              },
-              {
                 "group": "セルフホスト",
                 "pages": [
                   "l/ja/developers/self-host/capabilities/docker-compose",
@@ -3487,9 +3228,7 @@
               {
                 "group": "貢献",
                 "pages": [
-                  "l/ja/developers/contribute/capabilities/local-setup",
-                  "developers/contribute/commands",
-                  "developers/contribute/style-guide"
+                  "l/ja/developers/contribute/capabilities/local-setup"
                 ]
               }
             ]
@@ -3499,32 +3238,6 @@
       {
         "language": "ko",
         "tabs": [
-          {
-            "tab": "시작하기",
-            "groups": [
-              {
-                "group": "환영합니다",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "핵심 개념",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
           {
             "tab": "사용자 안내서",
             "groups": [
@@ -3933,32 +3646,6 @@
         "language": "pt",
         "tabs": [
           {
-            "tab": "Primeiros passos",
-            "groups": [
-              {
-                "group": "Boas-vindas",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "Conceitos essenciais",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
-          {
             "tab": "User Guide",
             "groups": [
               {
@@ -4365,32 +4052,6 @@
       {
         "language": "ro",
         "tabs": [
-          {
-            "tab": "Începeți",
-            "groups": [
-              {
-                "group": "Bun venit",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "Concepte cheie",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
           {
             "tab": "User Guide",
             "groups": [
@@ -4799,32 +4460,6 @@
         "language": "ru",
         "tabs": [
           {
-            "tab": "Начало работы",
-            "groups": [
-              {
-                "group": "Добро пожаловать",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "Основные понятия",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
-          {
             "tab": "Руководство пользователя",
             "groups": [
               {
@@ -5232,32 +4867,6 @@
         "language": "tr",
         "tabs": [
           {
-            "tab": "Başlarken",
-            "groups": [
-              {
-                "group": "Hoş geldiniz",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "Temel Kavramlar",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
-          {
             "tab": "Kullanıcı Rehberi",
             "groups": [
               {
@@ -5664,32 +5273,6 @@
       {
         "language": "zh",
         "tabs": [
-          {
-            "tab": "开始使用",
-            "groups": [
-              {
-                "group": "欢迎",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "核心概念",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
           {
             "tab": "用户指南",
             "groups": [

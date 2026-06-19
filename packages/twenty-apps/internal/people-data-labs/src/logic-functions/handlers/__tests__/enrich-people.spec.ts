@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { createCoreApiClientMock } from 'src/logic-functions/__mocks__/create-core-api-client-mock';
 import { PERSON_NODE_MOCK } from 'src/logic-functions/__mocks__/person-node.mock';
 import { enrichPeopleCore } from 'src/logic-functions/handlers/enrich-people';
@@ -214,7 +215,7 @@ describe('enrichPeopleCore', () => {
     });
   });
 
-  it('overwrites a populated standard field when overrideExistingValues is set', async () => {
+  it('overwrites a populated standard field when updateFields is "Yes and overwrite"', async () => {
     enrichPeopleMock.mockResolvedValue([
       {
         outcome: 'matched',
@@ -230,11 +231,39 @@ describe('enrichPeopleCore', () => {
     });
 
     await enrichPeopleCore({
-      input: { records: [{ id: 'p1' }], overrideExistingValues: true },
+      input: {
+        records: [{ id: 'p1' }],
+        updateFields: UPDATE_FIELDS_OPTIONS.overwrite,
+      },
       client,
     });
 
     expect(captured.updatePerson?.jobTitle).toBe('CEO');
+  });
+
+  it('returns enriched data without writing when updateFields is "No"', async () => {
+    enrichPeopleMock.mockResolvedValue([
+      {
+        outcome: 'matched',
+        httpStatus: 200,
+        likelihood: 8,
+        data: { id: 'pdl1', first_name: 'Jane', job_title: 'CEO' },
+      },
+    ]);
+    const captured: Captured = {};
+    const client = buildClient({ people: [PERSON_NODE_MOCK], captured });
+
+    const result = await enrichPeopleCore({
+      input: { records: [{ id: 'p1' }], updateFields: UPDATE_FIELDS_OPTIONS.no },
+      client,
+    });
+
+    expect(result.matched).toBe(1);
+    expect(result.results[0].updatedFields).toEqual([]);
+    expect(result.results[0].data?.jobTitle).toBe('CEO');
+    expect(captured.updatePerson).toBeUndefined();
+    expect(captured.updatePeople).toBeUndefined();
+    expect(captured.createCompanyCalled).toBeUndefined();
   });
 
   it('skips when there is no usable identifier', async () => {

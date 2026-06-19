@@ -56,11 +56,11 @@ export const getFirstNavigationMenuItemLink = ({
       }
     }
 
-    const link = getNavigationMenuItemComputedLink(
+    const link = getNavigationMenuItemComputedLink({
       item,
       objectMetadataItems,
       views,
-    );
+    });
 
     if (isNonEmptyString(link)) {
       return link;

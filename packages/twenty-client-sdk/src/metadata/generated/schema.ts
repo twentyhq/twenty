@@ -1259,6 +1259,12 @@ export interface BillingPlan {
     __typename: 'BillingPlan'
 }
 
+export interface BillingPaymentIntent {
+    clientSecret: Scalars['String']
+    paymentIntentType: Scalars['String']
+    __typename: 'BillingPaymentIntent'
+}
+
 export interface BillingSession {
     url?: Scalars['String']
     __typename: 'BillingSession'
@@ -1505,6 +1511,7 @@ export type ModelFamily = 'GPT' | 'CLAUDE' | 'GEMINI' | 'MISTRAL' | 'GROK'
 export interface Billing {
     isBillingEnabled: Scalars['Boolean']
     billingUrl?: Scalars['String']
+    stripePublishableKey?: Scalars['String']
     trialPeriods: BillingTrialPeriod[]
     __typename: 'Billing'
 }
@@ -2805,6 +2812,7 @@ export interface Mutation {
     skipBookOnboardingStep: OnboardingStepSuccess
     updateOneApplicationVariable: Scalars['Boolean']
     checkoutSession: BillingSession
+    createSubscriptionPaymentIntent: BillingPaymentIntent
     switchSubscriptionInterval: BillingUpdate
     switchBillingPlan: BillingUpdate
     cancelSwitchBillingPlan: BillingUpdate
@@ -4300,6 +4308,13 @@ export interface BillingPlanGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface BillingPaymentIntentGenqlSelection{
+    clientSecret?: boolean | number
+    paymentIntentType?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingSessionGenqlSelection{
     url?: boolean | number
     __typename?: boolean | number
@@ -4549,6 +4564,7 @@ export interface ClientAiModelConfigGenqlSelection{
 export interface BillingGenqlSelection{
     isBillingEnabled?: boolean | number
     billingUrl?: boolean | number
+    stripePublishableKey?: boolean | number
     trialPeriods?: BillingTrialPeriodGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5980,6 +5996,7 @@ export interface MutationGenqlSelection{
     skipBookOnboardingStep?: OnboardingStepSuccessGenqlSelection
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
+    createSubscriptionPaymentIntent?: (BillingPaymentIntentGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null), idempotencyKey: Scalars['String']} })
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
     switchBillingPlan?: BillingUpdateGenqlSelection
     cancelSwitchBillingPlan?: BillingUpdateGenqlSelection
@@ -7319,6 +7336,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isBillingPlan = (obj?: { __typename?: any } | null): obj is BillingPlan => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPlan"')
       return BillingPlan_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingPaymentIntent_possibleTypes: string[] = ['BillingPaymentIntent']
+    export const isBillingPaymentIntent = (obj?: { __typename?: any } | null): obj is BillingPaymentIntent => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPaymentIntent"')
+      return BillingPaymentIntent_possibleTypes.includes(obj.__typename)
     }
     
 

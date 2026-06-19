@@ -1611,6 +1611,11 @@ type BillingPlan {
   meteredProducts: [BillingMeteredProduct!]!
 }
 
+type BillingPaymentIntent {
+  clientSecret: String!
+  paymentIntentType: String!
+}
+
 type BillingSession {
   url: String
 }
@@ -1880,6 +1885,7 @@ enum ModelFamily {
 type Billing {
   isBillingEnabled: Boolean!
   billingUrl: String
+  stripePublishableKey: String
   trialPeriods: [BillingTrialPeriod!]!
 }
 
@@ -3287,6 +3293,7 @@ type Mutation {
   skipBookOnboardingStep: OnboardingStepSuccess!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
+  createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   switchSubscriptionInterval: BillingUpdate!
   switchBillingPlan: BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!

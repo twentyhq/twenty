@@ -1,2 +1,0 @@
-export const CONTACT_CAL_FORM_CAL_LINK =
-  'forms/f7841033-0a20-4958-8c92-4e34ec128a81';

@@ -199,7 +199,7 @@ describe('computeStepOutputSchema', () => {
 
       expect((result as any).payload).toMatchObject({
         isLeaf: false,
-        label: 'Payload',
+        label: 'Record',
       });
       expect((result as any).payload.value).toHaveProperty(
         '_outputSchemaType',
@@ -223,6 +223,10 @@ describe('computeStepOutputSchema', () => {
         objectMetadataItems: [mockCompanyObjectMetadataItem],
       });
 
+      expect((result as any).payload).toMatchObject({
+        isLeaf: false,
+        label: 'Records',
+      });
       expect((result as any).payload.value).toHaveProperty('companies');
       expect((result as any).payload.value.companies).toMatchObject({
         isLeaf: true,

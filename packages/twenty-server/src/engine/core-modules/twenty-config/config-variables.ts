@@ -839,6 +839,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
+      'Stripe publishable key for billing, exposed to the frontend to mount Stripe Elements',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_STRIPE_PUBLISHABLE_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
       'Use the ClickHouse-backed poller (instead of Stripe billing alerts) as the source of truth for metered-credit cap enforcement',
     type: ConfigVariableType.BOOLEAN,
   })

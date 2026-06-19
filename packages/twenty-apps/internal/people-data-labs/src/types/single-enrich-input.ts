@@ -1,5 +1,7 @@
+import { type UpdateFieldsOption } from 'src/types/update-fields-option';
+
 export type SingleEnrichInput = {
   recordId?: string;
-  overrideExistingValues?: boolean;
+  updateFields?: UpdateFieldsOption;
   minLikelihood?: number;
 };
