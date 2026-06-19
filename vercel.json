@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "yarn install --immutable",
+  "buildCommand": "NODE_OPTIONS=--max-old-space-size=8192 npx nx build twenty-front && cd packages/twenty-front && ./scripts/inject-runtime-env.sh",
+  "outputDirectory": "packages/twenty-front/build",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}

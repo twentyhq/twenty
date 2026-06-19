@@ -1,0 +1,116 @@
+# ===========================================================================
+# Orbitor (Twenty) backend on Render  —  Blueprint
+# ---------------------------------------------------------------------------
+# Hosts the parts that CANNOT run on Vercel: the long-lived NestJS API server,
+# the always-on BullMQ worker, and Redis (Key Value). The frontend is served
+# separately from Vercel (see vercel.json); the database + file storage live on
+# Supabase (Frankfurt / eu-central-1, co-located with these services).
+#
+# To deploy: Render Dashboard -> New -> Blueprint -> pick this repo/branch ->
+# Apply. Render prompts for every `sync: false` value (the secrets below).
+# `APP_SECRET` is auto-generated; `REDIS_URL` is wired automatically.
+#
+# After the first deploy, set SERVER_URL / FRONTEND_URL to the real URLs
+# (the server's own https URL and the Vercel front URL) — see the deploy notes.
+# ===========================================================================
+
+envVarGroups:
+  - name: orbitor-shared
+    envVars:
+      # --- Database: Supabase SESSION pooler (port 5432, NOT 6543). ---
+      - key: PG_DATABASE_URL
+        sync: false
+      # Keep (core + workspace) x (server + worker) under the pooler client cap.
+      - key: PG_POOL_MAX_CONNECTIONS
+        value: "3"
+      - key: PG_SSL_ALLOW_SELF_SIGNED
+        value: "true"
+      # --- Secrets: APP_SECRET signs tokens + is the at-rest encryption key. ---
+      - key: APP_SECRET
+        generateValue: true
+      # --- Object storage: Supabase S3-compatible (bucket must already exist). ---
+      - key: STORAGE_TYPE
+        value: s3
+      - key: STORAGE_S3_NAME
+        sync: false
+      - key: STORAGE_S3_ENDPOINT
+        sync: false
+      - key: STORAGE_S3_REGION
+        value: eu-central-1
+      - key: STORAGE_S3_ACCESS_KEY_ID
+        sync: false
+      - key: STORAGE_S3_SECRET_ACCESS_KEY
+        sync: false
+      # --- App ---
+      # The server binds NODE_PORT; match Render's default web port (10000).
+      - key: NODE_PORT
+        value: "10000"
+      # Start new workspaces clean (no demo/sample records or workflows).
+      - key: IS_WORKSPACE_DEMO_DATA_ENABLED
+        value: "false"
+      # The server's own public URL (https://orbitor-server.onrender.com unless
+      # the name was taken). Used for generated links / file URLs / callbacks.
+      - key: SERVER_URL
+        sync: false
+
+services:
+  # ---------------------------------------------------------------------------
+  # API server (web). Entrypoint auto-initializes the DB on first boot.
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: orbitor-server
+    runtime: docker
+    repo: https://github.com/zzeenniitthh/orbitor
+    branch: feat/supabase-local-compat
+    region: frankfurt
+    plan: standard
+    dockerfilePath: ./packages/twenty-docker/render/Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - fromGroup: orbitor-shared
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: orbitor-redis
+          property: connectionString
+      # The Vercel front origin — enables CORS + correct redirect links.
+      - key: FRONTEND_URL
+        sync: false
+
+  # ---------------------------------------------------------------------------
+  # Background worker (BullMQ). Same image; migrations/cron disabled (server owns them).
+  # ---------------------------------------------------------------------------
+  - type: worker
+    name: orbitor-worker
+    runtime: docker
+    repo: https://github.com/zzeenniitthh/orbitor
+    branch: feat/supabase-local-compat
+    region: frankfurt
+    plan: starter
+    dockerfilePath: ./packages/twenty-docker/render/Dockerfile
+    dockerContext: .
+    dockerCommand: yarn worker:prod
+    autoDeploy: true
+    envVars:
+      - fromGroup: orbitor-shared
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: orbitor-redis
+          property: connectionString
+      - key: DISABLE_DB_MIGRATIONS
+        value: "true"
+      - key: DISABLE_CRON_JOBS_REGISTRATION
+        value: "true"
+
+  # ---------------------------------------------------------------------------
+  # Redis (Key Value). Internal-only; noeviction is required for BullMQ.
+  # ---------------------------------------------------------------------------
+  - type: keyvalue
+    name: orbitor-redis
+    region: frankfurt
+    plan: starter
+    ipAllowList: []
+    maxmemoryPolicy: noeviction
