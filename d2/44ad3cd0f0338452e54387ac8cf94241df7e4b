@@ -1,0 +1,19 @@
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+  s_35892942d7e0a6::t_5a1826e618a8f2 73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "d244ad3cd0f0338452e54387ac8cf94241df7e4b",
+  "prompts": {},
+  "sessions": {
+    "s_35892942d7e0a6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa469098-23d2-4e87-9b82-23f0c53dd368",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "RISHAV DEWAN <rishavdewan10@gmail.com>"
+    }
+  }
+}
