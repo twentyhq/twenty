@@ -126,7 +126,13 @@ export const Avatar = ({
       data-clickable={!isUndefined(onClick) ? true : undefined}
       role={!isUndefined(onClick) ? 'button' : undefined}
       tabIndex={!isUndefined(onClick) ? 0 : undefined}
-      aria-label={!isUndefined(onClick) ? placeholder : undefined}
+      aria-label={
+        !isUndefined(onClick)
+          ? isNonEmptyString(placeholder)
+            ? placeholder
+            : 'Avatar'
+          : undefined
+      }
       onClick={onClick}
       onKeyDown={handleClickableElementKeyDown}
       style={avatarStyle}

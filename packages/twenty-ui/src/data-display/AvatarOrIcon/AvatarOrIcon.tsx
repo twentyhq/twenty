@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { Avatar } from '@ui/data-display/Avatar/Avatar';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
@@ -48,6 +50,9 @@ export const AvatarOrIcon = ({
   }
 
   const isClickable = isDefined(onClick);
+  const accessibleLabel = isNonEmptyString(placeholder)
+    ? placeholder
+    : 'Avatar';
 
   if (isIconInverted || isDefined(IconBackgroundColor)) {
     return (
@@ -56,7 +61,7 @@ export const AvatarOrIcon = ({
         data-clickable={isClickable || undefined}
         role={isClickable ? 'button' : undefined}
         tabIndex={isClickable ? 0 : undefined}
-        aria-label={isClickable ? placeholder : undefined}
+        aria-label={isClickable ? accessibleLabel : undefined}
         onClick={onClick}
         onKeyDown={handleClickableElementKeyDown}
       >
@@ -87,7 +92,7 @@ export const AvatarOrIcon = ({
       data-clickable={isClickable || undefined}
       role={isClickable ? 'button' : undefined}
       tabIndex={isClickable ? 0 : undefined}
-      aria-label={isClickable ? placeholder : undefined}
+      aria-label={isClickable ? accessibleLabel : undefined}
       onClick={onClick}
       onKeyDown={handleClickableElementKeyDown}
     >
