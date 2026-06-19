@@ -1,5 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 
+import { RECALL_BOT_EVERYONE_LEFT_MIN_ACTIVATE_AFTER_SECONDS } from 'src/logic-functions/constants/recall-bot-everyone-left-min-activate-after-seconds';
 import { RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-everyone-left-timeout-seconds-env-var-name';
 import { RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-noone-joined-timeout-seconds-env-var-name';
 import { RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-waiting-room-timeout-seconds-env-var-name';
@@ -41,7 +42,7 @@ export const getRecallBotAutomaticLeave = ():
   if (!isUndefined(everyoneLeftTimeoutSeconds)) {
     automaticLeave.everyone_left_timeout = {
       timeout: everyoneLeftTimeoutSeconds,
-      activate_after: 0,
+      activate_after: RECALL_BOT_EVERYONE_LEFT_MIN_ACTIVATE_AFTER_SECONDS,
     };
   }
 
