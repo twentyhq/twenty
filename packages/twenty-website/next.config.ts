@@ -154,11 +154,6 @@ const nextConfig: LinariaConfig = {
         permanent: true,
       },
       {
-        source: '/developers/:slug',
-        destination: 'https://docs.twenty.com/developers/:slug',
-        permanent: true,
-      },
-      {
         source: '/twenty-ui',
         destination: 'https://docs.twenty.com/twenty-ui/introduction',
         permanent: true,
@@ -171,11 +166,6 @@ const nextConfig: LinariaConfig = {
       {
         source: '/twenty-ui/:folder/:slug*',
         destination: 'https://docs.twenty.com/twenty-ui/:folder/:slug*',
-        permanent: true,
-      },
-      {
-        source: '/twenty-ui/:slug',
-        destination: 'https://docs.twenty.com/twenty-ui/:slug',
         permanent: true,
       },
       {
