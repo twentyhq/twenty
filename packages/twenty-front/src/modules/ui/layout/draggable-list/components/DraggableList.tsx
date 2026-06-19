@@ -7,7 +7,6 @@ import {
 } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { v4 } from 'uuid';
-
 type DraggableListProps = {
   draggableItems: React.ReactNode;
   onDragEnd: OnDragEndResponder;

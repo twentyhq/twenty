@@ -1,4 +1,5 @@
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
+import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -26,7 +27,6 @@ import {
   PermissionFlagType,
   ViewVisibility,
 } from '~/generated-metadata/graphql';
-import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
@@ -46,7 +46,7 @@ export const ViewPickerOptionDropdown = ({
   onEdit,
   view,
   handleViewSelect,
-  isCurrentView = false,
+  isCurrentView,
 }: ViewPickerOptionDropdownProps) => {
   const dropdownId = `view-picker-options-${view.id}`;
 
