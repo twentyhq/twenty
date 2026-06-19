@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -106,15 +106,20 @@ export const WorkspaceActivation = () => {
     setNextOnboardingStatus,
   ]);
 
-  const [hasTriggered, setHasTriggered] = useState(false);
+  // Guard the one-shot trigger with a ref, not state: a ref mutation is
+  // synchronous and survives StrictMode's double-invocation of effects, whereas
+  // a state flag stays false in the second (same-closure) invocation and fires
+  // a second concurrent activation that trips the server's lock.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const hasTriggeredRef = useRef(false);
   useEffect(() => {
-    if (hasTriggered || !isDefined(currentWorkspace)) {
+    if (hasTriggeredRef.current || !isDefined(currentWorkspace)) {
       return;
     }
 
-    setHasTriggered(true);
+    hasTriggeredRef.current = true;
     void activate();
-  }, [activate, hasTriggered, currentWorkspace]);
+  }, [activate, currentWorkspace]);
 
   return (
     <ModalContent isVerticallyCentered isHorizontallyCentered>
