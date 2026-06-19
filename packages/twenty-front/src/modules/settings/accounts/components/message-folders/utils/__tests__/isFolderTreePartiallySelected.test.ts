@@ -3,10 +3,7 @@ import { type MessageFolderTreeNode } from '@/settings/accounts/components/messa
 import { isFolderTreePartiallySelected } from '@/settings/accounts/components/message-folders/utils/isFolderTreePartiallySelected';
 import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 
-const createFolder = (
-  id: string,
-  isSynced: boolean,
-): MessageFolder => ({
+const createFolder = (id: string, isSynced: boolean): MessageFolder => ({
   __typename: 'MessageFolder',
   id,
   name: id,
@@ -46,19 +43,28 @@ describe('isFolderTreePartiallySelected', () => {
   });
 
   it('should return false when all nodes are synced', () => {
-    const tree = node('parent', true, [leaf('child-a', true), leaf('child-b', true)]);
+    const tree = node('parent', true, [
+      leaf('child-a', true),
+      leaf('child-b', true),
+    ]);
 
     expect(isFolderTreePartiallySelected(tree)).toBe(false);
   });
 
   it('should return false when all nodes are unsynced', () => {
-    const tree = node('parent', false, [leaf('child-a', false), leaf('child-b', false)]);
+    const tree = node('parent', false, [
+      leaf('child-a', false),
+      leaf('child-b', false),
+    ]);
 
     expect(isFolderTreePartiallySelected(tree)).toBe(false);
   });
 
   it('should return true when some children are synced and some are not', () => {
-    const tree = node('parent', false, [leaf('child-a', true), leaf('child-b', false)]);
+    const tree = node('parent', false, [
+      leaf('child-a', true),
+      leaf('child-b', false),
+    ]);
 
     expect(isFolderTreePartiallySelected(tree)).toBe(true);
   });
@@ -77,7 +83,10 @@ describe('isFolderTreePartiallySelected', () => {
 
   it('should detect mixed state in deeply nested tree', () => {
     const tree = node('root', false, [
-      node('middle', false, [leaf('leaf-synced', true), leaf('leaf-unsynced', false)]),
+      node('middle', false, [
+        leaf('leaf-synced', true),
+        leaf('leaf-unsynced', false),
+      ]),
     ]);
 
     expect(isFolderTreePartiallySelected(tree)).toBe(true);
