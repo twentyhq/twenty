@@ -1,14 +1,29 @@
-import { signEnterpriseKey } from '@/lib/enterprise/enterprise-jwt';
-import { getLicenseeFromStripeCustomer } from '@/lib/enterprise/stripe-customer-helpers';
-import { getStripeClient } from '@/lib/enterprise/stripe-client';
 import { NextResponse } from 'next/server';
+
+import {
+  getLicenseeFromStripeCustomer,
+  getStripeClient,
+  signEnterpriseKey,
+} from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
+  if (
+    !process.env.STRIPE_SECRET_KEY ||
+    !process.env.ENTERPRISE_JWT_PRIVATE_KEY
+  ) {
+    console.error(
+      '[enterprise-activate] 503 — STRIPE_SECRET_KEY and/or ENTERPRISE_JWT_PRIVATE_KEY are not configured',
+    );
+    return NextResponse.json(
+      { error: 'Enterprise activation is not configured.' },
+      { status: 503 },
+    );
+  }
+
   try {
-    const url = new URL(request.url);
-    const sessionId = url.searchParams.get('session_id');
+    const sessionId = new URL(request.url).searchParams.get('session_id');
 
     if (!sessionId) {
       return NextResponse.json(
@@ -18,7 +33,6 @@ export async function GET(request: Request) {
     }
 
     const stripe = getStripeClient();
-
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ['subscription', 'customer'],
     });
@@ -52,10 +66,7 @@ export async function GET(request: Request) {
 
     if (!ACTIVATABLE_SUBSCRIPTION_STATUSES.includes(subscription.status)) {
       return NextResponse.json(
-        {
-          error: 'Subscription is not active',
-          status: subscription.status,
-        },
+        { error: 'Subscription is not active', status: subscription.status },
         { status: 402 },
       );
     }
