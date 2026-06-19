@@ -149,8 +149,6 @@ export const WorkflowOutputSchemaBuilder = ({
     );
   };
 
-  // The variable name becomes a JSON schema property key sent to the model
-  // provider, which rejects keys outside this character set at run time.
   const getVariableNameError = (name: string): string | undefined => {
     if (name === '' || isValidAgentResponseSchemaPropertyKey(name)) {
       return undefined;
