@@ -26,7 +26,8 @@ import { useCallback } from 'react';
 
 const StyledIndexContainer = styled.div`
   display: flex;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   width: 100%;
 `;
 
