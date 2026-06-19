@@ -34,6 +34,13 @@ export const useResizeBoardColumn = () => {
 
   const handleResizeStart = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
+      // useTrackPointer only tracks mouse events, so a touch or pen pointer
+      // would never receive the move/up and would leave the board stuck with
+      // drag-select disabled. Restrict resizing to mouse pointers.
+      if (event.pointerType !== 'mouse') {
+        return;
+      }
+
       setDragSelectionStartEnabled(false);
       setInitialPointerPositionX(event.clientX);
     },
