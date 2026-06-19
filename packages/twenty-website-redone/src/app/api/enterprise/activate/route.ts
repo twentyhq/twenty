@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 
-import { getStripeClient, signEnterpriseKey } from '@/platform/enterprise';
+import {
+  getLicenseeFromStripeCustomer,
+  getStripeClient,
+  signEnterpriseKey,
+} from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
 
@@ -67,11 +71,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const customer = session.customer;
-    const licensee =
-      customer && typeof customer !== 'string' && !customer.deleted
-        ? (customer.name ?? customer.email ?? 'Unknown')
-        : 'Unknown';
+    const licensee = getLicenseeFromStripeCustomer(session.customer);
 
     const enterpriseKey = signEnterpriseKey(subscription.id, licensee);
 
