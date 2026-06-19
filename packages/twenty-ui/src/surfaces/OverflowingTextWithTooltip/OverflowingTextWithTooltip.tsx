@@ -113,6 +113,7 @@ export const OverflowingTextWithTooltip = ({
         (isTitleOverflowing || alwaysShowTooltip) &&
         isDefined(tooltipText) &&
         createPortal(
+          // oxlint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
           <div onClick={handleTooltipClick}>
             <AppTooltip
               anchorSelect={`#${textElementId}`}

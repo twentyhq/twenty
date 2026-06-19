@@ -44,6 +44,8 @@
     outline: none;
   }
 
+  @include focus-ring;
+
   &[data-disabled] {
     cursor: not-allowed;
   }

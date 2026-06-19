@@ -55,7 +55,7 @@ export const FloatingIconButton = ({
       data-is-active={isActive || undefined}
       onClick={onClick}
     >
-      {Icon && <Icon size={theme.icon.size.md} />}
+      {Icon && <Icon size={theme.icon.size.md} aria-hidden={!!ariaLabel} />}
     </button>
   );
 };
