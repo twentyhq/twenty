@@ -6,6 +6,12 @@ on:
       - main
   pull_request:
   workflow_dispatch:
+    inputs:
+      application:
+        description: 'Internal app folder name to test (e.g. "twenty-linear"). Leave empty to test all non-excluded apps. Runs even if in CI_EXCLUDED_APPLICATIONS.'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: read
@@ -50,6 +56,7 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          APPLICATION_INPUT: ${{ inputs.application }}
         run: |
           node <<'NODE'
           const fs = require('fs');
@@ -68,12 +75,17 @@ jobs:
             const match = file.match(/^packages\/twenty-apps\/internal\/([^/]+)\//);
             if (match) changedApps.add(match[1]);
           }
+          const requestedApp = (process.env.APPLICATION_INPUT || '').trim();
           const matrix = fs.readdirSync(root, { withFileTypes: true })
             .filter((entry) => entry.isDirectory() && entry.name !== 'node_modules')
             .map((entry) => entry.name)
             .filter((name) => fs.existsSync(path.join(root, name, 'package.json')))
-            .filter((name) => !CI_EXCLUDED_APPLICATIONS.includes(name))
-            .filter((name) => eventName === 'workflow_dispatch' || changedApps.has(name))
+            .filter((name) => {
+              if (eventName === 'workflow_dispatch') {
+                return requestedApp ? name === requestedApp : !CI_EXCLUDED_APPLICATIONS.includes(name);
+              }
+              return !CI_EXCLUDED_APPLICATIONS.includes(name) && changedApps.has(name);
+            })
             .map((name) => {
               const appPath = path.join(root, name);
               const scripts = JSON.parse(fs.readFileSync(path.join(appPath, 'package.json'), 'utf8')).scripts || {};
