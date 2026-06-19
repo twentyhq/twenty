@@ -12,6 +12,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
+import { FilterWhereConditionRecorder } from './filter-where-condition-recorder';
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
 
 export class GraphqlQueryFilterConditionParser {
@@ -52,6 +53,21 @@ export class GraphqlQueryFilterConditionParser {
         );
       }),
     );
+  }
+
+  public producesWhereCondition(
+    objectNameSingular: string,
+    filter: Partial<ObjectRecordFilter>,
+  ): boolean {
+    const recorder = new FilterWhereConditionRecorder();
+
+    this.parse(
+      recorder as unknown as WorkspaceSelectQueryBuilder<ObjectLiteral>,
+      objectNameSingular,
+      filter,
+    );
+
+    return recorder.hasWhereCondition;
   }
 
   public applyFilterEntriesToWhereBrackets(

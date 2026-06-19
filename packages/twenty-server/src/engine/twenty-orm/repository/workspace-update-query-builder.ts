@@ -33,6 +33,7 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { type WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { applyRowLevelPermissionPredicates } from 'src/engine/twenty-orm/utils/apply-row-level-permission-predicates.util';
 import { applyTableAliasOnWhereCondition } from 'src/engine/twenty-orm/utils/apply-table-alias-on-where-condition';
+import { assertMutationIsScoped } from 'src/engine/twenty-orm/utils/assert-mutation-is-scoped.util';
 import { computeEventSelectQueryBuilder } from 'src/engine/twenty-orm/utils/compute-event-select-query-builder.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -106,6 +107,9 @@ export class WorkspaceUpdateQueryBuilder<
       if (this.manyInputs) {
         return this.executeMany();
       }
+
+      assertMutationIsScoped({ expressionMap: this.expressionMap });
+
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
         objectsPermissions: this.objectRecordsPermissions,
@@ -424,6 +428,8 @@ export class WorkspaceUpdateQueryBuilder<
       for (const input of this.manyInputs) {
         this.expressionMap.valuesSet = input.partialEntity;
         this.where({ id: input.criteria });
+
+        assertMutationIsScoped({ expressionMap: this.expressionMap });
 
         this.applyRowLevelPermissionPredicates();
 

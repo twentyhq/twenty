@@ -39,6 +39,7 @@ export const twentyORMGraphqlApiExceptionHandler = (
     case TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR:
     case TwentyORMExceptionCode.RLS_VALIDATION_FAILED:
     case TwentyORMExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
+    case TwentyORMExceptionCode.UNSCOPED_MUTATION:
       throw new UserInputError(error.message, {
         userFriendlyMessage: error.userFriendlyMessage,
       });

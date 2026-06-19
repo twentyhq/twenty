@@ -103,6 +103,8 @@ describe('destroyMany / deleteMany empty filter guard', () => {
     ['an empty "and" array', { and: [] }],
     ['an empty "or" array', { or: [] }],
     ['an "and" of empty sub-filters', { and: [{}] }],
+    ['an empty composite filter', { name: {} }],
+    ['an empty relation filter', { company: {} }],
   ])(
     'should reject destroyMany with %s and not delete any record',
     async (_label, filter) => {

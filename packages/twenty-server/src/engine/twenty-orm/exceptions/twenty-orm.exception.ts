@@ -27,6 +27,7 @@ export enum TwentyORMExceptionCode {
   ORM_EVENT_DATA_CORRUPTED = 'ORM_EVENT_DATA_CORRUPTED',
   RLS_VALIDATION_FAILED = 'RLS_VALIDATION_FAILED',
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'NO_ROLE_FOUND_FOR_USER_WORKSPACE',
+  UNSCOPED_MUTATION = 'UNSCOPED_MUTATION',
 }
 
 const getTwentyORMExceptionUserFriendlyMessage = (
@@ -69,6 +70,8 @@ const getTwentyORMExceptionUserFriendlyMessage = (
       return msg`Invalid input provided.`;
     case TwentyORMExceptionCode.RLS_VALIDATION_FAILED:
       return msg`Record does not satisfy security constraints.`;
+    case TwentyORMExceptionCode.UNSCOPED_MUTATION:
+      return msg`A non-empty filter is required to perform this operation.`;
     case TwentyORMExceptionCode.ENUM_TYPE_NAME_NOT_FOUND:
     case TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED:
       return STANDARD_ERROR_MESSAGE;

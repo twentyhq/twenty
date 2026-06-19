@@ -27,7 +27,8 @@ export const workspaceQueryRunnerRestApiExceptionHandler = (
     case error instanceof ThrottlerException:
       return throttlerToRestApiExceptionHandler(error);
     case error instanceof TwentyORMException &&
-      error.code === TwentyORMExceptionCode.INVALID_INPUT:
+      (error.code === TwentyORMExceptionCode.INVALID_INPUT ||
+        error.code === TwentyORMExceptionCode.UNSCOPED_MUTATION):
       throw new BadRequestException(error.message);
     default:
       throw error;

@@ -74,6 +74,16 @@ export class GraphqlQueryParser {
     );
   }
 
+  public filterProducesWhereCondition(
+    objectNameSingular: string,
+    recordFilter: Partial<ObjectRecordFilter>,
+  ): boolean {
+    return this.filterConditionParser.producesWhereCondition(
+      objectNameSingular,
+      recordFilter,
+    );
+  }
+
   public applyDeletedAtToBuilder(
     // oxlint-disable-next-line typescript/no-explicit-any
     queryBuilder: WorkspaceSelectQueryBuilder<any>,
