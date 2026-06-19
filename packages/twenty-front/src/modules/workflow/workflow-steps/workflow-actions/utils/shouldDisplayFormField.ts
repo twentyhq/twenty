@@ -29,10 +29,6 @@ const SUPPORTED_FORM_FIELD_TYPES = [
   FieldMetadataType.RICH_TEXT,
 ];
 
-// Fields can be picked either for a workflow action (to write them) or for the
-// 'DATABASE_EVENT' trigger (to watch them for changes). The two have different
-// rules: watching is not editing, so the trigger must not gate on isUIEditable
-// (system objects have all fields non-editable and would otherwise be empty).
 export const shouldDisplayFormField = ({
   fieldMetadataItem,
   actionType,
