@@ -85,7 +85,7 @@ const fetchAllPartners = async (url: string, key: string): Promise<PartnerRecord
   const recs: PartnerRecord[] = [];
   let after: string | undefined;
   for (;;) {
-    const path = `${url}/rest/partners?limit=60&depth=1${after ? `&starting_after=${after}` : ''}`;
+    const path = `${url}/rest/partners?limit=60&depth=1${after ? `&starting_after=${encodeURIComponent(after)}` : ''}`;
     const res = await fetch(path, {
       headers: { Authorization: `Bearer ${key}`, 'User-Agent': 'Mozilla/5.0' },
       signal: AbortSignal.timeout(HTTP_TIMEOUT_MS),
@@ -97,7 +97,12 @@ const fetchAllPartners = async (url: string, key: string): Promise<PartnerRecord
           : '';
       throw new Error(`Partners API ${res.status} ${res.statusText}${hint}`);
     }
-    const body = (await res.json()) as PartnersPage;
+    let body: PartnersPage;
+    try {
+      body = (await res.json()) as PartnersPage;
+    } catch {
+      throw new Error(`Partners API returned a non-JSON response (HTTP ${res.status}).`);
+    }
     const page = body.data?.partners ?? [];
     recs.push(...page);
     if (body.pageInfo?.hasNextPage && page.length > 0 && body.pageInfo.endCursor) {
