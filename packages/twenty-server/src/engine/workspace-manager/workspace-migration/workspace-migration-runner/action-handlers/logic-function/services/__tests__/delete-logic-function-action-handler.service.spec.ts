@@ -70,6 +70,13 @@ describe('DeleteLogicFunctionActionHandlerService', () => {
     expect(driverDelete).toHaveBeenCalledWith(flatLogicFunction);
   });
 
+  it('should delete the source folder and the built handler file', async () => {
+    await handler.executeForMetadata(buildContext());
+
+    expect(fileStorageService.deleteFolder).toHaveBeenCalledTimes(1);
+    expect(fileStorageService.deleteFile).toHaveBeenCalledTimes(1);
+  });
+
   it('should not wedge metadata deletion when the driver delete fails', async () => {
     driverDelete.mockRejectedValueOnce(new Error('aws down'));
 
@@ -78,5 +85,34 @@ describe('DeleteLogicFunctionActionHandlerService', () => {
     ).resolves.toBeUndefined();
 
     expect(warn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should still release the runtime resource when a file-storage delete fails', async () => {
+    (fileStorageService.deleteFolder as jest.Mock).mockRejectedValueOnce(
+      new Error('storage down'),
+    );
+
+    await expect(
+      handler.executeForMetadata(buildContext()),
+    ).resolves.toBeUndefined();
+
+    expect(driverDelete).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should swallow every cleanup failure independently', async () => {
+    (fileStorageService.deleteFolder as jest.Mock).mockRejectedValueOnce(
+      new Error('folder down'),
+    );
+    (fileStorageService.deleteFile as jest.Mock).mockRejectedValueOnce(
+      new Error('file down'),
+    );
+    driverDelete.mockRejectedValueOnce(new Error('aws down'));
+
+    await expect(
+      handler.executeForMetadata(buildContext()),
+    ).resolves.toBeUndefined();
+
+    expect(warn).toHaveBeenCalledTimes(3);
   });
 });
