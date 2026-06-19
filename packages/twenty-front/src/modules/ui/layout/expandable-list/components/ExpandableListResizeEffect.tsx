@@ -3,6 +3,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 const RESIZE_THRESHOLD_PX = 1;
 
+// Recompute only once the resize settles: a live drag fires continuously and each
+// reset would blank the chip count until release.
+const RESIZE_SETTLE_DELAY_MS = 100;
+
 type ExpandableListResizeEffectProps = {
   containerRef: RefObject<HTMLElement | null>;
   onContainerWidthChange: () => void;
@@ -20,6 +24,7 @@ export const ExpandableListResizeEffect = ({
     }
 
     let previousWidth = containerElement.clientWidth;
+    let settleTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
     const resizeObserver = new ResizeObserver((entries) => {
       const entry = entries[0];
@@ -30,15 +35,24 @@ export const ExpandableListResizeEffect = ({
 
       const newWidth = entry.contentRect.width;
 
-      if (Math.abs(newWidth - previousWidth) > RESIZE_THRESHOLD_PX) {
-        previousWidth = newWidth;
-        onContainerWidthChange();
+      if (Math.abs(newWidth - previousWidth) <= RESIZE_THRESHOLD_PX) {
+        return;
       }
+
+      previousWidth = newWidth;
+      clearTimeout(settleTimeoutId);
+      settleTimeoutId = setTimeout(
+        onContainerWidthChange,
+        RESIZE_SETTLE_DELAY_MS,
+      );
     });
 
     resizeObserver.observe(containerElement);
 
-    return () => resizeObserver.disconnect();
+    return () => {
+      clearTimeout(settleTimeoutId);
+      resizeObserver.disconnect();
+    };
   }, [containerRef, onContainerWidthChange]);
 
   return null;
