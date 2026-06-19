@@ -33,16 +33,12 @@ const SUPPORTED_FORM_FIELD_TYPES = [
 // 'DATABASE_EVENT' trigger (to watch them for changes). The two have different
 // rules: watching is not editing, so the trigger must not gate on isUIEditable
 // (system objects have all fields non-editable and would otherwise be empty).
-export type ShouldDisplayFormFieldMode =
-  | WorkflowActionType
-  | WorkflowTriggerType;
-
 export const shouldDisplayFormField = ({
   fieldMetadataItem,
   actionType,
 }: {
   fieldMetadataItem: FieldMetadataItem;
-  actionType: ShouldDisplayFormFieldMode;
+  actionType: WorkflowActionType | WorkflowTriggerType;
 }) => {
   if (!SUPPORTED_FORM_FIELD_TYPES.includes(fieldMetadataItem.type)) {
     return false;
