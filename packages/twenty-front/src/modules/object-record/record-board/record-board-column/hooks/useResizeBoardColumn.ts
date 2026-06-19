@@ -39,8 +39,21 @@ export const useResizeBoardColumn = () => {
   );
 
   const handleResizeMove = useCallback<PointerEventListener>(
-    ({ x }) => {
+    ({ x, event }) => {
       if (!isDefined(initialPointerPositionX)) {
+        return;
+      }
+
+      // useTrackPointer ends the drag on a document mouseup, which never fires
+      // when the button is released outside the window. A move with no button
+      // pressed means that happened, so cancel the drag (reset + restore the
+      // committed width) instead of leaving it stuck.
+      if ('buttons' in event && event.buttons === 0) {
+        setInitialPointerPositionX(null);
+        setRecordBoardColumnWidthCssVariable(
+          recordBoardId,
+          recordIndexKanbanColumnWidth,
+        );
         return;
       }
 
