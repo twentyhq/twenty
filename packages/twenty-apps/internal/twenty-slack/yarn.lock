@@ -2646,7 +2646,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.14.0":
+"twenty-client-sdk@npm:2.14.0, twenty-client-sdk@npm:^2.14.0":
   version: 2.14.0
   resolution: "twenty-client-sdk@npm:2.14.0"
   dependencies:
@@ -2698,6 +2698,7 @@ __metadata:
     oxlint: "npm:^0.16.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
+    twenty-client-sdk: "npm:^2.14.0"
     twenty-sdk: "npm:^2.14.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
