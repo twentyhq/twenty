@@ -1,4 +1,4 @@
-import { ViewType, defineView } from 'twenty-sdk/define';
+import { AggregateOperations, ViewType, defineView } from 'twenty-sdk/define';
 
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
@@ -18,6 +18,9 @@ export default defineView({
   type: ViewType.KANBAN,
   position: 0,
   mainGroupByFieldMetadataUniversalIdentifier: PARTNER_VALIDATION_STAGE_FIELD_ID,
+  kanbanAggregateOperation: AggregateOperations.COUNT,
+  kanbanAggregateOperationFieldMetadataUniversalIdentifier:
+    'a0000001-0000-4000-8000-000000000001',
   groups: [
     {
       universalIdentifier: '24298244-4ce6-435d-91a4-d32d3f2fa6ef',

@@ -1,4 +1,9 @@
-import { ViewSortDirection, ViewType, defineView } from 'twenty-sdk/define';
+import {
+  AggregateOperations,
+  ViewSortDirection,
+  ViewType,
+  defineView,
+} from 'twenty-sdk/define';
 
 import { PARTNER_COUNTRY_VIEW_GROUPS } from 'src/constants/partner-country-view-groups';
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -19,6 +24,9 @@ export default defineView({
   type: ViewType.TABLE,
   position: 1,
   mainGroupByFieldMetadataUniversalIdentifier: PARTNER_COUNTRY_FIELD_ID,
+  kanbanAggregateOperation: AggregateOperations.COUNT,
+  kanbanAggregateOperationFieldMetadataUniversalIdentifier:
+    'a0000001-0000-4000-8000-000000000001',
   shouldHideEmptyGroups: true,
   groups: [...PARTNER_COUNTRY_VIEW_GROUPS],
   fields: [
