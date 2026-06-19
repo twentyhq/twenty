@@ -1,5 +1,6 @@
 import { msg, t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import {
@@ -30,6 +31,22 @@ export const validateAgentResponseFormat = ({
       message: t`Response format with type "json" must include a schema`,
       userFriendlyMessage: msg`JSON response format requires a schema`,
     });
+  }
+
+  if (type === 'json' && isDefined(responseFormat.schema)) {
+    const invalidPropertyNames = Object.keys(
+      responseFormat.schema.properties,
+    ).filter(
+      (propertyName) => !isValidAgentResponseSchemaPropertyKey(propertyName),
+    );
+
+    if (isNonEmptyArray(invalidPropertyNames)) {
+      errors.push({
+        code: AiExceptionCode.INVALID_AGENT_INPUT,
+        message: t`Output field names must use only letters, numbers, underscores, dots or hyphens and be at most 64 characters: ${invalidPropertyNames.join(', ')}`,
+        userFriendlyMessage: msg`Output field names can only contain letters, numbers, underscores, dots or hyphens (max 64 characters).`,
+      });
+    }
   }
 
   if (

@@ -7,6 +7,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
+import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
 import { IconChevronDown, IconPlus, IconVariable, IconX } from 'twenty-ui/icon';
 import { AnimatedLightIconButton, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
@@ -148,6 +149,16 @@ export const WorkflowOutputSchemaBuilder = ({
     );
   };
 
+  // The variable name becomes a JSON schema property key sent to the model
+  // provider, which rejects keys outside this character set at run time.
+  const getVariableNameError = (name: string): string | undefined => {
+    if (name === '' || isValidAgentResponseSchemaPropertyKey(name)) {
+      return undefined;
+    }
+
+    return t`Use only letters, numbers, underscores, dots or hyphens (max 64 characters).`;
+  };
+
   return (
     <StyledOutputSchemaContainer>
       <InputLabel>{t`Output`}</InputLabel>
@@ -205,6 +216,7 @@ export const WorkflowOutputSchemaBuilder = ({
                         label={t`Variable Name`}
                         placeholder={t`e.g., summary, status, count`}
                         defaultValue={field.name}
+                        error={getVariableNameError(field.name)}
                         onChange={(value) =>
                           updateField(field.id, { name: value.trim() })
                         }
