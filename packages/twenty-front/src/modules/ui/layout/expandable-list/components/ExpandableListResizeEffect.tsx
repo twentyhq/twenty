@@ -3,8 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 const RESIZE_THRESHOLD_PX = 1;
 
-// Recompute only once the resize settles: a live drag fires continuously and each
-// reset would blank the chip count until release.
 const RESIZE_SETTLE_DELAY_MS = 100;
 
 type ExpandableListResizeEffectProps = {

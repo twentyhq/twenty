@@ -95,8 +95,6 @@ export const ExpandableList = ({
   const hiddenChildrenCount = children.length - firstHiddenChildIndex;
   const canDisplayChipCount = isChipCountDisplayed && hiddenChildrenCount > 0;
 
-  // Without a chip count, render every chip and let the container clip the overflow
-  // so a resized cell always shows as many chips as fit (see #12039).
   const visibleChildren = isChipCountDisplayed
     ? children.slice(0, firstHiddenChildIndex)
     : children;
