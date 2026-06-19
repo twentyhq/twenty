@@ -5,7 +5,9 @@ const { queryMock, mutationMock } = vi.hoisted(() => ({
   mutationMock: vi.fn(),
 }));
 vi.mock('twenty-client-sdk/core', () => ({
-  CoreApiClient: vi.fn(() => ({ query: queryMock, mutation: mutationMock })),
+  CoreApiClient: vi.fn(function () {
+    return { query: queryMock, mutation: mutationMock };
+  }),
 }));
 
 import onCalendarInteraction from '../on-calendar-interaction';
