@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useSelectedRecordIds } from 'twenty-sdk/front-component';
-import { Callout, IconAlertCircle, themeCssVariables } from 'twenty-sdk/ui';
 
 import { TRANSCRIPT_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/transcript-front-component-universal-identifier';
 import { useCallRecordingTranscript } from 'src/front-components/hooks/use-call-recording-transcript';
@@ -12,75 +11,120 @@ import { parseTranscriptEntries } from 'src/front-components/utils/parse-transcr
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
-// Theme values are interpolated lazily: the manifest build proxy-mocks twenty-sdk/ui, so module-scope nested access throws.
+// Avoid the SDK UI entrypoint until its bundle is safe for the browser runtime.
+const transcriptThemeCssVariables = {
+  background: {
+    transparentDanger: 'var(--t-background-transparent-danger)',
+  },
+  border: {
+    colorDanger: 'var(--t-border-color-danger)',
+    radiusMd: 'var(--t-border-radius-md)',
+  },
+  font: {
+    colorDanger: 'var(--t-font-color-danger)',
+    colorPrimary: 'var(--t-font-color-primary)',
+    colorSecondary: 'var(--t-font-color-secondary)',
+    colorTertiary: 'var(--t-font-color-tertiary)',
+    family: 'var(--t-font-family)',
+    sizeSm: 'var(--t-font-size-sm)',
+    sizeXs: 'var(--t-font-size-xs)',
+    weightMedium: 'var(--t-font-weight-medium)',
+  },
+  spacing: {
+    1: 'var(--t-spacing-1)',
+    2: 'var(--t-spacing-2)',
+    3: 'var(--t-spacing-3)',
+    4: 'var(--t-spacing-4)',
+  },
+} as const;
+
 const StyledStateContainer = styled.div`
   box-sizing: border-box;
-  font-family: ${() => themeCssVariables.font.family};
+  font-family: ${transcriptThemeCssVariables.font.family};
   height: 100%;
-  padding: ${() => themeCssVariables.spacing[4]};
+  padding: ${transcriptThemeCssVariables.spacing[4]};
 `;
 
 const StyledCenteredState = styled(StyledStateContainer)`
   align-items: center;
-  color: ${() => themeCssVariables.font.color.tertiary};
+  color: ${transcriptThemeCssVariables.font.colorTertiary};
   display: flex;
-  font-size: ${() => themeCssVariables.font.size.sm};
+  font-size: ${transcriptThemeCssVariables.font.sizeSm};
   justify-content: center;
 `;
 
 const StyledTranscriptContainer = styled(StyledStateContainer)`
   display: flex;
   flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[4]};
+  gap: ${transcriptThemeCssVariables.spacing[4]};
   overflow-y: auto;
 `;
 
 const StyledEntry = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[1]};
+  gap: ${transcriptThemeCssVariables.spacing[1]};
 `;
 
 const StyledEntryHeader = styled.div`
   align-items: baseline;
   display: flex;
-  gap: ${() => themeCssVariables.spacing[2]};
+  gap: ${transcriptThemeCssVariables.spacing[2]};
 `;
 
 const StyledSpeakerName = styled.span`
-  color: ${() => themeCssVariables.font.color.primary};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  font-weight: ${() => themeCssVariables.font.weight.medium};
+  color: ${transcriptThemeCssVariables.font.colorPrimary};
+  font-size: ${transcriptThemeCssVariables.font.sizeSm};
+  font-weight: ${transcriptThemeCssVariables.font.weightMedium};
 `;
 
 const StyledTimestamp = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-size: ${() => themeCssVariables.font.size.xs};
+  color: ${transcriptThemeCssVariables.font.colorTertiary};
+  font-size: ${transcriptThemeCssVariables.font.sizeXs};
 `;
 
 const StyledEntryText = styled.p`
-  color: ${() => themeCssVariables.font.color.secondary};
-  font-size: ${() => themeCssVariables.font.size.sm};
+  color: ${transcriptThemeCssVariables.font.colorSecondary};
+  font-size: ${transcriptThemeCssVariables.font.sizeSm};
   line-height: 1.5;
   margin: 0;
 `;
 
-type TranscriptErrorCalloutProps = {
+const StyledErrorBox = styled.div`
+  background: ${transcriptThemeCssVariables.background.transparentDanger};
+  border: 1px solid ${transcriptThemeCssVariables.border.colorDanger};
+  border-radius: ${transcriptThemeCssVariables.border.radiusMd};
+  display: flex;
+  flex-direction: column;
+  gap: ${transcriptThemeCssVariables.spacing[1]};
+  padding: ${transcriptThemeCssVariables.spacing[3]};
+`;
+
+const StyledErrorTitle = styled.span`
+  color: ${transcriptThemeCssVariables.font.colorDanger};
+  font-size: ${transcriptThemeCssVariables.font.sizeSm};
+  font-weight: ${transcriptThemeCssVariables.font.weightMedium};
+`;
+
+const StyledErrorDescription = styled.span`
+  color: ${transcriptThemeCssVariables.font.colorSecondary};
+  font-size: ${transcriptThemeCssVariables.font.sizeSm};
+`;
+
+type TranscriptErrorBoxProps = {
   title: string;
   description: string;
 };
 
-const TranscriptErrorCallout = ({
+const TranscriptErrorBox = ({
   title,
   description,
-}: TranscriptErrorCalloutProps) => (
+}: TranscriptErrorBoxProps) => (
   <StyledStateContainer>
-    <Callout
-      variant="error"
-      title={title}
-      description={description}
-      Icon={IconAlertCircle}
-    />
+    <StyledErrorBox>
+      <StyledErrorTitle>{title}</StyledErrorTitle>
+      <StyledErrorDescription>{description}</StyledErrorDescription>
+    </StyledErrorBox>
   </StyledStateContainer>
 );
 
@@ -128,7 +172,7 @@ const CallRecordingTranscript = () => {
 
   if (!isUndefined(errorMessage)) {
     return (
-      <TranscriptErrorCallout
+      <TranscriptErrorBox
         title="Failed to load the transcript"
         description={errorMessage}
       />
@@ -155,7 +199,7 @@ const CallRecordingTranscript = () => {
 
   if (marker?.status === 'FAILED') {
     return (
-      <TranscriptErrorCallout
+      <TranscriptErrorBox
         title="Transcription failed"
         description={
           isNonEmptyString(marker.subCode)
@@ -170,7 +214,7 @@ const CallRecordingTranscript = () => {
 
   if (isUndefined(entries)) {
     return (
-      <TranscriptErrorCallout
+      <TranscriptErrorBox
         title="Unrecognized transcript format"
         description="The stored transcript does not match the expected diarized format."
       />
