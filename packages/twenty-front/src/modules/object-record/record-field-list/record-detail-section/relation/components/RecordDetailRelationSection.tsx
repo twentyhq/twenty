@@ -181,6 +181,10 @@ export const RecordDetailRelationSection = ({
 
   const relationRecordsCount = relationAggregateResult?.id?.COUNT ?? 0;
 
+  const sectionTitle = isToOneObject
+    ? (relationObjectMetadataItem.labelSingular || fieldDefinition.label)
+    : (relationObjectMetadataItem.labelPlural || fieldDefinition.label);
+
   return (
     <FieldInputEventContext.Provider
       value={{
@@ -188,8 +192,8 @@ export const RecordDetailRelationSection = ({
       }}
     >
       <RecordDetailSectionContainer
-        dataTestId={`${fieldDefinition.label.toLowerCase().replace(' ', '-')}-relation`}
-        title={fieldDefinition.label}
+        dataTestId={`${sectionTitle.toLowerCase().replace(' ', '-')}-relation`}
+        title={sectionTitle}
         link={
           isToManyObjects
             ? {
