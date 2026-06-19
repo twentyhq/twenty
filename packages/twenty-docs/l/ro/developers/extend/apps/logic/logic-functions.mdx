@@ -349,12 +349,52 @@ export default defineLogicFunction({
 });
 ```
 
+Pentru a declara parametrii **o singură dată** și a deservi ambele suprafețe, definește o singură schemă JSON (`InputJsonSchema`) și convertește-o pentru acțiunea din fluxul de lucru cu `jsonSchemaToInputSchema` din `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` primește direct schema JSON, în timp ce `workflowActionTriggerSettings.inputSchema` necesită `InputSchema` al Twenty:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**Ajutoare la rulare (runtime helpers).** `twenty-sdk/utils` re-exportă mici ajutoare la rulare, astfel încât handlerii să nu importe niciodată direct din `twenty-shared`. De exemplu, `isDefined(value)` returnează `false` atât pentru `null`, cât și pentru `undefined` — folosește-l pentru a restrânge în siguranță intrările opționale ale handlerilor, care pot ajunge drept `null` la rulare, chiar și atunci când sunt tipate `T | undefined`:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **Hook-uri de instalare** — handleri pre-instalare și post-instalare — partajează acest runtime, dar sunt declarați cu propriile lor funcții `define` și nu folosesc setări de declanșare. Consultați [Hook-uri de instalare](/l/ro/developers/extend/apps/config/install-hooks) pentru `definePreInstallLogicFunction` și `definePostInstallLogicFunction`.

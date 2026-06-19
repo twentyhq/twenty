@@ -9,8 +9,10 @@ import {
 } from 'twenty-shared/testing';
 import { v4 as uuidv4 } from 'uuid';
 
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 const TEST_APP_UID = uuidv4();
-const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 const UNKNOWN_WORKSPACE_ID = uuidv4();
 const UNKNOWN_APPLICATION_ID = uuidv4();
 

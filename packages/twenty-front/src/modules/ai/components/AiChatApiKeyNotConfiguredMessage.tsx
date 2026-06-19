@@ -4,7 +4,7 @@ import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
-import { IconExternalLink } from 'twenty-ui/display';
+import { IconExternalLink } from 'twenty-ui/icon';
 
 export const AiChatApiKeyNotConfiguredMessage = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);

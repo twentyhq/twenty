@@ -12,7 +12,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { IconChevronLeft, useIcons } from 'twenty-ui/display';
+import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type ChartGroupByFieldSelectionCompositeFieldViewProps = {

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { IconLock } from 'twenty-ui/display';
+import { IconLock } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`

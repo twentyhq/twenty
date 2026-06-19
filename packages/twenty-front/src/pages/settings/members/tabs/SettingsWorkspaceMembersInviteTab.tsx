@@ -20,15 +20,10 @@ import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useRe
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  H2Title,
-  IconMail,
-  IconReload,
-  IconTrash,
-  Status,
-  TooltipDelay,
-} from 'twenty-ui/display';
+import { Status } from 'twenty-ui/data-display';
+import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/typography';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

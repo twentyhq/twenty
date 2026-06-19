@@ -349,12 +349,52 @@ export default defineLogicFunction({
 });
 ```
 
+要只声明**一次**参数并服务于这两种界面，请定义一个单个 JSON Schema（`InputJsonSchema`），并使用来自 `twenty-sdk/logic-function` 的 `jsonSchemaToInputSchema` 将其转换为工作流操作所用。 `toolTriggerSettings.inputSchema` 直接接受 JSON Schema，而 `workflowActionTriggerSettings.inputSchema` 需要的是 Twenty 的 `InputSchema`：
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **写一个好的 `description`。** AI 智能体会依赖该函数的 `description` 字段来决定何时使用该工具。 明确说明该工具的作用以及应在何时调用。
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**运行时辅助工具。** `twenty-sdk/utils` 会重新导出一些小型运行时辅助工具，这样处理程序就不需要直接从 `twenty-shared` 导入。 例如，`isDefined(value)` 对 `null` 和 `undefined` 都会返回 `false` —— 使用它可以安全地收窄可选处理程序输入的类型，因为即使类型标注为 `T | undefined`，在运行时它们仍可能以 `null` 的形式传入：
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **安装 hooks**——预安装和后安装处理程序——共享此运行时，但使用它们自己的 define 函数进行声明，并且不接受触发器设置。 有关 `definePreInstallLogicFunction` 和 `definePostInstallLogicFunction`，请参阅 [Install Hooks](/l/zh/developers/extend/apps/config/install-hooks)。

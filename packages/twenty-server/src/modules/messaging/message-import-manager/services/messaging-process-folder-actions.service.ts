@@ -10,6 +10,11 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
+import { MessagingImportFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-import-folder-messages.service';
+
+export type ProcessFolderActionsResult = {
+  messageExternalIdsToImport: string[];
+};
 
 @Injectable()
 export class MessagingProcessFolderActionsService {
@@ -22,13 +27,14 @@ export class MessagingProcessFolderActionsService {
     @InjectRepository(MessageFolderEntity)
     private readonly messageFolderRepository: Repository<MessageFolderEntity>,
     private readonly messagingDeleteFolderMessagesService: MessagingDeleteFolderMessagesService,
+    private readonly messagingImportFolderMessagesService: MessagingImportFolderMessagesService,
   ) {}
 
   async processFolderActions(
     messageChannel: MessageChannelEntity,
     messageFolders: MessageFolderEntity[],
     workspaceId: string,
-  ): Promise<void> {
+  ): Promise<ProcessFolderActionsResult> {
     const foldersWithPendingActions = messageFolders.filter(
       (folder) =>
         isDefined(folder.pendingSyncAction) &&
@@ -36,13 +42,14 @@ export class MessagingProcessFolderActionsService {
     );
 
     if (foldersWithPendingActions.length === 0) {
-      return;
+      return { messageExternalIdsToImport: [] };
     }
 
     this.logger.log(
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Processing ${foldersWithPendingActions.length} folders with pending actions`,
     );
 
+    const messageExternalIdsToImport: string[] = [];
     const folderIdsToDelete: string[] = [];
     const processedFolderIds: string[] = [];
     const failedFolderIds: Array<{ folderId: string; error: Error }> = [];
@@ -53,21 +60,37 @@ export class MessagingProcessFolderActionsService {
           `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Processing folder action: ${folder.pendingSyncAction}`,
         );
 
-        if (
-          folder.pendingSyncAction ===
-          MessageFolderPendingSyncAction.FOLDER_DELETION
-        ) {
-          await this.messagingDeleteFolderMessagesService.deleteFolderMessages(
-            workspaceId,
-            messageChannel,
-            folder,
-          );
+        switch (folder.pendingSyncAction) {
+          case MessageFolderPendingSyncAction.FOLDER_DELETION: {
+            await this.messagingDeleteFolderMessagesService.deleteFolderMessages(
+              workspaceId,
+              messageChannel,
+              folder,
+            );
 
-          folderIdsToDelete.push(folder.id);
+            folderIdsToDelete.push(folder.id);
 
-          this.logger.debug(
-            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Completed FOLDER_DELETION action`,
-          );
+            this.logger.debug(
+              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Completed FOLDER_DELETION action`,
+            );
+            break;
+          }
+          case MessageFolderPendingSyncAction.FOLDER_IMPORT: {
+            const folderMessageExternalIdsToImport =
+              await this.messagingImportFolderMessagesService.getFolderMessageIdsToImport(
+                messageChannel,
+                folder,
+              );
+
+            messageExternalIdsToImport.push(
+              ...folderMessageExternalIdsToImport,
+            );
+
+            this.logger.debug(
+              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Completed FOLDER_IMPORT action`,
+            );
+            break;
+          }
         }
 
         processedFolderIds.push(folder.id);
@@ -117,5 +140,9 @@ export class MessagingProcessFolderActionsService {
         { lite: true },
       );
     }
+
+    return {
+      messageExternalIdsToImport: [...new Set(messageExternalIdsToImport)],
+    };
   }
 }

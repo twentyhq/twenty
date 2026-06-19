@@ -2,9 +2,9 @@ import { styled } from '@linaria/react';
 
 import { type ReactNode, useContext } from 'react';
 import { t } from '@lingui/core/macro';
-import { Card, CardContent } from 'twenty-ui/layout';
-import { IconChevronRight } from 'twenty-ui/display';
-import { Pill } from 'twenty-ui/components';
+import { Card, CardContent } from 'twenty-ui/surfaces';
+import { IconChevronRight } from 'twenty-ui/icon';
+import { Pill } from 'twenty-ui/data-display';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

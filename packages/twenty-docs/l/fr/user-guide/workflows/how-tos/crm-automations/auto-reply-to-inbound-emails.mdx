@@ -1,0 +1,121 @@
+---
+title: Réponse automatique aux emails entrants
+description: Créez un flux de travail qui utilise l'IA pour trier les emails entrants et envoyer automatiquement des réponses en fil de discussion.
+---
+
+Répondez aux emails entrants en quelques secondes — et non en heures. Ce flux de travail utilise un agent IA pour filtrer le bruit (newsletters, spam, réponses automatiques) et rédiger une réponse personnalisée aux vrais messages, puis l'envoie comme réponse en fil de discussion dans la conversation d'origine.
+
+## Comment fonctionne le fil de discussion des emails
+
+Chaque email comporte un en-tête caché `Message-ID` — une empreinte unique attribuée par le serveur de messagerie de l'expéditeur. Lorsque vous répondez à un e-mail, votre client de messagerie définit un en-tête `In-Reply-To` faisant référence à cette empreinte. C’est ainsi que Gmail, Outlook et tous les autres clients regroupent les messages en fils de discussion.
+
+Dans Twenty, cette empreinte est stockée en tant que `headerMessageId` sur l’objet Message. Votre flux de travail la récupère et la transmet au champ In-Reply-To de l’action Send Email.
+
+## Création du flux de travail
+
+### Étape 1 : Créer un nouveau flux de travail
+
+Accédez à **Settings -> Workflows** et cliquez sur **+ New Workflow**.
+
+### Étape 2 : Déclencher sur les messages entrants
+
+Choisissez **When a Record is Created** puis **Messages**.
+
+Chaque fois qu’un e-mail arrive dans Twenty, ceci se déclenche.
+
+<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+
+### Étape 3 : Identifier l’expéditeur
+
+Ajoutez une action **Search Records**.
+
+L’adresse de l’expéditeur n’est pas sur le message lui-même — elle se trouve sur l’enregistrement Message Participant associé.
+
+| Champ      | Valeur                           |
+| ---------- | -------------------------------- |
+| **Objet**  | Participants au message          |
+| **Filtre** | Message **est** `{{trigger.id}}` |
+| **Filtre** | Rôle **est** From                |
+| **Limite** | 1                                |
+
+Vous obtenez ainsi l’adresse e-mail de l’expéditeur dans `handle` et son nom dans `displayName`.
+
+<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+
+### Étape 4 : Triage par IA et brouillon de réponse
+
+Ajoutez une action **AI Agent**. Cette seule étape fait deux choses : elle détermine si l’e-mail mérite une réponse et, le cas échéant, en rédige une.
+
+Utilisez une invite comme :
+
+```
+You are an email triage assistant for a sales team. Read the following
+inbound email and decide if it deserves a reply.
+
+Subject: {{trigger.subject}}
+Body: {{trigger.text}}
+From: {{Find Sender.first.displayName}} ({{Find Sender.first.handle}})
+
+If this email is spam, a newsletter, an automated notification, or
+otherwise does not need a human reply, respond with exactly: SKIP
+
+Otherwise, write a short, professional reply (3-4 sentences max) that:
+- Acknowledges their specific message
+- Lets them know someone from the team will follow up shortly
+- Is warm but not overly casual
+
+Respond with only the reply text, no subject line or greeting prefix.
+```
+
+L’action AI Agent produit sa réponse dans un champ `response` auquel les étapes suivantes peuvent se référer.
+
+<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+
+### Étape 5 : Bifurquer selon la décision de l’IA
+
+Ajoutez une action **If/Else** pour vérifier si l’IA a décidé de répondre ou d’ignorer.
+
+| Champ         | Valeur                                         |
+| ------------- | ---------------------------------------------- |
+| **Condition** | AI Agent `response` **ne contient pas** `SKIP` |
+| **Si vrai**   | Continuer vers Send Email                      |
+| **Sinon**     | Ne rien faire (le flux de travail se termine)  |
+
+Les spams, les newsletters et les messages générés automatiquement sont ignorés. Tout le reste passe à l’étape suivante.
+
+<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+
+### Étape 6 : Envoyer une réponse dans le fil de discussion
+
+Ajoutez une action **Envoyer un e-mail** sur la branche « si vrai ». Cliquez sur **Options avancées**, puis sur **Ajouter In-Reply-To**.
+
+| Champ                | Valeur                                 |
+| -------------------- | -------------------------------------- |
+| **À**                | `{{Find Sender.first.handle}}`         |
+| **Objet**            | `Re: {{trigger.subject}}`              |
+| **Corps du message** | `{{AI Triage & Draft Reply.response}}` |
+| **In-Reply-To**      | `{{trigger.headerMessageId}}`          |
+
+C’est le champ In-Reply-To qui fait de ce message une réponse plutôt qu’une nouvelle conversation. Le destinataire le voit regroupé sous l’e-mail d’origine dans Gmail, Outlook ou tout autre client.
+
+<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+
+<Tip>
+**In-Reply-To** attend un `message.headerMessageId` provenant du déclencheur — c’est l’empreinte unique de l’e-mail, pas une adresse de destinataire. Si vous le laissez vide, l’e-mail sera quand même envoyé, simplement comme un message autonome.
+</Tip>
+
+<Warning>
+Gmail utilise l’objet pour regrouper les messages en fils de discussion. L’objet **doit** commencer par `Re:` (y compris les deux-points et l’espace) pour que Gmail affiche la réponse dans le fil d’origine. Sans cela, la réponse apparaîtra comme une conversation distincte — même si l’en-tête In-Reply-To est correctement défini.
+</Warning>
+
+### Étape 7 : Tester et activer
+
+Cliquez sur **Test**, puis vérifiez votre client de messagerie. La réponse devrait apparaître imbriquée sous le message d’origine.
+
+Activez lorsque vous en êtes satisfait.
+
+## Idées pour aller plus loin
+
+* **Ne répondre qu’aux VIP** — ajoutez une branche qui vérifie le domaine de l’expéditeur ou s’il existe en tant que Contact dans Twenty
+* **Orienter selon l’intention** — utilisez des invites AI Agent distinctes pour traiter différemment les demandes commerciales et les demandes d’assistance
+* **Enrichir avant de répondre** — ajoutez une étape Search Records pour intégrer l’entreprise de l’expéditeur ou l’historique d’opportunités dans l’invite d’IA afin d’obtenir des réponses plus personnalisées

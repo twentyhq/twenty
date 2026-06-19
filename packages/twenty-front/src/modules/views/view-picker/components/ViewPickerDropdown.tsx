@@ -14,12 +14,8 @@ import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPicke
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronDown,
-  IconList,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui/display';
+import { IconChevronDown, IconList, useIcons } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { useContext } from 'react';
 import {
   MOBILE_VIEWPORT,

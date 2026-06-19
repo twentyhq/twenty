@@ -1,3 +1,4 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { v5 } from 'uuid';
 
 import { buildNavigationCommandMenuItemOperationsOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/build-navigation-command-menu-item-operations-or-throw.util';
@@ -51,6 +52,8 @@ const buildExistingNavigationItem = ({
     },
     commandMenuItemId: `command-menu-item-${objectUniversalIdentifier}`,
     applicationId: APPLICATION_ID,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     workspaceId: WORKSPACE_ID,
     position,
     now: NOW,

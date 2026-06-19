@@ -9,39 +9,46 @@ title: Seleccionar
 Permite a los usuarios seleccionar un valor de una lista de opciones predefinidas.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { IconTwentyStar } from 'twenty-ui/display';
+<Tab title="Uso">
 
-    import { Select } from '@/ui/input/components/Select';
+```jsx
+import { IconTwentyStar } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
+import { Select } from '@/ui/input/components/Select';
 
-      return (
-          <Select
-            className
-            disabled={false}
-            label="Selecciona una opción"
-            options={[
-              { value: 'option1', label: 'Opción A', Icon: IconTwentyStar },
-              { value: 'option2', label: 'Opción B', Icon: IconTwentyStar },
-            ]}
-            value="option1"
-          />
-      );
-    };
+export const MyComponent = () => {
 
-    ```
-  </Tab>
+  return (
+    <Select
+      className
+      disabled={false}
+      label="Selecciona una opción"
+      options={[
+        { value: 'option1', label: 'Opción A', Icon: IconTwentyStar },
+        { value: 'option2', label: 'Opción B', Icon: IconTwentyStar },
+      ]}
+      value="option1"
+    />
+  );
+};
 
-  <Tab title="Props">
-    | Props         | Tipo     | Descripción                                                                                                                                                                                                         |
-    | ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | nombreDeClase | cadena   | Clase CSS opcional para estilo adicional                                                                                                                                                                            |
-    | "desactivado" | booleano | Cuando se establece en `true`, desactiva la interacción del usuario con el componente                                                                                                                               |
-    | etiqueta      | cadena   | La etiqueta para describir el propósito del componente `Seleccionar`                                                                                                                                                |
-    | "onChange"    | función  | La función que se llama cuando los valores seleccionados cambian                                                                                                                                                    |
-    | opciones      | array    | Representa las opciones disponibles para el componente `Selected`. Es un arreglo de objetos donde cada objeto tiene un `valor` (el identificador único), `etiqueta` (el identificador único), y un `Icono` opcional |
-    | valor         | cadena   | Representa el valor actualmente seleccionado. Debe coincidir con una de las propiedades `valor` en el arreglo de `opciones`.                                                                                        |
-  </Tab>
+```
+
+</Tab>
+<Tab title="Props">
+
+
+| Propiedades   | Tipo     | Descripción                                                                                                                                                                                                         |
+| ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nombreDeClase | cadena   | Clase CSS opcional para estilo adicional                                                                                                                                                                            |
+| "desactivado" | booleano | Cuando se establece en `true`, desactiva la interacción del usuario con el componente                                                                                                                               |
+| etiqueta      | cadena   | La etiqueta para describir el propósito del componente `Seleccionar`                                                                                                                                                |
+| "onChange"    | función  | La función que se llama cuando los valores seleccionados cambian                                                                                                                                                    |
+| opciones      | array    | Representa las opciones disponibles para el componente `Selected`. Es un arreglo de objetos donde cada objeto tiene un `valor` (el identificador único), `etiqueta` (el identificador único), y un `Icono` opcional |
+| valor         | cadena   | Representa el valor actualmente seleccionado. Debe coincidir con una de las propiedades `valor` en el arreglo de `opciones`.                                                                                        |
+
+
+
+
+</Tab>
 </Tabs>

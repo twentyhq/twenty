@@ -1,30 +1,41 @@
-import { verifyEnterpriseKey } from '@/lib/enterprise/enterprise-jwt';
-import { getStripeClient } from '@/lib/enterprise/stripe-client';
 import { NextResponse } from 'next/server';
+
+import { getStripeClient, verifyEnterpriseKey } from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
 
+const NON_UPDATABLE_STATUSES = new Set(['canceled', 'incomplete_expired']);
+
 export async function POST(request: Request) {
+  if (
+    !process.env.STRIPE_SECRET_KEY ||
+    !process.env.ENTERPRISE_JWT_PUBLIC_KEY
+  ) {
+    console.error(
+      '[enterprise-seats] 503 — STRIPE_SECRET_KEY and/or ENTERPRISE_JWT_PUBLIC_KEY are not configured',
+    );
+    return NextResponse.json(
+      { error: 'Enterprise seat management is not configured.' },
+      { status: 503 },
+    );
+  }
+
   try {
-    const body = await request.json();
+    const body = (await request.json()) as {
+      enterpriseKey?: unknown;
+      seatCount?: unknown;
+    };
     const { enterpriseKey, seatCount } = body;
 
     if (!enterpriseKey || typeof enterpriseKey !== 'string') {
       return NextResponse.json(
         { error: 'Missing enterpriseKey' },
-        {
-          status: 400,
-        },
+        { status: 400 },
       );
     }
 
     if (typeof seatCount !== 'number' || seatCount < 1) {
-      return NextResponse.json(
-        { error: 'Invalid seatCount' },
-        {
-          status: 400,
-        },
-      );
+      return NextResponse.json({ error: 'Invalid seatCount' }, { status: 400 });
     }
 
     const payload = verifyEnterpriseKey(enterpriseKey);
@@ -32,20 +43,15 @@ export async function POST(request: Request) {
     if (!payload) {
       return NextResponse.json(
         { error: 'Invalid enterprise key' },
-        {
-          status: 403,
-        },
+        { status: 403 },
       );
     }
 
     const stripe = getStripeClient();
-
     const subscription = await stripe.subscriptions.retrieve(payload.sub);
 
-    const NON_UPDATABLE_STATUSES = ['canceled', 'incomplete_expired'];
-
     if (
-      NON_UPDATABLE_STATUSES.includes(subscription.status) ||
+      NON_UPDATABLE_STATUSES.has(subscription.status) ||
       subscription.cancel_at_period_end
     ) {
       return NextResponse.json({

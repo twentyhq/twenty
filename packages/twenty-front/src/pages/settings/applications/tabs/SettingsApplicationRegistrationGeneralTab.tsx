@@ -2,7 +2,7 @@ import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
-import { InlineBanner } from 'twenty-ui/display';
+import { InlineBanner } from 'twenty-ui/feedback';
 import { SettingsApplicationRegistrationGeneralInfo } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo';
 
 import { SettingsAdminApplicationRegistrationDangerZone } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone';

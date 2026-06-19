@@ -1,5 +1,6 @@
 ---
 title: 문제 해결
+icon: wrench
 ---
 
 ## 문제 해결
@@ -53,7 +54,7 @@ Twenty 설치 중에 적절한 스키마, 확장, 사용자를 사용하여 post
 
 #### 저장 시 린트가 작동하지 않음
 
-Oxc 확장 (`oxc.oxc-vscode`) 프로그램이 설치된 상태에서는 기본 설정으로 작동해야 합니다. 작동하지 않으면 vscode 설정(개발 컨테이너 범위)에 다음을 추가해 보세요:
+This should work out of the box with the Oxc extension (`oxc.oxc-vscode`) installed. 작동하지 않으면 vscode 설정(개발 컨테이너 범위)에 다음을 추가해 보세요:
 
 ```
 "editor.codeActionsOnSave": {
@@ -165,6 +166,10 @@ plugins: [
 #### 관리자 패널에 액세스할 수 없음
 
 데이터베이스 컨테이너에서 관리자 패널에 액세스하기 위해 `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';`을 실행하십시오.
+
+#### 워크플로우를 실행하면 다음 오류로 실행이 실패합니다: "로직 함수 실행이 비활성화되었습니다. 활성화하려면 LOGIC_FUNCTION_TYPE을 LOCAL 또는 LAMBDA로 설정하세요."
+
+프로덕션 환경에서는 로직 함수가 기본적으로 비활성화되어 있습니다. 이를 활성화하려면 `LOGIC_FUNCTION_TYPE` 환경 변수를 `LOCAL` 또는 `LAMBDA`로 설정하세요. 이는 환경 변수를 통해서나 관리자 패널의 데이터베이스 변수를 통해 구성할 수 있습니다. 자세한 내용은 [로직 함수 설정 가이드](/l/ko/developers/self-host/capabilities/setup#logic-functions-available-drivers)를 참조하세요.
 
 ### 1-클릭 Docker 구성
 

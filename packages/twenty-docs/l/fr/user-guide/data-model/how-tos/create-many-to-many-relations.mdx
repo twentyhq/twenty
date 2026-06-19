@@ -6,11 +6,11 @@ description: Reliez des enregistrements lorsque de nombreux éléments des deux 
 Les relations plusieurs-à-plusieurs vous permettent de relier plusieurs enregistrements des deux côtés. Par exemple : de nombreuses Personnes peuvent travailler sur de nombreux Projets, et chaque Projet peut avoir de nombreuses Personnes.
 
 <Warning>
-  **Fonctionnalité Lab** : Les relations de jonction sont actuellement dans le Lab. Activez-les dans **Paramètres → Mises à jour → Lab** avant de suivre ce guide.
+**Fonctionnalité Lab** : Les relations de jonction sont actuellement dans le Lab. Activez-les dans **Paramètres → Mises à jour → Lab** avant de suivre ce guide.
 </Warning>
 
 <Note>
-  Cette fonctionnalité exige également que le **mode avancé** soit activé (bascule en bas à droite des Paramètres).
+Cette fonctionnalité exige également que le **mode avancé** soit activé (bascule en bas à droite des Paramètres).
 </Note>
 
 ## Quand utiliser les relations plusieurs-à-plusieurs
@@ -53,38 +53,45 @@ D'abord, créez l'objet intermédiaire qui contiendra les connexions.
 1. Allez dans **Paramètres → Modèle de données**
 2. Cliquez sur **+ Nouvel objet**
 3. Donnez-lui un nom explicite (p. ex., "Affectation de projet", "Membre de l'équipe", "Commande de produit")
-4. Cliquez sur **Enregistrer**
+4. Activez l’option "Ignorer la création d’un champ Nom"
+
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="Nouvel objet de jonction" />
+
+5. Cliquez sur **Enregistrer**
 
 <Tip>
-  **Convention de nommage** : Utilisez un nom qui décrit la relation, comme "Affectation de projet" ou "Appartenance à l'équipe". Cela rend le modèle de données plus facile à comprendre.
+**Convention de nommage** : Utilisez un nom qui décrit la relation, comme "Affectation de projet" ou "Appartenance à l'équipe". Cela rend le modèle de données plus facile à comprendre.
 </Tip>
 
-## Étape 2 : Créer des relations à partir de l'objet de jonction
+## Étape 2 : Créer des relations entre les objets et l’objet de jonction
 
-Ajoutez des champs de relation depuis l'objet de jonction vers les deux objets que vous souhaitez connecter.
+Ajoutez des champs de relation depuis chacun de vos deux objets vers l’objet de jonction.
 
-### Première relation (Jonction → Objet A)
+### Première relation (Objet A → Jonction)
 
-1. Sélectionnez votre objet de jonction dans **Paramètres → Modèle de données**
-2. Cliquez sur **+ Ajouter un champ**
-3. Choisissez **Relation** comme type de champ
-4. Sélectionnez le premier objet (p. ex., "Personnes")
-5. Définissez le type de relation sur **Plusieurs-à-un** (de nombreuses affectations peuvent être liées à une personne)
-6. Nommez les champs :
-   * Champ sur la jonction : p. ex., "Personne"
-   * Champ sur Personnes : p. ex., "Affectations de projet"
-7. Cliquez sur **Enregistrer**
-
-### Deuxième relation (Jonction → Objet B)
-
-1. Toujours sur l'objet de jonction, cliquez sur **+ Ajouter un champ**
-2. Choisissez **Relation** comme type de champ
-3. Sélectionnez le deuxième objet (p. ex., "Projets")
-4. Définissez le type de relation sur **Plusieurs-à-un**
+1. Sélectionnez votre premier objet dans **Paramètres → Modèle de données**
+2. Cliquez sur **+ Ajouter une relation**
+3. Sélectionnez l’objet de jonction (p. ex., "Affectations de projet")
+4. Définissez le type de relation sur **Un-à-plusieurs** (une personne peut être liée à de nombreuses affectations)
 5. Nommez les champs :
+   * Champ sur Personnes : p. ex., "Affectations de projet"
+   * Champ sur la jonction : p. ex., "Personne"
+6. Cliquez sur **Enregistrer**
+
+### Deuxième relation (Objet B → Jonction)
+
+1. Sélectionnez votre deuxième objet dans **Paramètres → Modèle de données**
+2. Cliquez sur **+ Ajouter une relation**
+3. Sélectionnez l’objet de jonction (p. ex., "Affectations de projet")
+4. Définissez le type de relation sur **Un-à-plusieurs** (un projet peut être lié à de nombreuses affectations)
+5. Activez **"Il s'agit d'une relation vers un objet de jonction"**
+
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
+
+6. Nommez les champs :
    * Champ sur la jonction : p. ex., "Projet"
    * Champ sur Projets : p. ex., "Membres de l'équipe"
-6. Cliquez sur **Enregistrer**
+7. Cliquez sur **Enregistrer**
 
 ## Étape 3 : Configurer l'affichage de la relation de jonction
 
@@ -97,18 +104,6 @@ Configurez maintenant les objets sources pour afficher directement les enregistr
 5. Activez **"Il s'agit d'une relation vers un objet de jonction"**
 6. Sélectionnez la **relation cible** (p. ex., "Projet" — le champ sur la jonction qui pointe vers l'autre côté)
 7. Cliquez sur **Enregistrer**
-
-{/* TODO: Add image
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
-*/}
-
-Répétez pour l'autre objet :
-
-1. Sélectionnez "Projets" dans Modèle de données
-2. Modifiez le champ de relation "Membres de l'équipe"
-3. Activez la bascule de jonction
-4. Sélectionnez "Personne" comme relation cible
-5. Enregistrer
 
 ## Résultat
 
@@ -130,15 +125,15 @@ Voici un guide complet :
 
 ### Ajouter des relations
 
-1. **Affectation de projet → Personnes**
-   * Type : Plusieurs-à-un
-   * Champ sur Affectation : "Personne"
+1. **Personnes → Affectation de projet**
+   * Type : Un-à-plusieurs
    * Champ sur Personnes : "Affectations de projet"
+   * Champ sur Affectation : "Personne"
 
-2. **Affectation de projet → Projets**
-   * Type : Plusieurs-à-un
-   * Champ sur Affectation : "Projet"
+2. **Projets → Affectation de projet**
+   * Type : Un-à-plusieurs
    * Champ sur Projets : "Membres de l'équipe"
+   * Champ sur Affectation : "Projet"
 
 ### Configurer l'affichage de la jonction
 

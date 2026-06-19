@@ -1,0 +1,50 @@
+---
+title: Extender objetos
+description: Añade campos a los objetos estándar de Twenty (Person, Company, …) o a objetos de otras aplicaciones usando defineField.
+icon: wand-magic-sparkles
+---
+
+Usa `defineField()` para añadir un campo a un objeto que no te pertenece — un objeto estándar de Twenty como Person o Company, u otro objeto proporcionado por otra aplicación instalada. A diferencia de los campos en línea declarados dentro de [`defineObject`](/l/es/developers/extend/apps/data/objects), los campos independientes requieren un `objectUniversalIdentifier` para especificar qué objeto extienden.
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+## Puntos clave
+
+* `objectUniversalIdentifier` identifica el objeto de destino. Para los objetos estándar de Twenty, importa la constante desde `twenty-sdk`:
+
+  ```ts
+  import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier
+  // …
+  ```
+
+* Al definir campos **en línea dentro de `defineObject()`**, **no** necesitas `objectUniversalIdentifier` — se hereda del objeto padre.
+
+* `defineField()` es la única forma de añadir campos a objetos que no creaste con `defineObject()`.
+
+* La ubicación del archivo depende de ti. La convención es `src/fields/\<name>.field.ts`, pero el SDK detecta campos en cualquier lugar de `src/`.
+
+* Para agregar una pestaña a un diseño de página estándar (por ejemplo, la página de detalles de la Tarea o de la Empresa), usa [`definePageLayoutTab`](/l/es/developers/extend/apps/layout/page-layouts#definepagelayouttab) con `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` de `twenty-sdk/define`.
+
+## Añadir una relación a un objeto existente
+
+Para añadir un campo de relación (por ejemplo, vinculando tu objeto personalizado a un `Person` estándar), usa `defineField()` con `FieldType.RELATION`. El patrón es el mismo que para las relaciones en línea, pero con `objectUniversalIdentifier` establecido explícitamente. Consulta [Relaciones](/l/es/developers/extend/apps/data/relations) para conocer el patrón bidireccional.

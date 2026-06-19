@@ -1,4 +1,5 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -48,6 +49,8 @@ export const WidgetActionFieldEdit = () => {
   );
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -113,10 +116,10 @@ export const WidgetActionFieldEdit = () => {
         objectPermissionsByObjectMetadataId,
         objectMetadataId: objectMetadataItem.id,
       }),
+      isFieldCustom: getIsMetadataItemCustom(fieldMetadataItem),
       fieldMetadataItem: {
         id: fieldMetadataItem.id,
         isUIEditable: fieldMetadataItem.isUIEditable ?? true,
-        isCustom: fieldMetadataItem.isCustom ?? false,
       },
       fieldDefinition,
       objectPermissionsByObjectMetadataId,

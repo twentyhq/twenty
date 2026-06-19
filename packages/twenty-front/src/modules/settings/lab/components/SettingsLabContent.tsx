@@ -9,8 +9,8 @@ import {
   IconRelationManyToMany,
   IconSparkles,
   type IconComponent,
-} from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
+} from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 

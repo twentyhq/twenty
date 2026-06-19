@@ -13,7 +13,7 @@ import {
   AppTooltip,
   OverflowingTextWithTooltip,
   TooltipDelay,
-} from 'twenty-ui/display';
+} from 'twenty-ui/surfaces';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
 

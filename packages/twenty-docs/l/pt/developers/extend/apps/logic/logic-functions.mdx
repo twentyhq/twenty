@@ -348,12 +348,52 @@ export default defineLogicFunction({
 });
 ```
 
+Para declarar seus parâmetros **uma vez** e atender a ambas as interfaces, defina um único JSON Schema (`InputJsonSchema`) e converta-o para a ação de fluxo de trabalho com `jsonSchemaToInputSchema` de `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` recebe o JSON Schema diretamente, enquanto `workflowActionTriggerSettings.inputSchema` espera o `InputSchema` da Twenty:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **Escreva uma boa `description`.** Os agentes de IA dependem do campo `description` da função para decidir quando usar a ferramenta. Seja específico sobre o que a ferramenta faz e quando ela deve ser chamada.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**Auxiliares de tempo de execução.** `twenty-sdk/utils` reexporta pequenos auxiliares de tempo de execução para que os handlers nunca importem diretamente de `twenty-shared`. Por exemplo, `isDefined(value)` retorna `false` tanto para `null` quanto para `undefined` — use-o para restringir com segurança entradas opcionais de handlers, que podem chegar como `null` em tempo de execução mesmo quando tipadas como `T | undefined`:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **Hooks de instalação** — manipuladores de pré-instalação e pós-instalação — compartilham esse ambiente de execução, mas são declarados com suas próprias funções de definição e não usam configurações de gatilho. Veja [Hooks de instalação](/l/pt/developers/extend/apps/config/install-hooks) para `definePreInstallLogicFunction` e `definePostInstallLogicFunction`.

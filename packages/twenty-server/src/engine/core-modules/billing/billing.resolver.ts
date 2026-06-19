@@ -12,6 +12,7 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { BillingEndTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-end-trial-period.dto';
 import { BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
+import { BillingPaymentIntentDTO } from 'src/engine/core-modules/billing/dtos/billing-payment-intent.dto';
 import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-session.dto';
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
@@ -71,12 +72,13 @@ export class BillingResolver {
   )
   async billingPortalSession(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args() { returnUrlPath }: BillingSessionInput,
+    @Args() { returnUrlPath, forPaymentMethodUpdate }: BillingSessionInput,
   ) {
     return {
       url: await this.billingPortalWorkspaceService.computeBillingPortalSessionURLOrThrow(
         workspace,
         returnUrlPath,
+        forPaymentMethodUpdate,
       ),
     };
   }
@@ -140,6 +142,40 @@ export class BillingResolver {
         url: checkoutSessionURL,
       };
     }
+  }
+
+  @Mutation(() => BillingPaymentIntentDTO)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
+  async createSubscriptionPaymentIntent(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args() { recurringInterval, plan }: BillingCheckoutSessionInput,
+    @Args('idempotencyKey', { type: () => String }) idempotencyKey: string,
+    @AuthApiKey() apiKey?: ApiKeyEntity,
+  ): Promise<BillingPaymentIntentDTO> {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      apiKeyId: apiKey?.id,
+      workspaceActivationStatus: workspace.activationStatus,
+    });
+
+    const resolvedPlan = plan ?? BillingPlanKey.PRO;
+
+    const billingPricesPerPlan =
+      await this.billingPlanService.getPricesPerPlanByInterval({
+        planKey: resolvedPlan,
+        interval: recurringInterval,
+      });
+
+    return this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
+      user,
+      workspace,
+      plan: resolvedPlan,
+      billingPricesPerPlan,
+      idempotencyKey,
+    });
   }
 
   @Mutation(() => BillingUpdateDTO)

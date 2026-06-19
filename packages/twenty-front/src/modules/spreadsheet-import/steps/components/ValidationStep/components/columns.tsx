@@ -12,7 +12,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
 import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
@@ -56,10 +56,12 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledDefaultContainer = styled.div`
+  align-content: center;
   min-height: 100%;
   min-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledSelectReadonlyValueContianer = styled.div`

@@ -348,12 +348,52 @@ export default defineLogicFunction({
 });
 ```
 
+Чтобы объявить параметры **один раз** и использовать их в обоих сценариях, определите одну JSON Schema (`InputJsonSchema`) и преобразуйте её для действия рабочего процесса с помощью `jsonSchemaToInputSchema` из `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` принимает JSON Schema напрямую, в то время как `workflowActionTriggerSettings.inputSchema` ожидает `InputSchema` Twenty:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **Напишите хорошее описание в поле `description`.** Агенты ИИ опираются на поле `description` функции, чтобы решить, когда использовать инструмент. Чётко опишите, что делает инструмент и когда его следует вызывать.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**Вспомогательные функции времени выполнения.** `twenty-sdk/utils` повторно экспортирует небольшие вспомогательные функции времени выполнения, поэтому обработчики никогда не импортируют напрямую из `twenty-shared`. Например, `isDefined(value)` возвращает `false` как для `null`, так и для `undefined` — используйте её, чтобы безопасно сузить необязательные входные данные обработчика, которые могут приходить как `null` во время выполнения, даже если имеют тип `T | undefined`:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **Хуки установки** — обработчики до установки и после установки — используют тот же рантайм, но объявляются с помощью собственных функций `define` и не принимают настройки триггеров. См. раздел [Install Hooks](/l/ru/developers/extend/apps/config/install-hooks) для `definePreInstallLogicFunction` и `definePostInstallLogicFunction`.

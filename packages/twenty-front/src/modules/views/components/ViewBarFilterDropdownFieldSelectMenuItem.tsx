@@ -5,7 +5,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown } from '@/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
 export type ViewBarFilterDropdownFieldSelectMenuItemProps = {

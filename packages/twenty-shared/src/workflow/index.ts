@@ -13,8 +13,21 @@ export { IF_ELSE_BRANCH_POSITION_OFFSETS } from './constants/IfElseBranchPositio
 export { OBJECTS_BLOCKED_FROM_AUTOMATION } from './constants/ObjectsBlockedFromAutomation';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export { WORKFLOW_TRIGGER_METADATA_KEY } from './constants/WorkflowTriggerMetadataKey';
+export { WORKFLOW_TRIGGER_METADATA_LABEL } from './constants/WorkflowTriggerMetadataLabel';
 export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY } from './constants/WorkflowTriggerMetadataWorkspaceMemberIdKey';
+export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_LABEL } from './constants/WorkflowTriggerMetadataWorkspaceMemberIdLabel';
 export { WORKFLOW_TRIGGER_PAYLOAD_KEY } from './constants/WorkflowTriggerPayloadKey';
+export { WORKFLOW_TRIGGER_RECORD_LABEL } from './constants/WorkflowTriggerRecordLabel';
+export { WORKFLOW_TRIGGER_RECORDS_LABEL } from './constants/WorkflowTriggerRecordsLabel';
+export { WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS } from './layout/constants/WorkflowDiagramDefaultNodeDimensions';
+export { WORKFLOW_LAYOUT_DEFAULT_OPTIONS } from './layout/constants/WorkflowLayoutDefaultOptions';
+export type {
+  WorkflowLayoutNode,
+  WorkflowLayoutEdge,
+  WorkflowLayoutPosition,
+  WorkflowLayoutOptions,
+} from './layout/utils/compute-workflow-layout.util';
+export { computeWorkflowLayout } from './layout/utils/compute-workflow-layout.util';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
@@ -31,6 +44,7 @@ export { workflowDeleteRecordActionSettingsSchema } from './schemas/delete-recor
 export { workflowDraftEmailActionSchema } from './schemas/draft-email-action-schema';
 export { workflowEmptyActionSchema } from './schemas/empty-action-schema';
 export { workflowEmptyActionSettingsSchema } from './schemas/empty-action-settings-schema';
+export { expectedOutputSchemaShape } from './schemas/expected-output-schema-shape';
 export { workflowFilterActionSchema } from './schemas/filter-action-schema';
 export { workflowFilterActionSettingsSchema } from './schemas/filter-action-settings-schema';
 export { workflowFindRecordsActionSchema } from './schemas/find-records-action-schema';
@@ -81,6 +95,7 @@ export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
 export type { EmailRecipients } from './types/EmailRecipients';
 export type { FunctionInput } from './types/FunctionInput';
 export type {
+  RecordSchemaType,
   InputSchemaPropertyType,
   InputSchemaProperty,
   InputSchema,
@@ -164,6 +179,7 @@ export type {
   OutputSchemaV2,
   VariableSearchResult,
 } from './workflow-schema/types/output-schema.type';
+export { buildManualTriggerMetadataNode } from './workflow-schema/utils/build-manual-trigger-metadata-node';
 export { collectOutputSchemaPaths } from './workflow-schema/utils/collect-output-schema-paths';
 export type { OutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
 export { findOutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';

@@ -10,6 +10,7 @@ describe('isRecordFieldReadOnly', () => {
 
   const mockParams = {
     isRecordReadOnly: false,
+    isFieldCustom: false,
     objectPermissions: mockObjectPermissions,
     fieldMetadataId: 'field-123',
     fieldMetadataType: FieldMetadataType.TEXT,
@@ -23,7 +24,6 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIEditable: true,
-        isCustom: false,
       },
     });
 
@@ -40,7 +40,6 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIEditable: true,
-        isCustom: false,
       },
     });
 
@@ -59,7 +58,6 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIEditable: true,
-        isCustom: false,
       },
     });
 
@@ -72,7 +70,6 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIEditable: false,
-        isCustom: false,
       },
     });
 
@@ -85,7 +82,6 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIEditable: true,
-        isCustom: false,
       },
     });
 
@@ -99,7 +95,6 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIEditable: true,
-        isCustom: false,
       },
     });
 
@@ -110,10 +105,10 @@ describe('isRecordFieldReadOnly', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
       isSystemObject: true,
+      isFieldCustom: true,
       fieldMetadataItem: {
         id: 'field-123',
         isUIEditable: true,
-        isCustom: true,
       },
     });
 
@@ -126,7 +121,6 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIEditable: true,
-        isCustom: false,
       },
     });
 

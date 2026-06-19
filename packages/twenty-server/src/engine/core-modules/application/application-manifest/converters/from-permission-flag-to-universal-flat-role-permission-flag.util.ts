@@ -1,17 +1,9 @@
-import {
-  PermissionFlagType,
-  SystemPermissionFlag,
-} from 'twenty-shared/constants';
 import { v5 } from 'uuid';
 
 import { type UniversalFlatRolePermissionFlag } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role-permission-flag.type';
 
 export const ROLE_PERMISSION_FLAG_UUID_NAMESPACE =
   'b9a3b3b3-58a3-4f6c-9c1f-3a4f6c9c1f3a';
-
-const SYSTEM_PERMISSION_FLAG_BY_UNIVERSAL_IDENTIFIER = Object.fromEntries(
-  Object.entries(SystemPermissionFlag).map(([key, uuid]) => [uuid, key]),
-) as Record<string, PermissionFlagType | undefined>;
 
 export const fromPermissionFlagToUniversalFlatRolePermissionFlag = ({
   permissionFlagUniversalIdentifier,
@@ -29,17 +21,11 @@ export const fromPermissionFlagToUniversalFlatRolePermissionFlag = ({
     ROLE_PERMISSION_FLAG_UUID_NAMESPACE,
   );
 
-  const resolvedFlag =
-    SYSTEM_PERMISSION_FLAG_BY_UNIVERSAL_IDENTIFIER[
-      permissionFlagUniversalIdentifier
-    ];
-
   return {
     universalIdentifier,
     applicationUniversalIdentifier,
     roleUniversalIdentifier,
     permissionFlagUniversalIdentifier,
-    flag: resolvedFlag as PermissionFlagType,
     createdAt: now,
     updatedAt: now,
   };

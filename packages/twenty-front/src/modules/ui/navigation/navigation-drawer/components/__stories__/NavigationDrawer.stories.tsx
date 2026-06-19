@@ -33,8 +33,8 @@ import {
   IconUser,
   IconUserCircle,
   IconUsers,
-} from 'twenty-ui/display';
-import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
+} from 'twenty-ui/icon';
+import { AdvancedSettingsToggle } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';

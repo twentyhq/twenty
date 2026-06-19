@@ -1,0 +1,294 @@
+---
+title: 게시
+icon: 업로드
+description: Twenty 앱을 마켓플레이스에 배포하거나 내부에 배포하세요.
+---
+
+## 개요
+
+앱을 [로컬에서 빌드하고 테스트](/l/ko/developers/extend/apps/getting-started/concepts)하면, 배포 경로는 두 가지입니다:
+
+* **타르볼 배포** — 내부 또는 비공개 사용을 위해 특정 Twenty 서버에 앱을 직접 업로드합니다.
+* **npm에 게시** — 모든 워크스페이스가 검색하고 설치할 수 있도록 Twenty 마켓플레이스에 앱을 등재합니다.
+
+두 경로는 동일한 **build** 단계에서 시작합니다.
+
+## 앱 빌드
+
+앱을 컴파일하고 배포 준비가 된 `manifest.json`을 생성하려면 빌드 명령을 실행하세요:
+
+```bash filename="Terminal"
+yarn twenty dev:build
+```
+
+이는 TypeScript 소스를 컴파일하고, 로직 함수와 프런트 컴포넌트를 트랜스파일하며, 모든 항목을 `.twenty/output/`에 기록합니다. 수동 배포 또는 publish 명령을 위한 `.tgz` 패키지도 생성하려면 `--tarball`을 추가하세요.
+
+## 서버에 배포(타르볼)
+
+공개하고 싶지 않은 앱 — 독점 도구, 엔터프라이즈 전용 통합 또는 실험적 빌드 — 의 경우, 타르볼을 Twenty 서버에 직접 배포할 수 있습니다.
+
+### 사전 준비
+
+배포 전에 대상 서버를 가리키도록 구성된 원격이 필요합니다. 원격은 서버 URL과 인증 자격 증명을 로컬의 `~/.twenty/config.json`에 저장합니다.
+
+원격 추가:
+
+```bash filename="Terminal"
+yarn twenty remote:add --url https://your-twenty-server.com --as production
+```
+
+### 배포
+
+앱을 한 번에 빌드하여 서버에 업로드:
+
+```bash filename="Terminal"
+yarn twenty app:publish --private
+# To deploy to a specific remote:
+# yarn twenty app:publish --private --remote production
+```
+
+### 배포된 앱 공유
+
+<Warning>
+워크스페이스 간에 비공개(타르볼) 앱을 공유하는 것은 **엔터프라이즈** 기능입니다. 워크스페이스에 유효한 엔터프라이즈 키가 있을 때까지 **Distribution** 탭에는 공유 컨트롤 대신 업그레이드 프롬프트가 표시됩니다. 이를 활성화하려면 [설정 > 관리자 패널 > 엔터프라이즈](/settings/admin-panel#enterprise)로 이동하세요.
+</Warning>
+
+타르볼 앱은 공개 마켓플레이스에 나열되지 않으므로, 동일한 서버의 다른 워크스페이스는 탐색만으로는 이를 찾을 수 없습니다. 워크스페이스가 Enterprise 플랜을 사용 중이면, 배포된 앱을 다음과 같이 공유할 수 있습니다:
+
+1. **설정 > 애플리케이션 > 등록**으로 이동하여 앱을 엽니다
+2. **Distribution** 탭에서 **공유 링크 복사**를 클릭합니다
+3. 이 링크를 다른 워크스페이스의 사용자와 공유하세요 — 해당 앱의 설치 페이지로 바로 이동합니다
+
+공유 링크는 서버의 기본 URL(워크스페이스 하위 도메인 없이)을 사용하므로 서버의 모든 워크스페이스에서 동작합니다.
+
+### 버전 관리
+
+이미 배포된 타르볼 앱을 업데이트할 때, 서버는 `package.json`의 `version`이 현재 배포된 버전보다 [semver](https://semver.org) 순서 기준으로 엄격히 더 높아야 합니다. 동일한 버전을 다시 배포하거나 더 낮은 버전을 푸시하는 경우, 타르볼이 저장되기 전에 거부됩니다 — CLI에서 `VERSION_ALREADY_EXISTS` 오류가 표시됩니다.
+
+업데이트를 릴리스하려면:
+
+1. `package.json`의 `version` 필드를 올리세요(예: `1.2.3` → `1.2.4`, `1.3.0`, 또는 `2.0.0`)
+2. `yarn twenty app:publish --private`(또는 `yarn twenty app:publish --private --remote production`)를 실행합니다.
+3. 앱을 설치한 워크스페이스는 설정에서 사용 가능한 업그레이드를 확인할 수 있습니다
+
+<Note>
+프리릴리스 태그는 예상대로 동작합니다: `1.0.0-rc.1` → `1.0.0-rc.2`로 올리는 것은 허용되며, `1.0.0`과 같은 최종 릴리스는 `1.0.0-rc.5`보다 더 높은 버전으로 올바르게 인식됩니다. `package.json`의 버전은 유효한 semver 문자열이어야 합니다.
+</Note>
+
+{/* TODO: add screenshot of the Upgrade button */}
+
+### 서버 버전 호환성
+
+앱이 특정 Twenty 서버 버전에서 도입된 기능(예: v2.3.0에 추가된 OAuth 공급자)을 사용한다면, `package.json`의 `engines.twenty` 필드를 사용하여 앱에 필요한 최소 서버 버전을 선언해야 합니다:
+
+```json filename="package.json"
+{
+  "name": "twenty-my-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": "^24.5.0",
+    "twenty": ">=2.3.0"
+  }
+}
+```
+
+값은 표준 [semver 범위](https://github.com/npm/node-semver#ranges)입니다. 일반적인 패턴:
+
+| 범위                                 | 의미                                     |
+| ---------------------------------- | -------------------------------------- |
+| `>=2.3.0`                          | 2.3.0 이상인 모든 서버                        |
+| `>=2.3.0 \<3.0.0` | 2.3.0 이상이지만 다음 메이저 버전 미만               |
+| `^2.3.0`                           | `>=2.3.0 \<3.0.0`과 동일 |
+
+**배포 및 설치 시 동작:**
+
+* `engines.twenty`가 설정되어 있고 대상 서버의 버전이 해당 범위를 충족하지 않으면, 배포(tarball 업로드) 또는 설치가 `SERVER_VERSION_INCOMPATIBLE` 오류와 함께 거부되며 필요한 범위와 실제 서버 버전을 모두 나타내는 메시지가 표시됩니다.
+* `engines.twenty`가 **설정되어 있지 않으면**, 앱은 모든 서버 버전에서 허용됩니다(기존 앱과 하위 호환).
+* 서버에 `APP_VERSION`이 구성되어 있지 않으면, 검사가 생략됩니다.
+
+<Note>
+서버가 최종 검증을 수행합니다 — 타르볼 업로드와 워크스페이스 설치 모두에서 `engines.twenty`를 검증합니다. 타르볼을 별도 경로로 배포하거나 마켓플레이스에서 설치하더라도, 서버는 여전히 호환성을 강제합니다.
+</Note>
+
+## 자동화된 CI/CD (스캐폴드된 워크플로)
+
+`create-twenty-app`으로 생성된 앱은 `.github/workflows/` 아래에 기본으로 두 개의 GitHub Actions 워크플로가 포함되어 있습니다. 저장소를 GitHub에 푸시하는 즉시 실행할 준비가 되어 있습니다 — CI에는 추가 설정이 필요 없고, CD에는 단 하나의 시크릿만 필요합니다.
+
+### CI — `ci.yml`
+
+`main`으로의 푸시와 풀 리퀘스트마다 통합 테스트를 자동으로 실행합니다.
+
+**하는 일:**
+
+1. 앱의 소스 코드를 체크아웃합니다.
+2. `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` 컴포지트 액션을 사용해 격리된 Twenty 테스트 인스턴스를 생성합니다(CI에서 `yarn twenty docker:start --test`와 동등합니다).
+3. Corepack을 활성화하고, `.nvmrc`에 따라 Node.js를 설정하며, `yarn install --immutable`로 의존성을 설치합니다.
+4. 생성된 인스턴스에서 `TWENTY_API_URL`과 `TWENTY_API_KEY`를 전달하여 실제 서버와 통신할 수 있도록 `yarn test`를 실행합니다.
+
+**구성 옵션:**
+
+* `TWENTY_VERSION`(환경 변수, 기본값 `latest`) — `ci.yml`에서 이 값을 수정하여 CI에서 사용하는 Twenty 서버 버전을 고정합니다.
+* 동시 실행은 `github.ref`로 그룹화되며, 새 푸시가 발생하면 진행 중인 실행을 취소합니다.
+
+시크릿이 필요하지 않습니다 — 테스트 인스턴스는 일시적이며 작업이 진행되는 동안에만 존재합니다.
+
+### CD — `cd.yml`
+
+매번 `main`으로 푸시될 때 구성된 Twenty 서버에 앱을 배포하며, `deploy` 라벨이 적용된 경우 풀 리퀘스트에서도 선택적으로 배포합니다.
+
+**하는 일:**
+
+1. 라벨이 지정된 PR의 경우 PR 헤드, 아니면 푸시된 커밋을 체크아웃합니다.
+2. `twentyhq/twenty/.github/actions/deploy-twenty-app@main`를 실행합니다 — CI에서의 `yarn twenty app:publish --private`에 해당합니다.
+3. `twentyhq/twenty/.github/actions/install-twenty-app@main`를 실행하여 새로 배포된 버전을 대상 워크스페이스에 설치합니다.
+
+**필수 구성:**
+
+| 설정                      | 위치                                                        | 목적                                               |
+| ----------------------- | --------------------------------------------------------- | ------------------------------------------------ |
+| `TWENTY_DEPLOY_URL`     | `cd.yml`의 `env`(기본값 `http://localhost:3000`)              | 배포 대상 Twenty 서버입니다. 처음 사용하기 전에 실제 서버 URL로 변경하세요. |
+| `TWENTY_DEPLOY_API_KEY` | GitHub 저장소 **Settings → Secrets and variables → Actions** | 대상 서버에서 배포 권한이 있는 API 키입니다.                      |
+
+<Note>
+기본 `TWENTY_DEPLOY_URL` 값 `http://localhost:3000`은 플레이스홀더이며 — GitHub 호스팅 러너에서는 아무 곳에도 도달하지 않습니다. CD를 활성화하기 전에 서버의 퍼블릭 URL로 업데이트하세요(또는 네트워크에 접근 가능한 셀프 호스티드 러너를 사용하세요).
+</Note>
+
+**PR에서 프리뷰 배포 트리거하기:**
+
+풀 리퀘스트에 `deploy` 라벨을 추가하세요. `cd.yml`의 `if:` 가드는 해당 PR의 헤드 커밋을 사용해 그 PR에 대한 잡을 실행하므로, 머지 전에 대상 서버에서 변경 사항을 검증할 수 있습니다.
+
+### 재사용 가능한 액션 고정하기
+
+두 워크플로 모두 `@main`의 재사용 가능한 액션을 참조하므로, `twentyhq/twenty` 저장소의 액션 업데이트가 자동으로 반영됩니다. 결정적 빌드를 원한다면, 각 `uses:` 줄에서 `@main`을 커밋 SHA 또는 릴리스 태그로 바꾸세요.
+
+## npm에 게시
+
+npm에 게시하면 Twenty 마켓플레이스에서 앱을 찾을 수 있게 됩니다. 모든 Twenty 워크스페이스는 UI에서 바로 마켓플레이스 앱을 탐색, 설치 및 업그레이드할 수 있습니다.
+
+### 요구 사항
+
+* [npm](https://www.npmjs.com) 계정
+* `package.json`의 `keywords` 배열에 있는 `twenty-app` 키워드(수동으로 추가하세요 — `create-twenty-app` 템플릿에 기본적으로 포함되어 있지 않습니다)
+
+```json filename="package.json"
+{
+  "name": "twenty-app-postcard-sender",
+  "version": "1.0.0",
+  "keywords": ["twenty-app"]
+}
+```
+
+### 마켓플레이스 메타데이터
+
+`defineApplication()` 구성은 마켓플레이스에서 앱이 표시되는 방식을 제어하는 선택적 필드를 지원합니다. `public/` 폴더의 이미지를 참조하려면 `logoUrl`과 `screenshots`를 사용하세요:
+
+```ts src/application-config.ts
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'My App',
+  description: 'A great app',
+  logoUrl: 'public/logo.png',
+  screenshots: [
+    'public/screenshot-1.png',
+    'public/screenshot-2.png',
+  ],
+});
+```
+
+마켓플레이스 필드 전체 목록(`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` 등)은 Building Apps 페이지의 [defineApplication 아코디언](/l/ko/developers/extend/apps/config/application#marketplace-metadata)을 참조하세요.
+
+#### 권장 스크린샷 크기
+
+마켓플레이스는 `screenshots`를 고정된 `8:5` 컨테이너에 렌더링합니다(예: `1600×1000 px`).
+
+<Note>
+어떤 종횡비의 스크린샷이든 전체가 표시되며 잘리지 않습니다. 그러나 `8:5`보다 훨씬 세로로 길거나 가로로 좁은 경우 양쪽에 빈 띠가 표시됩니다.
+</Note>
+
+### 게시
+
+```bash filename="Terminal"
+yarn twenty app:publish
+```
+
+특정 dist-tag(예: `beta` 또는 `next`)로 게시하려면:
+
+```bash filename="Terminal"
+yarn twenty app:publish --tag beta
+```
+
+### 마켓플레이스 검색 방식
+
+Twenty 서버는 npm 레지스트리에서 마켓플레이스 카탈로그를 **매시간** 동기화합니다.
+
+기다리지 않고 즉시 동기화를 트리거할 수 있습니다:
+
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync
+# To target a specific remote:
+# yarn twenty dev:catalog-sync --remote production
+```
+
+마켓플레이스에 표시되는 메타데이터는 `defineApplication()` 구성에서 가져옵니다 — `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, `termsUrl` 같은 필드입니다.
+
+<Note>
+앱에서 `defineApplication()`에 `aboutDescription`을 정의하지 않으면, 마켓플레이스는 소개 페이지 콘텐츠로 npm에 게시된 패키지의 `README.md`를 자동으로 사용합니다. 즉, npm과 Twenty 마켓플레이스 모두에서 하나의 README만 관리하면 됩니다. 마켓플레이스에서 다른 설명을 사용하려면 `aboutDescription`을 명시적으로 설정하세요.
+</Note>
+
+### CI 게시
+
+모든 릴리스마다 자동으로 게시하려면 이 GitHub Actions 워크플로를 사용하세요([OIDC](https://docs.npmjs.com/trusted-publishers) 사용):
+
+```yaml filename=".github/workflows/publish.yml"
+name: Publish
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - run: yarn install --immutable
+      - run: npx twenty dev:build
+      - run: npm publish --provenance --access public
+        working-directory: .twenty/output
+```
+
+다른 CI 시스템(GitLab CI, CircleCI 등)에서도 동일한 세 가지 명령을 사용합니다: `yarn install`, `yarn twenty dev:build`, 그리고 `.twenty/output`에서 `npm publish`.
+
+<Note>
+**npm provenance**는 선택 사항이지만 권장됩니다. `--provenance` 옵션으로 게시하면 npm 목록에 신뢰 배지가 추가되어, 사용자가 공개 CI 파이프라인의 특정 커밋에서 패키지가 빌드되었는지 확인할 수 있습니다. 설정 방법은 [npm provenance 문서](https://docs.npmjs.com/generating-provenance-statements)를 참고하세요.
+</Note>
+
+## 앱 설치
+
+앱이 게시(npm)되었거나 배포(타르볼)되면, 워크스페이스는 UI를 통해 이를 설치할 수 있습니다.
+
+Twenty UI의 **설정 > 애플리케이션** 페이지로 이동하면 마켓플레이스 앱과 타르볼로 배포된 앱을 모두 탐색하고 설치할 수 있습니다.
+
+{/* TODO: add screenshot of the UI when the app is registered */}
+
+명령줄에서 앱을 설치할 수도 있습니다:
+
+```bash filename="Terminal"
+yarn twenty app:install
+```
+
+<Note>
+서버는 설치 시 semver 버전 규칙을 강제하며, 배포와 동일한 규칙을 적용합니다:
+
+* 워크스페이스에 이미 설치된 것과 동일한 버전을 설치하려고 하면 `APP_ALREADY_INSTALLED` 오류와 함께 거부됩니다.
+* 현재 설치된 것보다 낮은 버전을 설치하려고 하면 `CANNOT_DOWNGRADE_APPLICATION` 오류와 함께 거부됩니다.
+
+더 최신 버전을 설치하려면 먼저 배포하거나 게시한 다음 `yarn twenty app:install`을 다시 실행하세요.
+</Note>

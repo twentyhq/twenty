@@ -1,6 +1,6 @@
 {
   "name": "twenty-meeting-bot",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -19,16 +19,18 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@sniptt/guards": "^0.2.0",
-    "twenty-client-sdk": "2.13.0"
+    "@sniptt/guards": "^0.2.0"
   },
   "devDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@types/node": "^24.7.2",
     "@types/react": "^19.0.0",
     "oxlint": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "twenty-sdk": "2.13.0",
+    "twenty-client-sdk": "2.14.0",
+    "twenty-sdk": "2.14.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^3.1.1"

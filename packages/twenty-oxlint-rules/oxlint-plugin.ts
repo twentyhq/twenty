@@ -57,6 +57,10 @@ import {
   RULE_NAME as noStateUserefName,
 } from './rules/no-state-useref';
 import {
+  rule as noStorybookA11yDisable,
+  RULE_NAME as noStorybookA11yDisableName,
+} from './rules/no-storybook-a11y-disable';
+import {
   rule as preferWorkspaceScopedRepository,
   RULE_NAME as preferWorkspaceScopedRepositoryName,
 } from './rules/prefer-workspace-scoped-repository';
@@ -95,6 +99,7 @@ export default definePlugin({
     [noJotaiStoreInSelectorName]: noJotaiStoreInSelector,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
     [noStateUserefName]: noStateUseref,
+    [noStorybookA11yDisableName]: noStorybookA11yDisable,
     [preferWorkspaceScopedRepositoryName]: preferWorkspaceScopedRepository,
     [restApiMethodsShouldBeGuardedName]: restApiMethodsShouldBeGuarded,
     [sortCssPropertiesAlphabeticallyName]: sortCssPropertiesAlphabetically,

@@ -7,9 +7,8 @@ import {
   Banner,
   type BannerColor,
   type BannerVariant,
-  type IconComponent,
-  IconX,
-} from 'twenty-ui/display';
+} from 'twenty-ui/feedback';
+import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { Button, IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

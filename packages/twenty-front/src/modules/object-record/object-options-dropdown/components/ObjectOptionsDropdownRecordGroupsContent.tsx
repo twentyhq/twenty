@@ -29,7 +29,7 @@ import {
   IconEyeOff,
   IconLayoutList,
   IconSortDescending,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import {
   MenuItem,
   MenuItemNavigate,

@@ -34,8 +34,8 @@ import {
   isDefined,
   sumByProperty,
 } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/components';
-import { IconChevronDown } from 'twenty-ui/display';
+import { Tag } from 'twenty-ui/data-display';
+import { IconChevronDown } from 'twenty-ui/icon';
 import { AnimatedLightIconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 

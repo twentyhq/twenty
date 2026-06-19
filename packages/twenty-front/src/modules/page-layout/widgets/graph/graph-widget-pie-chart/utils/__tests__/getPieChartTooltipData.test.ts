@@ -26,19 +26,19 @@ describe('getPieChartTooltipData', () => {
 
   const mockEnrichedData: PieChartEnrichedData[] = [
     {
-      id: 'Product A',
+      key: 'Product A',
       value: 500,
       percentage: 50,
       colorScheme: mockColorScheme,
     },
     {
-      id: 'Product B',
+      key: 'Product B',
       value: 300,
       percentage: 30,
       colorScheme: { ...mockColorScheme, solid: '#solidB' },
     },
     {
-      id: 'Product C',
+      key: 'Product C',
       value: 200,
       percentage: 20,
       colorScheme: { ...mockColorScheme, solid: '#solidC' },
@@ -46,13 +46,13 @@ describe('getPieChartTooltipData', () => {
   ];
 
   const createMockDatum = (
-    id: string,
+    key: string,
     options?: { computedId?: string },
   ): ComputedDatum<PieChartDataItemWithColor> =>
     ({
-      id: options?.computedId ?? id,
+      id: options?.computedId ?? key,
       value: 0,
-      data: { id, value: 0 },
+      data: { key, value: 0 },
     }) as unknown as ComputedDatum<PieChartDataItemWithColor>;
 
   const defaultFormatOptions = {
@@ -150,7 +150,7 @@ describe('getPieChartTooltipData', () => {
       expect(result).toBeNull();
     });
 
-    it('should match by datum.data.id when computed id is namespaced per widget', () => {
+    it('should match by datum.data.key when computed id is namespaced per widget', () => {
       const datum = createMockDatum('Product A', {
         computedId: 'widget-xyz:Product A',
       });
@@ -182,7 +182,7 @@ describe('getPieChartTooltipData', () => {
     it('should handle item with zero value', () => {
       const enrichedDataWithZero: PieChartEnrichedData[] = [
         {
-          id: 'Zero Item',
+          key: 'Zero Item',
           value: 0,
           percentage: 0,
           colorScheme: mockColorScheme,
@@ -203,7 +203,7 @@ describe('getPieChartTooltipData', () => {
     it('should handle special characters in id', () => {
       const enrichedDataWithSpecialChars: PieChartEnrichedData[] = [
         {
-          id: 'Item & Special <chars>',
+          key: 'Item & Special <chars>',
           value: 100,
           percentage: 100,
           colorScheme: mockColorScheme,

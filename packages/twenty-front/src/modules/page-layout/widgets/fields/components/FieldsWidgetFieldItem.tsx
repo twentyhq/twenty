@@ -1,4 +1,5 @@
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -50,6 +51,8 @@ export const FieldsWidgetFieldItem = ({
   instanceId,
   onMouseEnter,
 }: FieldsWidgetFieldItemProps) => {
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+
   const isActivityTarget = isActivityTargetField(
     fieldMetadataItem.name,
     targetObjectNameSingular,
@@ -80,10 +83,10 @@ export const FieldsWidgetFieldItem = ({
             objectPermissionsByObjectMetadataId,
             objectMetadataId: objectMetadataItem.id,
           }),
+          isFieldCustom: getIsMetadataItemCustom(fieldMetadataItem),
           fieldMetadataItem: {
             id: fieldMetadataItem.id,
             isUIEditable: fieldMetadataItem.isUIEditable ?? true,
-            isCustom: fieldMetadataItem.isCustom ?? false,
           },
           fieldDefinition,
           objectPermissionsByObjectMetadataId,

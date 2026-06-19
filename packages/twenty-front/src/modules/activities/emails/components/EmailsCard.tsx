@@ -7,14 +7,11 @@ import { ComposeEmailButton } from '@/activities/emails/components/ComposeEmailB
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
-import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromCompanyId';
-import { getTimelineThreadsFromOpportunityId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromOpportunityId';
-import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
+import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans } from '@lingui/react/macro';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -52,26 +49,17 @@ const StyledEmailCount = styled.span`
 export const EmailsCard = () => {
   const targetRecord = useTargetRecord();
 
-  const [query, queryName] =
-    targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Person
-      ? [getTimelineThreadsFromPersonId, 'getTimelineThreadsFromPersonId']
-      : targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Company
-        ? [getTimelineThreadsFromCompanyId, 'getTimelineThreadsFromCompanyId']
-        : [
-            getTimelineThreadsFromOpportunityId,
-            'getTimelineThreadsFromOpportunityId',
-          ];
-
   const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
     useCustomResolver<TimelineThreadsWithTotal>(
-      query,
-      queryName,
+      getTimelineThreadsFromObjectRecord,
+      'getTimelineThreadsFromObjectRecord',
       'timelineThreads',
       targetRecord,
       TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
     );
 
-  const { totalNumberOfThreads, timelineThreads } = data?.[queryName] ?? {};
+  const { totalNumberOfThreads, timelineThreads } =
+    data?.getTimelineThreadsFromObjectRecord ?? {};
   const hasMoreTimelineThreads =
     timelineThreads && totalNumberOfThreads
       ? timelineThreads?.length < totalNumberOfThreads

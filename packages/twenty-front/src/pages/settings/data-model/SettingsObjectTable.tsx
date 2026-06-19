@@ -1,6 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
@@ -29,7 +30,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/display';
+import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import {
@@ -71,6 +72,7 @@ export const SettingsObjectTable = ({
 }) => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
@@ -255,9 +257,9 @@ export const SettingsObjectTable = ({
                           </StyledIconChevronRightContainer>
                         ) : isDDLLocked ? null : (
                           <SettingsObjectInactiveMenuDropDown
-                            isCustomObject={
-                              objectSettingsItem.objectMetadataItem.isCustom
-                            }
+                            isCustomObject={getIsMetadataItemCustom(
+                              objectSettingsItem.objectMetadataItem,
+                            )}
                             objectMetadataItemNamePlural={
                               objectSettingsItem.objectMetadataItem.namePlural
                             }

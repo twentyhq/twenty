@@ -5,8 +5,8 @@ import {
   type IndexFieldMetadataLoaderPayload,
   type IndexMetadataLoaderPayload,
   type IsConfiguredLoaderPayload,
-  type IsCustomLoaderPayload,
   type MorphRelationLoaderPayload,
+  type StandardApplicationIdLoaderPayload,
   type ObjectMetadataLoaderPayload,
   type RelationLoaderPayload,
   type ViewFieldGroupsByViewIdLoaderPayload,
@@ -94,5 +94,8 @@ export interface IDataloaders {
 
   isConfiguredLoader: DataLoader<IsConfiguredLoaderPayload, boolean>;
 
-  isCustomLoader: DataLoader<IsCustomLoaderPayload, boolean>;
+  standardApplicationIdLoader: DataLoader<
+    StandardApplicationIdLoaderPayload,
+    string
+  >;
 }

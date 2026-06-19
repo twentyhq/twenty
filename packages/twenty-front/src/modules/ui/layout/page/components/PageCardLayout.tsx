@@ -22,15 +22,19 @@ const StyledMainCardWrapper = styled.div`
   box-sizing: border-box;
   display: flex;
   flex: 1 1 0;
+  margin-left: -3px;
   min-width: 0;
-  padding-left: 1px;
+  padding-left: 4px;
   width: 0;
 `;
 
+// oxlint-disable-next-line twenty/no-hardcoded-colors
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
   border-radius: 16px 0 0 0;
-  box-shadow: 0 0 0 1px ${themeCssVariables.border.color.medium};
+  box-shadow:
+    -4px 0 4px 0 rgba(0, 0, 0, 0.006),
+    0 0 0 1px ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   display: flex;
   flex: 1;
@@ -38,6 +42,12 @@ const StyledCard = styled.div`
   min-height: 0;
   overflow: hidden;
   width: 100%;
+
+  .dark & {
+    box-shadow:
+      -4px 0 4px 0 rgba(0, 0, 0, 0.03),
+      0 0 0 1px ${themeCssVariables.border.color.medium};
+  }
 `;
 
 const StyledBodyContent = styled.div`

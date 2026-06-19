@@ -57,9 +57,10 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand implements SlowIns
           continue;
         }
 
-        const plaintext = this.secretEncryptionService.decryptVersioned(
-          rawValue as EncryptedString,
-        );
+        const plaintext =
+          this.secretEncryptionService.legacyDecryptVersionedWithFallback(
+            rawValue as EncryptedString,
+          );
 
         if (!isDefined(plaintext)) {
           continue;

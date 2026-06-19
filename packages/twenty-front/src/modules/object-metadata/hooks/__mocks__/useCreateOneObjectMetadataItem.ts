@@ -35,7 +35,6 @@ export const responseData = {
   description: '',
   icon: '',
   color: null,
-  isCustom: false,
   isActive: true,
   isSearchable: false,
   createdAt: '',

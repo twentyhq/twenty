@@ -8,7 +8,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';
 
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
-import { IconUserCircle } from 'twenty-ui/display';
+import { IconUserCircle } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 // const records = allMockPersonRecords.map<SearchRecord>((person) => ({

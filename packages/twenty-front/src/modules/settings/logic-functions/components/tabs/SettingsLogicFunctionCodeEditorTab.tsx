@@ -8,7 +8,8 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
+import { IconPlayerPlay } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 

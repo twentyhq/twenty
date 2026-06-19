@@ -21,7 +21,9 @@ export type SubdomainFieldStatus =
 
 const AVAILABILITY_CHECK_DEBOUNCE_MS = 400;
 
-export const useWorkspaceSubdomainField = () => {
+export const useWorkspaceSubdomainField = ({
+  isSubdomainEnabled = true,
+}: { isSubdomainEnabled?: boolean } = {}) => {
   const apolloClient = useApolloClient();
   const subdomainSchema = useMemo(() => getSubdomainValidationSchema(), []);
 
@@ -118,7 +120,7 @@ export const useWorkspaceSubdomainField = () => {
   const handleWorkspaceNameChange = (name: string) => {
     setWorkspaceName(name);
 
-    if (isManuallyEdited) {
+    if (!isSubdomainEnabled || isManuallyEdited) {
       return;
     }
 

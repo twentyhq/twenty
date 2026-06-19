@@ -7,7 +7,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconBox, IconUser, useIcons } from 'twenty-ui/display';
+import { IconBox, IconUser, useIcons } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

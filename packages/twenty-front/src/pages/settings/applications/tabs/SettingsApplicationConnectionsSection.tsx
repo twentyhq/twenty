@@ -12,15 +12,15 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { Status } from 'twenty-ui/data-display';
+import { Info } from 'twenty-ui/feedback';
 import {
-  H2Title,
   IconChevronRight,
   IconPlus,
   IconUser,
   IconUsers,
-  Info,
-  Status,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';

@@ -11,7 +11,6 @@ const FIND_MINIMAL_METADATA_QUERY = gql`
         labelSingular
         labelPlural
         icon
-        isCustom
         isActive
         isSystem
         isRemote
@@ -62,7 +61,6 @@ describe('minimalMetadata', () => {
         namePlural: expect.any(String),
         labelSingular: expect.any(String),
         labelPlural: expect.any(String),
-        isCustom: expect.any(Boolean),
         isActive: true,
         isSystem: expect.any(Boolean),
         isRemote: expect.any(Boolean),

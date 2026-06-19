@@ -1,11 +1,9 @@
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/components';
+import { Tag } from 'twenty-ui/data-display';
 import {
-  H2Title,
   IconBox,
   IconCalendarEvent,
   IconCalendarRepeat,
@@ -18,10 +16,11 @@ import {
   IconStatusChange,
   IconTag,
   IconUsers,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
@@ -73,10 +72,6 @@ const StyledItemValue = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledProgressBarContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const STATUS_COLORS: Record<SubscriptionStatus, ThemeColor> = {
@@ -143,7 +138,6 @@ export const SettingsAdminWorkspaceBillingContent = ({
 }: SettingsAdminWorkspaceBillingContentProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { theme } = useContext(ThemeContext);
   const apolloAdminClient = useApolloAdminClient();
 
   const { data, loading } = useQuery<WorkspaceBillingAdminPanelQuery>(

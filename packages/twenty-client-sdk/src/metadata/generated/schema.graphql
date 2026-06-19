@@ -479,7 +479,6 @@ type Field {
   description: String
   icon: String
   standardOverrides: StandardOverrides
-  isCustom: Boolean @deprecated(reason: "isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application.")
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
@@ -650,7 +649,6 @@ type Object {
   standardOverrides: ObjectStandardOverrides
   shortcut: String
   color: String
-  isCustom: Boolean! @deprecated(reason: "isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application.")
   isRemote: Boolean!
   isActive: Boolean!
   isSystem: Boolean!
@@ -871,6 +869,7 @@ type View {
   kanbanAggregateOperationFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean!
+  kanbanColumnWidth: Int
   calendarFieldMetadataId: UUID
   workspaceId: UUID!
   anyFieldFilterValue: String
@@ -964,6 +963,7 @@ type Workspace {
   billingSubscriptions: [BillingSubscription!]!
   installedApplications: [Application!]!
   currentBillingSubscription: BillingSubscription
+  billingCustomer: BillingCustomer
   billingEntitlements: [BillingEntitlement!]!
   hasValidSignedEnterpriseKey: Boolean!
   hasValidEnterpriseValidityToken: Boolean!
@@ -1367,6 +1367,7 @@ type ViewConfiguration {
 type RecordTableConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
+  recordLimit: Int
 }
 
 type WorkflowConfiguration {
@@ -1553,6 +1554,11 @@ type BillingSubscriptionItem {
   billingProduct: BillingProductDTO!
 }
 
+type BillingCustomer {
+  id: UUID!
+  hasPaymentMethod: Boolean
+}
+
 type BillingSubscription {
   id: UUID!
   status: SubscriptionStatus!
@@ -1603,6 +1609,11 @@ type BillingPlan {
   baseProducts: [BillingLicensedProduct!]!
   resourceCreditProducts: [BillingLicensedProduct!]!
   meteredProducts: [BillingMeteredProduct!]!
+}
+
+type BillingPaymentIntent {
+  clientSecret: String!
+  paymentIntentType: String!
 }
 
 type BillingSession {
@@ -1874,6 +1885,7 @@ enum ModelFamily {
 type Billing {
   isBillingEnabled: Boolean!
   billingUrl: String
+  stripePublishableKey: String
   trialPeriods: [BillingTrialPeriod!]!
 }
 
@@ -2715,7 +2727,7 @@ type LineChartDataPoint {
 }
 
 type LineChartSeries {
-  id: String!
+  key: String!
   label: String!
   data: [LineChartDataPoint!]!
 }
@@ -2731,7 +2743,7 @@ type LineChartData {
 }
 
 type PieChartDataItem {
-  id: String!
+  key: String!
   value: Float!
 }
 
@@ -2938,6 +2950,7 @@ type MessageFolder {
 
 enum MessageFolderPendingSyncAction {
   FOLDER_DELETION
+  FOLDER_IMPORT
   NONE
 }
 
@@ -2987,7 +3000,6 @@ type MinimalObjectMetadata {
   labelPlural: String!
   icon: String
   color: String
-  isCustom: Boolean!
   isActive: Boolean!
   isSystem: Boolean!
   isRemote: Boolean!
@@ -3028,7 +3040,7 @@ type Query {
   apiKey(input: GetApiKeyInput!): ApiKey
   getInviteSuggestions: [InviteSuggestion!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
-  billingPortalSession(returnUrlPath: String): BillingSession!
+  billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
@@ -3039,14 +3051,8 @@ type Query {
   getPageLayout(id: String!): PageLayout
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
-  findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
-  findManyLogicFunctions: [LogicFunction!]!
-  getAvailablePackages(input: LogicFunctionIdInput!): JSON!
-  getLogicFunctionSourceCode(input: LogicFunctionIdInput!): String
-  commandMenuItems: [CommandMenuItem!]!
-  commandMenuItem(id: UUID!): CommandMenuItem
-  frontComponents: [FrontComponent!]!
-  frontComponent(id: UUID!): FrontComponent
+  findManyAgents: [Agent!]!
+  findOneAgent(input: AgentIdInput!): Agent!
   objectRecordCounts: [ObjectRecordCount!]!
   object(
     """The id of the record to find."""
@@ -3070,8 +3076,14 @@ type Query {
     """Specify to filter the records returned."""
     filter: IndexFilter! = {}
   ): IndexConnection!
-  findManyAgents: [Agent!]!
-  findOneAgent(input: AgentIdInput!): Agent!
+  findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
+  findManyLogicFunctions: [LogicFunction!]!
+  getAvailablePackages(input: LogicFunctionIdInput!): JSON!
+  getLogicFunctionSourceCode(input: LogicFunctionIdInput!): String
+  commandMenuItems: [CommandMenuItem!]!
+  commandMenuItem(id: UUID!): CommandMenuItem
+  frontComponents: [FrontComponent!]!
+  frontComponent(id: UUID!): FrontComponent
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   unsubscribeTopics: [UnsubscribeTopic!]!
   unsubscribePagePreviewUrl: String!
@@ -3147,14 +3159,14 @@ input GetApiKeyInput {
   id: UUID!
 }
 
-input LogicFunctionIdInput {
-  """The id of the function."""
-  id: ID!
-}
-
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
+}
+
+input LogicFunctionIdInput {
+  """The id of the function."""
+  id: ID!
 }
 
 input PreviewMessageCampaignAudienceInput {
@@ -3224,6 +3236,7 @@ enum UsageOperationType {
   WORKFLOW_EXECUTION
   CODE_EXECUTION
   WEB_SEARCH
+  CALL_RECORDING
 }
 
 type Mutation {
@@ -3280,6 +3293,7 @@ type Mutation {
   skipBookOnboardingStep: OnboardingStepSuccess!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
+  createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   switchSubscriptionInterval: BillingUpdate!
   switchBillingPlan: BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!
@@ -3306,6 +3320,14 @@ type Mutation {
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   destroyPageLayoutWidget(id: String!): Boolean!
+  createOneAgent(input: CreateAgentInput!): Agent!
+  updateOneAgent(input: UpdateAgentInput!): Agent!
+  deleteOneAgent(input: AgentIdInput!): Agent!
+  createOneObject(input: CreateOneObjectInput!): Object!
+  deleteOneObject(input: DeleteOneObjectInput!): Object!
+  updateOneObject(input: UpdateOneObjectInput!): Object!
+  createOneIndex(input: CreateOneIndexInput!): Index!
+  deleteOneIndex(input: DeleteOneIndexInput!): Index!
   deleteOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
   executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
@@ -3317,14 +3339,6 @@ type Mutation {
   createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   deleteFrontComponent(id: UUID!): FrontComponent!
-  createOneObject(input: CreateOneObjectInput!): Object!
-  deleteOneObject(input: DeleteOneObjectInput!): Object!
-  updateOneObject(input: UpdateOneObjectInput!): Object!
-  createOneIndex(input: CreateOneIndexInput!): Index!
-  deleteOneIndex(input: DeleteOneIndexInput!): Index!
-  createOneAgent(input: CreateAgentInput!): Agent!
-  updateOneAgent(input: UpdateAgentInput!): Agent!
-  deleteOneAgent(input: AgentIdInput!): Agent!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
@@ -3387,6 +3401,7 @@ type Mutation {
   signUp(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInWorkspace(email: String!, password: String!, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String, captchaToken: String, locale: String, verifyEmailRedirectPath: String): SignUp!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
+  uploadNewWorkspaceLogo(workspaceId: String!, file: Upload!): FileWithSignedUrl!
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
@@ -3561,6 +3576,7 @@ input CreateViewInput {
   position: Float = 0
   isCompact: Boolean = false
   shouldHideEmptyGroups: Boolean = false
+  kanbanColumnWidth: Int
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -3587,6 +3603,7 @@ input UpdateViewInput {
   visibility: ViewVisibility
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean
+  kanbanColumnWidth: Int
 }
 
 input UpsertViewWidgetInput {
@@ -3895,6 +3912,103 @@ input UpdatePageLayoutWidgetInput {
   conditionalAvailabilityExpression: String
 }
 
+input CreateAgentInput {
+  name: String
+  label: String!
+  icon: String
+  description: String
+  prompt: String!
+  modelId: String!
+  roleId: UUID
+  responseFormat: JSON
+  modelConfiguration: JSON
+  evaluationInputs: [String!]
+}
+
+input UpdateAgentInput {
+  id: UUID!
+  name: String
+  label: String
+  icon: String
+  description: String
+  prompt: String
+  modelId: String
+  roleId: UUID
+  responseFormat: JSON
+  modelConfiguration: JSON
+  evaluationInputs: [String!]
+}
+
+input CreateOneObjectInput {
+  """The object to create"""
+  object: CreateObjectInput!
+}
+
+input CreateObjectInput {
+  nameSingular: String!
+  namePlural: String!
+  labelSingular: String!
+  labelPlural: String!
+  description: String
+  icon: String
+  shortcut: String
+  color: String
+  skipNameField: Boolean
+  isRemote: Boolean
+  primaryKeyColumnType: String
+  primaryKeyFieldMetadataSettings: JSON
+  isLabelSyncedWithName: Boolean
+}
+
+input DeleteOneObjectInput {
+  """The id of the record to delete."""
+  id: UUID!
+}
+
+input UpdateOneObjectInput {
+  update: UpdateObjectPayload!
+
+  """The id of the object to update"""
+  id: UUID!
+}
+
+input UpdateObjectPayload {
+  labelSingular: String
+  labelPlural: String
+  nameSingular: String
+  namePlural: String
+  description: String
+  icon: String
+  shortcut: String
+  color: String
+  isActive: Boolean
+  labelIdentifierFieldMetadataId: UUID
+  imageIdentifierFieldMetadataId: UUID
+  isLabelSyncedWithName: Boolean
+  isSearchable: Boolean
+}
+
+input CreateOneIndexInput {
+  """The custom index to create"""
+  index: CreateIndexInput!
+}
+
+input CreateIndexInput {
+  objectMetadataId: UUID!
+  fields: [CreateIndexFieldInput!]!
+  indexType: IndexType! = BTREE
+}
+
+input CreateIndexFieldInput {
+  fieldMetadataId: UUID!
+  subFieldName: String
+}
+
+input DeleteOneIndexInput {
+  """The id of the custom index to delete."""
+  id: UUID!
+}
+
 input CreateLogicFunctionFromSourceInput {
   id: UUID
   universalIdentifier: UUID
@@ -3991,103 +4105,6 @@ input UpdateFrontComponentInput {
 input UpdateFrontComponentInputUpdates {
   name: String
   description: String
-}
-
-input CreateOneObjectInput {
-  """The object to create"""
-  object: CreateObjectInput!
-}
-
-input CreateObjectInput {
-  nameSingular: String!
-  namePlural: String!
-  labelSingular: String!
-  labelPlural: String!
-  description: String
-  icon: String
-  shortcut: String
-  color: String
-  skipNameField: Boolean
-  isRemote: Boolean
-  primaryKeyColumnType: String
-  primaryKeyFieldMetadataSettings: JSON
-  isLabelSyncedWithName: Boolean
-}
-
-input DeleteOneObjectInput {
-  """The id of the record to delete."""
-  id: UUID!
-}
-
-input UpdateOneObjectInput {
-  update: UpdateObjectPayload!
-
-  """The id of the object to update"""
-  id: UUID!
-}
-
-input UpdateObjectPayload {
-  labelSingular: String
-  labelPlural: String
-  nameSingular: String
-  namePlural: String
-  description: String
-  icon: String
-  shortcut: String
-  color: String
-  isActive: Boolean
-  labelIdentifierFieldMetadataId: UUID
-  imageIdentifierFieldMetadataId: UUID
-  isLabelSyncedWithName: Boolean
-  isSearchable: Boolean
-}
-
-input CreateOneIndexInput {
-  """The custom index to create"""
-  index: CreateIndexInput!
-}
-
-input CreateIndexInput {
-  objectMetadataId: UUID!
-  fields: [CreateIndexFieldInput!]!
-  indexType: IndexType! = BTREE
-}
-
-input CreateIndexFieldInput {
-  fieldMetadataId: UUID!
-  subFieldName: String
-}
-
-input DeleteOneIndexInput {
-  """The id of the custom index to delete."""
-  id: UUID!
-}
-
-input CreateAgentInput {
-  name: String
-  label: String!
-  icon: String
-  description: String
-  prompt: String!
-  modelId: String!
-  roleId: UUID
-  responseFormat: JSON
-  modelConfiguration: JSON
-  evaluationInputs: [String!]
-}
-
-input UpdateAgentInput {
-  id: UUID!
-  name: String
-  label: String
-  icon: String
-  description: String
-  prompt: String
-  modelId: String
-  roleId: UUID
-  responseFormat: JSON
-  modelConfiguration: JSON
-  evaluationInputs: [String!]
 }
 
 input SendEmailViaDomainInput {
@@ -4280,7 +4297,6 @@ input CreateFieldInput {
   label: String!
   description: String
   icon: String
-  isCustom: Boolean
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
@@ -4369,7 +4385,7 @@ input UpdateMessageFolderInput {
 }
 
 input UpdateMessageFolderInputUpdates {
-  isSynced: Boolean
+  isSynced: Boolean!
 }
 
 input UpdateMessageFoldersInput {
@@ -4467,6 +4483,9 @@ input UpdateWorkspaceMemberSettingsInput {
 }
 
 input ActivateWorkspaceInput {
+  """
+  Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility.
+  """
   displayName: String
 }
 

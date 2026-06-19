@@ -62,6 +62,8 @@
     "@scalar/api-reference-react": "^0.9.42",
     "@sentry/react": "^10.51.0",
     "@sniptt/guards": "^0.2.0",
+    "@stripe/react-stripe-js": "^6.6.0",
+    "@stripe/stripe-js": "^9.8.0",
     "@tiptap/core": "3.4.2",
     "@tiptap/extension-bold": "3.4.2",
     "@tiptap/extension-document": "3.4.2",
