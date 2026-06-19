@@ -1,3 +1,4 @@
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -5,13 +6,13 @@ import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 
 export const useDeleteSelectedRecords = () => {
   const { objectNameSingular, objectPermissions } =
     useRecordTableContextOrThrow();
 
-  const selectedRowIds = useAtomComponentSelectorValue(
+  const selectedRowIdsCallbackState = useAtomComponentSelectorCallbackState(
     selectedRowIdsComponentSelector,
   );
 
@@ -19,11 +20,16 @@ export const useDeleteSelectedRecords = () => {
 
   const { deleteManyRecords } = useDeleteManyRecords({ objectNameSingular });
 
-  const deleteSelectedRecords = useCallback(async () => {
-    const hasObjectSoftDeletePermissions =
-      objectPermissions.canSoftDeleteObjectRecords === true;
+  const store = useStore();
 
-    if (!hasObjectSoftDeletePermissions || !isNonEmptyArray(selectedRowIds)) {
+  const deleteSelectedRecords = useCallback(async () => {
+    if (!objectPermissions.canSoftDeleteObjectRecords) {
+      return;
+    }
+
+    const selectedRowIds = store.get(selectedRowIdsCallbackState);
+
+    if (!isNonEmptyArray(selectedRowIds)) {
       return;
     }
 
@@ -32,9 +38,10 @@ export const useDeleteSelectedRecords = () => {
     await deleteManyRecords({ recordIdsToDelete: selectedRowIds });
   }, [
     objectPermissions,
-    selectedRowIds,
+    selectedRowIdsCallbackState,
     resetTableRowSelection,
     deleteManyRecords,
+    store,
   ]);
 
   return { deleteSelectedRecords };
