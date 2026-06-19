@@ -36,7 +36,6 @@ import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/work
 import {
   type BaseDatabaseEventTriggerSettings,
   type UpdateEventTriggerSettings,
-  type UpsertEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
   WorkflowTriggerJob,
@@ -409,22 +408,16 @@ export class WorkflowDatabaseEventTriggerListener {
     eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
     action: DatabaseEventAction;
   }) {
-    if (action === DatabaseEventAction.UPDATED) {
+    // UPDATE and UPSERT both expose updatedFields; an empty `fields` list means
+    // "any change", otherwise at least one watched field must have changed.
+    if (
+      action === DatabaseEventAction.UPDATED ||
+      action === DatabaseEventAction.UPSERTED
+    ) {
       const settings = eventListener.settings as UpdateEventTriggerSettings;
-      const updateEventPayload = eventPayload as ObjectRecordUpdateEvent;
-      const updatedFields = updateEventPayload?.properties?.updatedFields ?? [];
-
-      return (
-        !settings.fields ||
-        settings.fields.length === 0 ||
-        settings.fields.some((field) => updatedFields.includes(field))
-      );
-    }
-
-    if (action === DatabaseEventAction.UPSERTED) {
-      const settings = eventListener.settings as UpsertEventTriggerSettings;
-      const upsertEventPayload = eventPayload as ObjectRecordUpsertEvent;
-      const updatedFields = upsertEventPayload?.properties?.updatedFields ?? [];
+      const updatedFields =
+        (eventPayload as ObjectRecordUpdateEvent)?.properties?.updatedFields ??
+        [];
 
       return (
         !settings.fields ||
@@ -447,7 +440,8 @@ export class WorkflowDatabaseEventTriggerListener {
     eventPayload: ObjectRecordEvent;
     eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
   }) {
-    const { filter } = eventListener.settings as BaseDatabaseEventTriggerSettings;
+    const { filter } =
+      eventListener.settings as BaseDatabaseEventTriggerSettings;
 
     if (!isDefined(filter) || filter.stepFilters.length === 0) {
       return true;

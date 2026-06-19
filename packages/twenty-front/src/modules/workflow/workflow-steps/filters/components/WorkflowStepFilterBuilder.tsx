@@ -1,9 +1,6 @@
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import {
-  type FilterSettingsWithPotentiallyDeprecatedOperand,
-  WorkflowEditActionFilterBodyEffect,
-} from '@/workflow/workflow-steps/filters/components/WorkflowEditActionFilterBodyEffect';
+import { WorkflowEditActionFilterBodyEffect } from '@/workflow/workflow-steps/filters/components/WorkflowEditActionFilterBodyEffect';
 import { WorkflowStepFilterAddFilterRuleSelect } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect';
 import { WorkflowStepFilterAddRootStepFilterButton } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterAddRootStepFilterButton';
 import { WorkflowStepFilterColumn } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterColumn';
@@ -13,7 +10,10 @@ import { StepFilterGroupsComponentInstanceContext } from '@/workflow/workflow-st
 import { StepFiltersComponentInstanceContext } from '@/workflow/workflow-steps/filters/states/context/StepFiltersComponentInstanceContext';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { rootLevelStepFilterGroupComponentSelector } from '@/workflow/workflow-steps/filters/states/rootLevelStepFilterGroupComponentSelector';
-import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
+import {
+  type FilterSettings,
+  type FilterSettingsWithPotentiallyDeprecatedOperand,
+} from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { isStepFilterGroupChildAStepFilterGroup } from '@/workflow/workflow-steps/filters/utils/isStepFilterGroupChildAStepFilterGroup';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';

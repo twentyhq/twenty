@@ -89,6 +89,19 @@ export const prefillWorkflows = async (
     throw new Error('Person createdBy field metadata not found');
   }
 
+  const personSyncSourceFilterGroupId = '2d9c1f3a-6b4e-4c8a-9f12-7a3b5c6d8e90';
+
+  // Both source filters share everything but the excluded source value, so the
+  // common shape lives in one base object spread into each.
+  const personSyncSourceFilterBase = {
+    type: 'ACTOR',
+    operand: 'IS_NOT',
+    stepOutputKey: '{{trigger.properties.after.createdBy.source}}',
+    stepFilterGroupId: personSyncSourceFilterGroupId,
+    compositeFieldSubFieldName: 'source',
+    fieldMetadataId: personCreatedByFieldMetadata.id,
+  };
+
   await entityManager
     .createQueryBuilder()
     .insert()
@@ -373,33 +386,21 @@ export const prefillWorkflows = async (
             filter: {
               stepFilterGroups: [
                 {
-                  id: '2d9c1f3a-6b4e-4c8a-9f12-7a3b5c6d8e90',
+                  id: personSyncSourceFilterGroupId,
                   logicalOperator: 'AND',
                 },
               ],
               stepFilters: [
                 {
+                  ...personSyncSourceFilterBase,
                   id: '3e8b2a4c-7c5f-4d9b-8a23-6b4c5d7e9f01',
-                  type: 'ACTOR',
                   value: JSON.stringify([FieldActorSource.EMAIL]),
-                  operand: 'IS_NOT',
-                  stepOutputKey:
-                    '{{trigger.properties.after.createdBy.source}}',
-                  stepFilterGroupId: '2d9c1f3a-6b4e-4c8a-9f12-7a3b5c6d8e90',
-                  compositeFieldSubFieldName: 'source',
-                  fieldMetadataId: personCreatedByFieldMetadata.id,
                   positionInStepFilterGroup: 0,
                 },
                 {
+                  ...personSyncSourceFilterBase,
                   id: '4f9c3b5d-8d6a-4e0c-9b34-7c5d6e8f0a12',
-                  type: 'ACTOR',
                   value: JSON.stringify([FieldActorSource.CALENDAR]),
-                  operand: 'IS_NOT',
-                  stepOutputKey:
-                    '{{trigger.properties.after.createdBy.source}}',
-                  stepFilterGroupId: '2d9c1f3a-6b4e-4c8a-9f12-7a3b5c6d8e90',
-                  compositeFieldSubFieldName: 'source',
-                  fieldMetadataId: personCreatedByFieldMetadata.id,
                   positionInStepFilterGroup: 1,
                 },
               ],

@@ -17,6 +17,7 @@ import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTri
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
+import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
@@ -156,6 +157,23 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     });
   };
 
+  const handleFilterSettingsUpdate = (filterSettings: FilterSettings) => {
+    if (triggerOptions.readonly === true) {
+      return;
+    }
+
+    triggerOptions.onTriggerUpdate({
+      ...trigger,
+      settings: {
+        ...trigger.settings,
+        filter: {
+          stepFilterGroups: filterSettings.stepFilterGroups ?? [],
+          stepFilters: filterSettings.stepFilters ?? [],
+        },
+      },
+    });
+  };
+
   const handleSystemObjectsClick = () => {
     setIsSystemObjectsOpen(true);
     setSearchInputValue('');
@@ -275,22 +293,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             instanceId={TRIGGER_STEP_ID}
             defaultValue={trigger.settings.filter}
             readonly={triggerOptions.readonly ?? false}
-            onFilterSettingsUpdate={(filterSettings) => {
-              if (triggerOptions.readonly === true) {
-                return;
-              }
-
-              triggerOptions.onTriggerUpdate({
-                ...trigger,
-                settings: {
-                  ...trigger.settings,
-                  filter: {
-                    stepFilterGroups: filterSettings.stepFilterGroups ?? [],
-                    stepFilters: filterSettings.stepFilters ?? [],
-                  },
-                },
-              });
-            }}
+            onFilterSettingsUpdate={handleFilterSettingsUpdate}
           />
         )}
       </WorkflowStepBody>
