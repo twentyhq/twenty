@@ -5,12 +5,24 @@ import {
   PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import {
+  APPLICATION_NAME_FIELD_ID,
+  APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+  APPLICATION_OPPORTUNITY_FIELD_ID,
+  APPLICATION_PARTNER_FIELD_ID,
+  APPLICATION_PARTNER_USER_FIELD_ID,
+  APPLICATION_STATE_FIELD_ID,
+  APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
+} from 'src/objects/application.object';
 import { PARTNER_WORKFLOWS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER } from 'src/permission-flags/partner-workflows.permission-flag';
 import { OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID } from 'src/fields/opportunity-design-doc-status.field';
 import { OPPORTUNITY_DESIGN_DOC_URL_FIELD_ID } from 'src/fields/opportunity-design-doc-url.field';
 import { OPPORTUNITY_HOSTING_TYPE_FIELD_ID } from 'src/fields/opportunity-hosting-type.field';
+import { OPPORTUNITY_IS_LISTED_FIELD_ID } from 'src/fields/opportunity-is-listed.field';
 import { OPPORTUNITY_LOST_REASON_FIELD_ID } from 'src/fields/opportunity-lost-reason.field';
+import { OPPORTUNITY_NEED_FIELD_ID } from 'src/fields/opportunity-need.field';
 import { OPPORTUNITY_NUMBER_OF_SEATS_FIELD_ID } from 'src/fields/opportunity-number-of-seats.field';
+import { OPPORTUNITY_REQUIREMENTS_FIELD_ID } from 'src/fields/opportunity-requirements.field';
 import { OPPORTUNITY_SUBSCRIPTION_FREQUENCY_FIELD_ID } from 'src/fields/opportunity-subscription-frequency.field';
 import { OPPORTUNITY_SUBSCRIPTION_TYPE_FIELD_ID } from 'src/fields/opportunity-subscription-type.field';
 import { OPPORTUNITY_TFT_ID_FIELD_ID } from 'src/fields/opportunity-tft-id.field';
@@ -24,8 +36,10 @@ import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-par
 export const PARTNER_ROLE_LABEL = 'Partner';
 
 // External partner self-service role: a partner sees only its own records, can edit its
-// own Partner profile and an Opportunity's stage + amount; Company/Person are read-only.
-// Row-level predicates can't ship in the manifest, so run `yarn rls:configure` after install.
+// own Partner profile, an Opportunity's stage + amount, and an Application's pitch; Company/
+// Person are read-only. Application rows are scoped to own partnerUser (RLS); only pitch is
+// partner-editable. Row-level predicates can't ship in the manifest, so run `yarn rls:configure`
+// after install.
 //
 // `updatedBy` and `position` must stay editable even though they're not partner-facing: the
 // server injects `updatedBy` into every update (ActorFromAuthContextService) and co-writes
@@ -37,7 +51,7 @@ export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: PARTNER_ROLE_LABEL,
   description:
-    'External partner self-service role. Sees only its own Partner/Person/Company/Opportunity records (row-level). Can edit its own Partner profile and an Opportunity’s stage + amount; Company and Person are read-only. Configure predicates with `yarn rls:configure` after install.',
+    'External partner self-service role. Sees only its own Partner/Person/Company/Opportunity/Application records (row-level). Can edit its own Partner profile, an Opportunity’s stage + amount, and an Application’s pitch; Company and Person are read-only. Configure predicates with `yarn rls:configure` after install.',
   icon: 'IconBuildingStore',
   canBeAssignedToUsers: true,
   canUpdateAllSettings: false,
@@ -212,6 +226,31 @@ export default defineRole({
       fieldUniversalIdentifier: OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID,
       canUpdateFieldValue: false,
     },
+  // Marketplace brief fields — read-only for partners (listed briefs visible via RLS OR predicate).
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY_IS_LISTED_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY_REQUIREMENTS_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY_NEED_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
     // Partner object — lock admin-managed fields so partners can't self-promote or alter ops data.
     {
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -262,6 +301,39 @@ export default defineRole({
       fieldUniversalIdentifier: PARTNER_COMPANY_FIELD_ID,
       canUpdateFieldValue: false,
     },
+    // Application — lock every field except pitch (the only partner-editable field). System/
+    // server-managed fields (id, timestamps, updatedBy, position, searchVector) stay out —
+    // locking updatedBy/position breaks every update (same trap as Opportunity above).
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: APPLICATION_NAME_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: APPLICATION_OPPORTUNITY_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: APPLICATION_PARTNER_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: APPLICATION_PARTNER_USER_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: APPLICATION_STATE_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: 'b184ac02-51b2-4442-9505-2b06f5c94112',
+      canUpdateFieldValue: false,
+    },
   ],
   objectPermissions: [
     {
@@ -292,6 +364,13 @@ export default defineRole({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
