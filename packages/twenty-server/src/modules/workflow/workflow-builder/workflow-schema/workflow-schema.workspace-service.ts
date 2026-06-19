@@ -18,7 +18,8 @@ import {
   TRIGGER_STEP_ID,
   WORKFLOW_TRIGGER_METADATA_KEY,
   WORKFLOW_TRIGGER_PAYLOAD_KEY,
-  WORKFLOW_TRIGGER_PAYLOAD_LABEL,
+  WORKFLOW_TRIGGER_RECORD_LABEL,
+  WORKFLOW_TRIGGER_RECORDS_LABEL,
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
@@ -480,7 +481,7 @@ export class WorkflowSchemaWorkspaceService {
       const payload: Node = {
         isLeaf: false,
         type: 'object',
-        label: WORKFLOW_TRIGGER_PAYLOAD_LABEL,
+        label: WORKFLOW_TRIGGER_RECORD_LABEL,
         value: recordOutputSchema,
       };
 
@@ -500,7 +501,7 @@ export class WorkflowSchemaWorkspaceService {
       const payload: Node = {
         isLeaf: false,
         type: 'object',
-        label: WORKFLOW_TRIGGER_PAYLOAD_LABEL,
+        label: WORKFLOW_TRIGGER_RECORDS_LABEL,
         value: {
           [objectMetadataInfo.flatObjectMetadata.namePlural]: {
             label: objectMetadataInfo.flatObjectMetadata.labelPlural,
