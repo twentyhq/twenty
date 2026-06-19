@@ -394,10 +394,12 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
       await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
-      await this.prefillCreatedWorkspaceRecords({
-        workspaceId: workspace.id,
-        schemaName: getWorkspaceSchemaName(workspace.id),
-      });
+      if (this.twentyConfigService.get('IS_WORKSPACE_DEMO_DATA_ENABLED')) {
+        await this.prefillCreatedWorkspaceRecords({
+          workspaceId: workspace.id,
+          schemaName: getWorkspaceSchemaName(workspace.id),
+        });
+      }
 
       await this.activateAndInitializeUpgradeState({
         workspaceId: workspace.id,

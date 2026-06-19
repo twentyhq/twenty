@@ -450,6 +450,15 @@ export class ConfigVariables {
   IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = true;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'When disabled, newly created workspaces are not prefilled with demo/sample records and workflows.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKSPACE_DEMO_DATA_ENABLED = true;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
     description: 'Type of storage to use (local or S3)',
     type: ConfigVariableType.ENUM,
