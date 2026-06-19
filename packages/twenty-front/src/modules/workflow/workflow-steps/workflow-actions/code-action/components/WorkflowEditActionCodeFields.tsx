@@ -1,17 +1,12 @@
-import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
-import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
-import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
-import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { WorkflowEditActionCodeFieldLeaf } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFieldLeaf';
 import { getInputSchemaPropertyAtPath } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getInputSchemaPropertyAtPath';
-import { getWorkflowCodeFieldsEnumSelectOptions } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsEnumSelectOptions';
 import { getWorkflowCodeFieldsLeafKind } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsLeafKind';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isPlainObject } from 'twenty-shared/utils';
 import { type FunctionInput, type InputSchema } from 'twenty-shared/workflow';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -59,7 +54,13 @@ export const WorkflowEditActionCodeFields = ({
           ? schemaProperty.label
           : inputKey;
 
-        if (isPlainObject(inputValue)) {
+        const leafKind = getWorkflowCodeFieldsLeafKind(schemaProperty);
+        const isNestedObject =
+          isPlainObject(inputValue) &&
+          leafKind !== 'record' &&
+          leafKind !== 'record-array';
+
+        if (isNestedObject) {
           return (
             <div key={pathKey}>
               <InputLabel>{displayLabel}</InputLabel>
@@ -78,83 +79,15 @@ export const WorkflowEditActionCodeFields = ({
           );
         }
 
-        const leafKind = getWorkflowCodeFieldsLeafKind(schemaProperty);
-
-        if (leafKind === 'boolean') {
-          return (
-            <FormBooleanFieldInput
-              key={pathKey}
-              label={displayLabel}
-              defaultValue={
-                !isDefined(inputValue)
-                  ? undefined
-                  : typeof inputValue === 'boolean' ||
-                      typeof inputValue === 'string'
-                    ? inputValue
-                    : undefined
-              }
-              readonly={readonly}
-              onChange={(value) => onInputChange?.(value, currentPath)}
-              VariablePicker={VariablePicker}
-            />
-          );
-        }
-
-        if (leafKind === 'number') {
-          return (
-            <FormNumberFieldInput
-              key={pathKey}
-              label={displayLabel}
-              defaultValue={
-                !isDefined(inputValue)
-                  ? undefined
-                  : typeof inputValue === 'number' ||
-                      typeof inputValue === 'string'
-                    ? inputValue
-                    : undefined
-              }
-              readonly={readonly}
-              onChange={(value) => onInputChange?.(value, currentPath)}
-              VariablePicker={VariablePicker}
-            />
-          );
-        }
-
-        if (leafKind === 'enum' && isDefined(schemaProperty)) {
-          const enumOptions =
-            getWorkflowCodeFieldsEnumSelectOptions(schemaProperty);
-
-          if (isNonEmptyArray(enumOptions)) {
-            return (
-              <FormSelectFieldInput
-                key={pathKey}
-                label={displayLabel}
-                defaultValue={
-                  !isDefined(inputValue)
-                    ? undefined
-                    : typeof inputValue === 'string'
-                      ? inputValue
-                      : String(inputValue)
-                }
-                readonly={readonly}
-                onChange={(value) => onInputChange?.(value, currentPath)}
-                VariablePicker={VariablePicker}
-                options={enumOptions}
-              />
-            );
-          }
-        }
-
         return (
-          <FormTextFieldInput
+          <WorkflowEditActionCodeFieldLeaf
             key={pathKey}
             label={displayLabel}
-            placeholder={t`Enter value`}
-            defaultValue={inputValue ? `${inputValue}` : ''}
+            inputValue={inputValue}
+            schemaProperty={schemaProperty}
             readonly={readonly}
             onChange={(value) => onInputChange?.(value, currentPath)}
             VariablePicker={VariablePicker}
-            multiline={schemaProperty?.multiline === true}
           />
         );
       })}

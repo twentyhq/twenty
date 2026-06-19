@@ -113,37 +113,54 @@ const buildLanguageEntry = (language: string): GeneratedLanguage => {
 
   return {
     language,
-    tabs: baseStructure.tabs.map((tab) => ({
-      tab: translationMaps.tabLabels.get(tab.key) ?? tab.label,
-      groups: tab.groups.map((group) =>
-        buildGroup(group, translationMaps, language),
-      ),
-    })),
+    tabs: baseStructure.tabs
+      .map((tab) => ({
+        tab: translationMaps.tabLabels.get(tab.key) ?? tab.label,
+        groups: tab.groups
+          .map((group) => buildGroup(group, translationMaps, language))
+          .filter((group): group is GeneratedGroup => group !== null),
+      }))
+      .filter((tab) => tab.groups.length > 0),
   };
 };
 
+// Mintlify requires each page path to appear in only one language's navigation.
+// Duplicating a path across languages breaks the language switcher (it can no
+// longer resolve the equivalent page and falls back to the first page). So a
+// page is only included in a non-default language when its translation exists,
+// and empty groups/tabs are dropped entirely.
 const buildGroup = (
   group: BaseGroup,
   translations: TranslationMaps,
   language: string,
-): GeneratedGroup => ({
-  group: translations.groupLabels.get(group.key) ?? group.label,
-  ...(group.icon ? { icon: group.icon } : {}),
-  pages: group.pages.map((page) =>
-    typeof page === 'string'
-      ? formatPageSlug(page, language)
-      : buildGroup(page, translations, language),
-  ),
-});
+): GeneratedGroup | null => {
+  const pages = group.pages
+    .map((page) =>
+      typeof page === 'string'
+        ? formatPageSlug(page, language)
+        : buildGroup(page, translations, language),
+    )
+    .filter((page): page is string | GeneratedGroup => page !== null);
 
-const formatPageSlug = (slug: string, language: string): string => {
+  if (pages.length === 0) {
+    return null;
+  }
+
+  return {
+    group: translations.groupLabels.get(group.key) ?? group.label,
+    ...(group.icon ? { icon: group.icon } : {}),
+    pages,
+  };
+};
+
+const formatPageSlug = (slug: string, language: string): string | null => {
   if (language === DEFAULT_LANGUAGE) {
     return slug;
   }
 
   const localizedPagePath = path.join(localesRoot, language, `${slug}.mdx`);
 
-  return fs.existsSync(localizedPagePath) ? `l/${language}/${slug}` : slug;
+  return fs.existsSync(localizedPagePath) ? `l/${language}/${slug}` : null;
 };
 
 const hasLocaleContent = (language: string): boolean => {

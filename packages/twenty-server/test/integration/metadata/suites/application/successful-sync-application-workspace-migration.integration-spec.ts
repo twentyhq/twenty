@@ -93,7 +93,7 @@ describe('syncApplication', () => {
         paging: { first: 100 },
       },
       gqlFields:
-        'id nameSingular namePlural labelSingular labelPlural description icon isCustom',
+        'id nameSingular namePlural labelSingular labelPlural description icon',
       expectToFail: false,
     });
 
@@ -109,7 +109,6 @@ describe('syncApplication', () => {
       labelPlural: 'Tickets',
       description: 'A support ticket',
       icon: 'IconTicket',
-      isCustom: true,
     });
 
     const objects = await findManyObjectMetadataWithIndexes({

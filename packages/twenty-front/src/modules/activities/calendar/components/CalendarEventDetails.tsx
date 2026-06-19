@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
@@ -126,6 +127,8 @@ export const CalendarEventDetails = ({
     INPUT_ID_PREFIX,
   );
 
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+
   const standardFieldOrder = [
     'startsAt',
     'endsAt',
@@ -143,7 +146,9 @@ export const CalendarEventDetails = ({
     .filter(isDefined);
 
   const customFields = inlineFieldMetadataItems.filter(
-    (field) => field.isCustom && !standardFieldOrder.includes(field.name),
+    (field) =>
+      getIsMetadataItemCustom(field) &&
+      !standardFieldOrder.includes(field.name),
   );
 
   const { calendarEventParticipants } = calendarEvent;
@@ -190,10 +195,10 @@ export const CalendarEventDetails = ({
       isRecordReadOnly,
       isSystemObject: objectMetadataItem.isSystem,
       objectPermissions,
+      isFieldCustom: getIsMetadataItemCustom(fieldMetadataItem),
       fieldMetadataItem: {
         id: fieldMetadataItem.id,
         isUIEditable: fieldMetadataItem.isUIEditable ?? true,
-        isCustom: fieldMetadataItem.isCustom ?? false,
       },
       fieldDefinition,
       objectPermissionsByObjectMetadataId,

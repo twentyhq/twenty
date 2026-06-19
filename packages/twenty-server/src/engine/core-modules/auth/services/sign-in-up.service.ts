@@ -345,16 +345,14 @@ export class SignInUpService {
       );
     }
 
-    if (user.firstName === '' && user.lastName === '') {
-      await this.onboardingService.setOnboardingCreateProfilePending(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          value: true,
-        },
-        queryRunner,
-      );
-    }
+    await this.onboardingService.setOnboardingCreateProfilePending(
+      {
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      },
+      queryRunner,
+    );
   }
 
   private async saveNewUser(
@@ -516,6 +514,18 @@ export class SignInUpService {
 
     await this.assertWorkspaceCreationAllowed(userData);
 
+    const displayName = options?.displayName?.trim();
+
+    if (!displayName) {
+      throw new AuthException(
+        'Workspace name is required',
+        AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Workspace name is required`,
+        },
+      );
+    }
+
     const requestedSubdomain = options?.subdomain;
 
     if (isDefined(requestedSubdomain)) {
@@ -544,7 +554,7 @@ export class SignInUpService {
                   isWorkEmailFound ? { userEmail: email } : {},
                 ),
             workspaceCustomApplicationId,
-            displayName: options?.displayName ?? '',
+            displayName,
             inviteHash: v4(),
             activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
           });

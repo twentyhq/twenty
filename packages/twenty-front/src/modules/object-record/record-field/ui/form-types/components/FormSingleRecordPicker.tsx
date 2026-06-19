@@ -3,6 +3,10 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormSingleRecordFieldChip } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip';
+import {
+  type RecordId,
+  type Variable,
+} from '@/object-record/record-field/ui/form-types/types/RecordPickerValue';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
@@ -25,6 +29,7 @@ const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
   height: 32px;
+  min-width: 0;
   width: 100%;
 `;
 
@@ -33,8 +38,16 @@ const StyledIconButton = styled.div`
   padding-right: ${themeCssVariables.spacing[2]};
 `;
 
-export type RecordId = string;
-export type Variable = string;
+const StyledDropdownContainer = styled.div`
+  display: flex;
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledVariablePickerContainer = styled.div`
+  display: flex;
+  flex-shrink: 0;
+`;
 
 type FormSingleRecordPickerValue =
   | {
@@ -64,6 +77,7 @@ export type FormSingleRecordPickerProps = {
   disabled?: boolean;
   testId?: string;
   VariablePicker?: VariablePickerComponent;
+  shouldDisplayRecordFieldsInVariablePicker?: boolean;
 };
 
 export const FormSingleRecordPicker = ({
@@ -78,6 +92,7 @@ export const FormSingleRecordPicker = ({
   disabled,
   testId,
   VariablePicker,
+  shouldDisplayRecordFieldsInVariablePicker = false,
 }: FormSingleRecordPickerProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -200,64 +215,72 @@ export const FormSingleRecordPicker = ({
             </FormFieldInputInnerContainer>
           </StyledFormSelectContainerWrapper>
         ) : (
-          <Dropdown
-            dropdownId={dropdownId}
-            dropdownPlacement="bottom-start"
-            clickableComponentWidth="100%"
-            onClose={handleCloseRelationPickerDropdown}
-            onOpen={handleOpenDropdown}
-            dropdownOffset={{
-              y: parseInt(theme.spacing[1], 10),
-            }}
-            clickableComponent={
-              <StyledFormSelectContainerWrapper>
-                <FormFieldInputInnerContainer
-                  formFieldInputInstanceId={componentId}
-                  hasRightElement={isDefined(VariablePicker) && !disabled}
-                  hoverable
-                  preventFocusStackUpdate={true}
-                >
-                  <FormSingleRecordFieldChip
-                    draftValue={draftValue}
-                    selectedRecord={selectedRecord}
-                    objectNameSingular={resolvedObjectNameSingular}
-                    onRemove={handleUnlinkVariable}
-                    disabled={disabled}
-                  />
-                  <StyledIconButton>
-                    <IconChevronDown
-                      size={theme.icon.size.md}
-                      color={theme.font.color.light}
+          <StyledDropdownContainer>
+            <Dropdown
+              dropdownId={dropdownId}
+              dropdownPlacement="bottom-start"
+              clickableComponentWidth="100%"
+              onClose={handleCloseRelationPickerDropdown}
+              onOpen={handleOpenDropdown}
+              dropdownOffset={{
+                y: parseInt(theme.spacing[1], 10),
+              }}
+              clickableComponent={
+                <StyledFormSelectContainerWrapper>
+                  <FormFieldInputInnerContainer
+                    formFieldInputInstanceId={componentId}
+                    hasRightElement={isDefined(VariablePicker) && !disabled}
+                    hoverable
+                    preventFocusStackUpdate={true}
+                  >
+                    <FormSingleRecordFieldChip
+                      draftValue={draftValue}
+                      selectedRecord={selectedRecord}
+                      objectNameSingular={resolvedObjectNameSingular}
+                      onRemove={handleUnlinkVariable}
+                      disabled={disabled}
                     />
-                  </StyledIconButton>
-                </FormFieldInputInnerContainer>
-              </StyledFormSelectContainerWrapper>
-            }
-            dropdownComponents={
-              <SingleRecordPicker
-                focusId={dropdownId}
-                componentInstanceId={dropdownId}
-                EmptyIcon={IconForbid}
-                emptyLabel={t`No record`}
-                onCancel={() => closeDropdown(dropdownId)}
-                onCreate={isDefined(onCreate) ? handleCreateRecord : undefined}
-                onMorphItemSelected={handleMorphItemSelected}
-                objectNameSingulars={objectNameSingulars}
-                recordPickerInstanceId={dropdownId}
-                dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-              />
-            }
-          />
+                    <StyledIconButton>
+                      <IconChevronDown
+                        size={theme.icon.size.md}
+                        color={theme.font.color.light}
+                      />
+                    </StyledIconButton>
+                  </FormFieldInputInnerContainer>
+                </StyledFormSelectContainerWrapper>
+              }
+              dropdownComponents={
+                <SingleRecordPicker
+                  focusId={dropdownId}
+                  componentInstanceId={dropdownId}
+                  EmptyIcon={IconForbid}
+                  emptyLabel={t`No record`}
+                  onCancel={() => closeDropdown(dropdownId)}
+                  onCreate={
+                    isDefined(onCreate) ? handleCreateRecord : undefined
+                  }
+                  onMorphItemSelected={handleMorphItemSelected}
+                  objectNameSingulars={objectNameSingulars}
+                  recordPickerInstanceId={dropdownId}
+                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+                />
+              }
+            />
+          </StyledDropdownContainer>
         )}
         {isDefined(VariablePicker) && !disabled && (
-          <VariablePicker
-            instanceId={variablesDropdownId}
-            disabled={disabled}
-            onVariableSelect={handleVariableTagInsert}
-            shouldDisplayRecordObjects={true}
-            shouldDisplayRecordFields={false}
-            objectNameSingularsToSelect={objectNameSingulars}
-          />
+          <StyledVariablePickerContainer>
+            <VariablePicker
+              instanceId={variablesDropdownId}
+              disabled={disabled}
+              onVariableSelect={handleVariableTagInsert}
+              shouldDisplayRecordObjects={true}
+              shouldDisplayRecordFields={
+                shouldDisplayRecordFieldsInVariablePicker
+              }
+              objectNameSingularsToSelect={objectNameSingulars}
+            />
+          </StyledVariablePickerContainer>
         )}
       </FormFieldInputRowContainer>
     </FormFieldInputContainer>

@@ -1,3 +1,4 @@
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -64,6 +65,8 @@ export const RecordCalendarCardBody = ({
     recordCalendarCardHoverPositionComponentState,
   );
 
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+
   const handleMouseEnter = (index: number) => {
     setRecordCalendarCardHoverPosition(index);
   };
@@ -84,14 +87,16 @@ export const RecordCalendarCardBody = ({
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
                   isSystemObject: objectMetadataItem.isSystem,
+                  isFieldCustom: getIsMetadataItemCustom({
+                    applicationId:
+                      correspondingFieldDefinition.metadata.applicationId,
+                  }),
                   objectPermissions,
                   fieldMetadataItem: {
                     id: recordField.fieldMetadataItemId,
                     isUIEditable:
                       correspondingFieldDefinition.metadata.isUIEditable ??
                       true,
-                    isCustom:
-                      correspondingFieldDefinition.metadata.isCustom ?? false,
                   },
                   fieldDefinition: correspondingFieldDefinition,
                   objectPermissionsByObjectMetadataId,

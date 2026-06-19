@@ -40,7 +40,7 @@ export const PaymentSuccess = () => {
 
     try {
       if (isDefined(subscriptionStatus)) {
-        navigate(AppPath.CreateWorkspace);
+        navigate(AppPath.WorkspaceActivation);
         return;
       }
 
@@ -51,7 +51,7 @@ export const PaymentSuccess = () => {
 
       if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
         setCurrentUser(currentUser);
-        navigate(AppPath.CreateWorkspace);
+        navigate(AppPath.WorkspaceActivation);
         return;
       }
 

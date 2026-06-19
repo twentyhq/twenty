@@ -361,8 +361,6 @@ export interface Field {
     description?: Scalars['String']
     icon?: Scalars['String']
     standardOverrides?: StandardOverrides
-    /** @deprecated isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application. */
-    isCustom?: Scalars['Boolean']
     isActive?: Scalars['Boolean']
     isSystem?: Scalars['Boolean']
     isUIEditable?: Scalars['Boolean']
@@ -440,8 +438,6 @@ export interface Object {
     standardOverrides?: ObjectStandardOverrides
     shortcut?: Scalars['String']
     color?: Scalars['String']
-    /** @deprecated isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application. */
-    isCustom: Scalars['Boolean']
     isRemote: Scalars['Boolean']
     isActive: Scalars['Boolean']
     isSystem: Scalars['Boolean']
@@ -1262,6 +1258,12 @@ export interface BillingPlan {
     __typename: 'BillingPlan'
 }
 
+export interface BillingPaymentIntent {
+    clientSecret: Scalars['String']
+    paymentIntentType: Scalars['String']
+    __typename: 'BillingPaymentIntent'
+}
+
 export interface BillingSession {
     url?: Scalars['String']
     __typename: 'BillingSession'
@@ -1508,6 +1510,7 @@ export type ModelFamily = 'GPT' | 'CLAUDE' | 'GEMINI' | 'MISTRAL' | 'GROK'
 export interface Billing {
     isBillingEnabled: Scalars['Boolean']
     billingUrl?: Scalars['String']
+    stripePublishableKey?: Scalars['String']
     trialPeriods: BillingTrialPeriod[]
     __typename: 'Billing'
 }
@@ -2600,7 +2603,7 @@ export interface MessageFolder {
     __typename: 'MessageFolder'
 }
 
-export type MessageFolderPendingSyncAction = 'FOLDER_DELETION' | 'NONE'
+export type MessageFolderPendingSyncAction = 'FOLDER_DELETION' | 'FOLDER_IMPORT' | 'NONE'
 
 export interface CollectionHash {
     collectionName: AllMetadataName
@@ -2618,7 +2621,6 @@ export interface MinimalObjectMetadata {
     labelPlural: Scalars['String']
     icon?: Scalars['String']
     color?: Scalars['String']
-    isCustom: Scalars['Boolean']
     isActive: Scalars['Boolean']
     isSystem: Scalars['Boolean']
     isRemote: Scalars['Boolean']
@@ -2809,6 +2811,7 @@ export interface Mutation {
     skipBookOnboardingStep: OnboardingStepSuccess
     updateOneApplicationVariable: Scalars['Boolean']
     checkoutSession: BillingSession
+    createSubscriptionPaymentIntent: BillingPaymentIntent
     switchSubscriptionInterval: BillingUpdate
     switchBillingPlan: BillingUpdate
     cancelSwitchBillingPlan: BillingUpdate
@@ -2916,6 +2919,7 @@ export interface Mutation {
     signUp: AvailableWorkspacesAndAccessTokens
     signUpInWorkspace: SignUp
     signUpInNewWorkspace: SignUp
+    uploadNewWorkspaceLogo: FileWithSignedUrl
     generateTransientToken: TransientToken
     getAuthTokensFromLoginToken: AuthTokens
     authorizeApp: AuthorizeApp
@@ -3352,8 +3356,6 @@ export interface FieldGenqlSelection{
     description?: boolean | number
     icon?: boolean | number
     standardOverrides?: StandardOverridesGenqlSelection
-    /** @deprecated isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application. */
-    isCustom?: boolean | number
     isActive?: boolean | number
     isSystem?: boolean | number
     isUIEditable?: boolean | number
@@ -3453,8 +3455,6 @@ export interface ObjectGenqlSelection{
     standardOverrides?: ObjectStandardOverridesGenqlSelection
     shortcut?: boolean | number
     color?: boolean | number
-    /** @deprecated isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application. */
-    isCustom?: boolean | number
     isRemote?: boolean | number
     isActive?: boolean | number
     isSystem?: boolean | number
@@ -4306,6 +4306,13 @@ export interface BillingPlanGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface BillingPaymentIntentGenqlSelection{
+    clientSecret?: boolean | number
+    paymentIntentType?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingSessionGenqlSelection{
     url?: boolean | number
     __typename?: boolean | number
@@ -4555,6 +4562,7 @@ export interface ClientAiModelConfigGenqlSelection{
 export interface BillingGenqlSelection{
     isBillingEnabled?: boolean | number
     billingUrl?: boolean | number
+    stripePublishableKey?: boolean | number
     trialPeriods?: BillingTrialPeriodGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5750,7 +5758,6 @@ export interface MinimalObjectMetadataGenqlSelection{
     labelPlural?: boolean | number
     icon?: boolean | number
     color?: boolean | number
-    isCustom?: boolean | number
     isActive?: boolean | number
     isSystem?: boolean | number
     isRemote?: boolean | number
@@ -5987,6 +5994,7 @@ export interface MutationGenqlSelection{
     skipBookOnboardingStep?: OnboardingStepSuccessGenqlSelection
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
+    createSubscriptionPaymentIntent?: (BillingPaymentIntentGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null), idempotencyKey: Scalars['String']} })
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
     switchBillingPlan?: BillingUpdateGenqlSelection
     cancelSwitchBillingPlan?: BillingUpdateGenqlSelection
@@ -6094,6 +6102,7 @@ export interface MutationGenqlSelection{
     signUp?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInWorkspace?: (SignUpGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], workspaceId?: (Scalars['UUID'] | null), workspaceInviteHash?: (Scalars['String'] | null), workspacePersonalInviteToken?: (Scalars['String'] | null), captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInNewWorkspace?: (SignUpGenqlSelection & { __args?: {input?: (SignUpInNewWorkspaceInput | null)} })
+    uploadNewWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {workspaceId: Scalars['String'], file: Scalars['Upload']} })
     generateTransientToken?: TransientTokenGenqlSelection
     getAuthTokensFromLoginToken?: (AuthTokensGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
     authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), redirectUrl: Scalars['String'], state?: (Scalars['String'] | null), scope?: (Scalars['String'] | null)} })
@@ -6441,7 +6450,7 @@ export interface CreateOneFieldMetadataInput {
 /** The record to create */
 field: CreateFieldInput}
 
-export interface CreateFieldInput {type: FieldMetadataType,name: Scalars['String'],label: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isCustom?: (Scalars['Boolean'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemoteCreation?: (Scalars['Boolean'] | null),relationCreationPayload?: (Scalars['JSON'] | null),morphRelationsCreationPayload?: (Scalars['JSON'][] | null)}
+export interface CreateFieldInput {type: FieldMetadataType,name: Scalars['String'],label: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemoteCreation?: (Scalars['Boolean'] | null),relationCreationPayload?: (Scalars['JSON'] | null),morphRelationsCreationPayload?: (Scalars['JSON'][] | null)}
 
 export interface UpdateOneFieldMetadataInput {
 /** The id of the record to update */
@@ -6475,7 +6484,7 @@ id: Scalars['UUID']}
 
 export interface UpdateMessageFolderInput {id: Scalars['UUID'],update: UpdateMessageFolderInputUpdates}
 
-export interface UpdateMessageFolderInputUpdates {isSynced?: (Scalars['Boolean'] | null)}
+export interface UpdateMessageFolderInputUpdates {isSynced: Scalars['Boolean']}
 
 export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: UpdateMessageFolderInputUpdates}
 
@@ -6507,7 +6516,9 @@ export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars[
 
 export interface UpdateWorkspaceMemberSettingsInput {workspaceMemberId: Scalars['UUID'],update: Scalars['JSON']}
 
-export interface ActivateWorkspaceInput {displayName?: (Scalars['String'] | null)}
+export interface ActivateWorkspaceInput {
+/** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
+displayName?: (Scalars['String'] | null)}
 
 export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),fastModel?: (Scalars['String'] | null),smartModel?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),enabledAiModelIds?: (Scalars['String'][] | null),useRecommendedModels?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null)}
 
@@ -7323,6 +7334,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isBillingPlan = (obj?: { __typename?: any } | null): obj is BillingPlan => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPlan"')
       return BillingPlan_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingPaymentIntent_possibleTypes: string[] = ['BillingPaymentIntent']
+    export const isBillingPaymentIntent = (obj?: { __typename?: any } | null): obj is BillingPaymentIntent => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPaymentIntent"')
+      return BillingPaymentIntent_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9203,6 +9222,7 @@ export const enumCalendarChannelContactAutoCreationPolicy = {
 
 export const enumMessageFolderPendingSyncAction = {
    FOLDER_DELETION: 'FOLDER_DELETION' as const,
+   FOLDER_IMPORT: 'FOLDER_IMPORT' as const,
    NONE: 'NONE' as const
 }
 

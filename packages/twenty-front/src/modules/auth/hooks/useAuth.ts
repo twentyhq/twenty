@@ -32,7 +32,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
-import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
   SignInUpStep,
@@ -76,8 +75,6 @@ export const useAuth = () => {
   );
   const { loadCurrentUser } = useLoadCurrentUser();
   const apolloClient = useApolloClient();
-
-  const { createWorkspace } = useSignUpInNewWorkspace();
 
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const { redirect } = useRedirect();
@@ -131,16 +128,18 @@ export const useAuth = () => {
     async (
       availableWorkspaces: Parameters<typeof countAvailableWorkspaces>[0],
       email: string,
-      { newTab = true }: { newTab?: boolean } = {},
     ) => {
       const availableWorkspacesCount =
         countAvailableWorkspaces(availableWorkspaces);
 
-      if (availableWorkspacesCount === 0) {
-        if (!isMultiWorkspaceEnabled) {
-          return await createWorkspace({ newTab });
-        }
+      // The in-app "Create Workspace" entry point redirects here with this
+      // signal so an existing user with workspaces lands on the creation form
+      // instead of the workspace selection step.
+      const wantsToCreateNewWorkspace =
+        new URLSearchParams(window.location.search).get('action') ===
+        'create-new-workspace';
 
+      if (availableWorkspacesCount === 0 || wantsToCreateNewWorkspace) {
         await apolloClient.query({
           query: GetWorkspaceCreationDefaultsDocument,
         });
@@ -166,13 +165,7 @@ export const useAuth = () => {
 
       setSignInUpStep(SignInUpStep.WorkspaceSelection);
     },
-    [
-      apolloClient,
-      createWorkspace,
-      isMultiWorkspaceEnabled,
-      redirectToWorkspaceDomain,
-      setSignInUpStep,
-    ],
+    [apolloClient, redirectToWorkspaceDomain, setSignInUpStep],
   );
 
   const handleGetLoginTokenFromCredentials = useCallback(
@@ -264,7 +257,6 @@ export const useAuth = () => {
       await navigateAfterMultiWorkspaceSignInUp(
         user.availableWorkspaces,
         user.email,
-        { newTab: false },
       );
     },
     [
@@ -363,7 +355,6 @@ export const useAuth = () => {
           await navigateAfterMultiWorkspaceSignInUp(
             user.availableWorkspaces,
             user.email,
-            { newTab: false },
           );
         },
         onError: (error) => {
@@ -418,7 +409,6 @@ export const useAuth = () => {
       await navigateAfterMultiWorkspaceSignInUp(
         user.availableWorkspaces,
         user.email,
-        { newTab: false },
       );
     },
     [

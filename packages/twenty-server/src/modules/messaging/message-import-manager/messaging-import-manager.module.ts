@@ -18,7 +18,6 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cleaner/messaging-message-cleaner.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
-import { MessagingSingleMessageImportCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-single-message-import.command';
 import { MessagingTriggerMessageListFetchCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-trigger-message-list-fetch.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
@@ -34,7 +33,6 @@ import { MessagingInboundEmailDriverModule } from 'src/modules/messaging/message
 import { InboundEmailImportService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-import.service';
 import { MessagingMicrosoftDriverModule } from 'src/modules/messaging/message-import-manager/drivers/microsoft/messaging-microsoft-driver.module';
 import { MessagingSmtpDriverModule } from 'src/modules/messaging/message-import-manager/drivers/smtp/messaging-smtp-driver.module';
-import { MessagingAddSingleMessageToCacheForImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-add-single-message-to-cache-for-import.job';
 import { MessagingCleanCacheJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-clean-cache';
 import { MessagingInboundEmailImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-inbound-email-import.job';
 import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
@@ -44,6 +42,7 @@ import { MessagingRelaunchFailedMessageChannelJob } from 'src/modules/messaging/
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
 import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-group-email-messages.service';
+import { MessagingImportFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-import-folder-messages.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
@@ -92,7 +91,6 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessagesImportCronCommand,
     MessagingOngoingStaleCronCommand,
     MessagingRelaunchFailedMessageChannelsCronCommand,
-    MessagingSingleMessageImportCommand,
     MessagingTriggerMessageListFetchCommand,
     MessagingMessageListFetchJob,
     MessagingMessagesImportJob,
@@ -102,7 +100,6 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessagesImportCronJob,
     MessagingOngoingStaleCronJob,
     MessagingRelaunchFailedMessageChannelsCronJob,
-    MessagingAddSingleMessageToCacheForImportJob,
     MessagingCleanCacheJob,
     MessagingInboundEmailImportJob,
     MessagingMessageService,
@@ -117,6 +114,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingProcessFolderActionsService,
     MessagingProcessGroupEmailActionsService,
     MessagingDeleteFolderMessagesService,
+    MessagingImportFolderMessagesService,
     MessagingDeleteGroupEmailMessagesService,
     InboundEmailImportService,
   ],

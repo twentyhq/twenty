@@ -479,7 +479,6 @@ type Field {
   description: String
   icon: String
   standardOverrides: StandardOverrides
-  isCustom: Boolean @deprecated(reason: "isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application.")
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
@@ -650,7 +649,6 @@ type Object {
   standardOverrides: ObjectStandardOverrides
   shortcut: String
   color: String
-  isCustom: Boolean! @deprecated(reason: "isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application.")
   isRemote: Boolean!
   isActive: Boolean!
   isSystem: Boolean!
@@ -1612,6 +1610,11 @@ type BillingPlan {
   meteredProducts: [BillingMeteredProduct!]!
 }
 
+type BillingPaymentIntent {
+  clientSecret: String!
+  paymentIntentType: String!
+}
+
 type BillingSession {
   url: String
 }
@@ -1881,6 +1884,7 @@ enum ModelFamily {
 type Billing {
   isBillingEnabled: Boolean!
   billingUrl: String
+  stripePublishableKey: String
   trialPeriods: [BillingTrialPeriod!]!
 }
 
@@ -2945,6 +2949,7 @@ type MessageFolder {
 
 enum MessageFolderPendingSyncAction {
   FOLDER_DELETION
+  FOLDER_IMPORT
   NONE
 }
 
@@ -2994,7 +2999,6 @@ type MinimalObjectMetadata {
   labelPlural: String!
   icon: String
   color: String
-  isCustom: Boolean!
   isActive: Boolean!
   isSystem: Boolean!
   isRemote: Boolean!
@@ -3288,6 +3292,7 @@ type Mutation {
   skipBookOnboardingStep: OnboardingStepSuccess!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
+  createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   switchSubscriptionInterval: BillingUpdate!
   switchBillingPlan: BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!
@@ -3395,6 +3400,7 @@ type Mutation {
   signUp(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInWorkspace(email: String!, password: String!, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String, captchaToken: String, locale: String, verifyEmailRedirectPath: String): SignUp!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
+  uploadNewWorkspaceLogo(workspaceId: String!, file: Upload!): FileWithSignedUrl!
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
@@ -4288,7 +4294,6 @@ input CreateFieldInput {
   label: String!
   description: String
   icon: String
-  isCustom: Boolean
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
@@ -4377,7 +4382,7 @@ input UpdateMessageFolderInput {
 }
 
 input UpdateMessageFolderInputUpdates {
-  isSynced: Boolean
+  isSynced: Boolean!
 }
 
 input UpdateMessageFoldersInput {
@@ -4475,6 +4480,9 @@ input UpdateWorkspaceMemberSettingsInput {
 }
 
 input ActivateWorkspaceInput {
+  """
+  Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility.
+  """
   displayName: String
 }
 

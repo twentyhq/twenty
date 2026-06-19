@@ -1,5 +1,6 @@
 import { useDeleteOneFieldMetadataItem } from '@/object-metadata/hooks/useDeleteOneFieldMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -101,6 +102,8 @@ export const SettingsObjectRelationItemTableRow = ({
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { getIcon } = useIcons();
+
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   const Icon = getIcon(fieldMetadataItem.icon);
 
@@ -207,7 +210,6 @@ export const SettingsObjectRelationItemTableRow = ({
       <TableCell>
         <SettingsItemTypeTag
           item={{
-            isCustom: fieldMetadataItem.isCustom ?? undefined,
             isRemote: objectMetadataItem.isRemote,
             applicationId: fieldMetadataItem.applicationId,
           }}
@@ -248,7 +250,7 @@ export const SettingsObjectRelationItemTableRow = ({
           </UndecoratedLink>
         ) : (
           <SettingsObjectFieldInactiveActionDropdown
-            isCustomField={fieldMetadataItem.isCustom === true}
+            isCustomField={getIsMetadataItemCustom(fieldMetadataItem)}
             readonly={readonly}
             fieldMetadataItemId={fieldMetadataItem.id}
             onEdit={navigateToFieldEdit}

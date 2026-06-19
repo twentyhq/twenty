@@ -17,7 +17,8 @@ export { WORKFLOW_TRIGGER_METADATA_LABEL } from './constants/WorkflowTriggerMeta
 export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY } from './constants/WorkflowTriggerMetadataWorkspaceMemberIdKey';
 export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_LABEL } from './constants/WorkflowTriggerMetadataWorkspaceMemberIdLabel';
 export { WORKFLOW_TRIGGER_PAYLOAD_KEY } from './constants/WorkflowTriggerPayloadKey';
-export { WORKFLOW_TRIGGER_PAYLOAD_LABEL } from './constants/WorkflowTriggerPayloadLabel';
+export { WORKFLOW_TRIGGER_RECORD_LABEL } from './constants/WorkflowTriggerRecordLabel';
+export { WORKFLOW_TRIGGER_RECORDS_LABEL } from './constants/WorkflowTriggerRecordsLabel';
 export { WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS } from './layout/constants/WorkflowDiagramDefaultNodeDimensions';
 export { WORKFLOW_LAYOUT_DEFAULT_OPTIONS } from './layout/constants/WorkflowLayoutDefaultOptions';
 export type {
@@ -94,6 +95,7 @@ export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
 export type { EmailRecipients } from './types/EmailRecipients';
 export type { FunctionInput } from './types/FunctionInput';
 export type {
+  RecordSchemaType,
   InputSchemaPropertyType,
   InputSchemaProperty,
   InputSchema,

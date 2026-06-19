@@ -1,5 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { CatalogDecorator, type CatalogStory } from '@ui/testing';
+import {
+  A11Y_DEFER_COLOR_CONTRAST,
+  CatalogDecorator,
+  type CatalogStory,
+} from '@ui/testing';
 
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
 import { CircularProgressBar } from '@ui/feedback/CircularProgressBar/CircularProgressBar';
@@ -26,8 +30,7 @@ export const Default: Story = {
 export const Catalog: CatalogStory<Story, typeof CircularProgressBar> = {
   argTypes: {},
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {

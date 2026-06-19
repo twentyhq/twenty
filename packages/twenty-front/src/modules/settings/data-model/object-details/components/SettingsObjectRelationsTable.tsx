@@ -58,7 +58,7 @@ const SETTINGS_OBJECT_RELATION_TABLE_METADATA: TableMetadata<FieldMetadataItem> 
       },
       {
         fieldLabel: msg`App`,
-        fieldName: 'isCustom',
+        fieldName: 'applicationId',
         fieldType: 'string',
         align: 'left',
       },

@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { type ColorSampleVariant } from '@ui/data-display';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogDimension,
   type CatalogOptions,
@@ -29,8 +30,7 @@ export const Default: Story = {
 export const Catalog: CatalogStory<Story, typeof MenuItemSelectColor> = {
   argTypes: { className: { control: false } },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [

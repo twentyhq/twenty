@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import QRCode from 'react-qr-code';
+import QRCodeModule from 'react-qr-code';
 
 import { qrCodeState } from '@/auth/states/qrCode';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -20,7 +20,10 @@ import { Loader } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { resolveCjsModuleDefaultExport } from '~/utils/resolveCjsModuleDefaultExport';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+
+const QRCode = resolveCjsModuleDefaultExport(QRCodeModule);
 
 const StyledQRCodeContainer = styled.div`
   align-items: flex-start;

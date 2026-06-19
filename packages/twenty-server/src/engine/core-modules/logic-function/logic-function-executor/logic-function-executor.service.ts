@@ -359,9 +359,10 @@ export class LogicFunctionExecutorService {
 
     for (const variable of serverVariables) {
       if (variable.encryptedValue !== '') {
-        envMap[variable.key] = this.secretEncryptionService.decryptVersioned(
-          variable.encryptedValue,
-        );
+        envMap[variable.key] =
+          this.secretEncryptionService.decryptVersionedOrThrow(
+            variable.encryptedValue,
+          );
       }
     }
 
