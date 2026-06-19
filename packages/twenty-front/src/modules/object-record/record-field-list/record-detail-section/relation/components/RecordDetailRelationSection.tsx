@@ -182,8 +182,8 @@ export const RecordDetailRelationSection = ({
   const relationRecordsCount = relationAggregateResult?.id?.COUNT ?? 0;
 
   const sectionTitle = isToOneObject
-    ? (relationObjectMetadataItem.labelSingular || fieldDefinition.label)
-    : (relationObjectMetadataItem.labelPlural || fieldDefinition.label);
+    ? relationObjectMetadataItem.labelSingular || fieldDefinition.label
+    : relationObjectMetadataItem.labelPlural || fieldDefinition.label;
 
   return (
     <FieldInputEventContext.Provider
