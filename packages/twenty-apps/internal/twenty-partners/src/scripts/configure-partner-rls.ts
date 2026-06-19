@@ -2,7 +2,17 @@
 // predicates. Does three things:
 //
 // 1. Upserts row-level-permission predicates on the Partner role:
-//    - "partnerUser IS the current member" on partner/person/company/application
+//    - "partnerUser IS the current member" on partner/person/company
+//    - "(partnerUser IS me) OR (lastActivityAt IS EMPTY)" on application. RLS is validated on
+//      INSERT against the row exactly as submitted, but a partner's Apply workflow creates the
+//      row with partnerUser=null (on-application-created stamps it AFTER insert, as the app).
+//      A strict "partnerUser IS me" would reject every apply, so the OR adds an escape hatch:
+//      a freshly-created row (lastActivityAt null, set by the same handler) passes insert and
+//      is readable by its creator until the handler stamps it.
+//      ponytail: trade-off — an unstamped row is briefly readable by ANY partner (sub-second
+//      window; permanent only if the handler fails to stamp). Acceptable for an internal
+//      partner marketplace; tighten by setting partnerUser at insert if a current-member
+//      workflow variable ever lands.
 //    - "(partnerUser IS me) OR (isListed = true)" on opportunity (marketplace briefs)
 //    - "id IS the current member" on workspaceMember (self-scope; internal roster hidden)
 //
@@ -29,14 +39,20 @@ const requireEnv = (name: string): string => {
   return value;
 };
 
-const SIMPLE_TARGET_OBJECTS = ['partner', 'person', 'company', 'application'] as const;
+const SIMPLE_TARGET_OBJECTS = ['partner', 'person', 'company'] as const;
 type SimpleTargetObject = (typeof SIMPLE_TARGET_OBJECTS)[number];
 
-const ALL_TARGET_OBJECTS = [...SIMPLE_TARGET_OBJECTS, 'opportunity'] as const;
+// application + opportunity use OR groups (handled separately), but still need existence checks.
+const ALL_TARGET_OBJECTS = [
+  ...SIMPLE_TARGET_OBJECTS,
+  'application',
+  'opportunity',
+] as const;
 
-// Stable id for the Opportunity OR predicate group — re-runs upsert in place instead of
-// creating duplicate groups.
+// Stable ids for the OR predicate groups — re-runs upsert in place instead of creating
+// duplicate groups.
 const OPPORTUNITY_RLS_OR_GROUP_ID = 'b7e7f3a0-4c5d-4e8f-9a1b-2c3d4e5f6789';
+const APPLICATION_RLS_OR_GROUP_ID = 'a9c1f3d2-5b6e-4a7c-8d9f-1e2b3c4d5e6f';
 
 // Opportunity fields that must NOT be locked: system columns and updatedBy/position
 // (server-managed — locking them breaks every update; see src/roles/partner.role.ts).
@@ -334,6 +350,24 @@ async function main() {
     'isListed',
   );
 
+  const applicationObjectIdForPredicate = objectIdByName.get(
+    'application',
+  ) as string;
+  const applicationPartnerUserFieldId = await findFieldByName(
+    metadataUrl,
+    apiKey,
+    applicationObjectIdForPredicate,
+    'application',
+    'partnerUser',
+  );
+  const applicationLastActivityAtFieldId = await findFieldByName(
+    metadataUrl,
+    apiKey,
+    applicationObjectIdForPredicate,
+    'application',
+    'lastActivityAt',
+  );
+
   // ── 2. Resolve workspaceMember.id field metadata id ──────────────────────────
 
   const workspaceMemberIdFieldId = await findFieldByName(
@@ -496,6 +530,63 @@ async function main() {
     );
   }
 
+  // Application: (partnerUser IS me) OR (lastActivityAt IS EMPTY). The IS-EMPTY branch lets a
+  // partner CREATE their own application — RLS is validated on insert against the row as
+  // submitted (partnerUser is null until on-application-created stamps it). A scalar IS_EMPTY
+  // on lastActivityAt resolves to `{ is: 'NULL' }`, which is unambiguous on both the insert
+  // check and the SQL read path (a relation IS_EMPTY is riskier there). See header for the leak.
+  {
+    const appData = await metadataFetch<{
+      upsertRowLevelPermissionPredicates: { predicates: PredicateResult[] };
+    }>(metadataUrl, apiKey, MUTATION, {
+      input: {
+        roleId: partnerRole.id,
+        objectMetadataId: applicationObjectIdForPredicate,
+        predicateGroups: [
+          {
+            id: APPLICATION_RLS_OR_GROUP_ID,
+            objectMetadataId: applicationObjectIdForPredicate,
+            logicalOperator: 'OR',
+            parentRowLevelPermissionPredicateGroupId: null,
+          },
+        ],
+        predicates: [
+          {
+            fieldMetadataId: applicationPartnerUserFieldId,
+            operand: 'IS',
+            workspaceMemberFieldMetadataId: workspaceMemberIdFieldId,
+            rowLevelPermissionPredicateGroupId: APPLICATION_RLS_OR_GROUP_ID,
+            positionInRowLevelPermissionPredicateGroup: 0,
+          },
+          {
+            fieldMetadataId: applicationLastActivityAtFieldId,
+            operand: 'IS_EMPTY',
+            rowLevelPermissionPredicateGroupId: APPLICATION_RLS_OR_GROUP_ID,
+            positionInRowLevelPermissionPredicateGroup: 1,
+          },
+        ],
+      } satisfies UpsertPredicatesInput,
+    });
+
+    const appPredicates =
+      appData.upsertRowLevelPermissionPredicates.predicates;
+
+    if (appPredicates.length < 2) {
+      throw new Error(
+        'upsertRowLevelPermissionPredicates returned fewer than 2 predicates for application OR group',
+      );
+    }
+
+    for (const predicate of appPredicates) {
+      results.push(predicate);
+    }
+
+    console.log(
+      `[rls:configure] ✓ application: OR group id=${APPLICATION_RLS_OR_GROUP_ID} ` +
+        `(${appPredicates.length} predicates: partnerUser IS me OR lastActivityAt IS EMPTY)`,
+    );
+  }
+
   // workspaceMember predicate: "id IS the current member", scoping the role's read to the
   // partner's own record. Other members (e.g. an opportunity's internal owner) resolve to null.
   {
@@ -534,7 +625,7 @@ async function main() {
 
   console.log(
     `\n[rls:configure] Done — ${results.length} predicates upserted on Partner role ` +
-      `(${SIMPLE_TARGET_OBJECTS.length} simple objects + opportunity OR group + workspaceMember self-scope)`,
+      `(${SIMPLE_TARGET_OBJECTS.length} simple objects + application OR group + opportunity OR group + workspaceMember self-scope)`,
   );
 
   // ── 5. Verify Opportunity field permissions (set via manifest, not here — see header) ─

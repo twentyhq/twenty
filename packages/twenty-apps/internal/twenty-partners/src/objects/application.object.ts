@@ -107,7 +107,10 @@ export default defineObject({
       label: 'State',
       icon: 'IconProgressCheck',
       isNullable: false,
-      defaultValue: "'INVITED'",
+      // Self-apply is the primary path → default APPLIED so a partner who applies never sees a
+      // misleading "Invited" flicker while on-application-created (async) stamps the candidacy.
+      // Admin invites are a manual action that explicitly sets INVITED.
+      defaultValue: "'APPLIED'",
       options: [
         { id: '7f9d5ae7-64be-4269-8fab-3cfeaf352bcb', value: 'APPLIED', label: 'Applied', position: 0, color: 'blue' },
         { id: '2ce94524-4ac3-4a4a-a87c-5c9841eced7c', value: 'INVITED', label: 'Invited', position: 1, color: 'gray' },

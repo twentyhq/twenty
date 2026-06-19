@@ -13,7 +13,6 @@ import {
   APPLICATION_STATE_FIELD_ID,
   APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
 } from 'src/objects/application.object';
-import { PARTNER_WORKFLOWS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER } from 'src/permission-flags/partner-workflows.permission-flag';
 import { OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID } from 'src/fields/opportunity-design-doc-status.field';
 import { OPPORTUNITY_DESIGN_DOC_URL_FIELD_ID } from 'src/fields/opportunity-design-doc-url.field';
 import { OPPORTUNITY_HOSTING_TYPE_FIELD_ID } from 'src/fields/opportunity-hosting-type.field';
@@ -58,9 +57,11 @@ export default defineRole({
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
-  permissionFlagUniversalIdentifiers: [
-    PARTNER_WORKFLOWS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
-  ],
+  // No permission flags: partners apply by CREATING an Application directly (a normal record
+  // write, governed by the Application object permission), which fires on-application-created.
+  // They never run a manual workflow, so the WORKFLOWS flag is unnecessary — and it can't be
+  // granted on an app-owned role anyway (the manifest sync drops role→permissionFlag links).
+  permissionFlagUniversalIdentifiers: [],
   // Lock every Opportunity field except the system/server-managed fields left out here
   // (id, timestamps, updatedBy, position — see header). Stage + amount are locked too.
   fieldPermissions: [
