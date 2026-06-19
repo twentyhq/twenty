@@ -349,7 +349,7 @@ export default defineLogicFunction({
 });
 ```
 
-要**只**声明一次参数并服务于这两种界面，请定义一个单一的 JSON Schema（`InputJsonSchema`），并使用来自 `twenty-sdk/logic-function` 的 `jsonSchemaToInputSchema` 将其转换为工作流操作使用。 `toolTriggerSettings.inputSchema` 直接接受 JSON Schema，而 `workflowActionTriggerSettings.inputSchema` 需要的是 Twenty 的 `InputSchema`：
+要只声明**一次**参数并服务于这两种界面，请定义一个单个 JSON Schema（`InputJsonSchema`），并使用来自 `twenty-sdk/logic-function` 的 `jsonSchemaToInputSchema` 将其转换为工作流操作所用。 `toolTriggerSettings.inputSchema` 直接接受 JSON Schema，而 `workflowActionTriggerSettings.inputSchema` 需要的是 Twenty 的 `InputSchema`：
 
 ```ts
 import { defineLogicFunction } from 'twenty-sdk/define';

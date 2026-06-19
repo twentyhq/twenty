@@ -348,7 +348,7 @@ export default defineLogicFunction({
 });
 ```
 
-Um deine Parameter **einmal** zu deklarieren und beide Oberflächen zu bedienen, definiere ein einziges JSON Schema (`InputJsonSchema`) und konvertiere es für die Workflow-Aktion mit `jsonSchemaToInputSchema` aus `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` nimmt das JSON Schema direkt, während `workflowActionTriggerSettings.inputSchema` Twenty's `InputSchema` erwartet:
+Um Ihre Parameter **einmal** zu deklarieren und beide Oberflächen zu bedienen, definieren Sie ein einziges JSON Schema (`InputJsonSchema`) und konvertieren Sie es für die Workflow-Aktion mit `jsonSchemaToInputSchema` aus `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` nimmt das JSON Schema direkt, während `workflowActionTriggerSettings.inputSchema` das `InputSchema` von Twenty erwartet:
 
 ```ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -382,7 +382,7 @@ export default defineLogicFunction({
 </AccordionGroup>
 
 <Note>
-**Runtime-Hilfsfunktionen.** `twenty-sdk/utils` exportiert kleine Runtime-Hilfsfunktionen erneut, sodass Handler niemals direkt aus `twenty-shared` importieren. Zum Beispiel gibt `isDefined(value)` für sowohl `null` als auch `undefined` den Wert `false` zurück – verwenden Sie es, um optionale Handler-Eingaben sicher einzugrenzen, die zur Laufzeit als `null` ankommen können, selbst wenn sie als `T | undefined` typisiert sind:
+**Runtime-Hilfsfunktionen.** `twenty-sdk/utils` exportiert kleine Runtime-Hilfsfunktionen erneut, sodass Handler niemals direkt aus `twenty-shared` importieren. Zum Beispiel gibt `isDefined(value)` sowohl für `null` als auch für `undefined` den Wert `false` zurück – verwenden Sie es, um optionale Handler-Eingaben sicher einzugrenzen, die zur Laufzeit als `null` ankommen können, selbst wenn sie als `T | undefined` typisiert sind:
 
 ```ts
 import { isDefined } from 'twenty-sdk/utils';
