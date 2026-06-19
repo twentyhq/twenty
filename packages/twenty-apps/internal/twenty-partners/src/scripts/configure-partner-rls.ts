@@ -38,9 +38,9 @@ const ALL_TARGET_OBJECTS = [...SIMPLE_TARGET_OBJECTS, 'opportunity'] as const;
 // creating duplicate groups.
 const OPPORTUNITY_RLS_OR_GROUP_ID = 'b7e7f3a0-4c5d-4e8f-9a1b-2c3d4e5f6789';
 
-// Opportunity fields that must NOT be locked: system columns, the editable business
-// fields (stage, amount), and updatedBy/position (server-managed — locking them breaks
-// every update; see src/roles/partner.role.ts). Everything else is expected to be locked.
+// Opportunity fields that must NOT be locked: system columns and updatedBy/position
+// (server-managed — locking them breaks every update; see src/roles/partner.role.ts).
+// Stage + amount are expected locked (admin-only for partners). Everything else too.
 const OPPORTUNITY_FIELD_LOCK_SKIP = new Set([
   'id',
   'createdAt',
@@ -48,22 +48,19 @@ const OPPORTUNITY_FIELD_LOCK_SKIP = new Set([
   'deletedAt',
   'updatedBy',
   'position',
-  'stage',
-  'amount',
 ]);
 
-// Application fields that must be locked (pitch is the only partner-editable field).
+// Application fields that must be locked (pitch + opportunity are partner-editable).
 const APPLICATION_FIELD_LOCK_EXPECTED = new Set([
   'name',
-  'opportunity',
   'partner',
   'partnerUser',
   'state',
   'lastActivityAt',
 ]);
 
-// Application fields that must NOT be locked: system columns, pitch (editable), and
-// updatedBy/position (server-managed — locking them breaks every update).
+// Application fields that must NOT be locked: system columns, pitch + opportunity
+// (editable), and updatedBy/position (server-managed — locking them breaks every update).
 const APPLICATION_FIELD_LOCK_SKIP = new Set([
   'id',
   'createdAt',
@@ -73,6 +70,7 @@ const APPLICATION_FIELD_LOCK_SKIP = new Set([
   'position',
   'searchVector',
   'pitch',
+  'opportunity',
 ]);
 
 type ObjectInfo = {
@@ -548,7 +546,7 @@ async function main() {
     allOppFields.map((f) => [f.id, f.name]),
   );
 
-  // Build the expected lock set: every non-system, non-stage Opportunity field.
+  // Build the expected lock set: every non-system Opportunity field (incl. stage + amount).
   const expectedLockedNames = new Set<string>(
     allOppFields
       .filter((f) => !OPPORTUNITY_FIELD_LOCK_SKIP.has(f.name))
@@ -569,17 +567,6 @@ async function main() {
       ),
   );
 
-  const stageIsLocked = oppLockedFps.some(
-    (fp) => oppFieldIdToName.get(fp.fieldMetadataId) === 'stage',
-  );
-
-  if (stageIsLocked) {
-    console.warn(
-      `[rls:configure] WARNING: stage field is locked — it should be editable. ` +
-        `Remove it from fieldPermissions in partner.role.ts and re-sync.`,
-    );
-  }
-
   if (missingLocks.length > 0) {
     console.error(
       `\n[rls:configure] DRIFT DETECTED: ${missingLocks.length} Opportunity field(s) ` +
@@ -596,7 +583,7 @@ async function main() {
   }
 
   console.log(
-    `[rls:configure] ✓ ${oppLockedFps.length} Opportunity fields locked (stage + amount editable) — field permissions verified`,
+    `[rls:configure] ✓ ${oppLockedFps.length} Opportunity fields locked (stage + amount read-only) — field permissions verified`,
   );
 
   // ── 6. Verify Application field permissions (set via manifest, not here — see header) ─
