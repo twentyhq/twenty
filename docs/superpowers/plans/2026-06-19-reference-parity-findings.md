@@ -16,10 +16,16 @@
 | Inline cell / record-title editing | ⚠️ not automatable, not confirmed broken | Twenty's custom contenteditable/composite editors didn't accept Playwright driver input; this is a **test-tooling limitation**. Same code as reference Twenty (which ships working inline edit) → works for real users. |
 
 ## Root cause of the reported breakage ("buttons don't work / app not working")
-**Environmental, not code we changed:**
-1. **Corrupted browser site-data** — during debugging I cleared `localhost:3001` IndexedDB / Service Worker / localStorage. Twenty's boot (`hydrateMetadataStore().then(renderApp)`) hangs if that store is mid-deletion, leaving a **blank/hung tab**. This is the most likely cause when viewing in that browser.
+
+**PRIMARY cause — a real (dev-only) build inconsistency, found only by verifying in the user's actual Chrome (claude-in-chrome); Playwright had masked it via cached modules:**
+0. **Vite could not resolve `twenty-shared`.** `twenty-shared/dist/utils.mjs` referenced a hashed chunk (`utils-BQ9EETLQ.mjs`) that Vite's import-analysis treated as unresolvable — a dev-server cache/race after `nx` rebuilt `twenty-shared` as a dependency during the server edits. Result: a **full-screen Vite error overlay blocking the entire app** in the browser — this is what "add-company button / nothing works" actually was. **Fixed** with a clean `rm -rf packages/twenty-shared/dist && npx nx build twenty-shared`; the app then loaded with 0 console errors in the user's Chrome. The **production build (static frontend, no Vite dev server) is immune** to this class of issue.
+
+**Contributing/environmental factors:**
+1. **Corrupted browser site-data** — during debugging I cleared `localhost:3001` IndexedDB / Service Worker / localStorage. Twenty's boot (`hydrateMetadataStore().then(renderApp)`) hangs if that store is mid-deletion, leaving a **blank/hung tab**.
 2. **Vite dev build** — inherently rougher than the production build.
 3. **Seeded demo workflow** — "Create company when adding a new person" auto-created blank companies on person upserts (now cleaned + deactivated).
+
+**Lesson:** verify in the user's real browser (claude-in-chrome), not only an isolated Playwright context — the latter can cache past a real Vite/build error.
 
 ## Fix / guidance
 - **Reset the browser:** clear site data for `localhost:3001` (DevTools → Application → Clear storage), or use a fresh tab / incognito. The app then loads cleanly.
