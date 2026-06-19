@@ -98,6 +98,50 @@ describe('shouldDisplayFormField', () => {
     expect(result).toBe(true);
   });
 
+  it('returns false for UPDATE_RECORD with non UI editable field', () => {
+    const field = { ...baseField, isUIEditable: false } as FieldMetadataItem;
+    const result = shouldDisplayFormField({
+      fieldMetadataItem: field,
+      actionType: 'UPDATE_RECORD',
+    });
+    expect(result).toBe(false);
+  });
+
+  it('returns true for WATCH_FIELDS with non UI editable field', () => {
+    const field = { ...baseField, isUIEditable: false } as FieldMetadataItem;
+    const result = shouldDisplayFormField({
+      fieldMetadataItem: field,
+      actionType: 'WATCH_FIELDS',
+    });
+    expect(result).toBe(true);
+  });
+
+  it('returns false for WATCH_FIELDS with hidden system field', () => {
+    const field = {
+      ...baseField,
+      isSystem: true,
+      name: 'position',
+    } as FieldMetadataItem;
+    const result = shouldDisplayFormField({
+      fieldMetadataItem: field,
+      actionType: 'WATCH_FIELDS',
+    });
+    expect(result).toBe(false);
+  });
+
+  it('returns false for WATCH_FIELDS with RELATION not MANY_TO_ONE', () => {
+    const field = {
+      ...baseField,
+      type: FieldMetadataType.RELATION,
+      settings: { relationType: 'ONE_TO_MANY' },
+    } as FieldMetadataItem;
+    const result = shouldDisplayFormField({
+      fieldMetadataItem: field,
+      actionType: 'WATCH_FIELDS',
+    });
+    expect(result).toBe(false);
+  });
+
   it('throws error on unsupported action', () => {
     expect(() =>
       shouldDisplayFormField({

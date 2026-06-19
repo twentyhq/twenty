@@ -266,7 +266,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             handleFieldsChange={handleFieldsChange}
             readonly={triggerOptions.readonly ?? false}
             defaultFields={trigger.settings.fields}
-            actionType="UPDATE_RECORD"
+            actionType="WATCH_FIELDS"
           />
         )}
       </WorkflowStepBody>
