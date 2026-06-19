@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { IngressTriggerController } from 'src/engine/core-modules/ingress-trigger/ingress-trigger.controller';
-import { IngressTriggerService } from 'src/engine/core-modules/ingress-trigger/ingress-trigger.service';
+import { ServerWebhookTriggerController } from 'src/engine/core-modules/server-webhook-trigger/server-webhook-trigger.controller';
+import { ServerWebhookTriggerService } from 'src/engine/core-modules/server-webhook-trigger/server-webhook-trigger.service';
 import { LogicFunctionTriggerModule } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.module';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
@@ -14,7 +14,7 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
     ApplicationRegistrationModule,
     LogicFunctionTriggerModule,
   ],
-  controllers: [IngressTriggerController],
-  providers: [IngressTriggerService],
+  controllers: [ServerWebhookTriggerController],
+  providers: [ServerWebhookTriggerService],
 })
-export class IngressTriggerModule {}
+export class ServerWebhookTriggerModule {}

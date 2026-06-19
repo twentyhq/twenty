@@ -1,4 +1,4 @@
-import { type IngressTriggerSettings } from '@/application/ingressTriggerSettingsType';
+import { type ServerWebhookTriggerSettings } from '@/application/serverWebhookTriggerSettingsType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type ToolTriggerSettings } from '@/application/toolTriggerSettingsType';
 import { type WorkflowActionTriggerSettings } from '@/application/workflowActionTriggerSettingsType';
@@ -11,7 +11,7 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   cronTriggerSettings?: CronTriggerSettings;
   databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
   httpRouteTriggerSettings?: HttpRouteTriggerSettings;
-  ingressTriggerSettings?: IngressTriggerSettings;
+  serverWebhookTriggerSettings?: ServerWebhookTriggerSettings;
   toolTriggerSettings?: ToolTriggerSettings;
   workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
   sourceHandlerPath: string;

@@ -39,10 +39,6 @@ export type {
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
 export type {
-  WebhookWorkspaceIdSource,
-  IngressTriggerSettings,
-} from './ingressTriggerSettingsType';
-export type {
   LogicFunctionManifest,
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
@@ -72,6 +68,10 @@ export type {
 } from './roleManifestType';
 export type { RunAgentInput, RunAgentResult } from './runAgentType';
 export type { ServerVariables } from './server-variables.type';
+export type {
+  WebhookWorkspaceIdSource,
+  ServerWebhookTriggerSettings,
+} from './serverWebhookTriggerSettingsType';
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';

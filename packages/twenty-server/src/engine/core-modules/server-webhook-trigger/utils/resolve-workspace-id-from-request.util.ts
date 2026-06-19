@@ -1,6 +1,6 @@
 import { isArray, isObject, isString } from '@sniptt/guards';
 import { type Request } from 'express';
-import { type IngressTriggerSettings } from 'twenty-shared/application';
+import { type ServerWebhookTriggerSettings } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { extractBody } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
@@ -29,7 +29,7 @@ const asString = (value: unknown): string | undefined => {
 };
 
 const getResolverRoot = (
-  source: IngressTriggerSettings['workspaceIdResolver']['source'],
+  source: ServerWebhookTriggerSettings['workspaceIdResolver']['source'],
   request: Request,
 ): Record<string, unknown> | undefined => {
   switch (source) {
@@ -48,7 +48,7 @@ export const resolveWorkspaceIdFromRequest = ({
   resolver,
   request,
 }: {
-  resolver: IngressTriggerSettings['workspaceIdResolver'];
+  resolver: ServerWebhookTriggerSettings['workspaceIdResolver'];
   request: Request;
 }): string | undefined => {
   const segments = resolver.path.split('.');

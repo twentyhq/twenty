@@ -10,17 +10,19 @@ import {
 
 import { Request, Response } from 'express';
 
-import { IngressTriggerRestApiExceptionFilter } from 'src/engine/core-modules/ingress-trigger/exceptions/ingress-trigger-rest-api-exception-filter';
-import { IngressTriggerService } from 'src/engine/core-modules/ingress-trigger/ingress-trigger.service';
+import { ServerWebhookTriggerRestApiExceptionFilter } from 'src/engine/core-modules/server-webhook-trigger/exceptions/server-webhook-trigger-rest-api-exception-filter';
+import { ServerWebhookTriggerService } from 'src/engine/core-modules/server-webhook-trigger/server-webhook-trigger.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { sendRouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 
-@Controller('webhooks/ingress')
+@Controller('webhooks/server')
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-@UseFilters(IngressTriggerRestApiExceptionFilter)
-export class IngressTriggerController {
-  constructor(private readonly ingressTriggerService: IngressTriggerService) {}
+@UseFilters(ServerWebhookTriggerRestApiExceptionFilter)
+export class ServerWebhookTriggerController {
+  constructor(
+    private readonly serverWebhookTriggerService: ServerWebhookTriggerService,
+  ) {}
 
   @Post(
     ':applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier',
@@ -35,7 +37,7 @@ export class IngressTriggerController {
   ) {
     sendRouteTriggerResponse(
       response,
-      await this.ingressTriggerService.handle({
+      await this.serverWebhookTriggerService.handle({
         request,
         applicationRegistrationUniversalIdentifier,
         logicFunctionUniversalIdentifier,

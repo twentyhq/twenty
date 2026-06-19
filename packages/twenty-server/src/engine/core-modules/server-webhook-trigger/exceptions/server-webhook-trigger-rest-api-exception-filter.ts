@@ -7,39 +7,39 @@ import {
 import type { Response } from 'express';
 
 import {
-  IngressTriggerException,
-  IngressTriggerExceptionCode,
-} from 'src/engine/core-modules/ingress-trigger/exceptions/ingress-trigger.exception';
+  ServerWebhookTriggerException,
+  ServerWebhookTriggerExceptionCode,
+} from 'src/engine/core-modules/server-webhook-trigger/exceptions/server-webhook-trigger.exception';
 import type { CustomException } from 'src/utils/custom-exception';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 
-@Catch(IngressTriggerException)
-export class IngressTriggerRestApiExceptionFilter implements ExceptionFilter {
+@Catch(ServerWebhookTriggerException)
+export class ServerWebhookTriggerRestApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
   ) {}
 
-  catch(exception: IngressTriggerException, host: ArgumentsHost) {
+  catch(exception: ServerWebhookTriggerException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
     switch (exception.code) {
-      case IngressTriggerExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND:
-      case IngressTriggerExceptionCode.INGRESS_TRIGGER_NOT_CONFIGURED:
-      case IngressTriggerExceptionCode.APPLICATION_NOT_INSTALLED:
-      case IngressTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
+      case ServerWebhookTriggerExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND:
+      case ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_TRIGGER_NOT_CONFIGURED:
+      case ServerWebhookTriggerExceptionCode.APPLICATION_NOT_INSTALLED:
+      case ServerWebhookTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,
           404,
         );
-      case IngressTriggerExceptionCode.WORKSPACE_ID_NOT_RESOLVED:
+      case ServerWebhookTriggerExceptionCode.WORKSPACE_ID_NOT_RESOLVED:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,
           400,
         );
-      case IngressTriggerExceptionCode.INGRESS_USER_UNCAUGHT_ERROR:
+      case ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_USER_UNCAUGHT_ERROR:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,
@@ -48,7 +48,7 @@ export class IngressTriggerRestApiExceptionFilter implements ExceptionFilter {
           undefined,
           { shouldBeCapturedBySentry: false },
         );
-      case IngressTriggerExceptionCode.INGRESS_PLATFORM_ERROR:
+      case ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_PLATFORM_ERROR:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,

@@ -1,8 +1,8 @@
 import { type Request } from 'express';
 import { type Repository } from 'typeorm';
 
-import { IngressTriggerService } from 'src/engine/core-modules/ingress-trigger/ingress-trigger.service';
-import { IngressTriggerExceptionCode } from 'src/engine/core-modules/ingress-trigger/exceptions/ingress-trigger.exception';
+import { ServerWebhookTriggerService } from 'src/engine/core-modules/server-webhook-trigger/server-webhook-trigger.service';
+import { ServerWebhookTriggerExceptionCode } from 'src/engine/core-modules/server-webhook-trigger/exceptions/server-webhook-trigger.exception';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
@@ -15,7 +15,7 @@ const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const buildRequest = (body: object | null): Request =>
   ({
     method: 'POST',
-    path: `/webhooks/ingress/${REGISTRATION_UID}/${LOGIC_FUNCTION_UID}`,
+    path: `/webhooks/server/${REGISTRATION_UID}/${LOGIC_FUNCTION_UID}`,
     query: {},
     headers: {},
     rawBody: Buffer.from(JSON.stringify(body ?? {}), 'utf-8'),
@@ -35,7 +35,7 @@ const REGISTRATION_WITH_TRIGGER = asRegistration({
     logicFunctions: [
       {
         universalIdentifier: LOGIC_FUNCTION_UID,
-        ingressTriggerSettings: {
+        serverWebhookTriggerSettings: {
           workspaceIdResolver: {
             source: 'body',
             path: 'metadata.twentyWorkspaceId',
@@ -46,8 +46,8 @@ const REGISTRATION_WITH_TRIGGER = asRegistration({
   },
 });
 
-describe('IngressTriggerService', () => {
-  let service: IngressTriggerService;
+describe('ServerWebhookTriggerService', () => {
+  let service: ServerWebhookTriggerService;
   let applicationRegistrationService: jest.Mocked<
     Pick<ApplicationRegistrationService, 'findOneByUniversalIdentifier'>
   >;
@@ -91,7 +91,7 @@ describe('IngressTriggerService', () => {
         .mockResolvedValue({ id: 'app-1', workspaceId: WORKSPACE_ID }),
     };
 
-    service = new IngressTriggerService(
+    service = new ServerWebhookTriggerService(
       applicationRegistrationService as unknown as ApplicationRegistrationService,
       logicFunctionTriggerService as unknown as LogicFunctionTriggerService,
       logicFunctionRepository as unknown as Repository<LogicFunctionEntity>,
@@ -121,7 +121,7 @@ describe('IngressTriggerService', () => {
     );
 
     await expect(handle()).rejects.toMatchObject({
-      code: IngressTriggerExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+      code: ServerWebhookTriggerExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
     });
   });
 
@@ -131,7 +131,7 @@ describe('IngressTriggerService', () => {
     );
 
     await expect(handle()).rejects.toMatchObject({
-      code: IngressTriggerExceptionCode.INGRESS_TRIGGER_NOT_CONFIGURED,
+      code: ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_TRIGGER_NOT_CONFIGURED,
     });
   });
 
@@ -139,7 +139,7 @@ describe('IngressTriggerService', () => {
     await expect(
       handle({ metadata: { twentyWorkspaceId: 'not-a-uuid' } }),
     ).rejects.toMatchObject({
-      code: IngressTriggerExceptionCode.WORKSPACE_ID_NOT_RESOLVED,
+      code: ServerWebhookTriggerExceptionCode.WORKSPACE_ID_NOT_RESOLVED,
     });
   });
 
@@ -147,7 +147,7 @@ describe('IngressTriggerService', () => {
     applicationRepository.findOne.mockResolvedValue(null);
 
     await expect(handle()).rejects.toMatchObject({
-      code: IngressTriggerExceptionCode.APPLICATION_NOT_INSTALLED,
+      code: ServerWebhookTriggerExceptionCode.APPLICATION_NOT_INSTALLED,
     });
   });
 
@@ -155,7 +155,7 @@ describe('IngressTriggerService', () => {
     logicFunctionRepository.findOne.mockResolvedValue(null);
 
     await expect(handle()).rejects.toMatchObject({
-      code: IngressTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      code: ServerWebhookTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
     });
   });
 
@@ -166,7 +166,7 @@ describe('IngressTriggerService', () => {
     });
 
     await expect(handle()).rejects.toMatchObject({
-      code: IngressTriggerExceptionCode.INGRESS_USER_UNCAUGHT_ERROR,
+      code: ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_USER_UNCAUGHT_ERROR,
     });
   });
 });

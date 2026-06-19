@@ -22,7 +22,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { MinimalMetadataModule } from 'src/engine/metadata-modules/minimal-metadata/minimal-metadata.module';
-import { IngressTriggerModule } from 'src/engine/core-modules/ingress-trigger/ingress-trigger.module';
+import { ServerWebhookTriggerModule } from 'src/engine/core-modules/server-webhook-trigger/server-webhook-trigger.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
@@ -55,7 +55,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     PermissionsModule,
     PermissionFlagModule,
     RouteTriggerModule,
-    IngressTriggerModule,
+    ServerWebhookTriggerModule,
     WebhookModule,
     ConnectedAccountMetadataModule,
     MessageChannelMetadataModule,
