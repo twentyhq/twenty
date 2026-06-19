@@ -39,6 +39,17 @@ Watch health: `docker compose ... logs -f server` until `/healthz` is green.
 ## 4. First sign-in
 Open `SERVER_URL`, "Continue with Email", and create your account + workspace. With `IS_WORKSPACE_DEMO_DATA_ENABLED=false`, the new workspace starts **empty** (no sample companies/people/workflows) — only the standard object model.
 
+## Co-located deploy recipe (recommended for speed) — one VM in the Supabase region
+The fastest, simplest setup: a single small VM **in `ap-northeast-1` (Tokyo, your Supabase region)** running this compose. Server↔DB becomes ~1–5ms, so the dozens of queries per action are effectively free; only your browser→server HTTP calls (~300ms each) remain → actions feel ~0.5–1.5s instead of ~20s.
+
+1. Provision a small VM (2 vCPU / 4GB+) in **ap-northeast-1** — AWS EC2/Lightsail, GCP `asia-northeast1`, Fly.io `nrt`, etc.
+2. Install Docker + Docker Compose Plugin.
+3. Copy the repo + your filled `.env` to the VM.
+4. `docker compose -f packages/twenty-docker/docker-compose.supabase.yml --env-file .env up -d --build`
+5. Point `SERVER_URL` / your domain at the VM and use that instance (not the local server).
+
+> Why a single VM (not Fly/Render multi-service): server+worker+redis sit together and ~1–5ms from Supabase, with no managed-Redis setup. For *sub-100ms end-to-end for you*, instead put BOTH this VM and the Supabase project in **your own** region.
+
 ## Notes
 - **UI:** the server serves Twenty's optimized **production frontend** (not the dev server) — native design/animations, no dev-build roughness.
 - **Secrets:** never commit `.env`. Rotate keys via `FALLBACK_ENCRYPTION_KEY`.
