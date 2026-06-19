@@ -83,4 +83,8 @@ export type {
   ViewSortManifest,
   ViewManifest,
 } from './viewManifestType';
+export type {
+  WebhookWorkspaceIdSource,
+  WebhookIngressManifest,
+} from './webhookIngressManifestType';
 export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSettingsType';
