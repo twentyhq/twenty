@@ -869,6 +869,7 @@ type View {
   kanbanAggregateOperationFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean!
+  kanbanColumnWidth: Int
   calendarFieldMetadataId: UUID
   workspaceId: UUID!
   anyFieldFilterValue: String
@@ -3575,6 +3576,7 @@ input CreateViewInput {
   position: Float = 0
   isCompact: Boolean = false
   shouldHideEmptyGroups: Boolean = false
+  kanbanColumnWidth: Int
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -3601,6 +3603,7 @@ input UpdateViewInput {
   visibility: ViewVisibility
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean
+  kanbanColumnWidth: Int
 }
 
 input UpsertViewWidgetInput {

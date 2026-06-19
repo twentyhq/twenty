@@ -25,6 +25,7 @@ import {
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
+import { ADD_VIEW_KANBAN_COLUMN_WIDTH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/add-view-kanban-column-width-upgrade-command-name.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
@@ -50,6 +51,7 @@ export type ViewOverrides = {
   visibility?: ViewVisibility;
   mainGroupByFieldMetadataId?: SerializedRelation | null;
   shouldHideEmptyGroups?: boolean;
+  kanbanColumnWidth?: number | null;
 };
 
 // We could refactor this type to be dynamic to view type
@@ -184,6 +186,12 @@ export class ViewEntity
 
   @Column({ nullable: false, default: false, type: 'boolean' })
   shouldHideEmptyGroups: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_VIEW_KANBAN_COLUMN_WIDTH_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'int', default: null })
+  kanbanColumnWidth: number | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
