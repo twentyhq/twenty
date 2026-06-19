@@ -6,21 +6,14 @@ import {
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RECORD_BOARD_COLUMN_MAX_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnMaxWidth';
-import { RECORD_BOARD_COLUMN_MIN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnMinWidth';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { clampRecordBoardColumnWidth } from '@/object-record/record-board/utils/clampRecordBoardColumnWidth';
 import { setRecordBoardColumnWidthCssVariable } from '@/object-record/record-board/utils/setRecordBoardColumnWidthCssVariable';
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useUpdateViewKanbanColumnWidth } from '@/views/hooks/useUpdateViewKanbanColumnWidth';
-
-const clampColumnWidth = (width: number) =>
-  Math.min(
-    Math.max(Math.round(width), RECORD_BOARD_COLUMN_MIN_WIDTH),
-    RECORD_BOARD_COLUMN_MAX_WIDTH,
-  );
 
 export const useResizeBoardColumn = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
@@ -53,7 +46,7 @@ export const useResizeBoardColumn = () => {
 
       setRecordBoardColumnWidthCssVariable(
         recordBoardId,
-        clampColumnWidth(
+        clampRecordBoardColumnWidth(
           recordIndexKanbanColumnWidth + (x - initialPointerPositionX),
         ),
       );
@@ -69,8 +62,10 @@ export const useResizeBoardColumn = () => {
 
       setInitialPointerPositionX(null);
 
-      const nextWidth = clampColumnWidth(
-        recordIndexKanbanColumnWidth + (x - initialPointerPositionX),
+      const nextWidth = Math.round(
+        clampRecordBoardColumnWidth(
+          recordIndexKanbanColumnWidth + (x - initialPointerPositionX),
+        ),
       );
 
       if (nextWidth !== recordIndexKanbanColumnWidth) {

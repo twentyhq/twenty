@@ -92,6 +92,7 @@ describe('Update core view', () => {
       type: ViewType.KANBAN,
       mainGroupByFieldMetadataId: testSelectFieldMetadataId,
       isCompact: true,
+      kanbanColumnWidth: 250,
     };
 
     const { data, errors } = await updateOneView({
@@ -106,6 +107,7 @@ describe('Update core view', () => {
       name: 'Updated View',
       type: ViewType.KANBAN,
       isCompact: true,
+      kanbanColumnWidth: 250,
     });
   });
 

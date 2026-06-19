@@ -16,6 +16,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
+import { clampRecordBoardColumnWidth } from '@/object-record/record-board/utils/clampRecordBoardColumnWidth';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
@@ -326,7 +327,9 @@ export const useLoadRecordIndexStates = () => {
 
           batchSet(
             recordIndexKanbanColumnWidthAtom,
-            view.kanbanColumnWidth ?? RECORD_BOARD_COLUMN_WIDTH,
+            clampRecordBoardColumnWidth(
+              view.kanbanColumnWidth ?? RECORD_BOARD_COLUMN_WIDTH,
+            ),
           );
 
           if (isDefined(recordIndexGroupFieldMetadataItemValue)) {
