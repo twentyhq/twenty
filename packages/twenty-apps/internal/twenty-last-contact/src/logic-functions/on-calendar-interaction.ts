@@ -1,12 +1,16 @@
 import { defineLogicFunction, ObjectRecordUpdateEvent } from 'twenty-sdk/define';
 import type { DatabaseEventPayload } from 'twenty-sdk/logic-function';
-import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CALENDAR_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { updatePersonLastContactAtFromCalendar } from 'src/utils/update-person-last-contact-at-from-calendar';
 
+type CalendarEventParticipantUpdate = {
+  personId?: string | null;
+};
+
 const handler = async (event: DatabaseEventPayload<
-  ObjectRecordUpdateEvent<CoreSchema.CalendarEventParticipant>
+  ObjectRecordUpdateEvent<CalendarEventParticipantUpdate>
 >): Promise<void> => {
   const personId = event.properties.after.personId;
 

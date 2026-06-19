@@ -1,11 +1,16 @@
 import { defineLogicFunction, ObjectRecordUpdateEvent } from 'twenty-sdk/define';
 import type { DatabaseEventPayload } from 'twenty-sdk/logic-function';
-import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { updatePersonLastContactAtIfNewer } from 'src/utils/update-person-last-contact-at';
 
-const handler = async (event: DatabaseEventPayload<ObjectRecordUpdateEvent<CoreSchema.MessageParticipant>>): Promise<void> => {
+type MessageParticipantUpdate = {
+  personId?: string | null;
+  messageId?: string | null;
+};
+
+const handler = async (event: DatabaseEventPayload<ObjectRecordUpdateEvent<MessageParticipantUpdate>>): Promise<void> => {
   const personId = event.properties.after.personId;
   const messageId = event.properties.after.messageId;
 
