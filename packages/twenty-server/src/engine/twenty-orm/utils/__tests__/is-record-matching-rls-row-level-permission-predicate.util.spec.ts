@@ -119,6 +119,11 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         joinColumnName: 'companyId',
       },
     ),
+    createMockFlatFieldMetadata(
+      'close-date-id',
+      'closeDate',
+      FieldMetadataType.DATE_TIME,
+    ),
   ];
 
   const flatObjectMetadata = createMockFlatObjectMetadata(
@@ -326,5 +331,38 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         flatFieldMetadataMaps,
       }),
     ).toBe(false);
+  });
+
+  // In the realtime event-matching path the record comes straight from the
+  // driver (noFormatting), so DATE/DATE_TIME columns are Date objects rather
+  // than ISO strings. This used to crash with `split is not a function` because
+  // parseISO only accepts strings.
+  describe('DATE_TIME field with Date object value (event-matching path)', () => {
+    const recordWithDateObject = {
+      ...baseRecord,
+      closeDate: new Date('2026-06-19T12:00:00.000Z'),
+    } as unknown as ObjectRecord;
+
+    it('matches a gt filter without throwing', () => {
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: recordWithDateObject,
+          filter: { closeDate: { gt: '2026-01-01T00:00:00.000Z' } },
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(true);
+    });
+
+    it('does not match a gt filter when the value is earlier', () => {
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: recordWithDateObject,
+          filter: { closeDate: { gt: '2026-12-31T00:00:00.000Z' } },
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(false);
+    });
   });
 });

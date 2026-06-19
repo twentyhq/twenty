@@ -158,4 +158,46 @@ describe('isMatchingDateFilter', () => {
       ).toBe(false);
     });
   });
+
+  // In the RLS event-matching path, date columns arrive as Date objects, not
+  // ISO strings. parseISO would crash on them with `split is not a function`.
+  describe('Date object values (RLS event-matching path)', () => {
+    const testDateObject = new Date(testDate);
+
+    it('does not throw and matches eq filter', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { eq: testDate },
+          value: testDateObject,
+        }),
+      ).toBe(true);
+    });
+
+    it('matches gt filter', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { gt: '2023-12-18T12:15:29.810Z' },
+          value: testDateObject,
+        }),
+      ).toBe(true);
+    });
+
+    it('matches gte filter', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { gte: testDate },
+          value: testDateObject,
+        }),
+      ).toBe(true);
+    });
+
+    it('matches lte filter', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { lte: testDate },
+          value: testDateObject,
+        }),
+      ).toBe(true);
+    });
+  });
 });
