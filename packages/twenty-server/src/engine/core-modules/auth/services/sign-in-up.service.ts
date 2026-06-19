@@ -345,16 +345,14 @@ export class SignInUpService {
       );
     }
 
-    if (user.firstName === '' && user.lastName === '') {
-      await this.onboardingService.setOnboardingCreateProfilePending(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          value: true,
-        },
-        queryRunner,
-      );
-    }
+    await this.onboardingService.setOnboardingCreateProfilePending(
+      {
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      },
+      queryRunner,
+    );
   }
 
   private async saveNewUser(
