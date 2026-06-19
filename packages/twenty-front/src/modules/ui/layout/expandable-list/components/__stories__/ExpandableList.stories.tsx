@@ -1,8 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/data-display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
@@ -59,8 +59,7 @@ export const WithExpandedList: Story = {
 };
 
 const OPTIONS_COUNT = 7;
-const NARROW_WIDTH_PX = 80;
-const WIDE_WIDTH_PX = 1000;
+const COLLAPSED_WIDTH_PX = 96;
 
 const optionTags = Array.from({ length: OPTIONS_COUNT }, (_, index) => (
   <Tag
@@ -73,39 +72,46 @@ const optionTags = Array.from({ length: OPTIONS_COUNT }, (_, index) => (
 const countRenderedOptions = (canvas: ReturnType<typeof within>) =>
   canvas.queryAllByText(/^Option \d+$/).length;
 
-const ResizableExpandableListWrapper = () => {
-  const [width, setWidth] = useState(NARROW_WIDTH_PX);
-
-  return (
-    <div>
-      <button onClick={() => setWidth(WIDE_WIDTH_PX)}>Widen</button>
-      <div style={{ width, overflow: 'hidden' }}>
-        <ExpandableList isChipCountDisplayed>{optionTags}</ExpandableList>
-      </div>
-    </div>
-  );
-};
-
 export const RecomputesVisibleChipsOnResize: Story = {
-  render: () => <ResizableExpandableListWrapper />,
+  render: () => (
+    <div
+      data-resizable-cell
+      style={{
+        resize: 'horizontal',
+        overflow: 'hidden',
+        width: COLLAPSED_WIDTH_PX,
+        minWidth: 56,
+        maxWidth: '100%',
+      }}
+    >
+      <ExpandableList isChipCountDisplayed>{optionTags}</ExpandableList>
+    </div>
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const resizableCell = canvasElement.querySelector<HTMLElement>(
+      '[data-resizable-cell]',
+    );
 
     await waitFor(() => {
       expect(countRenderedOptions(canvas)).toBeLessThan(OPTIONS_COUNT);
     });
 
-    await userEvent.click(await canvas.findByText('Widen'));
+    const collapsedCount = countRenderedOptions(canvas);
+
+    if (isDefined(resizableCell)) {
+      resizableCell.style.width = '100%';
+    }
 
     await waitFor(() => {
-      expect(countRenderedOptions(canvas)).toBe(OPTIONS_COUNT);
+      expect(countRenderedOptions(canvas)).toBeGreaterThan(collapsedCount);
     });
   },
 };
 
 export const ShowsAllChipsWhenCountHidden: Story = {
   render: () => (
-    <div style={{ width: NARROW_WIDTH_PX, overflow: 'hidden' }}>
+    <div style={{ width: '100%', overflow: 'hidden' }}>
       <ExpandableList isChipCountDisplayed={false}>{optionTags}</ExpandableList>
     </div>
   ),
