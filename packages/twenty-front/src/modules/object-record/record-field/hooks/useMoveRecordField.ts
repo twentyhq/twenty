@@ -26,9 +26,9 @@ export const useMoveRecordField = (recordTableId?: string) => {
       direction: 'before' | 'after';
       fieldMetadataItemIdToMove: string;
     }) => {
-      const currentVisibleRecordFields = store.get(visibleRecordFields);
+      const visibleRecordFieldsValue = store.get(visibleRecordFields);
 
-      const indexOfRecordFieldToMove = currentVisibleRecordFields.findIndex(
+      const indexOfRecordFieldToMove = visibleRecordFieldsValue.findIndex(
         (recordField) =>
           recordField.fieldMetadataItemId === fieldMetadataItemIdToMove,
       );
@@ -42,15 +42,16 @@ export const useMoveRecordField = (recordTableId?: string) => {
           ? indexOfRecordFieldToMove - 1
           : indexOfRecordFieldToMove + 1;
 
-      const targetArraySize = currentVisibleRecordFields.length - 1;
-
-      if (targetArrayIndex < 0 || targetArrayIndex > targetArraySize) {
+      if (
+        targetArrayIndex < 0 ||
+        targetArrayIndex > visibleRecordFieldsValue.length - 1
+      ) {
         return;
       }
 
       const currentRecordField =
-        currentVisibleRecordFields[indexOfRecordFieldToMove];
-      const targetRecordField = currentVisibleRecordFields[targetArrayIndex];
+        visibleRecordFieldsValue[indexOfRecordFieldToMove];
+      const targetRecordField = visibleRecordFieldsValue[targetArrayIndex];
 
       const targetRecordFieldNewPosition = currentRecordField.position;
       const currentRecordFieldNewPosition = targetRecordField.position;
