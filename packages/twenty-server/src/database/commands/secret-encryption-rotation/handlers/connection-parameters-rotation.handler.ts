@@ -156,7 +156,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
         );
       }
 
-      const plaintext = this.secretEncryptionService.decryptVersioned(
+      const plaintext = this.secretEncryptionService.decryptVersionedOrThrow(
         params.password,
         { workspaceId },
       );
