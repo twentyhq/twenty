@@ -29,6 +29,7 @@ export const getNavigationMenuItemComputedLink = ({
       return getObjectNavigationMenuItemComputedLink(
         item,
         objectMetadataItems,
+        views,
         lastVisitedViewId,
       );
     }

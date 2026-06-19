@@ -38,11 +38,10 @@ describe('getNavigationMenuItemComputedLink', () => {
     expect(link).toBe('/objects/people?viewId=view-custom');
   });
 
-  // Regression: the link used to always force ?viewId=<index view>, which
-  // overrode the last-visited-view restoration in MainContextStoreProvider.
-  // With no recorded last visited view the link must stay bare so the context
-  // store resolves the view instead of this util forcing the index one.
-  it('should link an object item to the bare path when no last visited view is recorded', () => {
+  // Regression: the link used to always force ?viewId=<index view>, ignoring
+  // any last visited view. The last visited view now takes precedence, and the
+  // index view is only the fallback when none is recorded.
+  it('should fall back to the index view when no last visited view is recorded', () => {
     const link = getNavigationMenuItemComputedLink({
       item: objectItem,
       objectMetadataItems,
@@ -50,10 +49,10 @@ describe('getNavigationMenuItemComputedLink', () => {
       lastVisitedViewPerObjectMetadataItem: null,
     });
 
-    expect(link).toBe('/objects/people');
+    expect(link).toBe('/objects/people?viewId=view-index');
   });
 
-  it('should not use another object last visited view', () => {
+  it('should fall back to the index view rather than another object last visited view', () => {
     const link = getNavigationMenuItemComputedLink({
       item: objectItem,
       objectMetadataItems,
@@ -61,6 +60,6 @@ describe('getNavigationMenuItemComputedLink', () => {
       lastVisitedViewPerObjectMetadataItem: { 'obj-2': 'view-other' },
     });
 
-    expect(link).toBe('/objects/people');
+    expect(link).toBe('/objects/people?viewId=view-index');
   });
 });
