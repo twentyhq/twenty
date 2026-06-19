@@ -163,10 +163,12 @@ export class SecretEncryptionService {
     }) as PlaintextString;
   }
 
-  // Legacy variant kept only for the 2.5 encryption backfill instance
-  // commands, which read pre-v2 rows (legacy AES-CTR ciphertext or plaintext)
-  // and re-encrypt them into the enc:v2 envelope. Runtime and rotation paths
-  // must use `decryptVersionedOrThrow` instead.
+  /**
+   * @deprecated Legacy variant kept only for the 2.5 encryption backfill
+   * instance commands, which read pre-v2 rows (legacy AES-CTR ciphertext or
+   * plaintext) and re-encrypt them into the enc:v2 envelope. Runtime and
+   * rotation paths must use `decryptVersionedOrThrow` instead.
+   */
   public legacyDecryptVersionedWithFallback(
     value: EncryptedString,
     opts: VersionedOptions = {},
