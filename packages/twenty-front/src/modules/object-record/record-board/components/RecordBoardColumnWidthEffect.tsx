@@ -5,8 +5,6 @@ import { setRecordBoardColumnWidthCssVariable } from '@/object-record/record-boa
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-// Reflects the persisted kanban column width onto the shared CSS variable read
-// by every column (header + body), mirroring RecordTableColumnWidthEffect.
 export const RecordBoardColumnWidthEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
 

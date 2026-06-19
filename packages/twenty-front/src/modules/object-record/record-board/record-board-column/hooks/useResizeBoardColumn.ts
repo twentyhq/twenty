@@ -34,9 +34,6 @@ export const useResizeBoardColumn = () => {
 
   const handleResizeStart = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
-      // useTrackPointer only tracks mouse events, so a touch or pen pointer
-      // would never receive the move/up and would leave the board stuck with
-      // drag-select disabled. Restrict resizing to mouse pointers.
       if (event.pointerType !== 'mouse') {
         return;
       }
@@ -53,10 +50,6 @@ export const useResizeBoardColumn = () => {
         return;
       }
 
-      // useTrackPointer ends the drag on a document mouseup, which never fires
-      // when the button is released outside the window. A move with no button
-      // pressed means that happened, so cancel the drag (reset + restore the
-      // committed width) instead of leaving it stuck.
       if ('buttons' in event && event.buttons === 0) {
         setInitialPointerPositionX(null);
         setDragSelectionStartEnabled(true);
