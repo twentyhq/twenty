@@ -16,7 +16,7 @@ import {
 } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type FilterSettingsWithPotentiallyDeprecatedOperand = {
+export type FilterSettingsWithPotentiallyDeprecatedOperand = {
   stepFilterGroups?: StepFilterGroup[];
   stepFilters?: StepFilterWithPotentiallyDeprecatedOperand[];
 };

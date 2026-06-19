@@ -16,6 +16,7 @@ import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
@@ -267,6 +268,29 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             readonly={triggerOptions.readonly ?? false}
             defaultFields={trigger.settings.fields}
             actionType="DATABASE_EVENT"
+          />
+        )}
+        {isDefined(selectedObjectMetadataItem) && (
+          <WorkflowStepFilterBuilder
+            instanceId={TRIGGER_STEP_ID}
+            defaultValue={trigger.settings.filter}
+            readonly={triggerOptions.readonly ?? false}
+            onFilterSettingsUpdate={(filterSettings) => {
+              if (triggerOptions.readonly === true) {
+                return;
+              }
+
+              triggerOptions.onTriggerUpdate({
+                ...trigger,
+                settings: {
+                  ...trigger.settings,
+                  filter: {
+                    stepFilterGroups: filterSettings.stepFilterGroups ?? [],
+                    stepFilters: filterSettings.stepFilters ?? [],
+                  },
+                },
+              });
+            }}
           />
         )}
       </WorkflowStepBody>

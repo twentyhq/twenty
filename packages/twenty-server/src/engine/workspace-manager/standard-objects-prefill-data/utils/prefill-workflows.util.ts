@@ -75,6 +75,20 @@ export const prefillWorkflows = async (
     throw new Error('Company domainName field metadata not found');
   }
 
+  // Used by the trigger filter so the workflow skips contacts auto-created by
+  // the email/calendar sync, which already creates and links their company.
+  const personCreatedByFieldMetadata = Object.values(
+    flatFieldMetadataMaps.byUniversalIdentifier,
+  ).find(
+    (fieldMetadata) =>
+      fieldMetadata?.objectMetadataId === personObjectMetadataId &&
+      fieldMetadata?.name === 'createdBy',
+  );
+
+  if (!isDefined(personCreatedByFieldMetadata)) {
+    throw new Error('Person createdBy field metadata not found');
+  }
+
   await entityManager
     .createQueryBuilder()
     .insert()
@@ -356,6 +370,40 @@ export const prefillWorkflows = async (
               },
               DatabaseEventAction.UPSERTED,
             ),
+            filter: {
+              stepFilterGroups: [
+                {
+                  id: '2d9c1f3a-6b4e-4c8a-9f12-7a3b5c6d8e90',
+                  logicalOperator: 'AND',
+                },
+              ],
+              stepFilters: [
+                {
+                  id: '3e8b2a4c-7c5f-4d9b-8a23-6b4c5d7e9f01',
+                  type: 'ACTOR',
+                  value: JSON.stringify([FieldActorSource.EMAIL]),
+                  operand: 'IS_NOT',
+                  stepOutputKey:
+                    '{{trigger.properties.after.createdBy.source}}',
+                  stepFilterGroupId: '2d9c1f3a-6b4e-4c8a-9f12-7a3b5c6d8e90',
+                  compositeFieldSubFieldName: 'source',
+                  fieldMetadataId: personCreatedByFieldMetadata.id,
+                  positionInStepFilterGroup: 0,
+                },
+                {
+                  id: '4f9c3b5d-8d6a-4e0c-9b34-7c5d6e8f0a12',
+                  type: 'ACTOR',
+                  value: JSON.stringify([FieldActorSource.CALENDAR]),
+                  operand: 'IS_NOT',
+                  stepOutputKey:
+                    '{{trigger.properties.after.createdBy.source}}',
+                  stepFilterGroupId: '2d9c1f3a-6b4e-4c8a-9f12-7a3b5c6d8e90',
+                  compositeFieldSubFieldName: 'source',
+                  fieldMetadataId: personCreatedByFieldMetadata.id,
+                  positionInStepFilterGroup: 1,
+                },
+              ],
+            },
           },
           nextStepIds: ['c30d7cbe-00e0-4966-bc1a-99b0a11a2cca'],
         }),

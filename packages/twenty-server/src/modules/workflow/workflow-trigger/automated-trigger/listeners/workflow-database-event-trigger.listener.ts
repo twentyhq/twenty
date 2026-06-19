@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { In, Raw } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
@@ -31,7 +32,9 @@ import {
   type WorkflowAutomatedTriggerWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 import {
+  type BaseDatabaseEventTriggerSettings,
   type UpdateEventTriggerSettings,
   type UpsertEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
@@ -391,6 +394,21 @@ export class WorkflowDatabaseEventTriggerListener {
     eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
     action: DatabaseEventAction;
   }) {
+    return (
+      this.eventMatchesWatchedFields({ eventPayload, eventListener, action }) &&
+      this.eventMatchesRecordFilter({ eventPayload, eventListener })
+    );
+  }
+
+  private eventMatchesWatchedFields({
+    eventPayload,
+    eventListener,
+    action,
+  }: {
+    eventPayload: ObjectRecordEvent;
+    eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
+    action: DatabaseEventAction;
+  }) {
     if (action === DatabaseEventAction.UPDATED) {
       const settings = eventListener.settings as UpdateEventTriggerSettings;
       const updateEventPayload = eventPayload as ObjectRecordUpdateEvent;
@@ -416,5 +434,29 @@ export class WorkflowDatabaseEventTriggerListener {
     }
 
     return true;
+  }
+
+  // Evaluates the optional user-defined condition on the triggering record
+  // before the run is enqueued, so non-matching events never create a run.
+  // The record is exposed under the trigger key so filters reference it the
+  // same way steps do (e.g. {{trigger.properties.after.fieldName}}).
+  private eventMatchesRecordFilter({
+    eventPayload,
+    eventListener,
+  }: {
+    eventPayload: ObjectRecordEvent;
+    eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
+  }) {
+    const { filter } = eventListener.settings as BaseDatabaseEventTriggerSettings;
+
+    if (!isDefined(filter) || filter.stepFilters.length === 0) {
+      return true;
+    }
+
+    return evaluateStepFilters({
+      stepFilters: filter.stepFilters,
+      stepFilterGroups: filter.stepFilterGroups,
+      context: { [TRIGGER_STEP_ID]: eventPayload },
+    });
   }
 }

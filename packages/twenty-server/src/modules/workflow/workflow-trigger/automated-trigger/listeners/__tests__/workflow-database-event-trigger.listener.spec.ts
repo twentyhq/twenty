@@ -450,4 +450,77 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
   });
+
+  describe('record filter (trigger-level conditions)', () => {
+    const workspaceId = 'test-workspace';
+    const databaseEventName = 'createEvent';
+    const workflowId = 'test-workflow';
+
+    const createPayloadWith = (after: Record<string, unknown>) =>
+      ({
+        workspaceId,
+        name: databaseEventName,
+        objectMetadata: createMockFlatObjectMetadata({}),
+        events: [{ recordId: 'test-record', properties: { after } }],
+      }) as WorkspaceEventBatch<any>;
+
+    const listenerWithFilter = {
+      type: AutomatedTriggerType.DATABASE_EVENT,
+      workflowId,
+      settings: {
+        eventName: databaseEventName,
+        filter: {
+          stepFilterGroups: [{ id: 'group-1', logicalOperator: 'AND' }],
+          stepFilters: [
+            {
+              id: 'filter-1',
+              type: 'boolean',
+              value: 'true',
+              operand: 'IS',
+              stepOutputKey: '{{trigger.properties.after.isActive}}',
+              stepFilterGroupId: 'group-1',
+            },
+          ],
+        },
+      },
+    };
+
+    it('should enqueue the job when the record matches the filter', async () => {
+      mockRepository.find.mockResolvedValue([listenerWithFilter]);
+
+      await listener.handleObjectRecordCreateEvent(
+        createPayloadWith({ isActive: true }),
+      );
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not enqueue the job when the record does not match the filter', async () => {
+      mockRepository.find.mockResolvedValue([listenerWithFilter]);
+
+      await listener.handleObjectRecordCreateEvent(
+        createPayloadWith({ isActive: false }),
+      );
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('should enqueue the job when the filter has no conditions', async () => {
+      mockRepository.find.mockResolvedValue([
+        {
+          ...listenerWithFilter,
+          settings: {
+            eventName: databaseEventName,
+            filter: { stepFilterGroups: [], stepFilters: [] },
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordCreateEvent(
+        createPayloadWith({ isActive: false }),
+      );
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    });
+  });
 });
