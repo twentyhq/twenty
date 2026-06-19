@@ -20786,7 +20786,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/spectral-core@npm:^1.18.3, @stoplight/spectral-core@npm:^1.19.2, @stoplight/spectral-core@npm:^1.19.4":
+"@stoplight/spectral-core@npm:1.23.0, @stoplight/spectral-core@npm:^1.18.3, @stoplight/spectral-core@npm:^1.19.2":
   version: 1.23.0
   resolution: "@stoplight/spectral-core@npm:1.23.0"
   dependencies:
@@ -20828,21 +20828,21 @@ __metadata:
   linkType: hard
 
 "@stoplight/spectral-functions@npm:^1.7.2":
-  version: 1.10.1
-  resolution: "@stoplight/spectral-functions@npm:1.10.1"
+  version: 1.10.3
+  resolution: "@stoplight/spectral-functions@npm:1.10.3"
   dependencies:
     "@stoplight/better-ajv-errors": "npm:1.0.3"
     "@stoplight/json": "npm:^3.17.1"
-    "@stoplight/spectral-core": "npm:^1.19.4"
+    "@stoplight/spectral-core": "npm:1.23.0"
     "@stoplight/spectral-formats": "npm:^1.8.1"
     "@stoplight/spectral-runtime": "npm:^1.1.2"
-    ajv: "npm:^8.17.1"
+    ajv: "npm:^8.18.0"
     ajv-draft-04: "npm:~1.0.0"
     ajv-errors: "npm:~3.0.0"
     ajv-formats: "npm:~2.1.1"
-    lodash: "npm:~4.17.21"
+    lodash: "npm:^4.18.1"
     tslib: "npm:^2.8.1"
-  checksum: 10c0/f26af18a8ff107f5d49a86e4134f10d244fc9bc64833b92c487d1372740b2b3839a72bb76d2061320f33498e65c2704aba5062635ec4c24c16139a4cf83497ca
+  checksum: 10c0/430f9453cb114735442dab230da39c244691037ffd239ce599be6c9db089c92cda1ddba0ee68ed16407bd9f9b468d87544594a95ff477408378e7cec2344e1ad
   languageName: node
   linkType: hard
 
@@ -23231,14 +23231,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:*":
-  version: 4.17.15
-  resolution: "@types/lodash@npm:4.17.15"
-  checksum: 10c0/2eb2dc6d231f5fb4603d176c08c8d7af688f574d09af47466a179cd7812d9f64144ba74bb32ca014570ffdc544eedc51b7a5657212bad083b6eecbd72223f9bb
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:^4.17.15":
+"@types/lodash@npm:*, @types/lodash@npm:^4.17.24":
   version: 4.17.24
   resolution: "@types/lodash@npm:4.17.24"
   checksum: 10c0/b72f60d4daacdad1fa643edb3faba204c02a01eb1ac00a83ff73496a6d236fc55e459c06106e8ced42277dba932d087d8fc090f8de4ef590d3f91e6d6f7ce85a
@@ -41662,13 +41655,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:~4.17.21":
-  version: 4.17.23
-  resolution: "lodash@npm:4.17.23"
-  checksum: 10c0/1264a90469f5bb95d4739c43eb6277d15b6d9e186df4ac68c3620443160fc669e2f14c11e7d8b2ccf078b81d06147c01a8ccced9aab9f9f63d50dcf8cace6bf6
-  languageName: node
-  linkType: hard
-
 "log-symbols@npm:4.1.0, log-symbols@npm:^4.0.0, log-symbols@npm:^4.1.0":
   version: 4.1.0
   resolution: "log-symbols@npm:4.1.0"
@@ -54340,7 +54326,7 @@ __metadata:
   resolution: "twenty-client-sdk@workspace:packages/twenty-client-sdk"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
-    "@types/lodash": "npm:^4.17.15"
+    "@types/lodash": "npm:^4.17.24"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
