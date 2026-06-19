@@ -70,7 +70,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     label: 'Permanently delete ${capitalize(objectMetadataLabel)}',
     icon: 'IconTrashX',
     isPinned: false,
-    position: 5,
+    position: 7,
     shortLabel: 'Permanently delete',
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
