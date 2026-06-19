@@ -349,7 +349,7 @@ export default defineLogicFunction({
 });
 ```
 
-Pentru a declara parametrii **o singură dată** și a deservi ambele suprafețe, definește o singură schemă JSON (`InputJsonSchema`) și convertește-o pentru acțiunea workflow-ului cu `jsonSchemaToInputSchema` din `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` primește direct schema JSON, în timp ce `workflowActionTriggerSettings.inputSchema` se așteaptă la `InputSchema` de la Twenty:
+Pentru a declara parametrii **o singură dată** și a deservi ambele suprafețe, definește o singură schemă JSON (`InputJsonSchema`) și convertește-o pentru acțiunea din fluxul de lucru cu `jsonSchemaToInputSchema` din `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` primește direct schema JSON, în timp ce `workflowActionTriggerSettings.inputSchema` necesită `InputSchema` al Twenty:
 
 ```ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -383,7 +383,7 @@ export default defineLogicFunction({
 </AccordionGroup>
 
 <Note>
-**Ajutoare la rulare (runtime helpers).** `twenty-sdk/utils` re-exportă mici ajutoare la rulare, astfel încât handler-ele să nu importe niciodată direct din `twenty-shared`. De exemplu, `isDefined(value)` returnează `false` atât pentru `null`, cât și pentru `undefined` — folosește-l pentru a restrânge în siguranță intrările opționale ale handler-elor, care pot ajunge ca `null` la rulare, chiar și atunci când sunt tipate `T | undefined`:
+**Ajutoare la rulare (runtime helpers).** `twenty-sdk/utils` re-exportă mici ajutoare la rulare, astfel încât handlerii să nu importe niciodată direct din `twenty-shared`. De exemplu, `isDefined(value)` returnează `false` atât pentru `null`, cât și pentru `undefined` — folosește-l pentru a restrânge în siguranță intrările opționale ale handlerilor, care pot ajunge drept `null` la rulare, chiar și atunci când sunt tipate `T | undefined`:
 
 ```ts
 import { isDefined } from 'twenty-sdk/utils';

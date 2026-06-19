@@ -348,7 +348,7 @@ export default defineLogicFunction({
 });
 ```
 
-Per dichiarare i tuoi parametri **una sola volta** e servire entrambe le superfici, definisci un unico JSON Schema (`InputJsonSchema`) e convertilo per l'azione del workflow con `jsonSchemaToInputSchema` da `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` accetta direttamente il JSON Schema, mentre `workflowActionTriggerSettings.inputSchema` si aspetta l'`InputSchema` di Twenty:
+Per dichiarare i parametri **una sola volta** e servire entrambi i contesti, definisci un unico JSON Schema (`InputJsonSchema`) e convertilo per l'azione del flusso di lavoro con `jsonSchemaToInputSchema` da `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` accetta direttamente il JSON Schema, mentre `workflowActionTriggerSettings.inputSchema` si aspetta l'`InputSchema` di Twenty:
 
 ```ts
 import { defineLogicFunction } from 'twenty-sdk/define';

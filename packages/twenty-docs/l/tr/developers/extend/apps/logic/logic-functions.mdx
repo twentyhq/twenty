@@ -349,7 +349,7 @@ export default defineLogicFunction({
 });
 ```
 
-Parametrelerinizi **bir kez** bildirmek ve her iki yüzeye de hizmet vermek için tek bir JSON Şeması (`InputJsonSchema`) tanımlayın ve bunu iş akışı eylemi için `twenty-sdk/logic-function` içindeki `jsonSchemaToInputSchema` ile dönüştürün. `toolTriggerSettings.inputSchema`, JSON Şemasını doğrudan alırken `workflowActionTriggerSettings.inputSchema`, Twenty'nin `InputSchema` tipini bekler:
+Parametrelerinizi **bir kez** tanımlayıp her iki yüzeyde de kullanmak için tek bir JSON Şeması (`InputJsonSchema`) oluşturun ve bunu iş akışı eylemi için `twenty-sdk/logic-function` içindeki `jsonSchemaToInputSchema` ile dönüştürün. `toolTriggerSettings.inputSchema`, JSON Şemasını doğrudan alırken `workflowActionTriggerSettings.inputSchema`, Twenty'nin `InputSchema` tipini bekler:
 
 ```ts
 import { defineLogicFunction } from 'twenty-sdk/define';

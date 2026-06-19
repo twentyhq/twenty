@@ -1,6 +1,6 @@
 ---
 title: Flussi di lavoro
-description: Automatizza i processi aziendali con il builder di workflow visivi di Twenty.
+description: Automatizza i processi aziendali con il generatore visuale di workflow di Twenty.
 icon: bolt
 ---
 
@@ -20,18 +20,18 @@ Ogni workflow è composto da tre parti:
 
 ## Trigger
 
-| Scatenante       | Quando viene attivato                                                                      |
-| ---------------- | ------------------------------------------------------------------------------------------ |
-| **Record event** | Un record viene creato, aggiornato, eliminato o eseguito come upsert                       |
-| **Manuale**      | Un utente fa clic su un pulsante (su un singolo record, su più record o a livello globale) |
-| **Schedule**     | A intervalli ricorrenti (sintassi cron)                                                    |
-| **Webhook**      | Un sistema esterno invia una HTTP POST                                                     |
+| Trigger               | Quando viene attivato                                                                      |
+| --------------------- | ------------------------------------------------------------------------------------------ |
+| **Evento del record** | Un record viene creato, aggiornato, eliminato o sottoposto a upsert                        |
+| **Manuale**           | Un utente fa clic su un pulsante (su un singolo record, su più record o a livello globale) |
+| **Pianifica**         | A intervalli ricorrenti (sintassi cron)                                                    |
+| **Webhook**           | Un sistema esterno invia una richiesta HTTP POST                                           |
 
 ## Azioni
 
 I workflow possono concatenare qualsiasi combinazione di:
 
-* **Record operations** — Crea, aggiorna, trova, elimina o esegui upsert sui record
+* **Record operations** — Crea, aggiorna, trova, elimina o esegui un upsert sui record
 * **Send email** — Invia o prepara bozze di email dagli account collegati
 * **HTTP request** — Chiama qualsiasi API esterna
 * **Code** — Esegui JavaScript personalizzato per logiche complesse
@@ -43,7 +43,7 @@ I workflow possono concatenare qualsiasi combinazione di:
 
 ## Cosa puoi creare
 
-* Invia avvisi Slack quando un deal raggiunge una certa fase
+* Invia avvisi su Slack quando un’opportunità raggiunge una certa fase
 * Arricchisci automaticamente i nuovi contatti con dati provenienti da API esterne
 * Rileva le opportunità inattive e avvisa il proprietario
 * Sincronizza i dati tra Twenty e il tuo sistema di fatturazione

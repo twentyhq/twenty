@@ -348,7 +348,7 @@ export default defineLogicFunction({
 });
 ```
 
-매개 변수를 **한 번만** 선언하고 두 환경 모두에서 사용하려면, 단일 JSON Schema(`InputJsonSchema`)를 정의한 후 `twenty-sdk/logic-function`의 `jsonSchemaToInputSchema`를 사용해 워크플로 작업용으로 변환하세요. `toolTriggerSettings.inputSchema`는 JSON Schema를 그대로 사용하지만, `workflowActionTriggerSettings.inputSchema`는 Twenty의 `InputSchema`를 기대합니다:
+매개 변수를 **한 번만** 선언하고 두 환경 모두에서 사용하려면, 단일 JSON Schema(`InputJsonSchema`)를 정의한 후 `twenty-sdk/logic-function`의 `jsonSchemaToInputSchema`를 사용해 워크플로 작업용으로 변환하세요. `toolTriggerSettings.inputSchema`는 JSON Schema를 그대로 사용하지만, `workflowActionTriggerSettings.inputSchema`는 Twenty의 `InputSchema`를 요구합니다:
 
 ```ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -382,7 +382,7 @@ export default defineLogicFunction({
 </AccordionGroup>
 
 <Note>
-**런타임 헬퍼.** `twenty-sdk/utils` 는 작은 런타임 헬퍼들을 재노출(re-export)하여, 핸들러가 `twenty-shared` 를 직접 import 하지 않도록 합니다. 예를 들어, `isDefined(value)` 는 `null` 과 `undefined` 모두에 대해 `false` 를 반환합니다. 이를 사용하면 선택적 핸들러 입력을 안전하게 좁힐 수 있습니다. 이러한 입력은 타입이 `T | undefined` 로 지정되어 있더라도, 런타임에는 `null` 로 전달될 수 있습니다.
+**런타임 헬퍼.** `twenty-sdk/utils`는 작은 런타임 헬퍼를 다시 export하여 핸들러가 `twenty-shared`를 직접 import하지 않도록 합니다. 예를 들어 `isDefined(value)`는 `null`과 `undefined` 모두에 대해 `false`를 반환합니다. 이를 사용하면 선택적 핸들러 입력을 안전하게 좁힐 수 있습니다. 이러한 입력은 타입이 `T | undefined`로 지정되어 있더라도 런타임에는 `null`로 전달될 수 있습니다:
 
 ```ts
 import { isDefined } from 'twenty-sdk/utils';
