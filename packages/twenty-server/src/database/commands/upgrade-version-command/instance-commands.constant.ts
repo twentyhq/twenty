@@ -74,6 +74,7 @@ import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/data
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 import { AddHasPaymentMethodToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1781280240009-add-has-payment-method-to-billing-customer';
 import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action';
+import { AddBillingSubscriptionPendingSetupIntentIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1781863205497-add-billing-subscription-pending-setup-intent-id';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -150,4 +151,5 @@ export const INSTANCE_COMMANDS = [
   AddIsSystemSideEffectFastInstanceCommand,
   BackfillConnectionSecuritySlowInstanceCommand,
   AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand,
+  AddBillingSubscriptionPendingSetupIntentIdFastInstanceCommand,
 ];

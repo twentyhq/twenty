@@ -11,6 +11,7 @@ describe('transformStripeSubscriptionEventToDatabaseSubscription', () => {
   const createMockSubscriptionData = (overrides = {}) => ({
     id: 'sub_123',
     customer: 'cus_123',
+    pending_setup_intent: null,
     status: 'active',
     items: {
       data: [
@@ -48,6 +49,7 @@ describe('transformStripeSubscriptionEventToDatabaseSubscription', () => {
       workspaceId: mockWorkspaceId,
       stripeCustomerId: 'cus_123',
       stripeSubscriptionId: 'sub_123',
+      stripePendingSetupIntentId: null,
       status: SubscriptionStatus.Active,
       interval: 'month',
       cancelAtPeriodEnd: false,
@@ -91,6 +93,33 @@ describe('transformStripeSubscriptionEventToDatabaseSubscription', () => {
 
       expect(result.status).toBe(expectedStatus);
     });
+  });
+
+  it('should capture the pending setup intent id when present', () => {
+    const withStringId = transformStripeSubscriptionEventToDatabaseSubscription(
+      mockWorkspaceId,
+      createMockSubscriptionData({ pending_setup_intent: 'seti_123' }) as any,
+    );
+
+    expect(withStringId.stripePendingSetupIntentId).toBe('seti_123');
+
+    const withExpandedObject =
+      transformStripeSubscriptionEventToDatabaseSubscription(
+        mockWorkspaceId,
+        createMockSubscriptionData({
+          pending_setup_intent: { id: 'seti_456' },
+        }) as any,
+      );
+
+    expect(withExpandedObject.stripePendingSetupIntentId).toBe('seti_456');
+
+    const withoutSetupIntent =
+      transformStripeSubscriptionEventToDatabaseSubscription(
+        mockWorkspaceId,
+        createMockSubscriptionData({ pending_setup_intent: null }) as any,
+      );
+
+    expect(withoutSetupIntent.stripePendingSetupIntentId).toBeNull();
   });
 
   it('should handle subscription with trial periods', () => {

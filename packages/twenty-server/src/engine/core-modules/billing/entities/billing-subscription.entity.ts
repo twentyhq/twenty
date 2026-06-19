@@ -75,6 +75,12 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   @Column({ unique: true, nullable: false })
   stripeSubscriptionId: string;
 
+  // Set while a card-required trial waits for the customer to confirm the
+  // SetupIntent; Stripe clears it once the payment method is provided. Lets us
+  // block onboarding completion until a required payment method is confirmed.
+  @Column({ nullable: true, type: 'varchar' })
+  stripePendingSetupIntentId: string | null;
+
   @Field(() => SubscriptionStatus)
   @Column({
     type: 'enum',

@@ -3,7 +3,6 @@ import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { ModalContent } from 'twenty-ui/surfaces';
-import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -15,7 +14,10 @@ import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { AnimatedEaseIn } from 'twenty-ui/layout';
 import { useLazyQuery } from '@apollo/client/react';
-import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
+import {
+  GetCurrentUserDocument,
+  OnboardingStatus,
+} from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledTitleContainer = styled.div`
@@ -27,7 +29,6 @@ const StyledTitleContainer = styled.div`
 
 export const PaymentSuccess = () => {
   const navigate = useNavigateApp();
-  const subscriptionStatus = useSubscriptionStatus();
   const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument, {
     fetchPolicy: 'network-only',
   });
@@ -39,17 +40,18 @@ export const PaymentSuccess = () => {
     setIsLoading(true);
 
     try {
-      if (isDefined(subscriptionStatus)) {
-        navigate(AppPath.WorkspaceActivation);
-        return;
-      }
-
+      // The inline payment flow persists the subscription before the card is
+      // confirmed, so its existence no longer proves payment succeeded. Rely on
+      // the server-computed onboarding status, which only advances past
+      // PLAN_REQUIRED once a required payment method has been confirmed.
       const result = await getCurrentUser();
       const currentUser = result.data?.currentUser;
-      const refreshedSubscriptionStatus =
-        currentUser?.currentWorkspace?.currentBillingSubscription?.status;
 
-      if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
+      if (
+        isDefined(currentUser) &&
+        isDefined(currentUser.onboardingStatus) &&
+        currentUser.onboardingStatus !== OnboardingStatus.PLAN_REQUIRED
+      ) {
         setCurrentUser(currentUser);
         navigate(AppPath.WorkspaceActivation);
         return;

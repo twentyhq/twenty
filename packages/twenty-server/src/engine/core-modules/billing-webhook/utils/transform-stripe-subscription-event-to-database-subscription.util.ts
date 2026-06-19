@@ -62,6 +62,10 @@ export const transformStripeSubscriptionEventToDatabaseSubscription = (
     workspaceId,
     stripeCustomerId: String(subscription.customer),
     stripeSubscriptionId: subscription.id,
+    stripePendingSetupIntentId:
+      typeof subscription.pending_setup_intent === 'string'
+        ? subscription.pending_setup_intent
+        : (subscription.pending_setup_intent?.id ?? null),
     status: getSubscriptionStatus(subscription.status),
     interval: firstItem.plan.interval as SubscriptionInterval,
     phases: subscription.schedule
