@@ -44,7 +44,7 @@ export const LightButton = ({
       data-disabled={disabled || undefined}
       data-focus={(focus && !disabled) || undefined}
     >
-      {!!Icon && <Icon size={theme.icon.size.md} />}
+      {!!Icon && <Icon size={theme.icon.size.md} aria-hidden />}
       {title}
     </button>
   );

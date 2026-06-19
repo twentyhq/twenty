@@ -49,28 +49,17 @@ export const Tag = ({
       : (themeCssVariables.tag.text[color] ??
         themeCssVariables.font.color.secondary);
 
-  return (
-    <span
-      className={clsx(
-        styles.tag,
-        weight === 'medium' && styles.weightMedium,
-        variant === 'outline' && styles.variantOutline,
-        variant === 'border' && styles.variantBorder,
-        preventShrink && styles.preventShrink,
-        preventPadding && styles.preventPadding,
-        className,
-      )}
-      onClick={onClick}
-      style={
-        {
-          '--tag-background': tagBackground,
-          '--tag-text': tagText,
-        } as React.CSSProperties
-      }
-    >
+  const isInteractive = isDefined(onClick);
+
+  const tagContent = (
+    <>
       {isDefined(Icon) ? (
         <div className={styles.iconContainer}>
-          <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+          <Icon
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.sm}
+            aria-hidden
+          />
         </div>
       ) : (
         <></>
@@ -82,6 +71,40 @@ export const Tag = ({
           <OverflowingTextWithTooltip text={text} />
         </span>
       )}
+    </>
+  );
+
+  const sharedStyle = {
+    '--tag-background': tagBackground,
+    '--tag-text': tagText,
+  } as React.CSSProperties;
+
+  const sharedClassName = clsx(
+    styles.tag,
+    weight === 'medium' && styles.weightMedium,
+    variant === 'outline' && styles.variantOutline,
+    variant === 'border' && styles.variantBorder,
+    preventShrink && styles.preventShrink,
+    preventPadding && styles.preventPadding,
+    className,
+  );
+
+  if (isInteractive) {
+    return (
+      <button
+        type="button"
+        className={clsx(sharedClassName, styles.interactive)}
+        onClick={onClick}
+        style={sharedStyle}
+      >
+        {tagContent}
+      </button>
+    );
+  }
+
+  return (
+    <span className={sharedClassName} style={sharedStyle}>
+      {tagContent}
     </span>
   );
 };

@@ -1,5 +1,6 @@
 declare const classNames: {
   readonly tag: 'tag';
+  readonly interactive: 'interactive';
   readonly weightMedium: 'weightMedium';
   readonly variantOutline: 'variantOutline';
   readonly variantBorder: 'variantBorder';

@@ -62,6 +62,8 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
     outline: none;
   }
 
+  @include focus-ring;
+
   &[data-disabled] {
     cursor: not-allowed;
   }
