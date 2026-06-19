@@ -349,6 +349,32 @@ export default defineLogicFunction({
 });
 ```
 
+To declare your parameters **once** and serve both surfaces, define a single JSON Schema (`InputJsonSchema`) and convert it for the workflow action with `jsonSchemaToInputSchema` from `twenty-sdk/utils`. `toolTriggerSettings.inputSchema` takes the JSON Schema directly, while `workflowActionTriggerSettings.inputSchema` expects Twenty's `InputSchema`:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
 </Note>
