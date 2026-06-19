@@ -1,13 +1,21 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
 import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { SidePanelPages } from 'twenty-shared/types';
-import { IconCalendarEvent } from 'twenty-ui/icon';
+import {
+  ContextStorePageType,
+  CoreObjectNameSingular,
+  SidePanelPages,
+} from 'twenty-shared/types';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -22,16 +30,26 @@ jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
   }),
 }));
 
-const personMockObjectMetadataItem =
+const mockOpenNewRecordTitleCell = jest.fn();
+jest.mock(
+  '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell',
+  () => ({
+    useOpenNewRecordTitleCell: () => ({
+      openNewRecordTitleCell: mockOpenNewRecordTitleCell,
+    }),
+  }),
+);
+
+const calendarEventMockObjectMetadataItem =
   getTestEnrichedObjectMetadataItemsMock().find(
-    (item) => item.nameSingular === 'person',
+    (item) => item.nameSingular === CoreObjectNameSingular.CalendarEvent,
   )!;
 
 const wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
   apolloMocks: [],
   componentInstanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
-    personMockObjectMetadataItem.nameSingular,
+    calendarEventMockObjectMetadataItem.nameSingular,
   contextStoreCurrentViewId: 'my-view-id',
   contextStoreTargetedRecordsRule: {
     mode: 'selection',
@@ -51,10 +69,36 @@ const renderHooks = () => {
         viewableRecordIdComponentState,
         'mocked-uuid',
       );
+      const viewableRecordNameSingular = useAtomComponentStateValue(
+        viewableRecordNameSingularComponentState,
+        'mocked-uuid',
+      );
+      const contextStoreCurrentObjectMetadataItemId =
+        useAtomComponentStateValue(
+          contextStoreCurrentObjectMetadataItemIdComponentState,
+          'mocked-uuid',
+        );
+      const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
+        contextStoreTargetedRecordsRuleComponentState,
+        'mocked-uuid',
+      );
+      const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
+        contextStoreNumberOfSelectedRecordsComponentState,
+        'mocked-uuid',
+      );
+      const contextStoreCurrentPageType = useAtomComponentStateValue(
+        contextStoreCurrentPageTypeComponentState,
+        'mocked-uuid',
+      );
 
       return {
         openCalendarEventInSidePanel,
         viewableRecordId,
+        viewableRecordNameSingular,
+        contextStoreCurrentObjectMetadataItemId,
+        contextStoreTargetedRecordsRule,
+        contextStoreNumberOfSelectedRecords,
+        contextStoreCurrentPageType,
       };
     },
     {
@@ -69,7 +113,7 @@ describe('useOpenCalendarEventInSidePanel', () => {
     jest.clearAllMocks();
   });
 
-  it('should set the correct states and navigate to the calendar event page', () => {
+  it('should open the calendar event as a standard record page', () => {
     const { result } = renderHooks();
 
     const calendarEventId = 'calendar-event-123';
@@ -79,12 +123,26 @@ describe('useOpenCalendarEventInSidePanel', () => {
     });
 
     expect(result.current.viewableRecordId).toBe(calendarEventId);
-
-    expect(mockNavigateSidePanel).toHaveBeenCalledWith({
-      page: SidePanelPages.ViewCalendarEvent,
-      pageTitle: 'Calendar Event',
-      pageIcon: IconCalendarEvent,
-      pageId: 'mocked-uuid',
+    expect(result.current.viewableRecordNameSingular).toBe(
+      CoreObjectNameSingular.CalendarEvent,
+    );
+    expect(result.current.contextStoreCurrentObjectMetadataItemId).toBe(
+      calendarEventMockObjectMetadataItem.id,
+    );
+    expect(result.current.contextStoreTargetedRecordsRule).toEqual({
+      mode: 'selection',
+      selectedRecordIds: [calendarEventId],
     });
+    expect(result.current.contextStoreNumberOfSelectedRecords).toBe(1);
+    expect(result.current.contextStoreCurrentPageType).toBe(
+      ContextStorePageType.Record,
+    );
+
+    expect(mockNavigateSidePanel).toHaveBeenCalledWith(
+      expect.objectContaining({
+        page: SidePanelPages.ViewRecord,
+        pageId: 'mocked-uuid',
+      }),
+    );
   });
 });

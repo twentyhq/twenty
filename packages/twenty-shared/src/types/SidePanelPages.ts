@@ -3,7 +3,6 @@ export enum SidePanelPages {
   ViewRecord = 'view-record',
   MergeRecords = 'merge-records',
   UpdateRecords = 'update-records',
-  ViewCalendarEvent = 'view-calendar-event',
   EditRichText = 'edit-rich-text',
   Copilot = 'copilot',
   WorkflowTriggerSelectType = 'workflow-trigger-select-type',
