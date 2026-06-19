@@ -1,4 +1,5 @@
 export { getEnterprisePriceId } from './enterprise-price-id';
+export { getLicenseeFromStripeCustomer } from './get-licensee-from-stripe-customer';
 export { getStripeClient } from './stripe-client';
 export { getSubscriptionCurrentPeriodEnd } from './subscription-current-period-end';
 export { signEnterpriseKey } from './sign-enterprise-key';
