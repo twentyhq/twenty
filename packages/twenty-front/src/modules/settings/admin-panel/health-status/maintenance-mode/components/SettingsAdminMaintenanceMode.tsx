@@ -4,8 +4,11 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconLink, IconTool, Status } from 'twenty-ui/display';
-import { Card, CardContent, Section } from 'twenty-ui/layout';
+import { Status } from 'twenty-ui/data-display';
+import { IconLink, IconTool } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
+import { Card, CardContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';

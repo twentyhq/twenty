@@ -172,7 +172,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
       expect(url.searchParams.get('scope')).toBe('read write');
       expect(url.searchParams.get('state')).toBe('signed-state-token');
       expect(url.searchParams.get('redirect_uri')).toBe(
-        'https://api.example.com/apps/oauth/callback',
+        'https://api.example.com/auth/apps/callback',
       );
       expect(url.searchParams.has('code_challenge')).toBe(false);
 

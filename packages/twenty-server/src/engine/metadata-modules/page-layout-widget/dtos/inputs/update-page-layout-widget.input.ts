@@ -44,8 +44,6 @@ export class UpdatePageLayoutWidgetInput {
 
   @Field(() => GridPositionInput, {
     nullable: true,
-    deprecationReason:
-      'Use `position` instead. Will be removed in a future release.',
   })
   @ValidateNested()
   @Type(() => GridPositionInput)

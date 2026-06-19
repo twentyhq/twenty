@@ -9,7 +9,7 @@ import {
   IconListSearch,
   IconPlus,
   IconSquarePlus,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

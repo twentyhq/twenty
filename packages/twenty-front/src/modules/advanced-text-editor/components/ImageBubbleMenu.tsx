@@ -8,7 +8,7 @@ import {
   IconAlignLeft,
   IconAlignRight,
   IconTrash,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 
 type ImageBubbleMenuProps = {
   editor: Editor;

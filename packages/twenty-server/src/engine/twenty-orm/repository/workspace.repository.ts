@@ -918,7 +918,7 @@ export class WorkspaceRepository<
   /**
    * DEPRECATED AND RESTRICTED METHODS
    */
-  override async query(): Promise<unknown> {
+  override async query<TResult = unknown>(): Promise<TResult> {
     throw new PermissionsException(
       'Method not allowed.',
       PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED,

@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlLanguages',
   label: 'Languages',
   description: 'Languages returned by People Data Labs.',
+  icon: 'IconLanguage',
   isNullable: true,
 });

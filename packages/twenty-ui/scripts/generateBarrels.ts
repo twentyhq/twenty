@@ -136,7 +136,9 @@ const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
         .join('\n');
 
       return {
-        content,
+        // A placeholder barrel for an empty module must still be a valid module
+        // so `export * from './x'` re-exports (e.g. in individual-entry.ts) resolve.
+        content: content === '' ? 'export {};' : content,
         path: moduleDirectory,
         filename: INDEX_FILENAME,
       };
@@ -277,6 +279,8 @@ const EXCLUDED_DIRECTORIES = [
   '**/__mocks__/**',
   '**/__stories__/**',
   '**/internal/**',
+  '**/internals/**',
+  '**/parts/**',
 ] as const;
 function getTypeScriptFiles(
   directoryPath: string,
@@ -489,6 +493,38 @@ const retrieveExportsByBarrel = (barrelDirectories: string[]) => {
   });
 };
 
+const ROOT_BARREL_EXCLUDED_MODULES = ['assets', 'styles', 'testing'];
+const INDIVIDUAL_ENTRY_FILENAME = 'individual-entry';
+
+const getRootBarrelModuleNames = (moduleDirectories: string[]) =>
+  moduleDirectories
+    .map(getLastPathFolder)
+    .filter((moduleName) => !ROOT_BARREL_EXCLUDED_MODULES.includes(moduleName));
+
+const generateRootBarrel = (
+  moduleDirectories: string[],
+): createTypeScriptFileArgs => {
+  const content = [
+    "import './styles/base/reset.scss';",
+    '',
+    ...getRootBarrelModuleNames(moduleDirectories).map(
+      (moduleName) => `export * from './${moduleName}';`,
+    ),
+  ].join('\n');
+
+  return { path: SRC_PATH, content, filename: INDEX_FILENAME };
+};
+
+const generateIndividualEntry = (
+  moduleDirectories: string[],
+): createTypeScriptFileArgs => {
+  const content = getRootBarrelModuleNames(moduleDirectories)
+    .map((moduleName) => `export * from './${moduleName}';`)
+    .join('\n');
+
+  return { path: SRC_PATH, content, filename: INDIVIDUAL_ENTRY_FILENAME };
+};
+
 const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
   const exportsByBarrel = retrieveExportsByBarrel(moduleDirectories);
@@ -501,5 +537,7 @@ const main = () => {
   updateNxProjectConfigurationBuildOutputs(nxBuildOutputsPath);
   writeInPackageJson(packageJsonConfig);
   moduleIndexFiles.forEach(createTypeScriptFile);
+  createTypeScriptFile(generateRootBarrel(moduleDirectories));
+  createTypeScriptFile(generateIndividualEntry(moduleDirectories));
 };
 main();

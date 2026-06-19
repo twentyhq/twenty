@@ -5,6 +5,8 @@ export type InputSchemaPropertyType =
   | 'boolean'
   | 'object'
   | 'array'
+  | 'record'
+  | 'records'
   | 'unknown'
   | FieldMetadataType;
 
@@ -13,6 +15,7 @@ export type InputSchemaProperty = {
   enum?: string[];
   items?: InputSchemaProperty; // used to describe array type elements
   properties?: Properties; // used to describe object type elements
+  objectUniversalIdentifier?: string;
 };
 
 type Properties = {

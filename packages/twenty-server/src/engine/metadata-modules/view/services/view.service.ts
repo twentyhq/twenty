@@ -17,6 +17,7 @@ import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modul
 import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
 import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata-modules/view-filter-group/utils/from-flat-view-filter-group-to-view-filter-group-dto.util';
@@ -166,6 +167,10 @@ export class ViewService {
         flatViewGroupMaps: existingFlatViewGroupMaps,
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
         userWorkspaceId,
+        callerApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
       });
 
     const validateAndBuildResult =
@@ -239,6 +244,10 @@ export class ViewService {
       fromDeleteViewInputToFlatViewOrThrow({
         deleteViewInput,
         flatViewMaps: existingFlatViewMaps,
+        callerApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
       });
 
     const validateAndBuildResult =
@@ -313,14 +322,30 @@ export class ViewService {
       flatEntityMaps: existingFlatViewMaps,
     });
 
+    const shouldDeactivate = isCallerOverridingEntity({
+      callerApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      entityApplicationUniversalIdentifier:
+        existingFlatView.applicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      isSystemSideEffect: existingFlatView.isSystemSideEffect,
+    });
+
+    const now = new Date().toISOString();
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             view: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [flatViewFromDestroyInput],
-              flatEntityToUpdate: [],
+              flatEntityToDelete: shouldDeactivate
+                ? []
+                : [flatViewFromDestroyInput],
+              flatEntityToUpdate: shouldDeactivate
+                ? [{ ...existingFlatView, isActive: false, updatedAt: now }]
+                : [],
             },
           },
           workspaceId,
@@ -337,9 +362,17 @@ export class ViewService {
       );
     }
 
+    if (shouldDeactivate) {
+      return fromFlatViewToViewDto({
+        ...existingFlatView,
+        isActive: false,
+        updatedAt: now,
+      });
+    }
+
     return fromFlatViewToViewDto({
       ...existingFlatView,
-      deletedAt: new Date().toISOString(),
+      deletedAt: now,
     });
   }
 

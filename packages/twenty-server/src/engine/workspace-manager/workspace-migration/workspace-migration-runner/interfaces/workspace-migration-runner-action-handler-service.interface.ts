@@ -310,12 +310,12 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     label: string;
     method: () => Promise<void>;
   }): Promise<void> {
-    this.logger.time(
+    this.logger.perfTime(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
       `${this.actionType}_${this.metadataName} ${label}`,
     );
     await method();
-    this.logger.timeEnd(
+    this.logger.perfTimeEnd(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
       `${this.actionType}_${this.metadataName} ${label}`,
     );

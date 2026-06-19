@@ -38,3 +38,24 @@ my-twenty-app/
 <Note>
 **文件组织由你决定。** 上述文件夹只是约定——SDK 通过对 `export default defineEntity(...)` 调用进行 AST 分析来检测实体，而不受文件所在位置影响。
 </Note>
+
+## 依赖项
+
+这两个 Twenty SDK 软件包都应放在 `devDependencies` 下，而不是 `dependencies`：
+
+```json filename="package.json"
+{
+  "dependencies": {},
+  "devDependencies": {
+    "twenty-client-sdk": "^2.13.0",
+    "twenty-sdk": "^2.13.0"
+  }
+}
+```
+
+* **`twenty-sdk`** 提供 `twenty` CLI 以及构建/脚手架工具。 它只在开发和构建阶段运行，且永远不会在已发布应用的运行时环境中被导入。
+* **`twenty-client-sdk`** 会被你的应用代码（`CoreApiClient`、`MetadataApiClient`、`RestApiClient`）导入，但 Twenty 会在运行时提供它——逻辑函数从生成的 SDK 层获取它，前端组件则从服务器提供的模块中解析它。 你安装的副本仅用于类型检查和部署时的构建，因此不需要被打包进已部署的 bundle 中。
+
+把任意一个软件包放在 `dependencies` 下，都会把它拉入已安装应用的运行时 bundle 中，在那里只是累赘。 当任一软件包仍然列在 `dependencies` 下时，`twenty build` 会发出警告。
+
+像往常一样，把你的应用自身的运行时依赖项（逻辑函数在运行时实际导入的库）添加到 `dependencies` 下。

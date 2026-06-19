@@ -13,7 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFilter } from 'twenty-ui/display';
+import { IconFilter } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 

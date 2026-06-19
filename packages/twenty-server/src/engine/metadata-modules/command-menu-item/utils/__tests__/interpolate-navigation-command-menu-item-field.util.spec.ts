@@ -20,7 +20,6 @@ const mockObjectMetadata = {
   labelSingular: 'Person',
   description: 'A person',
   icon: 'IconUser',
-  isCustom: false,
   standardOverrides: undefined,
 } as unknown as ObjectMetadataDTO;
 
@@ -35,6 +34,8 @@ const baseCommandMenuItem = {
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   payload: { objectMetadataItemId: 'obj-id-1' },
   workspaceId: 'ws-id-1',
+  isActive: true,
+  isSystemSideEffect: false,
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -46,6 +47,7 @@ describe('interpolateNavigationCommandMenuItemField', () => {
       fieldName: 'label',
       objectMetadata: mockObjectMetadata,
       locale: undefined,
+      isStandardApp: true,
       i18nInstance: mockI18nInstance,
     });
 
@@ -58,6 +60,7 @@ describe('interpolateNavigationCommandMenuItemField', () => {
       fieldName: 'shortLabel',
       objectMetadata: mockObjectMetadata,
       locale: undefined,
+      isStandardApp: true,
       i18nInstance: mockI18nInstance,
     });
 
@@ -70,6 +73,7 @@ describe('interpolateNavigationCommandMenuItemField', () => {
       fieldName: 'icon',
       objectMetadata: mockObjectMetadata,
       locale: undefined,
+      isStandardApp: true,
       i18nInstance: mockI18nInstance,
     });
 
@@ -89,6 +93,7 @@ describe('interpolateNavigationCommandMenuItemField', () => {
       fieldName: 'label',
       objectMetadata: null,
       locale: undefined,
+      isStandardApp: true,
       i18nInstance: mockI18nInstance,
     });
 
@@ -101,6 +106,7 @@ describe('interpolateNavigationCommandMenuItemField', () => {
       fieldName: 'label',
       objectMetadata: null,
       locale: undefined,
+      isStandardApp: true,
       i18nInstance: mockI18nInstance,
     });
 
@@ -118,6 +124,7 @@ describe('interpolateNavigationCommandMenuItemField', () => {
       fieldName: 'shortLabel',
       objectMetadata: mockObjectMetadata,
       locale: undefined,
+      isStandardApp: true,
       i18nInstance: mockI18nInstance,
     });
 
@@ -127,7 +134,6 @@ describe('interpolateNavigationCommandMenuItemField', () => {
   it('should resolve label for custom object metadata', () => {
     const customObjectMetadata = {
       ...mockObjectMetadata,
-      isCustom: true,
       labelPlural: 'Custom Objects',
       icon: 'IconCustom',
     } as unknown as ObjectMetadataDTO;
@@ -137,6 +143,7 @@ describe('interpolateNavigationCommandMenuItemField', () => {
       fieldName: 'label',
       objectMetadata: customObjectMetadata,
       locale: undefined,
+      isStandardApp: true,
       i18nInstance: mockI18nInstance,
     });
 
@@ -146,7 +153,6 @@ describe('interpolateNavigationCommandMenuItemField', () => {
   it('should resolve icon for custom object metadata', () => {
     const customObjectMetadata = {
       ...mockObjectMetadata,
-      isCustom: true,
       icon: 'IconCustom',
     } as unknown as ObjectMetadataDTO;
 
@@ -155,6 +161,7 @@ describe('interpolateNavigationCommandMenuItemField', () => {
       fieldName: 'icon',
       objectMetadata: customObjectMetadata,
       locale: undefined,
+      isStandardApp: true,
       i18nInstance: mockI18nInstance,
     });
 
@@ -172,6 +179,7 @@ describe('interpolateNavigationCommandMenuItemField', () => {
       fieldName: 'label',
       objectMetadata: null,
       locale: undefined,
+      isStandardApp: true,
       i18nInstance: mockI18nInstance,
     });
 
@@ -189,6 +197,7 @@ describe('interpolateNavigationCommandMenuItemField', () => {
       fieldName: 'label',
       objectMetadata: mockObjectMetadata,
       locale: undefined,
+      isStandardApp: true,
       i18nInstance: mockI18nInstance,
     });
 

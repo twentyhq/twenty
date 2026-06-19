@@ -21,7 +21,7 @@ import {
   IconLayoutKanban,
   IconListDetails,
   IconTable,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
   FieldDisplayMode,

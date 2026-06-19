@@ -18,7 +18,6 @@ const fields = [
     name: 'amount',
     label: 'Amount',
     type: FieldMetadataType.NUMBER,
-    isCustom: false,
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -29,7 +28,6 @@ const fields = [
     name: 'name',
     label: 'Name',
     type: FieldMetadataType.TEXT,
-    isCustom: false,
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -43,7 +41,6 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   universalIdentifier: 'test-id',
   labelSingular: 'Company',
   labelPlural: 'Companies',
-  isCustom: false,
   isSearchable: false,
   labelIdentifierFieldMetadataId: '20202020-dd4a-4ea4-bb7b-1c7300491b65',
   isActive: true,
@@ -56,7 +53,8 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   isLabelSyncedWithName: true,
   isRemote: false,
   isSystem: false,
-  isUIReadOnly: false,
+  isUIEditable: true,
+  isUICreatable: true,
 };
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({

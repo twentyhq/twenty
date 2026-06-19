@@ -1,6 +1,6 @@
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { styled } from '@linaria/react';
-import { Avatar } from 'twenty-ui/display';
+import { Avatar } from 'twenty-ui/data-display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

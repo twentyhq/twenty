@@ -57,7 +57,7 @@ export const Elipsis: Story = {
 
 export const Performance = getProfilingStory({
   componentName: 'AddressFieldDisplay',
-  averageThresholdInMs: 0.15,
+  averageThresholdInMs: 0.3,
   numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });

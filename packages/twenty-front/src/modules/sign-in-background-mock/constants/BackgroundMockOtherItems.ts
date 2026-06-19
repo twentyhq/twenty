@@ -1,4 +1,4 @@
-import { IconFileText, IconSettings } from 'twenty-ui/display';
+import { IconFileText, IconSettings } from 'twenty-ui/icon';
 
 import { type BackgroundMockNavigationItem } from '@/sign-in-background-mock/constants/BackgroundMockNavigationItems';
 

@@ -22,6 +22,8 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-morph-relations-from-flat-field-metadata.util';
 import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
@@ -116,6 +118,10 @@ export type IsConfiguredLoaderPayload = {
   applicationRegistrationId: string;
 };
 
+export type StandardApplicationIdLoaderPayload = {
+  workspaceId: string;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
@@ -142,6 +148,8 @@ export class DataloaderService {
     const viewFilterGroupsByViewIdLoader =
       this.createViewFilterGroupsByViewIdLoader();
     const isConfiguredLoader = this.createIsConfiguredLoader();
+    const standardApplicationIdLoader =
+      this.createStandardApplicationIdLoader();
 
     return {
       relationLoader,
@@ -158,6 +166,7 @@ export class DataloaderService {
       viewGroupsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
       isConfiguredLoader,
+      standardApplicationIdLoader,
     };
   }
 
@@ -328,13 +337,13 @@ export class DataloaderService {
                         label: flatFieldMetadata.label,
                         description: flatFieldMetadata.description ?? undefined,
                         icon: flatFieldMetadata.icon ?? undefined,
-                        isCustom: flatFieldMetadata.isCustom,
                         standardOverrides:
                           flatFieldMetadata.standardOverrides ?? undefined,
                       },
                       property,
                       dataLoaderParams[0].locale,
                       i18nInstance,
+                      belongsToTwentyStandardApp(flatFieldMetadata),
                     ),
                   }),
                   flatFieldMetadata,
@@ -756,6 +765,27 @@ export class DataloaderService {
         return params.map(
           (p) => resultMap.get(p.applicationRegistrationId) ?? true,
         );
+      },
+    );
+  }
+
+  private createStandardApplicationIdLoader() {
+    return new DataLoader<StandardApplicationIdLoaderPayload, string>(
+      async (params: StandardApplicationIdLoaderPayload[]) => {
+        const workspaceId = params[0].workspaceId;
+
+        const { flatApplicationMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId,
+              flatMapsKeys: ['flatApplicationMaps'],
+            },
+          );
+
+        const standardApplicationId =
+          getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
+
+        return params.map(() => standardApplicationId);
       },
     );
   }

@@ -1,6 +1,13 @@
 import { Transform } from 'class-transformer';
 
-const VALID_LOG_LEVELS = ['log', 'error', 'warn', 'debug', 'verbose'];
+const VALID_LOG_LEVELS = [
+  'log',
+  'error',
+  'warn',
+  'debug',
+  'verbose',
+  'performance',
+];
 
 export const CastToLogLevelArray = () =>
   Transform(({ value }: { value: string }) => toLogLevelArray(value));

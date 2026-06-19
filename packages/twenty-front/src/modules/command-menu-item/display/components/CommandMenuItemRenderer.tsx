@@ -16,7 +16,7 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
 import { MenuItem } from 'twenty-ui/navigation';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
@@ -31,12 +31,14 @@ const StyledPreviewWrapper = styled.div`
 
 type CommandMenuItemRendererProps = {
   item: CommandMenuItemFieldsFragment;
+  isPrimaryAction?: boolean;
 };
 
 type CommandMenuItemButtonRendererProps = CommandMenuItemRendererProps;
 
 const CommandMenuItemButtonRenderer = ({
   item,
+  isPrimaryAction = false,
 }: CommandMenuItemButtonRendererProps) => {
   const { commandMenuContextApi, isInPreviewMode } =
     useContext(CommandMenuContext);
@@ -60,7 +62,10 @@ const CommandMenuItemButtonRenderer = ({
   if (isInPreviewMode) {
     return (
       <StyledPreviewWrapper>
-        <CommandMenuButton command={command} />
+        <CommandMenuButton
+          command={command}
+          isPrimaryAction={isPrimaryAction}
+        />
       </StyledPreviewWrapper>
     );
   }
@@ -70,6 +75,7 @@ const CommandMenuItemButtonRenderer = ({
       command={command}
       onClick={disabled ? undefined : handleClick}
       disabled={disabled}
+      isPrimaryAction={isPrimaryAction}
     />
   );
 };
@@ -167,11 +173,17 @@ const CommandMenuItemSelectableRenderer = ({
 // oxlint-disable-next-line twenty/effect-components
 export const CommandMenuItemRenderer = ({
   item,
+  isPrimaryAction,
 }: CommandMenuItemRendererProps) => {
   const { displayType } = useContext(CommandMenuContext);
 
   if (displayType === 'button') {
-    return <CommandMenuItemButtonRenderer item={item} />;
+    return (
+      <CommandMenuItemButtonRenderer
+        item={item}
+        isPrimaryAction={isPrimaryAction}
+      />
+    );
   }
 
   if (displayType === 'listItem' || displayType === 'dropdownItem') {

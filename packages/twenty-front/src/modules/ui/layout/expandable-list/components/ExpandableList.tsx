@@ -10,10 +10,13 @@ import {
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipSize } from 'twenty-ui/components';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { ChipSize } from 'twenty-ui/data-display';
+import { AnimatedContainer } from 'twenty-ui/layout';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedContainer } from 'twenty-ui/utilities';
+
+// Ignore sub-pixel width changes so the visible chips are not recomputed on layout jitter.
+const RESIZE_THRESHOLD_PX = 1;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -129,8 +132,6 @@ export const ExpandableList = ({
       }
 
       const newWidth = entry.contentRect.width;
-
-      const RESIZE_THRESHOLD_PX = 1;
 
       if (Math.abs(newWidth - previousWidth) > RESIZE_THRESHOLD_PX) {
         previousWidth = newWidth;

@@ -6,8 +6,24 @@ import packageJson from './package.json';
 const entries = [
   'src/core/index.ts',
   'src/metadata/index.ts',
+  'src/rest/index.ts',
   'src/generate/index.ts',
 ];
+
+const externalDeps = [
+  ...Object.keys(packageJson.dependencies),
+  ...Object.keys(packageJson.devDependencies).filter(
+    (dep) => dep !== 'twenty-shared',
+  ),
+  'node:fs/promises',
+  'node:fs',
+  'node:path',
+  'node:os',
+  'node:url',
+];
+
+const isExternal = (id: string) =>
+  externalDeps.some((dep) => id === dep || id.startsWith(`${dep}/`));
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (!chunk.isEntry) {
@@ -49,15 +65,7 @@ export default defineConfig(() => {
       outDir: 'dist',
       lib: { entry: entries, name: 'twenty-client-sdk' },
       rollupOptions: {
-        external: [
-          ...Object.keys((packageJson as any).dependencies || {}),
-          ...Object.keys((packageJson as any).devDependencies || {}).filter(
-            (dep: string) => dep !== 'twenty-shared',
-          ),
-          'node:fs/promises',
-          'node:fs',
-          'node:path',
-        ],
+        external: isExternal,
         output: [
           {
             format: 'es',

@@ -10,12 +10,8 @@ import React, {
   useState,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  ColorSample,
-  IconApps,
-  type IconComponent,
-  useIcons,
-} from 'twenty-ui/display';
+import { ColorSample } from 'twenty-ui/data-display';
+import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
 import {
   IconButton,
   type IconButtonSize,

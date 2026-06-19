@@ -6,7 +6,7 @@ import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/com
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconNewSection } from 'twenty-ui/display';
+import { IconNewSection } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledFieldsDroppable = styled.div`

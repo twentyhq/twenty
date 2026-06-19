@@ -2,9 +2,84 @@
 
 Enriches **Person** and **Company** records with [People Data Labs](https://www.peopledatalabs.com/) (PDL) data.
 
-> **Status: data-model scaffold.** This package defines the fields, relation, indexes,
-> views, role, and manifest. The enrichment **logic function (the "mapper") is not yet
-> implemented** — see [What the mapper must do](#what-the-mapper-must-do).
+> **Status: data model + enrichment mapper.** This package defines the fields, relation,
+> views, role, and manifest, and implements the enrichment **logic functions** that call the
+> PDL REST API and map the response onto the standard + `pdl*` fields. The manual "Enrich"
+> record-action workflows are currently **created by hand** — automatic post-install seeding is
+> implemented but not wired up (see [Seeded workflows](#seeded-workflows-post-install)).
+
+---
+
+## Enrichment logic functions
+
+`enrich-companies` / `enrich-people` (bulk workflow actions, for the manual record action) and
+`enrich-company` / `enrich-person` (single-record functions exposed **both** as a workflow action
+and as an AI tool) all delegate to a shared, trigger-agnostic core in `src/logic-functions/handlers/`:
+
+- The bulk workflow-action functions accept a **list of records** (`{ records, overrideExistingValues? }`),
+  call the PDL **bulk** Enrichment endpoints (`/person/bulk`, `/company/enrich/bulk`), and loop the
+  single-record core over each, aggregating the outcome (`total` / `matched` / `notFound` / `skipped` /
+  `errored`); a per-record failure is captured as `ERROR` without aborting the batch
+  (`src/logic-functions/utils/run-batch-enrichment.ts`).
+- The single-record functions accept one record (`{ recordId, overrideExistingValues? }`), call the PDL
+  **single-record** Enrichment endpoints (`/person/enrich`, `/company/enrich` —
+  `src/logic-functions/utils/post-pdl-single-enrich.ts`), and return a single `EnrichResult`
+  (`src/logic-functions/utils/run-single-enrichment.ts`). They declare both a
+  `workflowActionTriggerSettings` and a `toolTriggerSettings`, so one function is usable as a workflow
+  step and as an AI tool.
+
+- Read the record, guard against re-enriching within a TTL (`pdlLastEnrichedAt`), pick a
+  match identifier (person: `pdlId` → LinkedIn → email → name; company: `pdlId` → domain →
+  name), and call the PDL Person/Company Enrichment API (`src/logic-functions/utils/`).
+- On a match: fill **standard fields only when empty** (never clobber user data), always
+  (re)write `pdl*` fields, and set `pdlEnrichmentStatus = MATCHED`, `pdlLastEnrichedAt`,
+  `pdlRawPayload` (+ `pdlLikelihood` for Person). PDL `404` → `NOT_FOUND`; other errors →
+  `ERROR`. No identifier / fresh TTL → skipped with no writes.
+- SELECT/MULTI_SELECT values are normalized and dropped if not in the field's option set
+  (`src/logic-functions/utils/`); the option sets are the same `src/constants/*-options.ts`
+  the field definitions use.
+
+Run locally: `yarn twenty dev:function:exec -n enrich-people -p '{"records":[{"id":"<id>"}]}'` (bulk)
+or `yarn twenty dev:function:exec -n enrich-person -p '{"recordId":"<id>"}'` (single record).
+
+### Billing
+
+Each **successful match** is billed to the workspace in Twenty credits via
+`chargeCredits` (`twenty-sdk/billing`), mirroring PDL's own model — PDL only consumes a
+credit on a `200` match, so `not_found`, errors, and skipped records are free:
+
+- Person match: **336,000 micro-credits** ($0.336 — PDL list price $0.28 + 20% margin)
+- Company match: **120,000 micro-credits** ($0.12 — PDL list price $0.10 + 20% margin)
+
+The charge is emitted once per PDL batch call (`src/logic-functions/utils/enrich-chunk.ts`)
+with `quantity` = number of matches and `resourceContext` `pdl/person` / `pdl/company`,
+at the moment PDL returns — a record whose subsequent write fails is still billed, since the
+PDL cost was already incurred. Prices live in `src/constants/*-match-cost-dollars.ts` and
+the margin in `src/constants/billing-margin-multiplier.ts`. Billing is non-fatal: a failed
+charge never fails the enrichment.
+
+### Seeded workflows (post-install)
+
+> **Not currently wired up.** `post-install.function.ts` is a no-op
+> (`return { seededWorkflows: [] }`); the seeding implementation in
+> `src/logic-functions/handlers/post-install.ts` (`postInstallCore`) is **not invoked**. An
+> app's `CoreApiClient` only exposes per-object CRUD over the workspace `/graphql` schema, and the
+> workflow-builder mutations needed to seed a workflow (`createWorkflowVersionStep` /
+> `activateWorkflowVersion`) are core resolvers the app surface does not yet expose. Until the SDK
+> exposes them, **create the two "Enrich" workflows by hand**.
+
+When re-enabled, each workflow is a `MANUAL` / `BULK_RECORDS` trigger wired to a single
+`LOGIC_FUNCTION` step whose `records` input is bound to the selected records
+(`{{trigger.companies}}` / `{{trigger.people}}`):
+
+- **Enrich companies** — runs `enrich-companies` over the selected Companies.
+- **Enrich people** — runs `enrich-people` over the selected People.
+
+The intended seeding (`postInstallCore`) resolves each function's runtime id from its
+`universalIdentifier` via the metadata API, publishes the version
+(`activateWorkflowVersion`), and is **idempotent** (skips a workflow whose name already exists).
+
+**Deferred to a later PR:** auto-enrichment triggers (on-create event + cron backfill).
 
 ---
 
@@ -25,16 +100,22 @@ PDL schema v34.1**:
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------ |
 | `pdlSeniority` (`job_title_levels`, array)                                                                                                                                                      | MULTI_SELECT | 10                                         |
 | `pdlFundingStages` (`funding_stages`, array)                                                                                                                                                    | MULTI_SELECT | 29                                         |
-| `pdlIndustry` / `pdlJobCompanyIndustry` (`industry`)                                                                                                                                            | SELECT       | 147                                        |
+| `pdlIndustry` (`industry`)                                                                                                                                                                      | SELECT       | 147                                        |
 | `pdlJobTitleSubRole` (`job_title_sub_role`)                                                                                                                                                     | SELECT       | 106                                        |
-| `pdlJobTitleClass`, `pdlInferredSalary`, `pdlSex`, `pdlCompanyType`, `pdlSizeRange`, `pdlJobCompanySize`, `pdlLatestFundingStage`, `pdlLocationContinent`, `pdlLocationMetro`, `pdlMicExchange` | SELECT       | 5 / 11 / 2 / 6 / 8 / 8 / 29 / 7 / 384 / 70 |
+| `pdlJobTitleClass`, `pdlInferredSalary`, `pdlSex`, `pdlCompanyType`, `pdlSizeRange`, `pdlLatestFundingStage`, `pdlLocationContinent`, `pdlLocationMetro`, `pdlMicExchange`                       | SELECT       | 5 / 11 / 2 / 6 / 8 / 29 / 7 / 384 / 70     |
 
 - Option `value`s are normalized to **GraphQL enum names** (`united states` → `UNITED_STATES`):
   uppercase, accents stripped, non-alphanumeric → `_`, digit-leading prefixed.
-- Option `universalIdentifier`s are **unique per field** (shared enums like industry get a
-  separate id-set per field).
+- Option `universalIdentifier`s are **unique per field** (shared enums like industry, metro, and
+  funding stage get a separate id-set per field).
+- The large option sets (`metro-options.ts`, `industry-options.ts`, …) and the UUID registry
+  (`universal-identifiers.ts`) are generated from the PDL taxonomy and checked in. When
+  regenerating for a newer PDL schema, **never change an existing option or field UUID** — that
+  orphans stored data; only append ids for new options. `select-option-constants.spec.ts` guards
+  global UUID uniqueness, value normalization, and per-field id integrity.
 - **Stays `TEXT`** (no canonical PDL enum file exists): `pdlIndustryDetail` (`industry_v2`),
-  `pdlJobOnetCode`, `pdlLocationRegion`.
+  `pdlJobOnetCode`. PDL `location_region` has no dedicated field — it fills the `state` slot of
+  the person `pdlLocation` ADDRESS composite.
 
 ### Standard-field mapping
 
@@ -58,11 +139,19 @@ into the standard bags).
 - `pdlLocationMetro` (both) and `pdlLocationContinent` (company) stay SELECT — ADDRESS has no slot.
   _Trade-off:_ ADDRESS `country` is free text, so the country SELECT was dropped.
 
-### Relation
+### Current company → standard `company`
 
-Dedicated **`pdlCurrentCompany`** (Person `MANY_TO_ONE` → Company) ↔ inverse
-**`pdlCurrentEmployees`** (Company `ONE_TO_MANY` → Person). Deliberately **not** the standard
-`company` relation, so PDL's detected employer can't overwrite the user's CRM account link.
+PDL's detected current employer (`job_company_*`) is resolved to a Company record
+(**find-or-create**, matched by `pdlId` → domain → LinkedIn → name; created with
+`name` / `domainName` / `linkedinLink` + `pdlId` / `pdlIndustry` / `pdlSizeRange` when none
+matches) and linked via the **standard `company`** relation, **fill-only-if-empty** — it never
+overwrites a company the user already set, and the lookup is skipped entirely when the person
+already has one (no orphan companies).
+
+Company attributes live on the **Company** record, not denormalized on the Person. The earlier
+`pdlCurrentCompany` / `pdlCurrentEmployees` relation and the six `pdlJobCompany*` scalar fields
+were **removed** as duplicates of the standard `company` relation and the linked Company's own
+fields.
 
 ### Enrichment metadata
 
@@ -75,40 +164,41 @@ Dedicated **`pdlCurrentCompany`** (Person `MANY_TO_ONE` → Company) ↔ inverse
 ### Other
 
 - `pdlTotalFunding` is `CURRENCY` (mapper must convert the bare USD float → micros).
-- **Indexes**: `pdlId` and `pdlLastEnrichedAt` on both objects.
 - **Views**: a curated "People Data Labs" TABLE view per object.
 - **Role**: read/update on Person & Company (object-level; tighten to field-scoped later).
 
 ---
 
-## What the mapper must do
+## What the mapper does
 
-The logic function (to be built) must:
+**Orchestration** (`src/logic-functions/`)
 
-**Orchestration**
-
-1. Trigger via manual command-menu action / record create / batch (TBD).
-2. Call PDL Person and/or Company Enrichment with `PDL_API_KEY`; pass `min_likelihood` /
-   `required_fields` to control match quality.
-3. On `200` → write fields + set `pdlEnrichmentStatus = MATCHED`; on `404` →
-   `NOT_FOUND`; on error → `ERROR`.
-4. Respect PDL rate limits (queue / throttle on `429`).
-5. **TTL guard**: skip re-enrichment if `pdlLastEnrichedAt` is recent; prefer re-enriching by `pdlId`.
+1. Runs from the manual "Enrich" record action (`BULK_RECORDS`) or the single-record
+   `enrich-company` / `enrich-person` functions (as a workflow step or an AI tool).
+2. Calls the PDL Person / Company Enrichment API with `PDL_API_KEY`, passing a `min_likelihood`
+   chosen by identifier strength (2 with a strong identifier, 6 for a weaker name-based match;
+   overridable per call).
+3. A match → `pdlEnrichmentStatus = MATCHED`; PDL `404` / no match → `NOT_FOUND`; other errors →
+   `ERROR`. Errored and not-found records are also stamped with `pdlLastEnrichedAt` so the TTL
+   guard backs off instead of re-submitting them on every run.
+4. **TTL guard**: skips re-enrichment when `pdlLastEnrichedAt` is within 7 days (bypass with
+   `force`), and prefers re-enriching by `pdlId`.
 
 **Field writing**
 
-6. Write **standard fields** (fill-only-if-empty to avoid overwriting user data):
-   Person `name`, `emails`, `phones`, `linkedinLink`, `jobTitle`; Company `name`,
-   `domainName`, `linkedinLink`, `address`.
-7. Write `pdl*` fields for everything else.
-8. **SELECT guard**: only write a SELECT/MULTI_SELECT value if the normalized value exists in
-   the field's option set; otherwise skip and keep it in `pdlRawPayload` (handles PDL schema
-   versions newer than v34.1). Use the same normalization as the option `value`s.
-9. **MULTI_SELECT** arrays: `job_title_levels` → `pdlSeniority`; `funding_stages` → `pdlFundingStages`.
-10. **CURRENCY**: `total_funding_raised` (USD float) → `{ amountMicros: value × 1_000_000, currencyCode: 'USD' }`.
-11. **ADDRESS**: split PDL `location.*` into the composite — Company → standard `address`,
-    Person → `pdlLocation`.
-12. **Relation**: resolve `job_company_id` → find/upsert a Company record → link `pdlCurrentCompany`.
-13. **Dates**: handle partial PDL dates (`YYYY`, `YYYY-MM`) for `job_start_date`,
-    `last_funding_date`, `birth_date`.
-14. Always set `pdlId`, `pdlLastEnrichedAt`, `pdlRawPayload`, `pdlLikelihood` (person).
+5. **Standard fields** are filled **only when empty** (never clobber user data): Person `name`,
+   `emails`, `phones`, `linkedinLink`, `jobTitle`; Company `name`, `domainName`, `linkedinLink`,
+   `address`. All `pdl*` fields are (re)written on every match.
+6. **SELECT guard**: a SELECT/MULTI_SELECT value is written only if its normalized form is in the
+   field's option set; otherwise it is skipped and preserved in `pdlRawPayload` (handles PDL
+   schema versions newer than the bundled one). `job_title_levels` → `pdlSeniority`,
+   `funding_stages` → `pdlFundingStages`.
+7. **CURRENCY**: `total_funding_raised` (USD) → `{ amountMicros: value × 1_000_000, currencyCode: 'USD' }`.
+8. **ADDRESS**: PDL `location.*` is split into the composite — Company → standard `address`,
+   Person → `pdlLocation`.
+9. **Current company**: `job_company_*` is resolved to a Company record (find-or-create, matched by
+   `pdlId` → domain → LinkedIn → name) and linked via the standard `company` relation
+   (fill-only-if-empty); resolutions are cached within a batch run.
+10. **Dates**: partial PDL dates (`YYYY`, `YYYY-MM`) for `job_start_date`, `last_funding_date`,
+    `birth_date` are expanded and range-validated.
+11. Always sets `pdlId`, `pdlLastEnrichedAt`, `pdlRawPayload` (+ `pdlLikelihood` for Person).

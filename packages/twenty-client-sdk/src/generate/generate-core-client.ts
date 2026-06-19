@@ -1,12 +1,12 @@
 import { appendFile, copyFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { generate } from '@genql/cli';
 import { build } from 'esbuild';
 import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
 
 import { buildClientWrapperSource } from './client-wrapper';
 import { emptyDir, ensureDir, move, remove } from './fs-utils';
+import { generate } from './genql';
 import twentyClientTemplateSource from './twenty-client-template.ts?raw';
 
 const COMMON_SCALAR_TYPES = {

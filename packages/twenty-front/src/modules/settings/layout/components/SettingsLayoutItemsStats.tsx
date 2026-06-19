@@ -12,7 +12,7 @@ import {
   IconLayoutSidebarLeftExpand,
   IconPuzzle,
   IconTable,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 
 export const SettingsLayoutItemsStats = () => {
   const { t } = useLingui();

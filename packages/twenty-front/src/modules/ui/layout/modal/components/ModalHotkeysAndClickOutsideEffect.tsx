@@ -5,7 +5,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { Key } from 'ts-key-enum';
 
 type ModalHotkeysAndClickOutsideEffectProps = {
-  modalRef: React.RefObject<HTMLDivElement>;
+  modalRef: React.RefObject<HTMLDivElement | null>;
   onEnter?: () => void;
   isClosable?: boolean;
   onClose?: () => void;

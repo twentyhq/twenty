@@ -1,8 +1,16 @@
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledItems = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.betweenSiblingsGap};
+`;
 
 type CollapsibleNavigationDrawerSectionProps = {
   // Namespaced id (e.g. 'settings/User') used to persist open/closed state.
@@ -39,7 +47,7 @@ export const CollapsibleNavigationDrawerSection = ({
         containAnimation
         initial={false}
       >
-        {children}
+        <StyledItems>{children}</StyledItems>
       </AnimatedExpandableContainer>
     </NavigationDrawerSection>
   );

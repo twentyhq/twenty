@@ -1,28 +1,30 @@
 import { checkUrlType } from '~/utils/checkUrlType';
+import { LinkType } from 'twenty-ui/navigation';
 
 describe('checkUrlType', () => {
-  it('should return "linkedin", if linkedin url', () => {
-    expect(checkUrlType('https://www.linkedin.com/in/håkan-fisk')).toBe(
-      'linkedin',
+  it('should detect LinkedIn urls', () => {
+    expect(checkUrlType('https://www.linkedin.com/in/john')).toBe(
+      LinkType.LinkedIn,
     );
-    expect(checkUrlType('http://www.linkedin.com/in/håkan-fisk')).toBe(
-      'linkedin',
+    expect(checkUrlType('linkedin.com/company/twenty')).toBe(LinkType.LinkedIn);
+  });
+
+  it('should detect Twitter urls', () => {
+    expect(checkUrlType('https://twitter.com/twenty')).toBe(LinkType.Twitter);
+  });
+
+  it('should detect X urls as Twitter', () => {
+    expect(checkUrlType('https://x.com/twenty')).toBe(LinkType.Twitter);
+  });
+
+  it('should detect Facebook urls', () => {
+    expect(checkUrlType('https://www.facebook.com/twenty')).toBe(
+      LinkType.Facebook,
     );
-    expect(checkUrlType('https://linkedin.com/in/håkan-fisk')).toBe('linkedin');
-    expect(checkUrlType('http://linkedin.com/in/håkan-fisk')).toBe('linkedin');
-    expect(checkUrlType('linkedin.com/in/håkan-fisk')).toBe('linkedin');
   });
 
-  it('should return "twitter", if twitter url', () => {
-    expect(checkUrlType('https://www.twitter.com/john-doe')).toBe('twitter');
-    expect(checkUrlType('https://www.x.com/john-doe')).toBe('twitter');
-  });
-
-  it('should return "url", if neither linkedin nor twitter url', () => {
-    expect(checkUrlType('https://www.example.com')).toBe('url');
-  });
-
-  it('should return "facebook", if facebook url', () => {
-    expect(checkUrlType('https://www.facebook.com/john-doe')).toBe('facebook');
+  it('should fall back to a generic url type', () => {
+    expect(checkUrlType('https://example.com')).toBe(LinkType.Url);
+    expect(checkUrlType('not-a-url')).toBe(LinkType.Url);
   });
 });

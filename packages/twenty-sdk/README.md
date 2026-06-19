@@ -32,6 +32,10 @@ Full documentation is available at **[docs.twenty.com/developers/extend/apps](ht
 - [Building Apps](https://docs.twenty.com/developers/extend/apps/building) — entity definitions, API clients, testing, CLI reference
 - [Publishing](https://docs.twenty.com/developers/extend/apps/publishing) — deploy, npm publish, marketplace
 
+Guides in this repository:
+
+- [Logic function inputs](./docs/logic-function-inputs.md) — input schema inference, record-typed inputs, and the id contract
+
 ## Manual installation
 
 If you are adding `twenty-sdk` to an existing project instead of using `create-twenty-app`:

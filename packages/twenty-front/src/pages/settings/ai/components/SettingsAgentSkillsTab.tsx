@@ -6,7 +6,8 @@ import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { H2Title, IconArchive } from 'twenty-ui/display';
+import { IconArchive } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -22,8 +23,8 @@ import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/Set
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
 
-const StyledSearchInput = styled(SearchInput)`
-  margin-bottom: ${themeCssVariables.spacing[4]};
+const StyledSearchContainer = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsAgentSkillsTab = () => {
@@ -89,32 +90,34 @@ export const SettingsAgentSkillsTab = () => {
         description={t`Use filter to see existing skills or create your own`}
       />
 
-      <StyledSearchInput
-        placeholder={t`Search a skill...`}
-        value={searchTerm}
-        onChange={setSearchTerm}
-        filterDropdown={(filterButton) => (
-          <Dropdown
-            dropdownId="settings-skills-filter-dropdown"
-            dropdownPlacement="bottom-end"
-            dropdownOffset={{ x: 0, y: 8 }}
-            clickableComponent={filterButton}
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <MenuItemToggle
-                    LeftIcon={IconArchive}
-                    onToggleChange={setShowDeactivated}
-                    toggled={showDeactivated}
-                    text={t`Deactivated`}
-                    toggleSize="small"
-                  />
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
-        )}
-      />
+      <StyledSearchContainer>
+        <SearchInput
+          placeholder={t`Search a skill...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+          filterDropdown={(filterButton) => (
+            <Dropdown
+              dropdownId="settings-skills-filter-dropdown"
+              dropdownPlacement="bottom-end"
+              dropdownOffset={{ x: 0, y: 8 }}
+              clickableComponent={filterButton}
+              dropdownComponents={
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    <MenuItemToggle
+                      LeftIcon={IconArchive}
+                      onToggleChange={setShowDeactivated}
+                      toggled={showDeactivated}
+                      text={t`Deactivated`}
+                      toggleSize="small"
+                    />
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+            />
+          )}
+        />
+      </StyledSearchContainer>
       <SettingsAgentSkillsTable
         skills={filteredSkills}
         loading={loading}

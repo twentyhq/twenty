@@ -10,7 +10,7 @@ import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/Ste
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconVariablePlus } from 'twenty-ui/display';
+import { IconVariablePlus } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownVariableButtonContainer = styled.div<{
@@ -36,6 +36,7 @@ export const WorkflowVariablesDropdown = ({
   onVariableSelect,
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
+  objectNameSingularsToSelect,
 }: {
   clickableComponent?: React.ReactNode;
   disabled?: boolean;
@@ -44,6 +45,7 @@ export const WorkflowVariablesDropdown = ({
   onVariableSelect: (variableName: string) => void;
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
+  objectNameSingularsToSelect?: string[];
 }) => {
   const { theme } = useContext(ThemeContext);
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
@@ -116,6 +118,7 @@ export const WorkflowVariablesDropdown = ({
             onSelect={handleSubItemSelect}
             onBack={handleBack}
             shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+            objectNameSingularsToSelect={objectNameSingularsToSelect}
           />
         )
       }

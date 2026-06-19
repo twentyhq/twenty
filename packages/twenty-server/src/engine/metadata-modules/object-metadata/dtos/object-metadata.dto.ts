@@ -63,9 +63,6 @@ export class ObjectMetadataDTO {
   color?: string;
 
   @FilterableField()
-  isCustom: boolean;
-
-  @FilterableField()
   isRemote: boolean;
 
   @FilterableField()
@@ -75,6 +72,16 @@ export class ObjectMetadataDTO {
   isSystem: boolean;
 
   @FilterableField()
+  isUIEditable: boolean;
+
+  @FilterableField()
+  isUICreatable: boolean;
+
+  // Deprecated alias kept for one release: stays filterable so ObjectFilter
+  // keeps its isUIReadOnly member and external API consumers are not broken.
+  @FilterableField({
+    deprecationReason: 'Use isUIEditable',
+  })
   isUIReadOnly: boolean;
 
   @FilterableField()

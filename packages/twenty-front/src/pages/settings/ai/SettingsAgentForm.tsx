@@ -22,7 +22,7 @@ import {
   IconListCheck,
   IconLock,
   IconSettings,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';

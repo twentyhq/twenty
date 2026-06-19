@@ -1,10 +1,11 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
-import { Chip, ChipVariant } from 'twenty-ui/components';
+import { Chip, ChipVariant } from 'twenty-ui/data-display';
 
 const MAX_WIDTH = 120;
 
@@ -28,6 +29,11 @@ export const FileChip = ({
   const isDeleted = file.isDeleted === true;
   const isClickable = forceDisableClick !== true && !isDeleted;
 
+  const fileCategory =
+    file.fileCategory ?? getFileCategoryFromExtension(file.extension ?? '');
+
+  const label = isNonEmptyString(file.label) ? file.label : t`Untitled file`;
+
   const handleMouseDown = (event: React.MouseEvent): void => {
     if (!isClickable) {
       return;
@@ -37,34 +43,29 @@ export const FileChip = ({
     onClick?.(file);
   };
 
-  const fileIcon = (
-    <FileIcon
-      fileCategory={
-        file.fileCategory ?? getFileCategoryFromExtension(file.extension ?? '')
-      }
-      size="small"
-    />
-  );
-
   return (
-    <>
-      <StyledClickableContainer
+    <StyledClickableContainer
+      clickable={isClickable}
+      onMouseDown={handleMouseDown}
+    >
+      <Chip
+        label={label}
+        alwaysShowTooltip={isDeleted}
+        tooltipLabel={
+          isDeleted ? t`File no longer exists - ${label}` : undefined
+        }
+        disabled={isDeleted}
+        maxWidth={MAX_WIDTH}
+        leftComponent={
+          <FileIcon
+            fileCategory={fileCategory}
+            size="small"
+            thumbnailUrl={isDeleted ? undefined : file.url}
+          />
+        }
+        variant={isDeleted ? ChipVariant.Static : ChipVariant.Highlighted}
         clickable={isClickable}
-        onMouseDown={handleMouseDown}
-      >
-        <Chip
-          label={file.label}
-          alwaysShowTooltip={isDeleted}
-          tooltipLabel={
-            isDeleted ? t`File no longer exists - ${file.label}` : undefined
-          }
-          disabled={isDeleted}
-          maxWidth={MAX_WIDTH}
-          leftComponent={fileIcon}
-          variant={isDeleted ? ChipVariant.Static : ChipVariant.Highlighted}
-          clickable={isClickable}
-        />
-      </StyledClickableContainer>
-    </>
+      />
+    </StyledClickableContainer>
   );
 };

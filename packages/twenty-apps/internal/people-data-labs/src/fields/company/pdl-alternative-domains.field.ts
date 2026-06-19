@@ -15,5 +15,6 @@ export default defineField({
   name: 'pdlAlternativeDomains',
   label: 'Alternative Domains',
   description: 'Alternative domains returned by People Data Labs.',
+  icon: 'IconWorldWww',
   isNullable: true,
 });
