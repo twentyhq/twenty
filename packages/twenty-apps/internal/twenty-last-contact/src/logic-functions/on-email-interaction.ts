@@ -1,4 +1,4 @@
-import { defineLogicFunction, ObjectRecordUpdateEvent } from 'twenty-sdk/define';
+import { defineLogicFunction, type ObjectRecordUpdateEvent } from 'twenty-sdk/define';
 import type { DatabaseEventPayload } from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 

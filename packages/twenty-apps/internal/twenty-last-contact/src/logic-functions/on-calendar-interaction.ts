@@ -1,5 +1,5 @@
-import { defineLogicFunction, ObjectRecordUpdateEvent } from 'twenty-sdk/define';
-import { DatabaseEventPayload } from 'twenty-sdk/logic-function';
+import { defineLogicFunction, type ObjectRecordUpdateEvent } from 'twenty-sdk/define';
+import { type DatabaseEventPayload } from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CALENDAR_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
