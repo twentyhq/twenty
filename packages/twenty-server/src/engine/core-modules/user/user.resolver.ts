@@ -577,7 +577,7 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
   ) {
-    if (!workspace) {
+    if (!isDefined(workspace)) {
       return null;
     }
 
