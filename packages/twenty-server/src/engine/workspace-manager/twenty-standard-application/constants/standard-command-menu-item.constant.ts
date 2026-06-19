@@ -65,6 +65,21 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.DELETE_RECORDS,
     hotKeys: null,
   },
+  permanentlyDeleteRecords: {
+    universalIdentifier: 'a3f1c2d4-8e5b-4a7f-9c6d-2b0e1f3a4c5d',
+    label: 'Permanently delete ${capitalize(objectMetadataLabel)}',
+    icon: 'IconTrashX',
+    isPinned: false,
+    position: 5,
+    shortLabel: 'Permanently delete',
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and objectPermissions.canDestroyObjectRecords and not hasAnySoftDeleteFilterOnView and (isSelectAll or noneDefined(selectedRecords, "deletedAt"))',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.PERMANENTLY_DELETE_RECORDS,
+    hotKeys: null,
+  },
   restoreRecords: {
     universalIdentifier: '2d733846-8cc5-4314-ab79-916ae0801baa',
     label: 'Restore ${capitalize(objectMetadataLabel)}',
