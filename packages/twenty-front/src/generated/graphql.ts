@@ -259,11 +259,30 @@ export type ObjectRecordFilterInput = {
 
 export type Query = {
   __typename?: 'Query';
+  /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
+  getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromObjectRecord: TimelineCalendarEventsWithTotal;
+  /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
+  getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
+  /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
+  getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
+  /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
+  getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromObjectRecord: TimelineThreadsWithTotal;
+  /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
+  getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
+  /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
+  getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
   search: SearchResultConnection;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
+};
+
+
+export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
+  companyId: Scalars['UUID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
 };
 
 
@@ -275,11 +294,46 @@ export type QueryGetTimelineCalendarEventsFromObjectRecordArgs = {
 };
 
 
+export type QueryGetTimelineCalendarEventsFromOpportunityIdArgs = {
+  opportunityId: Scalars['UUID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+};
+
+
+export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+  personId: Scalars['UUID']['input'];
+};
+
+
+export type QueryGetTimelineThreadsFromCompanyIdArgs = {
+  companyId: Scalars['UUID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+};
+
+
 export type QueryGetTimelineThreadsFromObjectRecordArgs = {
   objectNameSingular: Scalars['String']['input'];
   page: Scalars['Int']['input'];
   pageSize: Scalars['Int']['input'];
   recordId: Scalars['UUID']['input'];
+};
+
+
+export type QueryGetTimelineThreadsFromOpportunityIdArgs = {
+  opportunityId: Scalars['UUID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+};
+
+
+export type QueryGetTimelineThreadsFromPersonIdArgs = {
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+  personId: Scalars['UUID']['input'];
 };
 
 
