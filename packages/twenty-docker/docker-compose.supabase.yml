@@ -1,0 +1,98 @@
+name: orbitor
+
+# Orbitor (Twenty) on Supabase.
+# Postgres + object storage are external (Supabase); only Redis runs locally.
+# Build the image first so the Supabase compatibility fixes are baked in:
+#   docker compose -f packages/twenty-docker/docker-compose.supabase.yml --env-file <your.env> build
+# Then:
+#   docker compose -f packages/twenty-docker/docker-compose.supabase.yml --env-file <your.env> up -d
+# See SUPABASE_DEPLOY.md. IMPORTANT: deploy in the SAME region as the Supabase
+# project (fast workspace activation).
+
+services:
+  server:
+    build:
+      context: ../..
+      dockerfile: packages/twenty-docker/twenty/Dockerfile
+      target: twenty
+    image: orbitor:supabase
+    volumes:
+      - server-local-data:/app/packages/twenty-server/.local-storage
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_PORT: 3000
+      # Full Supabase SESSION-pooler URL (port 5432, NOT the 6543 transaction pooler).
+      PG_DATABASE_URL: ${PG_DATABASE_URL}
+      # Cap pools so server+worker stay under the Supabase pooler client limit (pool_size, default 15).
+      PG_POOL_MAX_CONNECTIONS: ${PG_POOL_MAX_CONNECTIONS:-3}
+      PG_SSL_ALLOW_SELF_SIGNED: ${PG_SSL_ALLOW_SELF_SIGNED:-true}
+      SERVER_URL: ${SERVER_URL}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+
+      # Supabase S3-compatible storage (bucket must already exist).
+      STORAGE_TYPE: ${STORAGE_TYPE:-s3}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
+      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
+      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
+      STORAGE_S3_ACCESS_KEY_ID: ${STORAGE_S3_ACCESS_KEY_ID}
+      STORAGE_S3_SECRET_ACCESS_KEY: ${STORAGE_S3_SECRET_ACCESS_KEY}
+
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      FALLBACK_ENCRYPTION_KEY: ${FALLBACK_ENCRYPTION_KEY}
+      APP_SECRET: ${APP_SECRET:-}
+
+      # Start new workspaces clean (no demo/sample records or workflows).
+      IS_WORKSPACE_DEMO_DATA_ENABLED: ${IS_WORKSPACE_DEMO_DATA_ENABLED:-false}
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://localhost:3000/healthz
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: always
+
+  worker:
+    image: orbitor:supabase
+    volumes:
+      - server-local-data:/app/packages/twenty-server/.local-storage
+    command: ["yarn", "worker:prod"]
+    environment:
+      PG_DATABASE_URL: ${PG_DATABASE_URL}
+      PG_POOL_MAX_CONNECTIONS: ${PG_POOL_MAX_CONNECTIONS:-3}
+      PG_SSL_ALLOW_SELF_SIGNED: ${PG_SSL_ALLOW_SELF_SIGNED:-true}
+      SERVER_URL: ${SERVER_URL}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      DISABLE_DB_MIGRATIONS: "true" # migrations run on the server
+      DISABLE_CRON_JOBS_REGISTRATION: "true" # cron registers on the server
+
+      STORAGE_TYPE: ${STORAGE_TYPE:-s3}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
+      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
+      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
+      STORAGE_S3_ACCESS_KEY_ID: ${STORAGE_S3_ACCESS_KEY_ID}
+      STORAGE_S3_SECRET_ACCESS_KEY: ${STORAGE_S3_SECRET_ACCESS_KEY}
+
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      FALLBACK_ENCRYPTION_KEY: ${FALLBACK_ENCRYPTION_KEY}
+      APP_SECRET: ${APP_SECRET:-}
+      IS_WORKSPACE_DEMO_DATA_ENABLED: ${IS_WORKSPACE_DEMO_DATA_ENABLED:-false}
+    depends_on:
+      server:
+        condition: service_healthy
+    restart: always
+
+  redis:
+    image: redis
+    restart: always
+    command: ["--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  server-local-data:
