@@ -37743,16 +37743,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ip-address@npm:^9.0.5":
-  version: 9.0.5
-  resolution: "ip-address@npm:9.0.5"
-  dependencies:
-    jsbn: "npm:1.1.0"
-    sprintf-js: "npm:^1.1.3"
-  checksum: 10c0/331cd07fafcb3b24100613e4b53e1a2b4feab11e671e655d46dc09ee233da5011284d09ca40c4ecbdfe1d0004f462958675c224a804259f2f78d2465a87824bc
-  languageName: node
-  linkType: hard
-
 "ip-regex@npm:^4.0.0":
   version: 4.3.0
   resolution: "ip-regex@npm:4.3.0"
@@ -39867,13 +39857,6 @@ __metadata:
   bin:
     js-yaml: bin/js-yaml.js
   checksum: 10c0/3261f25912f5dd76605e5993d0a126c2b6c346311885d3c483706cd722efe34f697ea0331f654ce27c00a42b426e524518ec89d65ed02ea47df8ad26dcc8ce69
-  languageName: node
-  linkType: hard
-
-"jsbn@npm:1.1.0":
-  version: 1.1.0
-  resolution: "jsbn@npm:1.1.0"
-  checksum: 10c0/4f907fb78d7b712e11dea8c165fe0921f81a657d3443dde75359ed52eb2b5d33ce6773d97985a089f09a65edd80b11cb75c767b57ba47391fee4c969f7215c96
   languageName: node
   linkType: hard
 
@@ -51410,23 +51393,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socks@npm:2.8.9":
+"socks@npm:2.8.9, socks@npm:^2.8.3":
   version: 2.8.9
   resolution: "socks@npm:2.8.9"
   dependencies:
     ip-address: "npm:^10.1.1"
     smart-buffer: "npm:^4.2.0"
   checksum: 10c0/2d4350c31142b0931eb1758825b426bcbf4bfb5eed682ca48bc46dc9e7d1930ec366ea574ad49fc6c1fd9e9e17ce243be0ef13e31fc4b0319d9093f1fb19743c
-  languageName: node
-  linkType: hard
-
-"socks@npm:^2.8.3":
-  version: 2.8.4
-  resolution: "socks@npm:2.8.4"
-  dependencies:
-    ip-address: "npm:^9.0.5"
-    smart-buffer: "npm:^4.2.0"
-  checksum: 10c0/00c3271e233ccf1fb83a3dd2060b94cc37817e0f797a93c560b9a7a86c4a0ec2961fb31263bdd24a3c28945e24868b5f063cd98744171d9e942c513454b50ae5
   languageName: node
   linkType: hard
 
@@ -51664,7 +51637,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sprintf-js@npm:^1.1.2, sprintf-js@npm:^1.1.3":
+"sprintf-js@npm:^1.1.2":
   version: 1.1.3
   resolution: "sprintf-js@npm:1.1.3"
   checksum: 10c0/09270dc4f30d479e666aee820eacd9e464215cdff53848b443964202bf4051490538e5dd1b42e1a65cf7296916ca17640aebf63dae9812749c7542ee5f288dec
