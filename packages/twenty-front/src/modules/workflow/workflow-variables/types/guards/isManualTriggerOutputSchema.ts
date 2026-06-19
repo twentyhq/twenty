@@ -2,8 +2,8 @@ import {
   type WorkflowActionType,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
-import { type ManualTriggerOutputSchema } from '@/workflow/workflow-variables/types/ManualTriggerOutputSchema';
 import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { type ManualTriggerOutputSchema } from 'twenty-shared/workflow';
 
 export const isManualTriggerOutputSchema = (
   stepType: WorkflowActionType | WorkflowTriggerType,

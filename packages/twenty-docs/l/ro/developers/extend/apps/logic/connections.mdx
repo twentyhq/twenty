@@ -82,7 +82,7 @@ Puncte cheie:
 URL-ul de callback OAuth pe care furnizorul tău trebuie să îl includă pe lista albă este:
 
 ```
-https://<your-twenty-server>/apps/oauth/callback
+https://<your-twenty-server>/auth/apps/callback
 ```
 
 </Accordion>
@@ -182,7 +182,7 @@ Sunt permise mai multe conexiuni per (utilizator, furnizor), astfel încât acel
 Pentru fiecare furnizor de conexiune, administratorul serverului trebuie mai întâi să înregistreze o aplicație OAuth la serviciul terț.
 
 1. Mergi la setările pentru dezvoltatori ale furnizorului (de ex. https://linear.app/settings/api/applications/new).
-2. Setează **Redirect URI** la `\<SERVER_URL>/apps/oauth/callback`.
+2. Setează **Redirect URI** la `\<SERVER_URL>/auth/apps/callback`.
 3. Copiază **Client ID** și **Client Secret** generate.
 4. Deschide aplicația instalată în Twenty ca administrator de server → setează valorile pe `serverVariables` corespunzătoare.
 5. Membrii spațiului de lucru pot apoi să adauge conexiuni din secțiunea **Conexiuni** a fiecărei aplicații.

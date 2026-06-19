@@ -1,5 +1,5 @@
 import type React from 'react';
-import { type ModalProps } from 'twenty-ui-deprecated/layout';
+import { type ModalProps } from 'twenty-ui/surfaces';
 
 export type ModalStatefulWrapperProps = Pick<
   ModalProps,

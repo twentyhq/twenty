@@ -74,6 +74,15 @@ Always rely on tool schema definitions:
 - Follow schema definitions exactly for field names, types, and structures
 - Schema includes validation rules and common patterns
 
+## Validation Strategy
+
+Build steps fully configured up front so the workflow is correct on the first try. Mutation tools (\`create_complete_workflow\`, \`update_workflow_version_step\`) return a compact validation summary (error codes, messages, suggestions) — fix any reported errors.
+
+Do NOT call \`validate_workflow\` after every change:
+- When making several step edits in a row, pass \`validate: false\` to \`update_workflow_version_step\` to skip per-edit validation.
+- Call \`validate_workflow\` exactly ONCE at the end, before activating. It returns the full report including warnings and available variable paths.
+
+
 ## Approach
 
 - Ask clarifying questions to understand user needs

@@ -6,9 +6,9 @@ export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
 
 export const PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS = {
   enrichPeople: '65356a82-6734-4fc9-8172-7d30ed1b7859',
-  enrichPersonTool: 'c1539ca9-6f57-4036-a2a7-621ec23a66e6',
+  enrichPerson: '864ad69b-ff9f-4635-9aed-16fd0c2ad210',
   enrichCompanies: 'c769fb49-d495-469f-a58f-1a69ab90ec24',
-  enrichCompanyTool: '88d126e1-a8f4-49f2-883f-39a7fa69cede',
+  enrichCompany: '560bbfd9-1107-4f7f-8398-ea835e7e5bbe',
   postInstall: '9de46f15-05ec-4314-84c1-b9919b545269',
 } as const;
 
@@ -89,12 +89,6 @@ export const PDL_FIELD_UNIVERSAL_IDENTIFIERS = {
 export const PDL_VIEW_UNIVERSAL_IDENTIFIERS = {
   enrichedCompanies: '25e3e91c-67cb-4a2c-b04d-3e93402d85ed',
   enrichedPeople: '2866db8e-086a-4b2e-8b89-a583c4181936',
-} as const;
-
-export const PDL_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS = {
-  folder: '0a8fe0ea-7a97-41d7-8741-511d69ebe71b',
-  enrichedCompanies: 'b31eced0-0b68-444f-b823-594694b758f0',
-  enrichedPeople: 'ddf5b795-283a-4d5d-885c-c47f0bd11fd0',
 } as const;
 
 export const PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS = {

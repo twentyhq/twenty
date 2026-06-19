@@ -3,9 +3,9 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/sta
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { IconFilter } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconFilter } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};

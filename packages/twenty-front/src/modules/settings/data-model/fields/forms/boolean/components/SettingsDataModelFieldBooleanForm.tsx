@@ -6,7 +6,7 @@ import { BOOLEAN_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
-import { IconCheck } from 'twenty-ui-deprecated/display';
+import { IconCheck } from 'twenty-ui/icon';
 
 export const settingsDataModelFieldBooleanFormSchema = z.object({
   defaultValue: z.boolean(),

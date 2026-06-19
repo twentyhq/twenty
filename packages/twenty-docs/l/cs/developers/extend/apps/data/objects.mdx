@@ -1,0 +1,104 @@
+---
+title: Objekty
+description: Deklarujte nové typy záznamů – vlastní tabulky s jejich vlastními poli – pomocí defineObject.
+icon: tabulka
+---
+
+Vlastní **objekty** jsou nové typy záznamů, které vaše aplikace přidává do pracovního prostoru — pohlednice, faktura, předplatné, cokoli specifického pro vaši doménu. Každý objekt definuje své schéma (pole, vztahy, výchozí hodnoty) a stabilní univerzální identifikátor, který přetrvá mezi synchronizacemi a nasazeními.
+
+```ts src/objects/post-card.object.ts
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+## Hlavní body
+
+* Hodnota `universalIdentifier` musí být jedinečná a stabilní napříč nasazeními.
+* Každé pole vyžaduje `name`, `type`, `label` a svůj vlastní stabilní `universalIdentifier`.
+* Pole `fields` je volitelné — objekty můžete definovat i bez vlastních polí.
+* Pole definovaná zde inline **nepotřebují** `objectUniversalIdentifier` — dědí se z nadřazeného objektu. Pomocí [`defineField()`](/l/cs/developers/extend/apps/data/extending-objects) můžete přidávat pole k objektům, které nevlastníte.
+* Nové objekty můžete vygenerovat pomocí `yarn twenty dev:add object`, který vás provede pojmenováním, poli a vztahy. Viz [Architektura → Scaffolding entit](/l/cs/developers/extend/apps/getting-started/scaffolding).
+
+<Note>
+**Základní pole jsou přidána automaticky.** Když definujete vlastní objekt, Twenty pro vás vytvoří standardní pole jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`. Nemusíte je uvádět v poli `fields` — pouze svá vlastní pole. Výchozí pole můžete přepsat tak, že deklarujete pole se stejným názvem, ale jen zřídka je to dobrý nápad.
+</Note>
+
+## Výchozí hodnoty
+
+Výchozí textové hodnoty musí být uzavřené v jednoduchých uvozovkách **uvnitř** řetězce — `defaultValue: "'Draft'"`, ne `defaultValue: "Draft"`. Proto pole `status` výše používá `` `'${PostCardStatus.DRAFT}'` ``.
+
+Neuzavřené (necitované) řetězce jsou vyhrazené pro vypočítané výchozí hodnoty, které se vyhodnocují při vytvoření záznamu:
+
+* `'uuid'` — generuje UUID (pro pole `UUID`)
+* `'now'` — aktuální časové razítko (pro pole `DATE_TIME`)
+
+Stejná konvence platí pro řetězcová podpola složených výchozích hodnot (např. `{ source: "'MANUAL'" }` u pole `ACTOR`) a pro hodnoty `SELECT`/`MULTI_SELECT`. Doslovná řetězcová výchozí hodnota ponechaná bez uvozovek vyvolá při sestavení aplikace varování.
+
+## Co dál
+
+* **Propojte tento objekt s ostatními** — vzor obousměrných vztahů najdete v části [Relations](/l/cs/developers/extend/apps/data/relations).
+* **Přidávejte pole k objektům z jiných aplikací** — viz [Extending Objects](/l/cs/developers/extend/apps/data/extending-objects) pro `defineField()`.
+* **Zobrazte tento objekt v uživatelském rozhraní** — viz [Views](/l/cs/developers/extend/apps/layout/views) a [Navigation Menu Items](/l/cs/developers/extend/apps/layout/navigation-menu-items) pro umístění do postranního panelu.

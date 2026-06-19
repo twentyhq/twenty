@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { TerminalOutput } from '@/ai/components/TerminalOutput';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -112,12 +112,18 @@ export const Empty: Story = {
   },
 };
 
+const LONG_OUTPUT_BASE_TIMESTAMP_MS = new Date(
+  '2024-03-12T09:30:00.000Z',
+).getTime();
+
 export const LongOutput: Story = {
   args: {
     stdout: Array.from(
       { length: 100 },
-      (_, i) =>
-        `[${new Date().toISOString()}] Processing batch ${i + 1}/100...`,
+      (_, index) =>
+        `[${new Date(
+          LONG_OUTPUT_BASE_TIMESTAMP_MS + index * 1000,
+        ).toISOString()}] Processing batch ${index + 1}/100...`,
     ).join('\n'),
     stderr: '',
     isRunning: false,

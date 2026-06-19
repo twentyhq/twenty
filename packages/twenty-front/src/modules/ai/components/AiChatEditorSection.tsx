@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
@@ -20,7 +20,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { type SelectOption } from 'twenty-ui/input';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;

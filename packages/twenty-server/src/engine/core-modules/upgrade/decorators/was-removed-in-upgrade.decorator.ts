@@ -12,6 +12,12 @@ export type WasRemovedInUpgrade<T> = T & {
   readonly [wasRemovedInUpgradeBrand]?: true;
 };
 
+export type UnwrapWasRemovedInUpgrade<T> = [T] extends [
+  WasRemovedInUpgrade<infer TUnwrapped>,
+]
+  ? TUnwrapped
+  : T;
+
 type WasRemovedInUpgradeKeys<TEntity> = {
   [K in keyof TEntity]: typeof wasRemovedInUpgradeBrand extends keyof TEntity[K]
     ? K

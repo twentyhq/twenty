@@ -10,7 +10,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PageCardHeaderProps = {
   links?: BreadcrumbProps['links'];
@@ -20,6 +20,7 @@ type PageCardHeaderProps = {
   tag?: ReactNode;
   actionButton?: ReactNode;
   centerTitle?: boolean;
+  titleColor?: string;
 };
 
 const StyledHeader = styled.div`
@@ -43,9 +44,10 @@ const StyledLeft = styled.div`
   overflow: hidden;
 `;
 
-const StyledTitle = styled.div`
+const StyledTitle = styled.div<{ titleColor?: string }>`
   align-items: center;
-  color: ${themeCssVariables.font.color.primary};
+  color: ${({ titleColor }) =>
+    titleColor ?? themeCssVariables.font.color.primary};
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.semiBold};
@@ -79,6 +81,7 @@ export const PageCardHeader = ({
   tag,
   actionButton,
   centerTitle = false,
+  titleColor,
 }: PageCardHeaderProps) => {
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
@@ -104,11 +107,13 @@ export const PageCardHeader = ({
           ? breadcrumb
           : isDefined(links) && <Breadcrumb links={links} />}
         {!centerTitle && hasTitleContent && (
-          <StyledTitle>{titleContent}</StyledTitle>
+          <StyledTitle titleColor={titleColor}>{titleContent}</StyledTitle>
         )}
       </StyledLeft>
       {centerTitle && hasTitleContent && (
-        <StyledCenteredTitle>{titleContent}</StyledCenteredTitle>
+        <StyledCenteredTitle titleColor={titleColor}>
+          {titleContent}
+        </StyledCenteredTitle>
       )}
       <StyledRight
         data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}

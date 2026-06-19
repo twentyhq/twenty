@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -14,14 +14,15 @@ import { RecordGroupDefinitionType } from '@/object-record/record-group/types/Re
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { Tag } from 'twenty-ui-deprecated/components';
-import { IconDotsVertical, IconPlus } from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { Tag } from 'twenty-ui/data-display';
+import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/input';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -91,7 +92,10 @@ export const RecordBoardColumnHeader = () => {
     objectMetadataItem.id,
   );
 
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
+  const canCreateRecords = canCreateRecordsForObjectMetadataItem({
+    objectPermissions,
+    objectMetadataItem,
+  });
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
@@ -186,14 +190,13 @@ export const RecordBoardColumnHeader = () => {
                     });
                   }}
                 />
-                {hasObjectUpdatePermissions &&
-                  !hasAnySoftDeleteFilterOnView && (
-                    <LightIconButton
-                      accent="tertiary"
-                      Icon={IconPlus}
-                      onClick={handleCreateNewRecordClick}
-                    />
-                  )}
+                {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
+                  <LightIconButton
+                    accent="tertiary"
+                    Icon={IconPlus}
+                    onClick={handleCreateNewRecordClick}
+                  />
+                )}
               </StyledHeaderActions>
             )}
           </StyledRightContainer>

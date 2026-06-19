@@ -12,6 +12,7 @@ import {
   IF_ELSE_BRANCH_POSITION_OFFSETS,
   getFunctionInputFromInputSchema,
   type StepIfElseBranch,
+  WorkflowActionType,
 } from 'twenty-shared/workflow';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -44,7 +45,6 @@ import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflo
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
-  WorkflowActionType,
   type WorkflowAction,
   type WorkflowEmptyAction,
   type WorkflowFormAction,
@@ -205,6 +205,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 },
                 _outputSchemaType: 'LINK',
               },
+              expectedOutputSchema: {},
               input: {
                 logicFunctionId: newLogicFunction.id,
                 logicFunctionInput: isDefined(
@@ -272,6 +273,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             settings: {
               ...BASE_STEP_DEFINITION,
               outputSchema: initialOutputSchema,
+              expectedOutputSchema: {},
               input: {
                 logicFunctionId,
                 logicFunctionInput: isDefined(
@@ -434,6 +436,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               input: {
                 objectName: activeObjectMetadataItem?.nameSingular || '',
                 limit: 1,
+                offset: 0,
               },
             },
           },
@@ -476,6 +479,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             type: WorkflowActionType.HTTP_REQUEST,
             settings: {
               ...BASE_STEP_DEFINITION,
+              expectedOutputSchema: {},
               input: {
                 url: '',
                 method: 'GET',

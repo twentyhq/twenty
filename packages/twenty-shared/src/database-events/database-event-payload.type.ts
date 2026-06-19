@@ -16,7 +16,8 @@ type SimplifiedFlatObjectMetadata = {
   isRemote: boolean;
   isActive: boolean;
   isSystem: boolean;
-  isUIReadOnly: boolean;
+  isUIEditable: boolean;
+  isUICreatable: boolean;
   isAuditLogged: boolean;
   isSearchable: boolean;
   duplicateCriteria: string[] | null;

@@ -1,3 +1,3 @@
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
+import { type ThemeColor } from 'twenty-ui/theme';
 
 export type GraphColor = ThemeColor | 'auto';

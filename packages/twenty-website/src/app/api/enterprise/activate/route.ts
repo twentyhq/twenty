@@ -1,4 +1,5 @@
 import { signEnterpriseKey } from '@/lib/enterprise/enterprise-jwt';
+import { getLicenseeFromStripeCustomer } from '@/lib/enterprise/stripe-customer-helpers';
 import { getStripeClient } from '@/lib/enterprise/stripe-client';
 import { NextResponse } from 'next/server';
 
@@ -59,11 +60,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const customer = session.customer;
-    const licensee =
-      customer && typeof customer !== 'string' && !customer.deleted
-        ? (customer.name ?? customer.email ?? 'Unknown')
-        : 'Unknown';
+    const licensee = getLicenseeFromStripeCustomer(session.customer);
 
     const enterpriseKey = signEnterpriseKey(subscription.id, licensee);
 

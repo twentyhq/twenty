@@ -27,6 +27,7 @@ import { isAsymmetricJwtHeader } from 'src/engine/core-modules/jwt/utils/is-asym
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { isWorkDomain } from 'src/utils/is-work-email';
 
 const APPROVED_ACCESS_DOMAIN_TOKEN_EXPIRES_IN = '7d';
@@ -65,7 +66,7 @@ export class ApprovedAccessDomainService {
       );
     }
 
-    if (to.split('@')[1] !== approvedAccessDomain.domain) {
+    if (getDomainFromEmail(to) !== approvedAccessDomain.domain) {
       throw new ApprovedAccessDomainException(
         'Approved access domain does not match email domain',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL,

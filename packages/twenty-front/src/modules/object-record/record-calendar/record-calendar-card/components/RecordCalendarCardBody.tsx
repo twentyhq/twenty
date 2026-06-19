@@ -1,3 +1,4 @@
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -17,7 +18,7 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type RecordCalendarCardBodyProps = {
   recordId: string;
@@ -64,6 +65,8 @@ export const RecordCalendarCardBody = ({
     recordCalendarCardHoverPositionComponentState,
   );
 
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+
   const handleMouseEnter = (index: number) => {
     setRecordCalendarCardHoverPosition(index);
   };
@@ -84,14 +87,16 @@ export const RecordCalendarCardBody = ({
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
                   isSystemObject: objectMetadataItem.isSystem,
+                  isFieldCustom: getIsMetadataItemCustom({
+                    applicationId:
+                      correspondingFieldDefinition.metadata.applicationId,
+                  }),
                   objectPermissions,
                   fieldMetadataItem: {
                     id: recordField.fieldMetadataItemId,
-                    isUIReadOnly:
-                      correspondingFieldDefinition.metadata.isUIReadOnly ??
-                      false,
-                    isCustom:
-                      correspondingFieldDefinition.metadata.isCustom ?? false,
+                    isUIEditable:
+                      correspondingFieldDefinition.metadata.isUIEditable ??
+                      true,
                   },
                   fieldDefinition: correspondingFieldDefinition,
                   objectPermissionsByObjectMetadataId,

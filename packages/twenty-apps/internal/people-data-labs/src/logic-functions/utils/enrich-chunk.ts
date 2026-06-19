@@ -4,6 +4,7 @@ import { buildErrorResult } from 'src/logic-functions/utils/build-error-result';
 import { buildMatchedResult } from 'src/logic-functions/utils/build-matched-result';
 import { buildNotFoundResult } from 'src/logic-functions/utils/build-not-found-result';
 import { buildSkippedResult } from 'src/logic-functions/utils/build-skipped-result';
+import { chargeMatchedEnrichments } from 'src/logic-functions/utils/charge-matched-enrichments';
 import { INTERNAL_BOOKKEEPING_FIELDS } from 'src/logic-functions/utils/internal-field-names';
 import { nowIso } from 'src/logic-functions/utils/now-iso';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
@@ -134,6 +135,14 @@ export const enrichChunk = async <TNode, TData, TParams>({
 
     return;
   }
+
+  await chargeMatchedEnrichments({
+    matchedCount: pdlEnrichmentOutcomes.filter(
+      (enrichmentOutcome) => enrichmentOutcome?.outcome === 'matched',
+    ).length,
+    costPerMatchDollars: adapter.costPerMatchDollars,
+    resourceContext: `pdl/${adapter.objectNameSingular.toLowerCase()}`,
+  });
 
   const notFoundRecordIds: string[] = [];
   const matchedRecordsToPersist: {

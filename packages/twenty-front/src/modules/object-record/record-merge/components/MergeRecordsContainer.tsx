@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';

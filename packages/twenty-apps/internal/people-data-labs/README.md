@@ -12,14 +12,21 @@ Enriches **Person** and **Company** records with [People Data Labs](https://www.
 
 ## Enrichment logic functions
 
-`enrich-person` / `enrich-company` (bulk workflow actions, for the manual record action) plus
-`enrich-person-tool` / `enrich-company-tool` (single-record AI tools) all delegate to a shared,
-trigger-agnostic core in `src/logic-functions/handlers/`:
+`enrich-companies` / `enrich-people` (bulk workflow actions, for the manual record action) and
+`enrich-company` / `enrich-person` (single-record functions exposed **both** as a workflow action
+and as an AI tool) all delegate to a shared, trigger-agnostic core in `src/logic-functions/handlers/`:
 
-- The workflow-action functions accept a **list of records** (`{ records, force? }`) and loop
-  the single-record core over each, aggregating the outcome (`total` / `matched` / `notFound` /
-  `skipped` / `errored`); a per-record failure is captured as `ERROR` without aborting the batch
-  (`src/logic-functions/utils/run-batch-enrichment.ts`). The AI tools stay single-record.
+- The bulk workflow-action functions accept a **list of records** (`{ records, overrideExistingValues? }`),
+  call the PDL **bulk** Enrichment endpoints (`/person/bulk`, `/company/enrich/bulk`), and loop the
+  single-record core over each, aggregating the outcome (`total` / `matched` / `notFound` / `skipped` /
+  `errored`); a per-record failure is captured as `ERROR` without aborting the batch
+  (`src/logic-functions/utils/run-batch-enrichment.ts`).
+- The single-record functions accept one record (`{ recordId, overrideExistingValues? }`), call the PDL
+  **single-record** Enrichment endpoints (`/person/enrich`, `/company/enrich` —
+  `src/logic-functions/utils/post-pdl-single-enrich.ts`), and return a single `EnrichResult`
+  (`src/logic-functions/utils/run-single-enrichment.ts`). They declare both a
+  `workflowActionTriggerSettings` and a `toolTriggerSettings`, so one function is usable as a workflow
+  step and as an AI tool.
 
 - Read the record, guard against re-enriching within a TTL (`pdlLastEnrichedAt`), pick a
   match identifier (person: `pdlId` → LinkedIn → email → name; company: `pdlId` → domain →
@@ -32,7 +39,24 @@ trigger-agnostic core in `src/logic-functions/handlers/`:
   (`src/logic-functions/utils/`); the option sets are the same `src/constants/*-options.ts`
   the field definitions use.
 
-Run locally: `yarn twenty dev:function:exec -n enrich-person -p '{"records":[{"id":"<id>"}]}'`.
+Run locally: `yarn twenty dev:function:exec -n enrich-people -p '{"records":[{"id":"<id>"}]}'` (bulk)
+or `yarn twenty dev:function:exec -n enrich-person -p '{"recordId":"<id>"}'` (single record).
+
+### Billing
+
+Each **successful match** is billed to the workspace in Twenty credits via
+`chargeCredits` (`twenty-sdk/billing`), mirroring PDL's own model — PDL only consumes a
+credit on a `200` match, so `not_found`, errors, and skipped records are free:
+
+- Person match: **336,000 micro-credits** ($0.336 — PDL list price $0.28 + 20% margin)
+- Company match: **120,000 micro-credits** ($0.12 — PDL list price $0.10 + 20% margin)
+
+The charge is emitted once per PDL batch call (`src/logic-functions/utils/enrich-chunk.ts`)
+with `quantity` = number of matches and `resourceContext` `pdl/person` / `pdl/company`,
+at the moment PDL returns — a record whose subsequent write fails is still billed, since the
+PDL cost was already incurred. Prices live in `src/constants/*-match-cost-dollars.ts` and
+the margin in `src/constants/billing-margin-multiplier.ts`. Billing is non-fatal: a failed
+charge never fails the enrichment.
 
 ### Seeded workflows (post-install)
 
@@ -48,15 +72,14 @@ When re-enabled, each workflow is a `MANUAL` / `BULK_RECORDS` trigger wired to a
 `LOGIC_FUNCTION` step whose `records` input is bound to the selected records
 (`{{trigger.companies}}` / `{{trigger.people}}`):
 
-- **Enrich companies** — runs `enrich-company` over the selected Companies.
-- **Enrich people** — runs `enrich-person` over the selected People.
+- **Enrich companies** — runs `enrich-companies` over the selected Companies.
+- **Enrich people** — runs `enrich-people` over the selected People.
 
 The intended seeding (`postInstallCore`) resolves each function's runtime id from its
 `universalIdentifier` via the metadata API, publishes the version
 (`activateWorkflowVersion`), and is **idempotent** (skips a workflow whose name already exists).
 
-**Deferred to a later PR:** enrichment metering/billing, and auto-enrichment
-triggers (on-create event + cron backfill).
+**Deferred to a later PR:** auto-enrichment triggers (on-create event + cron backfill).
 
 ---
 
@@ -150,7 +173,8 @@ fields.
 
 **Orchestration** (`src/logic-functions/`)
 
-1. Runs from the manual "Enrich" record action (`BULK_RECORDS`) or the single-record AI tools.
+1. Runs from the manual "Enrich" record action (`BULK_RECORDS`) or the single-record
+   `enrich-company` / `enrich-person` functions (as a workflow step or an AI tool).
 2. Calls the PDL Person / Company Enrichment API with `PDL_API_KEY`, passing a `min_likelihood`
    chosen by identifier strength (2 with a strong identifier, 6 for a weaker name-based match;
    overridable per call).

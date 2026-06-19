@@ -9,22 +9,28 @@ title: Éditeur de Blocs
 Utilise un éditeur de texte riche basé sur des blocs de [BlockNote](https://www.blocknotejs.org/) pour permettre aux utilisateurs de modifier et de visualiser des blocs de contenu.
 
 <Tabs>
-  <Tab title="Utilisation">
-    ```jsx
-    import { useBlockNote } from "@blocknote/react";
-    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+<Tab title="Utilisation">
 
-    export const MyComponent = () => {
-      const BlockNoteEditor = useBlockNote();
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-      return <BlockEditor editor={BlockNoteEditor} />;
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
 
-  <Tab title="Propriétés">
-    | Propriétés | Type              | Description                                          |
-    | ---------- | ----------------- | ---------------------------------------------------- |
-    | éditeur    | `BlockNoteEditor` | L'instance de l'éditeur de blocs ou sa configuration |
-  </Tab>
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="Propriétés">
+
+
+| Propriétés | Type              | Description                                          |
+| ---------- | ----------------- | ---------------------------------------------------- |
+| éditeur    | `BlockNoteEditor` | L'instance de l'éditeur de blocs ou sa configuration |
+
+
+
+</Tab>
 </Tabs>

@@ -1,157 +1,145 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { filterOutInvalidTimelineActivities } from '@/activities/timeline-activities/utils/filterOutInvalidTimelineActivities';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
-const noteObjectMetadataItem = {
-  nameSingular: CoreObjectNameSingular.Note,
-  namePlural: 'notes',
+const mainObjectMetadataItem = {
+  nameSingular: 'company',
+  namePlural: 'companies',
   fields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
   readableFields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
   updatableFields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
 } as EnrichedObjectMetadataItem;
 
+const noteObjectMetadataItem = {
+  nameSingular: 'note',
+  namePlural: 'notes',
+  readableFields: [{ name: 'title' }, { name: 'body' }],
+} as EnrichedObjectMetadataItem;
+
+const filter = (events: TimelineActivity[]) =>
+  filterOutInvalidTimelineActivities(events, 'company', [
+    mainObjectMetadataItem,
+    noteObjectMetadataItem,
+  ]);
+
 describe('filterOutInvalidTimelineActivities', () => {
-  it('should filter out TimelineActivities with deleted fields from the properties diff', () => {
+  it('keeps update diffs as-is and trims fields not in the readable fields', () => {
     const events = [
       {
         id: '1',
-        name: 'event1',
+        name: 'company.updated',
         properties: {
           diff: {
             field1: { before: 'value1', after: 'value2' },
             field2: { before: 'value3', after: 'value4' },
-            field3: { before: 'value5', after: 'value6' },
           },
         },
       },
       {
         id: '2',
-        name: 'event2',
+        name: 'company.updated',
         properties: {
           diff: {
             field1: { before: 'value7', after: 'value8' },
-            field2: { before: 'value9', after: 'value10' },
             field4: { before: 'value11', after: 'value12' },
           },
         },
       },
     ] as TimelineActivity[];
 
-    const mainObjectMetadataItem = {
-      nameSingular: 'objectNameSingular',
-      namePlural: 'objectNamePlural',
-      fields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
-      readableFields: [
-        { name: 'field1' },
-        { name: 'field2' },
-        { name: 'field3' },
-      ],
-      updatableFields: [
-        { name: 'field1' },
-        { name: 'field2' },
-        { name: 'field3' },
-      ],
-    } as EnrichedObjectMetadataItem;
-
-    const filteredEvents = filterOutInvalidTimelineActivities(
-      events,
-      'objectNameSingular',
-      [mainObjectMetadataItem, noteObjectMetadataItem],
-    );
-
-    expect(filteredEvents).toEqual([
+    expect(filter(events)).toEqual([
       {
         id: '1',
-        name: 'event1',
+        name: 'company.updated',
         properties: {
           diff: {
             field1: { before: 'value1', after: 'value2' },
             field2: { before: 'value3', after: 'value4' },
-            field3: { before: 'value5', after: 'value6' },
           },
         },
       },
       {
         id: '2',
-        name: 'event2',
+        name: 'company.updated',
         properties: {
-          diff: {
-            field1: { before: 'value7', after: 'value8' },
-            field2: { before: 'value9', after: 'value10' },
-          },
+          diff: { field1: { before: 'value7', after: 'value8' } },
         },
       },
     ]);
   });
 
-  it('should return an empty array if all TimelineActivities have deleted fields in the properties diff', () => {
+  it('drops update events whose diff has no readable fields', () => {
     const events = [
       {
         id: '1',
-        name: 'event1',
+        name: 'company.updated',
         properties: {
-          diff: {
-            field3: { before: 'value5', after: 'value6' },
-          },
-        },
-      },
-      {
-        id: '2',
-        name: 'event2',
-        properties: {
-          diff: {
-            field4: { before: 'value11', after: 'value12' },
-          },
+          diff: { field4: { before: 'value11', after: 'value12' } },
         },
       },
     ] as TimelineActivity[];
 
-    const mainObjectMetadataItem = {
-      nameSingular: 'objectNameSingular',
-      namePlural: 'objectNamePlural',
-      fields: [{ name: 'field1' }, { name: 'field2' }],
-      readableFields: [{ name: 'field1' }, { name: 'field2' }],
-      updatableFields: [{ name: 'field1' }, { name: 'field2' }],
-    } as EnrichedObjectMetadataItem;
-
-    const filteredEvents = filterOutInvalidTimelineActivities(
-      events,
-      'objectNameSingular',
-      [mainObjectMetadataItem, noteObjectMetadataItem],
-    );
-
-    expect(filteredEvents).toEqual([]);
+    expect(filter(events)).toEqual([]);
   });
 
-  it('should return the same TimelineActivities if there are no properties diffs', () => {
+  it('drops update events that have no diff', () => {
+    const events = [
+      { id: '1', name: 'company.updated', properties: {} },
+    ] as TimelineActivity[];
+
+    expect(filter(events)).toEqual([]);
+  });
+
+  it('keeps non-update events that have no diff', () => {
+    const events = [
+      { id: '1', name: 'company.created', properties: {} },
+      { id: '2', name: 'company.deleted', properties: {} },
+    ] as TimelineActivity[];
+
+    expect(filter(events)).toEqual(events);
+  });
+
+  it('keeps linked note/task update events even without a diff', () => {
+    const events = [
+      { id: '1', name: 'linked-task.updated', properties: {} },
+      { id: '2', name: 'linked-note.updated', properties: {} },
+    ] as TimelineActivity[];
+
+    expect(filter(events)).toEqual(events);
+  });
+
+  it('validates linked note diffs against the note readable fields', () => {
     const events = [
       {
         id: '1',
-        name: 'event1',
-        properties: {},
-      },
-      {
-        id: '2',
-        name: 'event2',
-        properties: {},
+        name: 'linked-note.updated',
+        properties: {
+          diff: {
+            title: { before: 'a', after: 'b' },
+            field1: { before: 'c', after: 'd' },
+          },
+        },
       },
     ] as TimelineActivity[];
 
-    const mainObjectMetadataItem = {
-      nameSingular: 'objectNameSingular',
-      namePlural: 'objectNamePlural',
-      fields: [{ name: 'field1' }, { name: 'field2' }],
-      readableFields: [{ name: 'field1' }, { name: 'field2' }],
-      updatableFields: [{ name: 'field1' }, { name: 'field2' }],
-    } as EnrichedObjectMetadataItem;
+    expect(filter(events)).toEqual([
+      {
+        id: '1',
+        name: 'linked-note.updated',
+        properties: { diff: { title: { before: 'a', after: 'b' } } },
+      },
+    ]);
+  });
 
-    const filteredEvents = filterOutInvalidTimelineActivities(
-      events,
-      'objectNameSingular',
-      [mainObjectMetadataItem, noteObjectMetadataItem],
-    );
+  it('drops linked note updates whose diff has no readable note fields', () => {
+    const events = [
+      {
+        id: '1',
+        name: 'linked-note.updated',
+        properties: { diff: { field1: { before: 'c', after: 'd' } } },
+      },
+    ] as TimelineActivity[];
 
-    expect(filteredEvents).toEqual(events);
+    expect(filter(events)).toEqual([]);
   });
 });

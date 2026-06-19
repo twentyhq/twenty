@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { Temporal } from 'temporal-polyfill';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const INITIAL_DATE = Temporal.ZonedDateTime.from(
   '2023-01-01T02:00:00+00:00[UTC]',
@@ -31,7 +31,16 @@ const meta: Meta<typeof DateTimePicker> = {
 export default meta;
 type Story = StoryObj<typeof DateTimePicker>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByRole(
+      'button',
+      { name: 'Select month and year' },
+      { timeout: 10000 },
+    );
+  },
+};
 
 export const WithOpenMonthSelect: Story = {
   play: async ({ canvasElement }) => {

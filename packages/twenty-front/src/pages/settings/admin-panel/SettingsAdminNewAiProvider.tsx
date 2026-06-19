@@ -7,8 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconPlus, Info } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { Info } from 'twenty-ui/feedback';
+import { IconPlus } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';

@@ -4,6 +4,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
+import { SettingsObjectNewFieldHeaderIcon } from '@/settings/data-model/fields/components/SettingsObjectNewFieldHeaderIcon';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
@@ -21,9 +22,10 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { H2Title } from 'twenty-ui/typography';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -182,6 +184,12 @@ export const SettingsObjectNewFieldConfigure = () => {
     >
       <SettingsPageLayout
         title={activeObjectMetadataItem.labelPlural}
+        icon={
+          <SettingsObjectNewFieldHeaderIcon
+            objectMetadataItem={activeObjectMetadataItem}
+          />
+        }
+        titleColor={themeCssVariables.font.color.tertiary}
         links={[
           {
             children: t`Workspace`,

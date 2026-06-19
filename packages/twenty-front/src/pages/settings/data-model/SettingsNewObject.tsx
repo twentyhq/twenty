@@ -18,8 +18,8 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsNewObject = () => {

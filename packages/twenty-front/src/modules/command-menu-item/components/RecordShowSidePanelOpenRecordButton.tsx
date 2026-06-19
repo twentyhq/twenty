@@ -23,9 +23,9 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBrowserMaximize } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { getOsControlSymbol } from 'twenty-ui-deprecated/utilities';
+import { IconBrowserMaximize } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type RecordShowSidePanelOpenRecordButtonProps = {

@@ -68,7 +68,7 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   }),
 }));
 
-jest.mock('twenty-ui-deprecated/display', () => ({
+jest.mock('twenty-ui/icon', () => ({
   useIcons: () => ({
     getIcon: mockGetIcon,
   }),
@@ -93,11 +93,18 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
 }));
 
 const renderUseFrontComponentExecutionContext = (
-  params: Parameters<typeof useFrontComponentExecutionContext>[0],
+  params: Omit<
+    Parameters<typeof useFrontComponentExecutionContext>[0],
+    'colorScheme'
+  > & { colorScheme?: 'light' | 'dark' },
 ) =>
-  renderHook(() => useFrontComponentExecutionContext(params), {
-    wrapper: ({ children }) => I18nProvider({ i18n, children }),
-  });
+  renderHook(
+    () =>
+      useFrontComponentExecutionContext({ colorScheme: 'light', ...params }),
+    {
+      wrapper: ({ children }) => I18nProvider({ i18n, children }),
+    },
+  );
 
 const FRONT_COMPONENT_ID = 'fc-test-id';
 const COMMAND_MENU_ITEM_ID = 'cmd-item-1';
@@ -120,6 +127,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: 'record-456',
         selectedRecordIds: ['record-456'],
+        colorScheme: 'light',
       });
     });
 
@@ -134,6 +142,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: null,
         selectedRecordIds: ['record-1', 'record-2', 'record-3'],
+        colorScheme: 'light',
       });
     });
 
@@ -164,6 +173,15 @@ describe('useFrontComponentExecutionContext', () => {
 
       expect(result.current.executionContext.recordId).toBeNull();
       expect(result.current.executionContext.selectedRecordIds).toEqual([]);
+    });
+
+    it('should expose the provided colorScheme', () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        colorScheme: 'dark',
+      });
+
+      expect(result.current.executionContext.colorScheme).toBe('dark');
     });
   });
 

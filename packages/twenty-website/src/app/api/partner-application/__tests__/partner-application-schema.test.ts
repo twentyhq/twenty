@@ -7,6 +7,10 @@ const minimalValid = {
   name: 'Ada Lovelace',
   email: 'ada@example.com',
   company: 'Analytical Engines Ltd',
+  website: 'https://analyticalengines.example',
+  city: 'London',
+  hourlyRate: 150,
+  projectBudgetMin: 5000,
 };
 
 const fullValid = {
@@ -108,7 +112,6 @@ describe('buildLogicFunctionPayload', () => {
     expect('country' in payload).toBe(false);
     expect('languages' in payload).toBe(false);
     expect('partnerScope' in payload).toBe(false);
-    expect('domainName' in payload).toBe(false);
   });
 
   it('forwards website as domainName when provided', () => {

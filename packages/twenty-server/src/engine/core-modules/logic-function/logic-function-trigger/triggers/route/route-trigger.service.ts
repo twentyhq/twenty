@@ -163,14 +163,16 @@ export class RouteTriggerService {
       }
     }
 
-    if (
-      error instanceof LogicFunctionException &&
-      error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
-    ) {
-      return RouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
+    if (error instanceof LogicFunctionException) {
+      switch (error.code) {
+        case LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
+          return RouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
+        case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
+          return RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION;
+      }
     }
 
-    return RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR;
+    return RouteTriggerExceptionCode.ROUTE_TRIGGER_PLATFORM_ERROR;
   }
 
   async handle({
@@ -249,7 +251,7 @@ export class RouteTriggerService {
     if (result.error) {
       throw new RouteTriggerException(
         result.error.errorMessage,
-        RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR,
+        RouteTriggerExceptionCode.ROUTE_TRIGGER_USER_UNCAUGHT_ERROR,
       );
     }
 

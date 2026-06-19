@@ -1,5 +1,6 @@
 ---
 title: 아이콘들
+icon: 아이콘
 ---
 
 <Frame>
@@ -13,35 +14,44 @@ title: 아이콘들
 앱 전반에 걸쳐 React에 타블러 아이콘을 사용합니다.
 
 <Tabs>
-  <Tab title="설치">
-    <br />
 
-    ```
-    yarn add @tabler/icons-react
-    ```
-  </Tab>
+<Tab title="설치">
+<br />
 
-  <Tab title="프로퍼티">
-    각 아이콘을 컴포넌트로 가져올 수 있습니다. 다음은 예시입니다:
+```
+yarn add @tabler/icons-react
+```
 
-    <br />
+</Tab>
 
-    ```jsx
-    import { IconArrowLeft } from "@tabler/icons-react";
+<Tab title="프로퍼티">
 
-    export const MyComponent = () => {
-      return <IconArrowLeft color="red" size={48} />;
-    };
-    ```
-  </Tab>
+각 아이콘을 컴포넌트로 가져올 수 있습니다. 다음은 예시입니다:
+<br />
 
-  <Tab title="프로퍼티">
-    | 프로퍼티 | 유형  | 설명                 | 기본값          |
-    | ---- | --- | ------------------ | ------------ |
-    | 크기   | 숫자  | 픽셀 단위의 아이콘 높이와 너비  | 24           |
-    | 색상   | 문자열 | 아이콘의 색상            | currentColor |
-    | 스트로크 | 숫자  | 픽셀 단위의 아이콘 스트로크 너비 | 2            |
-  </Tab>
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="프로퍼티">
+
+
+| 프로퍼티 | 유형  | 설명                 | 기본값          |
+| ---- | --- | ------------------ | ------------ |
+| 크기   | 숫자  | 픽셀 단위의 아이콘 높이와 너비  | 24           |
+| 색상   | 문자열 | 아이콘의 색상            | currentColor |
+| 스트로크 | 숫자  | 픽셀 단위의 아이콘 스트로크 너비 | 2            |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## 커스텀 아이콘
@@ -53,20 +63,29 @@ title: 아이콘들
 주소록 아이콘을 표시합니다.
 
 <Tabs>
-  <Tab title="사용법">
-    ```jsx
-    import { IconAddressBook } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return <IconAddressBook size={24} stroke={2} />;
-    };
-    ```
-  </Tab>
+<Tab title="사용법">
 
-  <Tab title="프로퍼티">
-    | 프로퍼티 | 유형 | 설명                 | 기본값 |
-    | ---- | -- | ------------------ | --- |
-    | 크기   | 숫자 | 픽셀 단위의 아이콘 높이와 너비  | 24  |
-    | 스트로크 | 숫자 | 픽셀 단위의 아이콘 스트로크 너비 | 2   |
-  </Tab>
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="프로퍼티">
+
+
+| 프로퍼티 | 유형 | 설명                 | 기본값 |
+| ---- | -- | ------------------ | --- |
+| 크기   | 숫자 | 픽셀 단위의 아이콘 높이와 너비  | 24  |
+| 스트로크 | 숫자 | 픽셀 단위의 아이콘 스트로크 너비 | 2   |
+
+
+
+</Tab>
+
 </Tabs>

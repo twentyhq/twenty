@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconCheck, IconX } from 'twenty-ui-deprecated/display';
+import { IconCheck, IconX } from 'twenty-ui/icon';
 const iconSizeSm = 14;
 
 const StyledBooleanFieldValue = styled.div`

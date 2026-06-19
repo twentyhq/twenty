@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof TitleInput> = {
   title: 'UI/Input/TitleInput',

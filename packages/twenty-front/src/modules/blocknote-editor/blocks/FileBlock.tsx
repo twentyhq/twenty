@@ -3,14 +3,14 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useRef } from 'react';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { FileIcon } from '@/file/components/FileIcon';
 import { t } from '@lingui/core/macro';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui-deprecated/input';
+import { Button } from 'twenty-ui/input';
 
 const StyledFileInput = styled.input`
   display: none;
@@ -93,6 +93,7 @@ export const FileBlock = createReactBlockSpec(
           <StyledFileLine>
             <FileIcon
               fileCategory={block.props.fileCategory as AttachmentFileCategory}
+              thumbnailUrl={safeUrl}
             />
             <StyledLink
               href={safeUrl}

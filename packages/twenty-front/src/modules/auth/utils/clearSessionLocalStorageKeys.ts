@@ -5,6 +5,10 @@ const SESSION_KEYS_TO_CLEAR = [
   'lastVisitedViewPerObjectMetadataItemState',
   'ai/agentChatDraftsByThreadIdState',
   'locale',
+  'currentUserState',
+  'currentWorkspaceState',
+  'currentWorkspaceMemberState',
+  'currentUserWorkspaceState',
 ];
 
 export const clearSessionLocalStorageKeys = () => {

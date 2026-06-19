@@ -6,7 +6,7 @@ import { isNumber } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator } from 'twenty-ui-deprecated/display';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -33,7 +33,7 @@ import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-a
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts';
 import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.light};
@@ -66,6 +66,7 @@ type FindRecordsFormData = {
   filter?: FindRecordsActionFilter;
   orderBy?: FindRecordsActionOrderBy;
   limit?: number;
+  offset?: number;
 };
 
 export type FindRecordsActionFilter = {
@@ -100,11 +101,13 @@ export const WorkflowEditActionFindRecords = ({
       action.settings.input.limit > QUERY_MAX_RECORDS
         ? QUERY_MAX_RECORDS
         : (action.settings.input.limit ?? 1),
+    offset: Math.max(0, Math.floor(action.settings.input.offset ?? 0)),
     filter: action.settings.input.filter as FindRecordsActionFilter,
     orderBy: action.settings.input.orderBy as FindRecordsActionOrderBy,
   }));
 
   const [limitError, setLimitError] = useState<string | undefined>(undefined);
+  const [offsetError, setOffsetError] = useState<string | undefined>(undefined);
   const isFormDisabled = actionOptions.readonly ?? false;
   const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectNameSingular}`;
 
@@ -140,6 +143,7 @@ export const WorkflowEditActionFindRecords = ({
       const {
         objectNameSingular: updatedObjectName,
         limit: updatedLimit,
+        offset: updatedOffset,
         filter: updatedFilter,
         orderBy: updatedOrderBy,
       } = formData;
@@ -151,6 +155,7 @@ export const WorkflowEditActionFindRecords = ({
           input: {
             objectName: updatedObjectName,
             limit: updatedLimit ?? 1,
+            offset: Math.max(0, Math.floor(updatedOffset ?? 0)),
             filter: updatedFilter,
             orderBy: updatedOrderBy as Record<string, any[]> | undefined,
           },
@@ -174,6 +179,7 @@ export const WorkflowEditActionFindRecords = ({
     const newFormData: FindRecordsFormData = {
       objectNameSingular: value,
       limit: 1,
+      offset: 0,
     };
 
     setFormData(newFormData);
@@ -328,6 +334,38 @@ export const WorkflowEditActionFindRecords = ({
             const newFormData: FindRecordsFormData = {
               ...formData,
               limit: cappedLimit,
+            };
+
+            setFormData(newFormData);
+
+            saveAction(newFormData);
+          }}
+        />
+
+        <FormNumberFieldInput
+          label={t`Offset`}
+          defaultValue={formData.offset}
+          placeholder={t`Enter offset`}
+          readonly={isFormDisabled}
+          hint={t`Number of records to skip. Combine with Limit to page through results.`}
+          error={offsetError}
+          onChange={(offset) => {
+            if (isFormDisabled === true || !isNumber(offset)) {
+              return;
+            }
+
+            const normalizedOffset = Math.floor(offset);
+
+            if (normalizedOffset < 0) {
+              setOffsetError(t`Offset cannot be negative.`);
+              return;
+            }
+
+            setOffsetError(undefined);
+
+            const newFormData: FindRecordsFormData = {
+              ...formData,
+              offset: normalizedOffset,
             };
 
             setFormData(newFormData);

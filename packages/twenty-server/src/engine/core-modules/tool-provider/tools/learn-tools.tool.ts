@@ -45,6 +45,7 @@ export type LearnToolsResultEntry = {
 export type LearnToolsResult = {
   tools: LearnToolsResultEntry[];
   notFound: string[];
+  suggestions?: Record<string, string[]>;
   message: string;
 };
 
@@ -69,21 +70,49 @@ export const createLearnToolsTool = (
       aspects,
     );
 
-    const foundNames = new Set(toolInfos.map((t) => t.name));
-    const notFound = toolNames.filter((name) => !foundNames.has(name));
+    const foundNames = new Set(toolInfos.map((toolInfo) => toolInfo.name));
+    // Base notFound on allowedNames so excluded tools aren't surfaced as
+    // missing (which would also trigger misleading suggestions).
+    const notFound = allowedNames.filter((name) => !foundNames.has(name));
+
+    const suggestions: Record<string, string[]> =
+      notFound.length > 0
+        ? await toolRegistry.suggestSimilarToolNames(notFound, context)
+        : {};
+
+    const messageParts: string[] = [];
+
+    if (toolInfos.length > 0) {
+      const learnedNames = toolInfos.map((toolInfo) => toolInfo.name);
+      const toolNoun = learnedNames.length === 1 ? 'tool' : 'tools';
+
+      messageParts.push(
+        `Learned ${learnedNames.length} ${toolNoun}: ${learnedNames.join(', ')}`,
+      );
+    }
 
     if (notFound.length > 0) {
-      return {
-        tools: toolInfos,
-        notFound,
-        message: `Learned ${toolInfos.length} tool(s). Could not find: ${notFound.join(', ')}.`,
-      };
+      const notFoundDescription = notFound
+        .map((name) => {
+          const similarToolNames = suggestions[name];
+
+          return similarToolNames?.length
+            ? `${name} (did you mean: ${similarToolNames.join(', ')}?)`
+            : name;
+        })
+        .join('; ');
+
+      messageParts.push(`Could not find: ${notFoundDescription}`);
     }
 
     return {
       tools: toolInfos,
-      notFound: [],
-      message: `Learned ${toolInfos.length} tool(s): ${toolInfos.map((t) => t.name).join(', ')}.`,
+      notFound,
+      ...(Object.keys(suggestions).length > 0 && { suggestions }),
+      message:
+        messageParts.length > 0
+          ? `${messageParts.join('. ')}.`
+          : 'No matching tools found.',
     };
   },
 });

@@ -43,6 +43,33 @@ yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 Это отличается от `yarn twenty docker:logs`, который показывает логи контейнера Docker. `yarn twenty dev:function:logs` показывает журналы выполнения функций вашего приложения с сервера Twenty.
 </Note>
 
+## Генерация типизированного клиента (`yarn twenty dev:generate-client`)
+
+Повторно сгенерируйте типизированный API‑клиент (`twenty-client-sdk`) из схемы активного удалённого экземпляра, не выполняя сборку или синхронизацию приложения. Используйте это, чтобы получить типизированного клиента в любом проекте — например, в backend‑сервисе в отдельном репозитории — который взаимодействует с вашим экземпляром Twenty:
+
+```bash filename="Terminal"
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
+```
+
+Затем импортируйте клиента в свой код:
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+Повторно запустите команду при каждом изменении вашей модели данных, чтобы обновить сгенерированные типы.
+
+<Note>
+Клиент генерируется внутри `node_modules`, поэтому он не добавляется в ваш репозиторий вместе с кодом. Запускайте `yarn twenty dev:generate-client` после каждой установки (например, в скрипте `postinstall` или в CI).
+</Note>
+
 ## Удаление приложения (`yarn twenty app:uninstall`)
 
 Удалите свое приложение из активного рабочего пространства:

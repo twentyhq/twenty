@@ -46,11 +46,7 @@ export const addFlatEntityToFlatEntityMapsThroughMutationOrThrow = <
       ];
 
     if (isDefined(existingUniversalIdentifiers)) {
-      if (
-        !existingUniversalIdentifiers.includes(flatEntity.universalIdentifier)
-      ) {
-        existingUniversalIdentifiers.push(flatEntity.universalIdentifier);
-      }
+      existingUniversalIdentifiers.push(flatEntity.universalIdentifier);
     } else {
       flatEntityMapsToMutate.universalIdentifiersByApplicationId[
         flatEntity.applicationId

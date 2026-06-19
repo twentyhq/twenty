@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { CommandLogger } from 'src/database/commands/logger';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
+import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
 
 type RawUpgradeCommandOptions = {
@@ -32,6 +33,7 @@ export class UpgradeCommand extends CommandRunner {
   constructor(
     protected readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     protected readonly upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
+    protected readonly upgradeStatusService: UpgradeStatusService,
   ) {
     super();
     this.logger = new CommandLogger({
@@ -190,6 +192,23 @@ export class UpgradeCommand extends CommandRunner {
         }),
       );
       throw error;
+    } finally {
+      await this.safeInvalidateUpgradeStatusCache();
+    }
+  }
+
+  private async safeInvalidateUpgradeStatusCache(): Promise<void> {
+    try {
+      await this.upgradeStatusService.invalidateInstanceAndAllWorkspacesStatus();
+    } catch (error) {
+      this.logger.error(
+        formatUpgradeLog({
+          humanMessage: `Failed to invalidate upgrade-status cache: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+          event: 'cache.invalidate.failed',
+        }),
+      );
     }
   }
 }

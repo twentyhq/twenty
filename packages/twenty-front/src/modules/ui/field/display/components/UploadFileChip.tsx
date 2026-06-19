@@ -1,11 +1,8 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { IconArrowUp } from 'twenty-ui-deprecated/display';
-import { Loader } from 'twenty-ui-deprecated/feedback';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconArrowUp } from 'twenty-ui/icon';
+import { Loader } from 'twenty-ui/feedback';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;

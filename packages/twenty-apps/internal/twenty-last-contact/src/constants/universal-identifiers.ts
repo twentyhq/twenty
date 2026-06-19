@@ -1,0 +1,19 @@
+export const APP_DISPLAY_NAME = 'Last contact';
+export const APP_DESCRIPTION =
+  'Always know when you last talked to anyone. Adds a Last Contact field to People, kept up to date automatically from your synced emails and meetings.';
+export const APPLICATION_UNIVERSAL_IDENTIFIER = '66a504cc-0a75-410e-a43f-cdeae1db1522';
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER = '34187abe-1b98-4153-85cd-4808e0aebf30';
+export const LAST_CONTACT_AT_FIELD_UNIVERSAL_IDENTIFIER =
+  '4e0fd7ff-0bbc-47b2-baab-5fe2c0d12557';
+export const LAST_CONTACT_AT_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
+  '8fc4d931-426c-413b-bd7e-0c10d1ad8d0a';
+export const EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
+  '87c8926b-15e3-43ed-a303-60f6d072f351';
+export const CALENDAR_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
+  'ff4e9fc0-a5d3-4a3d-87f9-81c23598589e';
+export const BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
+  'c94f671f-b3fa-47a2-8de6-dde94d13f8d1';
+export const CALENDAR_EVENT_STARTED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
+  'c56013d7-208b-46e2-a91f-27f481645591';
+export const CALENDAR_CRON_INTERVAL_MINUTES_VARIABLE_UNIVERSAL_IDENTIFIER =
+  '71cb72d1-9b5d-40fb-82d0-079495af32b1';

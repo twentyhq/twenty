@@ -7,12 +7,9 @@ import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useContext } from 'react';
-import { IconChevronDown } from 'twenty-ui-deprecated/display';
+import { IconChevronDown } from 'twenty-ui/icon';
 import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledDropdownButtonContainer = styled.div`
   align-items: center;
   border-right: 1px solid ${themeCssVariables.border.color.medium};

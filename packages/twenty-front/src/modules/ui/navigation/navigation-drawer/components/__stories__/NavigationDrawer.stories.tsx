@@ -33,9 +33,9 @@ import {
   IconUser,
   IconUserCircle,
   IconUsers,
-} from 'twenty-ui-deprecated/display';
-import { AdvancedSettingsToggle } from 'twenty-ui-deprecated/navigation';
-import { getOsControlSymbol } from 'twenty-ui-deprecated/utilities';
+} from 'twenty-ui/icon';
+import { AdvancedSettingsToggle } from 'twenty-ui/input';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';

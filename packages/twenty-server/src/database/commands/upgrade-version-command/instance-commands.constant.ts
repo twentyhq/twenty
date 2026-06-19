@@ -18,6 +18,19 @@ import { DropWorkspaceVersionColumnFastInstanceCommand } from 'src/database/comm
 import { AddIsPreInstalledToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1776886452831-add-is-pre-installed-to-application-registration';
 import { AddProviderExecutedToAgentMessagePartFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1777012800000-add-provider-executed-to-agent-message-part';
 import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-slow-1795000002000-backfill-page-layout-widget-position';
+import { DropEmailingDomainDriverColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-11/2-11-instance-command-fast-1780926908000-drop-emailing-domain-driver-column';
+import { DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1780579070012-drop-is-custom-from-object-and-field-metadata';
+import { ViewOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1781114009075-view-overridable-entity';
+import { AddEmailingDomainUnsubscribeHostFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1780088214774-add-emailing-domain-unsubscribe-host';
+import { AddArchivedAtToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781171103000-add-archived-at-to-connected-account';
+import { CreateMessageSuppressionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781250000000-create-message-suppression-core-table';
+import { CommandMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781253016028-command-menu-item-overridable-entity';
+import { CreateUnsubscribeTopicCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781260000000-create-unsubscribe-topic-core-table';
+import { RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781277453604-rename-is-ui-read-only-to-is-ui-editable';
+import { BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-slow-1781277480000-backfill-non-ui-creatable-standard-system-objects';
+import { SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-instance-command-slow-1781515653781-set-table-widget-views-visibility-to-workspace';
+import { AddIsSystemSideEffectFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1781600000000-add-is-system-side-effect';
+import { BackfillConnectionSecuritySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-slow-1781461753981-backfill-connection-security';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
@@ -59,9 +72,8 @@ import { EmailingDomainTenantStatusAndGlobalUniquenessFastInstanceCommand } from
 import { AddLogicFunctionExecutionModeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799000030000-add-logic-function-execution-mode';
 import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1798400000000-encrypt-non-secret-application-variable';
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
-import { DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1780579070012-drop-is-custom-from-object-and-field-metadata';
-import { DropEmailingDomainDriverColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-11/2-11-instance-command-fast-1780926908000-drop-emailing-domain-driver-column';
-import { ViewOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1781114009075-view-overridable-entity';
+import { AddHasPaymentMethodToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1781280240009-add-has-payment-method-to-billing-customer';
+import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -125,5 +137,17 @@ export const INSTANCE_COMMANDS = [
   EncryptNonSecretApplicationVariableSlowInstanceCommand,
   DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand,
   DropEmailingDomainDriverColumnFastInstanceCommand,
+  AddHasPaymentMethodToBillingCustomerFastInstanceCommand,
+  AddEmailingDomainUnsubscribeHostFastInstanceCommand,
   ViewOverridableEntityFastInstanceCommand,
+  CreateMessageSuppressionCoreTableFastInstanceCommand,
+  CreateUnsubscribeTopicCoreTableFastInstanceCommand,
+  AddArchivedAtToConnectedAccountFastInstanceCommand,
+  RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand,
+  BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand,
+  CommandMenuItemOverridableEntityFastInstanceCommand,
+  SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand,
+  AddIsSystemSideEffectFastInstanceCommand,
+  BackfillConnectionSecuritySlowInstanceCommand,
+  AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand,
 ];

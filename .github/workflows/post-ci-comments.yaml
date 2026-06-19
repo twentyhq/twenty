@@ -61,18 +61,28 @@ jobs:
             core.setOutput('has_pr', 'true');
             core.info(`PR #${prNumber}, Run ID: ${runId}`);
 
+      - name: Mint ci-privileged dispatch token
+        id: app-token
+        if: steps.pr-info.outputs.has_pr == 'true'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-privileged
+          permission-actions: write
+
       - name: Dispatch to ci-privileged
         if: steps.pr-info.outputs.has_pr == 'true'
         env:
-          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ steps.pr-info.outputs.pr_number }}
           RUN_ID: ${{ steps.pr-info.outputs.run_id }}
           REPOSITORY: ${{ github.repository }}
           BRANCH_STATE: ${{ github.event.workflow_run.head_branch }}
         run: |
-          gh api repos/twentyhq/ci-privileged/dispatches \
-            -f event_type=breaking-changes-report \
-            -f "client_payload[pr_number]=$PR_NUMBER" \
-            -f "client_payload[run_id]=$RUN_ID" \
-            -f "client_payload[repo]=$REPOSITORY" \
-            -f "client_payload[branch_state]=$BRANCH_STATE"
+          gh workflow run post-breaking-changes-comment.yaml --repo twentyhq/ci-privileged --ref main \
+            -f pr_number="$PR_NUMBER" \
+            -f run_id="$RUN_ID" \
+            -f repo="$REPOSITORY" \
+            -f branch_state="$BRANCH_STATE"

@@ -1,6 +1,5 @@
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 
 export const fromFlatFieldMetadataToFieldMetadataDto = (
   flatFieldMetadata: FlatFieldMetadata,
@@ -25,7 +24,7 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     isActive,
     isLabelSyncedWithName,
     isSystem,
-    isUIReadOnly,
+    isUIEditable,
     options,
     morphId,
     applicationId,
@@ -41,10 +40,10 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     workspaceId,
     defaultValue,
     isActive,
-    isCustom: !belongsToTwentyStandardApp(flatFieldMetadata),
     isLabelSyncedWithName,
     isSystem,
-    isUIReadOnly,
+    isUIEditable,
+    isUIReadOnly: !isUIEditable,
     options,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),

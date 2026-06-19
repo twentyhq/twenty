@@ -29,11 +29,12 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
-import { WorkspaceBillingSubscriptionCacheService } from 'src/engine/core-modules/billing/services/workspace-billing-subscription-cache.service';
+import { WorkspaceCurrentBillingSubscriptionCacheService } from 'src/engine/core-modules/billing/services/workspace-current-billing-subscription-cache.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
@@ -89,12 +90,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingUpdateSubscriptionPriceCommand,
     BillingSyncPlansDataCommand,
     BillingUsageService,
+    BillingUsageCacheService,
     BillingUsageCapService,
     BillingPriceService,
     BillingCreditRolloverService,
     ResourceCreditService,
     BillingGaugeService,
-    WorkspaceBillingSubscriptionCacheService,
+    WorkspaceCurrentBillingSubscriptionCacheService,
     provideWorkspaceScopedRepository(BillingEntitlementEntity),
     provideWorkspaceScopedRepository(BillingCustomerEntity),
     provideWorkspaceScopedRepository(BillingSubscriptionEntity),
@@ -107,6 +109,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingPortalWorkspaceService,
     BillingService,
     BillingUsageService,
+    BillingUsageCacheService,
     BillingUsageCapService,
     BillingCreditRolloverService,
     ResourceCreditService,

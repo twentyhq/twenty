@@ -1,12 +1,14 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { WorkflowActionType } from 'twenty-shared/workflow';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
-import {
-  type WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
 jest.mock(
@@ -44,9 +46,13 @@ const buildSendEmailStep = (input: Record<string, unknown>): WorkflowAction =>
     settings: { ...baseSettings, input },
   }) as WorkflowAction;
 
+const WORKSPACE_MEMBER_ID = '20202020-2222-4222-8222-222222222222';
+
 describe('SendEmailWorkflowAction', () => {
   let action: SendEmailWorkflowAction;
   let mockSendEmailTool: jest.Mocked<Pick<SendEmailTool, 'execute'>>;
+  let connectedAccountRepository: { findOne: jest.Mock };
+  let getRepository: jest.Mock;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -57,6 +63,8 @@ describe('SendEmailWorkflowAction', () => {
         error: undefined,
       }),
     };
+    connectedAccountRepository = { findOne: jest.fn() };
+    getRepository = jest.fn();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -65,6 +73,21 @@ describe('SendEmailWorkflowAction', () => {
         {
           provide: WorkflowRunStepLogWorkspaceService,
           useValue: { setStepLog: jest.fn() },
+        },
+        {
+          provide: GlobalWorkspaceOrmManager,
+          useValue: {
+            executeInWorkspaceContext: jest.fn((callback) => callback()),
+            getRepository,
+          },
+        },
+        {
+          provide: getRepositoryToken(ConnectedAccountEntity),
+          useValue: connectedAccountRepository,
+        },
+        {
+          provide: getRepositoryToken(UserWorkspaceEntity),
+          useValue: { findOne: jest.fn() },
         },
       ],
     }).compile();
@@ -170,6 +193,33 @@ describe('SendEmailWorkflowAction', () => {
 
       expect(renderRichTextToHtml).not.toHaveBeenCalled();
       expect(mockSendEmailTool.execute).toHaveBeenCalled();
+    });
+  });
+
+  describe('sender resolution', () => {
+    // Sender-as-variable (workspace member) is draft-only for now, so
+    // send-email must never resolve the value as a workspace member id.
+    it('does not resolve a workspace member id and passes the value through', async () => {
+      await action.execute({
+        currentStepId: 'step-1',
+        steps: [
+          buildSendEmailStep({
+            connectedAccountId: WORKSPACE_MEMBER_ID,
+            recipients: { to: 'test@example.com' },
+            subject: 'Test',
+            body: 'hi',
+          }),
+        ],
+        context: {},
+        runInfo: { workspaceId: 'workspace-1', workflowRunId: 'run-1' },
+      });
+
+      expect(getRepository).not.toHaveBeenCalled();
+      expect(connectedAccountRepository.findOne).not.toHaveBeenCalled();
+      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ connectedAccountId: WORKSPACE_MEMBER_ID }),
+        expect.any(Object),
+      );
     });
   });
 

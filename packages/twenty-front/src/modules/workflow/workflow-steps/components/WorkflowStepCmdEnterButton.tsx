@@ -1,8 +1,8 @@
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { Key } from 'ts-key-enum';
-import { Button } from 'twenty-ui-deprecated/input';
-import { getOsControlSymbol } from 'twenty-ui-deprecated/utilities';
+import { Button } from 'twenty-ui/input';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 export const WorkflowStepCmdEnterButton = ({
   title,
