@@ -37,7 +37,7 @@ and as an AI tool) all delegate to a shared, trigger-agnostic core in `src/logic
   match identifier (person: `pdlId` → LinkedIn → email → name; company: `pdlId` → domain →
   name), and call the PDL Person/Company Enrichment API (`src/logic-functions/utils/`).
 - On a match: fill **standard fields** per `updateFields` (default: only when empty, never
-  clobbering user data), always (re)write `pdl*` fields, and set
+  clobbering user data); when `updateFields` is not `No`, (re)write `pdl*` fields and set
   `pdlEnrichmentStatus = MATCHED`, `pdlLastEnrichedAt`,
   `pdlRawPayload` (+ `pdlLikelihood` for Person). PDL `404` → `NOT_FOUND`; other errors →
   `ERROR`. No identifier / fresh TTL → skipped with no writes.

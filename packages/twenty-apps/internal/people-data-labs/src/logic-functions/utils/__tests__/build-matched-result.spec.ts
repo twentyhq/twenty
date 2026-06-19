@@ -27,6 +27,7 @@ describe('buildMatchedResult', () => {
       status: 'MATCHED',
       updatedFields: [],
       data: { name: { firstName: 'Jane' } },
+      message: 'Matched People Data Labs data; no fields updated.',
     });
   });
 });

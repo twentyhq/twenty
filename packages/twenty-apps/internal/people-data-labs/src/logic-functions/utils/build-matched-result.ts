@@ -14,5 +14,8 @@ export const buildMatchedResult = ({
   status: 'MATCHED',
   updatedFields,
   data,
-  message: `Enriched with People Data Labs (${updatedFields.length} fields).`,
+  message:
+    updatedFields.length > 0
+      ? `Enriched with People Data Labs (${updatedFields.length} fields).`
+      : 'Matched People Data Labs data; no fields updated.',
 });
