@@ -172,6 +172,7 @@ export const CodeEditor = ({
       <Loader />
     </div>
   ) : (
+    // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className={styles.container} onKeyDown={handleKeyDown}>
       <input
         type="hidden"

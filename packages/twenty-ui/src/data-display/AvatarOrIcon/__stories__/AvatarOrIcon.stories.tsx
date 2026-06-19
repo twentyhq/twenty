@@ -63,6 +63,7 @@ export const ClickableIcon: Story = {
   args: {
     Icon: IconBuildingSkyscraper,
     isIconInverted: true,
+    placeholder: 'Company',
     onClick: () => alert('Icon AvatarOrIcon clicked'),
   },
 };

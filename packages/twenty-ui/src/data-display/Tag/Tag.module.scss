@@ -19,6 +19,13 @@
   min-width: none;
 }
 
+.interactive {
+  appearance: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: inherit;
+}
+
 .weightMedium {
   font-weight: var(--t-font-weight-medium);
 }

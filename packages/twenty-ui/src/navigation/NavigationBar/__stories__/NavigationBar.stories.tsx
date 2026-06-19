@@ -17,9 +17,14 @@ export const Default: Story = {
   args: {
     activeItemName: 'Home',
     items: [
-      { name: 'Home', Icon: IconHome, onClick: () => {} },
-      { name: 'Search', Icon: IconSearch, onClick: () => {} },
-      { name: 'Settings', Icon: IconSettings, onClick: () => {} },
+      { name: 'Home', label: 'Home', Icon: IconHome, onClick: () => {} },
+      { name: 'Search', label: 'Search', Icon: IconSearch, onClick: () => {} },
+      {
+        name: 'Settings',
+        label: 'Settings',
+        Icon: IconSettings,
+        onClick: () => {},
+      },
     ],
   },
 };
