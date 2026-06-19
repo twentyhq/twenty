@@ -1,13 +1,22 @@
 // Avoid the SDK UI entrypoint until its bundle is safe for the browser runtime.
 export const recordingThemeCssVariables = {
+  accent: {
+    primary: 'var(--t-accent-accent9)',
+  },
   background: {
+    primary: 'var(--t-background-primary)',
+    secondary: 'var(--t-background-secondary)',
     transparentBlue: 'var(--t-background-transparent-blue)',
     transparentDanger: 'var(--t-background-transparent-danger)',
   },
   border: {
     colorDanger: 'var(--t-border-color-danger)',
     colorLight: 'var(--t-border-color-light)',
+    colorMedium: 'var(--t-border-color-medium)',
     radiusMd: 'var(--t-border-radius-md)',
+  },
+  boxShadow: {
+    light: 'var(--t-box-shadow-light)',
   },
   font: {
     colorDanger: 'var(--t-font-color-danger)',

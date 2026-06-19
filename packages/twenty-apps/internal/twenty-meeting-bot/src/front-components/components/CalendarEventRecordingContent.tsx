@@ -27,8 +27,9 @@ const StyledCenteredState = styled(StyledStateContainer)`
 const StyledRecordingContainer = styled(StyledStateContainer)`
   display: flex;
   flex-direction: column;
-  gap: ${recordingThemeCssVariables.spacing[4]};
+  gap: ${recordingThemeCssVariables.spacing[2]};
   overflow: hidden;
+  padding: 0;
 `;
 
 type CalendarEventRecordingContentProps = {

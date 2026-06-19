@@ -1,22 +1,27 @@
 import styled from '@emotion/styled';
+import { type SyntheticEvent, useState } from 'react';
 
 import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
 
-type SerializedMediaEventData = {
-  currentTime?: number;
-};
+const DEFAULT_VIDEO_ASPECT_RATIO = 16 / 9;
 
 const StyledVideoWrapper = styled.div`
-  background: #000000;
-  border: 1px solid ${recordingThemeCssVariables.border.colorLight};
-  border-radius: ${recordingThemeCssVariables.border.radiusMd};
   flex-shrink: 0;
+  margin-inline: auto;
   overflow: hidden;
+  padding: ${recordingThemeCssVariables.spacing[2]};
+  width: 100%;
 `;
 
-const StyledVideo = styled.video`
+const StyledVideo = styled.video<{ $videoAspectRatio: number }>`
+  accent-color: ${recordingThemeCssVariables.accent.primary};
+  aspect-ratio: ${({ $videoAspectRatio }) => $videoAspectRatio};
+  background: ${recordingThemeCssVariables.background.primary};
+  border-radius: ${recordingThemeCssVariables.border.radiusMd};
+  color-scheme: light dark;
   display: block;
-  max-height: 360px;
+  height: auto;
+  object-fit: contain;
   width: 100%;
 `;
 
@@ -30,28 +35,38 @@ export const RecordingVideoPlayer = ({
   src,
   extension,
   onTimeUpdate,
-}: RecordingVideoPlayerProps) => (
-  <StyledVideoWrapper>
-    <StyledVideo
-      controls
-      onTimeUpdate={(event: unknown) => {
-        const serializedCurrentTime = (
-          event as CustomEvent<SerializedMediaEventData>
-        ).detail?.currentTime;
-        const nativeCurrentTime = (
-          event as { currentTarget?: { currentTime?: unknown } }
-        ).currentTarget?.currentTime;
-        const currentTimeSeconds =
-          typeof serializedCurrentTime === 'number'
-            ? serializedCurrentTime
-            : nativeCurrentTime;
+}: RecordingVideoPlayerProps) => {
+  const [videoAspectRatio, setVideoAspectRatio] = useState(
+    DEFAULT_VIDEO_ASPECT_RATIO,
+  );
 
-        if (typeof currentTimeSeconds === 'number') {
-          onTimeUpdate(currentTimeSeconds);
-        }
-      }}
-    >
-      <source src={src} type={`video/${extension}`} />
-    </StyledVideo>
-  </StyledVideoWrapper>
-);
+  const handleLoadedMetadata = (
+    event: SyntheticEvent<HTMLVideoElement>,
+  ) => {
+    const { videoWidth, videoHeight } = event.currentTarget;
+
+    if (
+      videoWidth > 0 &&
+      videoHeight > 0
+    ) {
+      setVideoAspectRatio(videoWidth / videoHeight);
+    }
+  };
+
+  const handleTimeUpdate = (event: SyntheticEvent<HTMLVideoElement>) => {
+    onTimeUpdate(event.currentTarget.currentTime);
+  };
+
+  return (
+    <StyledVideoWrapper>
+      <StyledVideo
+        $videoAspectRatio={videoAspectRatio}
+        controls
+        onLoadedMetadata={handleLoadedMetadata}
+        onTimeUpdate={handleTimeUpdate}
+      >
+        <source src={src} type={`video/${extension}`} />
+      </StyledVideo>
+    </StyledVideoWrapper>
+  );
+};
