@@ -774,6 +774,87 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript/native-preview-darwin-arm64@npm:7.0.0-dev.20260616.1":
+  version: 7.0.0-dev.20260616.1
+  resolution: "@typescript/native-preview-darwin-arm64@npm:7.0.0-dev.20260616.1"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-darwin-x64@npm:7.0.0-dev.20260616.1":
+  version: 7.0.0-dev.20260616.1
+  resolution: "@typescript/native-preview-darwin-x64@npm:7.0.0-dev.20260616.1"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-linux-arm64@npm:7.0.0-dev.20260616.1":
+  version: 7.0.0-dev.20260616.1
+  resolution: "@typescript/native-preview-linux-arm64@npm:7.0.0-dev.20260616.1"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-linux-arm@npm:7.0.0-dev.20260616.1":
+  version: 7.0.0-dev.20260616.1
+  resolution: "@typescript/native-preview-linux-arm@npm:7.0.0-dev.20260616.1"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-linux-x64@npm:7.0.0-dev.20260616.1":
+  version: 7.0.0-dev.20260616.1
+  resolution: "@typescript/native-preview-linux-x64@npm:7.0.0-dev.20260616.1"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-win32-arm64@npm:7.0.0-dev.20260616.1":
+  version: 7.0.0-dev.20260616.1
+  resolution: "@typescript/native-preview-win32-arm64@npm:7.0.0-dev.20260616.1"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-win32-x64@npm:7.0.0-dev.20260616.1":
+  version: 7.0.0-dev.20260616.1
+  resolution: "@typescript/native-preview-win32-x64@npm:7.0.0-dev.20260616.1"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview@npm:^7.0.0-dev.20260116.1":
+  version: 7.0.0-dev.20260616.1
+  resolution: "@typescript/native-preview@npm:7.0.0-dev.20260616.1"
+  dependencies:
+    "@typescript/native-preview-darwin-arm64": "npm:7.0.0-dev.20260616.1"
+    "@typescript/native-preview-darwin-x64": "npm:7.0.0-dev.20260616.1"
+    "@typescript/native-preview-linux-arm": "npm:7.0.0-dev.20260616.1"
+    "@typescript/native-preview-linux-arm64": "npm:7.0.0-dev.20260616.1"
+    "@typescript/native-preview-linux-x64": "npm:7.0.0-dev.20260616.1"
+    "@typescript/native-preview-win32-arm64": "npm:7.0.0-dev.20260616.1"
+    "@typescript/native-preview-win32-x64": "npm:7.0.0-dev.20260616.1"
+  dependenciesMeta:
+    "@typescript/native-preview-darwin-arm64":
+      optional: true
+    "@typescript/native-preview-darwin-x64":
+      optional: true
+    "@typescript/native-preview-linux-arm":
+      optional: true
+    "@typescript/native-preview-linux-arm64":
+      optional: true
+    "@typescript/native-preview-linux-x64":
+      optional: true
+    "@typescript/native-preview-win32-arm64":
+      optional: true
+    "@typescript/native-preview-win32-x64":
+      optional: true
+  bin:
+    tsgo: bin/tsgo.js
+  checksum: 10c0/e858f6a5bc41e615d3a87381ac33c938cbaa3553c47f4f1c3e06682fd96303f624ecd457542b7980a7eb29f73b54da19e8a52650246cc98a145c4a46aa743b40
+  languageName: node
+  linkType: hard
+
 "@vitest/expect@npm:4.1.8":
   version: 4.1.8
   resolution: "@vitest/expect@npm:4.1.8"
@@ -1084,7 +1165,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4":
+"debug@npm:4, debug@npm:^4.1.1":
   version: 4.4.3
   resolution: "debug@npm:4.4.3"
   dependencies:
@@ -1470,6 +1551,13 @@ __metadata:
     dunder-proto: "npm:^1.0.1"
     es-object-atoms: "npm:^1.0.0"
   checksum: 10c0/9224acb44603c5526955e83510b9da41baf6ae73f7398875fba50edc5e944223a89c4a72b070fcd78beb5f7bdda58ecb6294adc28f7acfc0da05f76a2399643c
+  languageName: node
+  linkType: hard
+
+"globrex@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "globrex@npm:0.1.2"
+  checksum: 10c0/a54c029520cf58bda1d8884f72bd49b4cd74e977883268d931fd83bcbd1a9eb96d57c7dbd4ad80148fb9247467ebfb9b215630b2ed7563b2a8de02e1ff7f89d1
   languageName: node
   linkType: hard
 
@@ -2390,6 +2478,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tsconfck@npm:^3.0.3":
+  version: 3.1.6
+  resolution: "tsconfck@npm:3.1.6"
+  peerDependencies:
+    typescript: ^5.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  bin:
+    tsconfck: bin/tsconfck.js
+  checksum: 10c0/269c3c513540be44844117bb9b9258fe6f8aeab026d32aeebf458d5299125f330711429dbb556dbf125a0bc25f4a81e6c24ac96de2740badd295c3fb400f66c4
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^1.9.3":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
@@ -2404,16 +2506,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.13.0":
-  version: 2.13.0
-  resolution: "twenty-client-sdk@npm:2.13.0"
+"twenty-client-sdk@npm:2.14.0, twenty-client-sdk@npm:^2.14.0":
+  version: 2.14.0
+  resolution: "twenty-client-sdk@npm:2.14.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/740464acec94c1d4cc5fa50ed6b190a7f1d1681963f61437a6c704835c05ffe0f5a13e254e57601a99b07bbe0f68483dee19211731853aafbcc15ec79f8039ce
+  checksum: 10c0/eb222a726e21fc98f3a624f9acac7d47f0c769b989911889036665dac7c7c88698ec99beb844bf51a42e1696ea0a067bae8cf47fd751965af52a3720835242f0
   languageName: node
   linkType: hard
 
@@ -2422,18 +2524,20 @@ __metadata:
   resolution: "twenty-exa@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     exa-js: "npm:^2.12.1"
     oxlint: "npm:^0.16.0"
-    twenty-client-sdk: "npm:2.13.0"
-    twenty-sdk: "npm:2.13.0"
+    twenty-client-sdk: "npm:^2.14.0"
+    twenty-sdk: "npm:^2.14.0"
     typescript: "npm:^5.9.3"
+    vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.0"
   languageName: unknown
   linkType: soft
 
-"twenty-sdk@npm:2.13.0":
-  version: 2.13.0
-  resolution: "twenty-sdk@npm:2.13.0"
+"twenty-sdk@npm:^2.14.0":
+  version: 2.14.0
+  resolution: "twenty-sdk@npm:2.14.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -2450,12 +2554,12 @@ __metadata:
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.13.0"
+    twenty-client-sdk: "npm:2.14.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/51c350abe5d344fcad3c961a77632fd3cb2d91e357d0562b3eb02f05f66dbc41221c5463d0f91c022316a16af03a05ad43f038d9534c0ae31c060008d0e48672
+  checksum: 10c0/c4211772f8dd2ba81074a74be5f616c4c264d6bf8a174c5724be6d1c9a8cb3ca68a2674653bb58c059dae4bf1b0f43f91991e73d6a01395807206f0ac44afb08
   languageName: node
   linkType: hard
 
@@ -2529,6 +2633,22 @@ __metadata:
   bin:
     uuid: dist-node/bin/uuid
   checksum: 10c0/32c7ee84fa7c7966cc09b3a1514a752a8e2f609f15c00033fbaedc0255d577d1877b839f11ee537f37e587bbc620bbb98c3b3a1482931b8ed47d79497cd7a7cd
+  languageName: node
+  linkType: hard
+
+"vite-tsconfig-paths@npm:^4.2.1":
+  version: 4.3.2
+  resolution: "vite-tsconfig-paths@npm:4.3.2"
+  dependencies:
+    debug: "npm:^4.1.1"
+    globrex: "npm:^0.1.2"
+    tsconfck: "npm:^3.0.3"
+  peerDependencies:
+    vite: "*"
+  peerDependenciesMeta:
+    vite:
+      optional: true
+  checksum: 10c0/f390ac1d1c3992fc5ac50f9274c1090f8b55ab34a89ea88893db9a6924a3b26c9f64bc1163615150ad100749db73b6b2cf1d57f6cd60df6e762ceb5b8ad30024
   languageName: node
   linkType: hard
 
