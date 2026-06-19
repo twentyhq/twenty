@@ -58,9 +58,20 @@ export const WithExpandedList: Story = {
   },
 };
 
-const RESIZABLE_OPTIONS_COUNT = 7;
+const OPTIONS_COUNT = 7;
 const NARROW_WIDTH_PX = 80;
 const WIDE_WIDTH_PX = 1000;
+
+const optionTags = Array.from({ length: OPTIONS_COUNT }, (_, index) => (
+  <Tag
+    key={index}
+    text={`Option ${index + 1}`}
+    color={MAIN_COLOR_NAMES[index]}
+  />
+));
+
+const countRenderedOptions = (canvas: ReturnType<typeof within>) =>
+  canvas.queryAllByText(/^Option \d+$/).length;
 
 const ResizableExpandableListWrapper = () => {
   const [width, setWidth] = useState(NARROW_WIDTH_PX);
@@ -69,15 +80,7 @@ const ResizableExpandableListWrapper = () => {
     <div>
       <button onClick={() => setWidth(WIDE_WIDTH_PX)}>Widen</button>
       <div style={{ width, overflow: 'hidden' }}>
-        <ExpandableList isChipCountDisplayed>
-          {Array.from({ length: RESIZABLE_OPTIONS_COUNT }, (_, index) => (
-            <Tag
-              key={index}
-              text={`Option ${index + 1}`}
-              color={MAIN_COLOR_NAMES[index]}
-            />
-          ))}
-        </ExpandableList>
+        <ExpandableList isChipCountDisplayed>{optionTags}</ExpandableList>
       </div>
     </div>
   );
@@ -88,17 +91,29 @@ export const RecomputesVisibleChipsOnResize: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const countVisibleOptions = () =>
-      canvas.queryAllByText(/^Option \d+$/).length;
-
     await waitFor(() => {
-      expect(countVisibleOptions()).toBeLessThan(RESIZABLE_OPTIONS_COUNT);
+      expect(countRenderedOptions(canvas)).toBeLessThan(OPTIONS_COUNT);
     });
 
     await userEvent.click(await canvas.findByText('Widen'));
 
     await waitFor(() => {
-      expect(countVisibleOptions()).toBe(RESIZABLE_OPTIONS_COUNT);
+      expect(countRenderedOptions(canvas)).toBe(OPTIONS_COUNT);
+    });
+  },
+};
+
+export const ShowsAllChipsWhenCountHidden: Story = {
+  render: () => (
+    <div style={{ width: NARROW_WIDTH_PX, overflow: 'hidden' }}>
+      <ExpandableList isChipCountDisplayed={false}>{optionTags}</ExpandableList>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(() => {
+      expect(countRenderedOptions(canvas)).toBe(OPTIONS_COUNT);
     });
   },
 };
