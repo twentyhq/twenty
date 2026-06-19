@@ -71,6 +71,9 @@ export class ViewDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   kanbanAggregateOperationFieldMetadataId?: string | null;
 
+  @Field({ nullable: true })
+  kanbanColumnWidth?: number | null;
+
   @Field(() => UUIDScalarType, { nullable: true })
   mainGroupByFieldMetadataId?: string | null;
 

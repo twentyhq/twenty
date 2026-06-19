@@ -28,6 +28,7 @@ export type View = {
   viewSorts: ViewSort[];
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId?: string | null;
+  kanbanColumnWidth?: number | null;
   mainGroupByFieldMetadataId?: string | null;
   shouldHideEmptyGroups: boolean;
   calendarFieldMetadataId?: string | null;

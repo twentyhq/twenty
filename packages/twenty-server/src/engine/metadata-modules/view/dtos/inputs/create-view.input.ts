@@ -85,6 +85,11 @@ export class CreateViewInput {
   kanbanAggregateOperationFieldMetadataId?: string;
 
   @IsOptional()
+  @IsNumber()
+  @Field({ nullable: true })
+  kanbanColumnWidth?: number | null;
+
+  @IsOptional()
   @IsString()
   @Field({ nullable: true })
   anyFieldFilterValue?: string;

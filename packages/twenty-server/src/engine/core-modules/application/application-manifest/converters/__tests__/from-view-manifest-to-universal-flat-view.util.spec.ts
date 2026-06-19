@@ -82,6 +82,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
         kanbanAggregateOperation: AggregateOperations.COUNT,
         kanbanAggregateOperationFieldMetadataUniversalIdentifier:
           'field-uuid-amount',
+        kanbanColumnWidth: 260,
       },
       applicationUniversalIdentifier,
       now,
@@ -94,6 +95,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(
       result.kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     ).toBe('field-uuid-amount');
+    expect(result.kanbanColumnWidth).toBe(260);
   });
 
   it('should default kanban and calendar fields to null when omitted', () => {
@@ -112,6 +114,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(
       result.kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     ).toBeNull();
+    expect(result.kanbanColumnWidth).toBeNull();
     expect(result.calendarLayout).toBeNull();
     expect(result.calendarFieldMetadataUniversalIdentifier).toBeNull();
   });

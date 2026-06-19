@@ -694,6 +694,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       shouldHideEmptyGroups: false,
       kanbanAggregateOperation: null,
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
+      kanbanColumnWidth: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       position: 0,

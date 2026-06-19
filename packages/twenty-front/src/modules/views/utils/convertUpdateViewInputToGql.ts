@@ -18,6 +18,9 @@ export const convertUpdateViewInputToGql = (
       kanbanAggregateOperationFieldMetadataId:
         view.kanbanAggregateOperationFieldMetadataId,
     }),
+    ...(view.kanbanColumnWidth !== undefined && {
+      kanbanColumnWidth: view.kanbanColumnWidth,
+    }),
     ...(isDefined(view.anyFieldFilterValue) && {
       anyFieldFilterValue: view.anyFieldFilterValue,
     }),

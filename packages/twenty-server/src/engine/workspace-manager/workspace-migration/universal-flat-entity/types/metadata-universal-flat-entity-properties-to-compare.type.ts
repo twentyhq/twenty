@@ -58,6 +58,7 @@ type Assertions = [
       | 'openRecordIn'
       | 'kanbanAggregateOperation'
       | 'kanbanAggregateOperationFieldMetadataUniversalIdentifier'
+      | 'kanbanColumnWidth'
       | 'calendarLayout'
       | 'calendarFieldMetadataUniversalIdentifier'
       | 'mainGroupByFieldMetadataUniversalIdentifier'

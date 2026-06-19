@@ -44,6 +44,7 @@ export type ViewOverrides = {
   openRecordIn?: ViewOpenRecordIn;
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId?: SerializedRelation | null;
+  kanbanColumnWidth?: number | null;
   anyFieldFilterValue?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
   calendarFieldMetadataId?: SerializedRelation | null;
@@ -134,6 +135,9 @@ export class ViewEntity
 
   @Column({ nullable: true, type: 'uuid' })
   kanbanAggregateOperationFieldMetadataId: string | null;
+
+  @Column({ nullable: true, type: 'double precision', default: null })
+  kanbanColumnWidth: number | null;
 
   @ManyToOne(
     () => FieldMetadataEntity,

@@ -9,6 +9,7 @@ export const FLAT_VIEW_EDITABLE_PROPERTIES = [
   'openRecordIn',
   'kanbanAggregateOperation',
   'kanbanAggregateOperationFieldMetadataId',
+  'kanbanColumnWidth',
   'anyFieldFilterValue',
   'calendarLayout',
   'calendarFieldMetadataId',

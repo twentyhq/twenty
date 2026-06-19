@@ -21,6 +21,7 @@ export type GraphQLView = {
   shouldHideEmptyGroups: boolean;
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId?: string | null;
+  kanbanColumnWidth?: number | null;
   objectMetadataId: string;
   isCompact: boolean;
   openRecordIn: ViewOpenRecordIn;

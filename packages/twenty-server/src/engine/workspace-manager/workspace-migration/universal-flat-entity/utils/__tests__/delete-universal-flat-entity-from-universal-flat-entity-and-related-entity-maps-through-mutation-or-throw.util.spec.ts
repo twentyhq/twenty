@@ -107,6 +107,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       kanbanFieldMetadataUniversalIdentifier: null,
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
       kanbanAggregateOperation: null,
+      kanbanColumnWidth: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
       viewFilterGroupUniversalIdentifiers: [],
       rowLevelPermissionPredicateGroupUniversalIdentifiers: [],

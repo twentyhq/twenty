@@ -1712,6 +1712,9 @@ export default {
             "kanbanAggregateOperationFieldMetadataId": [
                 3
             ],
+            "kanbanColumnWidth": [
+                11
+            ],
             "mainGroupByFieldMetadataId": [
                 3
             ],
@@ -9319,6 +9322,9 @@ export default {
             "kanbanAggregateOperationFieldMetadataId": [
                 3
             ],
+            "kanbanColumnWidth": [
+                11
+            ],
             "anyFieldFilterValue": [
                 1
             ],
@@ -9365,6 +9371,9 @@ export default {
             ],
             "kanbanAggregateOperationFieldMetadataId": [
                 3
+            ],
+            "kanbanColumnWidth": [
+                11
             ],
             "anyFieldFilterValue": [
                 1

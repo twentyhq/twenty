@@ -869,6 +869,7 @@ type View {
   openRecordIn: ViewOpenRecordIn!
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
+  kanbanColumnWidth: Float
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean!
   calendarFieldMetadataId: UUID
@@ -3571,6 +3572,7 @@ input CreateViewInput {
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
+  kanbanColumnWidth: Float
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
   calendarFieldMetadataId: UUID
@@ -3588,6 +3590,7 @@ input UpdateViewInput {
   openRecordIn: ViewOpenRecordIn
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
+  kanbanColumnWidth: Float
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
   calendarFieldMetadataId: UUID

@@ -335,6 +335,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
         'kanbanAggregateOperationFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
+    kanbanColumnWidth: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     anyFieldFilterValue: {
       toCompare: true,
       toStringify: false,

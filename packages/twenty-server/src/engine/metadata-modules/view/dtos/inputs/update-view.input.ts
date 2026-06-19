@@ -4,6 +4,7 @@ import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -69,6 +70,11 @@ export class UpdateViewInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   kanbanAggregateOperationFieldMetadataId?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Field({ nullable: true })
+  kanbanColumnWidth?: number | null;
 
   @IsOptional()
   @IsString()

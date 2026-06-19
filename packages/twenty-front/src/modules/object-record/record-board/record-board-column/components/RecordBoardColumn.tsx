@@ -3,6 +3,7 @@ import { Droppable } from '@hello-pangea/dnd';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
+import { RecordBoardColumnResizeHandler } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnResizeHandler';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -11,13 +12,21 @@ import { DragAndDropLibraryLegacyReRenderBreaker } from '@/ui/drag-and-drop/comp
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
+import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-board/constants/RecordBoardColumnWidthCSSVariableName';
 
 const StyledColumn = styled.div`
   background-color: ${themeCssVariables.background.primary};
   display: flex;
   flex-direction: column;
-  max-width: 200px;
-  min-width: 200px;
+  max-width: var(
+    ${RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME},
+    ${RECORD_BOARD_COLUMN_WIDTH}px
+  );
+  min-width: var(
+    ${RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME},
+    ${RECORD_BOARD_COLUMN_WIDTH}px
+  );
   padding: ${themeCssVariables.spacing[2]};
   padding-top: 0px;
   position: relative;
@@ -75,6 +84,7 @@ export const RecordBoardColumn = ({
               />
             </DragAndDropLibraryLegacyReRenderBreaker>
             {droppableProvided.placeholder}
+            <RecordBoardColumnResizeHandler />
           </StyledColumn>
         )}
       </Droppable>

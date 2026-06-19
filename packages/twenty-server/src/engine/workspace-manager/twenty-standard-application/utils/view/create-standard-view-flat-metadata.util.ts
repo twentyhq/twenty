@@ -135,6 +135,7 @@ export const createStandardViewFlatMetadata = <
     openRecordIn,
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,
+    kanbanColumnWidth: null,
     mainGroupByFieldMetadataId,
     shouldHideEmptyGroups: false,
     calendarLayout: null,

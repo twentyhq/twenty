@@ -33,6 +33,7 @@ export const fromViewManifestToUniversalFlatView = ({
     kanbanAggregateOperationFieldMetadataUniversalIdentifier:
       viewManifest.kanbanAggregateOperationFieldMetadataUniversalIdentifier ??
       null,
+    kanbanColumnWidth: viewManifest.kanbanColumnWidth ?? null,
     calendarLayout: viewManifest.calendarLayout ?? null,
     calendarFieldMetadataUniversalIdentifier:
       viewManifest.calendarFieldMetadataUniversalIdentifier ?? null,

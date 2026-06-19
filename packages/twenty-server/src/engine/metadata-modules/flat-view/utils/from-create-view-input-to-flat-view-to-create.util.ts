@@ -78,6 +78,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     shouldHideEmptyGroups: createViewInput.shouldHideEmptyGroups ?? false,
     kanbanAggregateOperation: createViewInput.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
+    kanbanColumnWidth: createViewInput.kanbanColumnWidth ?? null,
     mainGroupByFieldMetadataUniversalIdentifier,
     key: createViewInput.key ?? null,
     openRecordIn: createViewInput.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,

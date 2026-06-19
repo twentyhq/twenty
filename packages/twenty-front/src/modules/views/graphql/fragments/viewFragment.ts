@@ -26,6 +26,7 @@ export const VIEW_FRAGMENT = gql`
     openRecordIn
     kanbanAggregateOperation
     kanbanAggregateOperationFieldMetadataId
+    kanbanColumnWidth
     mainGroupByFieldMetadataId
     shouldHideEmptyGroups
     anyFieldFilterValue
