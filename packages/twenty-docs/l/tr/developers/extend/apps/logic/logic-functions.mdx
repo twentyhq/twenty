@@ -349,12 +349,52 @@ export default defineLogicFunction({
 });
 ```
 
+Parametrelerinizi **bir kez** bildirmek ve her iki yüzeye de hizmet vermek için tek bir JSON Şeması (`InputJsonSchema`) tanımlayın ve bunu iş akışı eylemi için `twenty-sdk/logic-function` içindeki `jsonSchemaToInputSchema` ile dönüştürün. `toolTriggerSettings.inputSchema`, JSON Şemasını doğrudan alırken `workflowActionTriggerSettings.inputSchema`, Twenty'nin `InputSchema` tipini bekler:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **İyi bir `description` yazın.** AI ajanları, aracı ne zaman kullanacaklarına karar vermek için işlevin `description` alanına güvenir. Aracın ne yaptığını ve ne zaman çağrılması gerektiğini açıkça belirtin.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**Çalışma zamanı yardımcıları.** `twenty-sdk/utils`, işleyicilerin doğrudan `twenty-shared` içinden içe aktarma yapmasına gerek kalmaması için küçük çalışma zamanı yardımcılarını yeniden dışa aktarır. Örneğin, `isDefined(value)` hem `null` hem de `undefined` için `false` döndürür — bunu, çalışma zamanında `T | undefined` olarak yazılmış olsa bile `null` olarak gelebilen isteğe bağlı işleyici girdilerini güvenli şekilde daraltmak için kullanın:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **Yükleme kancaları** — ön yükleme ve yükleme sonrası işleyiciler — bu çalışma zamanını paylaşır ancak kendi tanımlama işlevleriyle bildirilir ve tetikleyici ayarlarını almaz. `definePreInstallLogicFunction` ve `definePostInstallLogicFunction` için [Yükleme Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.

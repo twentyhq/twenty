@@ -348,12 +348,52 @@ export default defineLogicFunction({
 });
 ```
 
+Um deine Parameter **einmal** zu deklarieren und beide Oberflächen zu bedienen, definiere ein einziges JSON Schema (`InputJsonSchema`) und konvertiere es für die Workflow-Aktion mit `jsonSchemaToInputSchema` aus `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` nimmt das JSON Schema direkt, während `workflowActionTriggerSettings.inputSchema` Twenty's `InputSchema` erwartet:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **Schreiben Sie eine gute `description`.** KI-Agenten verlassen sich auf das `description`-Feld der Funktion, um zu entscheiden, wann das Tool verwendet werden soll. Seien Sie konkret darin, was das Tool tut und wann es aufgerufen werden soll.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**Runtime-Hilfsfunktionen.** `twenty-sdk/utils` exportiert kleine Runtime-Hilfsfunktionen erneut, sodass Handler niemals direkt aus `twenty-shared` importieren. Zum Beispiel gibt `isDefined(value)` für sowohl `null` als auch `undefined` den Wert `false` zurück – verwenden Sie es, um optionale Handler-Eingaben sicher einzugrenzen, die zur Laufzeit als `null` ankommen können, selbst wenn sie als `T | undefined` typisiert sind:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **Installations-Hooks** – Vorinstallations- und Nachinstallations-Handler – teilen sich diese Laufzeit, werden aber mit ihren eigenen define-Funktionen deklariert und verwenden keine Trigger-Einstellungen. Siehe [Installations-Hooks](/l/de/developers/extend/apps/config/install-hooks) für `definePreInstallLogicFunction` und `definePostInstallLogicFunction`.

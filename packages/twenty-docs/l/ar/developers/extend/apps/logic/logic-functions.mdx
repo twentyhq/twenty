@@ -348,12 +348,52 @@ export default defineLogicFunction({
 });
 ```
 
+للتصريح بمعاملاتك **مرة واحدة** وخدمة كلتا الواجهتين، عرّف مخطط JSON واحد (`InputJsonSchema`) وحوِّله لاستخدامه في إجراء سير العمل باستخدام `jsonSchemaToInputSchema` من `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` يستخدم مخطط JSON مباشرة، بينما `workflowActionTriggerSettings.inputSchema` يتوقّع `InputSchema` الخاص بـ Twenty:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **اكتب `description` جيدًا.** يعتمد وكلاء الذكاء الاصطناعي على حقل `description` الخاص بالدالة لتحديد وقت استخدام الأداة. كن محددًا بشأن ما تفعله الأداة ومتى ينبغي استدعاؤها.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**مساعدات وقت التشغيل.** يقوم `twenty-sdk/utils` بإعادة تصدير مساعدات صغيرة لوقت التشغيل حتى لا تستورد المعالجات مباشرةً من `twenty-shared`. على سبيل المثال، تُرجِع `isDefined(value)` القيمة `false` لكلٍّ من `null` و`undefined` — استخدمها لتضييق نطاق مُدخلات المعالِجات الاختيارية بأمان، والتي يمكن أن تصل كقيمة `null` أثناء وقت التشغيل حتى عندما تكون مكتوبة كـ `T | undefined`:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **خطافات التثبيت** — معالجات ما قبل التثبيت وما بعد التثبيت — تشترك في وقت التشغيل نفسه، ولكن يُصرَّح عنها بدوال تعريف خاصة بها ولا تأخذ إعدادات المشغّلات. راجع [خطافات التثبيت (Install Hooks)](/l/ar/developers/extend/apps/config/install-hooks) لمعرفة `definePreInstallLogicFunction` و `definePostInstallLogicFunction`.
