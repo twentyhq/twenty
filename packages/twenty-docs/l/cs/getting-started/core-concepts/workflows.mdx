@@ -1,0 +1,55 @@
+---
+title: Pracovní postupy
+description: Automatizujte své obchodní procesy pomocí vizuálního nástroje pro tvorbu workflow v Twenty.
+icon: bolt
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Workflow vám umožňují automatizovat opakující se úkoly a propojit Twenty s externími nástroji — bez psaní kódu (pokud ovšem nechcete).
+
+<VimeoEmbed videoId="1185511711" title="Pracovní postup" />
+
+## Jak workflow fungují
+
+Každé workflow má tři části:
+
+1. **Trigger** — Co workflow spustí
+2. **Steps** — Co se stane dál (jedna nebo více akcí v posloupnosti)
+3. **Variables** — Data, která proudí mezi kroky
+
+## Spouštěče
+
+| Spouštěč         | Kdy se spouští                                                                |
+| ---------------- | ----------------------------------------------------------------------------- |
+| **Record event** | Záznam je vytvořen, aktualizován, smazán nebo upsertován                      |
+| **Ruční**        | Uživatel klikne na tlačítko (na jednom záznamu, více záznamech nebo globálně) |
+| **Schedule**     | V opakovaném intervalu (syntax cron)                                          |
+| **Webhook**      | Externí systém odešle HTTP POST                                               |
+
+## Akce
+
+Workflow mohou řetězit libovolnou kombinaci:
+
+* **Record operations** — Vytváření, aktualizace, vyhledávání, mazání nebo upsertování záznamů
+* **Send email** — Odesílání nebo vytváření konceptů e‑mailů z propojených účtů
+* **HTTP request** — Volání libovolného externího API
+* **Code** — Spouštění vlastního JavaScriptu pro složitou logiku
+* **Branches** — Podmínky if/else pro rozdělení cesty workflow
+* **Iterator** — Procházení (loop) přes pole dat
+* **AI Agent** — Umožní agentovi AI autonomně zpracovávat data
+* **Delay** — Čekání před pokračováním
+* **Form** — Sběr vstupů od uživatele uprostřed workflow
+
+## Co můžete vytvořit
+
+* Posílejte upozornění na Slack, když obchod dosáhne určité fáze
+* Automaticky obohacujte nové kontakty daty z externích API
+* Detekujte neaktivní příležitosti a upozorněte jejich vlastníka
+* Synchronizujte data mezi Twenty a vaším fakturačním systémem
+* Generujte PDF nebo faktury z dat v záznamech
+* Automaticky odpovídejte na příchozí e‑maily, které splňují určitá kritéria
+
+<Card title="Kompletní průvodce workflow" icon="arrow-right" href="/l/cs/user-guide/workflows/overview">
+  Podrobná reference ke spouštěčům, akcím, proměnným a praktickým receptům na automatizaci.
+</Card>

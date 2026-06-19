@@ -1,0 +1,47 @@
+---
+title: Datenmodell
+description: Verstehen Sie, wie Twenty Ihre Daten mit Objekten, Feldern und Beziehungen strukturiert.
+icon: database
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Alles in Twenty ist rund um **Objekte** und **Felder** aufgebaut – die Bausteine Ihres Datenmodells.
+
+## Objekte
+
+Objekte sind die Tabellen, die Ihre Daten enthalten. Twenty enthält Standardobjekte:
+
+* **Companies** — Organisationen, mit denen Sie Geschäfte machen
+* **People** — Einzelkontakte
+* **Opportunities** — Deals in Ihrer Pipeline
+* **Tasks** — Aufgaben für Ihr Team
+* **Notes** — Freitext, der mit Datensätzen verknüpft ist
+
+Sie können auch **benutzerdefinierte Objekte** für alles erstellen, was Ihr Unternehmen benötigt – Projekte, Support-Tickets, Produkte, Verträge oder alles andere.
+
+## Felder
+
+Felder sind die Eigenschaften jedes Objekts. Twenty unterstützt eine breite Palette von Feldtypen:
+
+| Kategorie           | Typen                                                                                                 |
+| ------------------- | ----------------------------------------------------------------------------------------------------- |
+| **Grundlegend**     | Text, Zahl, Boolesch, Datum, Währung, Bewertung, Auswahl                                              |
+| **Zusammengesetzt** | Adresse (Straße, Stadt, Bundesland, Postleitzahl), Vollständiger Name, Links, Telefonnummern, E-Mails |
+| **Spezielle**       | Beziehung, Dateianhang, JSON, Benutzer (wer erstellt/geändert hat)                                    |
+
+Jedes Objekt erhält außerdem automatische Systemfelder: `id`, `createdAt`, `updatedAt`, `createdBy` und `position`.
+
+## Beziehungen
+
+Objekte sind über Beziehungen miteinander verbunden. Ein Unternehmen hat viele Personen, eine Opportunity gehört zu einem Unternehmen, und so weiter. Sie können benutzerdefinierte Beziehungen zwischen beliebigen Objekten erstellen, einschließlich Viele-zu-Viele-Beziehungen.
+
+## Warum das so leistungsfähig ist
+
+Anders als bei herkömmlichen CRM-Systemen, bei denen Sie auf vordefinierte Felder in vordefinierten Objekten beschränkt sind, können Sie mit Twenty Ihre Daten genau so modellieren, wie Ihr Unternehmen arbeitet. Benutzerdefinierte Objekte werden wie eingebaute Objekte als erstklassige Elemente behandelt – einschließlich API-Endpunkten, Ansichten, Berechtigungen und Workflow-Auslösern.
+
+<Card title="Tiefgehender Einblick in das Datenmodell" icon="arrow-right" href="/l/de/user-guide/data-model/overview">
+  Vollständige Referenz zu Objekten, Feldern, Beziehungen und deren Konfiguration.
+</Card>
+
+<VimeoEmbed videoId="1185511827" title="Datenmodell" />
