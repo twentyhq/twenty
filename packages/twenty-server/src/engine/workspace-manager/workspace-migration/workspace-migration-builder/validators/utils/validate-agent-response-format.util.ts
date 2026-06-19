@@ -35,7 +35,7 @@ export const validateAgentResponseFormat = ({
 
   if (type === 'json' && isDefined(responseFormat.schema)) {
     const invalidPropertyNames = Object.keys(
-      responseFormat.schema.properties,
+      responseFormat.schema.properties ?? {},
     ).filter(
       (propertyName) => !isValidAgentResponseSchemaPropertyKey(propertyName),
     );
