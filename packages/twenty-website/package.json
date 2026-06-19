@@ -46,6 +46,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.184.1",
+    "babel-plugin-react-compiler": "1.0.0",
     "jest-environment-jsdom": "30.0.0-beta.3",
     "wrangler": "^4.0.0"
   }
