@@ -63,6 +63,7 @@ export const AnimatedLightIconButton = ({
         {Icon && (
           <Icon
             size={size === 'medium' ? theme.icon.size.md : theme.icon.size.sm}
+            aria-hidden
           />
         )}
       </motion.div>

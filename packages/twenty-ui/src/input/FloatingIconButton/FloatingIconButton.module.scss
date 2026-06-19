@@ -24,6 +24,8 @@
   position: relative;
   transition: background calc(var(--t-animation-duration-instant) * 1s) ease;
   white-space: nowrap;
+
+  @include focus-ring;
 }
 
 .small {

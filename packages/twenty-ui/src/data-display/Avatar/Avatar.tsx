@@ -3,6 +3,7 @@ import { clsx } from 'clsx';
 import { useAtom } from 'jotai';
 import { useContext } from 'react';
 
+import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { invalidAvatarUrlsAtomV2 } from '@ui/data-display/Avatar/states/invalidAvatarUrlsAtomV2';
 import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
@@ -123,7 +124,11 @@ export const Avatar = ({
       className={clsx(styles.root, styles[size], className)}
       data-type={type ?? undefined}
       data-clickable={!isUndefined(onClick) ? true : undefined}
+      role={!isUndefined(onClick) ? 'button' : undefined}
+      tabIndex={!isUndefined(onClick) ? 0 : undefined}
+      aria-label={!isUndefined(onClick) ? placeholder : undefined}
       onClick={onClick}
+      onKeyDown={handleClickableElementKeyDown}
       style={avatarStyle}
     >
       {Icon ? (

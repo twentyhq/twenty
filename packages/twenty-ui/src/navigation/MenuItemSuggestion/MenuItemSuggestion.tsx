@@ -1,9 +1,11 @@
 import { clsx } from 'clsx';
 import { type MouseEvent } from 'react';
 
+import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { type IconComponent } from '@ui/icon';
 import { MenuItemLeftContent } from '@ui/navigation/MenuItem/parts/MenuItemLeftContent';
 import { StyledMenuItemLeftContent } from '@ui/navigation/MenuItem/parts/StyledMenuItemBase';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './MenuItemSuggestion.module.scss';
 
@@ -40,7 +42,10 @@ export const MenuItemSuggestion = ({
     <li
       className={clsx(styles.suggestionMenuItem, className)}
       data-selected={selected || undefined}
+      role={isDefined(onClick) ? 'button' : undefined}
+      tabIndex={isDefined(onClick) ? 0 : undefined}
       onClick={handleMenuItemClick}
+      onKeyDown={handleClickableElementKeyDown}
     >
       <StyledMenuItemLeftContent>
         <MenuItemLeftContent

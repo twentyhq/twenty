@@ -27,6 +27,8 @@
     outline: none;
   }
 
+  @include focus-ring;
+
   &:active {
     background: var(--t-background-transparent-medium);
   }
