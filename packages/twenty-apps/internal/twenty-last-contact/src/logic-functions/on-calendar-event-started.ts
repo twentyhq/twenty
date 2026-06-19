@@ -53,7 +53,7 @@ const handler = async (): Promise<void> => {
     });
 
     calendarEventIds.push(
-      ...(calendarEvents?.edges.map((edge) => edge.node.id) ?? []),
+      ...(calendarEvents?.edges.map((edge: { node: { id: string } }) => edge.node.id) ?? []),
     );
     calendarEventsHasNextPage = calendarEvents?.pageInfo.hasNextPage ?? false;
     calendarEventsCursor = calendarEvents?.pageInfo.endCursor ?? undefined;
