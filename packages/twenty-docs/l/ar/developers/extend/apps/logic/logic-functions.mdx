@@ -60,6 +60,7 @@ export default defineLogicFunction({
 * **cron**: يشغّل وظيفتك على جدول باستخدام تعبير CRON.
 * **databaseEvent**: يعمل على أحداث دورة حياة كائنات مساحة العمل. عندما تكون عملية الحدث هي `updated`، يمكن تحديد الحقول المحددة المراد الاستماع إليها في مصفوفة `updatedFields`. إذا تُركت غير معرّفة أو فارغة، فسيؤدي أي تحديث إلى تشغيل الدالة.
 > مثال: `person.updated`، `*.created`، `company.*`
+* **serverWebhook**: يستقبل خطافات الويب الواردة من خدمة خارجية (Stripe وGitHub وSvix و…) على نقطة نهاية واحدة ضمن نطاق التسجيل ويحدد مساحة العمل المستهدفة من الحمولة. راجع [مشغّل خطاف الويب على الخادم](#server-webhook-trigger).
 
 <Note>
 يمكنك أيضًا تنفيذ دالة يدويًا باستخدام CLI:
@@ -105,7 +106,7 @@ const handler = async (event: RoutePayload) => {
   | `body`                       | `object \| null`                                        | جسم الطلب المُحلَّل (JSON)                                                                                                                                                                     | `{ id: 1 }` -> `{ id: 1 }`                                                 |
   | `rawBody`                    | `string \| undefined`                                   | نص الطلب الأصلي بترميز UTF-8، قبل تحليل JSON. مفيد للتحقق من تواقيع خطافات الويب على نمط HMAC (مثل `X-Hub-Signature-256` الخاص بـ GitHub وStripe). `undefined` عندما لم يحتفظ وقت التشغيل بها. |                                                                            |
   | `isBase64Encoded`            | `boolean`                                               | ما إذا كان جسم الطلب مُرمَّزًا بترميز base64                                                                                                                                                   |                                                                            |
-  | `requestContext.http.method` | `string`                                                | طريقة HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                     |                                                                            |
+  | `requestContext.http.method` | `سلسلة نصية`                                            | طريقة HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                     |                                                                            |
   | `requestContext.http.path`   | `string`                                                | المسار الخام للطلب                                                                                                                                                                             |                                                                            |
 
 
@@ -169,6 +170,90 @@ const handler = async (event: RoutePayload) => {
 
 <Note>
 يجب أن يكون رمز الحالة رمز حالة HTTP صالحًا (بين 100 و599). تتم مطابقة أسماء ترويسات الاستجابة دون حساسية لحالة الأحرف.
+</Note>
+
+#### مشغّل ربط الويب على الخادم
+
+`httpRouteTriggerSettings` يوفّر دالة تحت ‎`/s/`‎ ويحل مساحة العمل من مضيف الطلب — وهذا يعمل عندما تكون لكل مساحة عمل نطاقها الخاص. مع ذلك، يرسل المزوّدون الخارجيون أحداث كل مستأجر إلى عنوان URL واحد لربط الويب. في هذه الحالة، استخدم `serverWebhookTriggerSettings`: تكون الدالة متاحة عند نقطة نهاية ذات نطاق تسجيل ويتم حل مساحة العمل من الحمولة.
+
+```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  // Verify the signature yourself before doing anything (see below).
+  // Return a non-2xx Response to make the provider retry.
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-provider-webhook',
+  handler,
+  serverWebhookTriggerSettings: {
+    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  },
+});
+```
+
+يمكن الوصول إلى الدالة عند:
+
+```
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+```
+
+كلا المعرّفين هما `universalIdentifier`s من البيان التعريفي الخاص بك — تسجيل التطبيق وهذه الدالة المنطقية. سجّل عنوان URL هذا لدى المزوّد.
+
+**حل مساحة العمل.** نظرًا لأن نقطة النهاية الواحدة تخدم كل مساحات العمل، يجب أن يضع تكاملك `workspaceId` المستهدف في مكان ما في التسليم، وتخبر `workspaceIdResolver.{ source, path }` المنصّة بمكان قراءته:
+
+| الحقل    | القيم                                                     | الملاحظات                                                                                                                                          |
+| -------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `المصدر` | `body` \| `query` \| `header`                             | `body` يقرأ JSON المحلَّل. `query` هو الخيار الأكثر شمولاً — فعادةً ما تتحكم في عنوان URL لرد النداء الذي تسجّله، لذا أضِف `?twentyWorkspaceId=…`. |
+| `مسار`   | مسار بنقطة، على سبيل المثال: `metadata.twentyWorkspaceId` | يقتصر على مقاطع أبجدية رقمية / `_` / `-`؛ يتم رفض مفاتيح النموذج الأولي.                                                                           |
+
+يجب أن تكون القيمة المحلولة UUID صالحًا لمساحة عمل **و** يجب أن يكون تطبيقك مثبتًا في تلك المساحة، وإلا فسيتم رفض الطلب قبل تشغيل الدالة.
+
+<Warning>
+**التحقق من التوقيع من مسؤوليتك.** المنصّة لا تتحقّق من توقيعات ربط الويب لهذا المشغّل — فهي تكتفي بحل مساحة العمل وتشغيل الدالة الخاصة بك. يجب أن يتحقق معالِجك من التوقيع بنفسه باستخدام `event.rawBody` والرؤوس التي أدرجتها في `forwardedRequestHeaders`، مع المقارنة بسر محفوظ كمتغيّر خادم/تطبيق. تحقّق دائمًا **قبل** أي تأثير جانبي، واستخدم مقارنة بزمن ثابت.
+</Warning>
+
+يستخدم معظم المزوّدين HMAC-SHA256 للتوقيع؛ الأجزاء التي تختلف هي اسم الرأس وترميز الملخّص وسلسلة الحمولة الموقّعة. بعض الأمثلة:
+
+| المزود                       | الرؤوس المطلوب تمريرها                                 | السلسلة الموقَّعة            | الملخّص                                            |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | -------------------------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (السر يكون بصيغة base64 بعد إزالة `whsec_`) |
+| سترايب                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                |
+| جيت هاب                      | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (يبدأ بـ `sha256=`)                            |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                             |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (يبدأ بـ `v0=`)                                |
+
+```ts
+import { createHmac, timingSafeEqual } from 'crypto';
+
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
+      .update(event.rawBody ?? '')
+      .digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    return new Response({ error: 'invalid signature' }, { status: 401 });
+  }
+
+  // ...handle the verified event
+  return { received: true };
+};
+```
+
+<Note>
+تعمل الدالة **بشكل متزامن** وتصبح القيمة التي تعيدها هي استجابة HTTP، لذا يرى المزوّدون رمز الحالة الخاص بك ويمكنهم إعادة المحاولة عند رموز غير 2xx. اجعل المعالِجات سريعة — بعض المزوّدين (مثل Slack) تنتهي مهلة طلباتهم خلال بضع ثوانٍ. نظرًا لأن الدالة تعمل قبل التحقق من التوقيع، قم بحماية نقطة النهاية هذه عبر تحديد المعدل على الحافة الخاصة بك.
 </Note>
 
 #### حمولة مُحفِّز حدث قاعدة البيانات

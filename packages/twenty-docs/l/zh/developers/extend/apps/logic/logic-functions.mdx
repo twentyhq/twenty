@@ -60,6 +60,7 @@ export default defineLogicFunction({
 * **cron**：使用 CRON 表达式按计划运行你的函数。
 * **databaseEvent**：在工作区对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
 > 例如 `person.updated`、`*.created`、`company.*`
+* **serverWebhook**：从第三方服务（Stripe、GitHub、Svix 等）接收入站 Webhooks 在单个以注册为作用域的端点上，并从有效负载中解析目标工作区。 参见 [服务端 Webhook 触发器](#server-webhook-trigger)。
 
 <Note>
 你也可以使用 CLI 手动执行函数：
@@ -170,6 +171,90 @@ const handler = async (event: RoutePayload) => {
 
 <Note>
 状态码必须是有效的 HTTP 状态码（介于 100 和 599 之间）。 响应头名称的匹配不区分大小写。
+</Note>
+
+#### 服务端 Webhook 触发器
+
+`httpRouteTriggerSettings` 在 `/s/` 下暴露一个函数，并根据请求主机解析 workspace——这在每个 workspace 都有自己域名时有效。 然而，第三方服务商会将每个租户的事件发送到**同一个** webhook URL。 对于这种情况，请使用 `serverWebhookTriggerSettings`：该函数可在注册范围的端点访问，并且 workspace 将从负载中解析。
+
+```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  // Verify the signature yourself before doing anything (see below).
+  // Return a non-2xx Response to make the provider retry.
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-provider-webhook',
+  handler,
+  serverWebhookTriggerSettings: {
+    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  },
+});
+```
+
+该函数可在以下地址访问：
+
+```
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+```
+
+这两个标识符都是来自清单的 `universalIdentifier`——即应用注册的 universalIdentifier 和此逻辑函数的 universalIdentifier。 在服务商处注册该 URL。
+
+**Workspace 解析。** 由于一个端点为每个 workspace 提供服务，你的集成必须在传递内容中的某处放入目标 `workspaceId`，而 `workspaceIdResolver.{ source, path }` 用于告知平台从哪里读取它：
+
+| 字段   | 值                                   | 备注                                                                                  |
+| ---- | ----------------------------------- | ----------------------------------------------------------------------------------- |
+| `来源` | `body` \| `query` \| `header`       | `body` 读取解析后的 JSON。 `query` 是最通用的——通常你可以控制所注册的回调 URL，因此可以追加 `?twentyWorkspaceId=…`。 |
+| `路径` | 点路径，例如 `metadata.twentyWorkspaceId` | 仅限字母数字 / `_` / `-` 片段；原型键将被拒绝。                                                      |
+
+解析得到的值必须是有效的 workspace UUID，**并且** 你的应用必须已安装在该 workspace 中，否则请求会在函数运行前被拒绝。
+
+<Warning>
+**签名验证由你负责。** 平台不会为此触发器验证 webhook 签名——它只会解析 workspace 并运行你的函数。 你的处理程序必须使用 `event.rawBody` 以及你在 `forwardedRequestHeaders` 中列出的请求头自行验证签名，并与作为服务器/应用变量存储的密钥进行比对。 始终在产生任何副作用**之前**进行验证，并使用常量时间比较。
+</Warning>
+
+大多数服务商使用 HMAC-SHA256 进行签名；不同之处在于请求头名称、摘要编码方式以及被签名的负载字符串。 例如：
+
+| 提供商                       | 要转发的请求头                                                | 签名字符串                        | 摘要                                 |
+| ------------------------- | ------------------------------------------------------ | ---------------------------- | ---------------------------------- |
+| Svix（Recall、Resend、Clerk） | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64（密钥在去掉 `whsec_` 前缀后为 base64） |
+| Stripe                    | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                |
+| GitHub                    | `x-hub-signature-256`                                  | `{rawBody}`                  | hex（前缀为 `sha256=`）                 |
+| Shopify                   | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                             |
+| Slack                     | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex（前缀为 `v0=`）                     |
+
+```ts
+import { createHmac, timingSafeEqual } from 'crypto';
+
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
+      .update(event.rawBody ?? '')
+      .digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    return new Response({ error: 'invalid signature' }, { status: 401 });
+  }
+
+  // ...handle the verified event
+  return { received: true };
+};
+```
+
+<Note>
+该函数**同步**运行，你返回的值会成为 HTTP 响应，因此服务商可以看到你的状态码，并在非 2xx 时重试。 保持处理程序足够快速——某些服务商（例如 Slack）会在几秒内超时。 由于函数在检查签名前运行，请在边缘通过速率限制来保护此端点。
 </Note>
 
 #### 数据库事件触发器有效负载
