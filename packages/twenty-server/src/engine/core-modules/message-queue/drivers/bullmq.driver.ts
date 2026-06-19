@@ -35,6 +35,14 @@ export type BullMQDriverOptions = QueueOptions;
 
 const V4_LENGTH = 36;
 
+const TRANSIENT_WORKER_ERROR_NAMES = new Set([
+  'MissingLockError',
+  'LockMismatchError',
+]);
+
+const isTransientWorkerError = (error: Error) =>
+  TRANSIENT_WORKER_ERROR_NAMES.has(error.name);
+
 export class BullMQDriver
   implements MessageQueueDriver, OnModuleDestroy, OnModuleInit
 {
@@ -114,6 +122,26 @@ export class BullMQDriver
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
 
+          Sentry.setTags({
+            'twenty.queue.name': queueName,
+            'twenty.queue.job.name': job.name,
+            ...(isDefined(job.id)
+              ? { 'twenty.queue.job.id': String(job.id) }
+              : {}),
+          });
+
+          Sentry.addBreadcrumb({
+            category: 'queue-worker.processing',
+            level: 'info',
+            message: `Processing job ${job.id} (${job.name}) on queue ${queueName}`,
+            data: {
+              queueName,
+              jobId: job.id,
+              jobName: job.name,
+              workspaceId: job.data?.workspaceId,
+            },
+          });
+
           // TODO: Correctly support for job.id
           const timeStart = performance.now();
           const workspaceId = job.data?.workspaceId;
@@ -148,14 +176,63 @@ export class BullMQDriver
         return;
       }
 
+      const maxAttempts = job.opts.attempts ?? 1;
+      const hasRetryRemaining = job.attemptsMade < maxAttempts;
+      const isTransientError = isTransientWorkerError(error);
+
+      Sentry.addBreadcrumb({
+        category: 'queue-worker.failed',
+        level: isTransientError
+          ? 'warning'
+          : hasRetryRemaining
+            ? 'warning'
+            : 'error',
+        message: `Job ${job.id} (${job.name}) failed on queue ${queueName}`,
+        data: {
+          queueName,
+          jobId: job.id,
+          jobName: job.name,
+          errorName: error.name,
+          attemptsMade: job.attemptsMade,
+          maxAttempts,
+          hasRetryRemaining,
+          isTransientError,
+          workspaceId: job.data?.workspaceId,
+        },
+      });
+
       void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobFailed,
         attributes: {
           queue: queueName,
           job_name: job.name,
           error_type: error.name,
+          is_transient_error: isTransientError ? 'true' : 'false',
         },
         shouldStoreInCache: false,
+      });
+    });
+
+    this.workerMap[queueName].on('error', (error) => {
+      const isTransientError = isTransientWorkerError(error);
+
+      const message = `Worker error on queue ${queueName}: ${error.message}`;
+
+      if (isTransientError) {
+        this.logger.warn(message);
+      } else {
+        this.logger.error(message, error.stack);
+      }
+
+      Sentry.addBreadcrumb({
+        category: 'queue-worker.error',
+        level: isTransientError ? 'warning' : 'error',
+        message,
+        data: {
+          queueName,
+          errorName: error.name,
+          isTransientError,
+        },
       });
     });
   }

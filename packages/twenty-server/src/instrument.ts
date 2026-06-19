@@ -45,6 +45,27 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     profilesSampleRate: 0.3,
     sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
+    beforeBreadcrumb: (breadcrumb) => {
+      const isQueueWorkerBreadcrumb =
+        breadcrumb.category === 'queue-worker.error' ||
+        breadcrumb.category === 'queue-worker.failed';
+
+      if (!isQueueWorkerBreadcrumb) {
+        return breadcrumb;
+      }
+
+      const isTransientError =
+        typeof breadcrumb.data === 'object' &&
+        breadcrumb.data !== null &&
+        'isTransientError' in breadcrumb.data &&
+        breadcrumb.data.isTransientError === true;
+
+      if (!isTransientError) {
+        return breadcrumb;
+      }
+
+      return null;
+    },
     beforeSendSpan: (span) => {
       const twentyContext = Sentry.getIsolationScope().getScopeData().contexts
         ?.twenty as
