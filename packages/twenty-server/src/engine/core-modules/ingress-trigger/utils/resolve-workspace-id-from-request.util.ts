@@ -31,7 +31,7 @@ const asString = (value: unknown): string | undefined => {
 };
 
 const getResolverRoot = (
-  source: IngressTriggerSettings['workspaceId']['source'],
+  source: IngressTriggerSettings['workspaceIdResolver']['source'],
   request: Request,
 ): Record<string, unknown> | undefined => {
   switch (source) {
@@ -50,7 +50,7 @@ export const resolveWorkspaceIdFromRequest = ({
   resolver,
   request,
 }: {
-  resolver: IngressTriggerSettings['workspaceId'];
+  resolver: IngressTriggerSettings['workspaceIdResolver'];
   request: Request;
 }): string | undefined => {
   const segments = resolver.path.split('.');

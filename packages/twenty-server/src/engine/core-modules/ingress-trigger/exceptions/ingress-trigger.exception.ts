@@ -8,7 +8,7 @@ export enum IngressTriggerExceptionCode {
   APPLICATION_REGISTRATION_NOT_FOUND = 'APPLICATION_REGISTRATION_NOT_FOUND',
   INGRESS_TRIGGER_NOT_CONFIGURED = 'INGRESS_TRIGGER_NOT_CONFIGURED',
   WORKSPACE_ID_NOT_RESOLVED = 'WORKSPACE_ID_NOT_RESOLVED',
-  WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
+  APPLICATION_NOT_INSTALLED = 'APPLICATION_NOT_INSTALLED',
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
   INGRESS_USER_UNCAUGHT_ERROR = 'INGRESS_USER_UNCAUGHT_ERROR',
   INGRESS_PLATFORM_ERROR = 'INGRESS_PLATFORM_ERROR',
@@ -24,8 +24,8 @@ const getIngressTriggerExceptionUserFriendlyMessage = (
       return msg`Webhook ingress is not configured for this application registration.`;
     case IngressTriggerExceptionCode.WORKSPACE_ID_NOT_RESOLVED:
       return msg`Could not resolve a workspace from the webhook payload.`;
-    case IngressTriggerExceptionCode.WORKSPACE_NOT_FOUND:
-      return msg`Workspace not found.`;
+    case IngressTriggerExceptionCode.APPLICATION_NOT_INSTALLED:
+      return msg`Application is not installed in this workspace.`;
     case IngressTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
       return msg`Logic function not found.`;
     case IngressTriggerExceptionCode.INGRESS_USER_UNCAUGHT_ERROR:

@@ -26,7 +26,7 @@ export class IngressTriggerRestApiExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case IngressTriggerExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND:
       case IngressTriggerExceptionCode.INGRESS_TRIGGER_NOT_CONFIGURED:
-      case IngressTriggerExceptionCode.WORKSPACE_NOT_FOUND:
+      case IngressTriggerExceptionCode.APPLICATION_NOT_INSTALLED:
       case IngressTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,

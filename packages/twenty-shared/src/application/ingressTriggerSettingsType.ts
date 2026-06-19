@@ -1,7 +1,7 @@
 export type WebhookWorkspaceIdSource = 'body' | 'query' | 'header';
 
 export type IngressTriggerSettings = {
-  workspaceId: {
+  workspaceIdResolver: {
     source: WebhookWorkspaceIdSource;
     path: string;
   };

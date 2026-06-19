@@ -40,7 +40,7 @@ export class IngressTriggerService {
   private getIngressTriggerSettingsOrThrow(
     settings: IngressTriggerSettings | undefined,
   ): IngressTriggerSettings {
-    const resolver = settings?.workspaceId;
+    const resolver = settings?.workspaceIdResolver;
 
     if (
       !isDefined(resolver) ||
@@ -89,7 +89,7 @@ export class IngressTriggerService {
     );
 
     const workspaceId = resolveWorkspaceIdFromRequest({
-      resolver: ingressTriggerSettings.workspaceId,
+      resolver: ingressTriggerSettings.workspaceIdResolver,
       request,
     });
 
@@ -110,7 +110,7 @@ export class IngressTriggerService {
     if (!isDefined(application)) {
       throw new IngressTriggerException(
         `Application is not installed in workspace ${workspaceId} for this registration`,
-        IngressTriggerExceptionCode.WORKSPACE_NOT_FOUND,
+        IngressTriggerExceptionCode.APPLICATION_NOT_INSTALLED,
       );
     }
 

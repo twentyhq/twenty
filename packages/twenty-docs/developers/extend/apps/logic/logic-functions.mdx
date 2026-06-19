@@ -193,7 +193,7 @@ export default defineLogicFunction({
   name: 'handle-provider-webhook',
   handler,
   ingressTriggerSettings: {
-    workspaceId: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
     forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
   },
 });
@@ -207,7 +207,7 @@ POST https://your-twenty-server.com/webhooks/ingress/:applicationRegistrationUni
 
 Both identifiers are the `universalIdentifier`s from your manifest — the application registration's and this logic function's. Register that URL with the provider.
 
-**Workspace resolution.** Because one endpoint serves every workspace, your integration must put the target `workspaceId` somewhere in the delivery, and `workspaceId.{ source, path }` tells the platform where to read it:
+**Workspace resolution.** Because one endpoint serves every workspace, your integration must put the target `workspaceId` somewhere in the delivery, and `workspaceIdResolver.{ source, path }` tells the platform where to read it:
 
 | Field | Values | Notes |
 |-------|--------|-------|

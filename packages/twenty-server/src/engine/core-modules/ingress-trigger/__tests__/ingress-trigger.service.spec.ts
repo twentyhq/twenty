@@ -36,7 +36,10 @@ const REGISTRATION_WITH_TRIGGER = asRegistration({
       {
         universalIdentifier: LOGIC_FUNCTION_UID,
         ingressTriggerSettings: {
-          workspaceId: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+          workspaceIdResolver: {
+            source: 'body',
+            path: 'metadata.twentyWorkspaceId',
+          },
         },
       },
     ],
@@ -144,7 +147,7 @@ describe('IngressTriggerService', () => {
     applicationRepository.findOne.mockResolvedValue(null);
 
     await expect(handle()).rejects.toMatchObject({
-      code: IngressTriggerExceptionCode.WORKSPACE_NOT_FOUND,
+      code: IngressTriggerExceptionCode.APPLICATION_NOT_INSTALLED,
     });
   });
 
