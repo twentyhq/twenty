@@ -1,0 +1,28 @@
+packages/twenty-front/src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
+  s_35892942d7e0a6::t_930a0fcbcb7e93 9
+  s_35892942d7e0a6::t_c44fbc26a9d6fc 63-65
+packages/twenty-front/src/modules/command-menu-item/engine-command/record/components/PermanentlyDeleteRecordsCommand.tsx
+  s_35892942d7e0a6::t_1910805e4c189d 1-90
+packages/twenty-server/src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum.ts
+  s_35892942d7e0a6::t_768b786b2a5198 54
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+  s_35892942d7e0a6::t_f1f8a3211414ae 68-82
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_35892942d7e0a6::t_7f7dca29993434 1586
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "2a2b509a19e6da4b155528acad05965d82d9675b",
+  "prompts": {},
+  "sessions": {
+    "s_35892942d7e0a6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa469098-23d2-4e87-9b82-23f0c53dd368",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "RISHAV DEWAN <rishavdewan10@gmail.com>"
+    }
+  }
+}
