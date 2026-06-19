@@ -5,13 +5,13 @@ import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { assertFilterIdOperandsAreValidUuids } from 'src/engine/api/common/common-query-runners/utils/assert-filter-id-operands-are-valid-uuids.util';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -22,7 +22,7 @@ import {
   DestroyManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -139,14 +139,14 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
 
     assertMutationNotOnRemoteObject(flatObjectMetadata);
 
-    if (!isDefined(args.filter)) {
+    if (!isDefined(args.filter) || Object.keys(args.filter).length === 0) {
       throw new CommonQueryRunnerException(
-        'Filter is required',
+        'A non-empty filter is required',
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
 
-    args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
+    assertFilterIdOperandsAreValidUuids(args.filter);
   }
 }
