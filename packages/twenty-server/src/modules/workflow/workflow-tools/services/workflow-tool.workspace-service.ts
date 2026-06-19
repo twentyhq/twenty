@@ -23,7 +23,9 @@ import { createDeactivateWorkflowVersionTool } from 'src/modules/workflow/workfl
 import { createDeleteWorkflowVersionEdgeTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-edge.tool';
 import { createDeleteWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-step.tool';
 import { createGetWorkflowCurrentVersionTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-current-version.tool';
+import { createGetWorkflowRunTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-run.tool';
 import { createListLogicFunctionToolsTool } from 'src/modules/workflow/workflow-tools/tools/list-logic-function-tools.tool';
+import { createListWorkflowRunsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflow-runs.tool';
 import { createUpdateLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/update-logic-function-source.tool';
 import { createUpdateWorkflowVersionPositionsTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-positions.tool';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
@@ -118,7 +120,15 @@ export class WorkflowToolWorkspaceService {
     );
     const getWorkflowCurrentVersion = createGetWorkflowCurrentVersionTool(
       this.deps,
-      context,
+      contextWithPermissions,
+    );
+    const getWorkflowRun = createGetWorkflowRunTool(
+      this.deps,
+      contextWithPermissions,
+    );
+    const listWorkflowRuns = createListWorkflowRunsTool(
+      this.deps,
+      contextWithPermissions,
     );
     const updateLogicFunctionSource = createUpdateLogicFunctionSourceTool(
       this.deps,
@@ -144,6 +154,8 @@ export class WorkflowToolWorkspaceService {
       [deactivateWorkflowVersion.name]: deactivateWorkflowVersion,
       [computeStepOutputSchema.name]: computeStepOutputSchema,
       [getWorkflowCurrentVersion.name]: getWorkflowCurrentVersion,
+      [getWorkflowRun.name]: getWorkflowRun,
+      [listWorkflowRuns.name]: listWorkflowRuns,
       [updateLogicFunctionSource.name]: updateLogicFunctionSource,
       [listLogicFunctionTools.name]: listLogicFunctionTools,
       [validateWorkflow.name]: validateWorkflow,
