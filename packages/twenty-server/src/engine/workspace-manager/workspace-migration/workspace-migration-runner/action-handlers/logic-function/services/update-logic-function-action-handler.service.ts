@@ -106,6 +106,8 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     });
 
     if (builtPathChanged) {
+      // Irreversible S3 delete running inside the transaction.
+      // TODO: move to getAfterCommitSideEffects, then to a worker job.
       const deleteFileStart = performance.now();
 
       await this.fileStorageService.deleteFile({
