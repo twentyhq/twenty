@@ -47,8 +47,23 @@ describe('parseTranscriptEntries', () => {
         },
       ]),
     ).toEqual([
-      { speakerName: 'Ada Lovelace', startSeconds: 1.2, text: 'Hello there' },
-      { speakerName: 'Grace Hopper', startSeconds: 3.4, text: 'Hi' },
+      {
+        speakerName: 'Ada Lovelace',
+        startSeconds: 1.2,
+        endSeconds: 2.1,
+        text: 'Hello there',
+        words: [
+          { text: 'Hello', startSeconds: 1.2, endSeconds: 1.6 },
+          { text: 'there', startSeconds: 1.7, endSeconds: 2.1 },
+        ],
+      },
+      {
+        speakerName: 'Grace Hopper',
+        startSeconds: 3.4,
+        endSeconds: undefined,
+        text: 'Hi',
+        words: [{ text: 'Hi', startSeconds: 3.4, endSeconds: undefined }],
+      },
     ]);
   });
 
@@ -62,9 +77,19 @@ describe('parseTranscriptEntries', () => {
       {
         speakerName: 'Unknown speaker',
         startSeconds: undefined,
+        endSeconds: undefined,
         text: 'Hello',
+        words: [
+          { text: 'Hello', startSeconds: undefined, endSeconds: undefined },
+        ],
       },
-      { speakerName: 'Unknown speaker', startSeconds: undefined, text: 'Hi' },
+      {
+        speakerName: 'Unknown speaker',
+        startSeconds: undefined,
+        endSeconds: undefined,
+        text: 'Hi',
+        words: [{ text: 'Hi', startSeconds: undefined, endSeconds: undefined }],
+      },
     ]);
   });
 
@@ -82,7 +107,15 @@ describe('parseTranscriptEntries', () => {
         },
       ]),
     ).toEqual([
-      { speakerName: 'Ada Lovelace', startSeconds: undefined, text: 'Hello' },
+      {
+        speakerName: 'Ada Lovelace',
+        startSeconds: undefined,
+        endSeconds: undefined,
+        text: 'Hello',
+        words: [
+          { text: 'Hello', startSeconds: undefined, endSeconds: undefined },
+        ],
+      },
     ]);
   });
 
@@ -99,7 +132,15 @@ describe('parseTranscriptEntries', () => {
         'not an entry',
       ]),
     ).toEqual([
-      { speakerName: 'Joan Clarke', startSeconds: undefined, text: 'Kept' },
+      {
+        speakerName: 'Joan Clarke',
+        startSeconds: undefined,
+        endSeconds: undefined,
+        text: 'Kept',
+        words: [
+          { text: 'Kept', startSeconds: undefined, endSeconds: undefined },
+        ],
+      },
     ]);
   });
 

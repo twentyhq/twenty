@@ -1,12 +1,18 @@
 import { isArray, isNumber, isUndefined } from '@sniptt/guards';
 
-import { type TranscriptEntry } from 'src/front-components/types/transcript-entry.type';
+import {
+  type TranscriptEntry,
+  type TranscriptWord,
+} from 'src/front-components/types/transcript-entry.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
-type TranscriptWord = {
-  text: string;
-  startSeconds: number | undefined;
+const readRelativeTimestamp = (timestamp: unknown): number | undefined => {
+  const relativeTimestamp = asRecord(timestamp)?.relative;
+
+  return isNumber(relativeTimestamp) && Number.isFinite(relativeTimestamp)
+    ? relativeTimestamp
+    : undefined;
 };
 
 const readTranscriptWord = (word: unknown): TranscriptWord | undefined => {
@@ -16,12 +22,10 @@ const readTranscriptWord = (word: unknown): TranscriptWord | undefined => {
     return undefined;
   }
 
-  const relative = asRecord(candidate.start_timestamp)?.relative;
-
   return {
     text: candidate.text.trim(),
-    startSeconds:
-      isNumber(relative) && Number.isFinite(relative) ? relative : undefined,
+    startSeconds: readRelativeTimestamp(candidate.start_timestamp),
+    endSeconds: readRelativeTimestamp(candidate.end_timestamp),
   };
 };
 
@@ -49,7 +53,9 @@ const readTranscriptEntry = (entry: unknown): TranscriptEntry | undefined => {
   return {
     speakerName: readSpeakerName(candidate.participant),
     startSeconds: words[0].startSeconds,
+    endSeconds: words[words.length - 1].endSeconds,
     text: words.map((word) => word.text).join(' '),
+    words,
   };
 };
 
