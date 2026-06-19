@@ -53,15 +53,6 @@ for lang_dir in "$DOCS_DIR"/*/ ; do
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
     "s|https://docs\.twenty\.com/twenty-ui/|https://docs.twenty.com/l/$lang_code/twenty-ui/|g" {} \;
 
-  find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
-    "s|https://docs\.twenty\.com/getting-started/|https://docs.twenty.com/$lang_code/getting-started/|g" {} \;
-  find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
-    "s|https://docs\.twenty\.com/user-guide/|https://docs.twenty.com/$lang_code/user-guide/|g" {} \;
-  find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
-    "s|https://docs\.twenty\.com/developers/|https://docs.twenty.com/$lang_code/developers/|g" {} \;
-  find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
-    "s|https://docs\.twenty\.com/twenty-ui/|https://docs.twenty.com/$lang_code/twenty-ui/|g" {} \;
-
   find "$lang_dir" -name "*.bak" -type f -delete
 
   echo "✅ $lang_code documentation links fixed"
