@@ -1,6 +1,6 @@
 import { type Request } from 'express';
 
-import { resolveWorkspaceIdFromRequest } from 'src/engine/core-modules/application-registration-webhook/utils/resolve-workspace-id-from-request.util';
+import { resolveWorkspaceIdFromRequest } from 'src/engine/core-modules/ingress-trigger/utils/resolve-workspace-id-from-request.util';
 
 const buildRequest = (overrides: Partial<Request>): Request =>
   ({ query: {}, headers: {}, body: null, ...overrides }) as unknown as Request;

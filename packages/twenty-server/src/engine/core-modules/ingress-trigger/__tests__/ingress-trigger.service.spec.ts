@@ -1,8 +1,8 @@
 import { type Request } from 'express';
 import { type Repository } from 'typeorm';
 
-import { ApplicationRegistrationWebhookService } from 'src/engine/core-modules/application-registration-webhook/application-registration-webhook.service';
-import { ApplicationRegistrationWebhookExceptionCode } from 'src/engine/core-modules/application-registration-webhook/exceptions/application-registration-webhook.exception';
+import { IngressTriggerService } from 'src/engine/core-modules/ingress-trigger/ingress-trigger.service';
+import { IngressTriggerExceptionCode } from 'src/engine/core-modules/ingress-trigger/exceptions/ingress-trigger.exception';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
@@ -15,7 +15,7 @@ const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const buildRequest = (body: object | null): Request =>
   ({
     method: 'POST',
-    path: `/webhooks/application-registrations/${REGISTRATION_UID}/${LOGIC_FUNCTION_UID}`,
+    path: `/webhooks/ingress/${REGISTRATION_UID}/${LOGIC_FUNCTION_UID}`,
     query: {},
     headers: {},
     rawBody: Buffer.from(JSON.stringify(body ?? {}), 'utf-8'),
@@ -43,8 +43,8 @@ const REGISTRATION_WITH_TRIGGER = asRegistration({
   },
 });
 
-describe('ApplicationRegistrationWebhookService', () => {
-  let service: ApplicationRegistrationWebhookService;
+describe('IngressTriggerService', () => {
+  let service: IngressTriggerService;
   let applicationRegistrationService: jest.Mocked<
     Pick<ApplicationRegistrationService, 'findOneByUniversalIdentifier'>
   >;
@@ -88,7 +88,7 @@ describe('ApplicationRegistrationWebhookService', () => {
         .mockResolvedValue({ id: 'app-1', workspaceId: WORKSPACE_ID }),
     };
 
-    service = new ApplicationRegistrationWebhookService(
+    service = new IngressTriggerService(
       applicationRegistrationService as unknown as ApplicationRegistrationService,
       logicFunctionTriggerService as unknown as LogicFunctionTriggerService,
       logicFunctionRepository as unknown as Repository<LogicFunctionEntity>,
@@ -114,7 +114,7 @@ describe('ApplicationRegistrationWebhookService', () => {
     );
 
     await expect(handle()).rejects.toMatchObject({
-      code: ApplicationRegistrationWebhookExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+      code: IngressTriggerExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
     });
   });
 
@@ -124,7 +124,7 @@ describe('ApplicationRegistrationWebhookService', () => {
     );
 
     await expect(handle()).rejects.toMatchObject({
-      code: ApplicationRegistrationWebhookExceptionCode.WEBHOOK_INGRESS_NOT_CONFIGURED,
+      code: IngressTriggerExceptionCode.INGRESS_TRIGGER_NOT_CONFIGURED,
     });
   });
 
@@ -132,7 +132,7 @@ describe('ApplicationRegistrationWebhookService', () => {
     await expect(
       handle({ metadata: { twentyWorkspaceId: 'not-a-uuid' } }),
     ).rejects.toMatchObject({
-      code: ApplicationRegistrationWebhookExceptionCode.WORKSPACE_ID_NOT_RESOLVED,
+      code: IngressTriggerExceptionCode.WORKSPACE_ID_NOT_RESOLVED,
     });
   });
 
@@ -140,7 +140,7 @@ describe('ApplicationRegistrationWebhookService', () => {
     applicationRepository.findOne.mockResolvedValue(null);
 
     await expect(handle()).rejects.toMatchObject({
-      code: ApplicationRegistrationWebhookExceptionCode.WORKSPACE_NOT_FOUND,
+      code: IngressTriggerExceptionCode.WORKSPACE_NOT_FOUND,
     });
   });
 
@@ -148,7 +148,7 @@ describe('ApplicationRegistrationWebhookService', () => {
     logicFunctionRepository.findOne.mockResolvedValue(null);
 
     await expect(handle()).rejects.toMatchObject({
-      code: ApplicationRegistrationWebhookExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      code: IngressTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
     });
   });
 
@@ -159,7 +159,7 @@ describe('ApplicationRegistrationWebhookService', () => {
     });
 
     await expect(handle()).rejects.toMatchObject({
-      code: ApplicationRegistrationWebhookExceptionCode.WEBHOOK_USER_UNCAUGHT_ERROR,
+      code: IngressTriggerExceptionCode.INGRESS_USER_UNCAUGHT_ERROR,
     });
   });
 });

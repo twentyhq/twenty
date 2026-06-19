@@ -10,10 +10,10 @@ import { validate as uuidValidate } from 'uuid';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  ApplicationRegistrationWebhookException,
-  ApplicationRegistrationWebhookExceptionCode,
-} from 'src/engine/core-modules/application-registration-webhook/exceptions/application-registration-webhook.exception';
-import { resolveWorkspaceIdFromRequest } from 'src/engine/core-modules/application-registration-webhook/utils/resolve-workspace-id-from-request.util';
+  IngressTriggerException,
+  IngressTriggerExceptionCode,
+} from 'src/engine/core-modules/ingress-trigger/exceptions/ingress-trigger.exception';
+import { resolveWorkspaceIdFromRequest } from 'src/engine/core-modules/ingress-trigger/utils/resolve-workspace-id-from-request.util';
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
@@ -25,9 +25,9 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 const WEBHOOK_WORKSPACE_ID_SOURCES = new Set(['body', 'query', 'header']);
 
 @Injectable()
-export class ApplicationRegistrationWebhookService {
+export class IngressTriggerService {
   private readonly logger = new Logger(
-    ApplicationRegistrationWebhookService.name,
+    IngressTriggerService.name,
   );
 
   constructor(
@@ -50,9 +50,9 @@ export class ApplicationRegistrationWebhookService {
       typeof resolver.path !== 'string' ||
       resolver.path.length === 0
     ) {
-      throw new ApplicationRegistrationWebhookException(
+      throw new IngressTriggerException(
         'Ingress trigger is not configured for this logic function',
-        ApplicationRegistrationWebhookExceptionCode.WEBHOOK_INGRESS_NOT_CONFIGURED,
+        IngressTriggerExceptionCode.INGRESS_TRIGGER_NOT_CONFIGURED,
       );
     }
 
@@ -74,9 +74,9 @@ export class ApplicationRegistrationWebhookService {
       );
 
     if (!isDefined(applicationRegistration)) {
-      throw new ApplicationRegistrationWebhookException(
+      throw new IngressTriggerException(
         `Application registration ${applicationRegistrationUniversalIdentifier} not found`,
-        ApplicationRegistrationWebhookExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+        IngressTriggerExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
       );
     }
 
@@ -96,9 +96,9 @@ export class ApplicationRegistrationWebhookService {
     });
 
     if (!isDefined(workspaceId) || !uuidValidate(workspaceId)) {
-      throw new ApplicationRegistrationWebhookException(
+      throw new IngressTriggerException(
         'Could not resolve a valid workspaceId from the webhook payload',
-        ApplicationRegistrationWebhookExceptionCode.WORKSPACE_ID_NOT_RESOLVED,
+        IngressTriggerExceptionCode.WORKSPACE_ID_NOT_RESOLVED,
       );
     }
 
@@ -110,9 +110,9 @@ export class ApplicationRegistrationWebhookService {
     });
 
     if (!isDefined(application)) {
-      throw new ApplicationRegistrationWebhookException(
+      throw new IngressTriggerException(
         `Application is not installed in workspace ${workspaceId} for this registration`,
-        ApplicationRegistrationWebhookExceptionCode.WORKSPACE_NOT_FOUND,
+        IngressTriggerExceptionCode.WORKSPACE_NOT_FOUND,
       );
     }
 
@@ -125,9 +125,9 @@ export class ApplicationRegistrationWebhookService {
     });
 
     if (!isDefined(logicFunction)) {
-      throw new ApplicationRegistrationWebhookException(
+      throw new IngressTriggerException(
         `Logic function ${logicFunctionUniversalIdentifier} is not installed in workspace ${workspaceId}`,
-        ApplicationRegistrationWebhookExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+        IngressTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
       );
     }
 
@@ -144,7 +144,7 @@ export class ApplicationRegistrationWebhookService {
         userWorkspaceId: null,
       });
     } catch (error) {
-      if (error instanceof ApplicationRegistrationWebhookException) {
+      if (error instanceof IngressTriggerException) {
         throw error;
       }
 
@@ -153,16 +153,16 @@ export class ApplicationRegistrationWebhookService {
         error instanceof Error ? error.stack : undefined,
       );
 
-      throw new ApplicationRegistrationWebhookException(
+      throw new IngressTriggerException(
         `Logic function execution failed for ${logicFunction.id}`,
         this.mapErrorToWebhookCode(error),
       );
     }
 
     if (outcome.kind === 'userError') {
-      throw new ApplicationRegistrationWebhookException(
+      throw new IngressTriggerException(
         outcome.errorMessage,
-        ApplicationRegistrationWebhookExceptionCode.WEBHOOK_USER_UNCAUGHT_ERROR,
+        IngressTriggerExceptionCode.INGRESS_USER_UNCAUGHT_ERROR,
       );
     }
 
@@ -171,14 +171,14 @@ export class ApplicationRegistrationWebhookService {
 
   private mapErrorToWebhookCode(
     error: unknown,
-  ): ApplicationRegistrationWebhookExceptionCode {
+  ): IngressTriggerExceptionCode {
     if (
       error instanceof LogicFunctionExecutionException &&
       error.code === LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
     ) {
-      return ApplicationRegistrationWebhookExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
+      return IngressTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
     }
 
-    return ApplicationRegistrationWebhookExceptionCode.WEBHOOK_PLATFORM_ERROR;
+    return IngressTriggerExceptionCode.INGRESS_PLATFORM_ERROR;
   }
 }
