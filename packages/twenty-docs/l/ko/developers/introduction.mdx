@@ -1,33 +1,28 @@
 ---
-title: 시작하기
-description: Twenty 개발자 문서에 오신 것을 환영합니다. 이 문서는 Twenty를 확장하고, 자체 호스팅하며, Twenty에 기여하는 데 필요한 자료를 제공합니다.
+title: 개발자
+description: 앱을 개발하거나, API를 사용하거나, 자체 호스팅하거나, 코드베이스에 기여하세요.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
 
-<CardGroup cols={2}>
-  <Card href="/l/ko/developers/api" icon="code">
+<CardGroup cols={3}>
+  <Card href="/l/ko/developers/extend/apps/getting-started" img="/images/user-guide/halftone/dev-apps.png">
+    <CardTitle>앱</CardTitle>
+    커스텀 오브젝트, 서버 측 로직, UI 컴포넌트, AI 에이전트로 Twenty를 확장하세요 — 모두 TypeScript 패키지 형태입니다.
+  </Card>
+
+  <Card href="/l/ko/developers/extend/api" img="/images/user-guide/halftone/dev-api.png">
     <CardTitle>API</CardTitle>
-    REST 또는 GraphQL로 CRM 데이터를 쿼리하고 수정합니다.
+    REST 및 GraphQL API, 웹훅, 그리고 OAuth.
   </Card>
 
-  <Card href="/l/ko/developers/webhooks" icon="bell">
-    <CardTitle>Webhooks</CardTitle>
-    이벤트 발생 시 실시간 알림을 받습니다.
-  </Card>
-
-  <Card href="/l/ko/developers/apps/apps" icon="puzzle-piece">
-    <CardTitle>Apps</CardTitle>
-    Twenty의 기능을 확장하는 맞춤형 애플리케이션을 구축하세요.
-  </Card>
-
-  <Card href="/l/ko/developers/self-host/self-host" icon="desktop">
+  <Card href="/l/ko/developers/self-host/capabilities/docker-compose" img="/images/user-guide/halftone/dev-self-host.png">
     <CardTitle>자체 호스팅</CardTitle>
-    자체 인프라에 Twenty를 배포하고 관리하세요.
+    자체 인프라에서 Twenty를 실행하세요.
   </Card>
 
-  <Card href="/l/ko/developers/contribute/contribute" icon="github">
+  <Card href="/l/ko/developers/contribute/capabilities/local-setup" img="/images/user-guide/halftone/dev-contribute.png">
     <CardTitle>기여</CardTitle>
-    오픈 소스 커뮤니티에 참여하고 Twenty에 기여하세요.
+    로컬에서 모노레포를 설정하고 PR을 제출하세요.
   </Card>
 </CardGroup>

@@ -1,0 +1,67 @@
+---
+title: Asset pubblici
+description: Distribuisci file statici — immagini, icone, font — insieme alla tua app tramite la cartella public/.
+icon: folder-open
+---
+
+La cartella `public/` alla radice della tua app contiene file statici — immagini, icone, font o qualsiasi altro asset di cui la tua app ha bisogno a runtime. Questi file sono inclusi automaticamente nelle build, sincronizzati durante la modalità di sviluppo e caricati sul server.
+
+I file posizionati in `public/` sono:
+
+* **Pubblicamente accessibili** — una volta sincronizzati sul server, gli asset sono serviti a un URL pubblico. Non è necessaria alcuna autenticazione per accedervi.
+* **Disponibili nei componenti front-end** — usa gli URL degli asset per visualizzare immagini, icone o qualsiasi media all'interno dei tuoi componenti React.
+* **Disponibili nelle funzioni logiche** — fai riferimento agli URL degli asset nelle email, nelle risposte API o in qualsiasi logica lato server.
+* **Usati per i metadati del marketplace** — i campi `logoUrl` e `screenshots` in `defineApplication()` fanno riferimento a file di questa cartella (ad es., `public/logo.png`). Questi vengono visualizzati nel marketplace quando la tua app viene pubblicata.
+* **Sincronizzati automaticamente in modalità dev** — quando aggiungi, aggiorni o elimini un file in `public/`, viene sincronizzato automaticamente con il server. Nessun riavvio necessario.
+* **Inclusi nelle build** — `yarn twenty dev:build` raggruppa tutti gli asset pubblici nell'output di distribuzione.
+
+## Accedere agli asset pubblici con `getPublicAssetUrl`
+
+Usa l'helper `getPublicAssetUrl` da `twenty-sdk` per ottenere l'URL completo di un file nella tua directory `public/`. Funziona sia nelle funzioni logiche che nei componenti front-end.
+
+**In una funzione logica:**
+
+```ts src/logic-functions/send-invoice.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
+
+const handler = async (): Promise<any> => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+  const invoiceUrl = getPublicAssetUrl('templates/invoice.png');
+
+  // Fetch the file content (no auth required — public endpoint)
+  const response = await fetch(invoiceUrl);
+  const buffer = await response.arrayBuffer();
+
+  return { logoUrl, size: buffer.byteLength };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'a1b2c3d4-...',
+  name: 'send-invoice',
+  description: 'Sends an invoice with the app logo',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+**In un componente front-end:**
+
+```tsx src/front-components/company-card.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
+
+const CompanyCard = () => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+
+  return <img src={logoUrl} alt="App logo" />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'company-card',
+  component: CompanyCard,
+});
+```
+
+L'argomento `path` è relativo alla cartella `public/` della tua app. Sia `getPublicAssetUrl('logo.png')` sia `getPublicAssetUrl('public/logo.png')` risolvono allo stesso URL — il prefisso `public/` viene rimosso automaticamente se presente.

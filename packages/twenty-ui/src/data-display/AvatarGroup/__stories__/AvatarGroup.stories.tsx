@@ -4,6 +4,7 @@ import { Avatar, type AvatarProps } from '@ui/data-display/Avatar/Avatar';
 import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   AVATAR_URL_MOCK,
   CatalogDecorator,
   ComponentDecorator,
@@ -47,8 +48,7 @@ export const Default: Story = {
 
 export const Catalog: Story = {
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {

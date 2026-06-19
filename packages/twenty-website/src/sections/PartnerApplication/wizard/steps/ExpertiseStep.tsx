@@ -5,6 +5,7 @@ import { useLingui } from '@lingui/react';
 import { PARTNER_APPLICATION_FIELD_COPY } from '@/sections/PartnerApplication/partner-application-modal-data';
 import {
   PARTNER_SCOPE_OPTIONS,
+  PARTNER_SKILL_POOL,
   PARTNER_SKILL_SUGGESTIONS,
   type PartnerScopeValue,
 } from '@/sections/PartnerApplication/wizard/partner-fields.data';
@@ -50,6 +51,7 @@ export function ExpertiseStep({ controller }: ExpertiseStepProps) {
           placeholder={i18n._(COPY.skillsPlaceholder)}
           ariaLabel={i18n._(COPY.skills)}
           suggestions={PARTNER_SKILL_SUGGESTIONS}
+          searchPool={PARTNER_SKILL_POOL}
         />
       </Form.Field>
       <Form.Field label={i18n._(COPY.applicationNotes)}>

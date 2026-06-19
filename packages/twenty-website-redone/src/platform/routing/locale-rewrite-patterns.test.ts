@@ -68,4 +68,13 @@ describe('locale rewrites', () => {
     expect(resolve('/sitemap.xml')).toBe('/sitemap.xml');
     expect(resolve('/og-image.png')).toBe('/og-image.png');
   });
+
+  it('should leave the .well-known directory untouched, including extensionless files', () => {
+    expect(resolve('/.well-known/security.txt')).toBe(
+      '/.well-known/security.txt',
+    );
+    expect(resolve('/.well-known/openai-apps-challenge')).toBe(
+      '/.well-known/openai-apps-challenge',
+    );
+  });
 });

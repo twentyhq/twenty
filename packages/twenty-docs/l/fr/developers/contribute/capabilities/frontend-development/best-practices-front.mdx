@@ -1,5 +1,6 @@
 ---
 title: Meilleures pratiques
+icon: étoile
 ---
 
 Ce document décrit les meilleures pratiques à suivre lors de votre travail sur l'interface frontend.
@@ -8,12 +9,14 @@ Ce document décrit les meilleures pratiques à suivre lors de votre travail sur
 
 React et Jotai gèrent la gestion de l'état dans la base de code.
 
-### Utilisez `useAtomState` pour stocker l'état
+### Utilisez les atomes Jotai pour stocker l'état
 
 C'est une bonne pratique de créer autant d'atomes que nécessaire pour stocker votre état.
 
 <Warning>
-  Il vaut mieux utiliser des atomes supplémentaires plutôt que d'essayer d'être trop concis en perçant les propriétés.
+
+Il vaut mieux utiliser des atomes supplémentaires plutôt que d'essayer d'être trop concis en perçant les propriétés.
+
 </Warning>
 
 ```tsx
@@ -43,7 +46,7 @@ export const MyComponent = () => {
 
 Évitez d'utiliser `useRef` pour stocker l'état.
 
-If you want to store state, you should use `useState` or `useAtomState`.
+Si vous souhaitez stocker un état, vous devez utiliser `useState` ou des atomes Jotai avec `useAtomState`.
 
 Consultez [comment gérer les re-rendus](#managing-re-renders) si vous avez l'impression d'avoir besoin de `useRef` pour empêcher certains re-rendus.
 
@@ -130,9 +133,9 @@ export const App = () => (
 );
 ```
 
-### Utilisez les états de famille de jotai et les sélecteurs de famille de jotai
+### Utilisez les familles d'atomes et les sélecteurs
 
-Les états et sélecteurs de famille jotai sont un excellent moyen d'éviter les re-rendus.
+Les familles d'atomes et les sélecteurs sont un excellent moyen d'éviter les re-rendus.
 
 Ils sont utiles lorsque vous devez stocker une liste d'articles.
 

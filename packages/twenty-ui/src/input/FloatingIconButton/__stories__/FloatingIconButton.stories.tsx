@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconSearch } from '@ui/icon';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -19,8 +20,6 @@ export default meta;
 type Story = StoryObj<typeof FloatingIconButton>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
   args: {
     size: 'small',
     disabled: false,
@@ -29,6 +28,7 @@ export const Default: Story = {
     applyShadow: true,
     position: 'standalone',
     Icon: IconSearch,
+    ariaLabel: 'Search',
   },
   argTypes: {
     Icon: { control: false },
@@ -37,15 +37,14 @@ export const Default: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof FloatingIconButton> = {
-  args: { Icon: IconSearch },
+  args: { Icon: IconSearch, ariaLabel: 'Search' },
   argTypes: {
     size: { control: false },
     disabled: { control: false },
     focus: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'] },
     catalog: {
       dimensions: [

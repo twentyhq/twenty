@@ -82,6 +82,15 @@ const PUBLIC_SVG_BRAND_FILES = new Set([
   // <img> and fed through the halftone shader, not rendered as an icon glyph.
   'public/images/shared/halftone/twenty-logo.svg',
 ]);
+// Root README documentation assets: the repo's top-level README.md embeds
+// these SVGs by URL. They are not site UI (so not src/icons components) nor
+// third-party brand marks — they live here only so the README's relative
+// paths keep resolving once this package takes over the twenty-website
+// public/ path. A trailing slash matches a whole directory.
+const PUBLIC_SVG_README_DOC_PATHS = [
+  'public/images/core/logo.svg',
+  'public/images/readme/',
+];
 // Vertical rhythm rides margins ('& > * + *'), not row-gap: gap breaks
 // silently when a wrapper changes the child list. row-gap is allowed only
 // where layout is genuinely multi-axis (wrapping rows, multi-column
@@ -313,17 +322,21 @@ function walk(directory) {
     }
 
     // .tsx files are PascalCase (named after their React component); .ts
-    // files are kebab-case. Next.js route files (page/layout/...) and the
-    // compiled locale catalogs are exempt.
+    // files are kebab-case. Test files mirror their subject's name, so the
+    // .test infix is stripped before the casing rule (TagInput.test.tsx,
+    // partner-fields.test.ts) — matching the .test-only exemptions elsewhere.
+    // Next.js route files (page/layout/...) and the compiled locale catalogs
+    // are exempt.
     if (
       !NEXT_CONTRACT_FILES.has(entry.name) &&
       !relativePath.startsWith('locales' + path.sep)
     ) {
-      if (entry.name.endsWith('.tsx')) {
-        if (!/^[A-Z][A-Za-z0-9]*\.tsx$/.test(entry.name)) {
+      const nameForCasing = entry.name.replace(/\.test(?=\.[tj]sx?$)/, '');
+      if (nameForCasing.endsWith('.tsx')) {
+        if (!/^[A-Z][A-Za-z0-9]*\.tsx$/.test(nameForCasing)) {
           failures.push(`src/${relativePath}: .tsx filenames are PascalCase.`);
         }
-      } else if (/[A-Z]/.test(entry.name)) {
+      } else if (/[A-Z]/.test(nameForCasing)) {
         failures.push(`src/${relativePath}: .ts filenames are kebab-case.`);
       }
     }
@@ -391,7 +404,10 @@ const walkPublic = (dir) => {
 };
 walkPublic('public');
 for (const svgPath of publicSvgs) {
-  if (!PUBLIC_SVG_BRAND_FILES.has(svgPath)) {
+  const isReadmeDocAsset = PUBLIC_SVG_README_DOC_PATHS.some((allowed) =>
+    allowed.endsWith('/') ? svgPath.startsWith(allowed) : svgPath === allowed,
+  );
+  if (!PUBLIC_SVG_BRAND_FILES.has(svgPath) && !isReadmeDocAsset) {
     failures.push(
       `${svgPath}: owned vector glyphs are components in src/icons — public/ svg files are third-party brand assets only (or add to PUBLIC_SVG_BRAND_FILES with a reason).`,
     );

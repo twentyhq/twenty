@@ -1,0 +1,514 @@
+---
+title: 로직 함수
+description: HTTP, cron 및 데이터베이스 이벤트 트리거를 사용하여 서버 측 TypeScript 함수를 정의합니다.
+icon: bolt
+---
+
+로직 함수는 Twenty 플랫폼에서 실행되는 서버 측 TypeScript 함수입니다. 이 함수들은 HTTP 요청, cron 스케줄 또는 데이터베이스 이벤트에 의해 트리거될 수 있으며 — AI 에이전트를 위한 도구로도 제공할 수 있습니다.
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="로직 함수와 해당 트리거 정의">
+
+각 함수 파일은 `defineLogicFunction()`을 사용해 핸들러와 선택적 트리거가 포함된 구성을 내보냅니다.
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const body = (params.body ?? {}) as { name?: string };
+  const name = body.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+사용 가능한 트리거 유형:
+* **httpRoute**: **`/s/` 엔드포인트** 아래의 HTTP 경로와 메서드로 함수를 노출합니다:
+> 예: `path: '/post-card/create'`는 `https://your-twenty-server.com/s/post-card/create`에서 호출할 수 있습니다
+
+<Note>
+(헤드리스) 프런트 컴포넌트에서 라우트로 트리거되는 로직 함수를 호출하려면 [로직 함수 호출하기](/l/ko/developers/extend/apps/layout/front-components#calling-a-logic-function)를 참고하세요.
+</Note>
+* **cron**: CRON 식을 사용하여 예약된 일정으로 함수를 실행합니다.
+* **databaseEvent**: 워크스페이스 객체 라이프사이클 이벤트에서 실행됩니다. 이벤트 작업이 `updated`인 경우, 수신할 특정 필드를 `updatedFields` 배열에 지정할 수 있습니다. 정의하지 않거나 비워두면, 어떤 업데이트든 함수가 트리거됩니다.
+> 예: `person.updated`, `*.created`, `company.*`
+
+<Note>
+CLI를 사용해 함수를 수동으로 실행할 수도 있습니다:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+다음으로 로그를 확인할 수 있습니다:
+
+```bash filename="Terminal"
+yarn twenty dev:function:logs
+```
+</Note>
+
+#### 라우트 트리거 페이로드
+
+라우트 트리거가 로직 함수를 호출하면, 함수는 [AWS HTTP API v2 형식](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html)을 따르는 `RoutePayload` 객체를 받습니다.
+`twenty-sdk/logic-function`에서 `RoutePayload` 타입을 임포트하세요:
+
+```ts
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+`RoutePayload` 타입은 다음과 같은 구조입니다:
+
+  | 속성                           | 유형                                                      | 설명                                                                                                                                          | 예시                                                                         |
+  | ---------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | HTTP 헤더(`forwardedRequestHeaders`에 나열된 항목만)                                                                                                 | 아래 섹션 참조                                                                   |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | 쿼리 문자열 매개변수(여러 값은 쉼표로 연결됨)                                                                                                                  | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | 라우트 패턴에서 추출된 경로 매개변수                                                                                                                        | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | 파싱된 요청 본문(JSON)                                                                                                                             | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | JSON 파싱 이전의 원본 UTF-8 요청 본문입니다. HMAC 스타일 웹훅 서명을 검증하는 데 유용합니다(예: GitHub의 `X-Hub-Signature-256`, Stripe). 런타임이 이를 보존하지 않은 경우에는 `undefined`입니다. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | 본문이 base64로 인코딩되었는지 여부                                                                                                                      |                                                                            |
+  | `requestContext.http.method` | `string`                                                | HTTP 메서드(GET, POST, PUT, PATCH, DELETE)                                                                                                     |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | 원시 요청 경로                                                                                                                                    |                                                                            |
+
+
+#### forwardedRequestHeaders
+
+기본적으로 보안상의 이유로 들어오는 요청의 HTTP 헤더는 로직 함수로 **전달되지 않습니다**.
+특정 헤더에 접근하려면 `forwardedRequestHeaders` 배열에 나열하세요:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+핸들러에서, 전달된 헤더에 다음과 같이 접근합니다:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+헤더 이름은 소문자로 정규화됩니다. 소문자 키를 사용해 접근하세요(예: `event.headers['content-type']`).
+</Note>
+
+#### 사용자 정의 HTTP 응답
+
+기본적으로, 핸들러에서 일반 값을 반환하면 해당 값이 `200` 응답으로 전송됩니다(객체는 JSON, 문자열은 `text/plain`). 상태 코드와 응답 헤더를 제어하려면 `twenty-sdk/logic-function`에서 `Response`를 반환하세요:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+보안상의 이유로, 응답 헤더는 허용 목록으로 제한됩니다. 목록에 없는 헤더(예: `Set-Cookie`, `Access-Control-Allow-Origin`과 같은 CORS 헤더, 또는 사용자 정의 `X-*` 헤더)는 응답이 전송되기 전에 조용히 제거됩니다. 허용되는 응답 헤더는 다음과 같습니다:
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+상태 코드는 유효한 HTTP 상태 코드(100에서 599 사이)여야 합니다. 응답 헤더 이름은 대소문자를 구분하지 않습니다.
+</Note>
+
+#### 데이터베이스 이벤트 트리거 페이로드
+
+데이터베이스 이벤트 트리거가 로직 함수를 호출하면, 변경된 각 레코드마다 하나의 `DatabaseEventPayload`를 받습니다. 이 페이로드는 소스 워크스페이스와 오브젝트에 대한 메타데이터를 레코드 수준 이벤트와 결합합니다.
+
+```ts
+import type {
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+} from 'twenty-sdk/logic-function';
+
+type Person = {
+  id: string;
+  emails?: { primaryEmail?: string };
+};
+```
+
+페이로드에는 다음이 포함됩니다:
+
+| 속성                                               | 설명                                                                             |
+| ------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `name`                                           | `person.updated`와 같은 이벤트 이름입니다.                                                |
+| `workspaceId`                                    | 이벤트가 발생한 워크스페이스입니다.                                                            |
+| `objectMetadata`                                 | 변경된 오브젝트에 대한 메타데이터입니다.                                                         |
+| `recordId`                                       | 변경된 레코드의 ID입니다.                                                                |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | 워크스페이스 사용자가 이벤트를 발생시켰을 때의 액터 필드입니다.                                            |
+| `properties`                                     | 이벤트에 대한 레코드 데이터로, 작업 유형에 따라 `before`, `after`, `diff`, `updatedFields`를 포함합니다. |
+
+| 이벤트                | 레코드 데이터                                                                                                        |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `person.created`   | `event.properties.after`                                                                                       |
+| `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
+| `person.destroyed` | `event.properties.before`                                                                                      |
+
+소프트 삭제의 경우, 레코드의 `deletedAt` 필드가 변경되므로 `.deleted`는 업데이트 스타일 구조를 따릅니다.
+영구 삭제의 경우 `.destroyed`를 사용하세요.
+
+<Note>
+`databaseEventTriggerSettings.updatedFields`는 어떤 업데이트 이벤트가 함수를 트리거할지 필터링합니다.
+`event.properties.updatedFields`는 현재 이벤트에서 실제로 어떤 필드가 변경되었는지 알려줍니다.
+</Note>
+
+생성 이벤트 예시:
+
+```ts
+type PersonCreatedEvent = DatabaseEventPayload<
+  ObjectRecordCreateEvent<Person>
+>;
+
+const handler = async (event: PersonCreatedEvent) => {
+  const person = event.properties.after;
+
+  return {
+    personId: event.recordId,
+    email: person.emails?.primaryEmail,
+  };
+};
+```
+
+업데이트 이벤트 예시:
+
+```ts
+type PersonUpdatedEvent = DatabaseEventPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (event: PersonUpdatedEvent) => {
+  const { before, after, diff, updatedFields } = event.properties;
+
+  return {
+    personId: event.recordId,
+    updatedFields,
+    previousEmail: before.emails?.primaryEmail,
+    currentEmail: after.emails?.primaryEmail,
+    emailDiff: diff.emails,
+  };
+};
+```
+
+이메일 업데이트에만 트리거되도록:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    updatedFields: ['emails'],
+  },
+});
+```
+
+삭제 이벤트 예시:
+
+```ts
+type PersonDestroyedEvent = DatabaseEventPayload<
+  ObjectRecordDestroyEvent<Person>
+>;
+
+const handler = async (event: PersonDestroyedEvent) => {
+  const personBeforeDestroy = event.properties.before;
+
+  return {
+    personId: event.recordId,
+    email: personBeforeDestroy.emails?.primaryEmail,
+  };
+};
+```
+
+#### 함수를 AI 도구 또는 워크플로 작업으로 노출하기
+
+로직 함수는 두 가지 영역에서 노출될 수 있으며, 각 영역마다 자체 트리거가 있습니다:
+
+* **`toolTriggerSettings`** — 이 설정을 사용하면 함수가 Twenty의 AI 기능(채팅, MCP, 함수 호출)에서 검색 가능해집니다. 표준 JSON 스키마(LLM이 기본적으로 이해하는 형식)를 사용합니다.
+* **`workflowActionTriggerSettings`** — 시각적 워크플로 빌더에서 함수를 단계로 나타나게 합니다. 빌더가 적절한 필드 에디터, 변수 선택기, 레이블을 렌더링할 수 있도록 Twenty의 풍부한 `InputSchema`를 사용합니다.
+
+함수는 둘 중 하나만 또는 둘 다 선택할 수 있습니다. 이들 설정은 `cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`와 나란히 위치하며 — 패턴도 형태도 동일합니다.
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  toolTriggerSettings: {},
+});
+```
+
+핵심 요점:
+
+* 함수는 노출 방식을 혼합할 수 있습니다 — `toolTriggerSettings`와 `workflowActionTriggerSettings`를 모두 선언하여 채팅과 워크플로 빌더 모두에 노출할 수 있습니다.
+* `toolTriggerSettings.inputSchema`와 `workflowActionTriggerSettings.inputSchema`는 모두 선택 사항입니다. 생략되면 매니페스트 빌더가 핸들러 소스 코드에서 이를 추론합니다(AI 도구의 경우 JSON 스키마, 워크플로 작업의 경우 Twenty의 `InputSchema`). 더 풍부한 타입 지정을 원한다면 명시적으로 제공하세요 — 예를 들어 워크플로 빌더를 위해 `CURRENCY` 또는 `RELATION`처럼 `FieldMetadataType`을 인지하는 필드를 사용하거나, AI 에이전트가 읽을 수 있는 `description` 필드를 포함하려는 경우:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
+      },
+      required: ['companyName'],
+    },
+  },
+});
+```
+
+<Note>
+**좋은 `description`을 작성하세요.** AI 에이전트는 도구를 언제 사용할지 결정하기 위해 함수의 `description` 필드에 의존합니다. 도구가 무엇을 하는지와 언제 호출해야 하는지 구체적으로 작성하세요.
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+**설치 훅** — 사전 설치 및 사후 설치 핸들러 — 는 이 런타임을 공유하지만, 각각의 `define` 함수로 선언되며 트리거 설정을 받지 않습니다. `definePreInstallLogicFunction` 및 `definePostInstallLogicFunction` 에 대해서는 [설치 훅](/l/ko/developers/extend/apps/config/install-hooks)을 참고하세요.
+</Note>
+
+## 타입이 지정된 API 클라이언트(twenty-client-sdk)
+
+`twenty-client-sdk` 패키지는 로직 함수와 프런트 컴포넌트에서 Twenty API와 상호작용하기 위한 타입이 지정된 두 가지 GraphQL 클라이언트를 제공합니다.
+
+| 클라이언트               | 가져오기                         | 엔드포인트                            | 생성 여부?         |
+| ------------------- | ---------------------------- | -------------------------------- | -------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — 워크스페이스 데이터(레코드, 객체) | 예, 개발/빌드 시점    |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — 워크스페이스 구성, 파일 업로드  | 아니오, 사전 빌드로 제공 |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="워크스페이스 데이터(레코드, 객체) 조회 및 변경">
+
+`CoreApiClient`는 워크스페이스 데이터를 조회하고 변경하는 데 사용하는 기본 클라이언트입니다. `yarn twenty dev` 또는 `yarn twenty dev:build` 중에 **워크스페이스 스키마로부터 생성되므로**, 객체와 필드에 정확히 맞는 완전한 타입 정보를 제공합니다.
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+이 클라이언트는 선택 집합 구문을 사용합니다: 필드를 포함하려면 `true`를 전달하고, 인수에는 `__args`를 사용하며, 관계는 객체를 중첩합니다. 워크스페이스 스키마를 기반으로 완전한 자동 완성과 타입 검사를 제공합니다.
+
+<Note>
+**CoreApiClient는 개발/빌드 시점에 생성됩니다.** 먼저 `yarn twenty dev` 또는 `yarn twenty dev:build`를 실행하지 않고 사용하면 오류가 발생합니다. 생성은 자동으로 이루어지며 — CLI가 워크스페이스의 GraphQL 스키마를 분석하고 `@genql/cli`를 사용해 타입이 지정된 클라이언트를 생성합니다.
+</Note>
+
+#### 타입 주석을 위한 CoreSchema 사용
+
+`CoreSchema`는 워크스페이스 객체에 맞는 TypeScript 타입을 제공하며, 컴포넌트 상태나 함수 매개변수에 타입을 지정할 때 유용합니다:
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="워크스페이스 구성, 애플리케이션, 파일 업로드">
+
+`MetadataApiClient`는 SDK와 함께 사전 빌드된 상태로 제공됩니다(생성 필요 없음). 워크스페이스 구성, 애플리케이션 및 파일 업로드를 위해 `/metadata` 엔드포인트를 조회합니다.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### 파일 업로드
+
+`MetadataApiClient`에는 파일 유형 필드에 파일을 첨부하기 위한 `uploadFile` 메서드가 포함되어 있습니다:
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| 매개변수                               | 유형       | 설명                                            |
+| ---------------------------------- | -------- | --------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | 원시 파일 내용                                      |
+| `filename`                         | `string` | 파일의 이름(저장 및 표시용)                              |
+| `contentType`                      | `string` | MIME 유형(생략하면 기본값은 `application/octet-stream`) |
+| `fieldMetadataUniversalIdentifier` | `string` | 객체의 파일 유형 필드의 `universalIdentifier`           |
+
+핵심 요점:
+* 필드의 `universalIdentifier`(워크스페이스별 ID가 아님)를 사용하므로, 앱이 설치된 모든 워크스페이스에서 업로드 코드가 동작합니다.
+* 반환된 `url`은 업로드된 파일에 액세스하는 데 사용할 수 있는 서명된 URL입니다.
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+  코드가 Twenty에서 실행될 때(로직 함수 또는 프런트 컴포넌트), 플랫폼이 자격 증명을 환경 변수로 주입합니다:
+
+  * `TWENTY_API_URL` — Twenty API의 기본 URL
+  * `TWENTY_APP_ACCESS_TOKEN` — 애플리케이션의 기본 함수 역할 범위로 제한된 단기 키
+
+  클라이언트에 이를 전달할 필요가 없습니다 — 자동으로 `process.env`에서 읽습니다. API 키의 권한은 `defineApplicationRole()`으로 선언된 역할(또는 `application-config.ts`의 `defaultRoleUniversalIdentifier`를 통해 참조된 역할)에 의해 결정됩니다.
+</Note>

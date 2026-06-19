@@ -8,6 +8,7 @@ import { FileTypeParser } from 'file-type';
 import { detectPdf } from '@file-type/pdf';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Like, type QueryRunner, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -15,6 +16,10 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -22,6 +27,7 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -35,6 +41,8 @@ export class FileCorePictureService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
@@ -135,6 +143,35 @@ export class FileCorePictureService {
       ...savedFile,
       url,
     };
+  }
+
+  async getPendingWorkspaceForLogoUploadOrThrow({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<WorkspaceEntity> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+    });
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId, workspaceId },
+    });
+
+    if (
+      !isDefined(workspace) ||
+      !isDefined(userWorkspace) ||
+      workspace.activationStatus !== WorkspaceActivationStatus.PENDING_CREATION
+    ) {
+      throw new AuthException(
+        'Cannot set a logo for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    return workspace;
   }
 
   async uploadWorkspaceMemberProfilePicture({

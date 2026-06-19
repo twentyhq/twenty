@@ -50,9 +50,9 @@ export const FOOTER_BACKDROP: Pick<
   },
   initialPose: {
     rotationX: -0.5858908325312259,
-    rotationY: 0.45733435420243096,
+    rotationY: 0.363343542024313,
     targetRotationX: -0.5858908325312265,
-    targetRotationY: 0.4573343542024313,
+    targetRotationY: 0.363343542024313,
     timeElapsed: 287.372499999977,
   },
 };

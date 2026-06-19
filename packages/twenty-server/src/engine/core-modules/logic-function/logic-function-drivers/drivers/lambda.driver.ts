@@ -25,6 +25,7 @@ import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/l
 import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-executor-manager.service';
 import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
+import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
 import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -217,6 +218,18 @@ export class LambdaDriver implements LogicFunctionDriver {
     } catch (error) {
       const phaseTiming = `phase=${currentPhase} buildMs=${buildExecutorMs} fetchCodeMs=${getBuiltCodeMs}`;
 
+      const isTimeoutError =
+        error instanceof Error && error.name === 'TimeoutError';
+
+      if (isTimeoutError && currentPhase === LambdaExecutionPhase.INVOKE) {
+        // User-level outcome (function ran too long), not a platform error: return, don't throw.
+        this.logger.warn(
+          `Logic function '${flatLogicFunction.id}' timed out during invoke [${phaseTiming}]`,
+        );
+
+        return buildLogicFunctionTimeoutResult(timeoutMs);
+      }
+
       this.logger.error(
         `Lambda invocation failed for function ${flatLogicFunction.id} [${phaseTiming}]: ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
@@ -229,7 +242,8 @@ export class LambdaDriver implements LogicFunctionDriver {
         );
       }
 
-      if (error instanceof Error && error.name === 'TimeoutError') {
+      if (isTimeoutError) {
+        // Build/fetch-phase timeouts are platform-side — keep throwing so they reach Sentry.
         const executor = await this.executorManager
           .getLambdaExecutor(flatLogicFunction)
           .catch(() => undefined);

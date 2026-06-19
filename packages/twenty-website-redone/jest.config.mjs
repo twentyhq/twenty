@@ -1,9 +1,6 @@
-const jestConfig = {
-  displayName: 'twenty-website-redone',
+const baseProject = {
   preset: '../../jest.preset.js',
-  testEnvironment: 'node',
-  // twenty-ui and twenty-shared ship ESM (.mjs) in their dist; transform them
-  // (everything else in node_modules stays ignored) so jest can load them.
+  setupFilesAfterEnv: ['<rootDir>/test/setup-jest-dom.ts'],
   transformIgnorePatterns: [
     '/node_modules/(?!(twenty-ui|twenty-shared)/.*)',
     '../../node_modules/(?!(twenty-ui|twenty-shared)/.*)',
@@ -24,6 +21,23 @@ const jestConfig = {
     '^@lingui/core/macro$': '<rootDir>/test/lingui-macro-mock.ts',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'mjs'],
+};
+
+const jestConfig = {
+  projects: [
+    {
+      ...baseProject,
+      displayName: 'node',
+      testEnvironment: 'node',
+      testMatch: ['<rootDir>/src/**/*.test.ts'],
+    },
+    {
+      ...baseProject,
+      displayName: 'jsdom',
+      testEnvironment: 'jsdom',
+      testMatch: ['<rootDir>/src/**/*.test.tsx'],
+    },
+  ],
   coverageDirectory: './coverage',
 };
 

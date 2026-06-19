@@ -5,21 +5,21 @@ const minimalValid: PartnerApplicationRequest = {
   name: 'Ada Lovelace',
   email: 'ada@example.com',
   company: 'Analytical Engines Ltd',
+  website: 'https://analyticalengines.example',
+  city: 'London',
+  hourlyRate: 150,
+  projectBudgetMin: 5000,
 };
 
 const fullValid: PartnerApplicationRequest = {
   ...minimalValid,
-  website: 'https://analyticalengines.example',
   linkedin: 'https://www.linkedin.com/in/ada',
-  city: 'London',
   country: 'UNITED_KINGDOM',
   languages: ['ENGLISH', 'FRENCH'],
   typeOfTeam: 'SOLO',
   partnerScope: ['ADVISORY', 'SOLUTIONING'],
   skills: ['React', 'TypeScript'],
   applicationNotes: 'refs: Acme, Globex',
-  hourlyRate: 150,
-  projectBudgetMin: 5000,
   calendarLink: 'https://cal.com/ada',
 };
 
@@ -51,7 +51,6 @@ describe('buildLogicFunctionPayload', () => {
     expect(payload).not.toHaveProperty('country');
     expect(payload).not.toHaveProperty('languages');
     expect(payload).not.toHaveProperty('partnerScope');
-    expect(payload).not.toHaveProperty('domainName');
   });
 
   it('omits empty arrays', () => {

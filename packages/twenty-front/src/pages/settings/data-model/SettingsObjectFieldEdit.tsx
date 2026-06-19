@@ -7,6 +7,7 @@ import { type z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
@@ -109,6 +110,7 @@ export const SettingsObjectFieldEdit = () => {
 
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   const { settings, defaultValue } =
     getFieldMetadataItemInitialValues(fieldMetadataItem);
@@ -140,6 +142,8 @@ export const SettingsObjectFieldEdit = () => {
   if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
     return null;
   }
+
+  const isCustomField = getIsMetadataItemCustom(fieldMetadataItem);
 
   const fieldLabel = fieldMetadataItem.label;
   const objectLabel = objectMetadataItem.labelPlural;
@@ -270,7 +274,7 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const handleDelete = () => {
-    if (readonly || !fieldMetadataItem?.isCustom) {
+    if (readonly || !isCustomField) {
       return;
     }
 
@@ -411,7 +415,7 @@ export const SettingsObjectFieldEdit = () => {
                         : handleActivate
                     }
                   />
-                  {fieldMetadataItem.isCustom && (
+                  {isCustomField && (
                     <Button
                       Icon={IconTrash}
                       variant="secondary"
@@ -427,7 +431,7 @@ export const SettingsObjectFieldEdit = () => {
           </SettingsPageContainer>
         </SettingsPageLayout>
       </FormProvider>
-      {fieldMetadataItem?.isCustom && (
+      {isCustomField && (
         <ConfirmationModal
           modalInstanceId={DELETE_FIELD_MODAL_ID}
           title={t`Delete ${fieldLabel} field?`}

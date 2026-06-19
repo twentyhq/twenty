@@ -10,6 +10,7 @@ import {
 } from '@ui/icon';
 import { TabButton } from '@ui/input/TabButton/TabButton';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   AVATAR_URL_MOCK,
   CatalogDecorator,
   type CatalogStory,
@@ -181,8 +182,7 @@ export const Catalog: CatalogStory<Story, typeof TabButton> = {
     </TabContainer>
   ),
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.active'] },
     catalog: {
       dimensions: [

@@ -1142,10 +1142,10 @@ msgstr "Chine 🇨🇳"
 msgid "Chinese"
 msgstr "Chinois"
 
-#. js-lingui-id: 3wV73y
+#. js-lingui-id: lAAXeW
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "City"
-msgstr "Ville"
+msgid "City *"
+msgstr ""
 
 #. js-lingui-id: ZbCD7v
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -1658,10 +1658,10 @@ msgstr "Glissez-déposez les opportunités entre les étapes"
 msgid "Dutch"
 msgstr "Néerlandais"
 
-#. js-lingui-id: 6r6pDf
+#. js-lingui-id: FJ+YsO
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "e.g. React, Postgres, n8n…"
-msgstr "p. ex. React, Postgres, n8n…"
+msgid "e.g. n8n, Shopify, Real estate…"
+msgstr ""
 
 #. js-lingui-id: hEtClO
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
@@ -1756,6 +1756,11 @@ msgstr "Anglais"
 #: src/app/[locale]/(home)/_components/HomeStepperSection.tsx
 msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 msgstr "Profitez d’une personnalisation illimitée en utilisant les outils de codage IA que vous aimez déjà. Adaptez votre CRM à la manière dont votre entreprise grandit et gagne."
+
+#. js-lingui-id: y3l1fN
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "Enter a valid amount using numbers only."
+msgstr ""
 
 #. js-lingui-id: xoqD/n
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
@@ -2275,10 +2280,10 @@ msgstr "Hébergement et infrastructure"
 msgid "Hourly"
 msgstr "À l’heure"
 
-#. js-lingui-id: Ivq5+7
+#. js-lingui-id: +puxRS
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Hourly rate"
-msgstr "Taux horaire"
+msgid "Hourly rate *"
+msgstr ""
 
 #. js-lingui-id: XnFo3G
 #: src/app/[locale]/customers/act-education/page.tsx
@@ -2881,10 +2886,10 @@ msgstr "Mike et Azmat de Nine Dots sont intervenus pour résoudre cela, non pas 
 msgid "Mike Babiy"
 msgstr "Mike Babiy"
 
-#. js-lingui-id: FFFENV
+#. js-lingui-id: 5IvRfo
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Minimum project budget"
-msgstr "Budget minimum du projet"
+msgid "Minimum project budget *"
+msgstr ""
 
 #. js-lingui-id: 6m8rMT
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
@@ -3323,11 +3328,6 @@ msgstr "Portugal 🇵🇹"
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Portuguese"
 msgstr "Portugais"
-
-#. js-lingui-id: z87IFG
-#: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Press Enter or comma to add a skill."
-msgstr "Appuyez sur Entrée ou sur la virgule pour ajouter une compétence."
 
 #. js-lingui-id: a7u1N9
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -4349,6 +4349,11 @@ msgstr "Tonga 🇹🇴"
 msgid "Tool integration"
 msgstr "Intégration d’outils"
 
+#. js-lingui-id: H9QaNY
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "Tools, technologies and industries you specialize in. Press Enter or comma to add."
+msgstr ""
+
 #. js-lingui-id: xv7HSr
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "total per month with fixed cost"
@@ -4800,10 +4805,10 @@ msgstr "Webhooks"
 msgid "Webhooks (Change Data Capture)"
 msgstr "Webhooks (capture de données modifiées)"
 
-#. js-lingui-id: hgDePr
+#. js-lingui-id: 7kkV4O
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Website or GitHub"
-msgstr "Site web ou GitHub"
+msgid "Website or GitHub *"
+msgstr ""
 
 #. js-lingui-id: Lx0cVD
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts

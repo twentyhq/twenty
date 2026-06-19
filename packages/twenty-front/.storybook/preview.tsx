@@ -98,6 +98,17 @@ const STORYBOOK_DEFAULT_USER_CONTEXT = {
   timeZone: 'UTC',
 };
 
+const INTER_FONT_WEIGHTS = ['400', '500', '600'];
+
+const waitForInterFontLoadedBeforeScreenshot = async () => {
+  await Promise.all(
+    INTER_FONT_WEIGHTS.map((weight) =>
+      document.fonts.load(`${weight} 1em Inter`),
+    ),
+  );
+  await document.fonts.ready;
+};
+
 const preview: Preview = {
   decorators: [
     (Story) => {
@@ -124,7 +135,7 @@ const preview: Preview = {
     resetJotaiStore();
   },
 
-  loaders: [mswLoader],
+  loaders: [mswLoader, waitForInterFontLoadedBeforeScreenshot],
 
   parameters: {
     controls: {

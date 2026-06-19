@@ -146,6 +146,7 @@ export const WorkflowEditTriggerManual = ({
             }}
             dropdownOffset={{ y: 4 }}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+            withSearchInput
           />
         ) : null}
 

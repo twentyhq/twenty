@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -44,8 +45,7 @@ export const WithLongText: Story = {
     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     container: { width: 100 },
   },
 };
@@ -55,8 +55,7 @@ export const Catalog: CatalogStory<Story, typeof Status> = {
     color: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {

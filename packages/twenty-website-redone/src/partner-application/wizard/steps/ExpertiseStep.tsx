@@ -5,6 +5,7 @@ import { useLingui } from '@lingui/react';
 import { CategoryCardSelect, Field, TagInput, TextareaField } from '@/ui';
 
 import { PARTNER_SCOPE_OPTIONS } from '../../data/partner-scope-options';
+import { PARTNER_SKILL_POOL } from '../../data/partner-skill-pool';
 import { PARTNER_SKILL_SUGGESTIONS } from '../../data/partner-skill-suggestions';
 import { PARTNER_APPLICATION_COPY } from '../../partner-application-copy';
 import { type PartnerApplicationController } from '../../use-partner-application-state';
@@ -48,6 +49,7 @@ export function ExpertiseStep({
           removeLabel={(tag) =>
             i18n._(PARTNER_APPLICATION_COPY.removeSkill(tag))
           }
+          searchPool={PARTNER_SKILL_POOL}
           suggestions={PARTNER_SKILL_SUGGESTIONS}
           values={state.skills}
         />

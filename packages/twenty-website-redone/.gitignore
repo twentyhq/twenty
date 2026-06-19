@@ -7,5 +7,12 @@ yarn-debug.log*
 yarn-error.log*
 .env
 .env*
+!.env.example
 *.tsbuildinfo
 next-env.d.ts
+
+# OpenNext / Cloudflare Workers
+.open-next/
+.wrangler/
+.dev.vars
+cloudflare-env.d.ts
