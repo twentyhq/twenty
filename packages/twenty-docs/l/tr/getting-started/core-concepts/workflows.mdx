@@ -1,0 +1,55 @@
+---
+title: İş Akışları
+description: Twenty'nin görsel iş akışı oluşturucusuyla iş süreçlerinizi otomatikleştirin.
+icon: bolt
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+İş akışları, tekrarlayan görevleri otomatikleştirmenize ve Twenty'yi harici araçlara kod yazmadan (isterseniz yazabilirsiniz) bağlamanıza olanak tanır.
+
+<VimeoEmbed videoId="1185511711" title="İş Akışı" />
+
+## İş akışları nasıl çalışır
+
+Her iş akışının üç bölümü vardır:
+
+1. **Tetikleyici** — İş akışını başlatan şey
+2. **Adımlar** — Sonrasında ne olur (ardışık bir veya daha fazla eylem)
+3. **Değişkenler** — Adımlar arasında akan veriler
+
+## Tetikleyiciler
+
+| Tetikleyici     | Ne zaman tetiklenir                                                                      |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| **Kayıt olayı** | Bir kayıt oluşturulur, güncellenir, silinir veya upsert edilir                           |
+| **Manuel**      | Bir kullanıcı bir düğmeye tıklar (tek bir kayıtta, birden çok kayıtta veya genel olarak) |
+| **Zamanlama**   | Yinelenen bir aralıkta (cron söz dizimiyle)                                              |
+| **Webhook**     | Harici bir sistem bir HTTP POST gönderir                                                 |
+
+## Eylemler
+
+İş akışları, aşağıdakilerin herhangi bir kombinasyonunu zincirleyebilir:
+
+* **Kayıt işlemleri** — Kayıtları oluşturma, güncelleme, bulma, silme veya upsert etme
+* **E-posta gönder** — Bağlı hesaplardan e-posta gönderin veya taslak oluşturun
+* **HTTP isteği** — Herhangi bir harici API'yi çağırın
+* **Kod** — Karmaşık mantık için özel JavaScript çalıştırın
+* **Dallar** — İş akışı yolunu bölmek için if/else koşulları
+* **Yineleyici** — Veri dizileri üzerinde döngü kurun
+* **Yapay Zekâ Aracısı** — Bir yapay zekâ aracısının verileri otonom şekilde işlemesine izin verin
+* **Gecikme** — Devam etmeden önce bekleyin
+* **Form** — İş akışının ortasında kullanıcı girdisi toplayın
+
+## Oluşturabilecekleriniz
+
+* Bir anlaşma belirli bir aşamaya ulaştığında Slack uyarıları gönderin
+* Yeni kişileri harici API'lerden gelen verilerle otomatik olarak zenginleştirin
+* Eski fırsatları tespit edin ve sahibini bilgilendirin
+* Twenty ile faturalandırma sisteminiz arasında verileri senkronize edin
+* Kayıt verilerinden PDF'ler veya faturalar oluşturun
+* Belirli kriterlerle eşleşen gelen e-postalara otomatik yanıt verin
+
+<Card title="Tam kapsamlı İş Akışları kılavuzu" icon="arrow-right" href="/l/tr/user-guide/workflows/overview">
+  Tetikleyiciler, eylemler, değişkenler ve gerçek dünyadan otomasyon örnekleri hakkında ayrıntılı başvuru.
+</Card>
