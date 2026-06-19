@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 
+import { ExpandableListResizeEffect } from '@/ui/layout/expandable-list/components/ExpandableListResizeEffect';
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,9 +15,6 @@ import { ChipSize } from 'twenty-ui/data-display';
 import { AnimatedContainer } from 'twenty-ui/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-// Ignore sub-pixel width changes so the visible chips are not recomputed on layout jitter.
-const RESIZE_THRESHOLD_PX = 1;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -106,43 +104,9 @@ export const ExpandableList = ({
     setFirstHiddenChildIndex(children.length);
   }, [children.length]);
 
-  // Recompute first hidden child when:
-  // - isChipCountDisplayed changes
-  // - children length changes
   useEffect(() => {
     resetFirstHiddenChildIndex();
   }, [isChipCountDisplayed, children.length, resetFirstHiddenChildIndex]);
-
-  // Recompute visible chips when the container width changes (see #12039).
-  // Observes the outer container to avoid a measure-trim-shrink feedback loop.
-  useEffect(() => {
-    const outerContainerElement = containerRef.current;
-
-    if (!isDefined(outerContainerElement)) {
-      return;
-    }
-
-    let previousWidth = outerContainerElement.clientWidth;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      const entry = entries[0];
-
-      if (!isDefined(entry)) {
-        return;
-      }
-
-      const newWidth = entry.contentRect.width;
-
-      if (Math.abs(newWidth - previousWidth) > RESIZE_THRESHOLD_PX) {
-        previousWidth = newWidth;
-        resetFirstHiddenChildIndex();
-      }
-    });
-
-    resizeObserver.observe(outerContainerElement);
-
-    return () => resizeObserver.disconnect();
-  }, [resetFirstHiddenChildIndex]);
 
   const handleClickOutside = () => {
     setIsListExpanded(false);
@@ -171,6 +135,12 @@ export const ExpandableList = ({
           : () => setIsChipCountDisplayedInternal(false)
       }
     >
+      {isChipCountDisplayed && (
+        <ExpandableListResizeEffect
+          containerRef={containerRef}
+          onContainerWidthChange={resetFirstHiddenChildIndex}
+        />
+      )}
       <StyledChildrenContainer ref={setChildrenContainerElement}>
         {children.slice(0, firstHiddenChildIndex).map((child, index) => (
           <StyledChildContainer

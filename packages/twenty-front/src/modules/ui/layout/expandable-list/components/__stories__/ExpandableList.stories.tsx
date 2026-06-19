@@ -58,18 +58,19 @@ export const WithExpandedList: Story = {
   },
 };
 
-// Regression test for #12039: when the available width grows (e.g. a table
-// column is widened), the list must recompute and reveal as many chips as fit,
-// instead of staying stuck on the count measured at the initial (narrow) width.
+const RESIZABLE_OPTIONS_COUNT = 7;
+const NARROW_WIDTH_PX = 80;
+const WIDE_WIDTH_PX = 1000;
+
 const ResizableExpandableListWrapper = () => {
-  const [width, setWidth] = useState(120);
+  const [width, setWidth] = useState(NARROW_WIDTH_PX);
 
   return (
     <div>
-      <button onClick={() => setWidth(600)}>Widen</button>
+      <button onClick={() => setWidth(WIDE_WIDTH_PX)}>Widen</button>
       <div style={{ width, overflow: 'hidden' }}>
         <ExpandableList isChipCountDisplayed>
-          {Array.from({ length: 7 }, (_, index) => (
+          {Array.from({ length: RESIZABLE_OPTIONS_COUNT }, (_, index) => (
             <Tag
               key={index}
               text={`Option ${index + 1}`}
@@ -90,18 +91,14 @@ export const RecomputesVisibleChipsOnResize: Story = {
     const countVisibleOptions = () =>
       canvas.queryAllByText(/^Option \d+$/).length;
 
-    // At the initial narrow width, only a subset of the 7 chips fit.
     await waitFor(() => {
-      expect(countVisibleOptions()).toBeLessThan(7);
+      expect(countVisibleOptions()).toBeLessThan(RESIZABLE_OPTIONS_COUNT);
     });
-
-    const initialVisibleCount = countVisibleOptions();
 
     await userEvent.click(await canvas.findByText('Widen'));
 
-    // After widening, the list recomputes and reveals more chips than before.
     await waitFor(() => {
-      expect(countVisibleOptions()).toBeGreaterThan(initialVisibleCount);
+      expect(countVisibleOptions()).toBe(RESIZABLE_OPTIONS_COUNT);
     });
   },
 };
