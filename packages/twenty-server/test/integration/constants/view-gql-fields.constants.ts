@@ -8,7 +8,6 @@ export const VIEW_GQL_FIELDS = `
     icon
     position
     isCompact
-    kanbanColumnWidth
     openRecordIn
     workspaceId
     anyFieldFilterValue
