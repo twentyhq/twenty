@@ -4,9 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // factory reference the mock fn safely despite hoisting.
 const { queryMock } = vi.hoisted(() => ({ queryMock: vi.fn() }));
 vi.mock('twenty-client-sdk/core', () => ({
-  CoreApiClient: vi.fn(function (this: { query: typeof queryMock }) {
-    this.query = queryMock;
-  }),
+  CoreApiClient: vi.fn(() => ({ query: queryMock })),
 }));
 
 import {

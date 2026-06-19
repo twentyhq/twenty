@@ -38,4 +38,5 @@ export default defineApplicationRole({
     },
   ],
   fieldPermissions: [],
+  permissionFlags: [],
 });

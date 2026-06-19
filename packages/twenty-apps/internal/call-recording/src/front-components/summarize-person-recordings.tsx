@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { SummaryViewer } from 'src/components/SummaryViewer';
 import { SummaryViewerSkeleton } from 'src/components/SummaryViewerSkeleton';
-import { SUMMARIZE_PERSON_RECORDINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/summarize-person-recordings-universal-identifiers';
+import {
+  SUMMARIZE_PERSON_RECORDINGS_COMMAND_UNIVERSAL_IDENTIFIER,
+  SUMMARIZE_PERSON_RECORDINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/summarize-person-recordings-universal-identifiers';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useRecordId } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -173,4 +176,14 @@ export default defineFrontComponent({
   description:
     'Generates and displays a summary of recent call recordings for a person',
   component: SummarizePersonRecordings,
+  command: {
+    universalIdentifier:
+      SUMMARIZE_PERSON_RECORDINGS_COMMAND_UNIVERSAL_IDENTIFIER,
+    label: 'Summarize call recordings',
+    icon: 'IconSparkles',
+    isPinned: false,
+    availabilityType: 'SINGLE_RECORD',
+    availabilityObjectUniversalIdentifier:
+      '20202020-e674-48e5-a542-72570eee7213',
+  },
 });

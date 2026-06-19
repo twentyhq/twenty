@@ -273,12 +273,7 @@ describe('submit-partner-application handler — upsert', () => {
 
   it('rejects a legacy scope value as invalid_input', async () => {
     const result = await handler(
-      authedEvent(
-        baseInput({
-          email: 'legacy@example.com',
-          partnerScope: ['APPS'] as unknown as SubmitPartnerApplicationInput['partnerScope'],
-        }),
-      ),
+      authedEvent(baseInput({ email: 'legacy@example.com', partnerScope: ['APPS'] })),
     );
     expect(result.ok).toBe(false);
     if (result.ok) return;

@@ -17,13 +17,10 @@
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "test": "vitest run",
-    "test:unit": "vitest run --config vitest.unit.config.ts",
-    "test:unit:watch": "vitest --config vitest.unit.config.ts",
     "test:watch": "vitest"
   },
   "dependencies": {
     "@slack/web-api": "^7.8.0",
-    "twenty-client-sdk": "2.13.0",
     "twenty-sdk": "2.13.0"
   },
   "devDependencies": {
@@ -33,7 +30,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.0.0"
   }
 }

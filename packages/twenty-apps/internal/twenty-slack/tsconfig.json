@@ -27,12 +27,5 @@
       "~/*": ["./*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "**/*.integration-test.ts"
-  ],
-  "references": [{ "path": "./tsconfig.spec.json" }]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

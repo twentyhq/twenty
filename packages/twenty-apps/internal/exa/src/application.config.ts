@@ -10,6 +10,7 @@ export default defineApplication({
   displayName: 'Exa',
   description:
     'Structured web search powered by Exa. Surfaces entity-aware results (companies, people, research, news) to Twenty AI agents.',
+  icon: 'IconSearch',
   logoUrl: 'public/exa-logomark.svg',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   serverVariables: {

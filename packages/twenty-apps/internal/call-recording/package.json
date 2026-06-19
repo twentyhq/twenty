@@ -11,12 +11,7 @@
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
-    "lint:fix": "oxlint --fix -c .oxlintrc.json .",
-    "typecheck": "tsc --noEmit -p tsconfig.spec.json",
-    "test": "vitest run",
-    "test:unit": "vitest run --config vitest.unit.config.ts",
-    "test:unit:watch": "vitest --config vitest.unit.config.ts",
-    "test:watch": "vitest"
+    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -31,8 +26,6 @@
     "@types/react": "^18.2.0",
     "oxlint": "^0.16.0",
     "react": "^18.2.0",
-    "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^4.0.0"
+    "typescript": "^5.9.3"
   }
 }

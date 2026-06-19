@@ -21,4 +21,5 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [],
   fieldPermissions: [],
+  permissionFlags: [],
 });

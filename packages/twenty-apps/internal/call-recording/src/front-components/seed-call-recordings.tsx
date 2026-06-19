@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { SEED_CALL_RECORDINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/seed-call-recordings-universal-identifiers';
+import {
+  SEED_CALL_RECORDINGS_COMMAND_UNIVERSAL_IDENTIFIER,
+  SEED_CALL_RECORDINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/seed-call-recordings-universal-identifiers';
 import { MOCK_CALL_RECORDINGS } from 'src/data/mock-call-recordings';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -98,4 +101,11 @@ export default defineFrontComponent({
   description: 'Seeds the workspace with mock call recordings for testing',
   isHeadless: true,
   component: SeedCallRecordings,
+  command: {
+    universalIdentifier: SEED_CALL_RECORDINGS_COMMAND_UNIVERSAL_IDENTIFIER,
+    label: 'Seed call recordings',
+    icon: 'IconDatabase',
+    isPinned: false,
+    availabilityType: 'GLOBAL',
+  },
 });
