@@ -56,4 +56,56 @@ describe('getDefaultFunctionInputFromInputSchema', () => {
       { briefs: [] },
     ]);
   });
+
+  it('should init record-typed inputs with null and record arrays with empty arrays', () => {
+    const inputSchema = [
+      {
+        type: 'object',
+        properties: {
+          company: {
+            type: 'object',
+            objectUniversalIdentifier: 'company-universal-identifier',
+          },
+          people: {
+            type: 'array',
+            items: {
+              type: 'object',
+              objectUniversalIdentifier: 'person-universal-identifier',
+            },
+          },
+          plainObject: { type: 'object' },
+        },
+      },
+    ] as InputSchema;
+
+    expect(getFunctionInputFromInputSchema(inputSchema)).toEqual([
+      {
+        company: null,
+        people: [],
+        plainObject: {},
+      },
+    ]);
+  });
+
+  it('should init record/records types with null and empty array', () => {
+    const inputSchema = [
+      {
+        type: 'object',
+        properties: {
+          company: {
+            type: 'record',
+            objectUniversalIdentifier: 'company-universal-identifier',
+          },
+          people: {
+            type: 'records',
+            objectUniversalIdentifier: 'person-universal-identifier',
+          },
+        },
+      },
+    ] as InputSchema;
+
+    expect(getFunctionInputFromInputSchema(inputSchema)).toEqual([
+      { company: null, people: [] },
+    ]);
+  });
 });
