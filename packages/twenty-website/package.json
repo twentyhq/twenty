@@ -2,9 +2,9 @@
   "name": "twenty-website",
   "private": true,
   "scripts": {
-    "dev": "npx next dev --port 3004",
+    "dev": "npx next dev --port 3002",
     "build": "npx next build",
-    "start": "npx next start --port 3004",
+    "start": "npx next start --port 3002",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy:dev": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env dev",
     "deploy:prod": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env prod",
