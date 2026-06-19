@@ -36,10 +36,10 @@ copy it to `~/.twenty/credentials.env` on first setup.
 ## Phase 0 — Run the ranker
 
 ```bash
-python3 "$(dirname "$0")/rank.py"          # or: python3 rank.py from the skill dir
+npx tsx "$(dirname "$0")/rank.ts"          # or: npx tsx rank.ts from the skill dir
 ```
 
-`rank.py` is the deterministic core. It pulls every partner, computes each applicant's
+`rank.ts` is the deterministic core. It pulls every partner, computes each applicant's
 net-new geo / language / scope / skills vs the **VALIDATED** baseline, detects a "real
 Twenty work" proof signal in the notes, scores, and prints ranked JSON. It does not call an
 LLM — the judgment lives in you (Phase 1).
@@ -48,7 +48,7 @@ Each ranked entry: `name, score, tier (A/B/C), new_geo, new_lang, new_scope, new
 proof{workspace_url|customers|migration}, team, contact_name, email, linkedin, website,
 notes`.
 
-Scoring (in `rank.py`, tune there if it drifts): geo +3 each, language +3 each, scope +1,
+Scoring (in `rank.ts`, tune there if it drifts): geo +3 each, language +3 each, scope +1,
 skills +1 capped at 3 (so generic dev shops that spray skill lists can't dominate), proof
 +6. Any proof signal ⇒ at least tier A.
 
@@ -115,7 +115,7 @@ Rules:
 - Not a gate. It never moves anyone to `REJECTED` or out of the funnel.
 - Not a writer. It never edits a record. Surfacing only.
 - Not the production cron. This is the **dev surface** for the ranking. Once the chase-list
-  is trustworthy, the deterministic core (`rank.py`) is what gets ported to a daily
+  is trustworthy, the deterministic core (`rank.ts`) is what gets ported to a daily
   logic-function cron in the partner app that writes `ranking` + a tier onto each un-booked
   record so the workspace view sorts itself. The LLM judgment pass stays here, for the runs
   where you want a human in the loop. Build skill → trust it → port the cheap part. Don't
@@ -123,6 +123,6 @@ Rules:
 
 ## Self-check
 
-`python3 rank.py --selftest` asserts the scoring orders a gap-filler-with-proof above a
+`npx tsx rank.ts --selftest` asserts the scoring orders a gap-filler-with-proof above a
 skill-sprayer above an empty record, and that skill volume stays capped. Run it after any
 edit to the weights or signal regexes.
