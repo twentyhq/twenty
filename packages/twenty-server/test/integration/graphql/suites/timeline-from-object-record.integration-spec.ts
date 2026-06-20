@@ -78,13 +78,6 @@ const requestTimeline = (
     variables: { objectNameSingular, recordId, page: 1, pageSize: PAGE_SIZE },
   });
 
-// The timeline resolvers derive their data from a person's message
-// participants and calendar event participants. This suite provisions its own
-// self-contained graph (company -> person -> message thread/message/participant
-// and calendar event/participant) instead of reading the dev-seeded data:
-// sibling suites sharded alongside it legitimately wipe people via
-// deleteAllRecords('person'), and the seeder assigns threads/events to random
-// people — both of which made discovery here order- and seed-dependent.
 const TIMELINE_COMPANY_ID = '20202020-7e57-4000-8000-000000000001';
 const TIMELINE_PERSON_ID = '20202020-7e57-4000-8000-000000000002';
 const TIMELINE_MESSAGE_THREAD_ID = '20202020-7e57-4000-8000-000000000003';
