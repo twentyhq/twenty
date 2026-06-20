@@ -212,11 +212,6 @@ const StyledContainer = styled.div<{
     opacity: ${({ calendarDisabled }) => (calendarDisabled ? '0.5' : '1')};
   }
 
-  & .react-datepicker__month-container .react-datepicker__day-name,
-  & .react-datepicker__month-container .react-datepicker__day {
-    margin: 2px;
-  }
-
   & .react-datepicker__day {
     width: 34px;
     height: 34px;
