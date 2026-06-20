@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
-import { resolveInput } from 'twenty-shared/utils';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -21,10 +21,15 @@ import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/fi
 import { isWorkflowPickRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-pick-record-action.guard';
 import {
   type WorkflowPickRecordActionInput,
+  type WorkflowPickRecordLoadBalance,
   type WorkflowPickRecordStrategy,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-pick-record-action-input.type';
 
 const ROUND_ROBIN_CURSOR_TTL_MS = 1000 * 60 * 60 * 24 * 90;
+
+type PickRecordExecutionContext = Awaited<
+  ReturnType<WorkflowExecutionContextService['getExecutionContext']>
+>;
 
 @Injectable()
 export class PickRecordWorkflowAction implements WorkflowAction {
@@ -53,7 +58,7 @@ export class PickRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { objectName, strategy, recordIds } = resolveInput(
+    const { objectName, strategy, recordIds, loadBalance } = resolveInput(
       step.settings.input,
       context,
     ) as WorkflowPickRecordActionInput;
@@ -94,6 +99,23 @@ export class PickRecordWorkflowAction implements WorkflowAction {
       String(recordA.id).localeCompare(String(recordB.id)),
     );
 
+    if (strategy === 'LOAD_BALANCED') {
+      if (!isDefined(loadBalance)) {
+        return {
+          error:
+            'Pick record action is missing its load balancing configuration',
+        };
+      }
+
+      const leastLoadedIndex = await this.getLeastLoadedIndex({
+        orderedRecords,
+        loadBalance,
+        executionContext,
+      });
+
+      return { result: orderedRecords[leastLoadedIndex] };
+    }
+
     const pickedIndex = await this.getPickedIndex({
       strategy,
       candidateCount: orderedRecords.length,
@@ -102,6 +124,43 @@ export class PickRecordWorkflowAction implements WorkflowAction {
     });
 
     return { result: orderedRecords[pickedIndex] };
+  }
+
+  private async getLeastLoadedIndex({
+    orderedRecords,
+    loadBalance,
+    executionContext,
+  }: {
+    orderedRecords: ObjectRecord[];
+    loadBalance: WorkflowPickRecordLoadBalance;
+    executionContext: PickRecordExecutionContext;
+  }): Promise<number> {
+    const relatedCounts = await Promise.all(
+      orderedRecords.map(async (record) => {
+        const countOutput = await this.findRecordsService.execute({
+          objectName: loadBalance.objectNameSingular,
+          filter: { [loadBalance.fieldName]: { id: { eq: record.id } } },
+          authContext: executionContext.authContext,
+          rolePermissionConfig: executionContext.rolePermissionConfig,
+          shouldBuildEffectiveSelectFields: false,
+          limit: 1,
+        });
+
+        return countOutput.success
+          ? (countOutput.result?.count ?? 0)
+          : Number.POSITIVE_INFINITY;
+      }),
+    );
+
+    let leastLoadedIndex = 0;
+
+    for (let index = 1; index < relatedCounts.length; index++) {
+      if (relatedCounts[index] < relatedCounts[leastLoadedIndex]) {
+        leastLoadedIndex = index;
+      }
+    }
+
+    return leastLoadedIndex;
   }
 
   private async getPickedIndex({

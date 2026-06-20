@@ -4,6 +4,7 @@ import { baseWorkflowActionSettingsSchema } from './base-workflow-action-setting
 export const workflowPickRecordStrategySchema = z.enum([
   'RANDOM',
   'ROUND_ROBIN',
+  'LOAD_BALANCED',
 ]);
 
 export const workflowPickRecordActionSettingsSchema =
@@ -12,5 +13,11 @@ export const workflowPickRecordActionSettingsSchema =
       objectName: z.string(),
       strategy: workflowPickRecordStrategySchema,
       recordIds: z.array(z.string()),
+      loadBalance: z
+        .object({
+          objectNameSingular: z.string(),
+          fieldName: z.string(),
+        })
+        .optional(),
     }),
   });
