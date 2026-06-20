@@ -643,8 +643,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       }) as WorkspaceEventBatch<any>;
 
     it('enqueues without throwing when stepFilters is missing from settings', async () => {
-      // A filter persisted in JSONB without a stepFilters array must be treated
-      // as "no conditions" rather than throwing in the suppressed @OnEvent path.
       mockRepository.find.mockResolvedValue([
         {
           type: AutomatedTriggerType.DATABASE_EVENT,

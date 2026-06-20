@@ -6,11 +6,6 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
-// Trigger filter for the seeded "Create company when adding a new person"
-// workflow. It skips contacts auto-created by the email/calendar sync (which
-// already create and link their company), so the workflow only runs for people
-// added another way. Exported as a pure builder so the exact filter shipped to
-// every workspace can be unit-tested against representative event payloads.
 const PERSON_SYNC_SOURCE_FILTER_GROUP_ID =
   '2d9c1f3a-6b4e-4c8a-9f12-7a3b5c6d8e90';
 
@@ -25,7 +20,6 @@ export const buildPersonSyncSourceFilter = ({
 }: {
   createdByFieldMetadataId: string;
 }): { stepFilterGroups: StepFilterGroup[]; stepFilters: StepFilter[] } => {
-  // Both source filters share everything but the excluded source value.
   const baseFilter = {
     type: 'ACTOR',
     operand: ViewFilterOperand.IS_NOT,

@@ -133,7 +133,6 @@ describe('evaluateStepFilters', () => {
       stepFilterGroupId: 'unused',
     };
 
-    // name CONTAINS "Acme" (true) AND source IS CALENDAR (false) -> false
     expect(
       evaluateStepFilters({
         stepFilterGroups: [],

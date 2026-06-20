@@ -1,9 +1,6 @@
 import { buildPersonSyncSourceFilter } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/build-person-sync-source-filter.util';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 
-// Verifies the exact filter shipped on the seeded "Create company when adding a
-// new person" workflow against representative person.upserted event payloads,
-// evaluated through the same engine the trigger listener uses at runtime.
 describe('buildPersonSyncSourceFilter', () => {
   const filter = buildPersonSyncSourceFilter({
     createdByFieldMetadataId: 'created-by-field-id',

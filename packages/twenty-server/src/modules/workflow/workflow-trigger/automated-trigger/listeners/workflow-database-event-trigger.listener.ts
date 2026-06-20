@@ -443,9 +443,6 @@ export class WorkflowDatabaseEventTriggerListener {
     const { filter } =
       eventListener.settings as BaseDatabaseEventTriggerSettings;
 
-    // No conditions means "always run". isNonEmptyArray also guards against
-    // settings persisted in JSONB without a well-formed stepFilters array, so a
-    // malformed filter can't throw here, outside the try/catch below.
     if (!isDefined(filter) || !isNonEmptyArray(filter.stepFilters)) {
       return true;
     }
