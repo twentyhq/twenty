@@ -80,7 +80,7 @@ export const SettingsObjectFieldTable = ({
 }: SettingsObjectFieldTableProps) => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
-  const [showInactive, setShowInactive] = useState(true);
+  const [showInactive, setShowInactive] = useState(false);
   const [showSystemFields, setShowSystemFields] = useState(false);
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
