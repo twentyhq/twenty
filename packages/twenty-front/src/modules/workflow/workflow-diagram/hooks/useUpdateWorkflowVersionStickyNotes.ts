@@ -4,6 +4,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { UPDATE_WORKFLOW_VERSION_STICKY_NOTES } from '@/workflow/workflow-version/graphql/mutations/updateWorkflowVersionStickyNotes';
 import { useMutation } from '@apollo/client/react';
@@ -19,6 +20,7 @@ export const useUpdateWorkflowVersionStickyNotes = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -36,20 +38,31 @@ export const useUpdateWorkflowVersionStickyNotes = () => {
     workflowVersionId: string,
     notes: Array<WorkflowStickyNote>,
   ) => {
-    const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);
+    const result = await mutate({
+      variables: { input: { workflowVersionId, notes } },
+      onError: (error) => {
+        enqueueErrorSnackBar({ apolloError: error });
+      },
+    });
 
-    if (isDefined(cachedRecord)) {
-      updateRecordFromCache({
-        objectMetadataItems,
-        objectMetadataItem,
-        cache: apolloCoreClient.cache,
-        record: { ...cachedRecord, notes },
-        recordGqlFields: { notes: true },
-        objectPermissionsByObjectMetadataId,
-      });
+    if (!isDefined(result?.data)) {
+      return;
     }
 
-    await mutate({ variables: { input: { workflowVersionId, notes } } });
+    const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);
+
+    if (!isDefined(cachedRecord)) {
+      return;
+    }
+
+    updateRecordFromCache({
+      objectMetadataItems,
+      objectMetadataItem,
+      cache: apolloCoreClient.cache,
+      record: { ...cachedRecord, notes },
+      recordGqlFields: { notes: true },
+      objectPermissionsByObjectMetadataId,
+    });
   };
 
   return { updateStickyNotes };

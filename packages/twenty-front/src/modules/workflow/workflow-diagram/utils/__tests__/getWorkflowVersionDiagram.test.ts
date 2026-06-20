@@ -33,6 +33,7 @@ describe('getWorkflowVersionDiagram', () => {
     const result = getWorkflowVersionDiagram({
       workflowVersion: {
         __typename: 'WorkflowVersion',
+        notes: null,
         status: 'ACTIVE',
         createdAt: '',
         id: '1',
@@ -73,6 +74,7 @@ describe('getWorkflowVersionDiagram', () => {
     const result = getWorkflowVersionDiagram({
       workflowVersion: {
         __typename: 'WorkflowVersion',
+        notes: null,
         status: 'ACTIVE',
         createdAt: '',
         id: '1',
@@ -121,6 +123,7 @@ describe('getWorkflowVersionDiagram', () => {
     const result = getWorkflowVersionDiagram({
       workflowVersion: {
         __typename: 'WorkflowVersion',
+        notes: null,
         status: 'ACTIVE',
         createdAt: '',
         id: '1',

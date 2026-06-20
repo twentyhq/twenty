@@ -55,6 +55,7 @@ export const workflowQueryResult = {
                   deletedAt: null,
                   id: 'e7ee024c-ea25-4558-84b8-6c3533f0c9a5',
                   name: 'v1',
+                  notes: null,
                   position: -1,
                   status: 'DRAFT',
                   steps: [

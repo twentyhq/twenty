@@ -19,6 +19,7 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
+      stickyNotes: [],
       workflowContext: 'workflow',
     });
 
@@ -84,6 +85,7 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
+      stickyNotes: [],
       workflowContext: 'workflow',
     });
 
@@ -161,6 +163,7 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
+      stickyNotes: [],
       workflowContext: 'workflow',
     });
 
@@ -226,6 +229,7 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
+      stickyNotes: [],
       workflowContext: 'workflow',
     });
 
@@ -309,6 +313,7 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
+      stickyNotes: [],
       workflowContext: 'workflow',
     });
 
