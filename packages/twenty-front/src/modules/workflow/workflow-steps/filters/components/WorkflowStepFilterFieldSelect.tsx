@@ -14,7 +14,10 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { extractRawVariableNamePart, TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import {
+  extractRawVariableNamePart,
+  TRIGGER_STEP_ID,
+} from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
