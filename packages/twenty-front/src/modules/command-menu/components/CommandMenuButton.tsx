@@ -29,6 +29,7 @@ export type CommandMenuButtonProps = {
   to?: string;
   disabled?: boolean;
   isPrimaryAction?: boolean;
+  ariaLabel?: string;
 };
 
 export const CommandMenuButton = ({
@@ -37,6 +38,7 @@ export const CommandMenuButton = ({
   to,
   disabled = false,
   isPrimaryAction = false,
+  ariaLabel,
 }: CommandMenuButtonProps) => {
   const resolvedLabel = getCommandMenuItemLabel(command.label);
 
@@ -58,7 +60,7 @@ export const CommandMenuButton = ({
           onClick={onClick}
           disabled={disabled}
           title={resolvedShortLabel}
-          ariaLabel={resolvedLabel}
+          ariaLabel={ariaLabel ?? resolvedLabel}
         />
       ) : (
         <div id={`command-menu-item-entry-${command.key}`} key={command.key}>
@@ -70,7 +72,7 @@ export const CommandMenuButton = ({
             to={to}
             onClick={onClick}
             disabled={disabled}
-            ariaLabel={resolvedLabel}
+            ariaLabel={ariaLabel ?? resolvedLabel}
           />
           <StyledWrapper>
             <AppTooltip

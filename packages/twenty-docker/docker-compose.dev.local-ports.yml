@@ -1,0 +1,9 @@
+# Local override: brew postgres/redis own 5432/6379 on this machine (artisan backend).
+# Usage: docker compose -f docker-compose.dev.yml -f docker-compose.dev.local-ports.yml up -d
+services:
+  db:
+    ports: !override
+      - "5433:5432"
+  redis:
+    ports: !override
+      - "6380:6379"

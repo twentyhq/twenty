@@ -59,12 +59,19 @@ const CommandMenuItemButtonRenderer = ({
 
   const command = { key: item.id, label, shortLabel, Icon };
 
+  const labelSingular = commandMenuContextApi.objectMetadataItem.labelSingular;
+  const createAriaLabel =
+    isPrimaryAction && typeof labelSingular === 'string'
+      ? `Create a new ${labelSingular.toLowerCase()}`
+      : undefined;
+
   if (isInPreviewMode) {
     return (
       <StyledPreviewWrapper>
         <CommandMenuButton
           command={command}
           isPrimaryAction={isPrimaryAction}
+          ariaLabel={createAriaLabel}
         />
       </StyledPreviewWrapper>
     );
@@ -76,6 +83,7 @@ const CommandMenuItemButtonRenderer = ({
       onClick={disabled ? undefined : handleClick}
       disabled={disabled}
       isPrimaryAction={isPrimaryAction}
+      ariaLabel={createAriaLabel}
     />
   );
 };

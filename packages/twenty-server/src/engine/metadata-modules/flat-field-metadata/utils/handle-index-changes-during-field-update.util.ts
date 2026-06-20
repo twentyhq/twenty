@@ -148,9 +148,15 @@ const handleExistingIndexes = ({
       flatObjectMetadata,
     });
 
-    const uniqueIndexToDelete = relatedIndexes.find(
-      (index) => index.name === expectedUniqueIndex.name,
-    );
+    const uniqueIndexToDelete =
+      relatedIndexes.find((index) => index.name === expectedUniqueIndex.name) ??
+      relatedIndexes.find(
+        (index) =>
+          index.isUnique &&
+          index.flatIndexFieldMetadatas.length === 1 &&
+          index.flatIndexFieldMetadatas[0].fieldMetadataId ===
+            fromFlatFieldMetadata.id,
+      );
 
     if (
       isDefined(uniqueIndexToDelete) &&
