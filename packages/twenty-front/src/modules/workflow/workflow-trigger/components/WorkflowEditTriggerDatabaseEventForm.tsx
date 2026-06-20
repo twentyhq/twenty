@@ -291,7 +291,12 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
         {isDefined(selectedObjectMetadataItem) && (
           <WorkflowStepFilterBuilder
             instanceId={TRIGGER_STEP_ID}
-            defaultValue={trigger.settings.filter}
+            defaultValue={
+              trigger.settings.filter ?? {
+                stepFilterGroups: [],
+                stepFilters: [],
+              }
+            }
             readonly={triggerOptions.readonly ?? false}
             onFilterSettingsUpdate={handleFilterSettingsUpdate}
           />

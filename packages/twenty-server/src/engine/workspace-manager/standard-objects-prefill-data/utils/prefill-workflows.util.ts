@@ -102,6 +102,33 @@ export const prefillWorkflows = async (
     fieldMetadataId: personCreatedByFieldMetadata.id,
   };
 
+  // Skip contacts auto-created by the email/calendar sync (which already create
+  // and link their company). The same filter is stored on the workflow version
+  // trigger AND on the automatedTrigger row the listener reads, so the two never
+  // drift apart — the listener only sees the automatedTrigger copy.
+  const personSyncSourceFilter = {
+    stepFilterGroups: [
+      {
+        id: personSyncSourceFilterGroupId,
+        logicalOperator: 'AND',
+      },
+    ],
+    stepFilters: [
+      {
+        ...personSyncSourceFilterBase,
+        id: '3e8b2a4c-7c5f-4d9b-8a23-6b4c5d7e9f01',
+        value: JSON.stringify([FieldActorSource.EMAIL]),
+        positionInStepFilterGroup: 0,
+      },
+      {
+        ...personSyncSourceFilterBase,
+        id: '4f9c3b5d-8d6a-4e0c-9b34-7c5d6e8f0a12',
+        value: JSON.stringify([FieldActorSource.CALENDAR]),
+        positionInStepFilterGroup: 1,
+      },
+    ],
+  };
+
   await entityManager
     .createQueryBuilder()
     .insert()
@@ -383,28 +410,7 @@ export const prefillWorkflows = async (
               },
               DatabaseEventAction.UPSERTED,
             ),
-            filter: {
-              stepFilterGroups: [
-                {
-                  id: personSyncSourceFilterGroupId,
-                  logicalOperator: 'AND',
-                },
-              ],
-              stepFilters: [
-                {
-                  ...personSyncSourceFilterBase,
-                  id: '3e8b2a4c-7c5f-4d9b-8a23-6b4c5d7e9f01',
-                  value: JSON.stringify([FieldActorSource.EMAIL]),
-                  positionInStepFilterGroup: 0,
-                },
-                {
-                  ...personSyncSourceFilterBase,
-                  id: '4f9c3b5d-8d6a-4e0c-9b34-7c5d6e8f0a12',
-                  value: JSON.stringify([FieldActorSource.CALENDAR]),
-                  positionInStepFilterGroup: 1,
-                },
-              ],
-            },
+            filter: personSyncSourceFilter,
           },
           nextStepIds: ['c30d7cbe-00e0-4966-bc1a-99b0a11a2cca'],
         }),
@@ -804,6 +810,7 @@ export const prefillWorkflows = async (
         settings: {
           eventName: 'person.upserted',
           fields: ['emails'],
+          filter: personSyncSourceFilter,
         },
       },
     ])
