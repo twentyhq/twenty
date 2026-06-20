@@ -116,25 +116,33 @@ describe('Pick Record Workflow - load balanced (e2e)', () => {
 
     // Two fresh companies start with zero related opportunities; adding one
     // opportunity to the second makes the first the least loaded candidate.
-    const companyAData = await graphql(`
+    const companyOneData = await graphql(`
       mutation {
-        createCompany(data: { name: "Pick Record LB - least loaded" }) {
+        createCompany(data: { name: "Pick Record LB company one" }) {
           id
         }
       }
     `);
 
-    leastLoadedCompanyId = companyAData.createCompany.id;
-
-    const companyBData = await graphql(`
+    const companyTwoData = await graphql(`
       mutation {
-        createCompany(data: { name: "Pick Record LB - most loaded" }) {
+        createCompany(data: { name: "Pick Record LB company two" }) {
           id
         }
       }
     `);
 
-    mostLoadedCompanyId = companyBData.createCompany.id;
+    // The executor orders candidates by id before selecting. Attach the
+    // opportunity to the id-first company so the least-loaded candidate is the
+    // id-second one: load balancing must pick it, which also guards against a
+    // regression where a broken count would fall back to the first candidate.
+    const [firstSortedCompanyId, secondSortedCompanyId] = [
+      companyOneData.createCompany.id,
+      companyTwoData.createCompany.id,
+    ].sort((idA: string, idB: string) => idA.localeCompare(idB));
+
+    mostLoadedCompanyId = firstSortedCompanyId;
+    leastLoadedCompanyId = secondSortedCompanyId;
 
     const opportunityData = await graphql(
       `

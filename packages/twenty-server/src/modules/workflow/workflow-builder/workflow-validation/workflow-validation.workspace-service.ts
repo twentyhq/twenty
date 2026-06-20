@@ -252,11 +252,13 @@ export class WorkflowValidationWorkspaceService {
   private validatePickRecordStep(
     step: WorkflowPickRecordAction,
   ): WorkflowValidationIssue[] {
-    if (step.settings.input.strategy !== 'LOAD_BALANCED') {
+    const input = step.settings?.input;
+
+    if (!isDefined(input) || input.strategy !== 'LOAD_BALANCED') {
       return [];
     }
 
-    const loadBalance = step.settings.input.loadBalance;
+    const loadBalance = input.loadBalance;
 
     if (
       !isNonEmptyString(loadBalance?.objectNameSingular) ||
