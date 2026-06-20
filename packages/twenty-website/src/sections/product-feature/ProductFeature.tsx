@@ -16,9 +16,6 @@ import { ScrollEntrance } from './ScrollEntrance';
 import { TileContent } from './TileContent';
 import { TileVisual } from './TileVisual';
 
-/* Block flow, not grid: a grid would blockify the inline-flex eyebrow
-   and stretch it off-center. text-align centers every child as one
-   mechanism. */
 const IntroMeasure = styled.div`
   margin-inline: auto;
   max-width: 688px;
@@ -28,10 +25,6 @@ const IntroMeasure = styled.div`
     margin-top: ${spacing(6)};
   }
 `;
-
-// The bento's authored column ratios (60/40 alternating across rows),
-// indexed by tile (spotlight first).
-const CARD_SPANS = [60, 40, 40, 60, 60, 40];
 
 const Grid = styled.div`
   border: 1px solid ${color('black-20')};
@@ -127,6 +120,8 @@ const CardVisualFrame = styled.div`
     margin: ${spacing(5)} ${spacing(5)} 0;
   }
 `;
+
+const CARD_SPANS = [60, 40, 40, 60, 60, 40];
 
 function padCounter(value: number): string {
   return String(value).padStart(2, '0');
