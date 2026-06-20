@@ -1,14 +1,13 @@
 import gql from 'graphql-tag';
 import { type DocumentNode } from 'graphql';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
 const PAGE_SIZE = 50;
-const PEOPLE_DISCOVERY_LIMIT = 100;
 
 const GET_TIMELINE_THREADS = gql`
   query GetTimelineThreadsFromObjectRecord(
@@ -79,71 +78,59 @@ const requestTimeline = (
     variables: { objectNameSingular, recordId, page: 1, pageSize: PAGE_SIZE },
   });
 
-const getPeopleWithCompany = async (): Promise<
-  { id: string; companyId: string }[]
-> => {
+// The timeline resolvers derive their data from a person's message
+// participants and calendar event participants. This suite provisions its own
+// self-contained graph (company -> person -> message thread/message/participant
+// and calendar event/participant) instead of reading the dev-seeded data:
+// sibling suites sharded alongside it legitimately wipe people via
+// deleteAllRecords('person'), and the seeder assigns threads/events to random
+// people — both of which made discovery here order- and seed-dependent.
+const TIMELINE_COMPANY_ID = '20202020-7e57-4000-8000-000000000001';
+const TIMELINE_PERSON_ID = '20202020-7e57-4000-8000-000000000002';
+const TIMELINE_MESSAGE_THREAD_ID = '20202020-7e57-4000-8000-000000000003';
+const TIMELINE_MESSAGE_ID = '20202020-7e57-4000-8000-000000000004';
+const TIMELINE_MESSAGE_PARTICIPANT_ID = '20202020-7e57-4000-8000-000000000005';
+const TIMELINE_CALENDAR_EVENT_ID = '20202020-7e57-4000-8000-000000000006';
+const TIMELINE_CALENDAR_EVENT_PARTICIPANT_ID =
+  '20202020-7e57-4000-8000-000000000007';
+
+// Destroyed in afterAll in child-before-parent order to satisfy foreign keys.
+const TIMELINE_FIXTURES: { objectMetadataSingularName: string; id: string }[] =
+  [
+    {
+      objectMetadataSingularName: 'calendarEventParticipant',
+      id: TIMELINE_CALENDAR_EVENT_PARTICIPANT_ID,
+    },
+    {
+      objectMetadataSingularName: 'calendarEvent',
+      id: TIMELINE_CALENDAR_EVENT_ID,
+    },
+    {
+      objectMetadataSingularName: 'messageParticipant',
+      id: TIMELINE_MESSAGE_PARTICIPANT_ID,
+    },
+    { objectMetadataSingularName: 'message', id: TIMELINE_MESSAGE_ID },
+    {
+      objectMetadataSingularName: 'messageThread',
+      id: TIMELINE_MESSAGE_THREAD_ID,
+    },
+    { objectMetadataSingularName: 'person', id: TIMELINE_PERSON_ID },
+    { objectMetadataSingularName: 'company', id: TIMELINE_COMPANY_ID },
+  ];
+
+const createTimelineRecord = async (
+  objectMetadataSingularName: string,
+  data: object,
+) => {
   const response = await makeGraphqlAPIRequest(
-    findManyOperationFactory({
-      objectMetadataSingularName: 'person',
-      objectMetadataPluralName: 'people',
-      gqlFields: 'id company { id }',
-      first: PEOPLE_DISCOVERY_LIMIT,
+    createOneOperationFactory({
+      objectMetadataSingularName,
+      gqlFields: 'id',
+      data,
     }),
   );
 
   expect(response.body.errors).toBeUndefined();
-
-  return (
-    response.body.data.people.edges
-      // @ts-expect-error legacy noImplicitAny
-      .map((edge) => edge.node)
-      // @ts-expect-error legacy noImplicitAny
-      .filter((person) => person.company?.id)
-      // @ts-expect-error legacy noImplicitAny
-      .map((person) => ({ id: person.id, companyId: person.company.id }))
-  );
-};
-
-const findPersonWithThreads = async (
-  people: { id: string; companyId: string }[],
-) => {
-  for (const person of people) {
-    const response = await requestTimeline(
-      GET_TIMELINE_THREADS,
-      'person',
-      person.id,
-    );
-
-    if (
-      response.body.data.getTimelineThreadsFromObjectRecord
-        .totalNumberOfThreads > 0
-    ) {
-      return person;
-    }
-  }
-
-  return undefined;
-};
-
-const findPersonWithCalendarEvents = async (
-  people: { id: string; companyId: string }[],
-) => {
-  for (const person of people) {
-    const response = await requestTimeline(
-      GET_TIMELINE_CALENDAR_EVENTS,
-      'person',
-      person.id,
-    );
-
-    if (
-      response.body.data.getTimelineCalendarEventsFromObjectRecord
-        .totalNumberOfCalendarEvents > 0
-    ) {
-      return person;
-    }
-  }
-
-  return undefined;
 };
 
 describe('timeline from object record resolvers (integration)', () => {
@@ -151,19 +138,76 @@ describe('timeline from object record resolvers (integration)', () => {
   let personWithEvents: { id: string; companyId: string };
 
   beforeAll(async () => {
-    const people = await getPeopleWithCompany();
+    await createTimelineRecord('company', {
+      id: TIMELINE_COMPANY_ID,
+      name: 'Timeline Source Company',
+    });
 
-    const threadsSource = await findPersonWithThreads(people);
-    const eventsSource = await findPersonWithCalendarEvents(people);
+    await createTimelineRecord('person', {
+      id: TIMELINE_PERSON_ID,
+      name: { firstName: 'Timeline', lastName: 'Source' },
+      companyId: TIMELINE_COMPANY_ID,
+    });
 
-    if (!threadsSource || !eventsSource) {
-      throw new Error(
-        'Expected the seeded workspace to contain a person with message threads and calendar events',
+    await createTimelineRecord('messageThread', {
+      id: TIMELINE_MESSAGE_THREAD_ID,
+    });
+
+    await createTimelineRecord('message', {
+      id: TIMELINE_MESSAGE_ID,
+      messageThreadId: TIMELINE_MESSAGE_THREAD_ID,
+      subject: 'Timeline source thread',
+      text: 'Timeline source message body',
+      receivedAt: new Date().toISOString(),
+    });
+
+    await createTimelineRecord('messageParticipant', {
+      id: TIMELINE_MESSAGE_PARTICIPANT_ID,
+      messageId: TIMELINE_MESSAGE_ID,
+      personId: TIMELINE_PERSON_ID,
+      role: 'FROM',
+      handle: 'timeline.source@example.com',
+      displayName: 'Timeline Source',
+    });
+
+    await createTimelineRecord('calendarEvent', {
+      id: TIMELINE_CALENDAR_EVENT_ID,
+      title: 'Timeline source event',
+      isFullDay: false,
+      startsAt: new Date().toISOString(),
+      endsAt: new Date().toISOString(),
+    });
+
+    await createTimelineRecord('calendarEventParticipant', {
+      id: TIMELINE_CALENDAR_EVENT_PARTICIPANT_ID,
+      calendarEventId: TIMELINE_CALENDAR_EVENT_ID,
+      personId: TIMELINE_PERSON_ID,
+      handle: 'timeline.source@example.com',
+      displayName: 'Timeline Source',
+      responseStatus: 'ACCEPTED',
+      isOrganizer: true,
+    });
+
+    personWithThreads = {
+      id: TIMELINE_PERSON_ID,
+      companyId: TIMELINE_COMPANY_ID,
+    };
+    personWithEvents = {
+      id: TIMELINE_PERSON_ID,
+      companyId: TIMELINE_COMPANY_ID,
+    };
+  });
+
+  afterAll(async () => {
+    for (const { objectMetadataSingularName, id } of TIMELINE_FIXTURES) {
+      await makeGraphqlAPIRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName,
+          gqlFields: 'id',
+          recordId: id,
+        }),
       );
     }
-
-    personWithThreads = threadsSource;
-    personWithEvents = eventsSource;
   });
 
   it('should derive a company message timeline from its related people', async () => {
