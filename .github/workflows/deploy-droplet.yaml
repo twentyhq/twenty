@@ -1,0 +1,87 @@
+name: Deploy to droplet
+
+# Despliega en cada push a main. El build pesado (frontend + imagen Docker)
+# corre aqui, en los runners de GitHub (con RAM de sobra). El droplet solo
+# hace pull de la imagen ya construida y reinicia los contenedores.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: deploy-droplet
+  cancel-in-progress: false
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # Pre-construir el frontend en el runner (tiene RAM de sobra). El Dockerfile
+      # detecta packages/twenty-front/build/ y se salta el build pesado en Docker.
+      - name: Build frontend
+        run: |
+          corepack enable
+          yarn install --immutable
+          npx nx build twenty-front
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login a GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push imagen
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/twenty-docker/twenty/Dockerfile
+          target: twenty
+          push: true
+          tags: |
+            ghcr.io/bridgestudio-mx/crm_sf:${{ github.sha }}
+            ghcr.io/bridgestudio-mx/crm_sf:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    # Despliega a cada servidor de la lista en paralelo. Para agregar maquinas,
+    # edita la variable DEPLOY_HOSTS (Settings -> Variables) con un JSON, ej:
+    #   ["157.230.52.8","10.0.0.5"]
+    # El acceso usa usuario+contrasena (secrets DROPLET_USER / DROPLET_PASSWORD).
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJSON(vars.DEPLOY_HOSTS) }}
+    steps:
+      - name: SSH al servidor ${{ matrix.host }} y redeploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ matrix.host }}
+          username: ${{ secrets.DROPLET_USER }}
+          password: ${{ secrets.DROPLET_PASSWORD }}
+          script: |
+            set -e
+            cd /opt/twenty
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            sed -i "s/^TAG=.*/TAG=${{ github.sha }}/" .env
+            docker compose pull
+            docker compose up -d
+            docker image prune -f

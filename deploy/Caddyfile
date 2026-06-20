@@ -1,0 +1,5 @@
+# Caddy obtiene y renueva el certificado SSL (Let's Encrypt) automaticamente,
+# guardandolo dentro del droplet (volumen caddy-data). No necesitas comprar SSL.
+parks.bridgehub.mx {
+    reverse_proxy server:3000
+}

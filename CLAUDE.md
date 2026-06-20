@@ -217,6 +217,24 @@ This handles everything: starts Postgres + Redis (auto-detects local services vs
 
 **Note:** CI workflows (GitHub Actions) manage services via Actions service containers and run setup steps individually — they don't use this script.
 
+### Trigger: "Carga los cambios en local"
+
+When the user says **"Carga los cambios en local"** (or a clear variant like "levanta el local", "corre la app en local con hot-reload"), Claude must start the local hybrid dev environment so that code changes reflect automatically:
+
+```bash
+# 1. Infra (Postgres + Redis) in Docker + .env files + migrations (idempotent)
+bash packages/twenty-utils/setup-dev-env.sh --docker
+
+# 2. App with hot-reload: frontend + backend + worker in watch mode
+yarn start
+```
+
+- Run `yarn start` in the background (it is long-running) and report the URL.
+- App URL: **http://localhost:3001** (frontend); server API on `:3000`.
+- Vite (frontend) and NestJS (backend) recompile on save — no manual rebuild needed.
+- To stop: kill `yarn start`, then `bash packages/twenty-utils/setup-dev-env.sh --down`.
+- This is the documented local flow in `deploy/README.md`. It is unrelated to production deploy (which happens via GitHub Actions on push to `main`).
+
 ## Important Files
 - `nx.json` - Nx workspace configuration with task definitions
 - `tsconfig.base.json` - Base TypeScript configuration
