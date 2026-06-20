@@ -5,6 +5,7 @@ import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
+import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -30,6 +31,7 @@ export const getFieldButtonIcon = (
     isFieldEmails(fieldDefinition) ||
     isFieldArray(fieldDefinition) ||
     isFieldFiles(fieldDefinition) ||
+    isFieldRichText(fieldDefinition) ||
     isFieldPhones(fieldDefinition)
   ) {
     return IconPencil;
