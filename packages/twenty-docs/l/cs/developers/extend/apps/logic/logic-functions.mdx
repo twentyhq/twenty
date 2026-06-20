@@ -60,6 +60,7 @@ Chcete-li vyvolat logickou funkci spuštěnou trasou z (bezhlavé) front-endové
 * **cron**: Spouští vaši funkci podle plánu pomocí výrazu CRON.
 * **databaseEvent**: Spouští se při událostech životního cyklu objektů v pracovním prostoru. Když je operace události `updated`, lze konkrétní sledovaná pole určit v poli `updatedFields`. Pokud zůstane nedefinované nebo prázdné, spustí funkci jakákoli aktualizace.
 > např. `person.updated`, `*.created`, `company.*`
+* **serverWebhook**: Přijímá příchozí webhooky od služby třetí strany (Stripe, GitHub, Svix, …) na jediném koncovém bodu v rámci registrace a z payloadu určí cílový pracovní prostor. Viz [spouštěč serverového webhooku](#server-webhook-trigger).
 
 <Note>
 Funkci můžete také spustit ručně pomocí CLI:
@@ -170,6 +171,90 @@ Z bezpečnostních důvodů jsou hlavičky odpovědi omezeny na seznam povolený
 
 <Note>
 Stavový kód musí být platný stavový kód HTTP (mezi 100 a 599). Názvy hlaviček odpovědi se porovnávají bez rozlišení velikosti písmen.
+</Note>
+
+#### Serverový spouštěč webhooku
+
+`httpRouteTriggerSettings` zpřístupňuje funkci pod `/s/` a workspace určuje z hostitele požadavku — což funguje, když má každý workspace svou vlastní doménu. Poskytovatelé třetích stran však doručují události každého tenanta na **jednu** adresu URL webhooku. Pro tento případ použijte `serverWebhookTriggerSettings`: funkce je dostupná na endpointu v rámci registrace a workspace se určuje z payloadu.
+
+```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  // Verify the signature yourself before doing anything (see below).
+  // Return a non-2xx Response to make the provider retry.
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-provider-webhook',
+  handler,
+  serverWebhookTriggerSettings: {
+    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  },
+});
+```
+
+Funkce je dostupná na:
+
+```
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+```
+
+Oba identifikátory jsou `universalIdentifier`s z vašeho manifestu — registrace aplikace a této logické funkce. Zaregistrujte tuto adresu URL u poskytovatele.
+
+**Určení workspace.** Protože jeden endpoint obsluhuje každý workspace, vaše integrace musí vložit cílové `workspaceId` někam do doručovaných dat a `workspaceIdResolver.{ source, path }` říká platformě, odkud ho přečíst:
+
+| Pole    | Hodnoty                                           | Poznámky                                                                                                                                                       |
+| ------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `zdroj` | `body` \| `query` \| `header`                     | `body` čte parsovaný JSON. `query` je nejuniverzálnější — obvykle máte pod kontrolou callback URL, kterou registrujete, takže připojte `?twentyWorkspaceId=…`. |
+| `cesta` | tečková cesta, např. `metadata.twentyWorkspaceId` | Omezeno na alfanumerické / `_` / `-` segmenty; prototypové klíče jsou odmítnuty.                                                                               |
+
+Určená hodnota musí být platné UUID workspace **a** vaše aplikace musí být v tomto workspace nainstalovaná, jinak je požadavek odmítnut ještě před spuštěním funkce.
+
+<Warning>
+**Ověření podpisu je vaše zodpovědnost.** Platforma pro tento spouštěč neověřuje podpisy webhooků — pouze určí workspace a spustí vaši funkci. Váš handler musí podpis ověřit sám pomocí `event.rawBody` a hlaviček, které jste uvedli v `forwardedRequestHeaders`, porovnáním s tajemstvím uloženým jako serverová/aplikační proměnná. Vždy ověřujte **před** jakýmikoliv vedlejšími efekty a použijte porovnání v konstantním čase.
+</Warning>
+
+Většina poskytovatelů podepisuje pomocí HMAC-SHA256; části, které se liší, jsou název hlavičky, kódování digestu a podepsaný řetězec payloadu. Několik příkladů:
+
+| Poskytovatel                 | Hlavičky k přeposlání                                  | Podepsaný řetězec            | Digest                                                |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | ----------------------------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (tajemství je v base64 po odstranění `whsec_`) |
+| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                   |
+| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (s prefixem `sha256=`)                            |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (s prefixem `v0=`)                                |
+
+```ts
+import { createHmac, timingSafeEqual } from 'crypto';
+
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
+      .update(event.rawBody ?? '')
+      .digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    return new Response({ error: 'invalid signature' }, { status: 401 });
+  }
+
+  // ...handle the verified event
+  return { received: true };
+};
+```
+
+<Note>
+Funkce běží **synchronně** a vámi vrácená hodnota se stává HTTP odpovědí, takže poskytovatelé vidí váš stavový kód a mohou opakovat požadavek při jiném než 2xx kódu. Udržujte handlery rychlé — některým poskytovatelům (např. Slack) vyprší časový limit během několika sekund. Protože funkce běží před tím, než je podpis zkontrolován, chraňte tento endpoint rate limitingem na vaší edge vrstvě.
 </Note>
 
 #### Payload spouštěče databázové události

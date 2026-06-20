@@ -60,6 +60,7 @@ Um eine routenausgelöste Logikfunktion von einer (headless) Front-Komponente au
 * **cron**: Führt Ihre Funktion nach Zeitplan mithilfe eines CRON-Ausdrucks aus.
 * **databaseEvent**: Wird bei Lebenszyklusereignissen von Workspace-Objekten ausgeführt. Wenn die Ereignisoperation `updated` ist, können bestimmte zu überwachende Felder im Array `updatedFields` angegeben werden. Wenn das Array undefiniert oder leer ist, löst jede Aktualisierung die Funktion aus.
 > z. B. `person.updated`, `*.created`, `company.*`
+* **serverWebhook**: Empfängt eingehende Webhooks von einem Drittanbieterdienst (Stripe, GitHub, Svix, …) an einem einzelnen, registrierungsbezogenen Endpunkt und ermittelt den Ziel-Arbeitsbereich aus der Nutzlast. Siehe [Server-Webhook-Trigger](#server-webhook-trigger).
 
 <Note>
 Sie können eine Funktion auch manuell über die CLI ausführen:
@@ -105,7 +106,7 @@ Der Typ `RoutePayload` hat die folgende Struktur:
   | `body`                       | `object \| null`                                        | Geparster Request-Body (JSON)                                                                                                                                                                                                          | `{ id: 1 }` -> `{ id: 1 }`                                                 |
   | `rawBody`                    | `string \| undefined`                                   | Ursprünglicher UTF-8-Request-Body vor dem JSON-Parsing. Nützlich zur Verifizierung von Webhook-Signaturen im HMAC-Stil (z. B. GitHubs `X-Hub-Signature-256`, Stripe). `undefined`, wenn die Laufzeitumgebung es nicht beibehalten hat. |                                                                            |
   | `isBase64Encoded`            | `boolean`                                               | Gibt an, ob der Body Base64-codiert ist                                                                                                                                                                                                |                                                                            |
-  | `requestContext.http.method` | `string`                                                | HTTP-Methode (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                           |                                                                            |
+  | `requestContext.http.method` | `Zeichenkette`                                          | HTTP-Methode (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                           |                                                                            |
   | `requestContext.http.path`   | `string`                                                | Rohpfad der Anfrage                                                                                                                                                                                                                    |                                                                            |
 
 
@@ -169,6 +170,90 @@ Aus Sicherheitsgründen sind Antwort-Header auf eine Allowlist beschränkt. Jede
 
 <Note>
 Der Statuscode muss ein gültiger HTTP-Statuscode sein (zwischen 100 und 599). Antwort-Header-Namen werden ohne Beachtung der Groß-/Kleinschreibung verglichen.
+</Note>
+
+#### Server-Webhook-Trigger
+
+`httpRouteTriggerSettings` stellt eine Funktion unter `/s/` bereit und ermittelt den Workspace aus dem Host der Anfrage — was funktioniert, wenn jeder Workspace seine eigene Domain hat. Drittanbieter hingegen liefern die Ereignisse jedes Mandanten an **eine** Webhook-URL. Verwende für diesen Fall `serverWebhookTriggerSettings`: Die Funktion ist über einen registrierungsbezogenen Endpunkt erreichbar und der Workspace wird aus der Nutzlast ermittelt.
+
+```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  // Verify the signature yourself before doing anything (see below).
+  // Return a non-2xx Response to make the provider retry.
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-provider-webhook',
+  handler,
+  serverWebhookTriggerSettings: {
+    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  },
+});
+```
+
+Die Funktion ist erreichbar unter:
+
+```
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+```
+
+Beide Bezeichner sind die `universalIdentifier` aus deinem Manifest — der der Anwendungsregistrierung und dieser Logikfunktion. Registriere diese URL beim Provider.
+
+**Workspace-Auflösung.** Da ein Endpunkt jeden Workspace bedient, muss deine Integration die Ziel-`workspaceId` irgendwo in der Zustellung platzieren, und `workspaceIdResolver.{ source, path }` teilt der Plattform mit, wo sie diese auslesen soll:
+
+| Feld     | Werte                                        | Notizen                                                                                                                                                                    |
+| -------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `quelle` | `body` \| `query` \| `header`                | `body` liest das geparste JSON. `query` ist am universellsten — du kontrollierst in der Regel die Callback-URL, die du registrierst, also hänge `?twentyWorkspaceId=…` an. |
+| `pfad`   | Dot-Pfad, z. B. `metadata.twentyWorkspaceId` | Beschränkt auf alphanumerische / `_`- / `-`-Segmente; Prototype-Schlüssel werden abgelehnt.                                                                                |
+
+Der aufgelöste Wert muss eine gültige Workspace-UUID sein **und** deine App muss in diesem Workspace installiert sein, andernfalls wird die Anfrage abgelehnt, bevor die Funktion ausgeführt wird.
+
+<Warning>
+**Die Signaturüberprüfung liegt in deiner Verantwortung.** Die Plattform überprüft für diesen Trigger keine Webhook-Signaturen — sie ermittelt nur den Workspace und führt deine Funktion aus. Dein Handler muss die Signatur selbst mithilfe von `event.rawBody` und den in `forwardedRequestHeaders` aufgeführten Headern überprüfen und sie mit einem als Server-/Anwendungsvariable gespeicherten Geheimnis vergleichen. Überprüfe immer **vor** jeglicher Nebenwirkung und verwende einen Vergleich in konstanter Zeit.
+</Warning>
+
+Die meisten Provider signieren mit HMAC-SHA256; die Teile, die sich unterscheiden, sind der Header-Name, die Digest-Codierung und der signierte Payload-String. Einige Beispiele:
+
+| Anbieter                     | Weiterzuleitende Header                                | Signierte Zeichenkette       | Digest                                                    |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | --------------------------------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (Geheimnis ist base64 nach Entfernen von `whsec_`) |
+| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                       |
+| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (mit Präfix `sha256=`)                                |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                    |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (mit Präfix `v0=`)                                    |
+
+```ts
+import { createHmac, timingSafeEqual } from 'crypto';
+
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
+      .update(event.rawBody ?? '')
+      .digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    return new Response({ error: 'invalid signature' }, { status: 401 });
+  }
+
+  // ...handle the verified event
+  return { received: true };
+};
+```
+
+<Note>
+Die Funktion läuft **synchron** und dein Rückgabewert wird zur HTTP-Antwort, sodass Provider deinen Statuscode sehen und bei Nicht-2xx erneut versuchen können. Halte Handler schnell — einige Provider (z. B. Slack) laufen nach wenigen Sekunden in ein Timeout. Da die Funktion ausgeführt wird, bevor die Signatur geprüft wird, solltest du diesen Endpunkt an deinem Edge mit Ratenbegrenzung schützen.
 </Note>
 
 #### Datenbank-Event-Trigger-Payload
