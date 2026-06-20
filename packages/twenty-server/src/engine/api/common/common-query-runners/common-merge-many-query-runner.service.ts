@@ -120,19 +120,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       mergedData: Partial<ObjectRecord>;
     },
   ): Promise<ObjectRecord> {
-    const {
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    } = queryRunnerContext;
-
-    const columnsToReturn = buildColumnsToReturn({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
+    const { flatObjectMetadata } = queryRunnerContext;
 
     const transactionRepository = transactionManager.getRepository(
       flatObjectMetadata.nameSingular,
@@ -150,7 +138,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       .createQueryBuilder(flatObjectMetadata.nameSingular)
       .delete()
       .whereInIds(idsToDelete)
-      .returning(columnsToReturn)
       .execute();
 
     return this.updatePriorityRecord(
@@ -400,8 +387,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     const relationFieldsPointingToCurrentObject: Array<{
       objectMetadata: FlatObjectMetadata;
-      fieldName: string;
-      fieldId: string;
       joinColumnName: string | undefined;
     }> = [];
 
@@ -435,8 +420,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
       relationFieldsPointingToCurrentObject.push({
         objectMetadata: objMetadata,
-        fieldName: field.name,
-        fieldId: field.id,
         joinColumnName: computeMorphOrRelationFieldJoinColumnName({
           name: field.name,
         }),
