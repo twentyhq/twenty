@@ -3,8 +3,6 @@ import { Temporal } from 'temporal-polyfill';
 
 jest.useFakeTimers().setSystemTime(new Date('2024-10-01T00:00:00.000Z'));
 
-const TIME_ZONE = 'UTC';
-
 const getUTCPlainDateFromISO = (isoStringDate: string) => {
   return Temporal.Instant.from(isoStringDate)
     .toZonedDateTimeISO('UTC')
@@ -18,7 +16,7 @@ describe('getHighlightedDates', () => {
       end: getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z'),
     };
     expect(
-      getHighlightedDates(dateRange.start, dateRange.end, TIME_ZONE),
+      getHighlightedDates(dateRange.start, dateRange.end),
     ).toEqual([getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z')]);
   });
 
@@ -28,7 +26,7 @@ describe('getHighlightedDates', () => {
       end: getUTCPlainDateFromISO('2024-10-13T00:00:00.000Z'),
     };
     expect(
-      getHighlightedDates(dateRange.start, dateRange.end, TIME_ZONE),
+      getHighlightedDates(dateRange.start, dateRange.end),
     ).toEqual([
       getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z'),
       getUTCPlainDateFromISO('2024-10-13T00:00:00.000Z'),
@@ -41,7 +39,7 @@ describe('getHighlightedDates', () => {
       end: getUTCPlainDateFromISO('2024-10-21T00:00:00.000Z'),
     };
     expect(
-      getHighlightedDates(dateRange.start, dateRange.end, TIME_ZONE),
+      getHighlightedDates(dateRange.start, dateRange.end),
     ).toEqual([
       getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z'),
       getUTCPlainDateFromISO('2024-10-13T00:00:00.000Z'),
@@ -56,13 +54,24 @@ describe('getHighlightedDates', () => {
     ]);
   });
 
-  it('should should return empty if range is 10 days but out of range', () => {
+  it('should highlight all days in range even when far from today', () => {
     const dateRange = {
       start: getUTCPlainDateFromISO('2023-10-01T00:00:00.000Z'),
       end: getUTCPlainDateFromISO('2023-10-10T00:00:00.000Z'),
     };
     expect(
-      getHighlightedDates(dateRange.start, dateRange.end, TIME_ZONE),
-    ).toEqual([]);
+      getHighlightedDates(dateRange.start, dateRange.end),
+    ).toEqual([
+      getUTCPlainDateFromISO('2023-10-01T00:00:00.000Z'),
+      getUTCPlainDateFromISO('2023-10-02T00:00:00.000Z'),
+      getUTCPlainDateFromISO('2023-10-03T00:00:00.000Z'),
+      getUTCPlainDateFromISO('2023-10-04T00:00:00.000Z'),
+      getUTCPlainDateFromISO('2023-10-05T00:00:00.000Z'),
+      getUTCPlainDateFromISO('2023-10-06T00:00:00.000Z'),
+      getUTCPlainDateFromISO('2023-10-07T00:00:00.000Z'),
+      getUTCPlainDateFromISO('2023-10-08T00:00:00.000Z'),
+      getUTCPlainDateFromISO('2023-10-09T00:00:00.000Z'),
+      getUTCPlainDateFromISO('2023-10-10T00:00:00.000Z'),
+    ]);
   });
 });

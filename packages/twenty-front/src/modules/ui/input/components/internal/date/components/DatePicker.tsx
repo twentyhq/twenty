@@ -10,12 +10,12 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
+import { useRelativeDateCalendarViewPlainDate } from '@/ui/input/components/internal/date/hooks/useRelativeDateCalendarViewPlainDate';
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import 'react-datepicker/dist/react-datepicker.css';
 
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
@@ -200,6 +200,11 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
     opacity: ${({ calendarDisabled }) => (calendarDisabled ? '0.5' : '1')};
   }
 
+  & .react-datepicker__month-container .react-datepicker__day-name,
+  & .react-datepicker__month-container .react-datepicker__day {
+    margin: 2px;
+  }
+
   & .react-datepicker__day {
     width: 34px;
     height: 34px;
@@ -368,11 +373,41 @@ export const DatePicker = ({
   hideHeaderInput,
 }: DatePickerProps) => {
   const { theme } = useContext(ThemeContext);
+
+  const relativeRangeStartPlainDate =
+    isRelative && isDefined(relativeDate?.start)
+      ? Temporal.PlainDate.from(relativeDate.start)
+      : null;
+
+  const relativeDatePickerKey =
+    isRelative &&
+    isDefined(relativeDate?.start) &&
+    isDefined(relativeDate?.end)
+      ? `${relativeDate.start}-${relativeDate.end}`
+      : undefined;
+
+  const {
+    calendarViewPlainDate,
+    handleChangeMonth: handleRelativeCalendarChangeMonth,
+    handleChangeYear: handleRelativeCalendarChangeYear,
+    handleAddMonth: handleRelativeCalendarAddMonth,
+    handleSubtractMonth: handleRelativeCalendarSubtractMonth,
+  } = useRelativeDateCalendarViewPlainDate({
+    isRelative,
+    relativeDateRangeKey: relativeDatePickerKey,
+    relativeRangeStartPlainDate,
+  });
+
   const plainDate = isDefined(plainDateString)
     ? Temporal.PlainDate.from(plainDateString)
-    : Temporal.Now.plainDateISO();
+    : isRelative && isDefined(relativeRangeStartPlainDate)
+      ? relativeRangeStartPlainDate
+      : Temporal.Now.plainDateISO();
 
-  const { userTimezone } = useUserTimezone();
+  const displayPlainDate =
+    isRelative && isDefined(relativeRangeStartPlainDate)
+      ? calendarViewPlainDate
+      : plainDate;
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
@@ -439,11 +474,10 @@ export const DatePicker = ({
       ? getHighlightedDates(
           Temporal.PlainDate.from(relativeDate.start),
           Temporal.PlainDate.from(relativeDate.end).subtract({ days: 1 }),
-          userTimezone,
         )
       : [];
 
-  const dateAsDate = new Date(plainDate.toString());
+  const dateAsDate = new Date(displayPlainDate.toString());
 
   const selectedDates = isRelative
     ? highlightedDates.map((plainDate) => new Date(plainDate.toString()))
@@ -458,7 +492,7 @@ export const DatePicker = ({
 
   const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const dateShiftedToISOString = plainDate
+  const dateShiftedToISOString = displayPlainDate
     ?.toZonedDateTime(systemTimeZone)
     .toInstant()
     .toString();
@@ -499,6 +533,7 @@ export const DatePicker = ({
           }
         >
           <ReactDatePicker
+            key={relativeDatePickerKey}
             open={true}
             selected={dateForDatePicker}
             selectedDates={selectedDates}
@@ -519,6 +554,13 @@ export const DatePicker = ({
                   amount={relativeDate?.amount}
                   unit={relativeDate?.unit ?? 'DAY'}
                   onChange={onRelativeDateChange}
+                  calendarViewDate={calendarViewPlainDate.toString()}
+                  onChangeMonth={handleRelativeCalendarChangeMonth}
+                  onChangeYear={handleRelativeCalendarChangeYear}
+                  onAddMonth={handleRelativeCalendarAddMonth}
+                  onSubtractMonth={handleRelativeCalendarSubtractMonth}
+                  prevMonthButtonDisabled={prevMonthButtonDisabled}
+                  nextMonthButtonDisabled={nextMonthButtonDisabled}
                 />
               ) : (
                 <DatePickerHeader

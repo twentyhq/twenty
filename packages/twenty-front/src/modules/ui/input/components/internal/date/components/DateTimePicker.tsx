@@ -10,6 +10,7 @@ import {
   DateTimePickerHeader,
 } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
+import { useRelativeDateCalendarViewPlainDate } from '@/ui/input/components/internal/date/hooks/useRelativeDateCalendarViewPlainDate';
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
@@ -211,6 +212,11 @@ const StyledContainer = styled.div<{
     opacity: ${({ calendarDisabled }) => (calendarDisabled ? '0.5' : '1')};
   }
 
+  & .react-datepicker__month-container .react-datepicker__day-name,
+  & .react-datepicker__month-container .react-datepicker__day {
+    margin: 2px;
+  }
+
   & .react-datepicker__day {
     width: 34px;
     height: 34px;
@@ -385,8 +391,40 @@ export const DateTimePicker = ({
 
   const { userTimezone } = useUserTimezone();
 
+  const relativeRangeStartPlainDate =
+    isRelative && isDefined(relativeDate?.start)
+      ? relativeDate.start.toPlainDate()
+      : null;
+
+  const relativeDatePickerKey =
+    isRelative &&
+    isDefined(relativeDate?.start) &&
+    isDefined(relativeDate?.end)
+      ? `${relativeDate.start}-${relativeDate.end}`
+      : undefined;
+
+  const {
+    calendarViewPlainDate,
+    handleChangeMonth: handleRelativeCalendarChangeMonth,
+    handleChangeYear: handleRelativeCalendarChangeYear,
+    handleAddMonth: handleRelativeCalendarAddMonth,
+    handleSubtractMonth: handleRelativeCalendarSubtractMonth,
+  } = useRelativeDateCalendarViewPlainDate({
+    isRelative,
+    relativeDateRangeKey: relativeDatePickerKey,
+    relativeRangeStartPlainDate,
+  });
+
   const dateToUse =
-    date ?? Temporal.Now.zonedDateTimeISO(timeZone ?? userTimezone);
+    date ??
+    (isRelative && isDefined(relativeDate?.start)
+      ? relativeDate.start.toPlainDate().toZonedDateTime(timeZone ?? userTimezone)
+      : Temporal.Now.zonedDateTimeISO(timeZone ?? userTimezone));
+
+  const displayZonedDateTime =
+    isRelative && isDefined(relativeRangeStartPlainDate)
+      ? calendarViewPlainDate.toZonedDateTime(timeZone ?? userTimezone)
+      : dateToUse;
 
   const { closeDropdown: closeMonthYearPanel } = useCloseDropdown();
 
@@ -465,14 +503,13 @@ export const DateTimePicker = ({
   const highlightedDates =
     isRelative && isDefined(relativeDate?.end) && isDefined(relativeDate?.start)
       ? getHighlightedDates(
-          relativeDate?.start.toPlainDate(),
-          relativeDate?.end.subtract({ days: 1 }).toPlainDate(),
-          timeZone ?? userTimezone,
+          relativeDate.start.toPlainDate(),
+          relativeDate.end.subtract({ days: 1 }).toPlainDate(),
         )
       : [];
 
   const nonShiftedDateForReactDatePicker = new Date(
-    dateToUse.toInstant().toString(),
+    displayZonedDateTime.toInstant().toString(),
   );
 
   const shiftedDateForReactDatePicker = getShiftedDateToSystemTimeZone(
@@ -530,6 +567,7 @@ export const DateTimePicker = ({
           }
         >
           <ReactDatePicker
+            key={relativeDatePickerKey}
             open={true}
             selected={shiftedDateForReactDatePicker}
             selectedDates={selectedDates}
@@ -551,6 +589,13 @@ export const DateTimePicker = ({
                   unit={relativeDate?.unit ?? 'DAY'}
                   onChange={onRelativeDateChange}
                   allowIntraDayUnits={true}
+                  calendarViewDate={calendarViewPlainDate.toString()}
+                  onChangeMonth={handleRelativeCalendarChangeMonth}
+                  onChangeYear={handleRelativeCalendarChangeYear}
+                  onAddMonth={handleRelativeCalendarAddMonth}
+                  onSubtractMonth={handleRelativeCalendarSubtractMonth}
+                  prevMonthButtonDisabled={prevMonthButtonDisabled}
+                  nextMonthButtonDisabled={nextMonthButtonDisabled}
                 />
               ) : (
                 <DateTimePickerHeader
