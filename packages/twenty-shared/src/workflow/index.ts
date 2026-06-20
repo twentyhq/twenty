@@ -91,6 +91,8 @@ export {
   workflowRunStepLogsSchema,
 } from './schemas/workflow-run-step-log-schema';
 export { workflowRunStepStatusSchema } from './schemas/workflow-run-step-status-schema';
+export type { WorkflowStickyNote } from './schemas/workflow-sticky-note-schema';
+export { workflowStickyNoteSchema } from './schemas/workflow-sticky-note-schema';
 export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
 export type { EmailRecipients } from './types/EmailRecipients';
 export type { FunctionInput } from './types/FunctionInput';

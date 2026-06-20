@@ -2,6 +2,8 @@ import {
   type WorkflowStep,
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
+import { generateStickyNoteNodes } from '@/workflow/workflow-diagram/utils/generateStickyNoteNodes';
+import { type WorkflowStickyNote } from 'twenty-shared/workflow';
 import { FIRST_NODE_POSITION } from '@/workflow/workflow-diagram/constants/FirstNodePosition';
 import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
 import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
@@ -26,13 +28,15 @@ import { v4 } from 'uuid';
 export const generateWorkflowDiagram = ({
   trigger,
   steps,
+  stickyNotes,
   workflowContext,
 }: {
   trigger: WorkflowTrigger | undefined;
   steps: Array<WorkflowStep>;
+  stickyNotes: Array<WorkflowStickyNote>;
   workflowContext: WorkflowContext;
 }): WorkflowDiagram => {
-  let nodes: Array<WorkflowDiagramNode> = [];
+  let nodes: Array<WorkflowDiagramNode> = generateStickyNoteNodes(stickyNotes);
   let edges: Array<WorkflowDiagramEdge> = [];
 
   const edgeTypeBetweenTwoNodes = getEdgeTypeBetweenTwoNodes({

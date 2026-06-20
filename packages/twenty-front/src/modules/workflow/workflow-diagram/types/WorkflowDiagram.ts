@@ -12,8 +12,11 @@ import {
   type Position,
 } from '@xyflow/react';
 import { type StepStatus } from 'twenty-shared/workflow';
+import { type ThemeColor } from 'twenty-ui/theme';
 
 export type WorkflowDiagramStepNode = Node<WorkflowDiagramStepNodeData>;
+export type WorkflowDiagramStickyNoteNode =
+  Node<WorkflowDiagramStickyNoteNodeData>;
 export type WorkflowDiagramNode = Node<WorkflowDiagramNodeData>;
 export type WorkflowDiagramEdge = Edge<WorkflowDiagramEdgeData> & {
   sourceHandle: string;
@@ -92,9 +95,25 @@ export type WorkflowDiagramEmptyTriggerNodeData = {
   };
 };
 
+export type WorkflowDiagramStickyNoteNodeData = {
+  nodeType: 'sticky-note';
+  noteId: string;
+  content: string;
+  color: ThemeColor;
+  size: {
+    width: number;
+    height: number;
+  };
+  position: {
+    x: number;
+    y: number;
+  };
+};
+
 export type WorkflowDiagramNodeData =
   | WorkflowDiagramStepNodeData
-  | WorkflowDiagramEmptyTriggerNodeData;
+  | WorkflowDiagramEmptyTriggerNodeData
+  | WorkflowDiagramStickyNoteNodeData;
 
 export type WorkflowRunDiagramNodeData = Exclude<
   WorkflowDiagramStepNodeData,
@@ -120,7 +139,11 @@ export type WorkflowDiagramDefaultEdgeData = {
 
 export type WorkflowDiagramEdgeData = WorkflowDiagramDefaultEdgeData;
 
-export type WorkflowDiagramNodeType = 'default' | 'empty-trigger' | 'empty';
+export type WorkflowDiagramNodeType =
+  | 'default'
+  | 'empty-trigger'
+  | 'empty'
+  | 'sticky-note';
 
 export type WorkflowDiagramEdgeType = 'blank' | 'editable' | 'readonly';
 

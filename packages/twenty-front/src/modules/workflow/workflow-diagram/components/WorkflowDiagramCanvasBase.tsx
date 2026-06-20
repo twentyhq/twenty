@@ -115,6 +115,7 @@ export const WorkflowDiagramCanvasBase = ({
   onReconnectEnd,
   startNodeCreation,
   handlePaneContextMenu,
+  onPaneClick,
   nodesConnectable = false,
   nodesDraggable = false,
 }: {
@@ -152,6 +153,7 @@ export const WorkflowDiagramCanvasBase = ({
   onReconnectStart?: () => void;
   onReconnectEnd?: () => void;
   startNodeCreation?: (params: StartNodeCreationParams) => void;
+  onPaneClick?: () => void;
   nodesConnectable?: boolean;
   nodesDraggable?: boolean;
   handlePaneContextMenu?: ({
@@ -618,6 +620,7 @@ export const WorkflowDiagramCanvasBase = ({
         edgesFocusable={isDefined(onDeleteEdge)}
         panOnDrag={workflowDiagramPanOnDrag}
         panOnScroll={true}
+        onPaneClick={onPaneClick}
         onPaneContextMenu={onPaneContextMenu}
         nodesConnectable={nodesConnectable}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node

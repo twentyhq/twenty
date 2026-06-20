@@ -209,6 +209,23 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  notes: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'notes',
+      type: FieldMetadataType.RAW_JSON,
+      label: i18nLabel(msg`Version notes`),
+      description: i18nLabel(msg`Json array of sticky notes`),
+      icon: 'IconSettingsAutomation',
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   status: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

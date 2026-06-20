@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -7,6 +9,8 @@ import {
   TRIGGER_STEP_ID,
   WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
   WorkflowActionType,
+  workflowStickyNoteSchema,
+  type WorkflowStickyNote,
 } from 'twenty-shared/workflow';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
@@ -33,6 +37,14 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+
+const cloneStickyNotesWithFreshIds = (
+  notes: WorkflowStickyNote[] | null,
+): WorkflowStickyNote[] =>
+  (notes ?? []).map((note) => ({
+    ...note,
+    id: randomUUID(),
+  }));
 
 @Injectable()
 export class WorkflowVersionWorkspaceService {
@@ -83,6 +95,9 @@ export class WorkflowVersionWorkspaceService {
         assertWorkflowVersionHasSteps(workflowVersionToCopy);
 
         const newWorkflowVersionTrigger = workflowVersionToCopy.trigger;
+        const newWorkflowVersionNotes = cloneStickyNotesWithFreshIds(
+          workflowVersionToCopy.notes,
+        );
         const newWorkflowVersionSteps: WorkflowAction[] = [];
 
         for (const step of workflowVersionToCopy.steps) {
@@ -108,6 +123,7 @@ export class WorkflowVersionWorkspaceService {
           await workflowVersionRepository.update(existingDraftVersion.id, {
             steps: newWorkflowVersionSteps,
             trigger: newWorkflowVersionTrigger,
+            notes: newWorkflowVersionNotes,
           });
 
           return {
@@ -115,6 +131,7 @@ export class WorkflowVersionWorkspaceService {
             name: existingDraftVersion.name ?? '',
             steps: newWorkflowVersionSteps,
             trigger: newWorkflowVersionTrigger,
+            notes: newWorkflowVersionNotes,
           };
         }
 
@@ -139,6 +156,7 @@ export class WorkflowVersionWorkspaceService {
           status: WorkflowVersionStatus.DRAFT,
           steps: newWorkflowVersionSteps,
           trigger: newWorkflowVersionTrigger,
+          notes: newWorkflowVersionNotes,
           position,
         });
 
@@ -150,6 +168,7 @@ export class WorkflowVersionWorkspaceService {
           name: draftWorkflowVersion.name ?? '',
           steps: newWorkflowVersionSteps,
           trigger: newWorkflowVersionTrigger,
+          notes: newWorkflowVersionNotes,
         };
       },
       authContext,
@@ -254,6 +273,7 @@ export class WorkflowVersionWorkspaceService {
           .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
 
         const newTrigger = sourceVersion.trigger;
+        const newNotes = cloneStickyNotesWithFreshIds(sourceVersion.notes);
         const sourceToClonedPairs: Array<{
           source: WorkflowAction;
           duplicated: WorkflowAction;
@@ -315,6 +335,7 @@ export class WorkflowVersionWorkspaceService {
         await workflowVersionRepository.update(newDraftVersion.id, {
           steps: remappedSteps,
           trigger: remappedTrigger,
+          notes: newNotes,
         });
 
         return {
@@ -322,6 +343,7 @@ export class WorkflowVersionWorkspaceService {
           name: newDraftVersion.name ?? '',
           steps: remappedSteps,
           trigger: remappedTrigger ?? null,
+          notes: newNotes,
         };
       },
       authContext,
@@ -389,6 +411,46 @@ export class WorkflowVersionWorkspaceService {
 
       await workflowVersionRepository.update(workflowVersionId, updatePayload);
     }, authContext);
+  }
+
+  async updateWorkflowVersionStickyNotes({
+    workflowVersionId,
+    notes,
+    workspaceId,
+  }: {
+    workflowVersionId: string;
+    notes: WorkflowStickyNote[];
+    workspaceId: string;
+  }): Promise<WorkflowStickyNote[]> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workflowVersionRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            workspaceId,
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const workflowVersion = await workflowVersionRepository.findOneOrFail({
+          where: {
+            id: workflowVersionId,
+          },
+        });
+
+        assertWorkflowVersionIsDraft(workflowVersion);
+
+        const validatedNotes = workflowStickyNoteSchema.array().parse(notes);
+
+        await workflowVersionRepository.update(workflowVersionId, {
+          notes: validatedNotes,
+        });
+
+        return validatedNotes;
+      },
+      authContext,
+    );
   }
 
   async autoLayoutWorkflowVersion({

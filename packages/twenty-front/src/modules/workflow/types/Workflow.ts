@@ -28,6 +28,7 @@ import {
   type workflowUpdateRecordActionSchema,
   type workflowUpsertRecordActionSchema,
   type workflowWebhookTriggerSchema,
+  type WorkflowStickyNote,
 } from 'twenty-shared/workflow';
 import { type z } from 'zod';
 
@@ -128,6 +129,7 @@ export type WorkflowVersion = {
   workflowId: string;
   trigger: WorkflowTrigger | null;
   steps: Array<WorkflowStep> | null;
+  notes: Array<WorkflowStickyNote> | null;
   status: WorkflowVersionStatus;
   __typename: 'WorkflowVersion';
 };

@@ -2,6 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
+import { type WorkflowStickyNote } from 'twenty-shared/workflow';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -32,4 +34,7 @@ export class WorkflowVersionDTO {
 
   @Field(() => GraphQLJSON, { nullable: true })
   steps: WorkflowAction[] | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  notes: WorkflowStickyNote[] | null;
 }

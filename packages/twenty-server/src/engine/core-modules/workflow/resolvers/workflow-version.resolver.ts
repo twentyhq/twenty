@@ -1,7 +1,9 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
+import graphqlTypeJson from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type WorkflowStickyNote } from 'twenty-shared/workflow';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -9,6 +11,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { CreateDraftFromWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/create-draft-from-workflow-version.input';
 import { DuplicateWorkflowInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow.input';
 import { UpdateWorkflowVersionPositionsInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-positions.input';
+import { UpdateWorkflowVersionStickyNotesInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-sticky-notes.input';
 import { WorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version.dto';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -76,5 +79,20 @@ export class WorkflowVersionResolver {
     });
 
     return true;
+  }
+
+  @Mutation(() => [graphqlTypeJson])
+  async updateWorkflowVersionStickyNotes(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('input')
+    { workflowVersionId, notes }: UpdateWorkflowVersionStickyNotesInput,
+  ): Promise<WorkflowStickyNote[]> {
+    return this.workflowVersionWorkspaceService.updateWorkflowVersionStickyNotes(
+      {
+        workspaceId,
+        workflowVersionId,
+        notes,
+      },
+    );
   }
 }

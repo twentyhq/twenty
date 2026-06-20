@@ -64,6 +64,7 @@ export const generateWorkflowRunDiagram = ({
   const workflowDiagram = generateWorkflowDiagram({
     trigger,
     steps,
+    stickyNotes: [],
     workflowContext: 'workflow-run',
   });
 

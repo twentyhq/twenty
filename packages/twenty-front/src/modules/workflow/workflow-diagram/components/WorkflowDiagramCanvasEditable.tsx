@@ -7,6 +7,7 @@ import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
   type WorkflowConnection,
   type WorkflowDiagramEdge,
@@ -18,8 +19,10 @@ import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/ut
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
 import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
+import { useWorkflowDiagramStickyNotes } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramStickyNotes';
 import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditable';
+import { WorkflowDiagramStickyNoteNode } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStickyNoteNode';
 import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
@@ -52,6 +55,10 @@ export const WorkflowDiagramCanvasEditable = () => {
     workflowDiagramRightClickMenuPositionState,
   );
 
+  const setWorkflowSelectedNode = useSetAtomComponentState(
+    workflowSelectedNodeComponentState,
+  );
+
   const { createEdge } = useCreateEdge();
 
   const { deleteEdge } = useDeleteEdge();
@@ -61,6 +68,8 @@ export const WorkflowDiagramCanvasEditable = () => {
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();
 
   const { startNodeCreation } = useStartNodeCreation();
+
+  const { updateStickyNote } = useWorkflowDiagramStickyNotes();
 
   const onConnect = async (edgeConnect: WorkflowConnection) => {
     const steps = workflowWithCurrentVersion?.currentVersion?.steps;
@@ -135,6 +144,12 @@ export const WorkflowDiagramCanvasEditable = () => {
   };
 
   const onNodeDragStop: OnNodeDrag<WorkflowDiagramNode> = async (_, node) => {
+    if (node.data.nodeType === 'sticky-note') {
+      await updateStickyNote(node.id, { position: node.position });
+
+      return;
+    }
+
     const stepToUpdate =
       workflowWithCurrentVersion?.currentVersion?.steps?.find(
         (step) => step.id === node.id,
@@ -183,6 +198,7 @@ export const WorkflowDiagramCanvasEditable = () => {
           default: WorkflowDiagramStepNodeEditable,
           'empty-trigger': WorkflowDiagramEmptyTriggerEditable,
           empty: WorkflowDiagramStepNodeEditable,
+          'sticky-note': WorkflowDiagramStickyNoteNode,
         }}
         edgeTypes={{
           blank: WorkflowDiagramBlankEdge,
@@ -199,6 +215,7 @@ export const WorkflowDiagramCanvasEditable = () => {
         nodesDraggable
         onDeleteEdge={onDeleteEdge}
         startNodeCreation={startNodeCreation}
+        onPaneClick={() => setWorkflowSelectedNode(undefined)}
       />
 
       <WorkflowDiagramCanvasEditableEffect />

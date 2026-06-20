@@ -2827,6 +2827,7 @@ export const STANDARD_OBJECTS = {
       },
       runs: { universalIdentifier: '20202020-1d08-46df-901a-85045f18099a' },
       steps: { universalIdentifier: '20202020-5988-4a64-b94a-1f9b7b989039' },
+      notes: { universalIdentifier: '74417cc8-0844-4089-8b4f-e0285fb2d782' },
       timelineActivities: {
         universalIdentifier: '20202020-fcb0-4695-b17e-3b43a421c633',
       },

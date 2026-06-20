@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { type WorkflowStickyNote } from 'twenty-shared/workflow';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
@@ -26,6 +27,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   name: string | null;
   trigger: WorkflowTrigger | null;
   steps: WorkflowAction[] | null;
+  notes: WorkflowStickyNote[] | null;
   status: WorkflowVersionStatus;
   position: number;
   searchVector: string;

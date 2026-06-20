@@ -23,6 +23,8 @@ export const getWorkflowVersionDiagram = ({
   return generateWorkflowDiagram({
     trigger: workflowVersion.trigger ?? undefined,
     steps: workflowVersion.steps ?? [],
+    stickyNotes:
+      workflowContext === 'workflow' ? (workflowVersion.notes ?? []) : [],
     workflowContext,
   });
 };

@@ -1,6 +1,7 @@
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import { useWorkflowDiagramStickyNotes } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramStickyNotes';
 import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
 import { useTidyUp } from '@/workflow/workflow-version/hooks/useTidyUp';
@@ -8,7 +9,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus, IconReorder } from 'twenty-ui/icon';
+import { IconNotes, IconPlus, IconReorder } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { WorkflowDiagramRightClickCommandMenuClickOutsideEffect } from './WorkflowDiagramRightClickCommandMenuClickOutsideEffect';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -44,6 +45,8 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
 
   const { tidyUp } = useTidyUp();
 
+  const { createStickyNote } = useWorkflowDiagramStickyNotes();
+
   const handleReorderWorkflowDiagram = async () => {
     await tidyUp();
     closeRightClickMenu();
@@ -60,6 +63,18 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
     });
   };
 
+  const addStickyNote = async () => {
+    const position = workflowDiagramScreenToFlowPosition(
+      workflowDiagramRightClickMenuPosition,
+    );
+
+    if (isDefined(position)) {
+      await createStickyNote(position);
+    }
+
+    closeRightClickMenu();
+  };
+
   if (!isDefined(workflowDiagramRightClickMenuPosition)) {
     return;
   }
@@ -72,6 +87,11 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
         y={workflowDiagramRightClickMenuPosition.y}
       >
         <MenuItem text={t`Add node`} LeftIcon={IconPlus} onClick={addNode} />
+        <MenuItem
+          text={t`Add note`}
+          LeftIcon={IconNotes}
+          onClick={addStickyNote}
+        />
         <MenuItem
           text={t`Tidy up workflow`}
           LeftIcon={IconReorder}

@@ -16,6 +16,7 @@ export const useWorkflowVersion = (workflowVersionId?: string) => {
       workflowId: true,
       trigger: true,
       steps: true,
+      notes: true,
       status: true,
       workflow: {
         id: true,
