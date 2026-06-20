@@ -29,10 +29,9 @@ const IntroMeasure = styled.div`
   }
 `;
 
-// The bento's authored column ratios (60/40 alternating across rows) and the
-// muted-surface depth pattern, indexed by tile (spotlight first).
+// The bento's authored column ratios (60/40 alternating across rows),
+// indexed by tile (spotlight first).
 const CARD_SPANS = [60, 40, 40, 60, 60, 40];
-const TILE_MUTED = [true, false, true, true, false, false, true];
 
 const Grid = styled.div`
   border: 1px solid ${color('black-20')};
@@ -47,14 +46,11 @@ const Grid = styled.div`
 `;
 
 const SpotlightCell = styled.div`
+  background-color: ${color('neutral')};
   border-bottom: 1px solid ${color('black-20')};
   display: flex;
   flex-direction: column;
   min-width: 0;
-
-  &[data-muted] {
-    background-color: ${color('neutral')};
-  }
 
   ${mediaUp('md')} {
     grid-column: span 100;
@@ -62,14 +58,11 @@ const SpotlightCell = styled.div`
 `;
 
 const GridCell = styled.div`
+  background-color: ${color('neutral')};
   border-bottom: 1px solid ${color('black-20')};
   display: flex;
   flex-direction: column;
   min-width: 0;
-
-  &[data-muted] {
-    background-color: ${color('neutral')};
-  }
 
   ${mediaUp('md')} {
     &[data-span='40'] {
@@ -157,18 +150,15 @@ function Tiles({ tiles }: { tiles: FeatureTile[] }) {
 
         if (tileNumber === 0) {
           return (
-            <SpotlightCell
-              key={tileNumber}
-              data-muted={TILE_MUTED[tileNumber] ? '' : undefined}
-            >
+            <SpotlightCell key={tileNumber}>
               <ScrollEntrance>
                 <SpotlightInner>
-                  <SpotlightContent>
-                    <TileContent counter={counter} spotlight tile={tile} />
-                  </SpotlightContent>
                   <SpotlightVisual>
                     <TileVisual visualKey={tile.visual} />
                   </SpotlightVisual>
+                  <SpotlightContent>
+                    <TileContent counter={counter} spotlight tile={tile} />
+                  </SpotlightContent>
                 </SpotlightInner>
               </ScrollEntrance>
             </SpotlightCell>
@@ -176,11 +166,7 @@ function Tiles({ tiles }: { tiles: FeatureTile[] }) {
         }
 
         return (
-          <GridCell
-            key={tileNumber}
-            data-muted={TILE_MUTED[tileNumber] ? '' : undefined}
-            data-span={CARD_SPANS[tileNumber - 1]}
-          >
+          <GridCell key={tileNumber} data-span={CARD_SPANS[tileNumber - 1]}>
             <ScrollEntrance>
               <CardInner>
                 <CardVisualFrame>
