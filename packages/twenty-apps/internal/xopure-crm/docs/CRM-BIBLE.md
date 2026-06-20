@@ -72,7 +72,7 @@
 - [ ] **Dashboard semantic parity audit** (some widget titles imply filters/sorts not present in blueprints) — `open: X0-43`
 - [ ] **Customer Dashboard** (blocked: `xopureCustomer` is empty, `retailProspect`/`influencerProspect` are empty, and canonical profiles source is unresolved) — `blocked`
 - [x] **Ambassador Dashboard** (DB-applied as `Ambassador Command Center`, live metadata row exists) — `NS`
-- [ ] **Support Dashboard** (blocked: support data exists only in `_xopureRaw_support_tickets`; no surfaced support-ticket object/blueprint yet) — `blocked`
+- [x] **Support Dashboard** (DB-applied, 5 widgets, object and data now surfaced) — `NS`
 - [x] **Comp Integrity Dashboard** (DB-applied, live metadata row exists) — `NS`
 
 ### Security and Ops
@@ -81,6 +81,14 @@
 - [x] **Move SDK packages to devDependencies** (X0-31, build warning) — `NS`
 - [x] **Document local SDK build prerequisites** (X0-32, tsgo binary missing) — `NS`
 - [ ] **Set XOPURE_SUPABASE_READONLY_DSN on Railway worker** (currently local-only) — `blocked: prod Railway env change forbidden by AGENTS.md`
+
+### Support Ticket System
+
+- [x] **xopureSupportTicket object surfaced in live Twenty metadata** — `NS`
+- [x] **_xopureSupportTicket table created and synced** (5/5 rows) — `NS`
+- [x] **Support tickets hashed and linked to Supabase source URLs** — `NS`
+- [x] **Support Dashboard applied** (1 layout, 5 widgets) — `NS`
+- [ ] **Live task auto-creation workflow activation** — `blocked: requires app deploy/install` (X0-53)
 
 ---
 
@@ -155,6 +163,7 @@ API key rotation: `tw3nty api-key <email> <password>` (requires user login, not 
 | public.commission_ledger | 108 | xopureCommission | 108/108 | 100% parity |
 | 42 additional non-empty tables | 2,103 total | _xopureRaw_* | 2,103/2,103 | Count parity + hash coverage |
 | public.customer_expertise | 0 | xopureCustomer | N/A | N/A |
+| public.support_tickets | 5 | xopureSupportTicket + _xopureRaw_support_tickets | 5/5 | object, hashes, dashboard live |
 | public.profiles | N/A | people | N/A | Table does not exist in public |
 
 ### Hash Coverage
@@ -286,6 +295,7 @@ Blueprint: `src/dashboards/blueprints/ops-command-center.blueprint.ts`
 - Fulfillment Dashboard
 - Risk / Exceptions Dashboard
 - Comp Integrity Dashboard
+- Support Dashboard
 
 **Visual verification status:** metadata rows exist for all feasible dashboards, but live browser/session tooling has not yet provided a stable authenticated path to claim pixel-perfect visual verification of every page. Treat dashboard creation as verified and visual inspection as still pending/manual.
 
@@ -339,6 +349,8 @@ Known examples:
 | X0-42 | Close feasible dashboard gaps | done | NS |
 | X0-43 | Audit and fix dashboard widgets whose titles imply missing filters | open | unclaimed |
 | X0-44 | Forensically audit all order and payment math | done | NS |
+| X0-45 | Surface support tickets in Twenty CRM with auto-task workflow | done | NS |
+| X0-53 | Activate live support-ticket task auto-creation | open | unclaimed |
 | X0-39 | Claim and implement Xopure dashboard adjacent gap | done | t2 |
 | X0-40 | DISCOVERY: GitNexus detect-changes cannot resolve Xopure repo | backlog | t2 |
 
