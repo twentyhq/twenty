@@ -34,6 +34,14 @@ const StyledChildContainer = styled.div`
   width: 100%;
 `;
 
+// Owns the label-to-content spacing so it looks the same regardless of the
+// parent's row-gap (the trigger form wraps the builder in a wider-gap body).
+const StyledConditions = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: ${themeCssVariables.spacing[0]};
+`;
+
 type WorkflowStepFilterBuilderProps = {
   instanceId: string;
   // Persisted settings can carry deprecated operands; the body effect converts
@@ -60,7 +68,7 @@ const WorkflowStepFilterBuilderConditions = ({
     });
 
   return (
-    <>
+    <StyledConditions>
       <InputLabel>{t`Conditions`}</InputLabel>
       {isDefined(rootStepFilterGroup) ? (
         <StyledContainer>
@@ -93,7 +101,7 @@ const WorkflowStepFilterBuilderConditions = ({
       ) : (
         <WorkflowStepFilterAddRootStepFilterButton />
       )}
-    </>
+    </StyledConditions>
   );
 };
 
