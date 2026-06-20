@@ -1,3 +1,4 @@
+import { createRequire } from 'module';
 import { lingui } from '@lingui/vite-plugin';
 import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
@@ -15,6 +16,8 @@ import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 import { createWywProfilingPlugin } from 'twenty-shared/vite';
+
+const require = createRequire(import.meta.url);
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
@@ -267,6 +270,15 @@ export default defineConfig(({ mode }) => {
         { find: /^@\//, replacement: path.resolve(__dirname, 'src/modules') + '/' },
         { find: /^~\//, replacement: path.resolve(__dirname, 'src') + '/' },
         { find: 'path', replacement: 'rollup-plugin-node-polyfills/polyfills/path' },
+        // Rolldown (Vite 8 production bundler) does not walk nested node_modules,
+        // so monaco-graphql must be aliased to its package directory explicitly.
+        // require.resolve('pkg/package.json') gives the directory regardless of hoisting;
+        // require.resolve('monaco-graphql') alone resolves to the entry-point file and
+        // breaks sub-path imports like monaco-graphql/esm/graphql.worker.js.
+        {
+          find: 'monaco-graphql',
+          replacement: path.dirname(require.resolve('monaco-graphql/package.json')),
+        },
       ],
     },
   };
