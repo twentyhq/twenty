@@ -65,7 +65,7 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
     const defaultCountryCode =
       stripSimpleQuotesFromString(
         fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
-      ) || fieldDefinition?.metadata?.settings?.defaultCountryCode;
+      ) ?? fieldDefinition?.metadata?.settings?.defaultCountryCode;
 
     if (
       isFieldValueEmpty({ fieldValue, fieldDefinition }) &&

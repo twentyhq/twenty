@@ -94,6 +94,29 @@ describe('computeDraftValueFromFieldValue - phones', () => {
     });
   });
 
+  it('should not fall back to settings.defaultCountryCode when defaultValue.primaryPhoneCountryCode is explicitly empty string', () => {
+    const fieldDefinition = {
+      ...basePhonesFieldDefinition,
+      metadata: {
+        fieldName: 'phones',
+        settings: { defaultCountryCode: 'CZ' },
+      },
+      defaultValue: {
+        primaryPhoneNumber: "''",
+        primaryPhoneCountryCode: "''",
+        primaryPhoneCallingCode: "''",
+        additionalPhones: null,
+      },
+    };
+
+    const result = computeDraftValueFromFieldValue({
+      fieldDefinition,
+      fieldValue: emptyPhonesValue,
+    });
+
+    expect(result).toEqual(emptyPhonesValue);
+  });
+
   it('should not override non-empty field value with default country', () => {
     const fieldDefinition = {
       ...basePhonesFieldDefinition,
