@@ -167,6 +167,7 @@ export const WorkflowEditActionPickRecord = ({
 
         {isDefined(selectedObjectMetadataItem) && (
           <FormMultiRecordPicker
+            key={selectedObjectMetadataItem.nameSingular}
             label={t`Pick at random from`}
             objectNameSingular={selectedObjectMetadataItem.nameSingular}
             defaultValue={formData.recordIds}

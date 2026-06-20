@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { resolveInput } from 'twenty-shared/utils';
 
@@ -46,6 +47,10 @@ export class PickRecordWorkflowAction implements WorkflowAction {
       step.settings.input,
       context,
     ) as WorkflowPickRecordActionInput;
+
+    if (!isNonEmptyString(objectName) || !Array.isArray(recordIds)) {
+      return { error: 'Pick record action received invalid input' };
+    }
 
     if (recordIds.length === 0) {
       return { error: 'Pick record action has no candidate records' };
