@@ -171,16 +171,18 @@ export const RelativeDatePickerHeader = ({
         />
       </StyledRelativeDateControls>
       {showCalendarNavigation && (
-        <DatePickerMonthYearNavigation
-          date={calendarViewDate}
-          onChangeMonth={onChangeMonth}
-          onChangeYear={onChangeYear}
-          onAddMonth={onAddMonth}
-          onSubtractMonth={onSubtractMonth}
-          prevMonthButtonDisabled={prevMonthButtonDisabled ?? false}
-          nextMonthButtonDisabled={nextMonthButtonDisabled ?? false}
-          variant="relative"
-        />
+        <StyledRelativeDateControls>
+          <DatePickerMonthYearNavigation
+            date={calendarViewDate}
+            onChangeMonth={onChangeMonth}
+            onChangeYear={onChangeYear}
+            onAddMonth={onAddMonth}
+            onSubtractMonth={onSubtractMonth}
+            prevMonthButtonDisabled={prevMonthButtonDisabled ?? false}
+            nextMonthButtonDisabled={nextMonthButtonDisabled ?? false}
+            variant="relative"
+          />
+        </StyledRelativeDateControls>
       )}
     </StyledContainer>
   );

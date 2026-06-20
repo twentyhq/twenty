@@ -4,6 +4,7 @@ import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,23 +22,20 @@ const YEARS_SELECT_OPTIONS = Array.from(
   (_, index) => new Date().getFullYear() + 50 - index,
 ).map((year) => ({ label: year.toString(), value: year }));
 
-const StyledMonthYearNavigation = styled.div<{
-  variant: 'default' | 'relative';
-}>`
+const StyledMonthYearSelect = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledMonthYearNavigation = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
-
-  ${({ variant }) =>
-    variant === 'default'
-      ? `
   justify-content: flex-end;
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
-  `
-      : ''}
+  width: 100%;
 `;
 
 type DatePickerMonthYearNavigationProps = {
@@ -66,34 +64,35 @@ export const DatePickerMonthYearNavigation = ({
 
   const dateParsed = isDefined(date) ? Temporal.PlainDate.from(date) : null;
 
-  return (
-    <StyledMonthYearNavigation variant={variant}>
-      <ClickOutsideListenerContext.Provider
-        value={{
-          excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-        }}
-      >
-        <Select
-          dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
-          options={getMonthSelectOptions(userLocale)}
-          onChange={onChangeMonth}
-          value={dateParsed?.month}
-          fullWidth
-        />
-      </ClickOutsideListenerContext.Provider>
-      <ClickOutsideListenerContext.Provider
-        value={{
-          excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-        }}
-      >
-        <Select
-          dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
-          onChange={onChangeYear}
-          value={dateParsed?.year}
-          options={YEARS_SELECT_OPTIONS}
-          fullWidth
-        />
-      </ClickOutsideListenerContext.Provider>
+  const wrapSelect = (select: ReactNode) =>
+    variant === 'relative' ? (
+      <StyledMonthYearSelect>{select}</StyledMonthYearSelect>
+    ) : (
+      select
+    );
+
+  const monthSelect = wrapSelect(
+    <Select
+      dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
+      options={getMonthSelectOptions(userLocale)}
+      onChange={onChangeMonth}
+      value={dateParsed?.month}
+      fullWidth
+    />,
+  );
+
+  const yearSelect = wrapSelect(
+    <Select
+      dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
+      onChange={onChangeYear}
+      value={dateParsed?.year}
+      options={YEARS_SELECT_OPTIONS}
+      fullWidth
+    />,
+  );
+
+  const navigationButtons = (
+    <>
       <LightIconButton
         Icon={IconChevronLeft}
         onClick={onSubtractMonth}
@@ -106,6 +105,48 @@ export const DatePickerMonthYearNavigation = ({
         size="medium"
         disabled={nextMonthButtonDisabled}
       />
+    </>
+  );
+
+  if (variant === 'relative') {
+    return (
+      <>
+        <ClickOutsideListenerContext.Provider
+          value={{
+            excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+          }}
+        >
+          {monthSelect}
+        </ClickOutsideListenerContext.Provider>
+        <ClickOutsideListenerContext.Provider
+          value={{
+            excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+          }}
+        >
+          {yearSelect}
+        </ClickOutsideListenerContext.Provider>
+        {navigationButtons}
+      </>
+    );
+  }
+
+  return (
+    <StyledMonthYearNavigation>
+      <ClickOutsideListenerContext.Provider
+        value={{
+          excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+        }}
+      >
+        {monthSelect}
+      </ClickOutsideListenerContext.Provider>
+      <ClickOutsideListenerContext.Provider
+        value={{
+          excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+        }}
+      >
+        {yearSelect}
+      </ClickOutsideListenerContext.Provider>
+      {navigationButtons}
     </StyledMonthYearNavigation>
   );
 };
