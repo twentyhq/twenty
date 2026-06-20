@@ -32,6 +32,7 @@ import {
   type WorkflowAiAgentAction,
   type WorkflowIteratorAction,
   type WorkflowLogicFunctionAction,
+  type WorkflowPickRecordAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   type WorkflowTrigger,
@@ -239,10 +240,39 @@ export class WorkflowValidationWorkspaceService {
         case WorkflowActionType.ITERATOR:
           issues.push(...this.validateIteratorStep({ step, steps, trigger }));
           break;
+        case WorkflowActionType.PICK_RECORD:
+          issues.push(...this.validatePickRecordStep(step));
+          break;
       }
     }
 
     return issues;
+  }
+
+  private validatePickRecordStep(
+    step: WorkflowPickRecordAction,
+  ): WorkflowValidationIssue[] {
+    if (step.settings.input.strategy !== 'LOAD_BALANCED') {
+      return [];
+    }
+
+    const loadBalance = step.settings.input.loadBalance;
+
+    if (
+      !isNonEmptyString(loadBalance?.objectNameSingular) ||
+      !isNonEmptyString(loadBalance?.fieldName)
+    ) {
+      return [
+        {
+          severity: 'error',
+          code: 'INVALID_STEP_PARAMS',
+          message: `Step "${step.name ?? step.id}" uses load balancing but is missing the object and field to count by.`,
+          stepId: step.id,
+        },
+      ];
+    }
+
+    return [];
   }
 
   private validateIteratorStep({
