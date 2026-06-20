@@ -8,6 +8,7 @@ export const DUPLICATE_WORKFLOW = gql`
       status
       trigger
       steps
+      notes
       createdAt
       updatedAt
       workflowId

@@ -10,6 +10,7 @@ export const CREATE_DRAFT_FROM_WORKFLOW_VERSION = gql`
       status
       trigger
       steps
+      notes
       createdAt
       updatedAt
     }
