@@ -137,6 +137,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     const transactionRepository = transactionManager.getRepository(
       flatObjectMetadata.nameSingular,
       queryRunnerContext.rolePermissionConfig,
+      queryRunnerContext.authContext,
     );
 
     await this.migrateRelatedRecords(
@@ -447,6 +448,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       const repository = transactionManager.getRepository(
         relationField.objectMetadata.nameSingular,
         context.rolePermissionConfig,
+        context.authContext,
       );
 
       await repository.update(
