@@ -79,4 +79,67 @@ describe('evaluateStepFilters', () => {
       }),
     ).toBe(true);
   });
+
+  it('evaluates IS_NOT_EMPTY against a present field when no value is set', () => {
+    const filter: StepFilter = {
+      id: 'filter-present',
+      type: 'TEXT',
+      operand: ViewFilterOperand.IS_NOT_EMPTY,
+      value: '',
+      stepOutputKey: '{{trigger.properties.after.name}}',
+      stepFilterGroupId: group.id,
+    };
+
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [group],
+        stepFilters: [filter],
+        context,
+      }),
+    ).toBe(true);
+  });
+
+  it('resolves a missing field path to empty (IS_EMPTY is true)', () => {
+    const filter: StepFilter = {
+      id: 'filter-missing',
+      type: 'TEXT',
+      operand: ViewFilterOperand.IS_EMPTY,
+      value: '',
+      stepOutputKey: '{{trigger.properties.after.missingField}}',
+      stepFilterGroupId: group.id,
+    };
+
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [group],
+        stepFilters: [filter],
+        context,
+      }),
+    ).toBe(true);
+  });
+
+  it('applies implicit AND across flat filters without groups', () => {
+    const nameContains: StepFilter = {
+      id: 'name-contains',
+      type: 'TEXT',
+      operand: ViewFilterOperand.CONTAINS,
+      value: 'Acme',
+      stepOutputKey: '{{trigger.properties.after.name}}',
+      stepFilterGroupId: 'unused',
+    };
+    const sourceIsCalendar: StepFilter = {
+      ...sourceFilter(ViewFilterOperand.IS),
+      value: JSON.stringify(['CALENDAR']),
+      stepFilterGroupId: 'unused',
+    };
+
+    // name CONTAINS "Acme" (true) AND source IS CALENDAR (false) -> false
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [],
+        stepFilters: [nameContains, sourceIsCalendar],
+        context,
+      }),
+    ).toBe(false);
+  });
 });

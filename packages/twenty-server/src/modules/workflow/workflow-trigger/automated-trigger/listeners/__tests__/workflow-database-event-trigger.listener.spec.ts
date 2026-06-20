@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildPersonSyncSourceFilter } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/build-person-sync-source-filter.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -564,6 +565,173 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       expect(loggerErrorSpy).toHaveBeenCalled();
 
       loggerErrorSpy.mockRestore();
+    });
+  });
+
+  describe('record filter — seeded person-sync default (real filter)', () => {
+    const workspaceId = 'test-workspace';
+    const databaseEventName = 'createEvent';
+    const workflowId = 'test-workflow';
+
+    const seededListener = {
+      type: AutomatedTriggerType.DATABASE_EVENT,
+      workflowId,
+      settings: {
+        eventName: databaseEventName,
+        filter: buildPersonSyncSourceFilter({
+          createdByFieldMetadataId: 'created-by-field-id',
+        }),
+      },
+    };
+
+    const createPersonPayload = (createdBy: Record<string, unknown>) =>
+      ({
+        workspaceId,
+        name: databaseEventName,
+        objectMetadata: createMockFlatObjectMetadata({}),
+        events: [
+          { recordId: 'person-1', properties: { after: { createdBy } } },
+        ],
+      }) as WorkspaceEventBatch<any>;
+
+    it.each(['EMAIL', 'CALENDAR'])(
+      'does not enqueue for a contact auto-created by the %s sync',
+      async (source) => {
+        mockRepository.find.mockResolvedValue([seededListener]);
+
+        await listener.handleObjectRecordCreateEvent(
+          createPersonPayload({ source }),
+        );
+
+        expect(messageQueueService.add).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each(['MANUAL', 'API', 'IMPORT'])(
+      'enqueues for a contact created via %s',
+      async (source) => {
+        mockRepository.find.mockResolvedValue([seededListener]);
+
+        await listener.handleObjectRecordCreateEvent(
+          createPersonPayload({ source }),
+        );
+
+        expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+      },
+    );
+
+    it('enqueues when createdBy is absent (fails open)', async () => {
+      mockRepository.find.mockResolvedValue([seededListener]);
+
+      await listener.handleObjectRecordCreateEvent(createPersonPayload({}));
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('record filter robustness', () => {
+    const workspaceId = 'test-workspace';
+    const databaseEventName = 'createEvent';
+    const workflowId = 'test-workflow';
+
+    const createPayload = () =>
+      ({
+        workspaceId,
+        name: databaseEventName,
+        objectMetadata: createMockFlatObjectMetadata({}),
+        events: [{ recordId: 'r1', properties: { after: { isActive: true } } }],
+      }) as WorkspaceEventBatch<any>;
+
+    it('enqueues without throwing when stepFilters is missing from settings', async () => {
+      // A filter persisted in JSONB without a stepFilters array must be treated
+      // as "no conditions" rather than throwing in the suppressed @OnEvent path.
+      mockRepository.find.mockResolvedValue([
+        {
+          type: AutomatedTriggerType.DATABASE_EVENT,
+          workflowId,
+          settings: {
+            eventName: databaseEventName,
+            filter: { stepFilterGroups: [] },
+          },
+        },
+      ]);
+
+      await expect(
+        listener.handleObjectRecordCreateEvent(createPayload()),
+      ).resolves.not.toThrow();
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('record filter combined with watched fields on update', () => {
+    const workspaceId = 'test-workspace';
+    const databaseEventName = 'updateEvent';
+    const workflowId = 'test-workflow';
+
+    const updateListener = {
+      type: AutomatedTriggerType.DATABASE_EVENT,
+      workflowId,
+      settings: {
+        eventName: databaseEventName,
+        fields: ['stage'],
+        filter: {
+          stepFilterGroups: [],
+          stepFilters: [
+            {
+              id: 'f1',
+              type: 'TEXT',
+              value: 'WON',
+              operand: 'CONTAINS',
+              stepOutputKey: '{{trigger.properties.after.stage}}',
+              stepFilterGroupId: 'unused',
+            },
+          ],
+        },
+      },
+    };
+
+    const updatePayload = (
+      updatedFields: string[],
+      after: Record<string, unknown>,
+    ) =>
+      ({
+        workspaceId,
+        name: databaseEventName,
+        objectMetadata: createMockFlatObjectMetadata({}),
+        events: [
+          { recordId: 'r1', properties: { updatedFields, before: {}, after } },
+        ],
+      }) as WorkspaceEventBatch<any>;
+
+    it('enqueues when a watched field changed and the filter matches', async () => {
+      mockRepository.find.mockResolvedValue([updateListener]);
+
+      await listener.handleObjectRecordUpdateEvent(
+        updatePayload(['stage'], { stage: 'WON' }),
+      );
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not enqueue when a watched field changed but the filter does not match', async () => {
+      mockRepository.find.mockResolvedValue([updateListener]);
+
+      await listener.handleObjectRecordUpdateEvent(
+        updatePayload(['stage'], { stage: 'LOST' }),
+      );
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('does not enqueue when the filter matches but no watched field changed', async () => {
+      mockRepository.find.mockResolvedValue([updateListener]);
+
+      await listener.handleObjectRecordUpdateEvent(
+        updatePayload(['name'], { stage: 'WON' }),
+      );
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
   });
 });

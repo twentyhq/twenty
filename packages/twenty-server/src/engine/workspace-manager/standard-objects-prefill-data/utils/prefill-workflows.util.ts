@@ -8,6 +8,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { buildPersonSyncSourceFilter } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/build-person-sync-source-filter.util';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record-event';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
 import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
@@ -89,45 +90,13 @@ export const prefillWorkflows = async (
     throw new Error('Person createdBy field metadata not found');
   }
 
-  const personSyncSourceFilterGroupId = '2d9c1f3a-6b4e-4c8a-9f12-7a3b5c6d8e90';
-
-  // Both source filters share everything but the excluded source value, so the
-  // common shape lives in one base object spread into each.
-  const personSyncSourceFilterBase = {
-    type: 'ACTOR',
-    operand: 'IS_NOT',
-    stepOutputKey: '{{trigger.properties.after.createdBy.source}}',
-    stepFilterGroupId: personSyncSourceFilterGroupId,
-    compositeFieldSubFieldName: 'source',
-    fieldMetadataId: personCreatedByFieldMetadata.id,
-  };
-
   // Skip contacts auto-created by the email/calendar sync (which already create
   // and link their company). The same filter is stored on the workflow version
   // trigger AND on the automatedTrigger row the listener reads, so the two never
   // drift apart — the listener only sees the automatedTrigger copy.
-  const personSyncSourceFilter = {
-    stepFilterGroups: [
-      {
-        id: personSyncSourceFilterGroupId,
-        logicalOperator: 'AND',
-      },
-    ],
-    stepFilters: [
-      {
-        ...personSyncSourceFilterBase,
-        id: '3e8b2a4c-7c5f-4d9b-8a23-6b4c5d7e9f01',
-        value: JSON.stringify([FieldActorSource.EMAIL]),
-        positionInStepFilterGroup: 0,
-      },
-      {
-        ...personSyncSourceFilterBase,
-        id: '4f9c3b5d-8d6a-4e0c-9b34-7c5d6e8f0a12',
-        value: JSON.stringify([FieldActorSource.CALENDAR]),
-        positionInStepFilterGroup: 1,
-      },
-    ],
-  };
+  const personSyncSourceFilter = buildPersonSyncSourceFilter({
+    createdByFieldMetadataId: personCreatedByFieldMetadata.id,
+  });
 
   await entityManager
     .createQueryBuilder()

@@ -9,7 +9,7 @@ import {
   type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { In, Raw } from 'typeorm';
 
@@ -443,7 +443,10 @@ export class WorkflowDatabaseEventTriggerListener {
     const { filter } =
       eventListener.settings as BaseDatabaseEventTriggerSettings;
 
-    if (!isDefined(filter) || filter.stepFilters.length === 0) {
+    // No conditions means "always run". isNonEmptyArray also guards against
+    // settings persisted in JSONB without a well-formed stepFilters array, so a
+    // malformed filter can't throw here, outside the try/catch below.
+    if (!isDefined(filter) || !isNonEmptyArray(filter.stepFilters)) {
       return true;
     }
 
