@@ -8,13 +8,14 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { getLogicFunctionSubfolderForFromSource } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder-for-from-source';
 
 import type { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { getLogicFunctionSubfolderForFromSource } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder-for-from-source';
 import {
   FlatDeleteLogicFunctionAction,
   UniversalDeleteLogicFunctionAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -42,18 +43,7 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatDeleteLogicFunctionAction>,
   ): Promise<void> {
-    const {
-      flatAction,
-      queryRunner,
-      workspaceId,
-      allFlatEntityMaps,
-      flatApplication,
-    } = context;
-
-    const flatLogicFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
-      flatEntityId: flatAction.entityId,
-    });
+    const { flatAction, queryRunner, workspaceId } = context;
 
     const logicFunctionRepository =
       queryRunner.manager.getRepository<LogicFunctionEntity>(
@@ -64,13 +54,25 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
       id: flatAction.entityId,
       workspaceId,
     });
+  }
+
+  protected override getAfterCommitSideEffects(
+    context: WorkspaceMigrationActionRunnerContext<FlatDeleteLogicFunctionAction>,
+  ): AfterCommitSideEffect[] {
+    const { flatAction, workspaceId, allFlatEntityMaps, flatApplication } =
+      context;
+
+    const flatLogicFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
+      flatEntityId: flatAction.entityId,
+    });
 
     const applicationUniversalIdentifier = flatApplication.universalIdentifier;
 
-    await Promise.all([
-      this.deleteBestEffort(
-        `source folder for logic function ${flatLogicFunction.id}`,
-        () =>
+    return [
+      {
+        description: `source folder for logic function ${flatLogicFunction.id} (universalIdentifier=${flatLogicFunction.universalIdentifier}, applicationUniversalIdentifier=${applicationUniversalIdentifier})`,
+        run: () =>
           this.fileStorageService.deleteFolder({
             workspaceId,
             applicationUniversalIdentifier,
@@ -79,39 +81,25 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
               flatLogicFunction.id,
             ),
           }),
-      ),
-      this.deleteBestEffort(
-        `built handler for logic function ${flatLogicFunction.id}`,
-        () =>
+      },
+      {
+        description: `built handler for logic function ${flatLogicFunction.id} (universalIdentifier=${flatLogicFunction.universalIdentifier}, applicationUniversalIdentifier=${applicationUniversalIdentifier})`,
+        run: () =>
           this.fileStorageService.deleteFile({
             workspaceId,
             applicationUniversalIdentifier,
             fileFolder: FileFolder.BuiltLogicFunction,
             resourcePath: flatLogicFunction.builtHandlerPath,
           }),
-      ),
-      this.deleteBestEffort(
-        `runtime resource for logic function ${flatLogicFunction.id}`,
-        () =>
+      },
+      {
+        description: `runtime resource for logic function ${flatLogicFunction.id} (universalIdentifier=${flatLogicFunction.universalIdentifier}, applicationUniversalIdentifier=${applicationUniversalIdentifier})`,
+        run: () =>
           this.logicFunctionDriverFactory
             .getCurrentDriver()
             .delete(flatLogicFunction),
-      ),
-    ]);
-  }
-
-  private async deleteBestEffort(
-    description: string,
-    operation: () => Promise<void>,
-  ): Promise<void> {
-    try {
-      await operation();
-    } catch (error) {
-      this.logger.warn(
-        `Failed to delete ${description}: ${error instanceof Error ? error.message : String(error)}`,
-        DeleteLogicFunctionActionHandlerService.name,
-      );
-    }
+      },
+    ];
   }
 
   async rollbackForMetadata(): Promise<void> {}

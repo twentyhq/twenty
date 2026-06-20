@@ -60,6 +60,7 @@ export default defineLogicFunction({
 * **cron**: CRON 식을 사용하여 예약된 일정으로 함수를 실행합니다.
 * **databaseEvent**: 워크스페이스 객체 라이프사이클 이벤트에서 실행됩니다. 이벤트 작업이 `updated`인 경우, 수신할 특정 필드를 `updatedFields` 배열에 지정할 수 있습니다. 정의하지 않거나 비워두면, 어떤 업데이트든 함수가 트리거됩니다.
 > 예: `person.updated`, `*.created`, `company.*`
+* **serverWebhook**: 타사 서비스(Stripe, GitHub, Svix, …)로부터 인바운드 웹훅을 수신합니다. 단일 등록 범위 엔드포인트에서 수신하고, 페이로드에서 대상 워크스페이스를 해석합니다. [서버 웹훅 트리거](#server-webhook-trigger)를 참고하세요.
 
 <Note>
 CLI를 사용해 함수를 수동으로 실행할 수도 있습니다:
@@ -169,6 +170,90 @@ const handler = async (event: RoutePayload) => {
 
 <Note>
 상태 코드는 유효한 HTTP 상태 코드(100에서 599 사이)여야 합니다. 응답 헤더 이름은 대소문자를 구분하지 않습니다.
+</Note>
+
+#### 서버 웹훅 트리거
+
+`httpRouteTriggerSettings`는 `/s/` 아래에 함수를 노출하고 요청 호스트에서 워크스페이스를 해석합니다. 이는 각 워크스페이스가 자체 도메인을 가질 때 동작합니다. 그러나 타사 공급자는 모든 테넌트의 이벤트를 **하나의** 웹훅 URL로 전달합니다. 그런 경우에는 `serverWebhookTriggerSettings`를 사용하세요. 이 함수는 등록 범위의 엔드포인트에서 접근 가능하며, 워크스페이스는 페이로드에서 해석됩니다.
+
+```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  // Verify the signature yourself before doing anything (see below).
+  // Return a non-2xx Response to make the provider retry.
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-provider-webhook',
+  handler,
+  serverWebhookTriggerSettings: {
+    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  },
+});
+```
+
+함수는 다음 위치에서 접근할 수 있습니다:
+
+```
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+```
+
+두 식별자는 모두 매니페스트에 있는 `universalIdentifier`입니다. 각각 애플리케이션 등록과 이 로직 함수의 `universalIdentifier`입니다. 해당 URL을 공급자에 등록하세요.
+
+**워크스페이스 해석.** 하나의 엔드포인트가 모든 워크스페이스를 처리하므로, 통합에서는 대상 `workspaceId`를 전달 데이터 어딘가에 넣어야 하고, `workspaceIdResolver.{ source, path }`는 플랫폼에 그 값을 어디에서 읽어야 하는지 알려 줍니다:
+
+| 필드       | 값                                         | 노트                                                                                                           |
+| -------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `source` | `body` \| `query` \| `header`             | `body`는 파싱된 JSON을 읽습니다. `query`가 가장 범용적입니다. 일반적으로 등록하는 콜백 URL을 제어할 수 있으므로, `?twentyWorkspaceId=…`를 추가하면 됩니다. |
+| `path`   | dot-path, 예: `metadata.twentyWorkspaceId` | 영숫자 / `_` / `-` 세그먼트로만 제한되며, prototype 키는 거부됩니다.                                                             |
+
+해석된 값은 유효한 워크스페이스 UUID여야 **하고**, 앱이 해당 워크스페이스에 설치되어 있어야 합니다. 그렇지 않으면 함수가 실행되기 전에 요청이 거부됩니다.
+
+<Warning>
+**서명 검증은 사용자 책임입니다.** 이 트리거에 대해 플랫폼은 웹훅 서명을 검증하지 않습니다. 워크스페이스를 해석하고 함수를 실행할 뿐입니다. 핸들러는 `event.rawBody`와 `forwardedRequestHeaders`에 나열한 헤더를 사용해 직접 서명을 검증해야 하며, 서버/애플리케이션 변수로 저장된 시크릿과 비교해야 합니다. 항상 부수 효과가 발생하기 **이전**에 서명을 검증하고, 상수 시간 비교를 사용하세요.
+</Warning>
+
+대부분의 공급자는 HMAC-SHA256으로 서명합니다. 서로 다른 부분은 헤더 이름, 다이제스트 인코딩, 그리고 서명 대상 페이로드 문자열입니다. 몇 가지 예시는 다음과 같습니다:
+
+| 공급자                          | 포워딩할 헤더                                                | 서명 문자열                       | 다이제스트                              |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | ---------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (`whsec_` 제거 후 시크릿이 base64) |
+| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                |
+| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (`sha256=` prefix 포함)          |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                             |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (`v0=` prefix 포함)              |
+
+```ts
+import { createHmac, timingSafeEqual } from 'crypto';
+
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
+      .update(event.rawBody ?? '')
+      .digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    return new Response({ error: 'invalid signature' }, { status: 401 });
+  }
+
+  // ...handle the verified event
+  return { received: true };
+};
+```
+
+<Note>
+함수는 **동기적으로** 실행되며, 반환한 값이 HTTP 응답이 됩니다. 따라서 프로바이더는 상태 코드를 확인하고 2xx가 아닐 경우 재시도할 수 있습니다. 핸들러는 빠르게 유지하세요. 일부 공급자(예: Slack)는 몇 초 안에 타임아웃됩니다. 함수가 서명을 확인하기 전에 실행되므로, 이 엔드포인트는 엣지에서 레이트 리밋으로 보호하세요.
 </Note>
 
 #### 데이터베이스 이벤트 트리거 페이로드
@@ -348,12 +433,52 @@ export default defineLogicFunction({
 });
 ```
 
+매개 변수를 **한 번만** 선언하고 두 환경 모두에서 사용하려면, 단일 JSON Schema(`InputJsonSchema`)를 정의한 후 `twenty-sdk/logic-function`의 `jsonSchemaToInputSchema`를 사용해 워크플로 작업용으로 변환하세요. `toolTriggerSettings.inputSchema`는 JSON Schema를 그대로 사용하지만, `workflowActionTriggerSettings.inputSchema`는 Twenty의 `InputSchema`를 요구합니다:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **좋은 `description`을 작성하세요.** AI 에이전트는 도구를 언제 사용할지 결정하기 위해 함수의 `description` 필드에 의존합니다. 도구가 무엇을 하는지와 언제 호출해야 하는지 구체적으로 작성하세요.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**런타임 헬퍼.** `twenty-sdk/utils`는 작은 런타임 헬퍼를 다시 export하여 핸들러가 `twenty-shared`를 직접 import하지 않도록 합니다. 예를 들어 `isDefined(value)`는 `null`과 `undefined` 모두에 대해 `false`를 반환합니다. 이를 사용하면 선택적 핸들러 입력을 안전하게 좁힐 수 있습니다. 이러한 입력은 타입이 `T | undefined`로 지정되어 있더라도 런타임에는 `null`로 전달될 수 있습니다:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **설치 훅** — 사전 설치 및 사후 설치 핸들러 — 는 이 런타임을 공유하지만, 각각의 `define` 함수로 선언되며 트리거 설정을 받지 않습니다. `definePreInstallLogicFunction` 및 `definePostInstallLogicFunction` 에 대해서는 [설치 훅](/l/ko/developers/extend/apps/config/install-hooks)을 참고하세요.

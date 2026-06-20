@@ -15,7 +15,7 @@ Gli oggetti sono le tabelle che contengono i tuoi dati. Twenty include oggetti s
 * **Aziende** — Organizzazioni con cui fai affari
 * **Persone** — Contatti individuali
 * **Opportunità** — Trattative nella tua pipeline
-* **Attività** — Elementi di azione per il tuo team
+* **Attività** — Attività da svolgere per il tuo team
 * **Note** — Testo libero collegato ai record
 
 Puoi anche creare **oggetti personalizzati** per qualsiasi esigenza della tua azienda: progetti, ticket di supporto, prodotti, contratti o qualsiasi altra cosa.
@@ -27,8 +27,8 @@ I campi sono le proprietà su ciascun oggetto. Twenty supporta un’ampia gamma 
 | Categoria     | Tipi                                                                     |
 | ------------- | ------------------------------------------------------------------------ |
 | **Di base**   | Testo, Numero, Booleano, Data, Valuta, Valutazione, Selezione            |
-| **Composito** | Indirizzo (via, città, stato, CAP), Nome completo, Link, Telefoni, Email |
-| **Speciale**  | Relazione, Allegato file, JSON, Attore (chi ha creato/modificato)        |
+| **Compositi** | Indirizzo (via, città, stato, CAP), Nome completo, Link, Telefoni, Email |
+| **Speciale**  | Relazione, Allegato file, JSON, Utente (chi ha creato/modificato)        |
 
 Ogni oggetto ottiene anche campi di sistema automatici: `id`, `createdAt`, `updatedAt`, `createdBy` e `position`.
 
@@ -38,7 +38,7 @@ Gli oggetti si collegano tra loro tramite relazioni. Un’Azienda ha molte Perso
 
 ## Cosa rende tutto questo potente
 
-A differenza dei CRM tradizionali, in cui sei limitato a campi predefiniti su oggetti predefiniti, Twenty ti permette di modellare i tuoi dati esattamente come funziona la tua azienda. Gli oggetti personalizzati ricevono lo stesso trattamento di prima classe di quelli integrati, inclusi endpoint API, viste, autorizzazioni e trigger di workflow.
+A differenza dei CRM tradizionali, in cui sei limitato a campi predefiniti su oggetti predefiniti, Twenty ti permette di modellare i tuoi dati esattamente come funziona la tua azienda. Gli oggetti personalizzati ricevono lo stesso trattamento di prima classe di quelli integrati, inclusi endpoint API, viste, autorizzazioni e trigger dei flussi di lavoro.
 
 <Card title="Approfondisci il modello di dati" icon="arrow-right" href="/l/it/user-guide/data-model/overview">
   Riferimento completo su oggetti, campi, relazioni e su come configurarli.
