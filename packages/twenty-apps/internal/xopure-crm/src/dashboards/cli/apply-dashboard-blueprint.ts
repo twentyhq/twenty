@@ -10,6 +10,13 @@ import {
   applyDashboardBlueprint,
   type DashboardApplyApiConfig,
 } from '../blueprints/apply-dashboard-blueprint';
+import { opsCommandCenterBlueprint } from '../blueprints/ops-command-center.blueprint';
+import { ordersDashboardBlueprint } from '../blueprints/orders-dashboard.blueprint';
+import { paymentsDashboardBlueprint } from '../blueprints/payments-dashboard.blueprint';
+import { fulfillmentDashboardBlueprint } from '../blueprints/fulfillment-dashboard.blueprint';
+import { riskExceptionsDashboardBlueprint } from '../blueprints/risk-exceptions-dashboard.blueprint';
+import { compIntegrityDashboardBlueprint } from '../blueprints/comp-integrity-dashboard.blueprint';
+import { supportDashboardBlueprint } from '../blueprints/support-dashboard.blueprint';
 
 type ApplyDashboardBlueprintCliArgs = {
   dashboardId?: string;
@@ -41,6 +48,8 @@ type TwentyConfig = {
     }
   >;
 };
+
+type TwentyRemoteConfig = NonNullable<TwentyConfig['remotes']>[string];
 
 const getArgumentValue = (
   argv: string[],
@@ -176,7 +185,7 @@ const parseApplyDashboardBlueprintCliArgs = (
   };
 };
 
-const loadRemoteConfig = (remoteName: string): TwentyConfig['remotes'][string] => {
+const loadRemoteConfig = (remoteName: string): TwentyRemoteConfig => {
   const configPath = resolve(homedir(), '.twenty/config.json');
   const config = JSON.parse(readFileSync(configPath, 'utf8')) as TwentyConfig;
   const remote = config.remotes?.[remoteName];
@@ -191,6 +200,13 @@ const loadRemoteConfig = (remoteName: string): TwentyConfig['remotes'][string] =
 const dashboardBlueprints: Record<string, DashboardBlueprint> = {
   'ambassador-command-center': ambassadorCommandCenterBlueprint,
   'leads-and-customers': leadsAndCustomersBlueprint,
+  'ops-command-center': opsCommandCenterBlueprint,
+  'orders-dashboard': ordersDashboardBlueprint,
+  'payments-dashboard': paymentsDashboardBlueprint,
+  'fulfillment-dashboard': fulfillmentDashboardBlueprint,
+  'risk-exceptions-dashboard': riskExceptionsDashboardBlueprint,
+  'comp-integrity-dashboard': compIntegrityDashboardBlueprint,
+  'support-dashboard': supportDashboardBlueprint,
 };
 
 const resolveApiConfig = async (

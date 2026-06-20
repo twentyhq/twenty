@@ -2,7 +2,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { handleSyncHealth } from './handlers/sync-health-handler';
 
-const handler = async (event: RoutePayload) =>
+const handler = async (_event: RoutePayload) =>
   handleSyncHealth({
     client: new CoreApiClient(),
   });

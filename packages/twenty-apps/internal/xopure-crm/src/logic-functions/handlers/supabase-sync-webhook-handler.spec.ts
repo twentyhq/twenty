@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { handleSupabaseSyncWebhook } from './supabase-sync-webhook-handler';
+import { mapSupabaseRecords } from '../../supabase-sync/utils/map-supabase-record';
 
 const buildEvent = (params: {
   secret?: string;
@@ -20,9 +21,57 @@ const buildClient = (params: {
   const mutationResults = [...(params.mutationResults ?? [])];
 
   return {
-    query: vi.fn(async () => queryResults.shift() ?? {}),
-    mutation: vi.fn(async () => mutationResults.shift() ?? {}),
+    query: vi.fn<(...args: Array<Record<string, unknown>>) => Promise<Record<string, unknown>>>(async () => queryResults.shift() ?? {}),
+    mutation: vi.fn<(...args: Array<Record<string, unknown>>) => Promise<Record<string, unknown>>>(async () => mutationResults.shift() ?? {}),
   };
+};
+
+const buildOrderRecordWithPaymentFields = () => ({
+  id: 'order-1',
+  commerce_order_id: 'commerce-order-1',
+  fulfillment_status: 'fulfilled',
+  subtotal_cents: 10_000,
+  total_cents: 12_900,
+  payment_gateway: 'stripe',
+  payment_status: 'succeeded',
+  payment_method_code: 'card',
+  currency: 'USD',
+  updated_at: '2026-05-01T00:00:00.000Z',
+  internal_note: 'do-not-echo',
+});
+
+const buildPaymentRecordFromOrderForTest = (
+  record: Record<string, unknown>,
+): Record<string, unknown> => ({
+  ...record,
+  order_id: record.order_id ?? record.id,
+  provider: record.payment_gateway ?? record.payment_method_code,
+  method_code: record.payment_method_code ?? record.payment_gateway,
+  amount_cents: record.total_cents ?? record.subtotal_cents,
+  status: record.payment_status,
+  refund_amount_cents: record.refund_amount_cents ?? 0,
+});
+
+const getMappedContentHash = (params: {
+  sourceTable: string;
+  record: Record<string, unknown>;
+}) => {
+  const result = mapSupabaseRecords({
+    eventType: 'UPDATE',
+    sourceSchema: 'public',
+    sourceTable: params.sourceTable,
+    record: params.record,
+  })[0];
+
+  if (!result) {
+    throw new Error(`No mapping result for ${params.sourceTable}`);
+  }
+
+  if (!result.ok) {
+    throw new Error(result.message);
+  }
+
+  return result.record.contentHash;
 };
 
 describe('handleSupabaseSyncWebhook', () => {
@@ -159,6 +208,275 @@ describe('handleSupabaseSyncWebhook', () => {
       },
     });
     expect(JSON.stringify(result)).not.toContain('nextStep');
+  });
+
+  it('fans out orders webhooks with payment fields into order and payment creates', async () => {
+    const orderRecord = buildOrderRecordWithPaymentFields();
+    const client = buildClient({
+      queryResults: [
+        { xopureSyncMaps: { edges: [] } },
+        { xopureOrders: { edges: [] } },
+        { xopureSyncMaps: { edges: [] } },
+        { xopureOrders: { edges: [{ node: { id: 'twenty-order-1' } }] } },
+        { xopureSyncMaps: { edges: [] } },
+        { xopurePayments: { edges: [] } },
+        { xopureSyncMaps: { edges: [] } },
+      ],
+      mutationResults: [
+        { createXopureOrder: { id: 'twenty-order-1' } },
+        { createXopureSyncMap: { id: 'sync-map-order' } },
+        { createXopurePayment: { id: 'twenty-payment-1' } },
+        { createXopureSyncMap: { id: 'sync-map-payment' } },
+      ],
+    });
+
+    const result = await handleSupabaseSyncWebhook({
+      event: buildEvent({
+        secret: 'secret',
+        body: {
+          type: 'INSERT',
+          schema: 'public',
+          table: 'orders',
+          record: orderRecord,
+        },
+      }),
+      expectedSecret: 'secret',
+      client,
+    });
+
+    expect(result).toMatchObject({
+      statusCode: 200,
+      body: {
+        ok: true,
+        status: 'processed',
+        created: 2,
+        updated: 0,
+        skipped: 0,
+        failed: 0,
+        sourceTable: 'orders',
+        sourceRecordId: 'order-1',
+        targetObject: 'xopureOrder',
+        targetObjects: ['xopureOrder', 'xopurePayment'],
+        twentyRecordId: 'twenty-order-1',
+      },
+    });
+    expect(client.mutation.mock.calls[0]?.[0]).toHaveProperty('createXopureOrder');
+    expect(client.mutation.mock.calls[2]?.[0]).toMatchObject({
+      createXopurePayment: {
+        __args: {
+          data: {
+            supabasePaymentId: 'order-1',
+            orderExternalId: 'order-1',
+            provider: 'stripe',
+            methodCode: 'card',
+            amountCents: 12_900,
+            status: 'SUCCEEDED',
+            refundCents: 0,
+            orderId: 'twenty-order-1',
+          },
+        },
+      },
+    });
+    expect(JSON.stringify(result)).not.toContain('do-not-echo');
+  });
+
+  it('fans out orders webhooks with payment fields into order and payment updates', async () => {
+    const orderRecord = buildOrderRecordWithPaymentFields();
+    const client = buildClient({
+      queryResults: [
+        {
+          xopureSyncMaps: {
+            edges: [
+              {
+                node: {
+                  id: 'sync-map-order',
+                  targetRecordId: 'twenty-order-1',
+                  payloadHash: 'stale-order-hash',
+                },
+              },
+            ],
+          },
+        },
+        { xopureOrders: { edges: [{ node: { id: 'twenty-order-1' } }] } },
+        {
+          xopureSyncMaps: {
+            edges: [
+              {
+                node: {
+                  id: 'sync-map-payment',
+                  targetRecordId: 'twenty-payment-1',
+                  payloadHash: 'stale-payment-hash',
+                },
+              },
+            ],
+          },
+        },
+      ],
+      mutationResults: [
+        { updateXopureOrder: { id: 'twenty-order-1' } },
+        { updateXopureSyncMap: { id: 'sync-map-order' } },
+        { updateXopurePayment: { id: 'twenty-payment-1' } },
+        { updateXopureSyncMap: { id: 'sync-map-payment' } },
+      ],
+    });
+
+    const result = await handleSupabaseSyncWebhook({
+      event: buildEvent({
+        secret: 'secret',
+        body: {
+          type: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+          record: orderRecord,
+        },
+      }),
+      expectedSecret: 'secret',
+      client,
+    });
+
+    expect(result).toMatchObject({
+      statusCode: 200,
+      body: {
+        ok: true,
+        status: 'processed',
+        created: 0,
+        updated: 2,
+        skipped: 0,
+        failed: 0,
+        targetObject: 'xopureOrder',
+        targetObjects: ['xopureOrder', 'xopurePayment'],
+      },
+    });
+    expect(client.mutation.mock.calls[0]?.[0]).toHaveProperty('updateXopureOrder');
+    expect(client.mutation.mock.calls[2]?.[0]).toHaveProperty('updateXopurePayment');
+  });
+
+  it('fans out orders webhooks with payment fields into order and payment skips', async () => {
+    const orderRecord = buildOrderRecordWithPaymentFields();
+    const paymentRecord = buildPaymentRecordFromOrderForTest(orderRecord);
+    const client = buildClient({
+      queryResults: [
+        {
+          xopureSyncMaps: {
+            edges: [
+              {
+                node: {
+                  id: 'sync-map-order',
+                  targetRecordId: 'twenty-order-1',
+                  payloadHash: getMappedContentHash({
+                    sourceTable: 'orders',
+                    record: orderRecord,
+                  }),
+                },
+              },
+            ],
+          },
+        },
+        { xopureOrders: { edges: [{ node: { id: 'twenty-order-1' } }] } },
+        {
+          xopureSyncMaps: {
+            edges: [
+              {
+                node: {
+                  id: 'sync-map-payment',
+                  targetRecordId: 'twenty-payment-1',
+                  payloadHash: getMappedContentHash({
+                    sourceTable: 'payments',
+                    record: paymentRecord,
+                  }),
+                },
+              },
+            ],
+          },
+        },
+      ],
+      mutationResults: [
+        { updateXopureSyncMap: { id: 'sync-map-order' } },
+        { updateXopureSyncMap: { id: 'sync-map-payment' } },
+      ],
+    });
+
+    const result = await handleSupabaseSyncWebhook({
+      event: buildEvent({
+        secret: 'secret',
+        body: {
+          type: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+          record: orderRecord,
+        },
+      }),
+      expectedSecret: 'secret',
+      client,
+    });
+
+    expect(result).toMatchObject({
+      statusCode: 200,
+      body: {
+        ok: true,
+        status: 'processed',
+        created: 0,
+        updated: 0,
+        skipped: 2,
+        failed: 0,
+        targetObject: 'xopureOrder',
+        targetObjects: ['xopureOrder', 'xopurePayment'],
+      },
+    });
+    expect(client.mutation).toHaveBeenCalledTimes(2);
+    expect(client.mutation.mock.calls[0]?.[0]).toHaveProperty('updateXopureSyncMap');
+    expect(client.mutation.mock.calls[1]?.[0]).toHaveProperty('updateXopureSyncMap');
+  });
+
+  it('maps orders webhooks without payment fields only as orders', async () => {
+    const client = buildClient({
+      queryResults: [
+        { xopureSyncMaps: { edges: [] } },
+        { xopureOrders: { edges: [] } },
+        { xopureSyncMaps: { edges: [] } },
+      ],
+      mutationResults: [
+        { createXopureOrder: { id: 'twenty-order-1' } },
+        { createXopureSyncMap: { id: 'sync-map-order' } },
+      ],
+    });
+
+    const result = await handleSupabaseSyncWebhook({
+      event: buildEvent({
+        secret: 'secret',
+        body: {
+          type: 'INSERT',
+          schema: 'public',
+          table: 'orders',
+          record: {
+            id: 'order-without-payment',
+            commerce_order_id: 'commerce-order-without-payment',
+            fulfillment_status: 'pending',
+            currency: 'USD',
+            updated_at: '2026-05-01T00:00:00.000Z',
+          },
+        },
+      }),
+      expectedSecret: 'secret',
+      client,
+    });
+
+    expect(result).toMatchObject({
+      statusCode: 200,
+      body: {
+        ok: true,
+        status: 'created',
+        created: 1,
+        updated: 0,
+        skipped: 0,
+        failed: 0,
+        sourceTable: 'orders',
+        sourceRecordId: 'order-without-payment',
+        targetObject: 'xopureOrder',
+        targetObjects: ['xopureOrder'],
+      },
+    });
+    expect(JSON.stringify(client.query.mock.calls)).not.toContain('xopurePayments');
   });
 
   it('mirrors affiliate downline relationships after the ambassador upsert', async () => {

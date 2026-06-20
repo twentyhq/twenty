@@ -127,8 +127,11 @@ If XO Pure reads Supabase directly for sync or dashboard-supporting ingestion, t
 
 - Supabase is read **server-side only**
 - the dashboard UI never queries Supabase directly
-- the reader uses a dedicated **read-only Postgres role**
+- the preferred reader uses a dedicated **read-only Postgres role**
 - that role reads only from sanitized `crm` views, not raw `public` tables
+- when the dedicated DSN is unavailable and Supabase must not be mutated, the
+  server-side REST fallback can use a publishable/anon key for GET-only reads
+  against exposed `public` tables
 - the sync pipeline stamps ownership and scope into Twenty records
 - dashboards then read from Twenty only, where row-level permissions enforce per-individual visibility
 
@@ -183,6 +186,12 @@ The preferred role is a dedicated Postgres login such as `readonly_crm_sync` wit
 It should also be denied broad access to raw application schemas.
 
 This role should not be exposed through the browser or normal client-side Supabase usage.
+
+Creating this role, granting privileges, or changing Supabase API schemas writes
+to Supabase. Under a no-Supabase-write constraint, those actions are not
+performed; the REST fallback reads only what the current public PostgREST API
+already exposes. Existing `crm` views are not exposed through PostgREST unless
+Supabase API schemas are changed.
 
 ### RLS and view security
 

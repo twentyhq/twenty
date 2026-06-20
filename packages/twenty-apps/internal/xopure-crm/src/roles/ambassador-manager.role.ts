@@ -10,7 +10,7 @@ import {
 export const AMBASSADOR_MANAGER_ROLE_ID =
   'f9d06652-db4d-51d0-84ff-b4e233934ed4';
 
-export default defineRole({
+const managerRoleConfig = {
   universalIdentifier: AMBASSADOR_MANAGER_ROLE_ID,
   label: 'Ambassador Manager',
   description:
@@ -29,4 +29,8 @@ export default defineRole({
     AMBASSADOR_MANAGER_ROW_LEVEL_PERMISSION_PREDICATE_GROUPS,
   rowLevelPermissionPredicates:
     AMBASSADOR_MANAGER_ROW_LEVEL_PERMISSION_PREDICATES,
-});
+};
+
+export default defineRole(
+  managerRoleConfig as Parameters<typeof defineRole>[0],
+);

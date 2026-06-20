@@ -17,7 +17,7 @@ export const BACKFILL_SOURCE_ORDER: SupportedSourceTable[] = [
   'commission_ledger',
 ];
 
-type BackfillReader = (
+export type BackfillReader = (
   sourceTable: SupportedSourceTable,
 ) => Promise<Array<Record<string, unknown>>>;
 

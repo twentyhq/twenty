@@ -1,8 +1,5 @@
 import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  type RoleConfig,
-  type RowLevelPermissionPredicateConfig,
-  type RowLevelPermissionPredicateGroupConfig,
 } from 'twenty-sdk/define';
 
 import { AMBASSADOR_MANAGER_WORKSPACE_MEMBER_FIELD_ID } from '../fields/ambassador-manager-workspace-member.field';
@@ -29,13 +26,37 @@ import { XOPURE_COMMISSION_OBJECT_ID } from '../objects/xopure-commission.object
 import { XOPURE_CUSTOMER_OBJECT_ID } from '../objects/xopure-customer.object';
 import { XOPURE_ORDER_OBJECT_ID } from '../objects/xopure-order.object';
 
-type ObjectPermissionConfig = NonNullable<
-  RoleConfig['objectPermissions']
->[number];
+// Local structural types — twenty-sdk/define does not export row-level permission types.
+// When the SDK catches up, these should be replaced with the canonical imports.
+type RowLevelPermissionPredicateConfig = {
+  objectUniversalIdentifier: string;
+  fieldUniversalIdentifier: string;
+  operand: string;
+  value: { isCurrentWorkspaceMemberSelected: boolean; selectedRecordIds: string[] };
+  rowLevelPermissionPredicateGroupUniversalIdentifier?: string;
+  positionInRowLevelPermissionPredicateGroup?: number;
+};
 
-type FieldPermissionConfig = NonNullable<
-  RoleConfig['fieldPermissions']
->[number];
+type RowLevelPermissionPredicateGroupConfig = {
+  universalIdentifier: string;
+  objectUniversalIdentifier: string;
+  logicalOperator: string;
+};
+
+type ObjectPermissionConfig = {
+  objectUniversalIdentifier: string;
+  canReadObjectRecords: boolean;
+  canUpdateObjectRecords: boolean;
+  canSoftDeleteObjectRecords: boolean;
+  canDestroyObjectRecords: boolean;
+};
+
+type FieldPermissionConfig = {
+  objectUniversalIdentifier: string;
+  fieldUniversalIdentifier: string;
+  canReadFieldValue: boolean;
+  canUpdateFieldValue: boolean;
+};
 
 type AmbassadorRestrictedObject = {
   objectUniversalIdentifier: string;

@@ -70,6 +70,8 @@ const mapAmbassadorStatus = (value: unknown): string => {
     case 'PAUSED':
     case 'INACTIVE':
       return 'PAUSED';
+    case 'SUSPENDED':
+      return 'PAUSED';
     case 'REJECTED':
       return 'REJECTED';
     default:
@@ -81,6 +83,14 @@ const mapAmbassadorLevel = (value: unknown): string => {
   const normalized = normalizeToken(value);
 
   switch (normalized) {
+    case 'ICON':
+      return 'ELITE';
+    case 'DIRECTOR':
+      return 'GOLD';
+    case 'BUILDER':
+      return 'SILVER';
+    case 'ACTIVE_AFFILIATE':
+      return 'BRONZE';
     case 'BRONZE':
       return 'BRONZE';
     case 'SILVER':
@@ -134,6 +144,9 @@ const mapOrderStatus = (value: unknown): string => {
 const mapFulfillmentStatus = (value: unknown): string => {
   const normalized = normalizeToken(value);
   switch (normalized) {
+    case 'CANCELLED':
+    case 'CANCELED':
+      return 'CANCELLED';
     case 'READY':
       return 'READY';
     case 'SYNCED':
@@ -149,6 +162,10 @@ const mapCommissionStatus = (value: unknown): string => {
   const normalized = normalizeToken(value);
 
   switch (normalized) {
+    case 'ACCRUED':
+      return 'PENDING';
+    case 'PAYABLE':
+      return 'APPROVED';
     case 'HELD':
     case 'HOLD':
       return 'HELD';
@@ -157,6 +174,7 @@ const mapCommissionStatus = (value: unknown): string => {
     case 'PAID':
       return 'PAID';
     case 'VOID':
+    case 'VOIDED':
     case 'CANCELLED':
     case 'CANCELED':
       return 'VOID';
@@ -227,7 +245,6 @@ const mapAmbassador = (record: Record<string, unknown>) =>
     status: mapAmbassadorStatus(record.status),
     referralCode: stringValue(record.tracking_code),
     sponsorAmbassadorExternalId: stringValue(record.parent_id),
-    sponsorDisplayName: stringValue(record.parent_id),
     careerRank: stringValue(record.career_rank),
     paidAsRank: stringValue(record.paid_as_rank),
     commissionRate: numberValue(record.commission_rate) ?? 0,
@@ -383,7 +400,10 @@ const getFirstAffiliateId = (record: Record<string, unknown>): string | undefine
 
   const firstValue = affiliateChain[0];
 
-  return typeof firstValue === 'string' ? firstValue : undefined;
+  if (typeof firstValue !== 'string') {
+    return undefined;
+  }
+  return firstValue;
 };
 
 const mapOrder = (record: Record<string, unknown>) =>
@@ -391,7 +411,11 @@ const mapOrder = (record: Record<string, unknown>) =>
     orderNumber: stringValue(record.id),
     supabaseOrderId: stringValue(record.id),
     commerceOrderId: stringValue(record.commerce_order_id),
-    status: mapOrderStatus(record.fulfillment_status),
+    status: mapOrderStatus(
+      stringValue(record.fulfillment_status) === 'cancelled'
+        ? 'cancelled'
+        : record.payment_status,
+    ),
     subtotalCents: integerValue(record.subtotal_cents) ?? 0,
     shippingCents: integerValue(record.shipping_cents) ?? 0,
     taxCents: integerValue(record.tax_cents) ?? 0,
@@ -497,18 +521,21 @@ const mapCommissionRelations = (
   return relations;
 };
 
-const mapCommission = (record: Record<string, unknown>) =>
-  withLastSyncedAt(record, {
+const mapCommission = (record: Record<string, unknown>) => {
+  const rateUsed = numberValue(record.rate_used);
+  const percentageBps = numberValue(record.percentage_bps);
+
+  return withLastSyncedAt(record, {
     name: `${mapCommissionStatus(record.status)} ${stringValue(record.id) ?? ''}`.trim(),
     supabaseCommissionId: stringValue(record.id),
     ambassadorExternalId: stringValue(record.affiliate_id),
     orderExternalId: stringValue(record.order_id),
     amountCents: integerValue(record.amount_cents) ?? 0,
     rate:
-      numberValue(record.rate_used) !== undefined
-        ? Number((numberValue(record.rate_used) * 100).toFixed(5))
-        : numberValue(record.percentage_bps) !== undefined
-          ? numberValue(record.percentage_bps) / 100
+      rateUsed !== undefined
+        ? Number((rateUsed * 100).toFixed(5))
+        : percentageBps !== undefined
+          ? percentageBps / 100
           : 0,
     status: mapCommissionStatus(record.status),
     payArea: stringValue(record.pay_area),
@@ -519,6 +546,7 @@ const mapCommission = (record: Record<string, unknown>) =>
     sourceOrderId: stringValue(record.source_order_id) ?? stringValue(record.order_id),
     payableAt: isoDateValue(record.payable_at),
   });
+};
 
 const mapPaymentRelations = (
   record: Record<string, unknown>,
@@ -621,16 +649,17 @@ const buildMappedRecord = (
     );
   }
 
-  const identity: SourceIdentity = {
-    sourceSystem: 'supabase',
+  return {
+    sourceSystem: 'supabase' as const,
     sourceSchema: input.sourceSchema,
     sourceTable,
     sourceRecordId,
-  };
-
-  return {
-    ...identity,
-    syncKey: toSyncKey(identity),
+    syncKey: toSyncKey({
+      sourceSystem: 'supabase' as const,
+      sourceSchema: input.sourceSchema,
+      sourceTable,
+      sourceRecordId,
+    }),
     targetObject: mapping.targetObject,
     externalIdField: mapping.externalIdField,
     externalIdValue,
@@ -660,16 +689,17 @@ const buildReferralRelationshipMappedRecord = (
     throw new Error('Mapped field relationshipKey is missing for affiliates');
   }
 
-  const identity: SourceIdentity = {
-    sourceSystem: 'supabase',
-    sourceSchema: input.sourceSchema,
-    sourceTable: 'affiliates',
-    sourceRecordId: `referral:${relationshipKey}`,
-  };
-
   return {
-    ...identity,
-    syncKey: toSyncKey(identity),
+    sourceSystem: 'supabase' as const,
+    sourceSchema: input.sourceSchema,
+    sourceTable: 'affiliates' as const,
+    sourceRecordId: `referral:${relationshipKey}`,
+    syncKey: toSyncKey({
+      sourceSystem: 'supabase' as const,
+      sourceSchema: input.sourceSchema,
+      sourceTable: 'affiliates' as const,
+      sourceRecordId: `referral:${relationshipKey}`,
+    }),
     targetObject: 'xopureReferralRelationship',
     externalIdField: 'relationshipKey',
     externalIdValue: relationshipKey,

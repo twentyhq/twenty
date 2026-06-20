@@ -8,7 +8,7 @@ import {
 
 export const AMBASSADOR_REP_ROLE_ID = 'eaced098-426a-5e90-8a8a-0134cce1a439';
 
-export default defineRole({
+const repRoleConfig = {
   universalIdentifier: AMBASSADOR_REP_ROLE_ID,
   label: 'Ambassador Rep',
   description:
@@ -24,4 +24,8 @@ export default defineRole({
   objectPermissions: AMBASSADOR_OBJECT_PERMISSIONS,
   fieldPermissions: AMBASSADOR_OWNERSHIP_FIELD_PERMISSIONS,
   rowLevelPermissionPredicates: AMBASSADOR_REP_ROW_LEVEL_PERMISSION_PREDICATES,
-});
+};
+
+export default defineRole(
+  repRoleConfig as Parameters<typeof defineRole>[0],
+);

@@ -23,6 +23,24 @@ type HandlerResponse = {
   body: Record<string, unknown>;
 };
 
+type MappingInput = Parameters<typeof mapSupabaseRecords>[0];
+type MappingResult = ReturnType<typeof mapSupabaseRecords>[number];
+
+type MappingPayload = {
+  type?: SupabaseWebhookPayload['type'];
+  schema?: string;
+  table: string;
+  record: Record<string, unknown>;
+};
+
+const ORDER_PAYMENT_FIELDS = [
+  'payment_gateway',
+  'payment_status',
+  'total_cents',
+  'subtotal_cents',
+  'payment_method_code',
+] as const;
+
 const getHeader = (
   headers: Record<string, string | undefined>,
   name: string,
@@ -55,6 +73,47 @@ const parsePayload = (body: unknown): SupabaseWebhookPayload | null => {
   }
 
   return isRecord(body) ? (body as SupabaseWebhookPayload) : null;
+};
+
+const hasOrderPaymentFields = (record: Record<string, unknown>): boolean =>
+  ORDER_PAYMENT_FIELDS.some((fieldName) =>
+    Object.prototype.hasOwnProperty.call(record, fieldName),
+  );
+
+const buildPaymentRecordFromOrder = (
+  record: Record<string, unknown>,
+): Record<string, unknown> => ({
+  ...record,
+  order_id: record.order_id ?? record.id,
+  provider: record.payment_gateway ?? record.payment_method_code,
+  method_code: record.payment_method_code ?? record.payment_gateway,
+  amount_cents: record.total_cents ?? record.subtotal_cents,
+  status: record.payment_status,
+  refund_amount_cents: record.refund_amount_cents ?? 0,
+});
+
+const expandWebhookMappingInputs = (
+  payload: MappingPayload,
+): MappingInput[] => {
+  const baseInput = {
+    eventType: payload.type ?? 'UNKNOWN',
+    sourceSchema: payload.schema ?? 'public',
+    sourceTable: payload.table,
+    record: payload.record,
+  };
+
+  if (payload.table !== 'orders' || !hasOrderPaymentFields(payload.record)) {
+    return [baseInput];
+  }
+
+  return [
+    baseInput,
+    {
+      ...baseInput,
+      sourceTable: 'payments',
+      record: buildPaymentRecordFromOrder(payload.record),
+    },
+  ];
 };
 
 export const handleSupabaseSyncWebhook = async (
@@ -96,12 +155,16 @@ export const handleSupabaseSyncWebhook = async (
   const record = payload.record;
   const sourceRecordId =
     getSafeSourceRecordId(record) ?? getSafeSourceRecordId(payload.old_record);
-  const mappingResults = mapSupabaseRecords({
-    eventType: payload.type ?? 'UNKNOWN',
-    sourceSchema: payload.schema ?? 'public',
-    sourceTable: payload.table,
+  const mappingResults: MappingResult[] = [];
+
+  for (const mappingInput of expandWebhookMappingInputs({
+    type: payload.type,
+    schema: payload.schema,
+    table: payload.table,
     record,
-  });
+  })) {
+    mappingResults.push(...mapSupabaseRecords(mappingInput));
+  }
   const firstMappingError = mappingResults.find((result) => !result.ok);
 
   if (firstMappingError && !firstMappingError.ok) {

@@ -14,7 +14,6 @@ export default defineApplication({
     XOPURE_SYNC_WEBHOOK_SECRET: {
       universalIdentifier: 'c57b0aad-9743-4b9e-8bc2-172178c018b3',
       description: 'Shared secret expected on Supabase webhook calls into Twenty.',
-      value: '',
       isSecret: true,
     },
     XOPURE_ENRICHMENT_PROVIDER: {

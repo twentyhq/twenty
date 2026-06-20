@@ -36,8 +36,8 @@ const buildClient = (params: {
   const mutationResults = [...(params.mutationResults ?? [])];
 
   return {
-    query: vi.fn(async () => queryResults.shift() ?? {}),
-    mutation: vi.fn(async () => mutationResults.shift() ?? {}),
+    query: vi.fn<(...args: Array<Record<string, unknown>>) => Promise<Record<string, unknown>>>(async () => queryResults.shift() ?? {}),
+    mutation: vi.fn<(...args: Array<Record<string, unknown>>) => Promise<Record<string, unknown>>>(async () => mutationResults.shift() ?? {}),
   };
 };
 

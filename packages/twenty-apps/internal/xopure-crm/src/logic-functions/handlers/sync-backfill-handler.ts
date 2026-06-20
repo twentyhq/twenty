@@ -115,24 +115,6 @@ const resolveSourceTable = (
   return mapping?.sourceTable ?? null;
 };
 
-const failedResponse = (
-  table: string,
-  dryRun: boolean,
-  durationMs: number,
-  errors: Array<BackfillErrorEntry>,
-): BackfillResponse => ({
-  ok: false,
-  dryRun,
-  table,
-  scanned: errors.length,
-  created: 0,
-  updated: 0,
-  skipped: 0,
-  failed: errors.length,
-  errors,
-  durationMs,
-});
-
 export const handleSyncBackfill = async (
   input: HandlerInput,
 ): Promise<HandlerResponse> => {
