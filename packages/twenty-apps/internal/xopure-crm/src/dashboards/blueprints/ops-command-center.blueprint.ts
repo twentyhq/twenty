@@ -22,16 +22,18 @@ export const opsCommandCenterBlueprint: DashboardBlueprint = {
           },
         },
         {
-          title: 'Gross Revenue',
+          title: 'Paid / Fulfilled Revenue',
           type: 'GRAPH',
           objectNameSingular: 'xopureOrder',
           gridPosition: { row: 0, column: 3, rowSpan: 2, columnSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
-            aggregateFieldName: 'totalCents',
+            aggregateFieldName: 'orderTotal',
             aggregateOperation: 'SUM',
-            label: 'Gross',
-            suffix: 'c',
+            label: 'Paid / fulfilled revenue',
+            filter: {
+              status: { in: ['PAID', 'FULFILLED'] },
+            },
             displayDataLabel: true,
           },
         },
@@ -124,16 +126,18 @@ export const opsCommandCenterBlueprint: DashboardBlueprint = {
       position: 2,
       widgets: [
         {
-          title: 'Payment Volume',
+          title: 'Successful Payment Volume',
           type: 'GRAPH',
           objectNameSingular: 'xopurePayment',
           gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
-            aggregateFieldName: 'amountCents',
+            aggregateFieldName: 'amount',
             aggregateOperation: 'SUM',
-            label: 'Payment volume',
-            suffix: 'c',
+            label: 'Successful payment volume',
+            filter: {
+              status: { in: ['SUCCEEDED'] },
+            },
             displayDataLabel: true,
           },
         },

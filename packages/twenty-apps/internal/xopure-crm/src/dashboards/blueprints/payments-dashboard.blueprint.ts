@@ -22,16 +22,18 @@ export const paymentsDashboardBlueprint: DashboardBlueprint = {
           },
         },
         {
-          title: 'Payment Amount',
+          title: 'Successful Payment Amount',
           type: 'GRAPH',
           objectNameSingular: 'xopurePayment',
           gridPosition: { row: 0, column: 3, rowSpan: 2, columnSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
-            aggregateFieldName: 'amountCents',
+            aggregateFieldName: 'amount',
             aggregateOperation: 'SUM',
-            label: 'Payment amount',
-            suffix: 'c',
+            label: 'Successful payment amount',
+            filter: {
+              status: { in: ['SUCCEEDED'] },
+            },
             displayDataLabel: true,
           },
         },
@@ -42,10 +44,12 @@ export const paymentsDashboardBlueprint: DashboardBlueprint = {
           gridPosition: { row: 0, column: 6, rowSpan: 2, columnSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
-            aggregateFieldName: 'refundCents',
+            aggregateFieldName: 'amount',
             aggregateOperation: 'SUM',
             label: 'Refund amount',
-            suffix: 'c',
+            filter: {
+              status: { in: ['REFUNDED', 'PARTIALLY_REFUNDED'] },
+            },
             displayDataLabel: true,
           },
         },

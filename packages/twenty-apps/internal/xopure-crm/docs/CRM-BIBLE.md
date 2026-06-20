@@ -309,6 +309,23 @@ Known examples:
 - Payments Dashboard → **Payment Exceptions** has no exception filter.
 - Risk / Exceptions → exception-style tables rely on naming, not widget-level filters in the blueprint.
 
+### Revenue math corrections now live
+
+The most misleading money widgets were corrected in both source blueprints and live DB metadata:
+
+- **Ops Command Center → Paid / Fulfilled Revenue** = `SUM(xopureOrder.orderTotal)` filtered to `status IN [PAID, FULFILLED]`
+- **Ops Command Center → Successful Payment Volume** = `SUM(xopurePayment.amount)` filtered to `status = SUCCEEDED`
+- **Orders Dashboard → Paid / Fulfilled Revenue** = `SUM(xopureOrder.orderTotal)` filtered to `status IN [PAID, FULFILLED]`
+- **Payments Dashboard → Successful Payment Amount** = `SUM(xopurePayment.amount)` filtered to `status = SUCCEEDED`
+- **Payments Dashboard → Refund Amount** = `SUM(xopurePayment.refundAmount)` filtered to `status IN [REFUNDED, PARTIALLY_REFUNDED]`
+
+DB truth at fix time:
+- Paid / fulfilled order revenue = **13,175.18**
+- Successful payment amount = **13,377.55**
+- Refund amount = **0.00**
+
+`X0-54` closed these order/payment money semantics. `X0-43` remains open for the broader title/filter parity sweep on non-money widgets.
+
 ---
 
 ## Key Source Files
@@ -351,6 +368,7 @@ Known examples:
 | X0-44 | Forensically audit all order and payment math | done | NS |
 | X0-45 | Surface support tickets in Twenty CRM with auto-task workflow | done | NS |
 | X0-53 | Activate live support-ticket task auto-creation | open | unclaimed |
+| X0-54 | Exclude failed and cancelled orders from revenue totals | done | NS |
 | X0-39 | Claim and implement Xopure dashboard adjacent gap | done | t2 |
 | X0-40 | DISCOVERY: GitNexus detect-changes cannot resolve Xopure repo | backlog | t2 |
 

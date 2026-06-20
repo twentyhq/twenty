@@ -22,16 +22,18 @@ export const ordersDashboardBlueprint: DashboardBlueprint = {
           },
         },
         {
-          title: 'Total Revenue',
+          title: 'Paid / Fulfilled Revenue',
           type: 'GRAPH',
           objectNameSingular: 'xopureOrder',
           gridPosition: { row: 0, column: 3, rowSpan: 2, columnSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
-            aggregateFieldName: 'totalCents',
+            aggregateFieldName: 'orderTotal',
             aggregateOperation: 'SUM',
-            label: 'Revenue',
-            suffix: 'c',
+            label: 'Paid / fulfilled revenue',
+            filter: {
+              status: { in: ['PAID', 'FULFILLED'] },
+            },
             displayDataLabel: true,
           },
         },

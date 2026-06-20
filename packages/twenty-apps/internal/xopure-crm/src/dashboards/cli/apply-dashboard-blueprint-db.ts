@@ -78,11 +78,19 @@ type DashboardApplyDbResult = {
   createdTabs: string[];
   createdViews: string[];
   createdWidgets: string[];
+  updatedWidgets: string[];
   skippedWidgets: string[];
 };
 
 const STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-64aa-4b6f-b003-9c74b97cee20';
+
+const SYSTEM_ACTOR = {
+  source: 'SYSTEM',
+  workspaceMemberId: null,
+  name: 'System',
+  context: {},
+};
 
 const getFirstRowOrThrow = <T>(rows: T[], message: string): T => {
   const row = rows[0];
@@ -257,8 +265,9 @@ const getObjectMetadataMap = async (
        LEFT JOIN core."fieldMetadata" fm
          ON fm."objectMetadataId" = om.id
         AND fm."workspaceId" = $1
+        AND fm."deletedAt" IS NULL
       WHERE om."workspaceId" = $1
-      `,
+        AND om."deletedAt" IS NULL`,
     [workspaceId],
   );
 
@@ -390,15 +399,19 @@ const createDashboardRecord = async (
        id,
        title,
        "pageLayoutId",
-        position
+       position,
+       "createdBy",
+       "updatedBy"
      ) VALUES (
        $1,
        $2,
        $3,
-        0
+       0,
+       $4::jsonb,
+       $4::jsonb
      )
      RETURNING id, title, "pageLayoutId"`,
-    [dashboardId, title, pageLayoutId],
+    [dashboardId, title, pageLayoutId, SYSTEM_ACTOR],
   );
 
   return getFirstRowOrThrow(
@@ -555,13 +568,13 @@ const ensurePageLayoutTab = async (
   };
 };
 
-const getExistingWidgetTitles = async (
+const getExistingWidgetsByTitle = async (
   client: PoolClient,
   workspaceContext: WorkspaceContext,
   pageLayoutTabId: string,
-): Promise<Set<string>> => {
-  const result = await client.query<{ title: string }>(
-    `SELECT title
+): Promise<Map<string, { id: string; title: string }>> => {
+  const result = await client.query<{ id: string; title: string }>(
+    `SELECT id, title
        FROM core."pageLayoutWidget"
       WHERE "workspaceId" = $1
         AND "pageLayoutTabId" = $2
@@ -569,7 +582,7 @@ const getExistingWidgetTitles = async (
     [workspaceContext.workspaceId, pageLayoutTabId],
   );
 
-  return new Set(result.rows.map((row) => row.title));
+  return new Map(result.rows.map((row) => [row.title, row]));
 };
 
 const findView = async (
@@ -647,6 +660,25 @@ const createView = async (
   );
 };
 
+const updateView = async (
+  client: PoolClient,
+  viewId: string,
+  widgetBlueprint: DashboardRecordTableWidgetBlueprint,
+): Promise<void> => {
+  await client.query(
+    `UPDATE core."view"
+        SET icon = $1,
+            position = $2,
+            "updatedAt" = NOW()
+      WHERE id = $3`,
+    [
+      widgetBlueprint.view.icon,
+      widgetBlueprint.view.position ?? 0,
+      viewId,
+    ],
+  );
+};
+
 const ensureViewFields = async (
   client: PoolClient,
   workspaceContext: WorkspaceContext,
@@ -654,16 +686,22 @@ const ensureViewFields = async (
   objectMetadata: ResolvedObjectMetadata,
   widgetBlueprint: DashboardRecordTableWidgetBlueprint,
 ): Promise<void> => {
-  const existingFields = await client.query<{ fieldMetadataId: string }>(
-    `SELECT "fieldMetadataId"
+  const existingFields = await client.query<{
+    id: string;
+    fieldMetadataId: string;
+    isVisible: boolean;
+    size: string | number | null;
+    position: number;
+  }>(
+    `SELECT id, "fieldMetadataId", "isVisible", size, position
        FROM core."viewField"
       WHERE "workspaceId" = $1
         AND "viewId" = $2
         AND "deletedAt" IS NULL`,
     [workspaceContext.workspaceId, viewId],
   );
-  const existingFieldIds = new Set(
-    existingFields.rows.map((row) => row.fieldMetadataId),
+  const existingFieldsByMetadataId = new Map(
+    existingFields.rows.map((row) => [row.fieldMetadataId, row]),
   );
 
   for (const fieldBlueprint of widgetBlueprint.view.fields) {
@@ -671,8 +709,26 @@ const ensureViewFields = async (
       objectMetadata,
       fieldBlueprint.fieldName,
     );
+    const existingField = existingFieldsByMetadataId.get(fieldMetadataId);
+    const isVisible = fieldBlueprint.isVisible ?? true;
 
-    if (existingFieldIds.has(fieldMetadataId)) {
+    if (existingField) {
+      if (
+        existingField.isVisible !== isVisible ||
+        existingField.size !== fieldBlueprint.size ||
+        existingField.position !== fieldBlueprint.position
+      ) {
+        await client.query(
+          `UPDATE core."viewField"
+              SET "isVisible" = $1,
+                  size = $2,
+                  position = $3,
+                  "updatedAt" = NOW()
+            WHERE id = $4`,
+          [isVisible, fieldBlueprint.size, fieldBlueprint.position, existingField.id],
+        );
+      }
+
       continue;
     }
 
@@ -704,7 +760,7 @@ const ensureViewFields = async (
       [
         randomUUID(),
         fieldMetadataId,
-        fieldBlueprint.isVisible ?? true,
+        isVisible,
         fieldBlueprint.size,
         fieldBlueprint.position,
         viewId,
@@ -738,6 +794,8 @@ const ensureView = async (
       widgetBlueprint,
     );
     created = true;
+  } else {
+    await updateView(client, view.id, widgetBlueprint);
   }
 
   await ensureViewFields(
@@ -878,6 +936,36 @@ const createWidget = async (
   ).id;
 };
 
+const updateWidget = async (
+  client: PoolClient,
+  widgetId: string,
+  objectMetadataId: string,
+  widgetBlueprint: DashboardWidgetBlueprint,
+  configuration: Record<string, unknown>,
+): Promise<void> => {
+  await client.query(
+    `UPDATE core."pageLayoutWidget"
+        SET "objectMetadataId" = $1,
+            type = $2,
+            "gridPosition" = $3::jsonb,
+            position = $4::jsonb,
+            configuration = $5::jsonb,
+            "updatedAt" = NOW()
+      WHERE id = $6`,
+    [
+      objectMetadataId,
+      widgetBlueprint.type,
+      widgetBlueprint.gridPosition,
+      {
+        layoutMode: 'GRID',
+        ...widgetBlueprint.gridPosition,
+      },
+      configuration,
+      widgetId,
+    ],
+  );
+};
+
 const applyTabBlueprint = async (
   client: PoolClient,
   workspaceContext: WorkspaceContext,
@@ -888,11 +976,13 @@ const applyTabBlueprint = async (
   createdTabs: string[];
   createdViews: string[];
   createdWidgets: string[];
+  updatedWidgets: string[];
   skippedWidgets: string[];
 }> => {
   const createdTabs: string[] = [];
   const createdViews: string[] = [];
   const createdWidgets: string[] = [];
+  const updatedWidgets: string[] = [];
   const skippedWidgets: string[] = [];
   const { tab, created } = await ensurePageLayoutTab(
     client,
@@ -905,18 +995,13 @@ const applyTabBlueprint = async (
     createdTabs.push(tab.title);
   }
 
-  const existingWidgetTitles = await getExistingWidgetTitles(
+  const existingWidgetsByTitle = await getExistingWidgetsByTitle(
     client,
     workspaceContext,
     tab.id,
   );
 
   for (const widgetBlueprint of tabBlueprint.widgets) {
-    if (existingWidgetTitles.has(widgetBlueprint.title)) {
-      skippedWidgets.push(widgetBlueprint.title);
-      continue;
-    }
-
     const objectMetadata = resolveObjectMetadata(
       objectMetadataMap,
       widgetBlueprint.objectNameSingular,
@@ -943,6 +1028,21 @@ const applyTabBlueprint = async (
       configuration = buildGraphConfiguration(objectMetadata, widgetBlueprint);
     }
 
+    const existingWidget = existingWidgetsByTitle.get(widgetBlueprint.title);
+
+    if (existingWidget) {
+      await updateWidget(
+        client,
+        existingWidget.id,
+        objectMetadata.id,
+        widgetBlueprint,
+        configuration,
+      );
+
+      updatedWidgets.push(`${widgetBlueprint.title} (${existingWidget.id})`);
+      continue;
+    }
+
     const widgetId = await createWidget(
       client,
       workspaceContext,
@@ -953,13 +1053,17 @@ const applyTabBlueprint = async (
     );
 
     createdWidgets.push(`${widgetBlueprint.title} (${widgetId})`);
-    existingWidgetTitles.add(widgetBlueprint.title);
+    existingWidgetsByTitle.set(widgetBlueprint.title, {
+      id: widgetId,
+      title: widgetBlueprint.title,
+    });
   }
 
   return {
     createdTabs,
     createdViews,
     createdWidgets,
+    updatedWidgets,
     skippedWidgets,
   };
 };
@@ -988,6 +1092,7 @@ const applyDashboardBlueprintDb = async (
     createdTabs: [],
     createdViews: [],
     createdWidgets: [],
+    updatedWidgets: [],
     skippedWidgets: [],
   };
 
@@ -1003,6 +1108,7 @@ const applyDashboardBlueprintDb = async (
     result.createdTabs.push(...tabResult.createdTabs);
     result.createdViews.push(...tabResult.createdViews);
     result.createdWidgets.push(...tabResult.createdWidgets);
+    result.updatedWidgets.push(...tabResult.updatedWidgets);
     result.skippedWidgets.push(...tabResult.skippedWidgets);
   }
 
