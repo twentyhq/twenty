@@ -447,10 +447,23 @@ export class WorkflowDatabaseEventTriggerListener {
       return true;
     }
 
-    return evaluateStepFilters({
-      stepFilters: filter.stepFilters,
-      stepFilterGroups: filter.stepFilterGroups,
-      context: { [TRIGGER_STEP_ID]: eventPayload },
-    });
+    try {
+      return evaluateStepFilters({
+        stepFilters: filter.stepFilters,
+        stepFilterGroups: filter.stepFilterGroups,
+        context: { [TRIGGER_STEP_ID]: eventPayload },
+      });
+    } catch (error) {
+      // A malformed filter (e.g. an orphaned group reference) must not abort the
+      // rest of the batch through the suppressed @OnEvent handler. Fail closed so
+      // a broken condition skips the run rather than triggering unconditionally.
+      this.logger.error(
+        `Failed to evaluate database-event trigger filter for workflow ${eventListener.workflowId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      return false;
+    }
   }
 }

@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -521,6 +522,48 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       );
 
       expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    });
+
+    it('should fail closed (no enqueue, no throw) when the filter is malformed', async () => {
+      const loggerErrorSpy = jest
+        .spyOn(Logger.prototype, 'error')
+        .mockImplementation(() => undefined);
+
+      mockRepository.find.mockResolvedValue([
+        {
+          ...listenerWithFilter,
+          settings: {
+            eventName: databaseEventName,
+            filter: {
+              // The filter references a group that does not exist, which makes
+              // evaluation throw; the listener must skip the run rather than let
+              // the error abort the suppressed @OnEvent batch.
+              stepFilterGroups: [{ id: 'group-1', logicalOperator: 'AND' }],
+              stepFilters: [
+                {
+                  id: 'filter-1',
+                  type: 'boolean',
+                  value: 'true',
+                  operand: 'IS',
+                  stepOutputKey: '{{trigger.properties.after.isActive}}',
+                  stepFilterGroupId: 'missing-group',
+                },
+              ],
+            },
+          },
+        },
+      ]);
+
+      await expect(
+        listener.handleObjectRecordCreateEvent(
+          createPayloadWith({ isActive: true }),
+        ),
+      ).resolves.not.toThrow();
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+      expect(loggerErrorSpy).toHaveBeenCalled();
+
+      loggerErrorSpy.mockRestore();
     });
   });
 });
