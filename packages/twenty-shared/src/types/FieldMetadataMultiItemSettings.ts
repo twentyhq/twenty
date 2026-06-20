@@ -7,4 +7,5 @@ export enum FieldMetadataSettingsOnClickAction {
 export type FieldMetadataMultiItemSettings = {
   maxNumberOfValues?: number;
   clickAction?: FieldMetadataSettingsOnClickAction;
+  defaultCountryCode?: string;
 };

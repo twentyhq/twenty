@@ -86,9 +86,10 @@ export const PhonesFieldInput = () => {
 
   const phones = createPhonesFromFieldValue(draftValue);
 
-  const defaultCountry = stripSimpleQuotesFromString(
-    fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
-  );
+  const defaultCountry =
+    stripSimpleQuotesFromString(
+      fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
+    ) || fieldDefinition?.metadata?.settings?.defaultCountryCode;
 
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
