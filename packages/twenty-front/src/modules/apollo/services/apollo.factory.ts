@@ -46,6 +46,23 @@ let renewalPromise: Promise<boolean> | null = null;
 const TOKEN_RENEWAL_MAX_RETRIES = 3;
 const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
 
+type GraphQLErrorMonitoringLevel = 'warning' | 'error';
+
+const isInvalidArgsFilterError = (graphQLError: GraphQLFormattedError) =>
+  graphQLError.extensions?.subCode === 'INVALID_ARGS_FILTER';
+
+const getGraphQLEndpointTag = (uri: string) => {
+  if (uri.endsWith('/metadata')) {
+    return 'metadata';
+  }
+
+  if (uri.endsWith('/graphql')) {
+    return 'core';
+  }
+
+  return 'unknown';
+};
+
 export interface Options {
   uri: string;
   cache: ApolloClient.Options['cache'];
@@ -209,12 +226,16 @@ export class ApolloFactory implements ApolloManager {
         );
       };
 
+      const graphQLEndpointTag = getGraphQLEndpointTag(uri);
+
       const sendToSentry = ({
         graphQLError,
         operation,
+        level = 'error',
       }: {
         graphQLError: GraphQLFormattedError;
         operation: ApolloLink.Operation;
+        level?: GraphQLErrorMonitoringLevel;
       }) => {
         if (isDebugMode === true) {
           logDebug(
@@ -226,22 +247,37 @@ export class ApolloFactory implements ApolloManager {
           );
         }
         import('@sentry/react')
-          .then(({ captureException, withScope }) => {
+          .then(({ captureException, captureMessage, withScope }) => {
             withScope((scope) => {
               const error = new Error(graphQLError.message);
 
               error.name = graphQLError.message;
 
-              const fingerPrint: string[] = [];
+              const fingerPrint: string[] = [graphQLEndpointTag];
+
+              scope.setTag('graphql.endpoint', graphQLEndpointTag);
+
               if (isDefined(graphQLError.extensions)) {
                 scope.setExtra('extensions', graphQLError.extensions);
+                if (isDefined(graphQLError.extensions.code)) {
+                  scope.setTag(
+                    'graphql.error_code',
+                    graphQLError.extensions.code as string,
+                  );
+                  fingerPrint.push(graphQLError.extensions.code as string);
+                }
                 if (isDefined(graphQLError.extensions.subCode)) {
+                  scope.setTag(
+                    'graphql.error_sub_code',
+                    graphQLError.extensions.subCode as string,
+                  );
                   fingerPrint.push(graphQLError.extensions.subCode as string);
                 }
               }
 
               if (isDefined(operation.operationName)) {
                 scope.setExtra('operation', operation.operationName);
+                scope.setTag('graphql.operation_name', operation.operationName);
                 const genericOperationName = getGenericOperationName(
                   operation.operationName,
                 );
@@ -251,8 +287,15 @@ export class ApolloFactory implements ApolloManager {
                 }
               }
 
+              scope.setLevel(level);
+
               if (!isEmpty(fingerPrint)) {
                 scope.setFingerprint(fingerPrint);
+              }
+
+              if (level === 'warning') {
+                captureMessage(graphQLError.message);
+                return;
               }
 
               captureException(error); // Sentry expects a JS error
@@ -301,14 +344,28 @@ export class ApolloFactory implements ApolloManager {
                 if (graphQLError.extensions?.isExpected === true) {
                   return;
                 }
-                sendToSentry({ graphQLError, operation });
+
+                sendToSentry({
+                  graphQLError,
+                  operation,
+                  level: isInvalidArgsFilterError(graphQLError)
+                    ? 'warning'
+                    : 'error',
+                });
                 return;
               }
               case 'INTERNAL_SERVER_ERROR': {
                 return; // already caught in BE
               }
               default:
-                sendToSentry({ graphQLError, operation });
+                sendToSentry({
+                  graphQLError,
+                  operation,
+                  level:
+                    graphQLError.extensions?.code === 'GRAPHQL_VALIDATION_FAILED'
+                      ? 'warning'
+                      : 'error',
+                });
             }
           }
         } else if (ServerError.is(error)) {
