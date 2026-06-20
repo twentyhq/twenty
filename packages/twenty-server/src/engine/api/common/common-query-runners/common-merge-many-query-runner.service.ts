@@ -120,7 +120,19 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       mergedData: Partial<ObjectRecord>;
     },
   ): Promise<ObjectRecord> {
-    const { flatObjectMetadata } = queryRunnerContext;
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
+
+    const columnsToReturn = buildColumnsToReturn({
+      select: args.selectedFieldsResult.select,
+      relations: args.selectedFieldsResult.relations,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
 
     const transactionRepository = transactionManager.getRepository(
       flatObjectMetadata.nameSingular,
@@ -138,6 +150,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       .createQueryBuilder(flatObjectMetadata.nameSingular)
       .delete()
       .whereInIds(idsToDelete)
+      .returning(columnsToReturn)
       .execute();
 
     return this.updatePriorityRecord(
