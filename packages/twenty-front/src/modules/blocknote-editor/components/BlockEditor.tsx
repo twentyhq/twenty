@@ -85,7 +85,6 @@ const StyledEditor = styled.div`
   & .bn-block-content,
   & .bn-inline-content {
     overflow-wrap: anywhere;
-    word-break: break-word;
   }
 
   & .bn-inline-content {
