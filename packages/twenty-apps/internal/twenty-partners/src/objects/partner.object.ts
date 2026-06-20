@@ -30,7 +30,7 @@ export default defineObject({
       isNullable: true,
     },
     {
-      universalIdentifier: 'a0000010-0000-4000-8000-000000000010',
+      universalIdentifier: 'a0000020-0000-4000-8000-000000000020',
       type: FieldType.TEXT,
       name: 'email',
       label: 'Email',
