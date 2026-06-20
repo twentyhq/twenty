@@ -54,6 +54,29 @@ describe('sanitizeGeminiToolResultRefsMiddleware', () => {
     expect(JSON.parse(part.output.value)).toEqual(SCHEMA_WITH_REFS);
   });
 
+  it('should preserve output-level providerOptions when serializing to text', async () => {
+    const providerOptions = { google: { cacheControl: { type: 'ephemeral' } } };
+    const prompt: LanguageModelV3Prompt = [
+      {
+        role: 'tool',
+        content: [
+          {
+            type: 'tool-result',
+            toolCallId: 'call-1',
+            toolName: 'learn_tools',
+            output: { type: 'json', value: SCHEMA_WITH_REFS, providerOptions },
+          },
+        ],
+      },
+    ];
+
+    const [message] = await transform(prompt);
+    const part = (message.content as any[])[0];
+
+    expect(part.output.type).toBe('text');
+    expect(part.output.providerOptions).toEqual(providerOptions);
+  });
+
   it('should convert error-json output containing refs to error-text', async () => {
     const prompt: LanguageModelV3Prompt = [
       {

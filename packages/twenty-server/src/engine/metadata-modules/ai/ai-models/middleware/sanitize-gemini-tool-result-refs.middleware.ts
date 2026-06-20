@@ -31,12 +31,18 @@ const sanitizeToolResultPart = (
     return part;
   }
 
+  const value = JSON.stringify(part.output.value);
+
+  const providerOptions = part.output.providerOptions
+    ? { providerOptions: part.output.providerOptions }
+    : {};
+
   return {
     ...part,
     output:
       part.output.type === 'error-json'
-        ? { type: 'error-text', value: JSON.stringify(part.output.value) }
-        : { type: 'text', value: JSON.stringify(part.output.value) },
+        ? { type: 'error-text', value, ...providerOptions }
+        : { type: 'text', value, ...providerOptions },
   };
 };
 
