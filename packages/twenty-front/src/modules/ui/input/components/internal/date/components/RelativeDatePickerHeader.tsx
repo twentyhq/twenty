@@ -12,7 +12,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { DatePickerMonthYearNavigation } from '@/ui/input/components/internal/date/components/DatePickerMonthYearNavigation';
+import { RelativeDatePickerCalendarNavigation } from '@/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation';
 import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
 import { RELATIVE_DATETIME_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateTimeUnitSelectOptions';
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
@@ -45,8 +45,6 @@ type RelativeDatePickerHeaderProps = {
   unitDropdownWidth?: number;
   allowIntraDayUnits?: boolean;
   calendarViewDate?: string | null;
-  onChangeMonth?: (month: number) => void;
-  onChangeYear?: (year: number) => void;
   onAddMonth?: () => void;
   onSubtractMonth?: () => void;
   prevMonthButtonDisabled?: boolean;
@@ -64,8 +62,6 @@ export const RelativeDatePickerHeader = ({
   unitDropdownWidth,
   allowIntraDayUnits,
   calendarViewDate,
-  onChangeMonth,
-  onChangeYear,
   onAddMonth,
   onSubtractMonth,
   prevMonthButtonDisabled,
@@ -89,8 +85,6 @@ export const RelativeDatePickerHeader = ({
 
   const showCalendarNavigation =
     isDefined(calendarViewDate) &&
-    isDefined(onChangeMonth) &&
-    isDefined(onChangeYear) &&
     isDefined(onAddMonth) &&
     isDefined(onSubtractMonth);
 
@@ -172,15 +166,12 @@ export const RelativeDatePickerHeader = ({
       </StyledRelativeDateControls>
       {showCalendarNavigation && (
         <StyledRelativeDateControls>
-          <DatePickerMonthYearNavigation
-            date={calendarViewDate}
-            onChangeMonth={onChangeMonth}
-            onChangeYear={onChangeYear}
+          <RelativeDatePickerCalendarNavigation
+            calendarViewDate={calendarViewDate}
             onAddMonth={onAddMonth}
             onSubtractMonth={onSubtractMonth}
             prevMonthButtonDisabled={prevMonthButtonDisabled ?? false}
             nextMonthButtonDisabled={nextMonthButtonDisabled ?? false}
-            variant="relative"
           />
         </StyledRelativeDateControls>
       )}

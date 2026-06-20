@@ -35,18 +35,6 @@ export const useRelativeDateCalendarViewPlainDate = ({
     }
   }
 
-  const handleChangeMonth = (month: number) => {
-    setCalendarViewPlainDate((previousPlainDate) =>
-      previousPlainDate.with({ month }),
-    );
-  };
-
-  const handleChangeYear = (year: number) => {
-    setCalendarViewPlainDate((previousPlainDate) =>
-      previousPlainDate.with({ year }),
-    );
-  };
-
   const handleAddMonth = () => {
     setCalendarViewPlainDate((previousPlainDate) =>
       previousPlainDate.add({ months: 1 }),
@@ -61,8 +49,6 @@ export const useRelativeDateCalendarViewPlainDate = ({
 
   return {
     calendarViewPlainDate,
-    handleChangeMonth,
-    handleChangeYear,
     handleAddMonth,
     handleSubtractMonth,
   };

@@ -400,8 +400,6 @@ export const DateTimePicker = ({
 
   const {
     calendarViewPlainDate,
-    handleChangeMonth: handleRelativeCalendarChangeMonth,
-    handleChangeYear: handleRelativeCalendarChangeYear,
     handleAddMonth: handleRelativeCalendarAddMonth,
     handleSubtractMonth: handleRelativeCalendarSubtractMonth,
   } = useRelativeDateCalendarViewPlainDate({
@@ -585,8 +583,6 @@ export const DateTimePicker = ({
                   onChange={onRelativeDateChange}
                   allowIntraDayUnits={true}
                   calendarViewDate={calendarViewPlainDate.toString()}
-                  onChangeMonth={handleRelativeCalendarChangeMonth}
-                  onChangeYear={handleRelativeCalendarChangeYear}
                   onAddMonth={handleRelativeCalendarAddMonth}
                   onSubtractMonth={handleRelativeCalendarSubtractMonth}
                   prevMonthButtonDisabled={prevMonthButtonDisabled}
