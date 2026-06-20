@@ -1,4 +1,4 @@
-export type WorkflowPickRecordStrategy = 'RANDOM';
+export type WorkflowPickRecordStrategy = 'RANDOM' | 'ROUND_ROBIN';
 
 export type WorkflowPickRecordActionInput = {
   objectName: string;

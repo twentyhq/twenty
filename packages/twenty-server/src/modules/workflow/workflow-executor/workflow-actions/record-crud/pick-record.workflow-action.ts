@@ -6,6 +6,9 @@ import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import {
   WorkflowStepExecutorException,
@@ -16,13 +19,18 @@ import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowPickRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-pick-record-action.guard';
-import { type WorkflowPickRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-pick-record-action-input.type';
+import {
+  type WorkflowPickRecordActionInput,
+  type WorkflowPickRecordStrategy,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-pick-record-action-input.type';
 
 @Injectable()
 export class PickRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly findRecordsService: FindRecordsService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   async execute({
@@ -43,7 +51,7 @@ export class PickRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { objectName, recordIds } = resolveInput(
+    const { objectName, strategy, recordIds } = resolveInput(
       step.settings.input,
       context,
     ) as WorkflowPickRecordActionInput;
@@ -80,9 +88,38 @@ export class PickRecordWorkflowAction implements WorkflowAction {
       };
     }
 
-    const pickedRecord =
-      candidateRecords[Math.floor(Math.random() * candidateRecords.length)];
+    const orderedRecords = [...candidateRecords].sort((recordA, recordB) =>
+      String(recordA.id).localeCompare(String(recordB.id)),
+    );
 
-    return { result: pickedRecord };
+    const pickedIndex = await this.getPickedIndex({
+      strategy,
+      candidateCount: orderedRecords.length,
+      workspaceId: runInfo.workspaceId,
+      stepId: currentStepId,
+    });
+
+    return { result: orderedRecords[pickedIndex] };
+  }
+
+  private async getPickedIndex({
+    strategy,
+    candidateCount,
+    workspaceId,
+    stepId,
+  }: {
+    strategy: WorkflowPickRecordStrategy;
+    candidateCount: number;
+    workspaceId: string;
+    stepId: string;
+  }): Promise<number> {
+    if (strategy === 'ROUND_ROBIN') {
+      const cursorKey = `pick-record:round-robin:${workspaceId}:${stepId}`;
+      const nextCursor = await this.cacheStorageService.incrBy(cursorKey, 1);
+
+      return (nextCursor - 1) % candidateCount;
+    }
+
+    return Math.floor(Math.random() * candidateCount);
   }
 }

@@ -1,7 +1,10 @@
 import { z } from 'zod';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
 
-export const workflowPickRecordStrategySchema = z.enum(['RANDOM']);
+export const workflowPickRecordStrategySchema = z.enum([
+  'RANDOM',
+  'ROUND_ROBIN',
+]);
 
 export const workflowPickRecordActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({

@@ -4,12 +4,14 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { type SelectOption } from 'twenty-ui/input';
 import { HorizontalSeparator } from 'twenty-ui/layout';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
+import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -45,8 +47,12 @@ type WorkflowEditActionPickRecordProps = {
       };
 };
 
+type PickRecordStrategy =
+  WorkflowPickRecordAction['settings']['input']['strategy'];
+
 type PickRecordFormData = {
   objectNameSingular: string;
+  strategy: PickRecordStrategy;
   recordIds: string[];
 };
 
@@ -66,10 +72,16 @@ export const WorkflowEditActionPickRecord = ({
 
   const [formData, setFormData] = useState<PickRecordFormData>(() => ({
     objectNameSingular: action.settings.input.objectName,
+    strategy: action.settings.input.strategy,
     recordIds: action.settings.input.recordIds,
   }));
 
   const isFormDisabled = actionOptions.readonly ?? false;
+
+  const strategyOptions: SelectOption<PickRecordStrategy>[] = [
+    { label: t`Random`, value: 'RANDOM' },
+    { label: t`Round robin`, value: 'ROUND_ROBIN' },
+  ];
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
@@ -94,7 +106,7 @@ export const WorkflowEditActionPickRecord = ({
           ...action.settings,
           input: {
             objectName: updatedFormData.objectNameSingular,
-            strategy: action.settings.input.strategy,
+            strategy: updatedFormData.strategy,
             recordIds: updatedFormData.recordIds,
           },
         },
@@ -115,6 +127,7 @@ export const WorkflowEditActionPickRecord = ({
     }
 
     const newFormData: PickRecordFormData = {
+      ...formData,
       objectNameSingular: value,
       recordIds: [],
     };
@@ -122,6 +135,20 @@ export const WorkflowEditActionPickRecord = ({
     setFormData(newFormData);
     saveAction(newFormData);
     closeDropdown(dropdownId);
+  };
+
+  const handleStrategyChange = (strategy: PickRecordStrategy) => {
+    if (isFormDisabled === true) {
+      return;
+    }
+
+    const newFormData: PickRecordFormData = {
+      ...formData,
+      strategy,
+    };
+
+    setFormData(newFormData);
+    saveAction(newFormData);
   };
 
   const handleRecordIdsChange = (recordIds: string[]) => {
@@ -163,12 +190,22 @@ export const WorkflowEditActionPickRecord = ({
           />
         </StyledObjectSelectContainer>
 
+        <Select
+          dropdownId={`workflow-edit-action-pick-record-strategy-${action.id}`}
+          label={t`Strategy`}
+          fullWidth
+          disabled={isFormDisabled}
+          value={formData.strategy}
+          options={strategyOptions}
+          onChange={handleStrategyChange}
+        />
+
         <HorizontalSeparator noMargin />
 
         {isDefined(selectedObjectMetadataItem) && (
           <FormMultiRecordPicker
             key={selectedObjectMetadataItem.nameSingular}
-            label={t`Pick at random from`}
+            label={t`Pick from`}
             objectNameSingular={selectedObjectMetadataItem.nameSingular}
             defaultValue={formData.recordIds}
             onChange={(value) =>
