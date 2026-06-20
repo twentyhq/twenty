@@ -378,6 +378,7 @@ async function main() {
     // re-introduces retired values.
     const scope = mapLegacyScope(rawScope);
     const deploymentExpertise = rawScope.includes('HOSTING_ENVIRONMENT') ? ['SELF_HOST'] : [];
+    const sourcePrimaryEmail = p.emails?.primaryEmail?.trim();
     const data: Record<string, unknown> = {
       name: [p.name?.firstName, p.name?.lastName].filter(Boolean).join(' ').trim() || 'Unknown partner',
       slug,
@@ -394,6 +395,7 @@ async function main() {
       ...(p.city ? { city: p.city } : {}),
       ...(budgetCurrency(p.partnerBudgetMinimum) ? { projectBudgetMin: budgetCurrency(p.partnerBudgetMinimum) } : {}),
       ...(p.linkedinLink?.primaryLinkUrl ? { linkedin: { primaryLinkUrl: p.linkedinLink.primaryLinkUrl } } : {}),
+      ...(sourcePrimaryEmail ? { email: sourcePrimaryEmail } : {}),
       ...(companyId && APPLY ? { companyId } : {}),
     };
 

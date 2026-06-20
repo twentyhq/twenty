@@ -68,6 +68,7 @@ function buildApplicationNotes(input: SubmitPartnerApplicationInput): string | n
 // enum-typed columns are narrowed from the validated string inputs below.
 type PartnerFieldsForUpsert = {
   name: string;
+  email?: string;
   linkedin?: { primaryLinkUrl: string };
   city?: string;
   country?: CoreSchema.PartnerCountryEnum;
@@ -84,6 +85,7 @@ type PartnerFieldsForUpsert = {
 function buildPartnerFields(input: SubmitPartnerApplicationInput): PartnerFieldsForUpsert {
   const fields: PartnerFieldsForUpsert = {
     name: input.companyName.trim(),
+    email: input.email.trim(),
   };
   if (isNonEmptyString(input.linkedin)) fields.linkedin = { primaryLinkUrl: input.linkedin.trim() };
   if (isNonEmptyString(input.city)) fields.city = input.city.trim();

@@ -101,6 +101,7 @@ describe('submit-partner-application handler — upsert', () => {
         id: true,
         name: true,
         slug: true,
+        email: true,
         validationStage: true,
         reviewed: true,
         partnerTier: true,
@@ -110,6 +111,7 @@ describe('submit-partner-application handler — upsert', () => {
     });
     const node = partner.partner;
     expect(node?.name).toBe('YC Agency');
+    expect(node?.email).toBe('create.case@example.com');
     expect(node?.slug).toBe('yc-agency');
     expect(node?.validationStage).toBe('APPLICATION');
     expect(node?.reviewed).toBe(false);

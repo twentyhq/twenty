@@ -127,6 +127,7 @@ async function main() {
   for (const p of PARTNERS) {
     const data = {
       name: p.name, slug: p.slug, validationStage: p.validationStage, availability: p.availability,
+      email: `partner@${p.slug}.example`,
       introduction: p.introduction, calendarLink: { primaryLinkUrl: p.calendarLink },
       deploymentExpertise: p.deploymentExpertise, region: p.region, languagesSpoken: p.languagesSpoken,
       partnerTier: p.partnerTier, partnerScope: p.partnerScope, typeOfTeam: p.typeOfTeam,
