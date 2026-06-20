@@ -22,6 +22,8 @@
     color: var(--t-font-color-tertiary);
     cursor: default;
   }
+
+  @include focus-ring;
 }
 
 .small {

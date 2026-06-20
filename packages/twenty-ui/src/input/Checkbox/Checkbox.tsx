@@ -39,7 +39,9 @@ type CheckboxProps = {
   className?: string;
   disabled?: boolean;
   accent?: CheckboxAccent;
+  id?: string;
   'aria-label'?: string;
+  'aria-labelledby'?: string;
 };
 
 export const Checkbox = ({
@@ -54,7 +56,9 @@ export const Checkbox = ({
   className,
   disabled = false,
   accent = CheckboxAccent.Blue,
+  id,
   'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledby,
 }: CheckboxProps) => {
   const [isInternalChecked, setIsInternalChecked] =
     React.useState<boolean>(false);
@@ -68,8 +72,10 @@ export const Checkbox = ({
       checked={isInternalChecked}
       indeterminate={indeterminate}
       disabled={disabled}
+      id={id}
       name="styled-checkbox"
       aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledby}
       data-testid="input-checkbox"
       onCheckedChange={(value, eventDetails) => {
         onChange?.(
@@ -90,7 +96,11 @@ export const Checkbox = ({
     >
       <span className={styles.box}>
         <CheckboxPrimitive.Indicator className={styles.indicator}>
-          {indeterminate ? <IconMinus /> : <IconCheck />}
+          {indeterminate ? (
+            <IconMinus aria-hidden />
+          ) : (
+            <IconCheck aria-hidden />
+          )}
         </CheckboxPrimitive.Indicator>
       </span>
     </CheckboxPrimitive.Root>

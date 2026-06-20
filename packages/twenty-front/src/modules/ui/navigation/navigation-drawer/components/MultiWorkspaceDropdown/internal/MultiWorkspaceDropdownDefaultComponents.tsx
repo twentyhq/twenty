@@ -85,11 +85,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     );
   };
 
-  // The workspace name (and logo + subdomain) are collected by the shared
-  // creation form on the root domain, so we send the user there on the
-  // WorkspaceCreation step instead of creating a nameless workspace on the fly.
   const createWorkspace = () => {
-    closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
     redirectToDefaultDomain({
       pathname: AppPath.SignInUp,
       searchParams: { action: 'create-new-workspace' },

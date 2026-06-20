@@ -51,7 +51,7 @@ export const MainButton = ({
           : undefined
       }
     >
-      {Icon && <Icon size={theme.icon.size.sm} />}
+      {Icon && <Icon size={theme.icon.size.sm} aria-hidden />}
       {title}
     </button>
   );

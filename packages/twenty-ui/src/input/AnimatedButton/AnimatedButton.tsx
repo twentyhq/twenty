@@ -397,7 +397,7 @@ export const AnimatedButton = ({
           animate={animate}
           transition={transition}
         >
-          <Icon size={theme.icon.size.sm} />
+          <Icon size={theme.icon.size.sm} aria-hidden />
         </motion.div>
       )}
       {animatedSvg && (

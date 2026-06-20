@@ -12,7 +12,7 @@ describe('buildEnvVar', () => {
       (value: string, opts?: { workspaceId?: string }) =>
         `enc:v2:deadbeef:${value}|${opts?.workspaceId ?? 'instance'}`,
     ),
-    decryptVersioned: jest.fn(
+    decryptVersionedOrThrow: jest.fn(
       (value: string, _opts?: { workspaceId?: string }) =>
         value.replace(/^enc:v2:[0-9a-f]+:/, '').replace(/\|.*$/, ''),
     ),
@@ -79,9 +79,9 @@ describe('buildEnvVar', () => {
       API_SECRET: 'secret-123',
       DEBUG: 'true',
     });
-    expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledTimes(
-      3,
-    );
+    expect(
+      mockSecretEncryptionService.decryptVersionedOrThrow,
+    ).toHaveBeenCalledTimes(3);
   });
 
   it('routes each secret variable to its own workspace HKDF context', () => {
@@ -116,14 +116,16 @@ describe('buildEnvVar', () => {
 
     buildEnvVar(flatVariables, mockSecretEncryptionService);
 
-    expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
-      `enc:v2:deadbeef:value-a|${workspaceA}`,
-      { workspaceId: workspaceA },
-    );
-    expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
-      `enc:v2:deadbeef:value-b|${workspaceB}`,
-      { workspaceId: workspaceB },
-    );
+    expect(
+      mockSecretEncryptionService.decryptVersionedOrThrow,
+    ).toHaveBeenCalledWith(`enc:v2:deadbeef:value-a|${workspaceA}`, {
+      workspaceId: workspaceA,
+    });
+    expect(
+      mockSecretEncryptionService.decryptVersionedOrThrow,
+    ).toHaveBeenCalledWith(`enc:v2:deadbeef:value-b|${workspaceB}`, {
+      workspaceId: workspaceB,
+    });
   });
 
   it('should handle null or undefined values', () => {

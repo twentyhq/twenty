@@ -76,6 +76,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     icon: createViewInput.icon,
     isCompact: createViewInput.isCompact ?? false,
     shouldHideEmptyGroups: createViewInput.shouldHideEmptyGroups ?? false,
+    kanbanColumnWidth: createViewInput.kanbanColumnWidth ?? null,
     kanbanAggregateOperation: createViewInput.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,

@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
+import { phonesFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldDefaultValueSchema';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { mergeSettingsSchemas } from '@/settings/data-model/fields/forms/utils/mergeSettingsSchema';
 import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
@@ -28,7 +28,7 @@ type SettingsDataModelFieldPhonesFormProps = {
 
 export const settingsDataModelFieldPhonesFormSchema = z
   .object({
-    defaultValue: phonesFieldValueSchema,
+    defaultValue: phonesFieldDefaultValueSchema,
   })
   .merge(
     mergeSettingsSchemas(
@@ -91,7 +91,7 @@ export const SettingsDataModelFieldPhonesForm = ({
             <Select<string>
               dropdownId="selectDefaultCountryCode"
               value={stripSimpleQuotesFromString(
-                value?.primaryPhoneCountryCode,
+                value?.primaryPhoneCountryCode ?? '',
               )}
               onChange={(newPhoneCountryCode) =>
                 onChange({
