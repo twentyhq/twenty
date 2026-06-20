@@ -60,6 +60,7 @@ Per richiamare, da un componente front-end (headless), una funzione logica attiv
 * **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON.
 * **databaseEvent**: Viene eseguito sugli eventi del ciclo di vita degli oggetti dello spazio di lavoro. Quando l'operazione dell'evento è `updated`, è possibile specificare campi specifici da monitorare nell'array `updatedFields`. Se lasciato non definito o vuoto, qualsiasi aggiornamento attiverà la funzione.
 > ad es. `person.updated`, `*.created`, `company.*`
+* **serverWebhook**: Riceve webhook in entrata da un servizio di terze parti (Stripe, GitHub, Svix, …) su un singolo endpoint con ambito di registrazione e risolve lo spazio di lavoro di destinazione a partire dal payload. Vedi [Trigger webhook del server](#server-webhook-trigger).
 
 <Note>
 Puoi anche eseguire manualmente una funzione utilizzando la CLI:
@@ -169,6 +170,90 @@ Per motivi di sicurezza, le intestazioni di risposta sono limitate a un elenco c
 
 <Note>
 Il codice di stato deve essere un codice di stato HTTP valido (compreso tra 100 e 599). I nomi delle intestazioni di risposta vengono confrontati senza distinzione tra maiuscole e minuscole.
+</Note>
+
+#### Trigger webhook del server
+
+`httpRouteTriggerSettings` espone una funzione sotto `/s/` e risolve lo spazio di lavoro dall'host della richiesta — il che funziona quando ogni spazio di lavoro ha il proprio dominio. I provider di terze parti, tuttavia, inviano gli eventi di ogni tenant a **un** URL di webhook. Per quel caso, usa `serverWebhookTriggerSettings`: la funzione è raggiungibile in un endpoint con ambito di registrazione e lo spazio di lavoro viene risolto dal payload.
+
+```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  // Verify the signature yourself before doing anything (see below).
+  // Return a non-2xx Response to make the provider retry.
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-provider-webhook',
+  handler,
+  serverWebhookTriggerSettings: {
+    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  },
+});
+```
+
+La funzione è raggiungibile all'indirizzo:
+
+```
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+```
+
+Entrambi gli identificatori sono gli `universalIdentifier` del tuo manifest — quello della registrazione dell'applicazione e quello di questa funzione logica. Registra quell'URL presso il provider.
+
+**Risoluzione dello spazio di lavoro.** Poiché un endpoint serve ogni spazio di lavoro, la tua integrazione deve inserire il `workspaceId` di destinazione da qualche parte nella consegna, e `workspaceIdResolver.{ source, path }` indica alla piattaforma dove leggerlo:
+
+| Campo      | Valori                                                  | Note                                                                                                                                                       |
+| ---------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fonte`    | `body` \| `query` \| `header`                           | `body` legge il JSON analizzato. `query` è il più universale — di solito controlli l'URL di callback che registri, quindi aggiungi `?twentyWorkspaceId=…`. |
+| `percorso` | percorso con punti, ad es. `metadata.twentyWorkspaceId` | Limitato a segmenti alfanumerici / `_` / `-`; le chiavi del prototipo vengono rifiutate.                                                                   |
+
+Il valore risolto deve essere un UUID di spazio di lavoro valido **e** la tua app deve essere installata in quello spazio di lavoro, altrimenti la richiesta viene rifiutata prima che la funzione venga eseguita.
+
+<Warning>
+**La verifica della firma è tua responsabilità.** La piattaforma non verifica le firme dei webhook per questo trigger — si limita a risolvere lo spazio di lavoro ed eseguire la tua funzione. Il tuo handler deve verificare la firma autonomamente usando `event.rawBody` e gli header che hai elencato in `forwardedRequestHeaders`, confrontando con un segreto memorizzato come variabile server/applicazione. Verifica sempre **prima** di qualsiasi effetto collaterale e usa un confronto a tempo costante.
+</Warning>
+
+La maggior parte dei provider firma con HMAC-SHA256; le parti che differiscono sono il nome dell'header, la codifica del digest e la stringa del payload firmato. Alcuni esempi:
+
+| Provider                     | Header da inoltrare                                    | Stringa firmata              | Digest                                                     |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | ---------------------------------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (il segreto è in base64 dopo aver rimosso `whsec_`) |
+| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | esadecimale                                                |
+| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | esadecimale (prefissato con `sha256=`)                     |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                     |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | esadecimale (prefissato con `v0=`)                         |
+
+```ts
+import { createHmac, timingSafeEqual } from 'crypto';
+
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
+      .update(event.rawBody ?? '')
+      .digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    return new Response({ error: 'invalid signature' }, { status: 401 });
+  }
+
+  // ...handle the verified event
+  return { received: true };
+};
+```
+
+<Note>
+La funzione viene eseguita **in modo sincrono** e il valore restituito diventa la risposta HTTP, quindi i provider vedono il tuo codice di stato e possono ritentare in caso di codice non 2xx. Mantieni gli handler veloci — alcuni provider (ad es. Slack) vanno in timeout in pochi secondi. Poiché la funzione viene eseguita prima che la firma sia verificata, proteggi questo endpoint con limitazione della frequenza al tuo edge.
 </Note>
 
 #### Payload del trigger di evento del database
@@ -348,12 +433,52 @@ export default defineLogicFunction({
 });
 ```
 
+Per dichiarare i parametri **una sola volta** e servire entrambi i contesti, definisci un unico JSON Schema (`InputJsonSchema`) e convertilo per l'azione del flusso di lavoro con `jsonSchemaToInputSchema` da `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` accetta direttamente il JSON Schema, mentre `workflowActionTriggerSettings.inputSchema` si aspetta l'`InputSchema` di Twenty:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description` della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e quando dovrebbe essere invocato.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**Helper di runtime.** `twenty-sdk/utils` riesporta piccoli helper di runtime in modo che gli handler non importino mai direttamente da `twenty-shared`. Per esempio, `isDefined(value)` restituisce `false` sia per `null` che per `undefined` — usalo per restringere in modo sicuro gli input opzionali degli handler, che possono arrivare come `null` a runtime anche quando sono tipizzati come `T | undefined`:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **Hook di installazione** — i gestori di pre-installazione e post-installazione — condividono questo runtime, ma sono dichiarati con le proprie funzioni di definizione e non accettano impostazioni dei trigger. Consulta [Hook di installazione](/l/it/developers/extend/apps/config/install-hooks) per `definePreInstallLogicFunction` e `definePostInstallLogicFunction`.

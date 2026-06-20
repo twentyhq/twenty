@@ -16,23 +16,29 @@ Enriches **Person** and **Company** records with [People Data Labs](https://www.
 `enrich-company` / `enrich-person` (single-record functions exposed **both** as a workflow action
 and as an AI tool) all delegate to a shared, trigger-agnostic core in `src/logic-functions/handlers/`:
 
-- The bulk workflow-action functions accept a **list of records** (`{ records, overrideExistingValues? }`),
+- The bulk workflow-action functions accept a **list of records** (`{ records, updateFields? }`),
   call the PDL **bulk** Enrichment endpoints (`/person/bulk`, `/company/enrich/bulk`), and loop the
   single-record core over each, aggregating the outcome (`total` / `matched` / `notFound` / `skipped` /
   `errored`); a per-record failure is captured as `ERROR` without aborting the batch
   (`src/logic-functions/utils/run-batch-enrichment.ts`).
-- The single-record functions accept one record (`{ recordId, overrideExistingValues? }`), call the PDL
+- The single-record functions accept one record (`{ recordId, updateFields? }`), call the PDL
   **single-record** Enrichment endpoints (`/person/enrich`, `/company/enrich` —
   `src/logic-functions/utils/post-pdl-single-enrich.ts`), and return a single `EnrichResult`
   (`src/logic-functions/utils/run-single-enrichment.ts`). They declare both a
   `workflowActionTriggerSettings` and a `toolTriggerSettings`, so one function is usable as a workflow
   step and as an AI tool.
+- The **`updateFields`** select controls persistence: `Yes and overwrite` writes every enriched
+  standard field (replacing existing values), `Yes and don't overwrite` (the default) fills
+  standard fields only when empty, and `No` writes nothing to the record. In every mode each
+  matched result carries the enriched **mapped fields** under `data` (standard + `pdl*` values),
+  so `No` returns the data for downstream steps without modifying the record.
 
 - Read the record, guard against re-enriching within a TTL (`pdlLastEnrichedAt`), pick a
   match identifier (person: `pdlId` → LinkedIn → email → name; company: `pdlId` → domain →
   name), and call the PDL Person/Company Enrichment API (`src/logic-functions/utils/`).
-- On a match: fill **standard fields only when empty** (never clobber user data), always
-  (re)write `pdl*` fields, and set `pdlEnrichmentStatus = MATCHED`, `pdlLastEnrichedAt`,
+- On a match: fill **standard fields** per `updateFields` (default: only when empty, never
+  clobbering user data); when `updateFields` is not `No`, (re)write `pdl*` fields and set
+  `pdlEnrichmentStatus = MATCHED`, `pdlLastEnrichedAt`,
   `pdlRawPayload` (+ `pdlLikelihood` for Person). PDL `404` → `NOT_FOUND`; other errors →
   `ERROR`. No identifier / fresh TTL → skipped with no writes.
 - SELECT/MULTI_SELECT values are normalized and dropped if not in the field's option set

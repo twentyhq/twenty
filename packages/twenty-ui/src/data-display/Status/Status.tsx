@@ -1,9 +1,11 @@
 import { clsx } from 'clsx';
 
+import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { Loader } from '@ui/feedback/Loader/Loader';
 import { type ThemeColor } from '@ui/theme';
 import { themeCssVariables } from '@ui/theme-constants';
 import { parseThemeColor } from '@ui/utilities';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Status.module.scss';
 
@@ -30,6 +32,8 @@ export const Status = ({
     <h3
       className={clsx(styles.status, styles[weight], className)}
       onClick={onClick}
+      tabIndex={isDefined(onClick) ? 0 : undefined}
+      onKeyDown={handleClickableElementKeyDown}
       data-loader-visible={isLoaderVisible || undefined}
       style={
         {

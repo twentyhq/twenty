@@ -1,19 +1,62 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type CSSProperties,
-  type SyntheticEvent,
-} from 'react';
+import { type CSSProperties, type SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  closeSidePanel,
-  enqueueSnackbar,
-  unmountFrontComponent,
-} from 'twenty-sdk/front-component';
-import { themeCssVariables } from 'twenty-sdk/ui';
+import { closeSidePanel, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
 
 import { SEND_MESSAGE_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+// Workaround: 'twenty-sdk/ui' currently fails typecheck because it re-exports
+// from the unresolvable 'twenty-ui-deprecated'. Inline only the theme tokens
+// this component uses, keeping the same runtime CSS-variable values. Revert to
+// `import { themeCssVariables } from 'twenty-sdk/ui'` once the SDK export is fixed.
+const themeCssVariables = {
+  spacing: {
+    '1': 'var(--t-spacing-1)',
+    '2': 'var(--t-spacing-2)',
+    '3': 'var(--t-spacing-3)',
+    '4': 'var(--t-spacing-4)',
+    '8': 'var(--t-spacing-8)',
+    '20': 'var(--t-spacing-20)',
+  },
+  accent: {
+    accent4060: 'var(--t-accent-accent4060)',
+  },
+  background: {
+    primary: 'var(--t-background-primary)',
+    secondary: 'var(--t-background-secondary)',
+  },
+  border: {
+    color: {
+      medium: 'var(--t-border-color-medium)',
+      light: 'var(--t-border-color-light)',
+    },
+    radius: {
+      sm: 'var(--t-border-radius-sm)',
+    },
+  },
+  font: {
+    color: {
+      primary: 'var(--t-font-color-primary)',
+      secondary: 'var(--t-font-color-secondary)',
+      tertiary: 'var(--t-font-color-tertiary)',
+      inverted: 'var(--t-font-color-inverted)',
+      danger: 'var(--t-font-color-danger)',
+    },
+    size: {
+      xs: 'var(--t-font-size-xs)',
+      sm: 'var(--t-font-size-sm)',
+      md: 'var(--t-font-size-md)',
+    },
+    weight: {
+      regular: 'var(--t-font-weight-regular)',
+      medium: 'var(--t-font-weight-medium)',
+      semiBold: 'var(--t-font-weight-semi-bold)',
+    },
+    family: 'var(--t-font-family)',
+  },
+  color: {
+    blue: 'var(--t-color-blue)',
+  },
+};
 
 type SlackChannel = {
   id: string;

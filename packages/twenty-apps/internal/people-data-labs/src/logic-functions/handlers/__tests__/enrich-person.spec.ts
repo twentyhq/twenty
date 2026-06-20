@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { createCoreApiClientMock } from 'src/logic-functions/__mocks__/create-core-api-client-mock';
 import { PERSON_NODE_MOCK } from 'src/logic-functions/__mocks__/person-node.mock';
 import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person';
@@ -113,7 +114,7 @@ describe('enrichPersonCore', () => {
     });
   });
 
-  it('overwrites a populated standard field when overrideExistingValues is set', async () => {
+  it('overwrites a populated standard field when updateFields is "Yes and overwrite"', async () => {
     enrichPersonMock.mockResolvedValue([
       {
         outcome: 'matched',
@@ -129,11 +130,35 @@ describe('enrichPersonCore', () => {
     );
 
     await enrichPersonCore({
-      input: { recordId: 'p1', overrideExistingValues: true },
+      input: { recordId: 'p1', updateFields: UPDATE_FIELDS_OPTIONS.overwrite },
       client,
     });
 
     expect(captured.updatePerson?.jobTitle).toBe('CEO');
+  });
+
+  it('returns enriched data without writing when updateFields is "No"', async () => {
+    enrichPersonMock.mockResolvedValue([
+      {
+        outcome: 'matched',
+        httpStatus: 200,
+        likelihood: 8,
+        data: { id: 'pdl1', first_name: 'Jane', job_title: 'CEO' },
+      },
+    ]);
+    const captured: Captured = {};
+    const client = buildClient([PERSON_NODE_MOCK], captured);
+
+    const result = await enrichPersonCore({
+      input: { recordId: 'p1', updateFields: UPDATE_FIELDS_OPTIONS.no },
+      client,
+    });
+
+    expect(result.status).toBe('MATCHED');
+    expect(result.updatedFields).toEqual([]);
+    expect(result.data?.jobTitle).toBe('CEO');
+    expect(captured.updatePerson).toBeUndefined();
+    expect(captured.updatePeople).toBeUndefined();
   });
 
   it('skips when there is no usable identifier', async () => {

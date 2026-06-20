@@ -31,7 +31,7 @@ export const runSingleEnrichment = async <TNode, TData, TParams>({
     client,
     input: {
       records: recordId,
-      overrideExistingValues: input.overrideExistingValues,
+      updateFields: input.updateFields,
       minLikelihood: input.minLikelihood,
     },
     adapter,
