@@ -1,35 +1,36 @@
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import {
-  WORKFLOW_DIAGRAM_STICKY_NOTE_DEFAULT_COLOR,
-  WORKFLOW_DIAGRAM_STICKY_NOTE_DEFAULT_SIZE,
-} from '@/workflow/workflow-diagram/constants/WorkflowDiagramStickyNoteDefaults';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import { WORKFLOW_DIAGRAM_STICKY_NOTE_DEFAULTS } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStickyNoteDefaults';
 import { useUpdateWorkflowVersionStickyNotes } from '@/workflow/workflow-diagram/hooks/useUpdateWorkflowVersionStickyNotes';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type WorkflowStickyNote } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
 export const useWorkflowDiagramStickyNotes = () => {
-  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    workflowVisualizerWorkflowId,
-  );
-
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
   const { updateStickyNotes } = useUpdateWorkflowVersionStickyNotes();
 
-  const stickyNotes = workflowWithCurrentVersion?.currentVersion?.notes ?? [];
+  const getWorkflowVersionFromCache = useGetRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+  });
 
-  const persistStickyNotes = async (notes: Array<WorkflowStickyNote>) => {
+  const applyStickyNotesChange = async (
+    change: (
+      stickyNotes: Array<WorkflowStickyNote>,
+    ) => Array<WorkflowStickyNote>,
+  ) => {
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    await updateStickyNotes(workflowVersionId, notes);
+    const cachedWorkflowVersion =
+      getWorkflowVersionFromCache<WorkflowVersion>(workflowVersionId);
+
+    await updateStickyNotes(
+      workflowVersionId,
+      change(cachedWorkflowVersion?.notes ?? []),
+    );
   };
 
   const createStickyNote = async (position: { x: number; y: number }) => {
@@ -37,11 +38,14 @@ export const useWorkflowDiagramStickyNotes = () => {
       id: v4(),
       content: '',
       position,
-      size: WORKFLOW_DIAGRAM_STICKY_NOTE_DEFAULT_SIZE,
-      color: WORKFLOW_DIAGRAM_STICKY_NOTE_DEFAULT_COLOR,
+      size: WORKFLOW_DIAGRAM_STICKY_NOTE_DEFAULTS.size,
+      color: WORKFLOW_DIAGRAM_STICKY_NOTE_DEFAULTS.color,
     };
 
-    await persistStickyNotes([...stickyNotes, newStickyNote]);
+    await applyStickyNotesChange((stickyNotes) => [
+      ...stickyNotes,
+      newStickyNote,
+    ]);
 
     return newStickyNote.id;
   };
@@ -50,7 +54,7 @@ export const useWorkflowDiagramStickyNotes = () => {
     stickyNoteId: string,
     changes: Partial<Omit<WorkflowStickyNote, 'id'>>,
   ) => {
-    await persistStickyNotes(
+    await applyStickyNotesChange((stickyNotes) =>
       stickyNotes.map((stickyNote) =>
         stickyNote.id === stickyNoteId
           ? { ...stickyNote, ...changes }
@@ -60,7 +64,7 @@ export const useWorkflowDiagramStickyNotes = () => {
   };
 
   const removeStickyNote = async (stickyNoteId: string) => {
-    await persistStickyNotes(
+    await applyStickyNotesChange((stickyNotes) =>
       stickyNotes.filter((stickyNote) => stickyNote.id !== stickyNoteId),
     );
   };

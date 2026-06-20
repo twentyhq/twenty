@@ -1,9 +1,6 @@
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import {
-  WORKFLOW_DIAGRAM_STICKY_NOTE_COLORS,
-  WORKFLOW_DIAGRAM_STICKY_NOTE_MIN_SIZE,
-} from '@/workflow/workflow-diagram/constants/WorkflowDiagramStickyNoteDefaults';
+import { WORKFLOW_DIAGRAM_STICKY_NOTE_DEFAULTS } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStickyNoteDefaults';
 import { useWorkflowDiagramStickyNotes } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramStickyNotes';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStickyNoteNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -11,10 +8,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { NodeResizer } from '@xyflow/react';
 import { useContext, useState } from 'react';
+import { WORKFLOW_STICKY_NOTE_COLORS } from 'twenty-shared/workflow';
 import { ColorSample } from 'twenty-ui/data-display';
 import { IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
-import { type ThemeColor } from 'twenty-ui/theme';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledStickyNoteContainer = styled.div<{
@@ -94,7 +91,8 @@ export const WorkflowDiagramStickyNoteNode = ({
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
 
-  const { updateStickyNote, removeStickyNote } = useWorkflowDiagramStickyNotes();
+  const { updateStickyNote, removeStickyNote } =
+    useWorkflowDiagramStickyNotes();
 
   const [workflowSelectedNode, setWorkflowSelectedNode] = useAtomComponentState(
     workflowSelectedNodeComponentState,
@@ -124,8 +122,8 @@ export const WorkflowDiagramStickyNoteNode = ({
     <>
       <NodeResizer
         isVisible={selected}
-        minWidth={WORKFLOW_DIAGRAM_STICKY_NOTE_MIN_SIZE.width}
-        minHeight={WORKFLOW_DIAGRAM_STICKY_NOTE_MIN_SIZE.height}
+        minWidth={WORKFLOW_DIAGRAM_STICKY_NOTE_DEFAULTS.minSize.width}
+        minHeight={WORKFLOW_DIAGRAM_STICKY_NOTE_DEFAULTS.minSize.height}
         color={textColor}
         onResizeEnd={(_, params) =>
           updateStickyNote(id, {
@@ -136,7 +134,7 @@ export const WorkflowDiagramStickyNoteNode = ({
 
       {selected && (
         <StyledToolbar className="nodrag">
-          {WORKFLOW_DIAGRAM_STICKY_NOTE_COLORS.map((color: ThemeColor) => (
+          {WORKFLOW_STICKY_NOTE_COLORS.map((color) => (
             <StyledColorButton
               key={color}
               aria-label={color}
@@ -145,7 +143,10 @@ export const WorkflowDiagramStickyNoteNode = ({
               <ColorSample colorName={color} variant="default" />
             </StyledColorButton>
           ))}
-          <LightIconButton Icon={IconTrash} onClick={() => removeStickyNote(id)} />
+          <LightIconButton
+            Icon={IconTrash}
+            onClick={() => removeStickyNote(id)}
+          />
         </StyledToolbar>
       )}
 

@@ -3,7 +3,6 @@ import {
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { generateStickyNoteNodes } from '@/workflow/workflow-diagram/utils/generateStickyNoteNodes';
-import { type WorkflowStickyNote } from 'twenty-shared/workflow';
 import { FIRST_NODE_POSITION } from '@/workflow/workflow-diagram/constants/FirstNodePosition';
 import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
 import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
@@ -22,7 +21,10 @@ import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workf
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { isDefined } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import {
+  TRIGGER_STEP_ID,
+  type WorkflowStickyNote,
+} from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
 export const generateWorkflowDiagram = ({

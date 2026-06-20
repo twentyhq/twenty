@@ -1,5 +1,4 @@
 import { type WorkflowDiagramStickyNoteNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { type ThemeColor } from 'twenty-ui/theme';
 import { type WorkflowStickyNote } from 'twenty-shared/workflow';
 
 export const generateStickyNoteNodes = (
@@ -21,7 +20,7 @@ export const generateStickyNoteNodes = (
       nodeType: 'sticky-note',
       noteId: stickyNote.id,
       content: stickyNote.content,
-      color: stickyNote.color as ThemeColor,
+      color: stickyNote.color,
       size: stickyNote.size,
       position: stickyNote.position,
     },

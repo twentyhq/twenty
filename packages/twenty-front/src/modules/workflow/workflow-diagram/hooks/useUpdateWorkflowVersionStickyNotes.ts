@@ -36,22 +36,20 @@ export const useUpdateWorkflowVersionStickyNotes = () => {
     workflowVersionId: string,
     notes: Array<WorkflowStickyNote>,
   ) => {
-    await mutate({ variables: { input: { workflowVersionId, notes } } });
-
     const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);
 
-    if (!isDefined(cachedRecord)) {
-      return;
+    if (isDefined(cachedRecord)) {
+      updateRecordFromCache({
+        objectMetadataItems,
+        objectMetadataItem,
+        cache: apolloCoreClient.cache,
+        record: { ...cachedRecord, notes },
+        recordGqlFields: { notes: true },
+        objectPermissionsByObjectMetadataId,
+      });
     }
 
-    updateRecordFromCache({
-      objectMetadataItems,
-      objectMetadataItem,
-      cache: apolloCoreClient.cache,
-      record: { ...cachedRecord, notes },
-      recordGqlFields: { notes: true },
-      objectPermissionsByObjectMetadataId,
-    });
+    await mutate({ variables: { input: { workflowVersionId, notes } } });
   };
 
   return { updateStickyNotes };
