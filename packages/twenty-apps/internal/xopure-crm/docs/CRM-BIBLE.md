@@ -326,6 +326,15 @@ DB truth at fix time:
 
 `X0-54` closed these order/payment money semantics. `X0-43` remains open for the broader title/filter parity sweep on non-money widgets.
 
+### The Money Display Rule
+
+Dollar fields are the **primary UI fields**. Cent fields are **forensic only**.
+
+- Use dollar fields (for example `orderTotal`, `amount`, `refundAmount`, `teamVolume`, `heldCommission`) in dashboards, widget aggregates, and operator-facing record tables.
+- Keep `*Cents` fields for sync, parity, audit, and drill-down only.
+- Do not expose raw cent values as the primary number in user-facing widgets.
+- If only cents exist upstream, derive the dollar field in the sync or DB layer first, then point UI metadata at the dollar field.
+
 ---
 
 ## Key Source Files

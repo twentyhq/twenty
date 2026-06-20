@@ -44,7 +44,7 @@ export const paymentsDashboardBlueprint: DashboardBlueprint = {
           gridPosition: { row: 0, column: 6, rowSpan: 2, columnSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
-            aggregateFieldName: 'amount',
+            aggregateFieldName: 'refundAmount',
             aggregateOperation: 'SUM',
             label: 'Refund amount',
             filter: {
@@ -108,8 +108,8 @@ export const paymentsDashboardBlueprint: DashboardBlueprint = {
               { fieldName: 'status', position: 1, size: 130 },
               { fieldName: 'provider', position: 2, size: 120 },
               { fieldName: 'rail', position: 3, size: 120 },
-              { fieldName: 'amountCents', position: 4, size: 120 },
-              { fieldName: 'refundCents', position: 5, size: 120 },
+              { fieldName: 'amount', position: 4, size: 120 },
+              { fieldName: 'refundAmount', position: 5, size: 120 },
               { fieldName: 'description', position: 6, size: 220 },
               { fieldName: 'lastSyncedAt', position: 7, size: 160 },
             ],

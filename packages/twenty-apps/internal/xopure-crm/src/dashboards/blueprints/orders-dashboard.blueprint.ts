@@ -80,7 +80,7 @@ export const ordersDashboardBlueprint: DashboardBlueprint = {
               { fieldName: 'status', position: 2, size: 120 },
               { fieldName: 'paymentStatus', position: 3, size: 130 },
               { fieldName: 'fulfillmentStatus', position: 4, size: 150 },
-              { fieldName: 'totalCents', position: 5, size: 110 },
+              { fieldName: 'orderTotal', position: 5, size: 110 },
               { fieldName: 'manualReviewRequired', position: 6, size: 170 },
               { fieldName: 'orderedAt', position: 7, size: 160 },
             ],
