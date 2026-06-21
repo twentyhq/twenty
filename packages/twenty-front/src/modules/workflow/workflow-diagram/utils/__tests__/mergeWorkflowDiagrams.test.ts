@@ -133,3 +133,88 @@ it('Replaces duplicated properties with the next value', () => {
 }
 `);
 });
+
+it('Preserves the local position of a node that is being dragged when the next diagram has a stale position', () => {
+  const previousDiagram: WorkflowDiagram = {
+    nodes: [
+      {
+        data: {
+          nodeType: 'action',
+          name: '',
+          actionType: 'CODE',
+          hasNextStepIds: false,
+          position: { x: 120, y: 240 },
+          stepId: '',
+        },
+        id: '1',
+        position: { x: 120, y: 240 },
+        dragging: true,
+      },
+    ],
+    edges: [],
+  };
+  const nextDiagram: WorkflowDiagram = {
+    nodes: [
+      {
+        data: {
+          nodeType: 'action',
+          name: '',
+          actionType: 'CODE',
+          hasNextStepIds: false,
+          position: { x: 0, y: 0 },
+          stepId: '',
+        },
+        id: '1',
+        position: { x: 0, y: 0 },
+      },
+    ],
+    edges: [],
+  };
+
+  const result = mergeWorkflowDiagrams(previousDiagram, nextDiagram);
+
+  expect(result.nodes[0].position).toEqual({ x: 120, y: 240 });
+  expect(result.nodes[0].dragging).toBe(true);
+});
+
+it('Uses the next position when the node is not being dragged', () => {
+  const previousDiagram: WorkflowDiagram = {
+    nodes: [
+      {
+        data: {
+          nodeType: 'action',
+          name: '',
+          actionType: 'CODE',
+          hasNextStepIds: false,
+          position: { x: 120, y: 240 },
+          stepId: '',
+        },
+        id: '1',
+        position: { x: 120, y: 240 },
+        dragging: false,
+      },
+    ],
+    edges: [],
+  };
+  const nextDiagram: WorkflowDiagram = {
+    nodes: [
+      {
+        data: {
+          nodeType: 'action',
+          name: '',
+          actionType: 'CODE',
+          hasNextStepIds: false,
+          position: { x: 300, y: 400 },
+          stepId: '',
+        },
+        id: '1',
+        position: { x: 300, y: 400 },
+      },
+    ],
+    edges: [],
+  };
+
+  const result = mergeWorkflowDiagrams(previousDiagram, nextDiagram);
+
+  expect(result.nodes[0].position).toEqual({ x: 300, y: 400 });
+});

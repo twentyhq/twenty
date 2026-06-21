@@ -26,7 +26,14 @@ export const mergeWorkflowDiagrams = (
       {} as Partial<WorkflowDiagramNode>,
     );
 
-    return Object.assign(nodeWithPreservedProperties, nextNode);
+    const mergedNode = Object.assign(nodeWithPreservedProperties, nextNode);
+
+    if (previousNode?.dragging === true) {
+      mergedNode.dragging = true;
+      mergedNode.position = previousNode.position;
+    }
+
+    return mergedNode;
   });
 
   return {
