@@ -10,6 +10,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -20,7 +21,6 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.light};
@@ -109,11 +109,7 @@ export const WorkflowEditActionPickRecord = ({
   const loadBalanceFieldOptions: SelectOption<string>[] = (
     loadBalanceObjectMetadataItem?.fields ?? []
   )
-    .filter(
-      (field) =>
-        field.type === FieldMetadataType.RELATION &&
-        field.settings?.['relationType'] === 'MANY_TO_ONE',
-    )
+    .filter(isManyToOneRelationField)
     .map((field) => ({ label: field.label, value: field.name }));
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
