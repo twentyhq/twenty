@@ -27,12 +27,12 @@ import {
 
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
 import {
   type WorkflowAction,
   type WorkflowAiAgentAction,
   type WorkflowIteratorAction,
   type WorkflowLogicFunctionAction,
-  type WorkflowPickRecordAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   type WorkflowTrigger,
@@ -240,41 +240,10 @@ export class WorkflowValidationWorkspaceService {
         case WorkflowActionType.ITERATOR:
           issues.push(...this.validateIteratorStep({ step, steps, trigger }));
           break;
-        case WorkflowActionType.PICK_RECORD:
-          issues.push(...this.validatePickRecordStep(step));
-          break;
       }
     }
 
     return issues;
-  }
-
-  private validatePickRecordStep(
-    step: WorkflowPickRecordAction,
-  ): WorkflowValidationIssue[] {
-    const input = step.settings?.input;
-
-    if (!isDefined(input) || input.strategy !== 'LOAD_BALANCED') {
-      return [];
-    }
-
-    const loadBalance = input.loadBalance;
-
-    if (
-      !isNonEmptyString(loadBalance?.objectNameSingular) ||
-      !isNonEmptyString(loadBalance?.fieldName)
-    ) {
-      return [
-        {
-          severity: 'error',
-          code: 'INVALID_STEP_PARAMS',
-          message: `Step "${step.name ?? step.id}" uses load balancing but is missing the object and field to count by.`,
-          stepId: step.id,
-        },
-      ];
-    }
-
-    return [];
   }
 
   private validateIteratorStep({
@@ -622,7 +591,7 @@ export class WorkflowValidationWorkspaceService {
       return [];
     }
 
-    const { objectIdByNameSingular } =
+    const { objectIdByNameSingular, flatFieldMetadataMaps } =
       await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
 
     const issues: WorkflowValidationIssue[] = [];
@@ -650,6 +619,25 @@ export class WorkflowValidationWorkspaceService {
           message: `Step "${step.name ?? step.id}" targets object "${objectName}" which does not exist in this workspace.`,
           stepId: step.id,
         });
+
+        continue;
+      }
+
+      if (step.type === WorkflowActionType.PICK_RECORD) {
+        const loadBalanceError = getPickRecordLoadBalanceConfigError({
+          step,
+          objectIdByNameSingular,
+          flatFieldMetadataMaps,
+        });
+
+        if (isDefined(loadBalanceError)) {
+          issues.push({
+            severity: 'error',
+            code: 'INVALID_STEP_PARAMS',
+            message: loadBalanceError,
+            stepId: step.id,
+          });
+        }
       }
     }
 

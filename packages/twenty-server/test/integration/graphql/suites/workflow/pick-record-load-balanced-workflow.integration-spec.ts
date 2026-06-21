@@ -261,4 +261,154 @@ describe('Pick Record Workflow - load balanced (e2e)', () => {
 
     expect(result?.id).toBe(leastLoadedCompanyId);
   });
+
+  it('rejects activation when the count-by relation points to another object', async () => {
+    const createData = await graphql(`
+      mutation CreateWorkflow {
+        createWorkflow(data: { name: "Pick Record LB misrouted relation" }) {
+          id
+        }
+      }
+    `);
+
+    const misroutedWorkflowId = createData.createWorkflow.id;
+
+    try {
+      const workflowData = await graphql(
+        `
+          query GetWorkflow($id: UUID!) {
+            workflow(filter: { id: { eq: $id } }) {
+              versions {
+                edges {
+                  node {
+                    id
+                  }
+                }
+              }
+            }
+          }
+        `,
+        { id: misroutedWorkflowId },
+      );
+
+      const misroutedWorkflowVersionId =
+        workflowData.workflow.versions.edges[0].node.id;
+
+      await graphql(
+        `
+          mutation UpdateWorkflowVersion($id: UUID!, $data: WorkflowVersionUpdateInput!) {
+            updateWorkflowVersion(id: $id, data: $data) {
+              id
+            }
+          }
+        `,
+        {
+          id: misroutedWorkflowVersionId,
+          data: {
+            trigger: {
+              name: 'Manual Trigger',
+              type: 'MANUAL',
+              settings: { outputSchema: {} },
+              nextStepIds: [],
+              position: { x: 0, y: 0 },
+            },
+          },
+        },
+      );
+
+      await graphql(
+        `
+          mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
+            createWorkflowVersionStep(input: $input) {
+              stepsDiff
+            }
+          }
+        `,
+        {
+          input: {
+            workflowVersionId: misroutedWorkflowVersionId,
+            stepType: 'PICK_RECORD',
+            parentStepId: 'trigger',
+            position: { x: 200, y: 0 },
+          },
+        },
+      );
+
+      const stepsData = await graphql(
+        `
+          query GetWorkflowVersion($id: UUID!) {
+            workflowVersion(filter: { id: { eq: $id } }) {
+              steps
+            }
+          }
+        `,
+        { id: misroutedWorkflowVersionId },
+      );
+
+      const pickRecordStep = stepsData.workflowVersion.steps.find(
+        (step: { type: string }) => step.type === 'PICK_RECORD',
+      );
+
+      // pointOfContact is a many-to-one relation on opportunity, but it points
+      // to person, not the company pool — the silent misrouting the guard blocks.
+      await graphql(
+        `
+          mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
+            updateWorkflowVersionStep(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            workflowVersionId: misroutedWorkflowVersionId,
+            step: {
+              ...pickRecordStep,
+              settings: {
+                ...pickRecordStep.settings,
+                input: {
+                  objectName: 'company',
+                  strategy: 'LOAD_BALANCED',
+                  recordIds: [],
+                  loadBalance: {
+                    objectNameSingular: 'opportunity',
+                    fieldName: 'pointOfContact',
+                  },
+                },
+              },
+            },
+          },
+        },
+      );
+
+      const activateResponse = await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `
+            mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
+              activateWorkflowVersion(workflowVersionId: $workflowVersionId)
+            }
+          `,
+          variables: { workflowVersionId: misroutedWorkflowVersionId },
+        });
+
+      expect(activateResponse.body.errors).toBeDefined();
+      expect(activateResponse.body.errors[0].message).toContain(
+        'many-to-one relation',
+      );
+      expect(activateResponse.body.data?.activateWorkflowVersion).not.toBe(true);
+    } finally {
+      await graphql(
+        `
+          mutation DestroyWorkflow($id: ID!) {
+            destroyWorkflow(id: $id) {
+              id
+            }
+          }
+        `,
+        { id: misroutedWorkflowId },
+      );
+    }
+  });
 });
