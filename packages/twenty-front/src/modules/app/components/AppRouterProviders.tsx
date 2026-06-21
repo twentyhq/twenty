@@ -7,6 +7,8 @@ import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
+import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
+import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { SignOutOnOtherTabSignOutEffect } from '@/auth/effect-components/SignOutOnOtherTabSignOutEffect';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
@@ -34,11 +36,22 @@ import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
+const AUTH_AND_ONBOARDING_PATHS = [
+  ...ONGOING_USER_CREATION_PATHS,
+  ...ONBOARDING_PATHS,
+  AppPath.ResetPassword,
+];
+
 export const AppRouterProviders = () => {
-  const { pathname } = useLocation();
-  const pageTitle = getPageTitleFromPath(pathname);
+  const location = useLocation();
+  const pageTitle = getPageTitleFromPath(location.pathname);
+  const isSupportChatEnabledForRoute = !AUTH_AND_ONBOARDING_PATHS.some(
+    (appPath) => isMatchingLocation(location, appPath),
+  );
 
   return (
     <ApolloProvider>
@@ -79,7 +92,7 @@ export const AppRouterProviders = () => {
                           </AgentChatProvider>
                         </SnackBarProvider>
                         <MainContextStoreProvider />
-                        <SupportChatEffect />
+                        {isSupportChatEnabledForRoute && <SupportChatEffect />}
                         <PageChangeEffect />
                         <SignOutOnOtherTabSignOutEffect />
                       </PreComputedChipGeneratorsProvider>
