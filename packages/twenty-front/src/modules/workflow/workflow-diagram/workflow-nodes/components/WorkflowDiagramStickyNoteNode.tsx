@@ -9,9 +9,8 @@ import { useLingui } from '@lingui/react/macro';
 import { NodeResizer } from '@xyflow/react';
 import { useContext, useState } from 'react';
 import { WORKFLOW_STICKY_NOTE_COLORS } from 'twenty-shared/workflow';
-import { ColorSample } from 'twenty-ui/data-display';
 import { IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { ColorPickerButton, LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledStickyNoteContainer = styled.div<{
@@ -73,14 +72,6 @@ const StyledToolbar = styled.div`
   top: -40px;
 `;
 
-const StyledColorButton = styled.button`
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  padding: 0;
-`;
-
 export const WorkflowDiagramStickyNoteNode = ({
   id,
   data,
@@ -135,13 +126,12 @@ export const WorkflowDiagramStickyNoteNode = ({
       {selected && (
         <StyledToolbar className="nodrag">
           {WORKFLOW_STICKY_NOTE_COLORS.map((color) => (
-            <StyledColorButton
+            <ColorPickerButton
               key={color}
-              aria-label={color}
+              colorName={color}
+              isSelected={data.color === color}
               onClick={() => updateStickyNote(id, { color })}
-            >
-              <ColorSample colorName={color} variant="default" />
-            </StyledColorButton>
+            />
           ))}
           <LightIconButton
             Icon={IconTrash}
