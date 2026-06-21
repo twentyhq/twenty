@@ -12,6 +12,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -117,9 +118,15 @@ export const WorkflowEditActionPickRecord = ({
     )
     .map((field) => ({ label: field.label, value: field.name }));
 
+  const hasLoadBalanceFieldOptions = loadBalanceFieldOptions.length > 0;
+
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
   );
+
+  const loadBalancePoolObjectLabel =
+    selectedObjectMetadataItem?.labelSingular ?? t`the selected object`;
+
   const selectedOption = selectedObjectMetadataItem
     ? {
         label: selectedObjectMetadataItem.labelPlural,
@@ -295,19 +302,28 @@ export const WorkflowEditActionPickRecord = ({
             </StyledObjectSelectContainer>
 
             {isDefined(loadBalanceObjectMetadataItem) && (
-              <Select
-                dropdownId={`workflow-edit-action-pick-record-load-balance-field-${action.id}`}
-                label={t`Count by`}
-                fullWidth
-                disabled={isFormDisabled}
-                emptyOption={{
-                  label: i18n._(defaultSelectedOptionMessage),
-                  value: '',
-                }}
-                value={formData.loadBalance?.fieldName ?? ''}
-                options={loadBalanceFieldOptions}
-                onChange={handleLoadBalanceFieldChange}
-              />
+              <StyledObjectSelectContainer>
+                <Select
+                  dropdownId={`workflow-edit-action-pick-record-load-balance-field-${action.id}`}
+                  label={t`Count by`}
+                  fullWidth
+                  disabled={isFormDisabled || !hasLoadBalanceFieldOptions}
+                  emptyOption={{
+                    label: hasLoadBalanceFieldOptions
+                      ? i18n._(defaultSelectedOptionMessage)
+                      : t`No relation to count by`,
+                    value: '',
+                  }}
+                  value={formData.loadBalance?.fieldName ?? ''}
+                  options={loadBalanceFieldOptions}
+                  onChange={handleLoadBalanceFieldChange}
+                />
+                {!hasLoadBalanceFieldOptions && (
+                  <InputHint>
+                    {t`${loadBalanceObjectMetadataItem.labelPlural} have no relation to ${loadBalancePoolObjectLabel}. Pick a different object to balance by.`}
+                  </InputHint>
+                )}
+              </StyledObjectSelectContainer>
             )}
           </>
         )}
