@@ -94,7 +94,7 @@
     "dataloader": "2.2.2",
     "date-fns": "4.4.0",
     "digest-fetch": "^3.1.1",
-    "dompurify": "^3.4.0",
+    "dompurify": "^3.4.11",
     "dotenv": "16.4.5",
     "email-reply-parser": "^2.3.5",
     "express": "5.2.1",
