@@ -24,6 +24,8 @@ import {
   type WorkflowPickRecordStrategy,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-pick-record-action-input.type';
 
+const ROUND_ROBIN_CURSOR_TTL_MS = 1000 * 60 * 60 * 24 * 90;
+
 @Injectable()
 export class PickRecordWorkflowAction implements WorkflowAction {
   constructor(
@@ -116,6 +118,11 @@ export class PickRecordWorkflowAction implements WorkflowAction {
     if (strategy === 'ROUND_ROBIN') {
       const cursorKey = `pick-record:round-robin:${workspaceId}:${stepId}`;
       const nextCursor = await this.cacheStorageService.incrBy(cursorKey, 1);
+
+      await this.cacheStorageService.expire(
+        cursorKey,
+        ROUND_ROBIN_CURSOR_TTL_MS,
+      );
 
       return (nextCursor - 1) % candidateCount;
     }
