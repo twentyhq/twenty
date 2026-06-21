@@ -109,7 +109,12 @@ export const WorkflowEditActionPickRecord = ({
   const loadBalanceFieldOptions: SelectOption<string>[] = (
     loadBalanceObjectMetadataItem?.fields ?? []
   )
-    .filter(isManyToOneRelationField)
+    .filter(
+      (field) =>
+        isManyToOneRelationField(field) &&
+        field.relation?.targetObjectMetadata?.nameSingular ===
+          formData.objectNameSingular,
+    )
     .map((field) => ({ label: field.label, value: field.name }));
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
@@ -163,6 +168,9 @@ export const WorkflowEditActionPickRecord = ({
       ...formData,
       objectNameSingular: value,
       recordIds: [],
+      loadBalance: isDefined(formData.loadBalance)
+        ? { ...formData.loadBalance, fieldName: '' }
+        : undefined,
     };
 
     setFormData(newFormData);
