@@ -158,4 +158,53 @@ describe('isMatchingDateFilter', () => {
       ).toBe(false);
     });
   });
+
+  describe('Date object value', () => {
+    it('matches eq filter when value is a Date object', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { eq: testDate },
+          value: new Date(testDate),
+        }),
+      ).toBe(true);
+    });
+
+    it('matches gt filter when value is a Date object', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { gt: '2023-12-18T12:15:29.810Z' },
+          value: new Date(testDate),
+        }),
+      ).toBe(true);
+    });
+
+    it('matches in filter when value is a Date object', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { in: [testDate, '2023-12-20T12:15:29.810Z'] },
+          value: new Date(testDate),
+        }),
+      ).toBe(true);
+    });
+  });
+
+  describe('null value', () => {
+    it('matches is NULL', () => {
+      expect(
+        isMatchingDateFilter({ dateFilter: { is: 'NULL' }, value: null }),
+      ).toBe(true);
+    });
+
+    it('does not match is NOT_NULL', () => {
+      expect(
+        isMatchingDateFilter({ dateFilter: { is: 'NOT_NULL' }, value: null }),
+      ).toBe(false);
+    });
+
+    it('returns false for comparison filters instead of throwing', () => {
+      expect(
+        isMatchingDateFilter({ dateFilter: { gt: testDate }, value: null }),
+      ).toBe(false);
+    });
+  });
 });
