@@ -1,25 +1,13 @@
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { WORKFLOW_DIAGRAM_STICKY_NOTE_DEFAULTS } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStickyNoteDefaults';
 import { useUpdateWorkflowVersionStickyNotes } from '@/workflow/workflow-diagram/hooks/useUpdateWorkflowVersionStickyNotes';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowStickyNote } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
 export const useWorkflowDiagramStickyNotes = () => {
-  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    workflowVisualizerWorkflowId,
-  );
-
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
@@ -29,19 +17,19 @@ export const useWorkflowDiagramStickyNotes = () => {
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
 
-  const currentVersionId = workflowWithCurrentVersion?.currentVersion?.id;
-
+  // Read from the resolved updatable version: editing an Active workflow mints
+  // a fresh draft whose notes the server already cloned, so the snapshot must
+  // come from that draft, not the version that was current before promotion.
   const applyStickyNotesChange = async (
     change: (
       stickyNotes: Array<WorkflowStickyNote>,
     ) => Array<WorkflowStickyNote>,
   ) => {
-    const currentStickyNotes = isDefined(currentVersionId)
-      ? (getWorkflowVersionFromCache<WorkflowVersion>(currentVersionId)
-          ?.notes ?? [])
-      : [];
-
     const workflowVersionId = await getUpdatableWorkflowVersion();
+
+    const currentStickyNotes =
+      getWorkflowVersionFromCache<WorkflowVersion>(workflowVersionId)?.notes ??
+      [];
 
     await updateStickyNotes(workflowVersionId, change(currentStickyNotes));
   };
