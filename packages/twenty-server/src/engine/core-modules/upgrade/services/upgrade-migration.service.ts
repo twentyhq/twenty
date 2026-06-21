@@ -180,12 +180,12 @@ export class UpgradeMigrationService {
   // across instance and active-workspace scopes, with its status.
   // isInitial records are excluded — they represent activation
   // state, not execution progress.
-  async getLastAttemptedCommandNameOrThrow(
+  async getLastAttemptedCommandName(
     allActiveOrSuspendedWorkspaceIds: string[],
   ): Promise<{
     name: string;
     status: UpgradeMigrationStatus;
-  }> {
+  } | null> {
     const queryBuilder = this.upgradeMigrationRepository
       .createQueryBuilder('migration')
       .select(['migration.name', 'migration.status'])
@@ -215,13 +215,28 @@ export class UpgradeMigrationService {
       .orderBy('migration.createdAt', 'DESC')
       .getOne();
 
+    return isDefined(migration)
+      ? { name: migration.name, status: migration.status }
+      : null;
+  }
+
+  async getLastAttemptedCommandNameOrThrow(
+    allActiveOrSuspendedWorkspaceIds: string[],
+  ): Promise<{
+    name: string;
+    status: UpgradeMigrationStatus;
+  }> {
+    const migration = await this.getLastAttemptedCommandName(
+      allActiveOrSuspendedWorkspaceIds,
+    );
+
     if (!migration) {
       throw new Error(
         'No upgrade migration found — the database may not have been initialized',
       );
     }
 
-    return { name: migration.name, status: migration.status };
+    return migration;
   }
 
   async getWorkspaceLastAttemptedCommandName(

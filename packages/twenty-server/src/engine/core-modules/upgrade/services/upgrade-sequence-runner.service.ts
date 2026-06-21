@@ -191,9 +191,13 @@ export class UpgradeSequenceRunnerService {
     allActiveOrSuspendedWorkspaceIds: string[];
   }): Promise<number> {
     const lastAttempted =
-      await this.upgradeMigrationService.getLastAttemptedCommandNameOrThrow(
+      await this.upgradeMigrationService.getLastAttemptedCommandName(
         allActiveOrSuspendedWorkspaceIds,
       );
+
+    if (!isDefined(lastAttempted)) {
+      return 0;
+    }
 
     const lastAttemptedCursor =
       this.upgradeSequenceReaderService.locateStepInSequenceOrThrow({

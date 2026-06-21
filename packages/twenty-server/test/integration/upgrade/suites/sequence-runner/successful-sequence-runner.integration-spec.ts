@@ -46,6 +46,32 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     expect(report).toEqual({ totalSuccesses: 0, totalFailures: 0 });
   });
 
+  it('should ignore initial-only migration history and start from the first step', async () => {
+    const sequence = [makeFastInstance('Ic1')];
+
+    setMockActiveWorkspaceIds([WS_1]);
+
+    await seedWorkspaceMigration(context.dataSource, {
+      name: 'Wc0',
+      status: 'completed',
+      workspaceId: WS_1,
+      isInitial: true,
+    });
+
+    await context.runner.run({
+      sequence,
+      options: DEFAULT_OPTIONS,
+    });
+
+    const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
+
+    expect(executed.map(migrationRecordToKey)).toStrictEqual([
+      `Wc0:${WS_1}:completed:1:initial`,
+      'Ic1:instance:completed:1',
+      `Ic1:${WS_1}:completed:1`,
+    ]);
+  });
+
   it('should resume from a completed instance command and run remaining steps', async () => {
     const sequence = [
       makeFastInstance('Ic1'),

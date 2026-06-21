@@ -80,7 +80,7 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     jest.restoreAllMocks();
   });
 
-  it('should throw when no migration history exists', async () => {
+  it('should start from the beginning when no migration history exists', async () => {
     const sequence = [makeFastInstance('Ic1')];
 
     await expect(
@@ -88,9 +88,13 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
         sequence,
         options: DEFAULT_OPTIONS,
       }),
-    ).rejects.toThrow(
-      'No upgrade migration found — the database may not have been initialized',
-    );
+    ).resolves.toEqual({ totalFailures: 0, totalSuccesses: 0 });
+
+    const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
+
+    expect(executed.map(migrationRecordToKey)).toStrictEqual([
+      'Ic1:instance:completed:1',
+    ]);
   });
 
   it('should throw when cursor command is not found in the sequence', async () => {
