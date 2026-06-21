@@ -119,6 +119,11 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         joinColumnName: 'companyId',
       },
     ),
+    createMockFlatFieldMetadata(
+      'created-at-id',
+      'createdAt',
+      FieldMetadataType.DATE_TIME,
+    ),
   ];
 
   const flatObjectMetadata = createMockFlatObjectMetadata(
@@ -326,5 +331,22 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         flatFieldMetadataMaps,
       }),
     ).toBe(false);
+  });
+
+  it('matches a date filter when the record value is a Date object', () => {
+    const createdAt = new Date('2026-02-18T09:18:30.061Z');
+
+    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+      record: { ...baseRecord, createdAt },
+      filter: {
+        createdAt: {
+          gt: '2026-01-01T00:00:00.000Z',
+        },
+      },
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    expect(result).toBe(true);
   });
 });
