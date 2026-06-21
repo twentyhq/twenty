@@ -10,6 +10,7 @@ import { generateViews } from './mock-data/generate-views.js';
 import { authenticate } from './mock-data/utils.js';
 
 const main = async () => {
+  console.time('Total generation time');
   const token = await authenticate();
 
   const metadata = await generateObjectMetadata(token);
@@ -34,6 +35,14 @@ const main = async () => {
     console.warn('Skipping API keys generation:', (error as Error).message);
   }
 
+  console.log('All mock data generated!');
+  console.timeEnd('Total generation time');
+};
+
+main().catch((error) => {
+  console.error('Fatal error:', error);
+  process.exit(1);
+});
   console.log('All mock data generated!');
 };
 
