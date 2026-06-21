@@ -5,10 +5,6 @@ import { v5 as uuidv5 } from 'uuid';
 const ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE =
   'b403ec59-4d80-4f22-85e6-717a192dc9cb';
 
-// Deterministic serialization for the predicate hash seed. Plain JSON.stringify does not
-// guarantee object key order, so the same logical value could hash to different ids across
-// builds; sorting keys recursively keeps the derived universalIdentifier stable. Array order
-// is preserved because it is semantically significant.
 const stableStringify = (value: unknown): string => {
   if (value === null || typeof value !== 'object') {
     return JSON.stringify(value) ?? 'null';
@@ -49,9 +45,6 @@ export const fromRoleConfigToRoleManifest = (
         ),
       }),
     ),
-    // Predicate groups keep their author-provided universalIdentifier (predicates reference
-    // them by it). Predicate universalIdentifiers are derived from their semantic content so
-    // they stay stable across rebuilds without the author having to manage uuids.
     rowLevelPermissionPredicateGroups:
       roleConfig.rowLevelPermissionPredicateGroups ?? [],
     rowLevelPermissionPredicates: (
@@ -59,9 +52,6 @@ export const fromRoleConfigToRoleManifest = (
     ).map((predicate) => ({
       ...predicate,
       universalIdentifier: uuidv5(
-        // Every field that distinguishes two predicates must be in the key, otherwise
-        // semantically different predicates would derive the same universalIdentifier and
-        // collide when added to the flat entity maps at sync time.
         [
           roleConfig.universalIdentifier,
           'rlp',

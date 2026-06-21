@@ -353,8 +353,6 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         });
       }
 
-      // Groups are added before predicates so that predicates referencing a group resolve
-      // against an already-populated map.
       for (const rowLevelPermissionPredicateGroupManifest of roleManifest.rowLevelPermissionPredicateGroups ??
         []) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({

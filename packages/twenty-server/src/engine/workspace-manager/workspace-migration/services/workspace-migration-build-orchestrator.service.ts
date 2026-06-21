@@ -212,9 +212,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
         ALL_METADATA_NAME.role,
         workspaceMigrationRoleActionsBuilderService,
       ),
-      // Predicate groups and predicates reference the role (and its objects/fields), so the
-      // role must already exist in the optimistic maps when they are validated. This mirrors
-      // object/field permissions, which sit after the role for the same reason.
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.rowLevelPermissionPredicateGroup,
         workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,

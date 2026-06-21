@@ -26,22 +26,14 @@ import { PARTNER_USER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-user-on
 import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
 import { PARTNER_USER_ON_PERSON_FIELD_ID } from 'src/fields/partner-user-on-person.field';
 
-export const PARTNER_ROLE_LABEL = 'Partner';
-
-// External partner self-service role: a partner sees only its own records, can edit its
-// own Partner profile and an Opportunity's stage + amount; Company/Person are read-only.
-// Row-level scoping ships declaratively via `rowLevelPermissionPredicates` below, so it is
-// synced with the role on every install/upgrade — no post-install script required.
-//
 // `updatedBy` and `position` must stay editable even though they're not partner-facing: the
 // server injects `updatedBy` into every update (ActorFromAuthContextService) and co-writes
 // `position` with `stage` on a kanban drag, so locking either makes ALL opportunity updates
-// fail with PERMISSION_DENIED. The server overwrites both regardless, so there's nothing to
-// protect. `createdBy` stays locked (not injected on update); `searchVector` is a generated
-// column, so its lock is an inert no-op.
+// fail with PERMISSION_DENIED. `createdBy` stays locked (not injected on update); `searchVector`
+// is a generated column, so its lock is an inert no-op.
 export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
-  label: PARTNER_ROLE_LABEL,
+  label: 'Partner',
   description:
     'External partner self-service role. Sees only its own Partner/Person/Company/Opportunity records (row-level). Can edit its own Partner profile and an Opportunity’s stage + amount; Company and Person are read-only.',
   icon: 'IconBuildingStore',
@@ -305,9 +297,6 @@ export default defineRole({
       canDestroyObjectRecords: false,
     },
     {
-      // Read-only so the UI can resolve member-typed relations (own partnerUser link,
-      // owner/createdBy). The workspaceMember predicate below scopes this to the partner's
-      // own member record so the internal roster stays hidden.
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
       canReadObjectRecords: true,
@@ -316,10 +305,6 @@ export default defineRole({
       canDestroyObjectRecords: false,
     },
   ],
-  // Row-level security: "the record's partnerUser relation IS the current workspace member"
-  // on each owned object, so a partner only ever sees its own records. Operand must be IS
-  // (the RELATION query filter rejects CONTAINS); value stays unset because
-  // workspaceMemberFieldUniversalIdentifier injects the current member's id at query time.
   rowLevelPermissionPredicates: [
     {
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -357,7 +342,6 @@ export default defineRole({
           .universalIdentifier,
     },
     {
-      // "id IS the current member" scopes workspaceMember reads to the partner's own record.
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
       fieldUniversalIdentifier:

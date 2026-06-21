@@ -26,9 +26,6 @@ const PERSON_OBJECT_UNIVERSAL_IDENTIFIER =
 const WORKSPACE_MEMBER_ID_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.workspaceMember.fields.id.universalIdentifier;
 
-// A custom field contributed to the standard Person object. The predicate scopes on it; using
-// an app-owned field keeps the test self-contained and exercises cross-app reference resolution
-// (the predicate also points at the standard workspaceMember.id field).
 const personScopingFieldManifest: FieldManifest = {
   universalIdentifier: TEST_FIELD_ID,
   type: FieldMetadataType.TEXT,
@@ -170,8 +167,6 @@ describe('Manifest sync - row level permission predicates declared on a role', (
     expect(predicate.objectMetadataId).toBe(personObjectId);
     expect(predicate.fieldMetadataId).toBeTruthy();
     expect(predicate.workspaceMemberFieldMetadataId).toBeTruthy();
-    // The whole point of declarative RLS: the predicate is owned by the app that ships the
-    // role, not by the workspace's generic custom-application bucket.
     expect(predicate.applicationId).toBe(applicationId);
   }, 60000);
 
@@ -188,8 +183,6 @@ describe('Manifest sync - row level permission predicates declared on a role', (
     expect(createdRows).toHaveLength(1);
     const predicateId = createdRows[0].id;
 
-    // Re-sync with a changed operand and the same universalIdentifier: the existing predicate
-    // row is updated, not duplicated.
     await syncApplication({
       manifest: buildManifestWithPredicates([
         partnerUserStylePredicate(RowLevelPermissionPredicateOperand.IS_NOT),
@@ -205,7 +198,6 @@ describe('Manifest sync - row level permission predicates declared on a role', (
       RowLevelPermissionPredicateOperand.IS_NOT,
     );
 
-    // Drop the predicate from the manifest: inferred deletion removes it.
     await syncApplication({
       manifest: buildManifestWithPredicates([]),
       expectToFail: false,
