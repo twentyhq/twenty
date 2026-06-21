@@ -22,6 +22,8 @@ import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src
 import { fromPermissionFlagManifestToUniversalFlatPermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-manifest-to-universal-flat-permission-flag.util';
 import { fromPermissionFlagToUniversalFlatRolePermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-to-universal-flat-role-permission-flag.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
+import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
+import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { computeSearchVectorUniversalSettingsFromObjectManifest } from 'src/engine/core-modules/application/application-manifest/utils/compute-search-vector-universal-settings-from-object-manifest.util';
 import { fromViewFieldGroupManifestToUniversalFlatViewFieldGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-group-manifest-to-universal-flat-view-field-group.util';
@@ -348,6 +350,42 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             }),
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatRolePermissionFlagMaps,
+        });
+      }
+
+      // Groups are added before predicates so that predicates referencing a group resolve
+      // against an already-populated map.
+      for (const rowLevelPermissionPredicateGroupManifest of roleManifest.rowLevelPermissionPredicateGroups ??
+        []) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity:
+            fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
+              {
+                rowLevelPermissionPredicateGroupManifest,
+                roleUniversalIdentifier: roleManifest.universalIdentifier,
+                applicationUniversalIdentifier,
+                now,
+              },
+            ),
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps,
+        });
+      }
+
+      for (const rowLevelPermissionPredicateManifest of roleManifest.rowLevelPermissionPredicates ??
+        []) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity:
+            fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
+              {
+                rowLevelPermissionPredicateManifest,
+                roleUniversalIdentifier: roleManifest.universalIdentifier,
+                applicationUniversalIdentifier,
+                now,
+              },
+            ),
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatRowLevelPermissionPredicateMaps,
         });
       }
     }

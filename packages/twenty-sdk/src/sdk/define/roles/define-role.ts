@@ -33,5 +33,64 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
+  const predicateGroupUniversalIdentifiers = new Set(
+    (config.rowLevelPermissionPredicateGroups ?? []).map(
+      (group) => group.universalIdentifier,
+    ),
+  );
+
+  if (config.rowLevelPermissionPredicateGroups) {
+    for (const group of config.rowLevelPermissionPredicateGroups) {
+      if (!group.universalIdentifier) {
+        errors.push(
+          'Row level permission predicate group must have a universalIdentifier',
+        );
+      }
+
+      if (!group.objectUniversalIdentifier) {
+        errors.push(
+          'Row level permission predicate group must have an objectUniversalIdentifier',
+        );
+      }
+
+      if (!group.logicalOperator) {
+        errors.push(
+          'Row level permission predicate group must have a logicalOperator',
+        );
+      }
+    }
+  }
+
+  if (config.rowLevelPermissionPredicates) {
+    for (const predicate of config.rowLevelPermissionPredicates) {
+      if (!predicate.objectUniversalIdentifier) {
+        errors.push(
+          'Row level permission predicate must have an objectUniversalIdentifier',
+        );
+      }
+
+      if (!predicate.fieldUniversalIdentifier) {
+        errors.push(
+          'Row level permission predicate must have a fieldUniversalIdentifier',
+        );
+      }
+
+      if (!predicate.operand) {
+        errors.push('Row level permission predicate must have an operand');
+      }
+
+      if (
+        predicate.predicateGroupUniversalIdentifier &&
+        !predicateGroupUniversalIdentifiers.has(
+          predicate.predicateGroupUniversalIdentifier,
+        )
+      ) {
+        errors.push(
+          `Row level permission predicate references unknown predicate group "${predicate.predicateGroupUniversalIdentifier}"`,
+        );
+      }
+    }
+  }
+
   return createValidationResult({ config, errors });
 };

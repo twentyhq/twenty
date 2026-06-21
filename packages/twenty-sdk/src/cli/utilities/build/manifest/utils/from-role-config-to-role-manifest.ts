@@ -28,6 +28,29 @@ export const fromRoleConfigToRoleManifest = (
         ),
       }),
     ),
+    // Predicate groups keep their author-provided universalIdentifier (predicates reference
+    // them by it). Predicate universalIdentifiers are derived from their semantic content so
+    // they stay stable across rebuilds without the author having to manage uuids.
+    rowLevelPermissionPredicateGroups:
+      roleConfig.rowLevelPermissionPredicateGroups ?? [],
+    rowLevelPermissionPredicates: (
+      roleConfig.rowLevelPermissionPredicates ?? []
+    ).map((predicate) => ({
+      ...predicate,
+      universalIdentifier: uuidv5(
+        [
+          roleConfig.universalIdentifier,
+          'rlp',
+          predicate.objectUniversalIdentifier,
+          predicate.fieldUniversalIdentifier,
+          predicate.operand,
+          JSON.stringify(predicate.value ?? null),
+          predicate.predicateGroupUniversalIdentifier ?? '',
+          predicate.position ?? '',
+        ].join(':'),
+        ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
+      ),
+    })),
     permissionFlagUniversalIdentifiers:
       roleConfig.permissionFlagUniversalIdentifiers ?? [],
   };

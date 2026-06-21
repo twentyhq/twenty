@@ -50,6 +50,67 @@ export default defineRole({
 });
 ```
 
+## Row-level security
+
+Object and field permissions decide _which objects and fields_ a role can touch. **Row-level
+permission predicates** go further and decide _which records_ a role can see and act on — for
+example, a self-service role where each external user sees only their own records.
+
+Declare predicates with `rowLevelPermissionPredicates` on the role. Each predicate references an
+object and a field by `universalIdentifier`, an `operand`, and (optionally) a workspaceMember field
+whose value is injected at query time — so you can express "the record's owner relation **is** the
+current workspace member":
+
+```ts src/roles/partner-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/account-owner.field';
+
+export default defineRole({
+  universalIdentifier: 'c3c1dc2e-1a08-4de5-abb7-2139b3d99343',
+  label: 'Partner',
+  description: 'External partner — sees only its own records',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      // "this Company's accountOwner IS the current workspace member"
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+          .universalIdentifier,
+    },
+  ],
+});
+```
+
+Because predicates ship in the manifest, they are created, updated, and removed together with the
+role on every install and upgrade — there is no separate post-install step to keep in sync.
+
+Notes:
+
+- Predicate `universalIdentifier`s are derived for you; you don't manage uuids for them.
+- To combine multiple predicates with `AND`/`OR`, declare a `rowLevelPermissionPredicateGroups`
+  entry (with its own `universalIdentifier` and `logicalOperator`) and point each predicate at it
+  via `predicateGroupUniversalIdentifier`.
+- Predicates can reference objects and fields owned by your app or by Twenty's standard objects.
+- Row-level security is enforced for workspaces on plans that include it; the predicates still sync
+  on other plans, they are simply not enforced.
+
 ## The default function role
 
 When you scaffold a new app, the CLI creates a default role file declared with `defineApplicationRole()`:
