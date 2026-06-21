@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -84,6 +85,8 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const { navigateToIndexView, rankInView, totalCount } =
     useRecordShowPagePagination(objectNameSingular, objectRecordId);
 
+  const { formatNumber } = useNumberFormat();
+
   if (!loading && isInitialLoad) {
     setIsInitialLoad(false);
   }
@@ -136,7 +139,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         </FieldContext.Provider>
       </StyledTitle>
       <StyledPaginationInformation>
-        {`(${rankInView + 1}/${totalCount})`}
+        {`(${formatNumber(rankInView + 1)}/${formatNumber(totalCount)})`}
       </StyledPaginationInformation>
     </StyledEditableTitleContainer>
   );
