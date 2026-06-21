@@ -201,9 +201,12 @@ export const SettingsObjectFieldEdit = () => {
 
     if (Object.keys(otherDirtyFields).length > 0) {
       const formattedInput = Object.fromEntries(
-        Object.entries(formatFieldMetadataItemInput(formValues)).filter(
-          ([key]) => Object.keys(otherDirtyFields).includes(key),
-        ),
+        Object.entries(
+          formatFieldMetadataItemInput({
+            ...formValues,
+            isNullable: fieldMetadataItem.isNullable,
+          }),
+        ).filter(([key]) => Object.keys(otherDirtyFields).includes(key)),
       );
 
       const updateResult = await updateOneFieldMetadataItem({

@@ -13,12 +13,21 @@ export const formatFieldMetadataItemInput = (
       | 'options'
       | 'settings'
       | 'isLabelSyncedWithName'
+      | 'isNullable'
       | 'isUnique'
     >
   >,
 ) => {
+  // Required (non-nullable) fields must not carry a null defaultValue — the
+  // backend rejects that combination. Omit it by returning undefined so Apollo
+  // strips the key from the mutation variables entirely.
+  const defaultValue =
+    input.isNullable === false && input.defaultValue === null
+      ? undefined
+      : input.defaultValue;
+
   return {
-    defaultValue: input.defaultValue,
+    defaultValue,
     description: input.description?.trim() ?? null,
     icon: input.icon,
     label: input.label?.trim(),
