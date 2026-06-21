@@ -54,6 +54,11 @@ const VARIABLE_CONSUMING_ACTION_TYPES = new Set<WorkflowActionType>([
   ...RECORD_CRUD_ACTION_TYPES,
 ]);
 
+const OBJECT_TARGETING_ACTION_TYPES = new Set<WorkflowActionType>([
+  ...RECORD_CRUD_ACTION_TYPES,
+  WorkflowActionType.PICK_RECORD,
+]);
+
 @Injectable()
 export class WorkflowValidationWorkspaceService {
   constructor(
@@ -578,7 +583,7 @@ export class WorkflowValidationWorkspaceService {
     steps: WorkflowAction[];
   }): Promise<WorkflowValidationIssue[]> {
     const recordSteps = steps.filter((step) =>
-      RECORD_CRUD_ACTION_TYPES.has(step.type),
+      OBJECT_TARGETING_ACTION_TYPES.has(step.type),
     );
 
     if (recordSteps.length === 0) {
