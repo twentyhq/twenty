@@ -408,8 +408,6 @@ export class WorkflowDatabaseEventTriggerListener {
     eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
     action: DatabaseEventAction;
   }) {
-    // UPDATE and UPSERT both expose updatedFields; an empty `fields` list means
-    // "any change", otherwise at least one watched field must have changed.
     if (
       action === DatabaseEventAction.UPDATED ||
       action === DatabaseEventAction.UPSERTED
@@ -429,10 +427,6 @@ export class WorkflowDatabaseEventTriggerListener {
     return true;
   }
 
-  // Evaluates the optional user-defined condition on the triggering record
-  // before the run is enqueued, so non-matching events never create a run.
-  // The record is exposed under the trigger key so filters reference it the
-  // same way steps do (e.g. {{trigger.properties.after.fieldName}}).
   private eventMatchesRecordFilter({
     eventPayload,
     eventListener,
@@ -454,9 +448,6 @@ export class WorkflowDatabaseEventTriggerListener {
         context: { [TRIGGER_STEP_ID]: eventPayload },
       });
     } catch (error) {
-      // A malformed filter (e.g. an orphaned group reference) must not abort the
-      // rest of the batch through the suppressed @OnEvent handler. Fail closed so
-      // a broken condition skips the run rather than triggering unconditionally.
       this.logger.error(
         `Failed to evaluate database-event trigger filter for workflow ${eventListener.workflowId}: ${
           error instanceof Error ? error.message : String(error)

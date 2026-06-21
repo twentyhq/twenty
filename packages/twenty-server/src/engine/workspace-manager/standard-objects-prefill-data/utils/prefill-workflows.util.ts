@@ -76,8 +76,6 @@ export const prefillWorkflows = async (
     throw new Error('Company domainName field metadata not found');
   }
 
-  // Used by the trigger filter so the workflow skips contacts auto-created by
-  // the email/calendar sync, which already creates and links their company.
   const personCreatedByFieldMetadata = Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
   ).find(
@@ -90,10 +88,6 @@ export const prefillWorkflows = async (
     throw new Error('Person createdBy field metadata not found');
   }
 
-  // Skip contacts auto-created by the email/calendar sync (which already create
-  // and link their company). The same filter is stored on the workflow version
-  // trigger AND on the automatedTrigger row the listener reads, so the two never
-  // drift apart — the listener only sees the automatedTrigger copy.
   const personSyncSourceFilter = buildPersonSyncSourceFilter({
     createdByFieldMetadataId: personCreatedByFieldMetadata.id,
   });

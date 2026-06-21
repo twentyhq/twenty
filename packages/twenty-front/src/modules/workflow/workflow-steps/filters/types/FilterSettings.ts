@@ -9,8 +9,6 @@ export type FilterSettings = {
   stepFilters?: StepFilter[];
 };
 
-// Variant accepting persisted filters that may still carry deprecated operands;
-// the body effect converts them to core operands when initializing state.
 export type FilterSettingsWithPotentiallyDeprecatedOperand = {
   stepFilterGroups?: StepFilterGroup[];
   stepFilters?: StepFilterWithPotentiallyDeprecatedOperand[];

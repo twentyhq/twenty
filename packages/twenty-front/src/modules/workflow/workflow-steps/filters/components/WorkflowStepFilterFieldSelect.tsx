@@ -92,8 +92,6 @@ export const WorkflowStepFilterFieldSelect = ({
   };
 
   const isSelectedFieldNotFound = !isDefined(variableLabel);
-  // The trigger filters on the triggering record's own fields, so the
-  // "previous step" wording only makes sense for step-level filters.
   const label = isSelectedFieldNotFound
     ? currentStepId === TRIGGER_STEP_ID
       ? t`Select a field`

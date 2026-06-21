@@ -536,9 +536,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           settings: {
             eventName: databaseEventName,
             filter: {
-              // The filter references a group that does not exist, which makes
-              // evaluation throw; the listener must skip the run rather than let
-              // the error abort the suppressed @OnEvent batch.
               stepFilterGroups: [{ id: 'group-1', logicalOperator: 'AND' }],
               stepFilters: [
                 {

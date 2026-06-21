@@ -1,12 +1,5 @@
 import request from 'supertest';
 
-// Covers the DATABASE_EVENT trigger filter storage seam end to end: activating a
-// workflow whose trigger carries a filter must sync that filter onto the
-// workflowAutomatedTrigger row, because that row is what the runtime listener
-// reads to decide whether to enqueue a run. (A missing filter there is what
-// would silently make the workflow run unconditionally.) The filter evaluation
-// itself is covered by unit tests — the integration harness runs the queue
-// synchronously and cannot observe database-event-triggered runs.
 const client = request(`http://localhost:${APP_PORT}`);
 
 const STEP_FILTER_GROUP_ID = 'a1b2c3d4-1111-4a2b-8c3d-000000000001';
@@ -69,7 +62,6 @@ describe('Database event trigger filter (e2e)', () => {
     createdWorkflowVersionId =
       getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
 
-    // Only fire for companies whose name contains FILTER_VALUE.
     const databaseEventTrigger = {
       name: 'Company is created',
       type: 'DATABASE_EVENT',
@@ -115,7 +107,6 @@ describe('Database event trigger filter (e2e)', () => {
 
     expect(updateTriggerResponse.body.errors).toBeUndefined();
 
-    // Activation requires at least one (non-FORM) step; a code step is enough.
     const createStepResponse = await graphql(
       `
         mutation CreateWorkflowVersionStep(

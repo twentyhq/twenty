@@ -34,8 +34,6 @@ const StyledChildContainer = styled.div`
   width: 100%;
 `;
 
-// Owns the label-to-content spacing so it looks the same regardless of the
-// parent's row-gap (the trigger form wraps the builder in a wider-gap body).
 const StyledConditions = styled.div`
   display: flex;
   flex-direction: column;
@@ -44,15 +42,11 @@ const StyledConditions = styled.div`
 
 type WorkflowStepFilterBuilderProps = {
   instanceId: string;
-  // Persisted settings can carry deprecated operands; the body effect converts
-  // them to core operands when initializing jotai state.
   defaultValue?: FilterSettingsWithPotentiallyDeprecatedOperand;
   readonly?: boolean;
   onFilterSettingsUpdate: (filterSettings: FilterSettings) => void;
 };
 
-// The condition columns read jotai component state keyed by instanceId, so they
-// must be rendered inside the two ComponentInstanceContext providers.
 const WorkflowStepFilterBuilderConditions = ({
   readonly,
 }: {

@@ -8,7 +8,6 @@ import {
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 
 describe('evaluateStepFilters', () => {
-  // Mirrors how a database event trigger exposes the record to its filter.
   const context = {
     trigger: {
       properties: {
