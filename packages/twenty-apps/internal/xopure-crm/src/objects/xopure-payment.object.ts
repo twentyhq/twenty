@@ -41,7 +41,7 @@ export default defineObject({
     { universalIdentifier: XOPURE_PAYMENT_RAIL_FIELD_ID, type: FieldType.TEXT, name: 'rail', label: 'Rail', icon: 'IconRoute' },
     { universalIdentifier: XOPURE_PAYMENT_METHOD_CODE_FIELD_ID, type: FieldType.TEXT, name: 'methodCode', label: 'Method code', icon: 'IconBarcode' },
     { universalIdentifier: XOPURE_PAYMENT_AMOUNT_CENTS_FIELD_ID, type: FieldType.NUMBER, name: 'amountCents', label: 'Amount cents', icon: 'IconCurrencyDollar', defaultValue: 0 },
-    { universalIdentifier: '34b7b3cb-4d65-4e87-9234-40517e2e34ff', type: FieldType.NUMBER, name: 'amount', label: 'Amount', icon: 'IconCurrencyDollar', defaultValue: 0 },
+    { universalIdentifier: '34b7b3cb-4d65-4e87-9234-40517e2e34ff', type: FieldType.CURRENCY, name: 'amount', label: 'Amount', icon: 'IconCurrencyDollar', defaultValue: null },
     { universalIdentifier: XOPURE_PAYMENT_CURRENCY_CODE_FIELD_ID, type: FieldType.TEXT, name: 'currencyCode', label: 'Currency code', icon: 'IconCoin' },
     {
       universalIdentifier: XOPURE_PAYMENT_STATUS_FIELD_ID,
@@ -62,7 +62,7 @@ export default defineObject({
     },
     { universalIdentifier: XOPURE_PAYMENT_PROVIDER_PAYMENT_ID_FIELD_ID, type: FieldType.TEXT, name: 'providerPaymentId', label: 'Provider payment ID', icon: 'IconHash' },
     { universalIdentifier: XOPURE_PAYMENT_REFUND_CENTS_FIELD_ID, type: FieldType.NUMBER, name: 'refundCents', label: 'Refund cents', icon: 'IconCurrencyDollar', defaultValue: 0 },
-    { universalIdentifier: '361d210f-8d7e-48a7-9928-a740752fa2b6', type: FieldType.NUMBER, name: 'refundAmount', label: 'Refund amount', icon: 'IconCurrencyDollar', defaultValue: 0 },
+    { universalIdentifier: '361d210f-8d7e-48a7-9928-a740752fa2b6', type: FieldType.CURRENCY, name: 'refundAmount', label: 'Refund amount', icon: 'IconCurrencyDollar', defaultValue: null },
     { universalIdentifier: XOPURE_PAYMENT_DESCRIPTION_FIELD_ID, type: FieldType.TEXT, name: 'description', label: 'Description', icon: 'IconNotes' },
     { universalIdentifier: XOPURE_PAYMENT_LAST_SYNCED_AT_FIELD_ID, type: FieldType.DATE_TIME, name: 'lastSyncedAt', label: 'Last synced at', icon: 'IconRefresh', isNullable: true, defaultValue: null },
   ],

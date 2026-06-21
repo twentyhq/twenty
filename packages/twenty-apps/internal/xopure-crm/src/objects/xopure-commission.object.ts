@@ -18,7 +18,7 @@ export default defineObject({
     { universalIdentifier: 'f5bb2878-ee16-4ae0-9ac8-b29deabb6cc2', type: FieldType.TEXT, name: 'supabaseCommissionId', label: 'Supabase commission ID', icon: 'IconDatabase', isUnique: true },
     { universalIdentifier: 'ec0498cf-ca3b-42a9-b583-2110ecb3e849', type: FieldType.TEXT, name: 'ambassadorExternalId', label: 'Ambassador external ID', icon: 'IconUserStar' },
     { universalIdentifier: '8fe7846d-79c9-4e7c-a96d-a86f9711d1ac', type: FieldType.TEXT, name: 'orderExternalId', label: 'Order external ID', icon: 'IconShoppingBag' },
-    { universalIdentifier: '12f98239-0d32-431b-8f5d-ccd346552e0b', type: FieldType.NUMBER, name: 'amount', label: 'Amount', icon: 'IconCurrencyDollar', defaultValue: 0 },
+    { universalIdentifier: '12f98239-0d32-431b-8f5d-ccd346552e0b', type: FieldType.CURRENCY, name: 'amount', label: 'Amount', icon: 'IconCurrencyDollar', defaultValue: null },
     { universalIdentifier: 'eea01e8f-cff9-4b95-91ed-d701458455b4', type: FieldType.NUMBER, name: 'amountCents', label: 'Amount cents', icon: 'IconCurrencyDollar', defaultValue: 0 },
     { universalIdentifier: '9e5c9ae3-0ffb-466a-aac4-0b5637258976', type: FieldType.NUMBER, name: 'rate', label: 'Rate %', icon: 'IconPercentage', defaultValue: 0 },
     {

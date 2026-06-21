@@ -334,6 +334,7 @@ Dollar fields are the **primary UI fields**. Cent fields are **forensic only**.
 - Keep `*Cents` fields for sync, parity, audit, and drill-down only.
 - Do not expose raw cent values as the primary number in user-facing widgets.
 - If only cents exist upstream, derive the dollar field in the sync or DB layer first, then point UI metadata at the dollar field.
+- Where Twenty should visibly render a `$`, mark the live/source field metadata as **`CURRENCY`** (not generic `NUMBER`). The database column can remain numeric; the `$` comes from field metadata.
 
 ---
 
