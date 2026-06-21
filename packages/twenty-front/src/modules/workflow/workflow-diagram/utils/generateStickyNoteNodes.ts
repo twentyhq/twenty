@@ -18,10 +18,7 @@ export const generateStickyNoteNodes = (
     deletable: false,
     data: {
       nodeType: 'sticky-note',
-      noteId: stickyNote.id,
       content: stickyNote.content,
       color: stickyNote.color,
-      size: stickyNote.size,
-      position: stickyNote.position,
     },
   }));

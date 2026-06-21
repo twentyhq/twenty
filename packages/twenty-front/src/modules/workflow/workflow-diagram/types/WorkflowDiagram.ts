@@ -11,8 +11,10 @@ import {
   type Node,
   type Position,
 } from '@xyflow/react';
-import { type StepStatus } from 'twenty-shared/workflow';
-import { type ThemeColor } from 'twenty-ui/theme';
+import {
+  type StepStatus,
+  type WorkflowStickyNote,
+} from 'twenty-shared/workflow';
 
 export type WorkflowDiagramStepNode = Node<WorkflowDiagramStepNodeData>;
 export type WorkflowDiagramStickyNoteNode =
@@ -97,17 +99,8 @@ export type WorkflowDiagramEmptyTriggerNodeData = {
 
 export type WorkflowDiagramStickyNoteNodeData = {
   nodeType: 'sticky-note';
-  noteId: string;
   content: string;
-  color: ThemeColor;
-  size: {
-    width: number;
-    height: number;
-  };
-  position: {
-    x: number;
-    y: number;
-  };
+  color: WorkflowStickyNote['color'];
 };
 
 export type WorkflowDiagramNodeData =
