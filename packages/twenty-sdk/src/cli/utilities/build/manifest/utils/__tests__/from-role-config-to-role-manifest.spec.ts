@@ -78,6 +78,47 @@ describe('fromRoleConfigToRoleManifest', () => {
     expect(new Set(identifiers).size).toBe(2);
   });
 
+  it('derives distinct identifiers for predicates differing only by workspace member field or sub-field', () => {
+    const config: RoleConfig = {
+      ...baseConfig,
+      rowLevelPermissionPredicates: [
+        {
+          objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+          fieldUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          workspaceMemberFieldUniversalIdentifier:
+            '20202020-0d83-4a9b-8e3a-0a2a4f1f8f1a',
+        },
+        {
+          objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+          fieldUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          workspaceMemberFieldUniversalIdentifier:
+            '30303030-0d83-4a9b-8e3a-0a2a4f1f8f1a',
+        },
+        {
+          objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+          fieldUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          subFieldName: 'firstName',
+        },
+        {
+          objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+          fieldUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          subFieldName: 'lastName',
+        },
+      ],
+    };
+
+    const manifest = fromRoleConfigToRoleManifest(config);
+    const identifiers = (manifest.rowLevelPermissionPredicates ?? []).map(
+      (predicate) => predicate.universalIdentifier,
+    );
+
+    expect(new Set(identifiers).size).toBe(4);
+  });
+
   it('passes predicate groups through with their explicit universalIdentifier', () => {
     const groupUniversalIdentifier = '11111111-0000-4000-8000-000000000000';
 

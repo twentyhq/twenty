@@ -38,6 +38,9 @@ export const fromRoleConfigToRoleManifest = (
     ).map((predicate) => ({
       ...predicate,
       universalIdentifier: uuidv5(
+        // Every field that distinguishes two predicates must be in the key, otherwise
+        // semantically different predicates would derive the same universalIdentifier and
+        // collide when added to the flat entity maps at sync time.
         [
           roleConfig.universalIdentifier,
           'rlp',
@@ -45,6 +48,9 @@ export const fromRoleConfigToRoleManifest = (
           predicate.fieldUniversalIdentifier,
           predicate.operand,
           JSON.stringify(predicate.value ?? null),
+          predicate.subFieldName ?? '',
+          predicate.workspaceMemberFieldUniversalIdentifier ?? '',
+          predicate.workspaceMemberSubFieldName ?? '',
           predicate.predicateGroupUniversalIdentifier ?? '',
           predicate.position ?? '',
         ].join(':'),
