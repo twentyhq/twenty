@@ -26,6 +26,9 @@ describe('FileStorageService', () => {
     upsert: jest.fn(),
     findOneOrFail: jest.fn(),
     delete: jest.fn(),
+    manager: {
+      transaction: jest.fn(),
+    },
   };
 
   const mockApplicationRepository = {
@@ -57,6 +60,18 @@ describe('FileStorageService', () => {
     );
 
     jest.clearAllMocks();
+
+    mockFileRepository.manager.transaction.mockImplementation(
+      async (
+        callback: (transactionManager: {
+          getRepository: () => typeof mockFileRepository;
+        }) => Promise<unknown>,
+      ) => {
+        return await callback({
+          getRepository: () => mockFileRepository,
+        });
+      },
+    );
   });
 
   it('should be defined', () => {
@@ -403,6 +418,7 @@ describe('FileStorageService', () => {
             filePath: expectedValidPath,
           }),
         );
+        expect(mockFileRepository.manager.transaction).toHaveBeenCalledTimes(1);
       });
 
       describe('magic-byte backstop', () => {

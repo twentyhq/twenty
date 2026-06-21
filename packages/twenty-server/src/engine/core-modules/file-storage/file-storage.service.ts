@@ -169,29 +169,55 @@ export class FileStorageService {
       sourceFile: persistedSourceFile,
     });
 
-    await fileRepository.upsert(
-      {
-        path: filePath,
-        workspaceId,
-        applicationId: application.id,
-        id: fileId,
-        mimeType,
-        size:
-          typeof persistedSourceFile === 'string'
-            ? Buffer.byteLength(persistedSourceFile)
-            : persistedSourceFile.length,
-        settings,
-      },
-      ['path', 'workspaceId', 'applicationId'],
-    );
+    const fileEntityPayload = {
+      path: filePath,
+      workspaceId,
+      applicationId: application.id,
+      id: fileId,
+      mimeType,
+      size:
+        typeof persistedSourceFile === 'string'
+          ? Buffer.byteLength(persistedSourceFile)
+          : persistedSourceFile.length,
+      settings,
+    };
 
-    return await fileRepository.findOneOrFail({
-      where: {
-        path: filePath,
-        applicationId: application.id,
-        workspaceId,
+    if (queryRunner) {
+      await fileRepository.upsert(fileEntityPayload, [
+        'path',
+        'workspaceId',
+        'applicationId',
+      ]);
+
+      return await fileRepository.findOneOrFail({
+        where: {
+          path: filePath,
+          applicationId: application.id,
+          workspaceId,
+        },
+      });
+    }
+
+    return await this.fileRepository.manager.transaction(
+      async (transactionManager) => {
+        const transactionalFileRepository =
+          transactionManager.getRepository(FileEntity);
+
+        await transactionalFileRepository.upsert(fileEntityPayload, [
+          'path',
+          'workspaceId',
+          'applicationId',
+        ]);
+
+        return await transactionalFileRepository.findOneOrFail({
+          where: {
+            path: filePath,
+            applicationId: application.id,
+            workspaceId,
+          },
+        });
       },
-    });
+    );
   }
 
   async getPresignedUrl(
