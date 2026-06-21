@@ -10,6 +10,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -31,12 +32,11 @@ type PickRecordExecutionContext = Awaited<
   ReturnType<WorkflowExecutionContextService['getExecutionContext']>
 >;
 
-const LOAD_BALANCED_COUNT_CONCURRENCY = 5;
-
 @Injectable()
 export class PickRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly findRecordsService: FindRecordsService,
+    private readonly groupByRecordsService: GroupByRecordsService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
@@ -141,52 +141,44 @@ export class PickRecordWorkflowAction implements WorkflowAction {
     loadBalance: WorkflowPickRecordLoadBalance;
     executionContext: PickRecordExecutionContext;
   }): Promise<{ index: number } | { error: string }> {
-    const relatedCounts: number[] = [];
+    const candidateIds = orderedRecords.map((record) => String(record.id));
 
-    // Count one related set per candidate, bounded by a fixed concurrency so a
-    // large pool cannot fan out into an unbounded number of parallel queries.
-    for (
-      let batchStart = 0;
-      batchStart < orderedRecords.length;
-      batchStart += LOAD_BALANCED_COUNT_CONCURRENCY
-    ) {
-      const batch = orderedRecords.slice(
-        batchStart,
-        batchStart + LOAD_BALANCED_COUNT_CONCURRENCY,
-      );
+    const groupByOutput = await this.groupByRecordsService.execute({
+      objectName: loadBalance.objectNameSingular,
+      groupBy: [{ [loadBalance.fieldName]: { id: true } }],
+      filter: { [loadBalance.fieldName]: { id: { in: candidateIds } } },
+      authContext: executionContext.authContext,
+      rolePermissionConfig: executionContext.rolePermissionConfig,
+    });
 
-      const batchOutputs = await Promise.all(
-        batch.map((record) =>
-          this.findRecordsService.execute({
-            objectName: loadBalance.objectNameSingular,
-            filter: { [loadBalance.fieldName]: { id: { eq: record.id } } },
-            authContext: executionContext.authContext,
-            rolePermissionConfig: executionContext.rolePermissionConfig,
-            shouldBuildEffectiveSelectFields: false,
-            limit: 1,
-          }),
-        ),
-      );
+    if (!groupByOutput.success) {
+      return {
+        error:
+          groupByOutput.error ||
+          groupByOutput.message ||
+          'Pick record action failed to count related records',
+      };
+    }
 
-      for (const countOutput of batchOutputs) {
-        if (!countOutput.success) {
-          return {
-            error:
-              countOutput.error ||
-              countOutput.message ||
-              'Pick record action failed to count related records',
-          };
-        }
+    const countByCandidateId = new Map<string, number>();
 
-        relatedCounts.push(countOutput.result?.count ?? 0);
+    for (const group of groupByOutput.result?.groups ?? []) {
+      const candidateId = group.dimensions[0];
+
+      if (isDefined(candidateId)) {
+        countByCandidateId.set(String(candidateId), Number(group.value ?? 0));
       }
     }
 
     let leastLoadedIndex = 0;
+    let leastLoadedCount = countByCandidateId.get(candidateIds[0]) ?? 0;
 
-    for (let index = 1; index < relatedCounts.length; index++) {
-      if (relatedCounts[index] < relatedCounts[leastLoadedIndex]) {
+    for (let index = 1; index < candidateIds.length; index++) {
+      const candidateCount = countByCandidateId.get(candidateIds[index]) ?? 0;
+
+      if (candidateCount < leastLoadedCount) {
         leastLoadedIndex = index;
+        leastLoadedCount = candidateCount;
       }
     }
 
