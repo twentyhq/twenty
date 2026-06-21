@@ -65,8 +65,24 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
+  const predicateUniversalIdentifiers = new Set<string>();
+
   if (config.rowLevelPermissionPredicates) {
     for (const predicate of config.rowLevelPermissionPredicates) {
+      if (!predicate.universalIdentifier) {
+        errors.push(
+          'Row level permission predicate must have a universalIdentifier',
+        );
+      } else if (
+        predicateUniversalIdentifiers.has(predicate.universalIdentifier)
+      ) {
+        errors.push(
+          `Duplicate row level permission predicate universalIdentifier "${predicate.universalIdentifier}"`,
+        );
+      } else {
+        predicateUniversalIdentifiers.add(predicate.universalIdentifier);
+      }
+
       if (!predicate.objectUniversalIdentifier) {
         errors.push(
           'Row level permission predicate must have an objectUniversalIdentifier',

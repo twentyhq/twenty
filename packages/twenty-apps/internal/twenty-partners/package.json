@@ -19,7 +19,9 @@
     "seed": "tsx src/scripts/seed.ts",
     "seed:prod": "ENV_FILE=.env.prod tsx src/scripts/seed.ts",
     "purge": "tsx src/scripts/purge-soft-deleted.ts",
-    "purge:prod": "ENV_FILE=.env.prod tsx src/scripts/purge-soft-deleted.ts"
+    "purge:prod": "ENV_FILE=.env.prod tsx src/scripts/purge-soft-deleted.ts",
+    "rls:configure": "tsx src/scripts/configure-partner-rls.ts",
+    "rls:configure:prod": "ENV_FILE=.env.prod tsx src/scripts/configure-partner-rls.ts"
   },
   "dependencies": {
     "twenty-client-sdk": "2.13.0",

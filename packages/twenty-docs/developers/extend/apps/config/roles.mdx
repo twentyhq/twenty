@@ -56,10 +56,10 @@ Object and field permissions decide _which objects and fields_ a role can touch.
 permission predicates** go further and decide _which records_ a role can see and act on — for
 example, a self-service role where each external user sees only their own records.
 
-Declare predicates with `rowLevelPermissionPredicates` on the role. Each predicate references an
-object and a field by `universalIdentifier`, an `operand`, and (optionally) a workspaceMember field
-whose value is injected at query time — so you can express "the record's owner relation **is** the
-current workspace member":
+Declare predicates with `rowLevelPermissionPredicates` on the role. Like the rest of the manifest,
+each predicate carries its own `universalIdentifier`, and references an object and a field by their
+`universalIdentifier`, an `operand`, and (optionally) a workspaceMember field whose value is injected
+at query time — so you can express "the record's owner relation **is** the current workspace member":
 
 ```ts src/roles/partner-role.ts
 import {
@@ -85,7 +85,7 @@ export default defineRole({
   ],
   rowLevelPermissionPredicates: [
     {
-      // "this Company's accountOwner IS the current workspace member"
+      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
@@ -101,12 +101,69 @@ export default defineRole({
 Because predicates ship in the manifest, they are created, updated, and removed together with the
 role on every install and upgrade — there is no separate post-install step to keep in sync.
 
+### Combining predicates with groups
+
+By default a role's predicates are combined with `AND`. To combine some of them with `OR` (or to
+nest logic), declare a `rowLevelPermissionPredicateGroups` entry and point each predicate at it via
+`predicateGroupUniversalIdentifier`. This role lets a partner see an Opportunity it either **owns**
+or is the **point of contact** for:
+
+```ts src/roles/partner-opportunities-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+const CURRENT_MEMBER =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+    .universalIdentifier;
+
+export default defineRole({
+  universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
+  label: 'Partner (opportunities)',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      canReadObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicateGroups: [
+    {
+      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+    {
+      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier:
+        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+  ],
+});
+```
+
 Notes:
 
-- Predicate `universalIdentifier`s are derived for you; you don't manage uuids for them.
-- To combine multiple predicates with `AND`/`OR`, declare a `rowLevelPermissionPredicateGroups`
-  entry (with its own `universalIdentifier` and `logicalOperator`) and point each predicate at it
-  via `predicateGroupUniversalIdentifier`.
+- Give every predicate and group a stable `universalIdentifier` (any uuid) — it keys the entity
+  across upgrades, and predicates reference groups by it.
 - Predicates can reference objects and fields owned by your app or by Twenty's standard objects.
 - Row-level security is enforced for workspaces on plans that include it; the predicates still sync
   on other plans, they are simply not enforced.
