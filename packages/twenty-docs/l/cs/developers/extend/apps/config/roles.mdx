@@ -50,6 +50,113 @@ export default defineRole({
 });
 ```
 
+## Zabezpečení na úrovni řádků
+
+Oprávnění objektů a polí určují, *kterých objektů a polí* se může role dotýkat. **Predikáty oprávnění na úrovni řádků** jdou dále a určují, *které záznamy* může role vidět a s nimi pracovat — například samoobslužná role, kde každý externí uživatel vidí pouze své vlastní záznamy.
+
+Predikáty deklarujte na roli pomocí `rowLevelPermissionPredicates`. Stejně jako zbytek manifestu nese každý predikát svůj vlastní `universalIdentifier` a odkazuje na objekt a pole podle jejich `universalIdentifier`, dále na `operand` a (volitelně) na pole workspaceMember, jehož hodnota je vložena v době dotazu — takže můžete vyjádřit „vztah vlastníka záznamu **je** aktuálním členem pracovního prostoru“:
+
+```ts src/roles/partner-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/account-owner.field';
+
+export default defineRole({
+  universalIdentifier: 'c3c1dc2e-1a08-4de5-abb7-2139b3d99343',
+  label: 'Partner',
+  description: 'External partner — sees only its own records',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+          .universalIdentifier,
+    },
+  ],
+});
+```
+
+Protože predikáty jsou součástí manifestu, vytvářejí se, aktualizují a odstraňují společně s rolí při každé instalaci a aktualizaci — není potřeba žádný samostatný post‑instalační krok, který by je udržoval v synchronizaci.
+
+### Kombinování predikátů se skupinami
+
+Ve výchozím nastavení se predikáty role kombinují pomocí `AND`. Aby bylo možné některé z nich kombinovat pomocí `OR` (nebo vnořovat logiku), deklarujte položku `rowLevelPermissionPredicateGroups` a každý predikát na ni odkažte prostřednictvím `predicateGroupUniversalIdentifier`. Tato role umožňuje partnerovi zobrazit obchodní příležitost, kterou buď vlastní, nebo u ní vystupuje jako kontaktní osoba:
+
+```ts src/roles/partner-opportunities-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+const CURRENT_MEMBER =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+    .universalIdentifier;
+
+export default defineRole({
+  universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
+  label: 'Partner (opportunities)',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      canReadObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicateGroups: [
+    {
+      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+    {
+      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier:
+        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+  ],
+});
+```
+
+Poznámky:
+
+* Každému predikátu a skupině dejte stabilní `universalIdentifier` (libovolný uuid) — podle něj se entita identifikuje při aktualizacích a predikáty podle něj odkazují na skupiny.
+* Predikáty mohou odkazovat na objekty a pole vlastněné vaší aplikací nebo na standardní objekty Twenty.
+* Zabezpečení na úrovni řádků je vynucováno pro pracovní prostory v tarifech, které ho zahrnují; predikáty se i na ostatních tarifech stále synchronizují, pouze nejsou vynucovány.
+
 ## Výchozí role funkce
 
 Když vygenerujete novou aplikaci, CLI vytvoří výchozí soubor role deklarovaný pomocí `defineApplicationRole()`:
