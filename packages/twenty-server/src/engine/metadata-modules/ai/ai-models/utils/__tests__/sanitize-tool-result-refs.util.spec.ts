@@ -1,21 +1,9 @@
 import {
-  type LanguageModelV3CallOptions,
   type LanguageModelV3Prompt,
+  type LanguageModelV3ToolResultPart,
 } from '@ai-sdk/provider';
 
-import { sanitizeGeminiToolResultRefsMiddleware } from 'src/engine/metadata-modules/ai/ai-models/middleware/sanitize-gemini-tool-result-refs.middleware';
-
-const transform = async (
-  prompt: LanguageModelV3Prompt,
-): Promise<LanguageModelV3Prompt> => {
-  const result = await sanitizeGeminiToolResultRefsMiddleware.transformParams!({
-    type: 'stream',
-    params: { prompt } as LanguageModelV3CallOptions,
-    model: {} as never,
-  });
-
-  return result.prompt;
-};
+import { sanitizeToolResultRefs } from 'src/engine/metadata-modules/ai/ai-models/utils/sanitize-tool-result-refs.util';
 
 const SCHEMA_WITH_REFS = {
   tools: [
@@ -30,8 +18,28 @@ const SCHEMA_WITH_REFS = {
   ],
 };
 
-describe('sanitizeGeminiToolResultRefsMiddleware', () => {
-  it('should serialize tool-result json output containing $ref/$defs to text', async () => {
+const getFirstToolResultPart = (
+  prompt: LanguageModelV3Prompt,
+): LanguageModelV3ToolResultPart => {
+  const toolMessage = prompt.find((message) => message.role === 'tool');
+
+  if (toolMessage?.role !== 'tool') {
+    throw new Error('Expected a tool message in the prompt');
+  }
+
+  const toolResultPart = toolMessage.content.find(
+    (part) => part.type === 'tool-result',
+  );
+
+  if (toolResultPart?.type !== 'tool-result') {
+    throw new Error('Expected a tool-result part in the tool message');
+  }
+
+  return toolResultPart;
+};
+
+describe('sanitizeToolResultRefs', () => {
+  it('should serialize tool-result json output containing $ref/$defs to text', () => {
     const prompt: LanguageModelV3Prompt = [
       {
         role: 'tool',
@@ -46,15 +54,16 @@ describe('sanitizeGeminiToolResultRefsMiddleware', () => {
       },
     ];
 
-    const [message] = await transform(prompt);
-    const part = (message.content as any[])[0];
+    const part = getFirstToolResultPart(sanitizeToolResultRefs(prompt));
 
-    expect(part.output.type).toBe('text');
-    expect(typeof part.output.value).toBe('string');
+    if (part.output.type !== 'text') {
+      throw new Error('Expected the output to be serialized to text');
+    }
+
     expect(JSON.parse(part.output.value)).toEqual(SCHEMA_WITH_REFS);
   });
 
-  it('should preserve output-level providerOptions when serializing to text', async () => {
+  it('should preserve output-level providerOptions when serializing to text', () => {
     const providerOptions = { google: { cacheControl: { type: 'ephemeral' } } };
     const prompt: LanguageModelV3Prompt = [
       {
@@ -70,14 +79,16 @@ describe('sanitizeGeminiToolResultRefsMiddleware', () => {
       },
     ];
 
-    const [message] = await transform(prompt);
-    const part = (message.content as any[])[0];
+    const part = getFirstToolResultPart(sanitizeToolResultRefs(prompt));
 
-    expect(part.output.type).toBe('text');
+    if (part.output.type !== 'text') {
+      throw new Error('Expected the output to be serialized to text');
+    }
+
     expect(part.output.providerOptions).toEqual(providerOptions);
   });
 
-  it('should convert error-json output containing refs to error-text', async () => {
+  it('should convert error-json output containing refs to error-text', () => {
     const prompt: LanguageModelV3Prompt = [
       {
         role: 'tool',
@@ -92,14 +103,16 @@ describe('sanitizeGeminiToolResultRefsMiddleware', () => {
       },
     ];
 
-    const [message] = await transform(prompt);
-    const part = (message.content as any[])[0];
+    const part = getFirstToolResultPart(sanitizeToolResultRefs(prompt));
 
-    expect(part.output.type).toBe('error-text');
+    if (part.output.type !== 'error-text') {
+      throw new Error('Expected the output to be serialized to error-text');
+    }
+
     expect(JSON.parse(part.output.value)).toEqual(SCHEMA_WITH_REFS);
   });
 
-  it('should leave tool results without refs untouched', async () => {
+  it('should leave tool results without refs untouched', () => {
     const value = { success: true, result: { id: '1', name: 'Acme' } };
     const prompt: LanguageModelV3Prompt = [
       {
@@ -115,14 +128,13 @@ describe('sanitizeGeminiToolResultRefsMiddleware', () => {
       },
     ];
 
-    const [message] = await transform(prompt);
-    const part = (message.content as any[])[0];
+    const part = getFirstToolResultPart(sanitizeToolResultRefs(prompt));
 
     expect(part.output.type).toBe('json');
-    expect(part.output.value).toEqual(value);
+    expect(part.output).toEqual({ type: 'json', value });
   });
 
-  it('should not touch non-tool messages', async () => {
+  it('should not touch non-tool messages', () => {
     const prompt: LanguageModelV3Prompt = [
       { role: 'system', content: 'You are helpful.' },
       {
@@ -131,8 +143,6 @@ describe('sanitizeGeminiToolResultRefsMiddleware', () => {
       },
     ];
 
-    const result = await transform(prompt);
-
-    expect(result).toEqual(prompt);
+    expect(sanitizeToolResultRefs(prompt)).toEqual(prompt);
   });
 });
