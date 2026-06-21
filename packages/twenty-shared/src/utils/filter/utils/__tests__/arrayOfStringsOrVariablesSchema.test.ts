@@ -45,6 +45,16 @@ describe('arrayOfStringsOrVariablesSchema', () => {
         }
       });
     });
+
+    it('should accept JSON string scalar', () => {
+      const result = arrayOfStringsOrVariablesSchema.safeParse('"NEW"');
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toEqual(['NEW']);
+      }
+    });
+
     it('should reject JSON array with non-string values', () => {
       const invalidArrays = [
         JSON.stringify([1, 2, 3]),
@@ -59,9 +69,24 @@ describe('arrayOfStringsOrVariablesSchema', () => {
         expect(result.success).toBe(false);
       });
     });
+
+    it('should reject malformed JSON array strings', () => {
+      const result = arrayOfStringsOrVariablesSchema.safeParse('["NEW",]');
+
+      expect(result.success).toBe(false);
+    });
   });
 
   describe('Edge cases', () => {
+    it('should handle plain scalar values', () => {
+      const result = arrayOfStringsOrVariablesSchema.safeParse('NEW');
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toEqual(['NEW']);
+      }
+    });
+
     it('should handle whitespace in variable syntax', () => {
       const result =
         arrayOfStringsOrVariablesSchema.safeParse('{{ variable }}');

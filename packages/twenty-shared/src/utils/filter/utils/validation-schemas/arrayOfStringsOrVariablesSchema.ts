@@ -8,7 +8,28 @@ export const arrayOfStringsOrVariablesSchema = z
     if (isValidVariable(val) as boolean) {
       return [val];
     }
-    return JSON.parse(val);
+
+    try {
+      const parsedValue = JSON.parse(val);
+
+      if (typeof parsedValue === 'string') {
+        return [parsedValue];
+      }
+
+      return parsedValue;
+    } catch {
+      const trimmedValue = val.trim();
+
+      if (
+        trimmedValue.startsWith('[') ||
+        trimmedValue.startsWith('{') ||
+        trimmedValue.startsWith('"')
+      ) {
+        throw new Error('Expected an array of strings');
+      }
+
+      return [val];
+    }
   })
   .refine(
     (parsed) =>
