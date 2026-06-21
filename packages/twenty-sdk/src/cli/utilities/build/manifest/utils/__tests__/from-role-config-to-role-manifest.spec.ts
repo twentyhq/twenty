@@ -119,6 +119,31 @@ describe('fromRoleConfigToRoleManifest', () => {
     expect(new Set(identifiers).size).toBe(4);
   });
 
+  it('derives the same identifier regardless of value object key order', () => {
+    const makeConfig = (value: Record<string, unknown>): RoleConfig => ({
+      ...baseConfig,
+      rowLevelPermissionPredicates: [
+        {
+          objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+          fieldUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+          operand: RowLevelPermissionPredicateOperand.CONTAINS,
+          value,
+        },
+      ],
+    });
+
+    const first = fromRoleConfigToRoleManifest(
+      makeConfig({ isCurrentWorkspaceMemberSelected: true, selectedRecordIds: ['a', 'b'] }),
+    );
+    const second = fromRoleConfigToRoleManifest(
+      makeConfig({ selectedRecordIds: ['a', 'b'], isCurrentWorkspaceMemberSelected: true }),
+    );
+
+    expect(
+      first.rowLevelPermissionPredicates?.[0]?.universalIdentifier,
+    ).toBe(second.rowLevelPermissionPredicates?.[0]?.universalIdentifier);
+  });
+
   it('passes predicate groups through with their explicit universalIdentifier', () => {
     const groupUniversalIdentifier = '11111111-0000-4000-8000-000000000000';
 

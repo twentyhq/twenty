@@ -269,4 +269,29 @@ describe('defineRole', () => {
       'Row level permission predicate group must have a logicalOperator',
     );
   });
+
+  it('should return error when two predicate groups share a universalIdentifier', () => {
+    const config = {
+      ...validConfig,
+      rowLevelPermissionPredicateGroups: [
+        {
+          universalIdentifier: '11111111-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          logicalOperator: 'AND',
+        },
+        {
+          universalIdentifier: '11111111-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          logicalOperator: 'OR',
+        },
+      ],
+    };
+
+    const result = defineRole(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Duplicate row level permission predicate group universalIdentifier "11111111-0000-4000-8000-000000000000"',
+    );
+  });
 });

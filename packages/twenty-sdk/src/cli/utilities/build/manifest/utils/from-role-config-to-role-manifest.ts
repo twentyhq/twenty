@@ -5,6 +5,27 @@ import { v5 as uuidv5 } from 'uuid';
 const ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE =
   'b403ec59-4d80-4f22-85e6-717a192dc9cb';
 
+// Deterministic serialization for the predicate hash seed. Plain JSON.stringify does not
+// guarantee object key order, so the same logical value could hash to different ids across
+// builds; sorting keys recursively keeps the derived universalIdentifier stable. Array order
+// is preserved because it is semantically significant.
+const stableStringify = (value: unknown): string => {
+  if (value === null || typeof value !== 'object') {
+    return JSON.stringify(value) ?? 'null';
+  }
+
+  if (Array.isArray(value)) {
+    return `[${value.map(stableStringify).join(',')}]`;
+  }
+
+  const record = value as Record<string, unknown>;
+
+  return `{${Object.keys(record)
+    .sort()
+    .map((key) => `${JSON.stringify(key)}:${stableStringify(record[key])}`)
+    .join(',')}}`;
+};
+
 export const fromRoleConfigToRoleManifest = (
   roleConfig: RoleConfig,
 ): RoleManifest => {
@@ -47,7 +68,7 @@ export const fromRoleConfigToRoleManifest = (
           predicate.objectUniversalIdentifier,
           predicate.fieldUniversalIdentifier,
           predicate.operand,
-          JSON.stringify(predicate.value ?? null),
+          stableStringify(predicate.value ?? null),
           predicate.subFieldName ?? '',
           predicate.workspaceMemberFieldUniversalIdentifier ?? '',
           predicate.workspaceMemberSubFieldName ?? '',

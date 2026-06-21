@@ -33,11 +33,7 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
-  const predicateGroupUniversalIdentifiers = new Set(
-    (config.rowLevelPermissionPredicateGroups ?? []).map(
-      (group) => group.universalIdentifier,
-    ),
-  );
+  const predicateGroupUniversalIdentifiers = new Set<string>();
 
   if (config.rowLevelPermissionPredicateGroups) {
     for (const group of config.rowLevelPermissionPredicateGroups) {
@@ -45,6 +41,14 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
         errors.push(
           'Row level permission predicate group must have a universalIdentifier',
         );
+      } else if (
+        predicateGroupUniversalIdentifiers.has(group.universalIdentifier)
+      ) {
+        errors.push(
+          `Duplicate row level permission predicate group universalIdentifier "${group.universalIdentifier}"`,
+        );
+      } else {
+        predicateGroupUniversalIdentifiers.add(group.universalIdentifier);
       }
 
       if (!group.objectUniversalIdentifier) {
