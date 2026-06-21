@@ -8,19 +8,22 @@ import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/reco
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
+import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-board/constants/RecordBoardColumnWidthCssVariableName';
+import { RecordBoardColumnResizeHandler } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnResizeHandler';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { Tag } from 'twenty-ui/components';
-import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
+import { Tag } from 'twenty-ui/data-display';
+import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
 const StyledHeader = styled.div`
@@ -60,8 +63,14 @@ const StyledColumn = styled.div`
   background-color: ${themeCssVariables.background.primary};
   display: flex;
   flex-direction: column;
-  max-width: ${RECORD_BOARD_COLUMN_WIDTH}px;
-  min-width: ${RECORD_BOARD_COLUMN_WIDTH}px;
+  max-width: var(
+    ${RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME},
+    ${RECORD_BOARD_COLUMN_WIDTH}px
+  );
+  min-width: var(
+    ${RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME},
+    ${RECORD_BOARD_COLUMN_WIDTH}px
+  );
 
   padding: ${themeCssVariables.spacing[2]};
 
@@ -91,7 +100,10 @@ export const RecordBoardColumnHeader = () => {
     objectMetadataItem.id,
   );
 
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
+  const canCreateRecords = canCreateRecordsForObjectMetadataItem({
+    objectPermissions,
+    objectMetadataItem,
+  });
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
@@ -186,19 +198,19 @@ export const RecordBoardColumnHeader = () => {
                     });
                   }}
                 />
-                {hasObjectUpdatePermissions &&
-                  !hasAnySoftDeleteFilterOnView && (
-                    <LightIconButton
-                      accent="tertiary"
-                      Icon={IconPlus}
-                      onClick={handleCreateNewRecordClick}
-                    />
-                  )}
+                {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
+                  <LightIconButton
+                    accent="tertiary"
+                    Icon={IconPlus}
+                    onClick={handleCreateNewRecordClick}
+                  />
+                )}
               </StyledHeaderActions>
             )}
           </StyledRightContainer>
         </StyledHeaderContainer>
       </StyledHeader>
+      <RecordBoardColumnResizeHandler />
     </StyledColumn>
   );
 };

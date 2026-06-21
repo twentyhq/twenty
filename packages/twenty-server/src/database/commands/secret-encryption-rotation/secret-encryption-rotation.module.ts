@@ -1,35 +1,43 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ConnectionParametersRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/connection-parameters-rotation.handler';
-import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/sensitive-config-storage-rotation.handler';
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES,
+  SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_ENTRIES,
+} from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-entries.constant';
 import { RotateSecretEncryptionCommand } from 'src/database/commands/secret-encryption-rotation/rotate-secret-encryption.command';
 import { SecretEncryptionRotationRunnerService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-rotation-runner.service';
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
-import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
-import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
-import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+
+const ROTATION_ENTITIES = [
+  ...Object.values(SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES).map(
+    (entry) => entry.entity,
+  ),
+  KeyValuePairEntity,
+];
+
+const DEDICATED_ROTATION_HANDLERS = [
+  ...Object.values(SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES)
+    .flatMap((entry) => Object.values(entry.columnSiteNames))
+    .map((meta) => meta.customHandler)
+    .filter(isDefined),
+  ...Object.values(SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_ENTRIES).map(
+    (entry) => entry.handler,
+  ),
+];
 
 @Module({
   imports: [
     SecretEncryptionModule,
     TwentyConfigModule,
-    TypeOrmModule.forFeature([
-      ApplicationRegistrationVariableEntity,
-      ApplicationVariableEntity,
-      ConnectedAccountEntity,
-      KeyValuePairEntity,
-      SigningKeyEntity,
-      TwoFactorAuthenticationMethodEntity,
-    ]),
+    TypeOrmModule.forFeature(ROTATION_ENTITIES),
   ],
   providers: [
-    ConnectionParametersRotationHandler,
-    SensitiveConfigStorageRotationHandler,
+    ...DEDICATED_ROTATION_HANDLERS,
     SecretEncryptionRotationRunnerService,
     RotateSecretEncryptionCommand,
   ],

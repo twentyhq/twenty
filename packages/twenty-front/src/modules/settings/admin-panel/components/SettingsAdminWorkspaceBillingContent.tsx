@@ -2,12 +2,12 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/components';
+import { Tag } from 'twenty-ui/data-display';
 import {
-  H2Title,
   IconBox,
   IconCalendarEvent,
   IconCalendarRepeat,
+  IconChartBar,
   IconCircleX,
   IconCoins,
   IconCreditCard,
@@ -16,7 +16,8 @@ import {
   IconStatusChange,
   IconTag,
   IconUsers,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -171,7 +172,10 @@ export const SettingsAdminWorkspaceBillingContent = ({
     );
   }
 
-  const { stripeCustomerId, creditBalance, subscription } = billing;
+  const { stripeCustomerId, creditBalance, subscription, usage } = billing;
+
+  const formatCredits = (credits: number): string =>
+    formatNumber(credits, { abbreviate: true, decimals: 2 });
 
   const customerItems = [
     {
@@ -206,6 +210,39 @@ export const SettingsAdminWorkspaceBillingContent = ({
     ? toBillingPlanKey(subscription.planKey)
     : null;
   const isTrialing = subscription?.status === SubscriptionStatus.Trialing;
+
+  const usageItems = isDefined(usage)
+    ? [
+        {
+          Icon: IconChartBar,
+          label: t`Credits used`,
+          value: `${formatCredits(usage.usedCredits)} / ${formatCredits(usage.totalGrantedCredits)}`,
+        },
+        ...(!isTrialing
+          ? [
+              {
+                Icon: IconCoins,
+                label: t`Base credits`,
+                value: formatCredits(usage.grantedCredits),
+              },
+            ]
+          : []),
+        ...(usage.rolloverCredits > 0
+          ? [
+              {
+                Icon: IconCoins,
+                label: t`Rollover credits`,
+                value: formatCredits(usage.rolloverCredits),
+              },
+            ]
+          : []),
+        {
+          Icon: IconCalendarRepeat,
+          label: t`Usage period`,
+          value: formatPeriod(usage.periodStart, usage.periodEnd),
+        },
+      ]
+    : [];
 
   const formatItemValue = (
     item: NonNullable<typeof subscription>['items'][number],
@@ -347,6 +384,24 @@ export const SettingsAdminWorkspaceBillingContent = ({
           items={customerItems}
           gridAutoColumns="3fr 8fr"
         />
+      </Section>
+
+      <Section>
+        <H2Title
+          title={t`Usage`}
+          description={
+            isDefined(usage)
+              ? t`Credit consumption for the current period`
+              : t`No usage data is available for this workspace.`
+          }
+        />
+        {isDefined(usage) && (
+          <SettingsTableCard
+            rounded
+            items={usageItems}
+            gridAutoColumns="3fr 8fr"
+          />
+        )}
       </Section>
 
       <Section>

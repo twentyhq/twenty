@@ -1,31 +1,18 @@
-import {
-  buildOrganizationJsonLd,
-  buildSoftwareApplicationJsonLd,
-  getSiteUrl,
-  JsonLd,
-} from '@/lib/seo';
-import { DRACO_DECODER_ORIGIN } from '@/lib/visual-runtime/utils/draco-decoder-path';
-import { theme } from '@/theme';
-import { cssVariables } from '@/theme/css-variables';
 import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
-import type { Metadata } from 'next';
 import { Aleo, Azeret_Mono, Host_Grotesk, VT323 } from 'next/font/google';
 import { type ReactNode } from 'react';
 
-import { FooterVisibilityGate } from '@/app/_components/FooterVisibilityGate';
-import { ScrollToTopOnRouteChange } from '@/app/_components/ScrollToTopOnRouteChange';
+import { getLocaleMessages } from '@/platform/i18n/get-locale-messages';
 import {
-  I18nProvider,
-  localeToUrlSegment,
-  PUBLIC_APP_LOCALE_LIST,
-  resolveLocaleParam,
-} from '@/lib/i18n';
-import { getLocaleMessages } from '@/lib/i18n/utils/messages-by-locale';
-import { setServerI18n } from '@/lib/i18n/utils/set-server-i18n';
-import { ContactCalModalRoot } from '@/sections/ContactCal';
-import { Footer, FOOTER_DATA } from '@/sections/Footer';
-import { PartnerApplicationModalRoot } from '@/sections/PartnerApplication';
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/platform/i18n/get-route-i18n';
+import { ContactCalModalRoot } from '@/contact-cal';
+import { I18nProvider } from '@/platform/i18n/I18nProvider';
+import { localeToUrlSegment } from '@/platform/i18n/locale-to-url-segment';
+import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
+import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';
+import { color, fontFamily, tokenCssVariables } from '@/tokens';
 
 const hostGrotesk = Host_Grotesk({
   subsets: ['latin'],
@@ -55,7 +42,19 @@ const vt323 = VT323({
   display: 'swap',
 });
 
-const _globalStyles = css`
+const globalStyles = css`
+  /* One root rule instead of per-component guards: motion collapses to
+     instant for users who prefer reduced motion. State still applies;
+     only the travel disappears. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   :global(*),
   :global(*::before),
   :global(*::after) {
@@ -64,67 +63,20 @@ const _globalStyles = css`
     padding: 0;
   }
 
-  :global(html) {
-    background-color: ${theme.colors.primary.background[100]};
-  }
-
   :global(body) {
-    color: ${theme.colors.primary.text[100]};
-    display: flex;
-    font-family: ${theme.font.family.sans};
-    flex-direction: column;
+    background-color: ${color('white')};
+    color: ${color('black')};
+    font-family: ${fontFamily('sans')};
     min-height: 100vh;
     min-height: 100dvh;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 `;
 
-const StyledMain = styled.main`
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-`;
-
-const SITE_TITLE = 'Twenty | #1 Open Source CRM';
-const SITE_DESCRIPTION =
-  'The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business.';
-
-export const metadata: Metadata = {
-  metadataBase: new URL(getSiteUrl()),
-  title: {
-    default: SITE_TITLE,
-    template: '%s | Twenty',
-  },
-  description: SITE_DESCRIPTION,
-  applicationName: 'Twenty',
-  openGraph: {
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
-    url: '/',
-    siteName: 'Twenty',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
-    site: '@twentycrm',
-    creator: '@twentycrm',
-  },
-  alternates: {
-    types: {
-      'application/rss+xml': '/articles/feed.xml',
-    },
-  },
-};
-
-type LocaleLayoutParams = { locale: string };
-
 export const dynamicParams = false;
 
-export const generateStaticParams = (): LocaleLayoutParams[] =>
-  PUBLIC_APP_LOCALE_LIST.map((locale) => ({
+export const generateStaticParams = (): LocaleRouteParams[] =>
+  WEBSITE_LOCALE_LIST.map((locale) => ({
     locale: localeToUrlSegment(locale),
   }));
 
@@ -133,46 +85,18 @@ const LocaleLayout = async ({
   params,
 }: {
   children: ReactNode;
-  params: Promise<LocaleLayoutParams>;
+  params: Promise<LocaleRouteParams>;
 }) => {
-  const { locale: rawLocale } = await params;
-  const locale = resolveLocaleParam(rawLocale);
-  setServerI18n(locale);
-  const messages = getLocaleMessages(locale);
+  await getRouteI18n(params);
+  const locale = resolveLocaleParam((await params).locale);
 
   return (
     <html lang={locale}>
-      <head>
-        <link
-          crossOrigin="anonymous"
-          href={DRACO_DECODER_ORIGIN}
-          rel="preconnect"
-        />
-        <JsonLd
-          data={[buildOrganizationJsonLd(), buildSoftwareApplicationJsonLd()]}
-        />
-      </head>
       <body
-        className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable}`}
-        suppressHydrationWarning
+        className={`${tokenCssVariables} ${globalStyles} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable}`}
       >
-        <I18nProvider locale={locale} messages={messages}>
-          <ContactCalModalRoot>
-            <PartnerApplicationModalRoot>
-              <ScrollToTopOnRouteChange />
-              <StyledMain>{children}</StyledMain>
-              <FooterVisibilityGate>
-                <Footer.Root>
-                  <Footer.Logo />
-                  <Footer.Nav groups={FOOTER_DATA.navGroups} />
-                  <Footer.Bottom
-                    copyright={FOOTER_DATA.bottom.copyright}
-                    links={FOOTER_DATA.socialLinks}
-                  />
-                </Footer.Root>
-              </FooterVisibilityGate>
-            </PartnerApplicationModalRoot>
-          </ContactCalModalRoot>
+        <I18nProvider locale={locale} messages={getLocaleMessages(locale)}>
+          <ContactCalModalRoot>{children}</ContactCalModalRoot>
         </I18nProvider>
       </body>
     </html>

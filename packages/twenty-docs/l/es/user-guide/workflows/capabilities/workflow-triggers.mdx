@@ -10,14 +10,13 @@ Los flujos de trabajo siempre comienzan con un solo disparador que define cuánd
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **¡Se admiten objetos avanzados!** Más allá de los objetos estándar de CRM (Personas, Empresas, Oportunidades), también puedes activar flujos de trabajo y ejecutar acciones sobre:
+**¡Se admiten objetos avanzados!** Más allá de los objetos estándar de CRM (Personas, Empresas, Oportunidades), también puedes activar flujos de trabajo y ejecutar acciones sobre:
+* Miembros del espacio de trabajo
+* Eventos del calendario
+* Mensajes (correos electrónicos)
+* Tareas, notas y muchos otros objetos del sistema
 
-  * Miembros del espacio de trabajo
-  * Eventos del calendario
-  * Mensajes (correos electrónicos)
-  * Tareas, notas y muchos otros objetos del sistema
-
-  Esto abre potentes automatizaciones como notificar a los miembros del equipo cuando se crean eventos del calendario o procesar automáticamente los correos electrónicos entrantes.
+Esto abre potentes automatizaciones como notificar a los miembros del equipo cuando se crean eventos del calendario o procesar automáticamente los correos electrónicos entrantes.
 </Tip>
 
 ## Se crea un registro
@@ -27,9 +26,9 @@ Inicia el flujo de trabajo cuando se crea un nuevo registro en un objeto selecci
 **Configuración**: Selecciona el tipo de objeto para monitorear nuevos registros.
 
 <Note>
-  * Este activador es ideal para registros creados por CSV, sincronización de buzón y de calendario, o API.
-  * **No se recomienda para registros creados manualmente**: con este activador, los flujos de trabajo comienzan tan pronto como se crea el registro. Dado que Twenty UI ofrece guardado automático sobre la marcha (no hay un modo de edición y luego una validación para guardar registros), el flujo de trabajo se activará antes de que el usuario complete todos los campos.
-    Para activar este flujo de trabajo en registros creados manualmente, se recomienda usar el activador `Record is created or updated` en su lugar.
+* Este activador es ideal para registros creados por CSV, sincronización de buzón y de calendario, o API.
+* **No se recomienda para registros creados manualmente**: con este activador, los flujos de trabajo comienzan tan pronto como se crea el registro. Dado que Twenty UI ofrece guardado automático sobre la marcha (no hay un modo de edición y luego una validación para guardar registros), el flujo de trabajo se activará antes de que el usuario complete todos los campos.
+  Para activar este flujo de trabajo en registros creados manualmente, se recomienda usar el activador `Record is created or updated` en su lugar.
 </Note>
 
 ## Se actualiza un registro
@@ -82,7 +81,7 @@ Elige cómo debe manejar el flujo de trabajo la selección de registros:
 * **En masa**: El/los registro(s) seleccionado(s) se pasará(n) a tu flujo de trabajo. Esto está configurado para un objeto dado. Se pueden seleccionar varios registros antes de iniciar el flujo de trabajo. El flujo de trabajo se ejecutará una vez, proporcionando como entrada toda la lista de registros. Esto significa que el flujo de trabajo debe contener una [Acción Iterator](/l/es/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
-  Esto es más avanzado y es ideal para quienes quieren optimizar la cantidad de ejecuciones del flujo de trabajo.
+Esto es más avanzado y es ideal para quienes quieren optimizar la cantidad de ejecuciones del flujo de trabajo.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
@@ -108,7 +107,7 @@ Inicia el flujo de trabajo de forma recurrente según lo defina.
 * Ingresa un valor o usa expresiones cron personalizadas para una programación avanzada
 
 <Note>
-  **Zona horaria**: Los flujos de trabajo programados se ejecutan en **UTC**. Al configurar las horas para programaciones diarias, convierte tu hora local a UTC.
+**Zona horaria**: Los flujos de trabajo programados se ejecutan en **UTC**. Al configurar las horas para programaciones diarias, convierte tu hora local a UTC.
 </Note>
 
 ## Activador externo: Webhook

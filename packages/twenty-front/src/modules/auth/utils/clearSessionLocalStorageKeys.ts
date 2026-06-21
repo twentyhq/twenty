@@ -3,9 +3,12 @@ import { safeRemoveLocalStorageItems } from '@/auth/utils/safeRemoveLocalStorage
 const SESSION_KEYS_TO_CLEAR = [
   'lastVisitedObjectMetadataItemIdState',
   'lastVisitedViewPerObjectMetadataItemState',
-  'playgroundApiKeyState',
   'ai/agentChatDraftsByThreadIdState',
   'locale',
+  'currentUserState',
+  'currentWorkspaceState',
+  'currentWorkspaceMemberState',
+  'currentUserWorkspaceState',
 ];
 
 export const clearSessionLocalStorageKeys = () => {

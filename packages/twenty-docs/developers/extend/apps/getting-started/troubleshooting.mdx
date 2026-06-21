@@ -8,5 +8,7 @@ icon: "wrench"
 - **Wrong Node version** — Need 24+. Check with `node -v`.
 - **Yarn 4 missing** — Run `corepack enable`.
 - **Dependencies broken** — `rm -rf node_modules && yarn install`.
+- **`twenty-sdk` errors after upgrading to v2.8.0** — It moved from `dependencies` to `devDependencies` in v2.8.0. See [Project Structure → Dependencies](/developers/extend/apps/getting-started/project-structure#dependencies).
+- **`twenty build` warns about `twenty-client-sdk` under `dependencies`** — It is provided at runtime by Twenty, so it should be moved to `devDependencies` alongside `twenty-sdk`. See [Project Structure → Dependencies](/developers/extend/apps/getting-started/project-structure#dependencies).
 
 Stuck? Ask on the [Twenty Discord](https://discord.com/channels/1130383047699738754/1130386664812982322).

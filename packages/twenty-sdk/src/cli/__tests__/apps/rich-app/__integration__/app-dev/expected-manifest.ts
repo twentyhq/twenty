@@ -1580,6 +1580,15 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'b1a2b3c4-0005-4a7b-8c9d-0e1f2a3b4c5d',
     },
   ],
+  viewFields: [
+    {
+      fieldMetadataUniversalIdentifier: '7b57bd63-5a4c-46ca-9d52-42c8f02d1df6',
+      isVisible: true,
+      position: 5,
+      universalIdentifier: 'cd582d11-ea21-4dc3-b9c1-0298ce3b6b54',
+      viewUniversalIdentifier: 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+  ],
   navigationMenuItems: [
     {
       type: NavigationMenuItemType.OBJECT,
@@ -1590,7 +1599,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     {
       type: NavigationMenuItemType.OBJECT,
       position: 0,
-      universalIdentifier: 'c1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+      universalIdentifier: 'e8031eca-d6ea-4a4b-b828-38227dba896a',
       targetObjectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
     },
     {
@@ -1649,6 +1658,37 @@ export const EXPECTED_MANIFEST: Manifest = {
         },
       },
       universalIdentifier: 'a1b2c3d4-1001-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      builtHandlerChecksum: '[checksum]',
+      builtHandlerPath: 'src/logic-functions/enrich-post-cards.function.mjs',
+      description: 'Enrich post cards of a company',
+      handlerName: 'default.config.handler',
+      name: 'enrich-post-cards',
+      sourceHandlerPath: 'src/logic-functions/enrich-post-cards.function.ts',
+      timeoutSeconds: 5,
+      workflowActionTriggerSettings: {
+        label: 'Enrich Post Cards',
+        icon: 'IconMail',
+        inputSchema: [
+          {
+            type: 'object',
+            properties: {
+              companyId: {
+                type: 'record',
+                objectUniversalIdentifier:
+                  '20202020-b374-4779-a561-80086cb2e17f',
+              },
+              postCardIds: {
+                type: 'records',
+                objectUniversalIdentifier:
+                  '54b589ca-eeed-4950-a176-358418b85c05',
+              },
+            },
+          },
+        ],
+      },
+      universalIdentifier: 'a1b2c3d4-ac10-4a7b-8c9d-0e1f2a3b4c5d',
     },
     {
       builtHandlerChecksum: '[checksum]',

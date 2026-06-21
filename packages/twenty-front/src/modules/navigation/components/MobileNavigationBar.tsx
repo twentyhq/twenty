@@ -1,3 +1,5 @@
+import { useLingui } from '@lingui/react/macro';
+
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -20,13 +22,14 @@ import {
   IconList,
   IconMessageCirclePlus,
   IconSearch,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { NavigationBar } from 'twenty-ui/navigation';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type NavigationBarItemName = 'main' | 'search' | 'newAiChat';
 
 export const MobileNavigationBar = () => {
+  const { t } = useLingui();
   const navigate = useNavigate();
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
@@ -56,11 +59,13 @@ export const MobileNavigationBar = () => {
 
   const items: {
     name: NavigationBarItemName;
+    label: string;
     Icon: IconComponent;
     onClick: () => void;
   }[] = [
     {
       name: 'main',
+      label: t`Main navigation`,
       Icon: IconList,
       onClick: () => {
         closeSidePanelMenu();
@@ -80,6 +85,7 @@ export const MobileNavigationBar = () => {
     },
     {
       name: 'search',
+      label: t`Search`,
       Icon: IconSearch,
       onClick: () => {
         setIsNavigationDrawerExpanded(false);
@@ -102,6 +108,7 @@ export const MobileNavigationBar = () => {
       ? [
           {
             name: 'newAiChat' as const,
+            label: t`New AI chat`,
             Icon: IconMessageCirclePlus,
             onClick: () => {
               setIsNavigationDrawerExpanded(false);

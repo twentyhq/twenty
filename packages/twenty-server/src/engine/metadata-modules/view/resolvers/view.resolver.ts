@@ -68,18 +68,22 @@ export class ViewResolver {
 
       if (isDefined(objectMetadata)) {
         const i18n = this.i18nService.getI18nInstance(context.req.locale);
+        const standardApplicationId =
+          await context.loaders.standardApplicationIdLoader.load({
+            workspaceId: workspace.id,
+          });
         const translatedObjectLabel = resolveObjectMetadataStandardOverride(
           {
             labelPlural: objectMetadata.labelPlural,
             labelSingular: objectMetadata.labelSingular,
             description: objectMetadata.description ?? undefined,
             icon: objectMetadata.icon ?? undefined,
-            isCustom: objectMetadata.isCustom,
             standardOverrides: objectMetadata.standardOverrides ?? undefined,
           },
           'labelPlural',
           context.req.locale,
           i18n,
+          objectMetadata.applicationId === standardApplicationId,
         );
 
         return this.viewService.processViewNameWithTemplate(

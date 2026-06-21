@@ -1,6 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -37,23 +36,6 @@ const buildEmptyMaps = (): FlatEntityMaps<FlatPermissionFlag> =>
 const buildEmptyRolePermissionFlagMaps =
   (): FlatEntityMaps<FlatRolePermissionFlag> =>
     createEmptyFlatEntityMaps() as unknown as FlatEntityMaps<FlatRolePermissionFlag>;
-
-const buildFlatRolePermissionFlag = (
-  overrides: Partial<FlatRolePermissionFlag> = {},
-): FlatRolePermissionFlag =>
-  ({
-    id: '00000000-0000-0000-0000-000000000101',
-    universalIdentifier: '00000000-0000-0000-0000-000000000101',
-    permissionFlagId: '00000000-0000-0000-0000-000000000001',
-    permissionFlagUniversalIdentifier: '00000000-0000-0000-0000-000000000001',
-    roleUniversalIdentifier: '00000000-0000-0000-0000-000000000201',
-    workspaceId: 'workspace-id',
-    applicationId: '00000000-0000-0000-0000-000000000aaa',
-    applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000aaa',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    ...overrides,
-  }) as unknown as FlatRolePermissionFlag;
 
 const buildArgs = (
   flatEntityToValidate: FlatPermissionFlag,
@@ -333,43 +315,6 @@ describe('FlatPermissionFlagValidatorService', () => {
 
       expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagExceptionCode.PERMISSION_FLAG_IS_STANDARD,
-      ]);
-    });
-
-    it('rejects deleting a definition while roles still grant its key', () => {
-      const existing = buildFlatDefinition({
-        key: PermissionFlagType.WORKSPACE,
-      });
-      const optimisticMaps = buildEmptyMaps();
-      optimisticMaps.byUniversalIdentifier[existing.universalIdentifier] =
-        existing;
-
-      const rolePermissionFlagMaps = buildEmptyRolePermissionFlagMaps();
-      const rolePermissionFlag = buildFlatRolePermissionFlag({
-        permissionFlagId: existing.id,
-        permissionFlagUniversalIdentifier: existing.universalIdentifier,
-      });
-      rolePermissionFlagMaps.byUniversalIdentifier[
-        rolePermissionFlag.universalIdentifier
-      ] = rolePermissionFlag;
-
-      const result = service.validateFlatPermissionFlagDeletion({
-        flatEntityToValidate: existing,
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-          flatPermissionFlagMaps: optimisticMaps,
-          flatRolePermissionFlagMaps: rolePermissionFlagMaps,
-        },
-        buildOptions: {
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            '00000000-0000-0000-0000-000000000aaa',
-        },
-      } as unknown as Parameters<
-        FlatPermissionFlagValidatorService['validateFlatPermissionFlagDeletion']
-      >[0]);
-
-      expect(result.errors.map((error) => error.code)).toEqual([
-        PermissionFlagExceptionCode.PERMISSION_FLAG_IN_USE,
       ]);
     });
   });

@@ -1,10 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import type { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step.input';
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
@@ -32,13 +31,6 @@ const baseStepFields = {
     .string()
     .optional()
     .describe('Optional ID of the step this new step should connect to'),
-  position: z
-    .object({
-      x: z.number(),
-      y: z.number(),
-    })
-    .optional()
-    .describe('Optional position coordinates for the step'),
 };
 
 const nonLogicFunctionStepTypes = Object.values(WorkflowActionType).filter(
@@ -85,7 +77,13 @@ const enrichResultWithNextStep = ({
       return {
         ...result,
         nextStep:
-          'This CODE step was created with a default placeholder function. You MUST now call update_logic_function_source with the logicFunctionId from this step to define the actual code.',
+          'This CODE step was created with a default placeholder function. You MUST now call update_logic_function_source with the logicFunctionId from this step to define the actual code. IMPORTANT: Also provide outputSchema (an example return value, e.g. { datePlus7: "2026-06-16" }) so downstream steps can reference this step\'s output variables via {{stepId.fieldName}}.',
+      };
+    case WorkflowActionType.AI_AGENT:
+      return {
+        ...result,
+        nextStep:
+          'This AI_AGENT step was created with a default placeholder agent. You MUST now call update_agent with the agentId from this step\'s settings.input.agentId to set the agent\'s system prompt (and optionally its model and responseFormat). Use responseFormat { type: "json", schema: { ... } } when downstream steps need to reference structured fields via {{stepId.fieldName}}, otherwise the output is referenced as {{stepId.response}}. If the step needs a task-specific prompt, also set it via update_workflow_version_step on settings.input.prompt.',
       };
     default:
       return result;
@@ -95,7 +93,9 @@ const enrichResultWithNextStep = ({
 export const createCreateWorkflowVersionStepTool = (
   deps: Pick<
     WorkflowToolDependencies,
-    'workflowVersionStepService' | 'workflowVersionStepHelpersService'
+    | 'workflowVersionStepService'
+    | 'workflowVersionStepHelpersService'
+    | 'workflowVersionService'
   >,
   context: WorkflowToolContext,
 ) => ({
@@ -142,6 +142,11 @@ export const createCreateWorkflowVersionStepTool = (
             parentStepId: effectiveParentStepId,
           },
         });
+
+      await deps.workflowVersionService.autoLayoutWorkflowVersion({
+        workflowVersionId: parameters.workflowVersionId,
+        workspaceId: context.workspaceId,
+      });
 
       return enrichResultWithNextStep({
         result,

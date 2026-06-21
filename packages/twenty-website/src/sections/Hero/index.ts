@@ -1,1 +1,0 @@
-export { Hero } from './components';

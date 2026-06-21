@@ -16,6 +16,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { WorkflowExpectedOutputBodyInput } from '@/workflow/workflow-steps/components/WorkflowExpectedOutputBodyInput';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { WorkflowCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor';
@@ -44,7 +45,7 @@ import {
 } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
-import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
+import { IconCode, IconPlayerPlay } from 'twenty-ui/icon';
 import { CodeEditor } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -205,6 +206,22 @@ export const WorkflowEditActionCode = ({
     });
   };
 
+  const handleExpectedOutputBodyChange = (
+    parsedValue: Record<string, unknown>,
+  ) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
+    updateAction({
+      ...action,
+      settings: {
+        ...action.settings,
+        expectedOutputSchema: parsedValue,
+      },
+    });
+  };
+
   const handleTestInputChange = async (value: any, path: string[]) => {
     if (actionOptions.readonly === true) {
       return;
@@ -358,7 +375,6 @@ export const WorkflowEditActionCode = ({
             readOnly: actionOptions.readonly,
             domReadOnly: actionOptions.readonly,
             scrollBeyondLastLine: false,
-            padding: { top: 4, bottom: 4 },
           }}
         />
       </StyledFullScreenCodeEditorContainer>
@@ -397,12 +413,16 @@ export const WorkflowEditActionCode = ({
                   readOnly: actionOptions.readonly,
                   domReadOnly: actionOptions.readonly,
                   scrollBeyondLastLine: false,
-                  padding: { top: 4, bottom: 4 },
                   lineNumbersMinChars: 2,
                   fixedOverflowWidgets: true,
                 }}
                 readonly={actionOptions.readonly}
                 onEnterFullScreen={handleEnterFullScreen}
+              />
+              <WorkflowExpectedOutputBodyInput
+                defaultValue={action.settings.expectedOutputSchema}
+                onChange={handleExpectedOutputBodyChange}
+                readonly={actionOptions.readonly}
               />
             </>
           )}

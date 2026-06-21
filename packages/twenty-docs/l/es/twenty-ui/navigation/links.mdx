@@ -1,5 +1,6 @@
 ---
 title: Enlaces
+icon: enlace
 ---
 
 <Frame>
@@ -11,40 +12,49 @@ title: Enlaces
 Un componente de enlace estilizado para mostrar información de contacto.
 
 <Tabs>
-  <Tab title="&#x22;Uso&#x22;">
-    ```jsx
-    import { BrowserRouter as Router } from 'react-router-dom';
+<Tab title="&#x22;Uso&#x22;">
 
-    import { ContactLink } from 'twenty-ui/navigation';
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
 
-    export const MyComponent = () => {
-      const handleLinkClick = (event) => {
-        console.log('Contact link clicked!', event);
-      };
+import { ContactLink } from 'twenty-ui/navigation';
 
-      return (
-        <Router>
-          <ContactLink
-            className
-            href="mailto:example@example.com"
-            onClick={handleLinkClick}
-          >
-            example@example.com
-          </ContactLink>
-        </Router>
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
 
-  <Tab title="&#x22;Props&#x22;">
-    | "Props"     | Tipo              | Descripción                                                                     |
-    | ----------- | ----------------- | ------------------------------------------------------------------------------- |
-    | "className" | string            | "Nombre opcional para estilización adicional"                                   |
-    | href        | string            | La URL o ruta objetivo del enlace                                               |
-    | onClick     | "función"         | Función de devolución de llamada que se activa cuando se hace clic en el enlace |
-    | hijos       | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                  |
-  </Tab>
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+
+</Tab>
+<Tab title="&#x22;Props&#x22;">
+
+
+| "Props"     | Tipo              | Descripción                                                                     |
+| ----------- | ----------------- | ------------------------------------------------------------------------------- |
+| "className" | string            | "Nombre opcional para estilización adicional"                                   |
+| href        | string            | La URL o ruta objetivo del enlace                                               |
+| onClick     | "función"         | Función de devolución de llamada que se activa cuando se hace clic en el enlace |
+| hijos       | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                  |
+
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Enlace Sin Estilo
@@ -52,36 +62,44 @@ Un componente de enlace estilizado para mostrar información de contacto.
 Un componente de enlace estilizado para mostrar enlaces.
 
 <Tabs>
-  <Tab title="&#x22;Uso&#x22;">
-    ```jsx
-    import { RawLink } from "/navigation";
-    import { BrowserRouter as Router } from "react-router-dom";
+<Tab title="&#x22;Uso&#x22;">
 
-    export const MyComponent = () => {
-      const handleLinkClick = (event) => {
-        console.log("Contact link clicked!", event);
-      };
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
 
-      return (
-        <Router>
-          <RawLink className href="/contact" onClick={handleLinkClick}>
-            Contact Us
-          </RawLink>
-        </Router>
-      );
-    };
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
 
-    ```
-  </Tab>
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
 
-  <Tab title="&#x22;Props&#x22;">
-    | "Props"       | Tipo              | Descripción                                                                     |
-    | ------------- | ----------------- | ------------------------------------------------------------------------------- |
-    | nombreDeClase | string            | Nombre opcional para estilo adicional                                           |
-    | href          | string            | La URL o ruta objetivo del enlace                                               |
-    | onClick       | función           | Función de devolución de llamada que se activa cuando se hace clic en el enlace |
-    | hijos         | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                  |
-  </Tab>
+```
+
+
+</Tab>
+<Tab title="&#x22;Props&#x22;">
+
+
+| "Props"       | Tipo              | Descripción                                                                     |
+| ------------- | ----------------- | ------------------------------------------------------------------------------- |
+| nombreDeClase | string            | Nombre opcional para estilo adicional                                           |
+| href          | string            | La URL o ruta objetivo del enlace                                               |
+| onClick       | función           | Función de devolución de llamada que se activa cuando se hace clic en el enlace |
+| hijos         | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                  |
+
+
+
+
+</Tab>
 </Tabs>
 
 ## Enlace Redondeado
@@ -89,34 +107,41 @@ Un componente de enlace estilizado para mostrar enlaces.
 Un enlace de estilo redondeado con un componente Chip para enlaces.
 
 <Tabs>
-  <Tab title="&#x22;Uso&#x22;">
-    ```jsx
-    import { RoundedLink } from "/navigation";
-    import { BrowserRouter as Router } from "react-router-dom";
+<Tab title="&#x22;Uso&#x22;">
 
-    export const MyComponent = () => {
-      const handleLinkClick = (event) => {
-        console.log("Contact link clicked!", event);
-      };
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
 
-      return (
-        <Router>
-          <RoundedLink href="/contact" onClick={handleLinkClick}>
-            Contact Us
-          </RoundedLink>
-        </Router>
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
 
-  <Tab title="&#x22;Props&#x22;">
-    | "Props" | Tipo              | Descripción                                                                     |
-    | ------- | ----------------- | ------------------------------------------------------------------------------- |
-    | href    | cadena            | La URL o ruta objetivo del enlace                                               |
-    | hijos   | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                  |
-    | onClick | "función"         | Función de devolución de llamada que se activa cuando se hace clic en el enlace |
-  </Tab>
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="&#x22;Props&#x22;">
+
+
+| "Props" | Tipo              | Descripción                                                                     |
+| ------- | ----------------- | ------------------------------------------------------------------------------- |
+| href    | cadena            | La URL o ruta objetivo del enlace                                               |
+| hijos   | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                  |
+| onClick | "función"         | Función de devolución de llamada que se activa cuando se hace clic en el enlace |
+
+
+
+</Tab>
 </Tabs>
 
 ## Enlace Social
@@ -124,30 +149,37 @@ Un enlace de estilo redondeado con un componente Chip para enlaces.
 Enlaces sociales estilizados, con soporte para varios tipos de enlaces sociales, como URLs, LinkedIn y X (o Twitter).
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { SocialLink } from "twenty-ui/navigation";
-    import { BrowserRouter as Router } from "react-router-dom";
+<Tab title="Uso">
 
-    export const MyComponent = () => {
-      return (
-        <Router>
-          <SocialLink
-            type="twitter"
-            href="https://twitter.com/twentycrm"
-          ></SocialLink>
-        </Router>
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
 
-  <Tab title="Props">
-    | Props   | Tipo              | Descripción                                                                        |
-    | ------- | ----------------- | ---------------------------------------------------------------------------------- |
-    | href    | string            | La URL o ruta objetivo del enlace                                                  |
-    | hijos   | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                     |
-    | tipo    | string            | El tipo de enlaces sociales. Las opciones incluyen: `url`, `LinkedIn`, y `Twitter` |
-    | onClick | función           | Función de devolución de llamada que se activa cuando se hace clic en el enlace    |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+
+| Props   | Tipo              | Descripción                                                                        |
+| ------- | ----------------- | ---------------------------------------------------------------------------------- |
+| href    | string            | La URL o ruta objetivo del enlace                                                  |
+| hijos   | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                     |
+| tipo    | string            | El tipo de enlaces sociales. Las opciones incluyen: `url`, `LinkedIn`, y `Twitter` |
+| onClick | función           | Función de devolución de llamada que se activa cuando se hace clic en el enlace    |
+
+
+
+
+</Tab>
 </Tabs>

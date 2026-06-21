@@ -1,10 +1,9 @@
-import type { MetadataRoute } from 'next';
+import { type MetadataRoute } from 'next';
 
-import { getSiteUrl } from '@/lib/seo';
-import { getRobotsDisallowedRoutePaths } from '@/lib/website-routing';
+import { getRobotsDisallowedRoutePaths } from '@/platform/routing';
+import { getSiteUrl } from '@/platform/seo';
 
-const SITE_URL = getSiteUrl();
-const ALWAYS_DISALLOW = ['/api/'] as const;
+const ALWAYS_DISALLOW: readonly string[] = ['/api/'];
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -15,6 +14,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [...ALWAYS_DISALLOW, ...getRobotsDisallowedRoutePaths()],
       },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: `${getSiteUrl()}/sitemap.xml`,
   };
 }

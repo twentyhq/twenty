@@ -24,6 +24,8 @@ export type ConnectionParametersUpdate<Pwd extends string = string> = Omit<
 
 export type AccountType = (typeof ACCOUNT_TYPES)[number];
 
+export { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
+
 export type ImapSmtpCaldavParams<Pwd extends string = string> = {
   IMAP?: ConnectionParameters<Pwd>;
   SMTP?: ConnectionParameters<Pwd>;

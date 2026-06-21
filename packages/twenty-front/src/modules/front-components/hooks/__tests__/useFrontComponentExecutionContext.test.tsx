@@ -1,7 +1,11 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
+import { getDefaultStore } from 'jotai';
+import { AppPath } from 'twenty-shared/types';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 
 const mockNavigateApp = jest.fn();
@@ -68,7 +72,7 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   }),
 }));
 
-jest.mock('twenty-ui/display', () => ({
+jest.mock('twenty-ui/icon', () => ({
   useIcons: () => ({
     getIcon: mockGetIcon,
   }),
@@ -93,19 +97,40 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
 }));
 
 const renderUseFrontComponentExecutionContext = (
-  params: Parameters<typeof useFrontComponentExecutionContext>[0],
+  params: Omit<
+    Parameters<typeof useFrontComponentExecutionContext>[0],
+    'colorScheme'
+  > & { colorScheme?: 'light' | 'dark' },
 ) =>
-  renderHook(() => useFrontComponentExecutionContext(params), {
-    wrapper: ({ children }) => I18nProvider({ i18n, children }),
-  });
+  renderHook(
+    () =>
+      useFrontComponentExecutionContext({ colorScheme: 'light', ...params }),
+    {
+      wrapper: ({ children }) => I18nProvider({ i18n, children }),
+    },
+  );
 
 const FRONT_COMPONENT_ID = 'fc-test-id';
 const COMMAND_MENU_ITEM_ID = 'cmd-item-1';
+
+const parentViewAtom =
+  contextStoreRecordShowParentViewComponentState.atomFamily({
+    instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+  });
+
+const createParentView = (parentViewObjectNameSingular: string) => ({
+  parentViewComponentId: 'parent-view-component-id',
+  parentViewObjectNameSingular,
+  parentViewFilterGroups: [],
+  parentViewFilters: [],
+  parentViewSorts: [],
+});
 
 describe('useFrontComponentExecutionContext', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCurrentUser = { id: 'user-123' };
+    getDefaultStore().set(parentViewAtom, undefined);
   });
 
   describe('executionContext', () => {
@@ -120,6 +145,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: 'record-456',
         selectedRecordIds: ['record-456'],
+        colorScheme: 'light',
       });
     });
 
@@ -134,6 +160,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: null,
         selectedRecordIds: ['record-1', 'record-2', 'record-3'],
+        colorScheme: 'light',
       });
     });
 
@@ -165,6 +192,15 @@ describe('useFrontComponentExecutionContext', () => {
       expect(result.current.executionContext.recordId).toBeNull();
       expect(result.current.executionContext.selectedRecordIds).toEqual([]);
     });
+
+    it('should expose the provided colorScheme', () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        colorScheme: 'dark',
+      });
+
+      expect(result.current.executionContext.colorScheme).toBe('dark');
+    });
   });
 
   describe('navigate', () => {
@@ -188,6 +224,67 @@ describe('useFrontComponentExecutionContext', () => {
         { tab: 'general' },
         { replace: true },
       );
+    });
+
+    it('should clear stale parent-view state when navigating to a record of a different object', async () => {
+      const store = getDefaultStore();
+      store.set(parentViewAtom, createParentView('company'));
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.navigate(
+          AppPath.RecordShowPage,
+          { objectNameSingular: 'person', objectRecordId: 'record-1' },
+        );
+      });
+
+      expect(store.get(parentViewAtom)).toBeUndefined();
+      expect(mockNavigateApp).toHaveBeenCalledWith(
+        AppPath.RecordShowPage,
+        { objectNameSingular: 'person', objectRecordId: 'record-1' },
+        undefined,
+        undefined,
+      );
+    });
+
+    it('should keep parent-view state when navigating to a record of the same object', async () => {
+      const store = getDefaultStore();
+      const parentView = createParentView('company');
+      store.set(parentViewAtom, parentView);
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.navigate(
+          AppPath.RecordShowPage,
+          { objectNameSingular: 'company', objectRecordId: 'record-2' },
+        );
+      });
+
+      expect(store.get(parentViewAtom)).toEqual(parentView);
+    });
+
+    it('should keep parent-view state when navigating to a non-record page', async () => {
+      const store = getDefaultStore();
+      const parentView = createParentView('company');
+      store.set(parentViewAtom, parentView);
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.navigate(
+          AppPath.SettingsCatchAll,
+        );
+      });
+
+      expect(store.get(parentViewAtom)).toEqual(parentView);
     });
   });
 

@@ -16,11 +16,20 @@
     "plugins": [
       {
         "name": "next"
+      },
+      {
+        "name": "typescript-styled-plugin",
+        "lint": {
+          "validProperties": ["text-wrap"]
+        }
       }
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["node", "jest"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "include": [
     "next-env.d.ts",

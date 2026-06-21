@@ -82,7 +82,7 @@ export default defineApplication({
 Sağlayıcınızın beyaz listeye alması gereken OAuth geri çağrı URL'si şudur:
 
 ```
-https://<your-twenty-server>/apps/oauth/callback
+https://<your-twenty-server>/auth/apps/callback
 ```
 
 </Accordion>
@@ -182,7 +182,7 @@ Kullanıcı ve sağlayıcı başına birden çok bağlantıya izin verilir; böy
 Her bağlantı sağlayıcısı için, sunucu yöneticisinin önce üçüncü tarafta bir OAuth uygulaması kaydetmesi gerekir.
 
 1. Sağlayıcının geliştirici ayarlarına gidin (örn. https://linear.app/settings/api/applications/new).
-2. **Redirect URI**'yi `\<SERVER_URL>/apps/oauth/callback` olarak ayarlayın.
+2. **Redirect URI**'yi `\<SERVER_URL>/auth/apps/callback` olarak ayarlayın.
 3. Oluşturulan **Client ID** ve **Client Secret**'ı kopyalayın.
 4. Yüklü uygulamayı Twenty'de bir sunucu yöneticisi olarak açın → karşılık gelen `serverVariables` üzerinde değerleri ayarlayın.
 5. Ardından çalışma alanı üyeleri, uygulama başına **Bağlantılar** bölümünden bağlantılar ekleyebilir.

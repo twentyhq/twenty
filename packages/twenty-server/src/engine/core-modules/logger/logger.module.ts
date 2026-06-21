@@ -2,6 +2,7 @@ import {
   ConsoleLogger,
   type DynamicModule,
   Global,
+  type LogLevel,
   Module,
 } from '@nestjs/common';
 
@@ -39,7 +40,7 @@ export class LoggerModule extends ConfigurableModuleClass {
   static forRootAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
     const provider = {
       provide: LOGGER_DRIVER,
-      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       useFactory: async (...args: any[]) => {
         const config = await options?.useFactory?.(...args);
 
@@ -54,7 +55,7 @@ export class LoggerModule extends ConfigurableModuleClass {
             ? new ConsoleLogger()
             : undefined;
 
-        logger?.setLogLevels(logLevels);
+        logger?.setLogLevels(logLevels as LogLevel[]);
 
         return logger;
       },

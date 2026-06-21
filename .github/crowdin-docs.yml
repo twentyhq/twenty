@@ -10,6 +10,10 @@
 
 files: [
   {
+    "source": "packages/twenty-docs/getting-started/**/*.mdx",
+    "translation": "packages/twenty-docs/l/%two_letters_code%/getting-started/**/%original_file_name%",
+  },
+  {
     #
     # MDX documentation files - user-guide
     # Using md type to preserve JSX component structure

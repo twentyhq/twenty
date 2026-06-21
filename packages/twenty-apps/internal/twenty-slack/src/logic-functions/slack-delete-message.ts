@@ -1,8 +1,8 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 
 import { SLACK_DELETE_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { slackDeleteMessageHandler } from 'src/logic-functions/handlers/slack-delete-message-handler';
+import { jsonSchemaToInputSchema } from 'src/logic-functions/utils/json-schema-to-input-schema';
 import { slackDeleteMessageInputSchema } from './schemas/slack-delete-message-input.schema';
 
 export default defineLogicFunction({

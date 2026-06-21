@@ -30,7 +30,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 3. **Message Participants**를 선택합니다(고급 객체에 있음)
 
 <Note>
-  Message Participant는 메시지 ID와 사람 ID의 조합으로, 메시지마다 하나의 고유 레코드를 생성합니다. 이는 발신자(또는 수신자)의 이메일 주소가 들어 있는 `handle` 필드에 접근할 수 있으므로 메시지를 직접 추적하는 것보다 더 쉽습니다.
+Message Participant는 메시지 ID와 사람 ID의 조합으로, 메시지마다 하나의 고유 레코드를 생성합니다. 이는 발신자(또는 수신자)의 이메일 주소가 들어 있는 `handle` 필드에 접근할 수 있으므로 메시지를 직접 추적하는 것보다 더 쉽습니다.
 </Note>
 
 ### 2단계: Role 기준으로 필터링
@@ -50,7 +50,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 해당 이메일 주소에서 보낸 모든 메시지를 찾아 총 개수를 구합니다.
 
 <Note>
-  Search Records 액션은 최대 200개의 레코드만 반환합니다. 그러나 개별 레코드가 아니라 `totalCount` 값만 사용하므로, 이 단계는 해당 사람이 보낸 이메일의 총 개수를 반환합니다.
+Search Records 액션은 최대 200개의 레코드만 반환합니다. 그러나 개별 레코드가 아니라 `totalCount` 값만 사용하므로, 이 단계는 해당 사람이 보낸 이메일의 총 개수를 반환합니다.
 </Note>
 
 ### 4단계: Create or Update Record 액션으로 사람 레코드를 업데이트합니다
@@ -58,7 +58,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 1. **레코드 생성 또는 업데이트** 액션을 추가합니다
 
 <Warning>
-  여기서는 **Update Record** 대신 **Upsert Record**를 사용하세요. 이렇게 하면 이전 단계의 레코드 ID가 없어도 `handle` 필드(이메일 주소)로 사람을 식별할 수 있습니다.
+여기서는 **Update Record** 대신 **Upsert Record**를 사용하세요. 이렇게 하면 이전 단계의 레코드 ID가 없어도 `handle` 필드(이메일 주소)로 사람을 식별할 수 있습니다.
 </Warning>
 
 2. 객체로 **People**를 선택합니다

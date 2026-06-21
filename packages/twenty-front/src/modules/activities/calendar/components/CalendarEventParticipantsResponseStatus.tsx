@@ -2,6 +2,7 @@ import groupBy from 'lodash.groupby';
 
 import { CalendarEventParticipantsResponseStatusField } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatusField';
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
+import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 
 export const CalendarEventParticipantsResponseStatus = ({
   participants,
@@ -29,7 +30,7 @@ export const CalendarEventParticipantsResponseStatus = ({
   ];
 
   return (
-    <>
+    <PropertyBox>
       {responseStatusOrder.map((responseStatus) => (
         <CalendarEventParticipantsResponseStatusField
           key={responseStatus}
@@ -37,6 +38,6 @@ export const CalendarEventParticipantsResponseStatus = ({
           participants={groupedParticipants[responseStatus] ?? []}
         />
       ))}
-    </>
+    </PropertyBox>
   );
 };

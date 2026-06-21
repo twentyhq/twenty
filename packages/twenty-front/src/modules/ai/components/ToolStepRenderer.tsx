@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -14,7 +14,7 @@ import {
 } from '@/ai/utils/getToolDisplayMessage';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { useLingui } from '@lingui/react/macro';
-import { type ToolUIPart } from 'ai';
+import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -131,7 +131,7 @@ export const ToolStepRenderer = ({
   toolPart,
   isStreaming,
 }: {
-  toolPart: ToolUIPart;
+  toolPart: ToolUIPart | DynamicToolUIPart;
   isStreaming: boolean;
 }) => {
   const { theme } = useContext(ThemeContext);
@@ -140,8 +140,8 @@ export const ToolStepRenderer = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('output');
 
-  const { input, output, type, errorText } = toolPart;
-  const rawToolName = type.split('-')[1];
+  const { input, output, errorText } = toolPart;
+  const rawToolName = getToolName(toolPart);
 
   const { resolvedInput: toolInput, resolvedToolName: toolName } =
     resolveToolInput(input, rawToolName);

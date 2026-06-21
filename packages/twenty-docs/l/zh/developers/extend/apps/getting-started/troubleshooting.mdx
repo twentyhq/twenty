@@ -8,5 +8,7 @@ icon: wrench
 * **Node 版本不正确** — 需要 24+。 使用 `node -v` 检查。
 * **缺少 Yarn 4** — 运行 `corepack enable`。
 * **依赖损坏** — `rm -rf node_modules && yarn install`。
+* **`twenty-sdk` 升级到 v2.8.0 后出现错误** — 在 v2.8.0 中，它从 `dependencies` 移动到了 `devDependencies`。 请参阅[项目结构 → 依赖项](/l/zh/developers/extend/apps/getting-started/project-structure#dependencies)。
+* **`twenty build` 会对 `dependencies` 下的 `twenty-client-sdk` 发出警告** — 它由 Twenty 在运行时提供，因此应与 `twenty-sdk` 一起移动到 `devDependencies` 中。 请参阅[项目结构 → 依赖项](/l/zh/developers/extend/apps/getting-started/project-structure#dependencies)。
 
 卡住了吗？ 在 [Twenty 的 Discord](https://discord.com/channels/1130383047699738754/1130386664812982322) 上提问。

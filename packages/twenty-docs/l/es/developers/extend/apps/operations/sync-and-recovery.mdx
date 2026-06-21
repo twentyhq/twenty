@@ -1,0 +1,111 @@
+---
+title: Sincronización y recuperación
+description: Qué comando usar y cuándo, cómo leer la salida de sincronización y una escalera de recuperación para cuando los metadatos locales se desvían, antes de llegar a un restablecimiento completo.
+icon: brújula
+---
+
+El desarrollo de aplicaciones locales gira en torno a la **sincronización**: la CLI recompila tu manifiesto y el servidor aplica solo la diferencia entre este y los metadatos que ya se encuentran en tu espacio de trabajo. Esta página explica qué comando usar, cómo leer qué cambió una sincronización y qué hacer, en orden, cuando el estado local parece inconsistente.
+
+## Qué comando usar y cuándo
+
+<Note>
+Para la iteración local del día a día casi siempre quieres `yarn twenty dev`. La implementación y la publicación son para enviar versiones, **no** para el ciclo local.
+</Note>
+
+| Quieres…                                            | Comando                             | Notas                                                                                                                                     |
+| --------------------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Iterar localmente con sincronización en tiempo real | `yarn twenty dev`                   | Supervisa tus archivos y sincroniza en cada cambio.                                                                                       |
+| Sincronizar una vez y salir (CI, scripts, hooks)    | `yarn twenty dev --once`            | Una compilación + sincronización, luego sale.                                                                                             |
+| Previsualizar cambios **sin aplicarlos**            | `yarn twenty dev --once --dry-run`  | Calcula e imprime el diff; no escribe nada.                                                                                               |
+| Eliminar la aplicación del espacio de trabajo       | `yarn twenty app:uninstall`         | Agrega `--yes` para omitir la confirmación.                                                                                               |
+| Enviar un tarball a un servidor                     | `yarn twenty app:publish --private` | Requiere una versión de `package.json` **estrictamente superior**; consulta [Publicación](/l/es/developers/extend/apps/operations/publishing). |
+| Publicar en el marketplace (npm)                    | `yarn twenty app:publish`           | —                                                                                                                                         |
+| Instalar / actualizar una versión implementada      | `yarn twenty app:install`           | Instala la versión actualmente implementada.                                                                                              |
+| Borrar el servidor local y empezar desde cero       | `yarn twenty docker:reset`          | Elimina **todos** los datos locales: último recurso.                                                                                      |
+
+### La sincronización local no necesita un aumento de versión
+
+La regla de `version` estrictamente creciente (`VERSION_ALREADY_EXISTS` al implementar, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` al instalar) se aplica a **`app:publish` / `app:install`**: la ruta de publicación. `yarn twenty dev` sincroniza tu manifiesto en su lugar y nunca requiere un cambio de versión, por lo que no necesitas tocar `package.json` para iterar. Si te encuentras aumentando la versión para probar un cambio local, estás usando la ruta de publicación cuando lo que quieres es el ciclo de desarrollo.
+
+## Leer la salida de la sincronización
+
+Cada sincronización muestra los cambios de metadatos que aplicó (o aplicaría, con `--dry-run`):
+
+```text filename="Terminal"
+Metadata changes: 2 created, 1 updated, 1 deleted
+  created objectMetadata rocket
+  created fieldMetadata timelineActivities
+  updated fieldMetadata launchedAt
+  deleted pageLayout legacyTab
+✓ Synced
+```
+
+Este es tu primer diagnóstico: te indica exactamente qué objetos, campos y diseños cambiaron, para que puedas confirmar que una sincronización hizo lo que esperabas antes de revisar la interfaz de usuario.
+
+Cuando una sincronización falla en una sola entidad, el error nombra la entidad implicada y su `universalIdentifier`, por ejemplo:
+
+```text
+Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337) failed
+```
+
+Usa ese identificador para encontrar la entidad en tu manifiesto (y, si es necesario, en el espacio de trabajo) en lugar de adivinar cuál entra en conflicto.
+
+## Previsualizar cambios (simulación)
+
+`yarn twenty dev --once --dry-run` compila tu manifiesto, le pide al servidor el plan de migración y lo imprime, **sin aplicar nada**. Es la forma segura de responder "¿qué cambiaría esta sincronización?" antes de comprometerte a ella.
+
+```bash filename="Terminal"
+yarn twenty dev --once --dry-run
+```
+
+```text filename="Terminal"
+Building manifest...
+Computing metadata diff (dry run, nothing will be applied)...
+Metadata changes: 1 created, 1 updated
+  created fieldMetadata timelineActivities
+  updated objectMetadata rocket
+✓ Dry run complete for My App — no changes were applied
+```
+
+Una simulación:
+
+* **No escribe nada**: sin migración de metadatos, sin actualización del registro de la aplicación, sin cambios de roles/pestañas predeterminados y sin generación del cliente de la API.
+* Devuelve el **mismo diff** que aplicaría una sincronización real, para que puedas revisar por adelantado las entidades creadas/actualizadas/eliminadas.
+* Es útil antes de un cambio arriesgado, al revisar un cambio generado por IA o en un script que deba fallar si está a punto de producirse un cambio inesperado.
+
+<Note>
+Una simulación solo previsualiza cambios de **metadatos** y requiere que la aplicación se haya sincronizado al menos una vez (para que el espacio de trabajo la conozca). Si la ejecutas con una aplicación que nunca se sincronizó, el servidor indicará que la aplicación no está instalada; ejecuta `yarn twenty dev` una vez primero.
+</Note>
+
+## Escalera de recuperación
+
+Cuando los metadatos locales parezcan incorrectos, ve escalando en este orden y detente en cuanto te hayas desbloqueado. Cada paso es más disruptivo que el anterior.
+
+1. **Volver a sincronizar.** Ejecuta `yarn twenty dev --once` de nuevo. Las sincronizaciones son idempotentes: volver a ejecutar un manifiesto limpio es seguro y suele resolver un problema transitorio.
+2. **Previsualizar el plan.** Ejecuta `yarn twenty dev --once --dry-run` para ver exactamente qué pretende cambiar la siguiente sincronización, sin aplicarlo.
+3. Lee el error identificado. Un conflicto suele señalar un identificador duplicado o reutilizado.
+4. **Desinstalar y volver a instalar.** `yarn twenty app:uninstall`, luego vuelve a sincronizar (`yarn twenty dev`). Esto reconstruye los metadatos de la aplicación desde cero manteniendo intacto el resto de tu espacio de trabajo.
+5. **Restablecimiento completo (último recurso).** `yarn twenty docker:reset`, luego vuelve a sembrar los datos y a sincronizar.
+
+<Warning>
+`yarn twenty docker:reset` elimina **todos** los datos de tu instancia local: todos los espacios de trabajo, registros y aplicaciones. Úsalo solo cuando los pasos anteriores hayan fallado.
+</Warning>
+
+<Note>
+¿Te has encontrado con un error de metadatos? Por favor, [abre una incidencia](https://github.com/twentyhq/twenty/issues/new/choose) e incluye el mensaje de migración con error (con su tipo de metadatos y `universalIdentifier`), la salida de `Metadata changes` de la sincronización y los comandos que ejecutaste.
+</Note>
+
+## Evita sincronizaciones concurrentes en un mismo espacio de trabajo
+
+La sincronización aplica migraciones de metadatos. Ejecutar varias operaciones de sincronización, implementación o instalación contra el **mismo espacio de trabajo al mismo tiempo** (por ejemplo, múltiples terminales o agentes de IA iterando en paralelo) puede entremezclar esas migraciones y dejar los metadatos en un estado parcialmente aplicado.
+
+El servidor serializa las sincronizaciones por espacio de trabajo para evitar esto, pero aun así deberías canalizar las operaciones de metadatos sensibles a través de un proceso **único** en lugar de lanzarlas de forma concurrente. Si orquestas el desarrollo con varios agentes, enruta sus llamadas de sincronización/implementación/instalación a través de una sola cola de modo que solo una se ejecute a la vez.
+
+## Distinguir los tipos de error
+
+Cuando algo sale mal, el diff de metadatos y los errores con nombre te permiten situar el fallo:
+
+* **Error de compilación del manifiesto**: la CLI falla antes de sincronizar (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); corrige el código fuente de tu aplicación.
+* **Error de sincronización / migración**: la compilación tiene éxito, pero aplicar el diff falla, nombrando la entidad y el `universalIdentifier`; corrige los metadatos en conflicto.
+* **Error de tiempo de ejecución del código de la aplicación**: la sincronización se completa correctamente, pero tus funciones lógicas o componentes se comportan de forma incorrecta en tiempo de ejecución; revisa los [registros de funciones](/l/es/developers/extend/apps/operations/cli).
+* **Estado de instancia local**: nada de lo anterior aplica y el espacio de trabajo sigue viéndose mal; desciende por la escalera de recuperación.

@@ -7,13 +7,14 @@ import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDom
 import { useSettingsCustomDomain } from '@/settings/domains/hooks/useSettingsCustomDomain';
 import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
+import { IconReload, IconTrash } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button, ButtonGroup } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -62,22 +63,22 @@ export const SettingsCustomDomain = () => {
   } = useSettingsCustomDomain();
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Custom Domain`}
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: <Trans>General</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: <Trans>Custom Domain</Trans> },
       ]}
       actionButton={
         <SaveAndCancelButtons
-          onCancel={() => navigate(SettingsPath.Workspace)}
+          onCancel={() => navigate(SettingsPath.General)}
           isSaveDisabled={isSaveDisabled}
           isLoading={isSubmitting}
           onSave={handleSave}
@@ -133,6 +134,6 @@ export const SettingsCustomDomain = () => {
           )}
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

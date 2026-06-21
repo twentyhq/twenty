@@ -16,6 +16,7 @@ export type CurrentWorkspace = Pick<
   | 'activationStatus'
   | 'billingSubscriptions'
   | 'billingEntitlements'
+  | 'billingCustomer'
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
@@ -54,4 +55,6 @@ export type CurrentWorkspace = Pick<
 export const currentWorkspaceState = createAtomState<CurrentWorkspace | null>({
   key: 'currentWorkspaceState',
   defaultValue: null,
+  useLocalStorage: true,
+  localStorageOptions: { getOnInit: true },
 });

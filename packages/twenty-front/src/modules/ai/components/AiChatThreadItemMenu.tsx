@@ -5,7 +5,7 @@ import {
   IconDotsVertical,
   IconPencil,
   IconTrash,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 

@@ -1,1 +1,0 @@
-export { CaseStudy } from './components';

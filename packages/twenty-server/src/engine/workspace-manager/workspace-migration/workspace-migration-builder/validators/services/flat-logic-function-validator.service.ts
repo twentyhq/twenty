@@ -7,7 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -77,6 +79,31 @@ export class FlatLogicFunctionValidatorService {
           userFriendlyMessage: msg`Source handler path is invalid`,
         });
       }
+    }
+
+    const mergedPrebuiltState = {
+      executionMode:
+        flatEntityUpdate.executionMode ??
+        existingFlatLogicFunction.executionMode,
+      isBuildUpToDate:
+        flatEntityUpdate.isBuildUpToDate ??
+        existingFlatLogicFunction.isBuildUpToDate,
+      checksum:
+        flatEntityUpdate.checksum !== undefined
+          ? flatEntityUpdate.checksum
+          : existingFlatLogicFunction.checksum,
+    };
+
+    if (
+      mergedPrebuiltState.executionMode ===
+        LogicFunctionExecutionMode.PREBUILT &&
+      !isLogicFunctionReadyForPrebuiltInstall(mergedPrebuiltState)
+    ) {
+      validationResult.errors.push({
+        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        message: t`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+        userFriendlyMessage: msg`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+      });
     }
 
     return validationResult;
@@ -173,6 +200,18 @@ export class FlatLogicFunctionValidatorService {
           userFriendlyMessage: msg`Source handler path is invalid`,
         });
       }
+    }
+
+    if (
+      flatLogicFunctionToValidate.executionMode ===
+        LogicFunctionExecutionMode.PREBUILT &&
+      !isLogicFunctionReadyForPrebuiltInstall(flatLogicFunctionToValidate)
+    ) {
+      validationResult.errors.push({
+        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        message: t`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+        userFriendlyMessage: msg`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+      });
     }
 
     return validationResult;

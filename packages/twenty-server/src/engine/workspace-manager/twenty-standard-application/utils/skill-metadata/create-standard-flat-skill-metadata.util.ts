@@ -74,6 +74,15 @@ Always rely on tool schema definitions:
 - Follow schema definitions exactly for field names, types, and structures
 - Schema includes validation rules and common patterns
 
+## Validation Strategy
+
+Build steps fully configured up front so the workflow is correct on the first try. Mutation tools (\`create_complete_workflow\`, \`update_workflow_version_step\`) return a compact validation summary (error codes, messages, suggestions) — fix any reported errors.
+
+Do NOT call \`validate_workflow\` after every change:
+- When making several step edits in a row, pass \`validate: false\` to \`update_workflow_version_step\` to skip per-edit validation.
+- Call \`validate_workflow\` exactly ONCE at the end, before activating. It returns the full report including warnings and available variable paths.
+
+
 ## Approach
 
 - Ask clarifying questions to understand user needs
@@ -182,8 +191,8 @@ For the fields you will create, make sure to create a good variety of field type
 *Here are the steps to follow closely:*
 
 STEP 0: Present a plan to the user and wait for approval.
-- Use list_object_metadata_items to see all available objects in the workspace
-- Use find_people (limit: 5) and find_companies (limit: 5) and find_opportunities (limit: 5) to understand the existing seed data shape
+- Use get_object_metadata to see all available objects in the workspace
+- Use find_many_people (limit: 5) and find_many_companies (limit: 5) and find_many_opportunities (limit: 5) to understand the existing seed data shape
 - Based on the user's business type, propose a plan that lists:
   - How People, Companies, and Opportunities map to the domain story (e.g. "People = Candidates", "Companies = Employers")
   - The 2–3 custom objects you will create, each with a one-line description of their role
@@ -201,7 +210,7 @@ STEP 2: Wait 3 seconds, for the backend side effects to be completed
 STEP 3: Create all NON-RELATION fields for ALL objects by batch with create_many_field_metadata.
 Do a separate batch call for each object.
 This includes:
-- New custom fields for the standard objects (Person, Company, Opportunity) — use their objectMetadataId from list_object_metadata_items
+- New custom fields for the standard objects (Person, Company, Opportunity) — use their objectMetadataId from get_object_metadata
 - All non-relation fields for the new custom objects
 DO NOT include relation fields in this step. Only create TEXT, NUMBER, BOOLEAN, DATE_TIME, SELECT, MULTI_SELECT, CURRENCY, etc.
 SELECT option values must be UPPER_SNAKE_CASE
@@ -215,9 +224,9 @@ targetFieldIcon is like IconSomething, it's ok if it doesn't exist in the icon l
 STEP 6: Wait 3 seconds, for the backend side effects to be completed
 
 STEP 7: Rename and enrich the first N records of People, Companies, and Opportunities.
-- Use find_people (limit: 50, orderBy: [{ position: "AscNullsFirst" }]), find_companies (limit: 50, orderBy: [{ position: "AscNullsFirst" }]), find_opportunities (limit: 50, orderBy: [{ position: "AscNullsFirst" }]) to get the IDs of the first records in each table
+- Use find_many_people (limit: 50, orderBy: [{ position: "AscNullsFirst" }]), find_many_companies (limit: 50, orderBy: [{ position: "AscNullsFirst" }]), find_many_opportunities (limit: 50, orderBy: [{ position: "AscNullsFirst" }]) to get the IDs of the first records in each table
   - Ordering by position ascending gives the earliest-inserted records, which are contiguous in the table — this keeps the demo data tightly grouped and makes the workspace feel coherent
-- For each standard object, call update_people / update_companies / update_opportunities **individually per record** (one call per record) to set domain-relevant names and field values:
+- For each standard object, call update_one_person / update_one_company / update_one_opportunity **individually per record** (one call per record) to set domain-relevant names and field values:
   - **People**: replace nameFirstName + nameLastName with realistic names that fit the domain role (e.g. for a law firm: "Sophie Martin", "James O'Brien"; for a clinic: "Dr. Clara Reyes", "Marco Bianchi"). Also set jobTitle to a domain-appropriate title.
   - **Companies**: replace name with realistic company names that fit the domain (e.g. for a law firm: "Ashford & Partners", "Nexus Legal Group"; for a clinic: "Meridian Health Clinic", "CarePoint Medical").
   - **Opportunities**: replace name with a domain-relevant deal name (e.g. "Q2 retainer — Ashford & Partners", "New patient intake — Meridian Health").
@@ -276,38 +285,6 @@ Also create additional views for the standard objects (People, Companies, Opport
 Navigate to each view after creating it. Wait 3 seconds.
 
 Loop STEP 8 for all the custom objects
-
-STEP 9: Create a multi-tab dashboard that tells the full story of the business.
-
-Use create_complete_dashboard to create the first tab, then add_dashboard_tab + add_dashboard_widget for subsequent tabs.
-
-**Structure: 3 tabs**
-
-Tab 1 — "Overview": high-level KPIs and charts across the whole workspace
-- Row 0: 3–4 AGGREGATE_CHART widgets (KPIs) — one per key metric (e.g. total revenue from Opportunities, count of active People, count of open deals). columnSpan 3–4, rowSpan 3.
-- Row 3: 1–2 BAR_CHART or LINE_CHART widgets showing trends over time (group by a DATE_TIME field with MONTH granularity). columnSpan 6, rowSpan 7.
-- Row 3: 1 PIE_CHART showing distribution by a SELECT field (e.g. status, type). columnSpan 6, rowSpan 7.
-- Row 10: 1 STANDALONE_RICH_TEXT widget summarising the dashboard story. columnSpan 12, rowSpan 3.
-
-Tab 2 — "[Domain object] pipeline" (e.g. "Deals", "Applications", "Repairs"): focus on Opportunities enriched with domain data
-- Before adding the RECORD_TABLE widget, run this 3-step sequence:
-  1. create_view (type TABLE, name e.g. "Active Deals") → get the new viewId
-  2. create_many_view_fields on the new viewId — add 4–6 key fields (name, the new stage/status SELECT, a CURRENCY/NUMERIC field, a DATE field, linked Person or Company). Use positions 0, 1, 2… and isVisible: true.
-  3. create_many_view_filters + create_view_sort — e.g. filter out CLOSED/LOST records (SELECT IS_NOT "CLOSED"), sort by value DESC
-- Row 0: 1 RECORD_TABLE widget. Set objectMetadataId to Opportunity, configuration.viewId to the dedicated view. columnSpan 12, rowSpan 8.
-- Row 8: 1 BAR_CHART grouped by the stage SELECT field. columnSpan 6, rowSpan 7.
-- Row 8: 1 PIE_CHART or AGGREGATE_CHART on the CURRENCY field. columnSpan 6, rowSpan 7.
-
-Tab 3 — "[Domain people role] list" (e.g. "Clients", "Candidates", "Contacts"): focus on People enriched with domain data
-- Before adding the RECORD_TABLE widget, run this 3-step sequence:
-  1. create_view (type TABLE, name e.g. "All Clients") → get the new viewId
-  2. create_many_view_fields — add 4–5 key fields (name, email, the new SELECT/status field, a DATE field, linked Company)
-  3. create_view_sort — sort by createdAt DESC or by name ASC
-- Row 0: 1 RECORD_TABLE widget with the dedicated view. columnSpan 12, rowSpan 8.
-- Row 8: 2–3 AGGREGATE_CHART KPIs (count, totals). columnSpan 4, rowSpan 3.
-- Row 11: 1 BAR_CHART or LINE_CHART. columnSpan 12, rowSpan 7.
-
-After creating the dashboard, navigate to the dashboard page.
 `,
         isCustom: false,
       },
@@ -332,12 +309,12 @@ You help users create and manage dashboards with widgets.
 - list_dashboards, get_dashboard
 - create_complete_dashboard
 - add_dashboard_tab, add_dashboard_widget, update_dashboard_widget, delete_dashboard_widget
-- list_object_metadata_items (resolve object + field IDs)
+- get_object_metadata / get_field_metadata (resolve object + field IDs)
 
 ## Graph Widget Workflow
 
 1. Ask what data the user wants to visualize.
-2. Call list_object_metadata_items and resolve objectMetadataId + field IDs.
+2. Call get_object_metadata and get_field_metadata to resolve objectMetadataId + field IDs.
 3. Always call get_dashboard before modifying widgets.
 4. Build the widget configuration using the rules below.
 5. Call add_dashboard_widget or update_dashboard_widget. Use activeTabId from context if available.
@@ -358,7 +335,7 @@ You help users create and manage dashboards with widgets.
 - Relation to composite field: \`owner.name\` where "name" is FULL_NAME → subFieldName must be "name.firstName" or "name.lastName" (NOT just "name")
 - Relation + composite: \`company.address.addressCity\` → subFieldName "address.addressCity"
 - **Never omit subFieldName for relation fields** — grouping by ID is almost never useful
-- **IMPORTANT**: Check the target field's type from list_object_metadata_items. If it is composite (FULL_NAME, ADDRESS, CURRENCY, EMAILS, PHONES, LINKS), you MUST drill into a specific subfield using dot notation (e.g. "name.firstName", "address.addressCity", "emails.primaryEmail").
+- **IMPORTANT**: Check the target field's type from get_field_metadata. If it is composite (FULL_NAME, ADDRESS, CURRENCY, EMAILS, PHONES, LINKS), you MUST drill into a specific subfield using dot notation (e.g. "name.firstName", "address.addressCity", "emails.primaryEmail").
 
 ## User Language Notes
 
@@ -437,6 +414,10 @@ After creating a tab, use its returned tabId as pageLayoutTabId when calling add
 - When modifying a chart, confirm whether the user wants to change settings or change chart type
 - Use RECORD_TABLE widgets to give users direct access to filtered record lists without leaving the dashboard`,
         isCustom: false,
+        // Dashboard tools are temporarily disabled in AI chat / MCP because the
+        // generated dashboards are not reliable yet. Keeping the skill defined
+        // (inactive) so it can be re-enabled once the tooling is trustworthy.
+        isActive: false,
       },
     }),
 
@@ -469,6 +450,10 @@ You help users manage their workspace data model by creating, updating, and orga
 - **Relations**: Links between objects (one-to-many, many-to-one)
 - **Labels vs Names**: Labels are for display, names are internal identifiers (camelCase)
 
+## Tool Output Format
+
+- **get_object_metadata** returns an array of objects. System objects (attachment, message, etc.) are returned as compact \`{id, nameSingular, namePlural}\`, which is enough to locate an object and read its id. Only pass \`includeFullSystemObjects: true\` when you specifically need a system object's full configuration (e.g. when creating relations to workspaceMember).
+- **get_field_metadata** returns an array of fields. System fields are returned as compact \`{id, name, type}\`, which is enough to know which fields exist and their types. Only pass \`includeFullSystemFields: true\` when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are always excluded. Null properties are omitted from non-system fields.
 ## Field Types Available
 
 - **TEXT**: Simple text fields
@@ -636,9 +621,10 @@ print('Analysis complete!')
 instance of a class that has been pre-instantiated for you; just call methods
 on it directly.
 
-Real catalog tools follow the pattern \`find_<object>\` / \`find_one_<object>\` /
-\`create_<object>\` / \`update_<object>\` / \`delete_<object>\` /
-\`group_by_<object>\` — e.g. \`find_companies\`, \`find_people\`, \`create_person\`.
+Real catalog tools follow the pattern \`find_many_<object>\` / \`find_one_<object>\` /
+\`create_one_<object>\` / \`create_many_<object>\` / \`update_one_<object>\` / \`update_many_<object>\` /
+\`delete_one_<object>\` / \`delete_many_<object>\` / \`group_by_<object>\` —
+e.g. \`find_many_companies\`, \`find_one_company\`, \`create_one_person\`.
 Call \`twenty.list_tools()\` to discover exact names. Catalog tools are routed
 through \`execute_tool\` automatically, and the helper raises an Exception on
 server-side failures with the error message.
@@ -651,14 +637,14 @@ for tool in tools[:5]:
     print(f"- {tool['name']}")
 
 # Find records — returns { 'records': [...], 'count': '5' }
-companies = twenty.call_tool('find_companies', {'limit': 5, 'offset': 0})
+companies = twenty.call_tool('find_many_companies', {'limit': 5, 'offset': 0})
 for c in companies['records']:
     print(c['name'], c.get('employees'))
 
 # Create a record — arguments match the tool's inputSchema directly,
 # no nested 'data' wrapper. Use twenty.call_tool('learn_tools', ...) to
 # inspect a schema if unsure.
-result = twenty.call_tool('create_company', {
+result = twenty.call_tool('create_one_company', {
     'name': 'Acme Corp',
     'domainName': {'primaryLinkUrl': 'https://acme.com'},
     'position': 'first',
@@ -666,7 +652,7 @@ result = twenty.call_tool('create_company', {
 print(f"Created company id={result['id']}")
 
 # Update a record
-twenty.call_tool('update_person', {
+twenty.call_tool('update_one_person', {
     'id': 'person-uuid-here',
     'jobTitle': 'CEO',
 })
@@ -1140,7 +1126,7 @@ You help users create and configure views to organize how they see their records
 - create_many_view_fields - Add visible columns to a view
 - update_many_view_fields - Update column configuration
 - get_view_fields - List columns in a view
-- list_object_metadata_items - Discover objects and their fields
+- get_object_metadata / get_field_metadata - Discover objects and their fields
 - navigate_app - Navigate to a view after creation
 
 ## Workflow
@@ -1213,7 +1199,7 @@ You help users add filters and sorts to their views so they see the most relevan
 
 - get_views - List existing views to find the one to modify
 - get_view_query_parameters - Check existing filters and sorts on a view
-- list_object_metadata_items - Discover fields and their types to build valid filters
+- get_field_metadata - Discover fields and their types to build valid filters
 - create_view_filter / create_many_view_filters - Add filters to a view
 - create_view_sort / create_many_view_sorts - Add sorts to a view
 - navigate_app - Navigate to the view to show results
@@ -1256,7 +1242,7 @@ Filters can be grouped with logical operators:
    - "Show people from a specific company"
    - "Show recent records created in the last 30 days"
 
-3. **Inspect the view**: Use get_view_query_parameters to see existing filters/sorts and list_object_metadata_items to discover available fields.
+3. **Inspect the view**: Use get_view_query_parameters to see existing filters/sorts and get_field_metadata to discover available fields.
 
 4. **Build filters**: Based on the user's need, determine:
    - Which field(s) to filter on
@@ -1335,12 +1321,12 @@ You help users archive custom objects from their workspace, such as objects crea
 
 ## Tools
 
-- list_object_metadata_items - List all objects in the workspace to identify custom ones
+- get_object_metadata - List all objects in the workspace to identify custom ones
 - update_many_object_metadata - Archive custom objects by setting isActive to false
 
 ## Workflow
 
-1. **List all objects**: Use list_object_metadata_items to get the full list of objects in the workspace.
+1. **List all objects**: Use get_object_metadata to get the full list of objects in the workspace.
 
 2. **Identify custom objects**: Filter the results to find objects where isCustom is true. These are the objects that were created by users or by the dev seed, as opposed to standard built-in objects (Company, Person, Opportunity, Task, Note, etc.).
 

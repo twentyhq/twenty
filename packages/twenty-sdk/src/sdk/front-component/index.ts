@@ -1,35 +1,3 @@
-export {
-  pageType,
-  isInSidePanel,
-  isDashboardPageLayoutInEditMode,
-  isLayoutCustomizationModeEnabled,
-  favoriteRecordIds,
-  isSelectAll,
-  hasAnySoftDeleteFilterOnView,
-  numberOfSelectedRecords,
-  objectPermissions,
-  selectedRecords,
-  featureFlags,
-  targetObjectReadPermissions,
-  targetObjectWritePermissions,
-  canImpersonate,
-  canAccessFullAdminPanel,
-  isDefined,
-  isNonEmptyString,
-  includes,
-  every,
-  everyDefined,
-  everyEquals,
-  some,
-  someDefined,
-  someEquals,
-  none,
-  noneDefined,
-  noneEquals,
-  someNonEmptyString,
-  includesEvery,
-  objectMetadataItem,
-} from './conditional-availability/conditional-availability-variables';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { copyToClipboard } from './functions/copyToClipboard';
 export { getApplicationVariable } from './functions/getApplicationVariable';
@@ -39,6 +7,7 @@ export { openCommandConfirmationModal } from './functions/openCommandConfirmatio
 export { openSidePanelPage } from './functions/openSidePanelPage';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
+export { useColorScheme } from './hooks/useColorScheme';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
 export { useFrontComponentId } from './hooks/useFrontComponentId';
 export { useRecordId } from './hooks/useRecordId';

@@ -1,4 +1,4 @@
-import { type ComponentType } from 'react';
+import { type ComponentType, type ReactNode } from 'react';
 
 import { styled } from '@linaria/react';
 
@@ -6,7 +6,8 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { H2Title, IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -48,6 +49,7 @@ export type SettingsTableListSectionColumn<Item> = {
 type SettingsTableListSectionProps<Item extends { id: string }> = {
   title: string;
   description: string;
+  headerAdornment?: ReactNode;
   items: Item[];
   columns: SettingsTableListSectionColumn<Item>[];
   gridAutoColumns: string;
@@ -61,6 +63,7 @@ export const SettingsTableListSection = <
 >({
   title,
   description,
+  headerAdornment,
   items,
   columns,
   gridAutoColumns,
@@ -69,7 +72,11 @@ export const SettingsTableListSection = <
   onFooterButtonClick,
 }: SettingsTableListSectionProps<Item>) => (
   <Section>
-    <H2Title title={title} description={description} />
+    <H2Title
+      title={title}
+      description={description}
+      adornment={headerAdornment}
+    />
     {items.length > 0 && (
       <Table>
         <TableRow gridAutoColumns={gridAutoColumns}>

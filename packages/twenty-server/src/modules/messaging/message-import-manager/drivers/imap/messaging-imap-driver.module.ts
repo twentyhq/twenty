@@ -19,7 +19,6 @@ import { ImapGetMessageListService } from 'src/modules/messaging/message-import-
 import { ImapGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-messages.service';
 import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
 import { ImapMessageParserService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-parser.service';
-import { ImapMessageTextExtractorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-text-extractor.service';
 import { ImapMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-messages-import-error-handler.service';
 import { ImapSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-sync.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
@@ -47,7 +46,6 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     ImapMessageParserService,
     ImapFindDraftsFolderService,
     ImapFindSentFolderService,
-    ImapMessageTextExtractorService,
   ],
   exports: [
     ImapGetMessagesService,

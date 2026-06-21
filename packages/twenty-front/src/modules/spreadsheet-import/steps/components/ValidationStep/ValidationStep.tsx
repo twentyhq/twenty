@@ -21,12 +21,11 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { ModalContent } from 'twenty-ui/layout';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-// @ts-expect-error Todo: remove usage of react-data-grid`
 import { type RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
-import { IconTrash } from 'twenty-ui/display';
+import { IconTrash } from 'twenty-ui/icon';
 import { Button, Toggle } from 'twenty-ui/input';
 import { generateColumns } from './components/columns';
 import { type ImportedStructuredRowMetadata } from './types';
@@ -199,7 +198,7 @@ export const ValidationStep = ({
           if (!hasBeenImported) return null;
           return column;
         })
-        .filter(Boolean),
+        .filter(isDefined),
     [fields, importedColumns],
   );
 
@@ -305,7 +304,7 @@ export const ValidationStep = ({
                 columns={columns}
                 selectedRows={selectedRows}
                 onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
-                components={{
+                renderers={{
                   noRowsFallback: (
                     <StyledNoRowsContainer>
                       {filterByErrors

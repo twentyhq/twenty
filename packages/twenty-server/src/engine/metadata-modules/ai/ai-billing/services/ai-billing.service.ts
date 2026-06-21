@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModelUsage } from 'ai';
+import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 
@@ -139,18 +140,19 @@ export class AiBillingService {
     let periodStart: Date | undefined;
 
     if (this.billingService.isBillingEnabled()) {
-      const {
-        billingSubscription: { currentPeriodStart },
-      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
-      ]);
+      const { currentBillingSubscription } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'currentBillingSubscription',
+        ]);
 
-      periodStart = currentPeriodStart;
+      if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
+        periodStart = currentBillingSubscription.currentPeriodStart;
 
-      await this.billingUsageService.decrementAvailableCreditsInCache({
-        workspaceId,
-        usedCredits: creditsUsedMicro,
-      });
+        await this.billingUsageService.decrementAvailableCreditsInCache({
+          workspaceId,
+          usedCredits: creditsUsedMicro,
+        });
+      }
     }
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
@@ -182,13 +184,15 @@ export class AiBillingService {
     let periodStart: Date | undefined;
 
     if (this.billingService.isBillingEnabled()) {
-      const {
-        billingSubscription: { currentPeriodStart },
-      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
-      ]);
+      const { currentBillingSubscription } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'currentBillingSubscription',
+        ]);
 
-      periodStart = currentPeriodStart;
+      periodStart =
+        currentBillingSubscription === NO_BILLING_SUBSCRIPTION
+          ? undefined
+          : currentBillingSubscription.currentPeriodStart;
     }
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(

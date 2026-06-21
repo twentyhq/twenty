@@ -64,6 +64,75 @@ Puncte cheie:
 * `description` (opțional) oferă context despre ce face agentul.
 * `icon` (opțional) setează pictograma afișată în UI.
 * `modelId` (opțional) suprascrie modelul AI implicit utilizat de agent.
+* `responseFormat` (opțional) controlează forma ieșirii agentului. Valoarea implicită este `{ type: 'text' }` pentru text liber. Folosește `{ type: 'json', schema }` pentru a impune ieșire JSON structurată.
+
+În mod implicit, un agent returnează text liber. Pentru a obține o ieșire structurată, setează `responseFormat` la `{ type: 'json' }` și furnizează `schema`:
+
+```ts src/agents/structured-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'c4d5e6f7-a8b9-0123-cdef-456789012345',
+  name: 'lead-scorer',
+  label: 'Lead Scorer',
+  prompt: 'Score the lead and explain your reasoning.',
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+        summary: { type: 'string', description: 'Short reasoning for the score' },
+      },
+      required: ['score', 'summary'],
+      additionalProperties: false,
+    },
+  },
+});
+```
+
+Note despre schemă:
+* Schema este un obiect plat: `type` al fiecărei proprietăți trebuie să fie un tip primitiv (`string`, `number` sau `boolean`). Obiectele îmbricate și tablourile nu sunt acceptate.
+* `description` (opțional) pe fiecare proprietate ghidează modelul cu privire la ce să pună acolo.
+* `required` (opțional) enumeră proprietățile pe care modelul trebuie să le returneze întotdeauna.
+* `additionalProperties: false` (opțional) interzice orice proprietate care nu este declarată în `properties`.
+
+</Accordion>
+<Accordion title="runAgent" description="Rulează un agent dintr-o funcție logică">
+
+`runAgent()` permite unei funcții logice să ruleze unul dintre agenții aplicației tale (cu abilitățile și instrumentele sale). Identifică agentul prin `universalIdentifier` pe care l-ai transmis către `defineAgent()`:
+
+```ts src/logic-functions/run-enricher.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
+});
+```
+
+Puncte cheie:
+* Agentul rulează **sincron** și poate citi/actualiza direct înregistrări prin propriile sale instrumente — `runAgent()` este rezolvat după ce rularea se încheie.
+* O aplicație poate rula doar propriii săi agenți.
+* [Rolul implicit](/l/ro/developers/extend/apps/config/roles) al aplicației trebuie să acorde indicatorul de permisiune `AI` — adaugă `SystemPermissionFlag.AI` la `permissionFlagUniversalIdentifiers` (sau setează `canAccessAllTools: true`).
+  Fără acesta, `runAgent()` eșuează cu o eroare de permisiune.
+* Setează un `timeoutSeconds` generos pentru funcția logică — rulările agentului pot dura câteva secunde.
+* `success` este `true` și `result` este nenul când rularea se încheie; în caz de eșec `success` este `false`, `result` este `null`, iar `error` conține motivul (de exemplu, când spațiul de lucru rămâne fără credite AI în timpul rulării).
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
+
+export default defineApplicationRole({
+  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+  label: 'Default function role',
+  // runAgent() requires the AI permission flag on the app's default role.
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+});
+```
+
+<Warning>
+  **Evită buclele:** dacă apelezi `runAgent()` dintr-un declanșator de tip eveniment de bază de date `*.updated`, iar agentul actualizează aceeași înregistrare, restrânge declanșatorul cu `updatedFields` la un câmp pe care agentul nu îl scrie niciodată (de exemplu, URL-ul sursă) sau verifică dacă vreun câmp țintă este încă gol înainte de a apela `runAgent()`.
+</Warning>
 
 </Accordion>
 </AccordionGroup>

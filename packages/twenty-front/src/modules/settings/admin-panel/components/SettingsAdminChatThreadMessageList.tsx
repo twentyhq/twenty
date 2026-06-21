@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Card } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AgentMessageRole,
@@ -113,7 +113,7 @@ export const SettingsAdminChatThreadMessageList = ({
             )}
             {toolParts.map((part, index) => (
               <StyledMessageContent key={index} isUser={false}>
-                {t`Tool call: ${part.toolName}`}
+                {t`Tool call: ${part.toolName ?? ''}`}
               </StyledMessageContent>
             ))}
             <StyledTimestamp>

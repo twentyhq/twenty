@@ -27,12 +27,12 @@ export const NATIVE_MODEL_TOOLS_BY_SDK_PACKAGE = {
   },
   [AI_SDK_XAI]: {
     webSearch: {
-      kind: 'provider-option',
-      providerOptionKey: 'web',
+      kind: 'sdk-tool',
+      directToolName: 'web_search',
     },
     twitterSearch: {
-      kind: 'provider-option',
-      providerOptionKey: 'x',
+      kind: 'sdk-tool',
+      directToolName: 'x_search',
     },
   },
   [AI_SDK_GOOGLE]: {},

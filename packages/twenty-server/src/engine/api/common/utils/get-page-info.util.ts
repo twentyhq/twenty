@@ -7,12 +7,17 @@ import {
   encodeCursor,
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const getPageInfo = (
   records: ObjectRecord[],
   orderBy: ObjectRecordOrderBy,
   limit: number,
   isForwardPagination: boolean,
+  flatObjectMetadata: FlatObjectMetadata,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ): CommonPageInfo => {
   const { hasNextPage, hasPreviousPage, hasMoreRecords } = getPaginationInfo(
     records,
@@ -25,10 +30,22 @@ export const getPageInfo = (
   }
 
   const startCursor =
-    records.length > 0 ? encodeCursor(records[0], orderBy) : null;
+    records.length > 0
+      ? encodeCursor({
+          objectRecord: records[0],
+          order: orderBy,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        })
+      : null;
   const endCursor =
     records.length > 0
-      ? encodeCursor(records[records.length - 1], orderBy)
+      ? encodeCursor({
+          objectRecord: records[records.length - 1],
+          order: orderBy,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        })
       : null;
 
   return { startCursor, endCursor, hasNextPage, hasPreviousPage };

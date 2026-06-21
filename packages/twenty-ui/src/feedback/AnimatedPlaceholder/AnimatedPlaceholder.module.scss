@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 100px;
+}
+
+.backgroundImage {
+  max-height: 160px;
+  max-width: 160px;
+}
+
+// error404 and error500 placeholders use a larger background illustration
+.backgroundImageLarge {
+  max-height: 245px;
+  max-width: 245px;
+}

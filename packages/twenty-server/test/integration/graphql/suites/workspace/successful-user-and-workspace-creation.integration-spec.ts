@@ -72,7 +72,6 @@ describe('Successful user and workspace creation', () => {
       data: { activateWorkspace: activateWorkspaceData },
     } = await activateWorkspace({
       accessToken: newWorkspaceAccessToken,
-      displayName: '42 answer',
       expectToFail: false,
     });
 
@@ -131,6 +130,180 @@ describe('Successful user and workspace creation', () => {
     );
   });
 
+  it('should reclaim a stale ONGOING_CREATION workspace and activate it', async () => {
+    const uniqueEmail = `test-reclaim-${randomUUID()}@example.com`;
+
+    const { data } = await signUp({
+      input: {
+        email: uniqueEmail,
+        password: 'Test123!@#',
+      },
+      expectToFail: false,
+    });
+
+    createdUserAccessToken =
+      data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    await testDataSource.query(
+      'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+      [uniqueEmail],
+    );
+
+    const {
+      data: { signUpInNewWorkspace: signUpInNewWorkspaceData },
+    } = await signUpInNewWorkspace({
+      accessToken: createdUserAccessToken,
+      expectToFail: false,
+    });
+
+    const workspaceId = signUpInNewWorkspaceData.workspace.id;
+
+    const {
+      data: { getAuthTokensFromLoginToken: authTokensData },
+    } = await getAuthTokensFromLoginToken({
+      origin: signUpInNewWorkspaceData.workspace.workspaceUrls.subdomainUrl,
+      loginToken: signUpInNewWorkspaceData.loginToken.token,
+      expectToFail: false,
+    });
+
+    const newWorkspaceAccessToken =
+      authTokensData.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    // Simulate an activation attempt that was killed mid-flight: the workspace
+    // is stuck in ONGOING_CREATION with a stale updatedAt. A retry should
+    // reclaim the stale lock and finish activation.
+    await testDataSource.query(
+      `UPDATE core.workspace SET "activationStatus" = 'ONGOING_CREATION', "updatedAt" = now() - interval '10 minutes' WHERE id = $1`,
+      [workspaceId],
+    );
+
+    const {
+      data: { activateWorkspace: activateWorkspaceData },
+    } = await activateWorkspace({
+      accessToken: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
+    expect(activateWorkspaceData.activationStatus).toBe(
+      WorkspaceActivationStatus.ACTIVE,
+    );
+  });
+
+  it('should not reclaim a workspace whose activation is genuinely in progress', async () => {
+    const uniqueEmail = `test-fresh-ongoing-${randomUUID()}@example.com`;
+
+    const { data } = await signUp({
+      input: {
+        email: uniqueEmail,
+        password: 'Test123!@#',
+      },
+      expectToFail: false,
+    });
+
+    createdUserAccessToken =
+      data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    await testDataSource.query(
+      'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+      [uniqueEmail],
+    );
+
+    const {
+      data: { signUpInNewWorkspace: signUpInNewWorkspaceData },
+    } = await signUpInNewWorkspace({
+      accessToken: createdUserAccessToken,
+      expectToFail: false,
+    });
+
+    const workspaceId = signUpInNewWorkspaceData.workspace.id;
+
+    const {
+      data: { getAuthTokensFromLoginToken: authTokensData },
+    } = await getAuthTokensFromLoginToken({
+      origin: signUpInNewWorkspaceData.workspace.workspaceUrls.subdomainUrl,
+      loginToken: signUpInNewWorkspaceData.loginToken.token,
+      expectToFail: false,
+    });
+
+    const newWorkspaceAccessToken =
+      authTokensData.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    // A fresh ONGOING_CREATION lock means another activation is genuinely in
+    // progress, so a concurrent attempt must be rejected rather than reclaim it.
+    await testDataSource.query(
+      `UPDATE core.workspace SET "activationStatus" = 'ONGOING_CREATION', "updatedAt" = now() WHERE id = $1`,
+      [workspaceId],
+    );
+
+    const { errors } = await activateWorkspace({
+      accessToken: newWorkspaceAccessToken,
+      expectToFail: true,
+    });
+
+    expect(errors).toBeDefined();
+
+    // This workspace was never actually activated (no tenant schema/metadata),
+    // so the standard deleteUser teardown cannot operate on it. Skip the
+    // afterEach cleanup; the integration test database is reset per run.
+    createdUserAccessToken = undefined;
+  });
+
+  it('should be idempotent when re-activating an already-active workspace', async () => {
+    const uniqueEmail = `test-idempotent-${randomUUID()}@example.com`;
+
+    const { data } = await signUp({
+      input: {
+        email: uniqueEmail,
+        password: 'Test123!@#',
+      },
+      expectToFail: false,
+    });
+
+    createdUserAccessToken =
+      data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    await testDataSource.query(
+      'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+      [uniqueEmail],
+    );
+
+    const {
+      data: { signUpInNewWorkspace: signUpInNewWorkspaceData },
+    } = await signUpInNewWorkspace({
+      accessToken: createdUserAccessToken,
+      expectToFail: false,
+    });
+
+    const {
+      data: { getAuthTokensFromLoginToken: authTokensData },
+    } = await getAuthTokensFromLoginToken({
+      origin: signUpInNewWorkspaceData.workspace.workspaceUrls.subdomainUrl,
+      loginToken: signUpInNewWorkspaceData.loginToken.token,
+      expectToFail: false,
+    });
+
+    const newWorkspaceAccessToken =
+      authTokensData.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    await activateWorkspace({
+      accessToken: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
+    // A second activation (e.g. the client lost the first response and retried)
+    // must succeed idempotently instead of throwing "already being created".
+    const {
+      data: { activateWorkspace: secondActivation },
+    } = await activateWorkspace({
+      accessToken: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
+    expect(secondActivation.activationStatus).toBe(
+      WorkspaceActivationStatus.ACTIVE,
+    );
+  });
+
   it('should suspend and soft-delete workspace when last user is deleted', async () => {
     const uniqueEmail = `test-delete-${randomUUID()}@example.com`;
 
@@ -173,7 +346,6 @@ describe('Successful user and workspace creation', () => {
 
     await activateWorkspace({
       accessToken: newWorkspaceAccessToken,
-      displayName: 'Test Workspace for Deletion',
       expectToFail: false,
     });
 

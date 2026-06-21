@@ -1,1 +1,0 @@
-export { Articles } from './components';

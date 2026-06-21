@@ -60,6 +60,7 @@ Pentru a apela o funcție logică declanșată de o rută dintr-o componentă fr
 * **cron**: Rulează funcția pe un program folosind o expresie CRON.
 * **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
 > de ex. `person.updated`, `*.created`, `company.*`
+* **serverWebhook**: Primește webhook-uri de intrare de la un serviciu terț (Stripe, GitHub, Svix, …) la un singur endpoint la nivelul înregistrării și determină spațiul de lucru țintă din payload. Consultați [declanșatorul de webhook de server](#server-webhook-trigger).
 
 <Note>
 Puteți, de asemenea, să executați manual o funcție folosind CLI:
@@ -143,6 +144,117 @@ const handler = async (event: RoutePayload) => {
 
 <Note>
 Numele anteturilor sunt normalizate la litere mici. Accesați-le folosind chei cu litere mici (de exemplu, `event.headers['content-type']`).
+</Note>
+
+#### Răspuns HTTP personalizat
+
+În mod implicit, returnarea unei valori simple din handler trimite înapoi un răspuns `200` (JSON pentru obiecte, `text/plain` pentru șiruri). Pentru a controla codul de stare și antetele răspunsului, returnează un `Response` din `twenty-sdk/logic-function`:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+Din motive de securitate, anteturile de răspuns sunt limitate la o listă de antete permise. Orice antet care nu se află pe listă (de exemplu, `Set-Cookie`, anteturi CORS precum `Access-Control-Allow-Origin` sau anteturi personalizate `X-*`) este eliminat în mod silențios înainte ca răspunsul să fie trimis. Anteturile de răspuns permise sunt:
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+Codul de stare trebuie să fie un cod de stare HTTP valid (între 100 și 599). Numele anteturilor de răspuns sunt comparate fără a ține cont de majuscule și minuscule.
+</Note>
+
+#### Declanșator webhook de server
+
+`httpRouteTriggerSettings` expune o funcție sub `/s/` și rezolvă spațiul de lucru din gazda cererii — ceea ce funcționează atunci când fiecare spațiu de lucru are propriul domeniu. Furnizorii terți, însă, livrează evenimentele fiecărui tenant către **un** singur URL de webhook. Pentru acest caz, folosiți `serverWebhookTriggerSettings`: funcția este accesibilă la un endpoint la nivelul înregistrării, iar spațiul de lucru este determinat din payload.
+
+```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  // Verify the signature yourself before doing anything (see below).
+  // Return a non-2xx Response to make the provider retry.
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-provider-webhook',
+  handler,
+  serverWebhookTriggerSettings: {
+    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  },
+});
+```
+
+Funcția este accesibilă la:
+
+```
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+```
+
+Ambii identificatori sunt `universalIdentifier` din manifestul dvs. — cel al înregistrării aplicației și al acestei funcții logice. Înregistrați acel URL la furnizor.
+
+**Rezolvarea spațiului de lucru.** Deoarece un singur endpoint deservește fiecare spațiu de lucru, integrarea dvs. trebuie să plaseze `workspaceId` țintă undeva în livrare, iar `workspaceIdResolver.{ source, path }` îi indică platformei de unde să îl citească:
+
+| Câmp     | Valori                                        | Notițe                                                                                                                                                                            |
+| -------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source` | `body` \| `query` \| `header`                 | `body` citește JSON-ul deja parsificat. `query` este cel mai universal — de obicei controlați URL-ul de callback pe care îl înregistrați, așa că adăugați `?twentyWorkspaceId=…`. |
+| `path`   | dot-path, de ex. `metadata.twentyWorkspaceId` | Restricționat la segmente alfanumerice / `_` / `-`; cheile prototype sunt respinse.                                                                                               |
+
+Valoarea rezolvată trebuie să fie un UUID de spațiu de lucru valid **și** aplicația dvs. trebuie să fie instalată în acel spațiu de lucru, altfel cererea este respinsă înainte ca funcția să ruleze.
+
+<Warning>
+**Verificarea semnăturii este responsabilitatea dvs.** Platforma nu verifică semnăturile webhook pentru acest declanșator — doar rezolvă spațiul de lucru și rulează funcția. Handlerul dvs. trebuie să verifice singur semnătura folosind `event.rawBody` și headerele pe care le-ați enumerat în `forwardedRequestHeaders`, comparând cu un secret stocat ca variabilă de server/aplicație. Verificați întotdeauna **înainte** de orice efect secundar și folosiți o comparație în timp constant.
+</Warning>
+
+Majoritatea furnizorilor semnează cu HMAC-SHA256; părțile care diferă sunt numele headerului, codificarea digestului și șirul de payload semnat. Câteva exemple:
+
+| Furnizor                     | Headere de redirecționat                               | Șir semnat                   | Digest                                                               |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | -------------------------------------------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (secretul este în base64 după eliminarea prefixului `whsec_`) |
+| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                                  |
+| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (cu prefixul `sha256=`)                                          |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                               |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (cu prefixul `v0=`)                                              |
+
+```ts
+import { createHmac, timingSafeEqual } from 'crypto';
+
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
+      .update(event.rawBody ?? '')
+      .digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    return new Response({ error: 'invalid signature' }, { status: 401 });
+  }
+
+  // ...handle the verified event
+  return { received: true };
+};
+```
+
+<Note>
+Funcția rulează **sincron**, iar valoarea returnată devine răspunsul HTTP, astfel încât furnizorii văd codul de stare și pot reîncerca pentru coduri non-2xx. Mențineți handler-ele rapide — unii furnizori (de ex. Slack) expiră după câteva secunde. Deoarece funcția rulează înainte ca semnătura să fie verificată, protejați acest endpoint cu limitare de rată la edge.
 </Note>
 
 #### Payload-ul declanșatorului de eveniment al bazei de date
@@ -322,12 +434,52 @@ export default defineLogicFunction({
 });
 ```
 
+Pentru a declara parametrii **o singură dată** și a deservi ambele suprafețe, definește o singură schemă JSON (`InputJsonSchema`) și convertește-o pentru acțiunea din fluxul de lucru cu `jsonSchemaToInputSchema` din `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` primește direct schema JSON, în timp ce `workflowActionTriggerSettings.inputSchema` necesită `InputSchema` al Twenty:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**Ajutoare la rulare (runtime helpers).** `twenty-sdk/utils` re-exportă mici ajutoare la rulare, astfel încât handlerii să nu importe niciodată direct din `twenty-shared`. De exemplu, `isDefined(value)` returnează `false` atât pentru `null`, cât și pentru `undefined` — folosește-l pentru a restrânge în siguranță intrările opționale ale handlerilor, care pot ajunge drept `null` la rulare, chiar și atunci când sunt tipate `T | undefined`:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **Hook-uri de instalare** — handleri pre-instalare și post-instalare — partajează acest runtime, dar sunt declarați cu propriile lor funcții `define` și nu folosesc setări de declanșare. Consultați [Hook-uri de instalare](/l/ro/developers/extend/apps/config/install-hooks) pentru `definePreInstallLogicFunction` și `definePostInstallLogicFunction`.

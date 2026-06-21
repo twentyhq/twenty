@@ -1,6 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { getWorkflowRunContext, StepStatus } from 'twenty-shared/workflow';
+import {
+  getWorkflowRunContext,
+  StepStatus,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -17,10 +21,7 @@ import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/fa
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
 import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
-import {
-  type WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -125,7 +126,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           provide: WorkspaceCacheService,
           useValue: {
             getOrRecompute: jest.fn().mockResolvedValue({
-              billingSubscription: {
+              currentBillingSubscription: {
                 currentPeriodStart: new Date('2026-04-01T00:00:00Z'),
               },
             }),
@@ -542,7 +543,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
     });
 
-    it('should return nextStepIds for a fail-safe iterator instead of entering the loop', async () => {
+    it('should return loop children as nextStepIdsToFailSafely for a fail-safe iterator', async () => {
       const step = {
         id: 'iterator-1',
         type: WorkflowActionType.ITERATOR,
@@ -562,11 +563,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       expect(result).toEqual({
-        nextStepIdsToExecute: ['after-loop'],
+        nextStepIdsToFailSafely: ['loop-step-1'],
       });
     });
 
-    it('should return nextStepIds for a skipped iterator instead of entering the loop', async () => {
+    it('should return loop children as nextStepIdsToSkip for a skipped iterator', async () => {
       const step = {
         id: 'iterator-1',
         type: WorkflowActionType.ITERATOR,
@@ -586,7 +587,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       expect(result).toEqual({
-        nextStepIdsToExecute: ['after-loop'],
+        nextStepIdsToSkip: ['loop-step-1'],
       });
     });
 

@@ -57,7 +57,6 @@ describe('FilterArgProcessorService', () => {
       id: 'object-id',
       nameSingular: 'testObject',
       namePlural: 'testObjects',
-      isCustom: false,
       fieldIds: fieldNames.map((name) => `${name}-id`),
       universalIdentifier: 'test-object-universal-id',
       labelIdentifierFieldMetadataUniversalIdentifier: null,
@@ -319,7 +318,7 @@ describe('FilterArgProcessorService', () => {
           },
           'target-currency-uid': {
             id: targetCurrencyFieldId,
-            name: 'annualRecurringRevenue',
+            name: 'annualRevenue',
             type: FieldMetadataType.CURRENCY,
             isNullable: true,
             objectMetadataId: targetObjectId,
@@ -338,7 +337,6 @@ describe('FilterArgProcessorService', () => {
         id: sourceObjectId,
         nameSingular: 'sourceObject',
         namePlural: 'sourceObjects',
-        isCustom: false,
         fieldIds: [relationFieldId],
         universalIdentifier: sourceUniversalId,
         labelIdentifierFieldMetadataUniversalIdentifier: null,
@@ -349,7 +347,6 @@ describe('FilterArgProcessorService', () => {
         id: targetObjectId,
         nameSingular: 'targetObject',
         namePlural: 'targetObjects',
-        isCustom: false,
         fieldIds: [targetTextFieldId, targetCurrencyFieldId],
         universalIdentifier: targetUniversalId,
         labelIdentifierFieldMetadataUniversalIdentifier: null,
@@ -405,7 +402,7 @@ describe('FilterArgProcessorService', () => {
 
       const filter = {
         target: {
-          annualRecurringRevenue: { amountMicros: { gte: 1_000_000 } },
+          annualRevenue: { amountMicros: { gte: 1_000_000 } },
         },
       };
 
@@ -418,7 +415,7 @@ describe('FilterArgProcessorService', () => {
 
       expect(result).toEqual({
         target: {
-          annualRecurringRevenue: { amountMicros: { gte: 1_000_000 } },
+          annualRevenue: { amountMicros: { gte: 1_000_000 } },
         },
       });
     });

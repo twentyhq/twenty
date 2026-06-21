@@ -40,7 +40,7 @@ describe('Filter by relation field (e2e)', () => {
         {
           id: TEST_COMPANY_IDS.AIRBNB,
           name: 'Airbnb',
-          annualRecurringRevenue: {
+          annualRevenue: {
             amountMicros: 50_000_000_000_000,
             currencyCode: 'USD',
           },
@@ -48,7 +48,7 @@ describe('Filter by relation field (e2e)', () => {
         {
           id: TEST_COMPANY_IDS.STRIPE,
           name: 'Stripe',
-          annualRecurringRevenue: {
+          annualRevenue: {
             amountMicros: 10_000_000_000_000,
             currencyCode: 'USD',
           },
@@ -56,7 +56,7 @@ describe('Filter by relation field (e2e)', () => {
         {
           id: TEST_COMPANY_IDS.NOTION,
           name: 'Notion',
-          annualRecurringRevenue: {
+          annualRevenue: {
             amountMicros: 5_000_000_000_000,
             currencyCode: 'USD',
           },
@@ -308,7 +308,7 @@ describe('Filter by relation field (e2e)', () => {
             { id: { in: ALL_TEST_PERSON_IDS } },
             {
               company: {
-                annualRecurringRevenue: {
+                annualRevenue: {
                   amountMicros: { gte: 20_000_000_000_000 },
                 },
               },

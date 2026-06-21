@@ -200,45 +200,22 @@ export default defineFrontComponent({
 
 Front components run browser-side in a sandboxed Web Worker, while [logic functions](/developers/extend/apps/logic/logic-functions) run server-side. There is no direct in-process call between the two — instead, a front component reaches a logic function over HTTP.
 
-A logic function declared with `httpRouteTriggerSettings` is exposed under the `/s/` endpoint at `${TWENTY_API_URL}/s<path>`. Your front component calls that route with `fetch`, authenticating with the `TWENTY_APP_ACCESS_TOKEN` that Twenty injects into the worker.
+A logic function declared with `httpRouteTriggerSettings` is exposed under the `/s/` endpoint at `${TWENTY_API_URL}/s<path>`. Your front component calls that route with the `RestApiClient` from `twenty-client-sdk/rest`, which authenticates with the `TWENTY_APP_ACCESS_TOKEN` that Twenty injects into the worker.
 
-A small reusable helper keeps the call sites clean:
-
-```ts src/shared/call-app-route.ts
-export async function callAppRoute(
-  path: string,
-  body: Record<string, unknown>,
-): Promise<unknown> {
-  const apiUrl = process.env.TWENTY_API_URL ?? '';
-  const token = process.env.TWENTY_APP_ACCESS_TOKEN;
-
-  const res = await fetch(`${apiUrl}/s${path}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Logic function failed (${res.status})`);
-  }
-
-  return res.json();
-}
-```
+The `RestApiClient` is built for exactly this. It reads `TWENTY_API_URL` and `TWENTY_APP_ACCESS_TOKEN` from the worker environment, attaches the `Authorization: Bearer` header, serializes and parses JSON, and throws a `RestApiClientError` when the token or URL is missing or the response is non-2xx — so you don't reimplement that boilerplate in every component.
 
 A headless front component can run the call on mount via the `Command` component, then unmount automatically:
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { callAppRoute } from 'src/shared/call-app-route';
+import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await callAppRoute('/github/fetch-prs', {
+    const client = new RestApiClient();
+
+    await client.post('/s/github/fetch-prs', {
       owner: 'twentyhq',
       repo: 'twenty',
     });
@@ -256,7 +233,7 @@ export default defineFrontComponent({
 });
 ```
 
-The `path` passed to `callAppRoute` must match the logic function's `httpRouteTriggerSettings.path` (the `/s` prefix is added by the helper):
+The path passed to the client is the route's public path — the logic function's `httpRouteTriggerSettings.path` prefixed with `/s`. Keep `isAuthRequired: true`; the client supplies the app access token Twenty mints for your component:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -283,6 +260,48 @@ export default defineLogicFunction({
 <Note>
 `TWENTY_API_URL` and `TWENTY_APP_ACCESS_TOKEN` are injected automatically — see [Application variables](#application-variables). Because secret application variables are never exposed to front components, keep API keys and other sensitive logic in the logic function, not in the front component.
 </Note>
+
+### RestApiClient reference
+
+Import `RestApiClient` from `twenty-client-sdk/rest`. It belongs to the same client family as `CoreApiClient` and `MetadataApiClient`, but targets your app's HTTP routes instead of the GraphQL API.
+
+| Method | Description |
+|--------|-------------|
+| `get(path, options?)` | Sends a `GET` request |
+| `post(path, body?, options?)` | Sends a `POST` request |
+| `put(path, body?, options?)` | Sends a `PUT` request |
+| `patch(path, body?, options?)` | Sends a `PATCH` request |
+| `delete(path, options?)` | Sends a `DELETE` request |
+| `request(method, path, options?)` | Generic request with any HTTP method |
+
+`options` accepts `headers`, `query` (a record of query-string params; nullish values are skipped), and an `AbortSignal` via `signal`. A non-`FormData` object `body` is JSON-serialized automatically. On a `401`, the client refreshes the access token once through the host and retries the request.
+
+The base URL and token are resolved from the environment by default. Pass overrides to the constructor when needed — for example in tests:
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://api.example.com',
+  token: 'my-token',
+});
+```
+
+Failed requests throw a `RestApiClientError` exposing `status`, `statusText`, `url`, and the parsed `body`:
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const prs = await client.get('/s/github/fetch-prs', {
+    query: { state: 'open' },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
 
 ## Accessing runtime context
 
@@ -325,6 +344,7 @@ Available hooks:
 | `useSelectedRecordIds()` | `string[]` | All selected record IDs (empty array if none selected) |
 | `useRecordId()` | `string` or `null` | **Deprecated.** Use `useSelectedRecordIds()` instead |
 | `useFrontComponentId()` | `string` | This component instance's ID |
+| `useColorScheme()` | `'light'` or `'dark'` | The host UI's active color scheme (`System` is already resolved) |
 | `useFrontComponentExecutionContext(selector)` | varies | Access the full execution context with a selector function |
 
 ## Application variables
@@ -423,8 +443,8 @@ export default defineFrontComponent({
 Use `useSelectedRecordIds()` to handle multiple selected records. This is useful for bulk operations:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 

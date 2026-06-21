@@ -60,6 +60,7 @@ Arayüzsüz bir ön uç bileşeninden rota tarafından tetiklenen mantık fonksi
 * **cron**: Bir CRON ifadesi kullanarak işlevinizi bir zamanlamayla çalıştırır.
 * **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme işlevi tetikler.
 > örn. `person.updated`, `*.created`, `company.*`
+* **serverWebhook**: Üçüncü taraf bir hizmetten (Stripe, GitHub, Svix, …) gelen webhook'ları alır tek bir kayıt kapsamlı uç noktadan ve hedef çalışma alanını payload'dan çözümler. [Sunucu webhook tetikleyicisine](#server-webhook-trigger) bakın.
 
 <Note>
 Bir işlevi CLI kullanarak manuel olarak da çalıştırabilirsiniz:
@@ -143,6 +144,117 @@ const handler = async (event: RoutePayload) => {
 
 <Note>
 Başlık adları küçük harfe normalize edilir. Onlara küçük harfli anahtarlarla erişin (örneğin, `event.headers['content-type']`).
+</Note>
+
+#### Özel HTTP yanıtı
+
+Varsayılan olarak, işleyicinizden düz bir değer döndürmek, onu `200` yanıtı olarak geri gönderir (nesneler için JSON, stringler için `text/plain`). Durum kodunu ve yanıt üstbilgilerini kontrol etmek için, `twenty-sdk/logic-function` içinden bir `Response` döndürün:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+Güvenlik nedenleriyle, yanıt üstbilgileri bir izin listesiyle sınırlandırılmıştır. Listede yer almayan herhangi bir üstbilgi (örneğin `Set-Cookie`, `Access-Control-Allow-Origin` gibi CORS üstbilgileri veya özel `X-*` üstbilgileri), yanıt gönderilmeden önce sessizce yok sayılır. İzin verilen yanıt üstbilgileri şunlardır:
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+Durum kodu geçerli bir HTTP durum kodu olmalıdır (100 ile 599 arasında). Yanıt üstbilgisi adları büyük/küçük harfe duyarsız olarak eşleştirilir.
+</Note>
+
+#### Sunucu webhook tetikleyicisi
+
+`httpRouteTriggerSettings`, `/s/` altında bir fonksiyon sunar ve çalışma alanını istek ana bilgisayarından çözümler — bu da her çalışma alanının kendi alan adına sahip olduğu durumda işe yarar. Üçüncü taraf sağlayıcılar ise, her kiracının olaylarını **tek** webhook URL’sine iletir. Bu durum için `serverWebhookTriggerSettings` kullanın: fonksiyona kayıt kapsamlı bir uç noktadan erişilebilir ve çalışma alanı, payload’dan çözümlenir.
+
+```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  // Verify the signature yourself before doing anything (see below).
+  // Return a non-2xx Response to make the provider retry.
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-provider-webhook',
+  handler,
+  serverWebhookTriggerSettings: {
+    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  },
+});
+```
+
+Fonksiyona şu adresten erişilebilir:
+
+```
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+```
+
+Her iki tanımlayıcı da manifest’inizdeki `universalIdentifier` değerleridir — uygulama kaydınınki ve bu mantık fonksiyonununki. Bu URL’yi sağlayıcıya kaydedin.
+
+**Çalışma alanı çözümleme.** Tek bir uç nokta her çalışma alanına hizmet verdiğinden, entegrasyonunuz hedef `workspaceId` değerini teslimatta bir yere koymalı ve `workspaceIdResolver.{ source, path }` platforma bunun nereden okunacağını söyler:
+
+| Alan     | Değerler                                      | Notlar                                                                                                                                                                      |
+| -------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source` | `body` \| `query` \| `header`                 | `body`, ayrıştırılmış JSON’u okur. `query` en evrensel seçenektir — genellikle kaydettiğiniz callback URL’sini kontrol edersiniz, bu yüzden `?twentyWorkspaceId=…` ekleyin. |
+| `path`   | nokta-yolu, örn. `metadata.twentyWorkspaceId` | Alfasayısal / `_` / `-` segmentleriyle sınırlandırılmıştır; prototype anahtarları reddedilir.                                                                               |
+
+Çözümlenen değer geçerli bir çalışma alanı UUID’si **olmalı** ve uygulamanızın o çalışma alanına yüklü olması gerekir, aksi halde istek, fonksiyon çalışmadan önce reddedilir.
+
+<Warning>
+**İmza doğrulama sizin sorumluluğunuzdadır.** Platform bu tetikleyici için webhook imzalarını doğrulamaz — yalnızca çalışma alanını çözümler ve fonksiyonunuzu çalıştırır. İşleyiciniz imzayı, `event.rawBody` ve `forwardedRequestHeaders` içinde listelediğiniz başlıkları kullanarak, sunucu/uygulama değişkeni olarak saklanan bir gizli anahtarla karşılaştırıp kendisi doğrulamalıdır. Her zaman herhangi bir yan etkiden **önce** doğrulayın ve sabit süreli bir karşılaştırma kullanın.
+</Warning>
+
+Çoğu sağlayıcı HMAC-SHA256 ile imzalar; farklı olan kısımlar başlık adı, özet kodlaması ve imzalanan payload dizesidir. Birkaç örnek:
+
+| Sağlayıcı                    | İletilecek başlıklar                                   | İmzalanmış dize              | Özet                                                             |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | ---------------------------------------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (gizli anahtar, `whsec_` kaldırıldıktan sonra base64’tür) |
+| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                              |
+| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (`sha256=` önekiyle)                                         |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                           |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (`v0=` önekiyle)                                             |
+
+```ts
+import { createHmac, timingSafeEqual } from 'crypto';
+
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
+      .update(event.rawBody ?? '')
+      .digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    return new Response({ error: 'invalid signature' }, { status: 401 });
+  }
+
+  // ...handle the verified event
+  return { received: true };
+};
+```
+
+<Note>
+Fonksiyon **senkron** olarak çalışır ve döndürdüğünüz değer HTTP yanıtı olur, bu nedenle sağlayıcılar durum kodunuzu görür ve 2xx olmayanlarda yeniden deneyebilir. İşleyicileri hızlı tutun — bazı sağlayıcılar (örn. Slack) birkaç saniye içinde zaman aşımına uğrar. Fonksiyon imza denetlenmeden önce çalıştığı için, bu uç noktayı edge’inizde hız sınırlamasıyla koruyun.
 </Note>
 
 #### Veritabanı olay tetikleyicisi yükü
@@ -322,12 +434,52 @@ export default defineLogicFunction({
 });
 ```
 
+Parametrelerinizi **bir kez** tanımlayıp her iki yüzeyde de kullanmak için tek bir JSON Şeması (`InputJsonSchema`) oluşturun ve bunu iş akışı eylemi için `twenty-sdk/logic-function` içindeki `jsonSchemaToInputSchema` ile dönüştürün. `toolTriggerSettings.inputSchema`, JSON Şemasını doğrudan alırken `workflowActionTriggerSettings.inputSchema`, Twenty'nin `InputSchema` tipini bekler:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **İyi bir `description` yazın.** AI ajanları, aracı ne zaman kullanacaklarına karar vermek için işlevin `description` alanına güvenir. Aracın ne yaptığını ve ne zaman çağrılması gerektiğini açıkça belirtin.
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**Çalışma zamanı yardımcıları.** `twenty-sdk/utils`, işleyicilerin doğrudan `twenty-shared` içinden içe aktarma yapmasına gerek kalmaması için küçük çalışma zamanı yardımcılarını yeniden dışa aktarır. Örneğin, `isDefined(value)` hem `null` hem de `undefined` için `false` döndürür — bunu, çalışma zamanında `T | undefined` olarak yazılmış olsa bile `null` olarak gelebilen isteğe bağlı işleyici girdilerini güvenli şekilde daraltmak için kullanın:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **Yükleme kancaları** — ön yükleme ve yükleme sonrası işleyiciler — bu çalışma zamanını paylaşır ancak kendi tanımlama işlevleriyle bildirilir ve tetikleyici ayarlarını almaz. `definePreInstallLogicFunction` ve `definePostInstallLogicFunction` için [Yükleme Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.

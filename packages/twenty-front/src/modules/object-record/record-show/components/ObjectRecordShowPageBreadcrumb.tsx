@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -9,6 +10,7 @@ import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/u
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { styled } from '@linaria/react';
+import { useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -56,6 +58,8 @@ export const ObjectRecordShowPageBreadcrumb = ({
   objectLabel: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   const { loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
@@ -81,12 +85,18 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const { navigateToIndexView, rankInView, totalCount } =
     useRecordShowPagePagination(objectNameSingular, objectRecordId);
 
-  if (loading) {
+  const { formatNumber } = useNumberFormat();
+
+  if (!loading && isInitialLoad) {
+    setIsInitialLoad(false);
+  }
+
+  if (isInitialLoad && loading) {
     return null;
   }
 
   return (
-    <StyledEditableTitleContainer>
+    <StyledEditableTitleContainer data-testid="top-bar-title">
       <StyledEditableTitlePrefix
         onClick={() => {
           navigateToIndexView();
@@ -129,7 +139,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         </FieldContext.Provider>
       </StyledTitle>
       <StyledPaginationInformation>
-        {`(${rankInView + 1}/${totalCount})`}
+        {`(${formatNumber(rankInView + 1)}/${formatNumber(totalCount)})`}
       </StyledPaginationInformation>
     </StyledEditableTitleContainer>
   );

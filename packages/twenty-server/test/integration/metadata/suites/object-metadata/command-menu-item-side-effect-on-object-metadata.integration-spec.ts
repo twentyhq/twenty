@@ -25,6 +25,7 @@ const COMMAND_MENU_ITEM_GQL_FIELDS = `
   engineComponentKey
   label
   icon
+  isActive
   payload {
     ... on PathCommandMenuItemPayload {
       path
@@ -159,7 +160,7 @@ describe('Command menu item side effect on object metadata', () => {
     ).toBeUndefined();
   });
 
-  it('should delete the navigation command menu item when a custom object is disabled', async () => {
+  it('should deactivate the navigation command menu item when a custom object is disabled', async () => {
     const {
       data: { createOneObject },
     } = await createOneObjectMetadata({
@@ -183,7 +184,7 @@ describe('Command menu item side effect on object metadata', () => {
         itemsBeforeDisable,
         createdObjectMetadataId,
       ),
-    ).toBeDefined();
+    ).toEqual(expect.objectContaining({ isActive: true }));
 
     await updateOneObjectMetadata({
       expectToFail: false,
@@ -206,10 +207,10 @@ describe('Command menu item side effect on object metadata', () => {
         itemsAfterDisable,
         createdObjectMetadataId,
       ),
-    ).toBeUndefined();
+    ).toEqual(expect.objectContaining({ isActive: false }));
   });
 
-  it('should recreate the navigation command menu item when a disabled object is re-enabled', async () => {
+  it('should reactivate the navigation command menu item when a disabled object is re-enabled', async () => {
     const {
       data: { createOneObject },
     } = await createOneObjectMetadata({
@@ -241,7 +242,7 @@ describe('Command menu item side effect on object metadata', () => {
         itemsWhileDisabled,
         createdObjectMetadataId,
       ),
-    ).toBeUndefined();
+    ).toEqual(expect.objectContaining({ isActive: false }));
 
     await updateOneObjectMetadata({
       expectToFail: false,
@@ -269,6 +270,7 @@ describe('Command menu item side effect on object metadata', () => {
         label: `Go to ${createObjectInput.labelPlural}`,
         icon: createObjectInput.icon,
         engineComponentKey: EngineComponentKey.NAVIGATION,
+        isActive: true,
       }),
     );
   });

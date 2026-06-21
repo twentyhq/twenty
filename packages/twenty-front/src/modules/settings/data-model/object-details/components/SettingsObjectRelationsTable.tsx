@@ -7,11 +7,13 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -22,7 +24,7 @@ import {
   IconFilter,
   IconSearch,
   IconSettings,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -56,7 +58,7 @@ const SETTINGS_OBJECT_RELATION_TABLE_METADATA: TableMetadata<FieldMetadataItem> 
       },
       {
         fieldLabel: msg`App`,
-        fieldName: 'isCustom',
+        fieldName: 'applicationId',
         fieldType: 'string',
         align: 'left',
       },
@@ -182,13 +184,17 @@ export const SettingsObjectRelationsTable = ({
           ))}
           <TableHeader></TableHeader>
         </TableRow>
-        {filteredRelationFields.map((fieldMetadataItem) => (
-          <SettingsObjectRelationItemTableRow
-            key={fieldMetadataItem.id}
-            fieldMetadataItem={fieldMetadataItem}
-            objectMetadataItem={objectMetadataItem}
-          />
-        ))}
+        <StyledSettingsDataModelTableBodyContainer>
+          <TableBody>
+            {filteredRelationFields.map((fieldMetadataItem) => (
+              <SettingsObjectRelationItemTableRow
+                key={fieldMetadataItem.id}
+                fieldMetadataItem={fieldMetadataItem}
+                objectMetadataItem={objectMetadataItem}
+              />
+            ))}
+          </TableBody>
+        </StyledSettingsDataModelTableBodyContainer>
       </Table>
     </>
   );

@@ -16,6 +16,12 @@ export type { NativeAiSdkProviderId } from './constants/native-ai-sdk-provider-i
 export { NATIVE_AI_SDK_PROVIDER_IDS } from './constants/native-ai-sdk-provider-ids.const';
 export { ToolCategory } from './constants/tool-category.const';
 export type {
+  AgentResponseFormatType,
+  AgentTextResponseFormat,
+  AgentJsonResponseFormat,
+  AgentResponseFormat,
+} from './types/agent-response-format.type';
+export type {
   AgentResponseFieldType,
   AgentResponseSchema,
 } from './types/agent-response-schema.type';
@@ -39,3 +45,4 @@ export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';
 export { isDataResidency } from './utils/is-data-residency.util';
+export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';

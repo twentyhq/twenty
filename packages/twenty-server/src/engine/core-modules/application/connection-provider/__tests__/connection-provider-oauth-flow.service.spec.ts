@@ -18,7 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -172,7 +172,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
       expect(url.searchParams.get('scope')).toBe('read write');
       expect(url.searchParams.get('state')).toBe('signed-state-token');
       expect(url.searchParams.get('redirect_uri')).toBe(
-        'https://api.example.com/apps/oauth/callback',
+        'https://api.example.com/auth/apps/callback',
       );
       expect(url.searchParams.has('code_challenge')).toBe(false);
 

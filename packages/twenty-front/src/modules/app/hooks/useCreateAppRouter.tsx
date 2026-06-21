@@ -5,8 +5,10 @@ import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect
 
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
+import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
 import { AppPath } from 'twenty-shared/types';
 
 import { lazy } from 'react';
@@ -46,9 +48,9 @@ const Authorize = lazy(() =>
   })),
 );
 
-const CreateWorkspace = lazy(() =>
-  import('~/pages/onboarding/CreateWorkspace').then((module) => ({
-    default: module.CreateWorkspace,
+const WorkspaceActivation = lazy(() =>
+  import('~/pages/onboarding/WorkspaceActivation').then((module) => ({
+    default: module.WorkspaceActivation,
   })),
 );
 
@@ -146,10 +148,10 @@ export const useCreateAppRouter = (
             }
           />
           <Route
-            path={AppPath.CreateWorkspace}
+            path={AppPath.WorkspaceActivation}
             element={
               <LazyRoute fallback={null}>
-                <CreateWorkspace />
+                <WorkspaceActivation />
               </LazyRoute>
             }
           />
@@ -209,48 +211,50 @@ export const useCreateAppRouter = (
               </LazyRoute>
             }
           />
-          <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
-          <Route
-            path={AppPath.RecordIndexPage}
-            element={
-              <LazyRoute>
-                <RecordIndexPage />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.RecordShowPage}
-            element={
-              <LazyRoute>
-                <RecordShowPage />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.PageLayoutPage}
-            element={
-              <LazyRoute>
-                <StandalonePageLayoutPage />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.SettingsCatchAll}
-            element={
-              <SettingsRoutes
-                isFunctionSettingsEnabled={isFunctionSettingsEnabled}
-                isAdminPageEnabled={isAdminPageEnabled}
-              />
-            }
-          />
-          <Route
-            path={AppPath.NotFoundWildcard}
-            element={
-              <LazyRoute>
-                <NotFound />
-              </LazyRoute>
-            }
-          />
+          <Route element={<MainAppLayoutWithSidePanel />}>
+            <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
+            <Route
+              path={AppPath.RecordIndexPage}
+              element={
+                <LazyRoute fallback={<RecordIndexSkeletonLoader />}>
+                  <RecordIndexPage />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.RecordShowPage}
+              element={
+                <LazyRoute>
+                  <RecordShowPage />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.PageLayoutPage}
+              element={
+                <LazyRoute>
+                  <StandalonePageLayoutPage />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.SettingsCatchAll}
+              element={
+                <SettingsRoutes
+                  isFunctionSettingsEnabled={isFunctionSettingsEnabled}
+                  isAdminPageEnabled={isAdminPageEnabled}
+                />
+              }
+            />
+            <Route
+              path={AppPath.NotFoundWildcard}
+              element={
+                <LazyRoute>
+                  <NotFound />
+                </LazyRoute>
+              }
+            />
+          </Route>
         </Route>
         <Route element={<BlankLayout />}>
           <Route

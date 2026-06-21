@@ -5,7 +5,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
 
-import { SECRET_ENCRYPTION_ROTATION_SITE_NAME } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
@@ -26,8 +25,6 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 @Injectable()
 export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotationHandler {
-  readonly siteName =
-    SECRET_ENCRYPTION_ROTATION_SITE_NAME.SENSITIVE_CONFIG_STORAGE;
   private readonly logger = new Logger(
     SensitiveConfigStorageRotationHandler.name,
   );
@@ -42,9 +39,10 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
 
   async countRemaining({
     currentEncryptionKeyId,
-  }: {
-    currentEncryptionKeyId: string;
-  }): Promise<number> {
+  }: Pick<
+    SecretEncryptionRotationContext,
+    'siteName' | 'currentEncryptionKeyId'
+  >): Promise<number> {
     const sensitiveStringConfigKeys = this.collectSensitiveStringConfigKeys();
 
     if (sensitiveStringConfigKeys.length === 0) {
@@ -58,6 +56,7 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
   }
 
   async rotate({
+    siteName,
     currentEncryptionKeyId,
     batchSize,
     dryRun,
@@ -90,7 +89,7 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
       }
 
       for (const row of rows) {
-        const rowOutcome = await this.rotateRow({ row, dryRun });
+        const rowOutcome = await this.rotateRow({ siteName, row, dryRun });
 
         outcome.rotated += rowOutcome.rotated;
         outcome.skipped += rowOutcome.skipped;
@@ -104,9 +103,11 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
   }
 
   private async rotateRow({
+    siteName,
     row,
     dryRun,
   }: {
+    siteName: SecretEncryptionRotationContext['siteName'];
     row: KeyValuePairEntity;
     dryRun: boolean;
   }): Promise<SecretEncryptionRotationOutcome> {
@@ -117,7 +118,8 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
     }
 
     try {
-      const plaintext = this.secretEncryptionService.decryptVersioned(rawValue);
+      const plaintext =
+        this.secretEncryptionService.decryptVersionedOrThrow(rawValue);
       const reEncrypted =
         this.secretEncryptionService.encryptVersioned(plaintext);
 
@@ -139,9 +141,7 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
 
       return { rotated: 1, skipped: 0, errors: 0 };
     } catch (error) {
-      this.logger.error(
-        buildRotationErrorMessage(this.siteName, row.id, error),
-      );
+      this.logger.error(buildRotationErrorMessage(siteName, row.id, error));
 
       return { rotated: 0, skipped: 0, errors: 1 };
     }

@@ -1,6 +1,6 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -9,7 +9,7 @@ import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconEye, IconSettings } from 'twenty-ui/display';
+import { IconEye, IconSettings } from 'twenty-ui/icon';
 import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 import { SettingsApplicationFrontComponentPreviewTab } from '~/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab';
 import { SettingsApplicationFrontComponentSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab';
@@ -52,7 +52,7 @@ export const SettingsApplicationFrontComponentDetail = () => {
   const breadcrumbLinks = [
     {
       children: t`Workspace`,
-      href: getSettingsPath(SettingsPath.Workspace),
+      href: getSettingsPath(SettingsPath.General),
     },
     {
       children: t`Applications`,
@@ -97,7 +97,7 @@ export const SettingsApplicationFrontComponentDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={frontComponent?.name ?? t`Front component`}
       links={breadcrumbLinks}
     >
@@ -105,6 +105,6 @@ export const SettingsApplicationFrontComponentDetail = () => {
         <TabList tabs={tabs} componentInstanceId={instanceId} />
         {loading ? <SettingsSectionSkeletonLoader /> : renderActiveTabContent()}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

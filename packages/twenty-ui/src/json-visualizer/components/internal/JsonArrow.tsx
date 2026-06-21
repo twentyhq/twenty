@@ -1,34 +1,11 @@
-import { styled } from '@linaria/react';
 import { VisibilityHidden } from '@ui/accessibility';
-import { IconChevronDown } from '@ui/display';
+import { IconChevronDown } from '@ui/icon';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
 import { useContext } from 'react';
-import { motion } from 'framer-motion';
 
-const StyledButton = styled.button<{
-  variant?: 'blue' | 'red';
-}>`
-  align-items: center;
-  background-color: ${({ variant }) =>
-    variant === 'red'
-      ? themeCssVariables.background.danger
-      : themeCssVariables.background.transparent.lighter};
-  border-color: ${({ variant }) =>
-    variant === 'red'
-      ? themeCssVariables.border.color.danger
-      : themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  border-style: solid;
-  border-width: 1px;
-  display: flex;
-  justify-content: center;
-  padding-inline: ${themeCssVariables.spacing[1]};
-  height: 24px;
-  width: 24px;
-  box-sizing: border-box;
-  cursor: pointer;
-`;
+import styles from './JsonArrow.module.scss';
 
 export const JsonArrow = ({
   isOpen,
@@ -51,18 +28,17 @@ export const JsonArrow = ({
         : themeCssVariables.font.color.secondary;
 
   return (
-    <StyledButton variant={variant} onClick={onClick}>
+    <button
+      className={clsx(styles.button, variant === 'red' && styles.red)}
+      onClick={onClick}
+    >
       <VisibilityHidden>
         {isOpen ? arrowButtonExpandedLabel : arrowButtonCollapsedLabel}
       </VisibilityHidden>
 
-      <motion.div
-        initial={false}
-        animate={{ rotate: isOpen ? 0 : -90 }}
-        transition={{ duration: 0.3 }}
-      >
+      <div className={styles.chevron} data-open={isOpen || undefined}>
         <IconChevronDown size={theme.icon.size.md} color={iconColor} />
-      </motion.div>
-    </StyledButton>
+      </div>
+    </button>
   );
 };

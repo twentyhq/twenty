@@ -36,6 +36,12 @@ const convertProperty = (jsonSchema: InputJsonSchema): InputSchemaProperty => {
         );
       }
       break;
+    case 'record':
+      property.type = 'record';
+      break;
+    case 'records':
+      property.type = 'records';
+      break;
     case 'null':
     default:
       property.type = 'unknown';
@@ -53,6 +59,10 @@ const convertProperty = (jsonSchema: InputJsonSchema): InputSchemaProperty => {
 
   if (isNonEmptyString(jsonSchema.label)) {
     property.label = jsonSchema.label;
+  }
+
+  if (isNonEmptyString(jsonSchema.objectUniversalIdentifier)) {
+    property.objectUniversalIdentifier = jsonSchema.objectUniversalIdentifier;
   }
 
   return property;

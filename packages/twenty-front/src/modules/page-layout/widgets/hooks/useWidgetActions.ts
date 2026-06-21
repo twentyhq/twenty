@@ -1,4 +1,5 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -41,6 +42,8 @@ export const useWidgetActions = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: targetRecord.id,
     objectMetadataId: objectMetadataItem.id,
@@ -82,10 +85,10 @@ export const useWidgetActions = ({
       objectPermissionsByObjectMetadataId,
       objectMetadataId: objectMetadataItem.id,
     }),
+    isFieldCustom: getIsMetadataItemCustom(fieldMetadataItem),
     fieldMetadataItem: {
       id: fieldMetadataItem.id,
-      isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
-      isCustom: fieldMetadataItem.isCustom ?? false,
+      isUIEditable: fieldMetadataItem.isUIEditable ?? true,
     },
     fieldDefinition,
     objectPermissionsByObjectMetadataId,

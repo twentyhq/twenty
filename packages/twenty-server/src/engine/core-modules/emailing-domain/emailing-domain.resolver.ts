@@ -5,10 +5,8 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { CreateEmailingDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/create-emailing-domain.input';
 import { EmailingDomainDTO } from 'src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto';
-import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
-import { SendEmailViaDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain.input';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -33,15 +31,13 @@ export class EmailingDomainResolver {
   @Mutation(() => EmailingDomainDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
   async createEmailingDomain(
-    @Args('domain') domain: string,
-    @Args('driver') driver: EmailingDomainDriver,
+    @Args('input') input: CreateEmailingDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<EmailingDomainDTO> {
     const emailingDomain =
       await this.emailingDomainService.createEmailingDomain(
-        domain,
-        driver,
-        currentWorkspace,
+        input.domain.trim().toLowerCase(),
+        currentWorkspace.id,
       );
 
     return emailingDomain;
@@ -71,22 +67,6 @@ export class EmailingDomainResolver {
       );
 
     return emailingDomain;
-  }
-
-  @Mutation(() => SendEmailViaDomainOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
-  async sendEmailViaEmailingDomain(
-    @Args('input') input: SendEmailViaDomainInput,
-    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
-  ): Promise<SendEmailViaDomainOutputDTO> {
-    const { emailingDomainId, ...content } = input;
-    const result = await this.emailingDomainService.sendEmail(
-      currentWorkspace.id,
-      emailingDomainId,
-      content,
-    );
-
-    return { messageId: result.messageId };
   }
 
   @Query(() => [EmailingDomainDTO])

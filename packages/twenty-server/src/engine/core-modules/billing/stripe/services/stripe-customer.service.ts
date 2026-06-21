@@ -59,6 +59,7 @@ export class StripeCustomerService {
 
     await this.billingCustomerRepository.save(workspaceId, {
       stripeCustomerId: customer.id,
+      hasPaymentMethod: false,
     });
 
     return customer;

@@ -5,7 +5,6 @@ import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
 
-import { SECRET_ENCRYPTION_ROTATION_SITE_NAME } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
@@ -17,11 +16,6 @@ import {
   type EncryptedImapSmtpCaldavParams,
   type ImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
-import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
-import {
-  SecretEncryptionException,
-  SecretEncryptionExceptionCode,
-} from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
@@ -29,8 +23,6 @@ const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
 
 @Injectable()
 export class ConnectionParametersRotationHandler extends SecretEncryptionRotationHandler {
-  readonly siteName =
-    SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_CONNECTION_PARAMETERS;
   private readonly logger = new Logger(
     ConnectionParametersRotationHandler.name,
   );
@@ -45,13 +37,15 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
 
   async countRemaining({
     currentEncryptionKeyId,
-  }: {
-    currentEncryptionKeyId: string;
-  }): Promise<number> {
+  }: Pick<
+    SecretEncryptionRotationContext,
+    'siteName' | 'currentEncryptionKeyId'
+  >): Promise<number> {
     return this.buildRowToSelectQuery({ currentEncryptionKeyId }).getCount();
   }
 
   async rotate({
+    siteName,
     currentEncryptionKeyId,
     batchSize,
     dryRun,
@@ -91,9 +85,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
               workspaceId: row.workspaceId,
             });
         } catch (error) {
-          this.logger.error(
-            buildRotationErrorMessage(this.siteName, row.id, error),
-          );
+          this.logger.error(buildRotationErrorMessage(siteName, row.id, error));
           outcome.errors += 1;
           continue;
         }
@@ -150,16 +142,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
         continue;
       }
 
-      // Refuse non-enc:v2 values up front: decryptVersioned would otherwise
-      // fall through to unauthenticated legacy CTR and corrupt the password.
-      if (!params.password.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) {
-        throw new SecretEncryptionException(
-          `${protocol} password is not a versioned envelope (expected '${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}…'), refusing to rotate.`,
-          SecretEncryptionExceptionCode.MALFORMED_ENVELOPE,
-        );
-      }
-
-      const plaintext = this.secretEncryptionService.decryptVersioned(
+      const plaintext = this.secretEncryptionService.decryptVersionedOrThrow(
         params.password,
         { workspaceId },
       );

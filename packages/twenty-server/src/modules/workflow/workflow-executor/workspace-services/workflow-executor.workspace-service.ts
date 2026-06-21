@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowRunContext,
@@ -9,6 +8,7 @@ import {
   WorkflowRunStepInfos,
 } from 'twenty-shared/workflow';
 
+import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -42,10 +42,10 @@ import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
 import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
-import { type WorkflowIfElseResult } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-result.type';
+import { getNextStepIdsForIfElse } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/utils/get-next-step-ids-for-if-else.util';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
-import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-result.type';
 import { findEnclosingIteratorWithContinueOnFailure } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/find-enclosing-iterator-with-continue-on-failure.util';
+import { getNextStepIdsForIterator } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-next-step-ids-for-iterator.util';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
@@ -250,61 +250,22 @@ export class WorkflowExecutorWorkspaceService {
     nextStepIdsToSkip?: string[];
     nextStepIdsToFailSafely?: string[];
   }> {
-    const isIteratorStep = isWorkflowIteratorAction(executedStep);
+    if (isWorkflowIteratorAction(executedStep)) {
+      const result = getNextStepIdsForIterator({
+        executedStep,
+        executedStepOutput,
+      });
 
-    if (isIteratorStep) {
-      const iteratorStepResult = executedStepOutput.result as
-        | WorkflowIteratorResult
-        | undefined;
-
-      if (
-        !iteratorStepResult?.hasProcessedAllItems &&
-        !executedStepOutput.shouldFailSafely &&
-        !executedStepOutput.shouldSkipStepExecution
-      ) {
-        const nextStepIdsToExecute = isString(
-          executedStep.settings.input.initialLoopStepIds,
-        )
-          ? JSON.parse(executedStep.settings.input.initialLoopStepIds)
-          : executedStep.settings.input.initialLoopStepIds;
-
-        return { nextStepIdsToExecute };
+      if (result) {
+        return result;
       }
     }
 
     if (isWorkflowIfElseAction(executedStep)) {
-      const ifElseResult = executedStepOutput.result as
-        | WorkflowIfElseResult
-        | undefined;
-
-      const branches = executedStep.settings.input.branches;
-
-      if (ifElseResult?.matchingBranchId) {
-        const matchingBranch = branches.find(
-          (branch) => branch.id === ifElseResult.matchingBranchId,
-        );
-
-        const nonMatchingBranches = branches.filter(
-          (branch) => branch.id !== ifElseResult.matchingBranchId,
-        );
-
-        return {
-          nextStepIdsToExecute: matchingBranch?.nextStepIds,
-          nextStepIdsToSkip: nonMatchingBranches.flatMap(
-            (branch) => branch.nextStepIds,
-          ),
-        };
-      } else if (executedStepOutput.shouldFailSafely) {
-        return {
-          nextStepIdsToFailSafely: branches.flatMap(
-            (branch) => branch.nextStepIds,
-          ),
-        };
-      } else {
-        return {
-          nextStepIdsToSkip: branches.flatMap((branch) => branch.nextStepIds),
-        };
-      }
+      return getNextStepIdsForIfElse({
+        executedStep,
+        executedStepOutput,
+      });
     }
 
     return { nextStepIdsToExecute: executedStep.nextStepIds };
@@ -367,18 +328,19 @@ export class WorkflowExecutorWorkspaceService {
   ) {
     let periodStart: Date | undefined;
     if (this.billingService.isBillingEnabled()) {
-      const {
-        billingSubscription: { currentPeriodStart },
-      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
-      ]);
+      const { currentBillingSubscription } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'currentBillingSubscription',
+        ]);
 
-      periodStart = currentPeriodStart;
+      if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
+        periodStart = currentBillingSubscription.currentPeriodStart;
 
-      await this.billingUsageService.decrementAvailableCreditsInCache({
-        workspaceId,
-        usedCredits: 100,
-      });
+        await this.billingUsageService.decrementAvailableCreditsInCache({
+          workspaceId,
+          usedCredits: 100,
+        });
+      }
     }
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
@@ -563,19 +525,69 @@ export class WorkflowExecutorWorkspaceService {
       workspaceId,
     });
 
-    const nextStepIds = new Set<string>();
+    const nextStepIdsToExecute = new Set<string>();
+    const cascadedStepIdsToSkip: string[] = [];
+    const cascadedStepIdsToFailSafely: string[] = [];
 
-    for (const stepId of [...stepIdsToSkip, ...stepIdsToFailSafely]) {
-      const step = steps.find((step) => step.id === stepId);
+    for (const stepId of stepIdsToSkip) {
+      const step = steps.find((candidate) => candidate.id === stepId);
 
-      for (const nextStepId of step?.nextStepIds ?? []) {
-        nextStepIds.add(nextStepId);
+      if (!step) {
+        continue;
       }
+
+      const result = await this.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: { shouldSkipStepExecution: true },
+      });
+
+      for (const id of result.nextStepIdsToExecute ?? []) {
+        nextStepIdsToExecute.add(id);
+      }
+      cascadedStepIdsToSkip.push(...(result.nextStepIdsToSkip ?? []));
+      cascadedStepIdsToFailSafely.push(
+        ...(result.nextStepIdsToFailSafely ?? []),
+      );
     }
 
-    if (nextStepIds.size > 0) {
+    for (const stepId of stepIdsToFailSafely) {
+      const step = steps.find((candidate) => candidate.id === stepId);
+
+      if (!step) {
+        continue;
+      }
+
+      const result = await this.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: { shouldFailSafely: true },
+      });
+
+      for (const id of result.nextStepIdsToExecute ?? []) {
+        nextStepIdsToExecute.add(id);
+      }
+      cascadedStepIdsToSkip.push(...(result.nextStepIdsToSkip ?? []));
+      cascadedStepIdsToFailSafely.push(
+        ...(result.nextStepIdsToFailSafely ?? []),
+      );
+    }
+
+    if (
+      cascadedStepIdsToSkip.length > 0 ||
+      cascadedStepIdsToFailSafely.length > 0
+    ) {
+      await this.skipAndFailSafelyStepsThenContinue({
+        stepIdsToSkip: cascadedStepIdsToSkip,
+        stepIdsToFailSafely: cascadedStepIdsToFailSafely,
+        steps,
+        workflowRunId,
+        workspaceId,
+        executedStepsCount,
+      });
+    }
+
+    if (nextStepIdsToExecute.size > 0) {
       await this.executeFromSteps({
-        stepIds: Array.from(nextStepIds),
+        stepIds: Array.from(nextStepIdsToExecute),
         workflowRunId,
         workspaceId,
         shouldComputeWorkflowRunStatus: false,

@@ -37,8 +37,10 @@ const StyledBoardCard = styled.div<{
   }
 
   .checkbox-container {
+    flex-shrink: 0;
     max-width: 0;
     opacity: 0;
+    overflow: hidden;
     pointer-events: none;
     transition: all ease-in-out 160ms;
   }

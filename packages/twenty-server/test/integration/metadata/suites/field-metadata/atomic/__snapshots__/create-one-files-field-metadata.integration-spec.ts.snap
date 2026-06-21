@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`createOne FILES field metadata - failing should fail to create files field with isUnique = true 1`] = `
 {
@@ -42,12 +42,49 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata, 1 index",
+    "message": "Validation failed for 1 fieldMetadata, 2 viewFields, 1 index",
     "summary": {
       "fieldMetadata": 1,
       "index": 1,
-      "totalErrors": 2,
+      "totalErrors": 4,
+      "viewField": 2,
     },
     "userFriendlyMessage": "Many validation errors",
   },
@@ -80,13 +117,50 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata",
+    "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
     "summary": {
       "fieldMetadata": 1,
-      "totalErrors": 1,
+      "totalErrors": 3,
+      "viewField": 2,
     },
-    "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
@@ -117,13 +191,50 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata",
+    "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
     "summary": {
       "fieldMetadata": 1,
-      "totalErrors": 1,
+      "totalErrors": 3,
+      "viewField": 2,
     },
-    "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
@@ -154,13 +265,50 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata",
+    "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
     "summary": {
       "fieldMetadata": 1,
-      "totalErrors": 1,
+      "totalErrors": 3,
+      "viewField": 2,
     },
-    "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",

@@ -9,9 +9,10 @@ import {
   IconKey,
   IconSettings,
   IconSettingsAutomation,
+  IconSparkles,
   IconTool,
   IconUsers,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 export type PermissionSummaryItem = {
@@ -113,6 +114,10 @@ export const buildPermissionSummaryFromRoleManifest = (
     [SystemPermissionFlag.API_KEYS_AND_WEBHOOKS]: {
       label: 'Manage API keys and webhooks',
       Icon: IconCode,
+    },
+    [SystemPermissionFlag.AI]: {
+      label: 'Run AI agents',
+      Icon: IconSparkles,
     },
   };
 

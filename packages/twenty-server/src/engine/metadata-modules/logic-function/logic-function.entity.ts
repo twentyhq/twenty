@@ -26,6 +26,11 @@ export enum LogicFunctionRuntime {
   NODE22 = 'nodejs22.x',
 }
 
+export enum LogicFunctionExecutionMode {
+  LIVE = 'LIVE',
+  PREBUILT = 'PREBUILT',
+}
+
 @Entity('logicFunction')
 @Index('IDX_LOGIC_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
 export class LogicFunctionEntity
@@ -62,6 +67,14 @@ export class LogicFunctionEntity
 
   @Column({ nullable: false, type: 'boolean', default: true })
   isBuildUpToDate: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: LogicFunctionExecutionMode,
+    default: LogicFunctionExecutionMode.LIVE,
+    nullable: false,
+  })
+  executionMode: LogicFunctionExecutionMode;
 
   @Column({ nullable: true, type: 'jsonb' })
   cronTriggerSettings: JsonbProperty<CronTriggerSettings> | null;

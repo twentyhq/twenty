@@ -8,5 +8,7 @@ icon: anahtar
 * **Yanlış Node sürümü** — 24+ gerekir. `node -v` ile kontrol edin.
 * **Yarn 4 eksik** — `corepack enable` çalıştırın.
 * **Bağımlılıklar bozuk** — `rm -rf node_modules && yarn install`.
+* **`twenty-sdk` v2.8.0 sürümüne yükselttikten sonra oluşan hatalar** — v2.8.0 sürümünde `dependencies` içinden `devDependencies` içine taşındı. [Proje Yapısı → Bağımlılıklar](/l/tr/developers/extend/apps/getting-started/project-structure#dependencies) bölümüne bakın.
+* **`twenty build`, `dependencies` altındaki `twenty-client-sdk` konusunda uyarır** — Bu paket, çalışma zamanında Twenty tarafından sağlanır, bu nedenle `twenty-sdk` ile birlikte `devDependencies` altına taşınmalıdır. [Proje Yapısı → Bağımlılıklar](/l/tr/developers/extend/apps/getting-started/project-structure#dependencies) bölümüne bakın.
 
 Takıldınız mı? [Twenty Discord](https://discord.com/channels/1130383047699738754/1130386664812982322) üzerinde yardım isteyin.

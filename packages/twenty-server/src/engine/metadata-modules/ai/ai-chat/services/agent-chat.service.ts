@@ -6,6 +6,7 @@ import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
+import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import {
@@ -14,6 +15,7 @@ import {
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
+import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import {
@@ -65,6 +67,7 @@ export class AgentChatService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    private readonly codeInterpreterService: CodeInterpreterService,
   ) {}
 
   async createThread({
@@ -232,15 +235,17 @@ export class AgentChatService {
 
     if (uiMessage.parts && uiMessage.parts.length > 0) {
       const dbParts = mapUIMessagePartsToDBParts(
-        uiMessage.parts,
+        finalizeDanglingToolParts(uiMessage.parts),
         savedMessageId,
         workspaceId,
       );
 
-      await this.messagePartRepository.insert(
-        workspaceId,
-        dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
-      );
+      if (dbParts.length > 0) {
+        await this.messagePartRepository.insert(
+          workspaceId,
+          dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
+        );
+      }
     }
 
     return {
@@ -509,6 +514,8 @@ export class AgentChatService {
 
     await this.broadcastThreadUpdated(thread, ['deletedAt'], userWorkspaceId);
 
+    this.releaseThreadSandboxBestEffort(workspaceId, threadId);
+
     return thread;
   }
 
@@ -595,6 +602,23 @@ export class AgentChatService {
         },
       ],
     });
+
+    this.releaseThreadSandboxBestEffort(workspaceId, threadId);
+  }
+
+  private releaseThreadSandboxBestEffort(
+    workspaceId: string,
+    threadId: string,
+  ): void {
+    void this.codeInterpreterService
+      .releaseThreadSandbox(workspaceId, threadId)
+      .catch((error) =>
+        this.logger.warn(
+          `Failed to release code interpreter sandbox for thread ${threadId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        ),
+      );
   }
 
   async notifyThreadActivityUpdated({

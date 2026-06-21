@@ -1,24 +1,25 @@
 import { EventFieldDiff } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiff';
+import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { isDefined } from 'twenty-shared/utils';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 type EventFieldDiffContainerProps = {
   mainObjectMetadataItem: EnrichedObjectMetadataItem;
   diffKey: string;
-  diffValue: any;
+  fieldDiff: { before: unknown; after: unknown };
   eventId: string;
-  fieldMetadataItemMap: Record<string, FieldMetadataItem>;
 };
 
 export const EventFieldDiffContainer = ({
   mainObjectMetadataItem,
   diffKey,
-  diffValue,
+  fieldDiff,
   eventId,
-  fieldMetadataItemMap,
 }: EventFieldDiffContainerProps) => {
-  const fieldMetadataItem = fieldMetadataItemMap[diffKey];
+  const fieldMetadataItem = findFieldMetadataItemByDiffKey(
+    mainObjectMetadataItem.fields,
+    diffKey,
+  );
 
   if (!isDefined(fieldMetadataItem)) {
     throw new Error(
@@ -31,7 +32,7 @@ export const EventFieldDiffContainer = ({
   return (
     <EventFieldDiff
       key={diffArtificialRecordStoreId}
-      diffRecord={diffValue}
+      fieldDiff={fieldDiff}
       fieldMetadataItem={fieldMetadataItem}
       mainObjectMetadataItem={mainObjectMetadataItem}
       diffArtificialRecordStoreId={diffArtificialRecordStoreId}

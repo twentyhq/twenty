@@ -1,20 +1,30 @@
 import { Injectable } from '@nestjs/common';
 
+import {
+  ALL_METADATA_NAME,
+  type AllMetadataName,
+} from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import {
+  type OrchestratorActionsReport,
+  type OrchestratorFailureReport,
   type WorkspaceMigrationOrchestratorBuildArgs,
   type WorkspaceMigrationOrchestratorFailedResult,
   type WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report.util';
+import { computeOrderedMigrationActions } from 'src/engine/workspace-manager/workspace-migration/utils/compute-ordered-migration-actions.util';
 import { crossEntityTransversalValidation } from 'src/engine/workspace-manager/workspace-migration/utils/cross-entity-transversal-validation.util';
 import { mergeOrchestratorFailureReports } from 'src/engine/workspace-manager/workspace-migration/utils/merge-orchestrator-failure-reports.util';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
+import { WorkspaceMigrationApplicationVariableActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/application-variable/workspace-migration-application-variable-actions-builder.service';
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
 import { WorkspaceMigrationConnectionProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/workspace-migration-connection-provider-actions-builder.service';
 import { WorkspaceMigrationFieldPermissionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-permission/workspace-migration-field-permission-actions-builder.service';
@@ -42,43 +52,240 @@ import { WorkspaceMigrationViewFilterActionsBuilderService } from 'src/engine/wo
 import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/workspace-migration-view-group-actions-builder.service';
 import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/workspace-migration-view-sort-actions.builder.service';
 import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
-import { WorkspaceMigrationApplicationVariableActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/application-variable/workspace-migration-application-variable-actions-builder.service';
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
+import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
+
+type FromToMetadataUniversalFlatEntityMaps<T extends AllMetadataName> = {
+  from: MetadataUniversalFlatEntityMaps<T>;
+  to: MetadataUniversalFlatEntityMaps<T>;
+};
+
+type EntityActionsBuilderTask = {
+  metadataName: AllMetadataName;
+  run: (context: EntityActionsBuilderRunContext) => Promise<void>;
+};
+
+type EntityActionsBuilderRunContext = {
+  additionalCacheDataMaps: WorkspaceMigrationOrchestratorBuildArgs['additionalCacheDataMaps'];
+  buildOptions: WorkspaceMigrationOrchestratorBuildArgs['buildOptions'];
+  fromToAllFlatEntityMaps: WorkspaceMigrationOrchestratorBuildArgs['fromToAllFlatEntityMaps'];
+  optimisticAllFlatEntityMaps: AllUniversalFlatEntityMaps;
+  orchestratorActionsReport: OrchestratorActionsReport;
+  orchestratorFailureReport: OrchestratorFailureReport;
+  workspaceId: string;
+};
+
+const createEntityActionsBuilderTask = <T extends AllMetadataName>(
+  metadataName: T,
+  builderService: WorkspaceEntityMigrationBuilderService<T>,
+): EntityActionsBuilderTask => ({
+  metadataName,
+  run: async ({
+    additionalCacheDataMaps,
+    buildOptions,
+    fromToAllFlatEntityMaps,
+    optimisticAllFlatEntityMaps,
+    orchestratorActionsReport,
+    orchestratorFailureReport,
+    workspaceId,
+  }) => {
+    const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
+    const fromToFlatEntityMaps = fromToAllFlatEntityMaps[flatEntityMapsKey] as
+      | FromToMetadataUniversalFlatEntityMaps<T>
+      | undefined;
+
+    if (!isDefined(fromToFlatEntityMaps)) {
+      return;
+    }
+
+    const result = await builderService.validateAndBuild({
+      additionalCacheDataMaps,
+      buildOptions,
+      dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
+      from: fromToFlatEntityMaps.from,
+      to: fromToFlatEntityMaps.to,
+      workspaceId,
+    });
+
+    if (result.status === 'fail') {
+      orchestratorFailureReport[metadataName].push(...result.errors);
+    } else {
+      // TS mapped-type invariance: writing into a generic key of a mapped
+      // type widens the expected value to the intersection of all variants.
+      // The runtime value is correctly typed as
+      // MetadataUniversalWorkspaceMigrationActionsRecord<T>, but TS cannot
+      // narrow OrchestratorActionsReport[T] on the assignment side.
+      orchestratorActionsReport[metadataName] =
+        result.actions as OrchestratorActionsReport[T];
+    }
+  },
+});
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
+  private readonly entityActionsBuilderTasksInExecutionOrder: ReadonlyArray<EntityActionsBuilderTask>;
+
   constructor(
-    private readonly workspaceMigrationObjectActionsBuilderService: WorkspaceMigrationObjectActionsBuilderService,
-    private readonly workspaceMigrationIndexActionsBuilderService: WorkspaceMigrationIndexActionsBuilderService,
-    private readonly workspaceMigrationViewActionsBuilderService: WorkspaceMigrationViewActionsBuilderService,
-    private readonly workspaceMigrationViewFieldActionsBuilderService: WorkspaceMigrationViewFieldActionsBuilderService,
-    private readonly workspaceMigrationViewFilterActionsBuilderService: WorkspaceMigrationViewFilterActionsBuilderService,
-    private readonly workspaceMigrationViewFilterGroupActionsBuilderService: WorkspaceMigrationViewFilterGroupActionsBuilderService,
-    private readonly workspaceMigrationViewGroupActionsBuilderService: WorkspaceMigrationViewGroupActionsBuilderService,
-    private readonly workspaceMigrationViewFieldGroupActionsBuilderService: WorkspaceMigrationViewFieldGroupActionsBuilderService,
-    private readonly workspaceMigrationViewSortActionsBuilderService: WorkspaceMigrationViewSortActionsBuilderService,
-    private readonly workspaceMigrationFieldPermissionActionsBuilderService: WorkspaceMigrationFieldPermissionActionsBuilderService,
-    private readonly workspaceMigrationObjectPermissionActionsBuilderService: WorkspaceMigrationObjectPermissionActionsBuilderService,
-    private readonly workspaceMigrationRolePermissionFlagActionsBuilderService: WorkspaceMigrationRolePermissionFlagActionsBuilderService,
-    private readonly workspaceMigrationPermissionFlagActionsBuilderService: WorkspaceMigrationPermissionFlagActionsBuilderService,
-    private readonly workspaceMigrationLogicFunctionActionsBuilderService: WorkspaceMigrationLogicFunctionActionsBuilderService,
-    private readonly workspaceMigrationRoleTargetActionsBuilderService: WorkspaceMigrationRoleTargetActionsBuilderService,
-    private readonly workspaceMigrationFieldActionsBuilderService: WorkspaceMigrationFieldActionsBuilderService,
-    private readonly workspaceMigrationRoleActionsBuilderService: WorkspaceMigrationRoleActionsBuilderService,
-    private readonly workspaceMigrationAgentActionsBuilderService: WorkspaceMigrationAgentActionsBuilderService,
-    private readonly workspaceMigrationSkillActionsBuilderService: WorkspaceMigrationSkillActionsBuilderService,
-    private readonly workspaceMigrationCommandMenuItemActionsBuilderService: WorkspaceMigrationCommandMenuItemActionsBuilderService,
-    private readonly workspaceMigrationNavigationMenuItemActionsBuilderService: WorkspaceMigrationNavigationMenuItemActionsBuilderService,
-    private readonly workspaceMigrationPageLayoutActionsBuilderService: WorkspaceMigrationPageLayoutActionsBuilderService,
-    private readonly workspaceMigrationPageLayoutWidgetActionsBuilderService: WorkspaceMigrationPageLayoutWidgetActionsBuilderService,
-    private readonly workspaceMigrationPageLayoutTabActionsBuilderService: WorkspaceMigrationPageLayoutTabActionsBuilderService,
-    private readonly workspaceMigrationRowLevelPermissionPredicateActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
-    private readonly workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
-    private readonly workspaceMigrationFrontComponentActionsBuilderService: WorkspaceMigrationFrontComponentActionsBuilderService,
-    private readonly workspaceMigrationWebhookActionsBuilderService: WorkspaceMigrationWebhookActionsBuilderService,
-    private readonly workspaceMigrationApplicationVariableActionsBuilderService: WorkspaceMigrationApplicationVariableActionsBuilderService,
-    private readonly workspaceMigrationConnectionProviderActionsBuilderService: WorkspaceMigrationConnectionProviderActionsBuilderService,
-  ) {}
+    workspaceMigrationObjectActionsBuilderService: WorkspaceMigrationObjectActionsBuilderService,
+    workspaceMigrationIndexActionsBuilderService: WorkspaceMigrationIndexActionsBuilderService,
+    workspaceMigrationViewActionsBuilderService: WorkspaceMigrationViewActionsBuilderService,
+    workspaceMigrationViewFieldActionsBuilderService: WorkspaceMigrationViewFieldActionsBuilderService,
+    workspaceMigrationViewFilterActionsBuilderService: WorkspaceMigrationViewFilterActionsBuilderService,
+    workspaceMigrationViewFilterGroupActionsBuilderService: WorkspaceMigrationViewFilterGroupActionsBuilderService,
+    workspaceMigrationViewGroupActionsBuilderService: WorkspaceMigrationViewGroupActionsBuilderService,
+    workspaceMigrationViewFieldGroupActionsBuilderService: WorkspaceMigrationViewFieldGroupActionsBuilderService,
+    workspaceMigrationViewSortActionsBuilderService: WorkspaceMigrationViewSortActionsBuilderService,
+    workspaceMigrationFieldPermissionActionsBuilderService: WorkspaceMigrationFieldPermissionActionsBuilderService,
+    workspaceMigrationObjectPermissionActionsBuilderService: WorkspaceMigrationObjectPermissionActionsBuilderService,
+    workspaceMigrationRolePermissionFlagActionsBuilderService: WorkspaceMigrationRolePermissionFlagActionsBuilderService,
+    workspaceMigrationPermissionFlagActionsBuilderService: WorkspaceMigrationPermissionFlagActionsBuilderService,
+    workspaceMigrationLogicFunctionActionsBuilderService: WorkspaceMigrationLogicFunctionActionsBuilderService,
+    workspaceMigrationRoleTargetActionsBuilderService: WorkspaceMigrationRoleTargetActionsBuilderService,
+    workspaceMigrationFieldActionsBuilderService: WorkspaceMigrationFieldActionsBuilderService,
+    workspaceMigrationRoleActionsBuilderService: WorkspaceMigrationRoleActionsBuilderService,
+    workspaceMigrationAgentActionsBuilderService: WorkspaceMigrationAgentActionsBuilderService,
+    workspaceMigrationSkillActionsBuilderService: WorkspaceMigrationSkillActionsBuilderService,
+    workspaceMigrationCommandMenuItemActionsBuilderService: WorkspaceMigrationCommandMenuItemActionsBuilderService,
+    workspaceMigrationNavigationMenuItemActionsBuilderService: WorkspaceMigrationNavigationMenuItemActionsBuilderService,
+    workspaceMigrationPageLayoutActionsBuilderService: WorkspaceMigrationPageLayoutActionsBuilderService,
+    workspaceMigrationPageLayoutWidgetActionsBuilderService: WorkspaceMigrationPageLayoutWidgetActionsBuilderService,
+    workspaceMigrationPageLayoutTabActionsBuilderService: WorkspaceMigrationPageLayoutTabActionsBuilderService,
+    workspaceMigrationRowLevelPermissionPredicateActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
+    workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
+    workspaceMigrationFrontComponentActionsBuilderService: WorkspaceMigrationFrontComponentActionsBuilderService,
+    workspaceMigrationWebhookActionsBuilderService: WorkspaceMigrationWebhookActionsBuilderService,
+    workspaceMigrationApplicationVariableActionsBuilderService: WorkspaceMigrationApplicationVariableActionsBuilderService,
+    workspaceMigrationConnectionProviderActionsBuilderService: WorkspaceMigrationConnectionProviderActionsBuilderService,
+  ) {
+    // The order of this array defines the execution order of the per-entity
+    // builders. Each builder may mutate `optimisticAllFlatEntityMaps`, so
+    // subsequent builders see those mutations and downstream entities depend
+    // on upstream ones being processed first. Do not reorder casually.
+    // The constructor parameter order above is irrelevant: NestJS DI resolves
+    // dependencies by type, not by position.
+    this.entityActionsBuilderTasksInExecutionOrder = [
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.objectMetadata,
+        workspaceMigrationObjectActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.fieldMetadata,
+        workspaceMigrationFieldActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.index,
+        workspaceMigrationIndexActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.view,
+        workspaceMigrationViewActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.viewFieldGroup,
+        workspaceMigrationViewFieldGroupActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.viewField,
+        workspaceMigrationViewFieldActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.viewFilterGroup,
+        workspaceMigrationViewFilterGroupActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.viewFilter,
+        workspaceMigrationViewFilterActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.viewGroup,
+        workspaceMigrationViewGroupActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.viewSort,
+        workspaceMigrationViewSortActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.rowLevelPermissionPredicateGroup,
+        workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.rowLevelPermissionPredicate,
+        workspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.logicFunction,
+        workspaceMigrationLogicFunctionActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.role,
+        workspaceMigrationRoleActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.objectPermission,
+        workspaceMigrationObjectPermissionActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.fieldPermission,
+        workspaceMigrationFieldPermissionActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.permissionFlag,
+        workspaceMigrationPermissionFlagActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.rolePermissionFlag,
+        workspaceMigrationRolePermissionFlagActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.roleTarget,
+        workspaceMigrationRoleTargetActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.agent,
+        workspaceMigrationAgentActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.skill,
+        workspaceMigrationSkillActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.frontComponent,
+        workspaceMigrationFrontComponentActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.commandMenuItem,
+        workspaceMigrationCommandMenuItemActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.navigationMenuItem,
+        workspaceMigrationNavigationMenuItemActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.pageLayout,
+        workspaceMigrationPageLayoutActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.pageLayoutTab,
+        workspaceMigrationPageLayoutTabActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.pageLayoutWidget,
+        workspaceMigrationPageLayoutWidgetActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.webhook,
+        workspaceMigrationWebhookActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.applicationVariable,
+        workspaceMigrationApplicationVariableActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.connectionProvider,
+        workspaceMigrationConnectionProviderActionsBuilderService,
+      ),
+    ];
+  }
 
   private setupOptimisticCache({
     fromToAllFlatEntityMaps,
@@ -143,778 +350,18 @@ export class WorkspaceMigrationBuildOrchestratorService {
       optimisticAllFlatEntityMaps.flatViewFieldMaps,
     );
 
-    const {
-      flatObjectMetadataMaps,
-      flatViewFieldMaps,
-      flatViewMaps,
-      flatIndexMaps,
-      flatLogicFunctionMaps,
-      flatFieldMetadataMaps,
-      flatViewFilterMaps,
-      flatViewFilterGroupMaps,
-      flatViewGroupMaps,
-      flatViewFieldGroupMaps,
-      flatViewSortMaps,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-      flatRoleMaps,
-      flatObjectPermissionMaps,
-      flatFieldPermissionMaps,
-      flatRolePermissionFlagMaps,
-      flatPermissionFlagMaps,
-      flatRoleTargetMaps,
-      flatAgentMaps,
-      flatSkillMaps,
-      flatCommandMenuItemMaps,
-      flatNavigationMenuItemMaps,
-      flatPageLayoutMaps,
-      flatPageLayoutWidgetMaps,
-      flatPageLayoutTabMaps,
-      flatFrontComponentMaps,
-      flatWebhookMaps,
-      flatApplicationVariableMaps,
-      flatConnectionProviderMaps,
-    } = fromToAllFlatEntityMaps;
-
-    if (isDefined(flatObjectMetadataMaps)) {
-      const { from: fromFlatObjectMetadataMaps, to: toFlatObjectMetadataMaps } =
-        flatObjectMetadataMaps;
-
-      const objectResult =
-        await this.workspaceMigrationObjectActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            from: fromFlatObjectMetadataMaps,
-            to: toFlatObjectMetadataMaps,
-            workspaceId,
-          },
-        );
-
-      if (objectResult.status === 'fail') {
-        orchestratorFailureReport.objectMetadata.push(...objectResult.errors);
-      } else {
-        orchestratorActionsReport.objectMetadata = objectResult.actions;
-      }
-    }
-
-    if (isDefined(flatFieldMetadataMaps)) {
-      const { from: fromFlatFieldMetadataMaps, to: toFlatFieldMetadataMaps } =
-        flatFieldMetadataMaps;
-      const fieldResult =
-        await this.workspaceMigrationFieldActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatFieldMetadataMaps,
-            to: toFlatFieldMetadataMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (fieldResult.status === 'fail') {
-        orchestratorFailureReport.fieldMetadata.push(...fieldResult.errors);
-      } else {
-        orchestratorActionsReport.fieldMetadata = fieldResult.actions;
-      }
-    }
-
-    if (isDefined(flatIndexMaps)) {
-      const { from: fromFlatIndexMaps, to: toFlatIndexMaps } = flatIndexMaps;
-      const indexResult =
-        await this.workspaceMigrationIndexActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatIndexMaps,
-            to: toFlatIndexMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (indexResult.status === 'fail') {
-        orchestratorFailureReport.index.push(...indexResult.errors);
-      } else {
-        orchestratorActionsReport.index = indexResult.actions;
-      }
-    }
-
-    if (isDefined(flatViewMaps)) {
-      const { from: fromFlatViewMaps, to: toFlatViewMaps } = flatViewMaps;
-      const viewResult =
-        await this.workspaceMigrationViewActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            from: fromFlatViewMaps,
-            to: toFlatViewMaps,
-            buildOptions,
-            workspaceId,
-          },
-        );
-
-      if (viewResult.status === 'fail') {
-        orchestratorFailureReport.view.push(...viewResult.errors);
-      } else {
-        orchestratorActionsReport.view = viewResult.actions;
-      }
-    }
-
-    if (isDefined(flatViewFieldGroupMaps)) {
-      const { from: fromFlatViewFieldGroupMaps, to: toFlatViewFieldGroupMaps } =
-        flatViewFieldGroupMaps;
-
-      const viewFieldGroupResult =
-        await this.workspaceMigrationViewFieldGroupActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatViewFieldGroupMaps,
-            to: toFlatViewFieldGroupMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (viewFieldGroupResult.status === 'fail') {
-        orchestratorFailureReport.viewFieldGroup.push(
-          ...viewFieldGroupResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.viewFieldGroup = viewFieldGroupResult.actions;
-      }
-    }
-
-    if (isDefined(flatViewFieldMaps)) {
-      const { from: fromFlatViewFieldMaps, to: toFlatViewFieldMaps } =
-        flatViewFieldMaps;
-      const viewFieldResult =
-        await this.workspaceMigrationViewFieldActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatViewFieldMaps,
-            to: toFlatViewFieldMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (viewFieldResult.status === 'fail') {
-        orchestratorFailureReport.viewField.push(...viewFieldResult.errors);
-      } else {
-        orchestratorActionsReport.viewField = viewFieldResult.actions;
-      }
-    }
-
-    if (isDefined(flatViewFilterGroupMaps)) {
-      const {
-        from: fromFlatViewFilterGroupMaps,
-        to: toFlatViewFilterGroupMaps,
-      } = flatViewFilterGroupMaps;
-
-      const viewFilterGroupResult =
-        await this.workspaceMigrationViewFilterGroupActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatViewFilterGroupMaps,
-            to: toFlatViewFilterGroupMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (viewFilterGroupResult.status === 'fail') {
-        orchestratorFailureReport.viewFilterGroup.push(
-          ...viewFilterGroupResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.viewFilterGroup =
-          viewFilterGroupResult.actions;
-      }
-    }
-
-    if (isDefined(flatViewFilterMaps)) {
-      const { from: fromFlatViewFilterMaps, to: toFlatViewFilterMaps } =
-        flatViewFilterMaps;
-      const viewFilterResult =
-        await this.workspaceMigrationViewFilterActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatViewFilterMaps,
-            to: toFlatViewFilterMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (viewFilterResult.status === 'fail') {
-        orchestratorFailureReport.viewFilter.push(...viewFilterResult.errors);
-      } else {
-        orchestratorActionsReport.viewFilter = viewFilterResult.actions;
-      }
-    }
-
-    if (isDefined(flatViewGroupMaps)) {
-      const { from: fromFlatViewGroupMaps, to: toFlatViewGroupMaps } =
-        flatViewGroupMaps;
-      const viewGroupResult =
-        await this.workspaceMigrationViewGroupActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatViewGroupMaps,
-            to: toFlatViewGroupMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (viewGroupResult.status === 'fail') {
-        orchestratorFailureReport.viewGroup.push(...viewGroupResult.errors);
-      } else {
-        orchestratorActionsReport.viewGroup = viewGroupResult.actions;
-      }
-    }
-
-    if (isDefined(flatViewSortMaps)) {
-      const { from: fromFlatViewSortMaps, to: toFlatViewSortMaps } =
-        flatViewSortMaps;
-      const viewSortResult =
-        await this.workspaceMigrationViewSortActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatViewSortMaps,
-            to: toFlatViewSortMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (viewSortResult.status === 'fail') {
-        orchestratorFailureReport.viewSort.push(...viewSortResult.errors);
-      } else {
-        orchestratorActionsReport.viewSort = viewSortResult.actions;
-      }
-    }
-
-    if (isDefined(flatRowLevelPermissionPredicateGroupMaps)) {
-      const {
-        from: fromFlatRowLevelPermissionPredicateGroupMaps,
-        to: toFlatRowLevelPermissionPredicateGroupMaps,
-      } = flatRowLevelPermissionPredicateGroupMaps;
-      const rowLevelPermissionPredicateGroupResult =
-        await this.workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatRowLevelPermissionPredicateGroupMaps,
-            to: toFlatRowLevelPermissionPredicateGroupMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (rowLevelPermissionPredicateGroupResult.status === 'fail') {
-        orchestratorFailureReport.rowLevelPermissionPredicateGroup.push(
-          ...rowLevelPermissionPredicateGroupResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.rowLevelPermissionPredicateGroup =
-          rowLevelPermissionPredicateGroupResult.actions;
-      }
-    }
-
-    if (isDefined(flatRowLevelPermissionPredicateMaps)) {
-      const {
-        from: fromFlatRowLevelPermissionPredicateMaps,
-        to: toFlatRowLevelPermissionPredicateMaps,
-      } = flatRowLevelPermissionPredicateMaps;
-      const rowLevelPermissionPredicateResult =
-        await this.workspaceMigrationRowLevelPermissionPredicateActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatRowLevelPermissionPredicateMaps,
-            to: toFlatRowLevelPermissionPredicateMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (rowLevelPermissionPredicateResult.status === 'fail') {
-        orchestratorFailureReport.rowLevelPermissionPredicate.push(
-          ...rowLevelPermissionPredicateResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.rowLevelPermissionPredicate =
-          rowLevelPermissionPredicateResult.actions;
-      }
-    }
-
-    if (isDefined(flatLogicFunctionMaps)) {
-      const { from: fromFlatLogicFunctionMaps, to: toFlatLogicFunctionMaps } =
-        flatLogicFunctionMaps;
-
-      const logicFunctionResult =
-        await this.workspaceMigrationLogicFunctionActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatLogicFunctionMaps,
-            to: toFlatLogicFunctionMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (logicFunctionResult.status === 'fail') {
-        orchestratorFailureReport.logicFunction.push(
-          ...logicFunctionResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.logicFunction = logicFunctionResult.actions;
-      }
-    }
-
-    if (isDefined(flatRoleMaps)) {
-      const { from: fromFlatRoleMaps, to: toFlatRoleMaps } = flatRoleMaps;
-
-      const roleResult =
-        await this.workspaceMigrationRoleActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatRoleMaps,
-            to: toFlatRoleMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (roleResult.status === 'fail') {
-        orchestratorFailureReport.role.push(...roleResult.errors);
-      } else {
-        orchestratorActionsReport.role = roleResult.actions;
-      }
-    }
-
-    if (isDefined(flatObjectPermissionMaps)) {
-      const {
-        from: fromFlatObjectPermissionMaps,
-        to: toFlatObjectPermissionMaps,
-      } = flatObjectPermissionMaps;
-
-      const objectPermissionResult =
-        await this.workspaceMigrationObjectPermissionActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatObjectPermissionMaps,
-            to: toFlatObjectPermissionMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (objectPermissionResult.status === 'fail') {
-        orchestratorFailureReport.objectPermission.push(
-          ...objectPermissionResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.objectPermission =
-          objectPermissionResult.actions;
-      }
-    }
-
-    if (isDefined(flatFieldPermissionMaps)) {
-      const {
-        from: fromFlatFieldPermissionMaps,
-        to: toFlatFieldPermissionMaps,
-      } = flatFieldPermissionMaps;
-
-      const fieldPermissionResult =
-        await this.workspaceMigrationFieldPermissionActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatFieldPermissionMaps,
-            to: toFlatFieldPermissionMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (fieldPermissionResult.status === 'fail') {
-        orchestratorFailureReport.fieldPermission.push(
-          ...fieldPermissionResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.fieldPermission =
-          fieldPermissionResult.actions;
-      }
-    }
-
-    if (isDefined(flatRolePermissionFlagMaps)) {
-      const {
-        from: fromFlatRolePermissionFlagMaps,
-        to: toFlatRolePermissionFlagMaps,
-      } = flatRolePermissionFlagMaps;
-
-      const rolePermissionFlagResult =
-        await this.workspaceMigrationRolePermissionFlagActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatRolePermissionFlagMaps,
-            to: toFlatRolePermissionFlagMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (rolePermissionFlagResult.status === 'fail') {
-        orchestratorFailureReport.rolePermissionFlag.push(
-          ...rolePermissionFlagResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.rolePermissionFlag =
-          rolePermissionFlagResult.actions;
-      }
-    }
-
-    if (isDefined(flatPermissionFlagMaps)) {
-      const { from: fromFlatPermissionFlagMaps, to: toFlatPermissionFlagMaps } =
-        flatPermissionFlagMaps;
-
-      const permissionFlagResult =
-        await this.workspaceMigrationPermissionFlagActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatPermissionFlagMaps,
-            to: toFlatPermissionFlagMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (permissionFlagResult.status === 'fail') {
-        orchestratorFailureReport.permissionFlag.push(
-          ...permissionFlagResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.permissionFlag = permissionFlagResult.actions;
-      }
-    }
-
-    if (isDefined(flatRoleTargetMaps)) {
-      const { from: fromFlatRoleTargetMaps, to: toFlatRoleTargetMaps } =
-        flatRoleTargetMaps;
-
-      const roleTargetResult =
-        await this.workspaceMigrationRoleTargetActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatRoleTargetMaps,
-            to: toFlatRoleTargetMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (roleTargetResult.status === 'fail') {
-        orchestratorFailureReport.roleTarget.push(...roleTargetResult.errors);
-      } else {
-        orchestratorActionsReport.roleTarget = roleTargetResult.actions;
-      }
-    }
-
-    if (isDefined(flatAgentMaps)) {
-      const { from: fromFlatAgentMaps, to: toFlatAgentMaps } = flatAgentMaps;
-
-      const agentResult =
-        await this.workspaceMigrationAgentActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatAgentMaps,
-            to: toFlatAgentMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (agentResult.status === 'fail') {
-        orchestratorFailureReport.agent.push(...agentResult.errors);
-      } else {
-        orchestratorActionsReport.agent = agentResult.actions;
-      }
-    }
-
-    if (isDefined(flatSkillMaps)) {
-      const { from: fromFlatSkillMaps, to: toFlatSkillMaps } = flatSkillMaps;
-
-      const skillResult =
-        await this.workspaceMigrationSkillActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatSkillMaps,
-            to: toFlatSkillMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (skillResult.status === 'fail') {
-        orchestratorFailureReport.skill.push(...skillResult.errors);
-      } else {
-        orchestratorActionsReport.skill = skillResult.actions;
-      }
-    }
-
-    if (isDefined(flatFrontComponentMaps)) {
-      const { from: fromFlatFrontComponentMaps, to: toFlatFrontComponentMaps } =
-        flatFrontComponentMaps;
-
-      const frontComponentResult =
-        await this.workspaceMigrationFrontComponentActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatFrontComponentMaps,
-            to: toFlatFrontComponentMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (frontComponentResult.status === 'fail') {
-        orchestratorFailureReport.frontComponent.push(
-          ...frontComponentResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.frontComponent = frontComponentResult.actions;
-      }
-    }
-
-    if (isDefined(flatCommandMenuItemMaps)) {
-      const {
-        from: fromFlatCommandMenuItemMaps,
-        to: toFlatCommandMenuItemMaps,
-      } = flatCommandMenuItemMaps;
-
-      const commandMenuItemResult =
-        await this.workspaceMigrationCommandMenuItemActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatCommandMenuItemMaps,
-            to: toFlatCommandMenuItemMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (commandMenuItemResult.status === 'fail') {
-        orchestratorFailureReport.commandMenuItem.push(
-          ...commandMenuItemResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.commandMenuItem =
-          commandMenuItemResult.actions;
-      }
-    }
-
-    if (isDefined(flatNavigationMenuItemMaps)) {
-      const {
-        from: fromFlatNavigationMenuItemMaps,
-        to: toFlatNavigationMenuItemMaps,
-      } = flatNavigationMenuItemMaps;
-
-      const navigationMenuItemResult =
-        await this.workspaceMigrationNavigationMenuItemActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatNavigationMenuItemMaps,
-            to: toFlatNavigationMenuItemMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (navigationMenuItemResult.status === 'fail') {
-        orchestratorFailureReport.navigationMenuItem.push(
-          ...navigationMenuItemResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.navigationMenuItem =
-          navigationMenuItemResult.actions;
-      }
-    }
-
-    if (isDefined(flatPageLayoutMaps)) {
-      const { from: fromFlatPageLayoutMaps, to: toFlatPageLayoutMaps } =
-        flatPageLayoutMaps;
-
-      const pageLayoutResult =
-        await this.workspaceMigrationPageLayoutActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatPageLayoutMaps,
-            to: toFlatPageLayoutMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (pageLayoutResult.status === 'fail') {
-        orchestratorFailureReport.pageLayout.push(...pageLayoutResult.errors);
-      } else {
-        orchestratorActionsReport.pageLayout = pageLayoutResult.actions;
-      }
-    }
-
-    if (isDefined(flatPageLayoutTabMaps)) {
-      const { from: fromFlatPageLayoutTabMaps, to: toFlatPageLayoutTabMaps } =
-        flatPageLayoutTabMaps;
-
-      const pageLayoutTabResult =
-        await this.workspaceMigrationPageLayoutTabActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatPageLayoutTabMaps,
-            to: toFlatPageLayoutTabMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (pageLayoutTabResult.status === 'fail') {
-        orchestratorFailureReport.pageLayoutTab.push(
-          ...pageLayoutTabResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.pageLayoutTab = pageLayoutTabResult.actions;
-      }
-    }
-
-    if (isDefined(flatPageLayoutWidgetMaps)) {
-      const {
-        from: fromFlatPageLayoutWidgetMaps,
-        to: toFlatPageLayoutWidgetMaps,
-      } = flatPageLayoutWidgetMaps;
-
-      const pageLayoutWidgetResult =
-        await this.workspaceMigrationPageLayoutWidgetActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatPageLayoutWidgetMaps,
-            to: toFlatPageLayoutWidgetMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (pageLayoutWidgetResult.status === 'fail') {
-        orchestratorFailureReport.pageLayoutWidget.push(
-          ...pageLayoutWidgetResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.pageLayoutWidget =
-          pageLayoutWidgetResult.actions;
-      }
-    }
-
-    if (isDefined(flatWebhookMaps)) {
-      const { from: fromFlatWebhookMaps, to: toFlatWebhookMaps } =
-        flatWebhookMaps;
-
-      const webhookResult =
-        await this.workspaceMigrationWebhookActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatWebhookMaps,
-            to: toFlatWebhookMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (webhookResult.status === 'fail') {
-        orchestratorFailureReport.webhook.push(...webhookResult.errors);
-      } else {
-        orchestratorActionsReport.webhook = webhookResult.actions;
-      }
-    }
-
-    if (isDefined(flatApplicationVariableMaps)) {
-      const {
-        from: fromFlatApplicationVariableMaps,
-        to: toFlatApplicationVariableMaps,
-      } = flatApplicationVariableMaps;
-
-      const applicationVariableResult =
-        await this.workspaceMigrationApplicationVariableActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatApplicationVariableMaps,
-            to: toFlatApplicationVariableMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (applicationVariableResult.status === 'fail') {
-        orchestratorFailureReport.applicationVariable.push(
-          ...applicationVariableResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.applicationVariable =
-          applicationVariableResult.actions;
-      }
-    }
-
-    if (isDefined(flatConnectionProviderMaps)) {
-      const {
-        from: fromFlatConnectionProviderMaps,
-        to: toFlatConnectionProviderMaps,
-      } = flatConnectionProviderMaps;
-
-      const connectionProviderResult =
-        await this.workspaceMigrationConnectionProviderActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatConnectionProviderMaps,
-            to: toFlatConnectionProviderMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (connectionProviderResult.status === 'fail') {
-        orchestratorFailureReport.connectionProvider.push(
-          ...connectionProviderResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.connectionProvider =
-          connectionProviderResult.actions;
-      }
+    const runContext: EntityActionsBuilderRunContext = {
+      additionalCacheDataMaps,
+      buildOptions,
+      fromToAllFlatEntityMaps,
+      optimisticAllFlatEntityMaps,
+      orchestratorActionsReport,
+      orchestratorFailureReport,
+      workspaceId,
+    };
+
+    for (const task of this.entityActionsBuilderTasksInExecutionOrder) {
+      await task.run(runContext);
     }
 
     const crossEntityFailureReport = crossEntityTransversalValidation({
@@ -949,168 +396,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
       workspaceMigration: {
         applicationUniversalIdentifier:
           buildOptions.applicationUniversalIdentifier,
-        actions: [
-          // Object and fields and indexes
-          ...aggregatedOrchestratorActionsReport.index.delete,
-          ...aggregatedOrchestratorActionsReport.fieldMetadata.delete,
-          ...aggregatedOrchestratorActionsReport.objectMetadata.delete,
-          ...aggregatedOrchestratorActionsReport.objectMetadata.create,
-          ...aggregatedOrchestratorActionsReport.objectMetadata.update,
-          ...aggregatedOrchestratorActionsReport.fieldMetadata.create,
-          ...aggregatedOrchestratorActionsReport.fieldMetadata.update,
-          ...aggregatedOrchestratorActionsReport.index.create,
-          ...aggregatedOrchestratorActionsReport.index.update.flat(),
-          ///
-
-          // Views
-          ...aggregatedOrchestratorActionsReport.view.delete,
-          ...aggregatedOrchestratorActionsReport.view.create,
-          ...aggregatedOrchestratorActionsReport.view.update,
-          ...aggregatedOrchestratorActionsReport.viewField.delete,
-          ...aggregatedOrchestratorActionsReport.viewFieldGroup.delete,
-          ...aggregatedOrchestratorActionsReport.viewFieldGroup.create,
-          ...aggregatedOrchestratorActionsReport.viewFieldGroup.update,
-          ...aggregatedOrchestratorActionsReport.viewField.create,
-          ...aggregatedOrchestratorActionsReport.viewField.update,
-          ...aggregatedOrchestratorActionsReport.viewFilterGroup.delete,
-          ...aggregatedOrchestratorActionsReport.viewFilterGroup.create,
-          ...aggregatedOrchestratorActionsReport.viewFilterGroup.update,
-          ...aggregatedOrchestratorActionsReport.viewFilter.delete,
-          ...aggregatedOrchestratorActionsReport.viewFilter.create,
-          ...aggregatedOrchestratorActionsReport.viewFilter.update,
-          ...aggregatedOrchestratorActionsReport.viewGroup.delete,
-          ...aggregatedOrchestratorActionsReport.viewGroup.create,
-          ...aggregatedOrchestratorActionsReport.viewGroup.update,
-          ...aggregatedOrchestratorActionsReport.viewSort.create,
-          ...aggregatedOrchestratorActionsReport.viewSort.update,
-          ...aggregatedOrchestratorActionsReport.viewSort.delete,
-          ///
-
-          // Logic functions
-          ...aggregatedOrchestratorActionsReport.logicFunction.delete,
-          ...aggregatedOrchestratorActionsReport.logicFunction.create,
-          ...aggregatedOrchestratorActionsReport.logicFunction.update,
-          ///
-
-          // Roles
-          ...aggregatedOrchestratorActionsReport.role.delete,
-          ...aggregatedOrchestratorActionsReport.role.create,
-          ...aggregatedOrchestratorActionsReport.role.update,
-          ///
-
-          // Role targets
-          ...aggregatedOrchestratorActionsReport.roleTarget.delete,
-          ...aggregatedOrchestratorActionsReport.roleTarget.create,
-          ...aggregatedOrchestratorActionsReport.roleTarget.update,
-          ///
-
-          // Object permissions
-          ...aggregatedOrchestratorActionsReport.objectPermission.delete,
-          ...aggregatedOrchestratorActionsReport.objectPermission.create,
-          ...aggregatedOrchestratorActionsReport.objectPermission.update,
-          ///
-
-          // Field permissions
-          ...aggregatedOrchestratorActionsReport.fieldPermission.delete,
-          ...aggregatedOrchestratorActionsReport.fieldPermission.create,
-          ...aggregatedOrchestratorActionsReport.fieldPermission.update,
-          ///
-
-          // Permission flags
-          ...aggregatedOrchestratorActionsReport.rolePermissionFlag.delete,
-          ...aggregatedOrchestratorActionsReport.rolePermissionFlag.create,
-          ...aggregatedOrchestratorActionsReport.rolePermissionFlag.update,
-          ///
-
-          // Permission flag definitions
-          ...aggregatedOrchestratorActionsReport.permissionFlag.delete,
-          ...aggregatedOrchestratorActionsReport.permissionFlag.create,
-          ...aggregatedOrchestratorActionsReport.permissionFlag.update,
-          ///
-
-          // Agents
-          ...aggregatedOrchestratorActionsReport.agent.delete,
-          ...aggregatedOrchestratorActionsReport.agent.create,
-          ...aggregatedOrchestratorActionsReport.agent.update,
-          ///
-
-          // Skills
-          ...aggregatedOrchestratorActionsReport.skill.delete,
-          ...aggregatedOrchestratorActionsReport.skill.create,
-          ...aggregatedOrchestratorActionsReport.skill.update,
-          ///
-
-          // Front components
-          ...aggregatedOrchestratorActionsReport.frontComponent.delete,
-          ...aggregatedOrchestratorActionsReport.frontComponent.create,
-          ...aggregatedOrchestratorActionsReport.frontComponent.update,
-          ///
-
-          // Command Menu Items
-          ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
-          ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
-          ...aggregatedOrchestratorActionsReport.commandMenuItem.update,
-          ///
-
-          // Page layouts
-          ...aggregatedOrchestratorActionsReport.pageLayout.delete,
-          ...aggregatedOrchestratorActionsReport.pageLayout.create,
-          ...aggregatedOrchestratorActionsReport.pageLayout.update,
-          ///
-
-          // Page layout tabs
-          ...aggregatedOrchestratorActionsReport.pageLayoutTab.delete,
-          ...aggregatedOrchestratorActionsReport.pageLayoutTab.create,
-          ...aggregatedOrchestratorActionsReport.pageLayoutTab.update,
-          ///
-
-          // Page layout widgets
-          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.delete,
-          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.create,
-          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.update,
-          ///
-
-          // Navigation Menu Items
-          ...aggregatedOrchestratorActionsReport.navigationMenuItem.delete,
-          ...aggregatedOrchestratorActionsReport.navigationMenuItem.create,
-          ...aggregatedOrchestratorActionsReport.navigationMenuItem.update,
-          ///
-
-          // Row level permission predicate groups
-          ...aggregatedOrchestratorActionsReport
-            .rowLevelPermissionPredicateGroup.delete,
-          ...aggregatedOrchestratorActionsReport
-            .rowLevelPermissionPredicateGroup.create,
-          ...aggregatedOrchestratorActionsReport
-            .rowLevelPermissionPredicateGroup.update,
-          ///
-
-          // Row level permission predicates
-          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .delete,
-          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .create,
-          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .update,
-          ///
-
-          // Webhooks
-          ...aggregatedOrchestratorActionsReport.webhook.delete,
-          ...aggregatedOrchestratorActionsReport.webhook.create,
-          ...aggregatedOrchestratorActionsReport.webhook.update,
-          ///
-
-          // Application Variables
-          ...aggregatedOrchestratorActionsReport.applicationVariable.delete,
-          ...aggregatedOrchestratorActionsReport.applicationVariable.create,
-          ...aggregatedOrchestratorActionsReport.applicationVariable.update,
-
-          // Connection providers
-          ...aggregatedOrchestratorActionsReport.connectionProvider.delete,
-          ...aggregatedOrchestratorActionsReport.connectionProvider.create,
-          ...aggregatedOrchestratorActionsReport.connectionProvider.update,
-          ///
-        ],
+        actions: computeOrderedMigrationActions(
+          aggregatedOrchestratorActionsReport,
+        ),
       },
     };
   }

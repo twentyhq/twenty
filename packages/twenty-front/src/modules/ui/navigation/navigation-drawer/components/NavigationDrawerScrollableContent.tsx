@@ -9,13 +9,20 @@ const StyledItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0;
+  width: 100%;
 `;
 
-const StyledScrollableInnerContainer = styled.div<{ isMobile?: boolean }>`
+const StyledNavigationDrawerScrollWrapper = styled(ScrollWrapper)`
+  flex: 1 1 auto;
+  min-height: 0;
+`;
+
+const StyledScrollableMobileInnerContainer = styled.div`
   height: 100%;
+  min-height: 0;
   padding-left: ${themeCssVariables.spacing[5]};
-  padding-right: ${({ isMobile }) =>
-    isMobile ? themeCssVariables.spacing[5] : themeCssVariables.spacing[8]};
+  padding-right: ${themeCssVariables.spacing[5]};
 `;
 
 export const NavigationDrawerScrollableContent = ({
@@ -27,21 +34,21 @@ export const NavigationDrawerScrollableContent = ({
   const isMobile = useIsMobile();
 
   return (
-    <ScrollWrapper
+    <StyledNavigationDrawerScrollWrapper
       componentInstanceId={`scroll-wrapper-${
         isSettingsDrawer ? 'settings-' : ''
       }navigation-drawer`}
       defaultEnableXScroll={false}
     >
       <StyledItemsContainer>
-        {isSettingsDrawer || isMobile ? (
-          <StyledScrollableInnerContainer isMobile={isMobile}>
+        {isMobile ? (
+          <StyledScrollableMobileInnerContainer>
             {children}
-          </StyledScrollableInnerContainer>
+          </StyledScrollableMobileInnerContainer>
         ) : (
           <>{children}</>
         )}
       </StyledItemsContainer>
-    </ScrollWrapper>
+    </StyledNavigationDrawerScrollWrapper>
   );
 };

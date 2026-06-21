@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 
 import { useCreateEmailGroupChannel } from '@/settings/accounts/hooks/useCreateEmailGroupChannel';
@@ -12,7 +12,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsAccountsNewEmailGroupChannel = () => {
@@ -39,24 +39,24 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
       }
     } catch {
       enqueueErrorSnackBar({
-        message: t`Failed to create email handle. Email handles may not be configured on this server.`,
+        message: t`Failed to create email channel. Email channels may not be configured on this server.`,
       });
     }
   }, [createEmailGroupChannel, handle, navigate, enqueueErrorSnackBar, t]);
 
   return (
-    <SubMenuTopBarContainer
-      title={t`New Email Handle`}
+    <SettingsPageLayout
+      title={t`New Email Channel`}
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`Email`,
           href: getSettingsPath(SettingsPath.WorkspaceEmail),
         },
-        { children: t`New Email Handle` },
+        { children: t`New Email Channel` },
       ]}
       actionButton={
         <SaveAndCancelButtons
@@ -84,6 +84,6 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
           />
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

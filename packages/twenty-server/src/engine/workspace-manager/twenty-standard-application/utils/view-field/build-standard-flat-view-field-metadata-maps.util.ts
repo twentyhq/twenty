@@ -8,6 +8,7 @@ import { computeStandardBlocklistViewFields } from 'src/engine/workspace-manager
 import { computeStandardCalendarChannelEventAssociationViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-channel-event-association-view-fields.util';
 import { computeStandardCalendarEventParticipantViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-event-participant-view-fields.util';
 import { computeStandardCalendarEventViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-event-view-fields.util';
+import { computeStandardCallRecordingViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-call-recording-view-fields.util';
 import { computeStandardCompanyViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-company-view-fields.util';
 import { computeStandardDashboardViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-dashboard-view-fields.util';
 import { computeStandardMessageChannelMessageAssociationMessageFolderViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-channel-message-association-message-folder-view-fields.util';
@@ -40,6 +41,7 @@ const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
     computeStandardCalendarChannelEventAssociationViewFields,
   calendarEvent: computeStandardCalendarEventViewFields,
   calendarEventParticipant: computeStandardCalendarEventParticipantViewFields,
+  callRecording: computeStandardCallRecordingViewFields,
   company: computeStandardCompanyViewFields,
   dashboard: computeStandardDashboardViewFields,
   message: computeStandardMessageViewFields,
@@ -73,6 +75,8 @@ export type BuildStandardFlatViewFieldMetadataMapsArgs = Omit<
 export const buildStandardFlatViewFieldMetadataMaps = (
   args: BuildStandardFlatViewFieldMetadataMapsArgs,
 ): FlatEntityMaps<FlatViewField> => {
+  const { flatViewMaps } = args.dependencyFlatEntityMaps;
+
   const allViewFieldMetadatas: FlatViewField[] = (
     Object.keys(
       STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME,
@@ -92,8 +96,16 @@ export const buildStandardFlatViewFieldMetadataMaps = (
   let flatViewFieldMaps = createEmptyFlatEntityMaps();
 
   for (const viewFieldMetadata of allViewFieldMetadatas) {
+    const parentView =
+      flatViewMaps.byUniversalIdentifier[
+        viewFieldMetadata.viewUniversalIdentifier
+      ];
+
     flatViewFieldMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: viewFieldMetadata,
+      flatEntity: {
+        ...viewFieldMetadata,
+        isSystemSideEffect: parentView?.isSystemSideEffect ?? false,
+      },
       flatEntityMaps: flatViewFieldMaps,
     });
   }

@@ -20,6 +20,7 @@ export const getMockFieldMetadataEntity = <
   overrides: GetMockFieldMetadataEntityOverride<T>,
 ): FieldMetadataEntity => {
   return {
+    isSystemSideEffect: false,
     workspace: {} as WorkspaceEntity,
     calendarViews: [],
     mainGroupByFieldMetadataViews: [],
@@ -31,10 +32,9 @@ export const getMockFieldMetadataEntity = <
     fieldPermissions: [],
     icon: null,
     indexFieldMetadatas: [],
-    isCustom: true,
     isLabelSyncedWithName: false,
     isNullable: null,
-    isUIReadOnly: false,
+    isUIEditable: true,
     isSystem: false,
     isUnique: null,
     object: {} as ObjectMetadataEntity,
@@ -53,6 +53,8 @@ export const getMockFieldMetadataEntity = <
     createdAt: new Date(),
     updatedAt: new Date(),
     isActive: true,
+    isCustom: false,
+    isUIReadOnly: false,
     application: {} as ApplicationEntity,
     applicationId: faker.string.uuid(),
     universalIdentifier: faker.string.uuid(),

@@ -1,5 +1,4 @@
-import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { SLACK_POST_MESSAGE_ROUTE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';

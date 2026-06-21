@@ -1,12 +1,15 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { generateText } from 'ai';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -33,10 +36,20 @@ jest.mock('ai', () => ({
   }),
 }));
 
+const generateTextMock = generateText as jest.MockedFunction<
+  typeof generateText
+>;
+
 describe('AgentAsyncExecutorService — workflow agent role-scoped tool resolution', () => {
   let service: AgentAsyncExecutorService;
   let toolRegistry: { getToolsByCategories: jest.Mock };
   let roleTargetRepository: { findOne: jest.Mock };
+  let aiBillingService: {
+    decrementAndCheckAvailableCredits: jest.Mock;
+    calculateCost: jest.Mock;
+    emitAiTokenUsageEvent: jest.Mock;
+    billNativeWebSearchUsage: jest.Mock;
+  };
 
   const agentId = 'agent-1';
   const workspaceId = 'workspace-1';
@@ -54,6 +67,16 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
   beforeEach(async () => {
     toolRegistry = { getToolsByCategories: jest.fn().mockResolvedValue({}) };
     roleTargetRepository = { findOne: jest.fn() };
+    aiBillingService = {
+      decrementAndCheckAvailableCredits: jest
+        .fn()
+        .mockResolvedValue({ hasNoMoreAvailableCredits: false }),
+      calculateCost: jest.fn().mockReturnValue(0),
+      emitAiTokenUsageEvent: jest.fn(),
+      billNativeWebSearchUsage: jest.fn(),
+    };
+
+    generateTextMock.mockClear();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -79,24 +102,20 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
         {
           provide: NativeToolBinderService,
           useValue: {
-            bind: jest.fn().mockReturnValue({ tools: {}, providerOptions: {} }),
+            bind: jest.fn().mockReturnValue({}),
           },
         },
-        {
-          provide: AiBillingService,
-          useValue: {
-            decrementAndCheckAvailableCredits: jest
-              .fn()
-              .mockResolvedValue({ hasNoMoreAvailableCredits: false }),
-            calculateCost: jest.fn().mockReturnValue(0),
-            emitAiTokenUsageEvent: jest.fn(),
-            billNativeWebSearchUsage: jest.fn(),
-          },
-        },
+        { provide: AiBillingService, useValue: aiBillingService },
         {
           provide: BillingUsageService,
           useValue: {
             hasAvailableCreditsOrThrow: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: MetricsService,
+          useValue: {
+            incrementCounterForEvent: jest.fn(),
           },
         },
         {
@@ -143,5 +162,80 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     });
 
     expect(toolRegistry.getToolsByCategories).not.toHaveBeenCalled();
+  });
+
+  describe('cost folding', () => {
+    const baseUsage = {
+      inputTokens: 100,
+      outputTokens: 50,
+      totalTokens: 150,
+      inputTokenDetails: {
+        noCacheTokens: 100,
+        cacheReadTokens: 0,
+        cacheWriteTokens: 0,
+      },
+      outputTokenDetails: { textTokens: 50, reasoningTokens: 0 },
+    };
+
+    it('returns token cost only when no native web searches happened', async () => {
+      roleTargetRepository.findOne.mockResolvedValueOnce({
+        roleId: agentRoleId,
+      });
+      aiBillingService.calculateCost.mockReturnValue(0.0042);
+      generateTextMock.mockResolvedValueOnce({
+        text: '',
+        steps: [{ toolCalls: [] }],
+        usage: baseUsage,
+      } as unknown as Awaited<ReturnType<typeof generateText>>);
+
+      const result = await service.executeAgent({
+        agent: buildAgent(),
+        userPrompt: 'test',
+        workspaceId,
+      });
+
+      expect(result.nativeWebSearchCallCount).toBe(0);
+      expect(result.totalCostInDollars).toBeCloseTo(0.0042, 6);
+      // credits = dollars * 1_000_000
+      expect(result.creditsUsedMicro).toBe(4200);
+    });
+
+    it('folds native web search dollars into totalCostInDollars and creditsUsedMicro', async () => {
+      roleTargetRepository.findOne.mockResolvedValueOnce({
+        roleId: agentRoleId,
+      });
+      aiBillingService.calculateCost.mockReturnValue(0.01);
+      generateTextMock.mockResolvedValueOnce({
+        text: '',
+        steps: [
+          {
+            toolCalls: [
+              { toolName: 'web_search' },
+              { toolName: 'web_search' },
+              { toolName: 'some_other_tool' },
+            ],
+          },
+          { toolCalls: [{ toolName: 'web_search' }] },
+        ],
+        usage: baseUsage,
+      } as unknown as Awaited<ReturnType<typeof generateText>>);
+
+      const result = await service.executeAgent({
+        agent: buildAgent(),
+        userPrompt: 'test',
+        workspaceId,
+      });
+
+      const expectedSearchCost = 3 * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
+
+      expect(result.nativeWebSearchCallCount).toBe(3);
+      expect(result.totalCostInDollars).toBeCloseTo(
+        0.01 + expectedSearchCost,
+        6,
+      );
+      expect(result.creditsUsedMicro).toBe(
+        Math.round((0.01 + expectedSearchCost) * 1_000_000),
+      );
+    });
   });
 });

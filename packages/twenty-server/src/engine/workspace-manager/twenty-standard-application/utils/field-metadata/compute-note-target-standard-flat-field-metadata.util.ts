@@ -40,7 +40,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -59,7 +59,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -81,7 +81,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -103,7 +103,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
@@ -123,7 +123,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -148,7 +148,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -215,7 +215,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`NoteTarget note`),
       icon: 'IconNotes',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'note',
       targetFieldName: 'noteTargets',
       settings: {
@@ -240,7 +240,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`NoteTarget target`),
       icon: 'IconArrowUpRight',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'person',
       targetFieldName: 'noteTargets',
       settings: {
@@ -265,7 +265,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`NoteTarget target`),
       icon: 'IconArrowUpRight',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'company',
       targetFieldName: 'noteTargets',
       settings: {
@@ -290,7 +290,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`NoteTarget target`),
       icon: 'IconArrowUpRight',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'opportunity',
       targetFieldName: 'noteTargets',
       settings: {

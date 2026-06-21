@@ -200,45 +200,22 @@ export default defineFrontComponent({
 
 Componentele de front rulează în browser într-un Web Worker izolat, în timp ce [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) rulează pe server. Nu există un apel direct în același proces între cele două — în schimb, o componentă de front apelează o funcție logică prin HTTP.
 
-O funcție logică declarată cu `httpRouteTriggerSettings` este expusă sub endpoint-ul `/s/` la `${TWENTY_API_URL}/s\<path>`. Componenta ta de front apelează acea rută cu `fetch`, autentificându-se cu `TWENTY_APP_ACCESS_TOKEN` pe care Twenty îl injectează în worker.
+O funcție logică declarată cu `httpRouteTriggerSettings` este expusă sub endpoint-ul `/s/` la `${TWENTY_API_URL}/s\<path>`. Componenta ta de front apelează acea rută cu `RestApiClient` din `twenty-client-sdk/rest`, care se autentifică folosind `TWENTY_APP_ACCESS_TOKEN` pe care Twenty îl injectează în worker.
 
-Un mic utilitar reutilizabil menține locurile de apel curate:
-
-```ts src/shared/call-app-route.ts
-export async function callAppRoute(
-  path: string,
-  body: Record<string, unknown>,
-): Promise<unknown> {
-  const apiUrl = process.env.TWENTY_API_URL ?? '';
-  const token = process.env.TWENTY_APP_ACCESS_TOKEN;
-
-  const res = await fetch(`${apiUrl}/s${path}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Logic function failed (${res.status})`);
-  }
-
-  return res.json();
-}
-```
+`RestApiClient` este creat exact pentru acest scop. Acesta citește `TWENTY_API_URL` și `TWENTY_APP_ACCESS_TOKEN` din mediul worker-ului, atașează antetul `Authorization: Bearer`, serializează și parsează JSON și aruncă un `RestApiClientError` atunci când token-ul sau URL-ul lipsesc sau când răspunsul nu este 2xx — astfel încât să nu trebuiască să reimplementezi acel boilerplate în fiecare componentă.
 
 O componentă de front headless poate efectua apelul la montare prin componenta `Command`, apoi se demontează automat:
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { callAppRoute } from 'src/shared/call-app-route';
+import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await callAppRoute('/github/fetch-prs', {
+    const client = new RestApiClient();
+
+    await client.post('/s/github/fetch-prs', {
       owner: 'twentyhq',
       repo: 'twenty',
     });
@@ -256,7 +233,7 @@ export default defineFrontComponent({
 });
 ```
 
-`path` transmis către `callAppRoute` trebuie să corespundă cu `httpRouteTriggerSettings.path` al funcției logice (prefixul `/s` este adăugat de utilitar):
+Calea transmisă către client este calea publică a rutei — proprietatea `httpRouteTriggerSettings.path` a funcției logice, cu prefixul `/s`. Păstrează `isAuthRequired: true`; clientul furnizează tokenul de acces al aplicației pe care Twenty îl emite pentru componenta ta:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -283,6 +260,48 @@ export default defineLogicFunction({
 <Note>
 `TWENTY_API_URL` și `TWENTY_APP_ACCESS_TOKEN` sunt injectate automat — vezi [Application variables](#application-variables). Deoarece variabilele de aplicație secrete nu sunt niciodată expuse componentelor de front, păstrează cheile API și altă logică sensibilă în funcția logică, nu în componenta de front.
 </Note>
+
+### Referință pentru `RestApiClient`
+
+Importă `RestApiClient` din `twenty-client-sdk/rest`. Face parte din aceeași familie de clienți ca `CoreApiClient` și `MetadataApiClient`, dar vizează rutele HTTP ale aplicației tale în locul API-ului GraphQL.
+
+| Metodă                            | Descriere                            |
+| --------------------------------- | ------------------------------------ |
+| `get(path, options?)`             | Trimite o cerere `GET`               |
+| `post(path, body?, options?)`     | Trimite o cerere `POST`              |
+| `put(path, body?, options?)`      | Trimite o cerere `PUT`               |
+| `patch(path, body?, options?)`    | Trimite o cerere `PATCH`             |
+| `delete(path, options?)`          | Trimite o cerere `DELETE`            |
+| `request(method, path, options?)` | Cerere generică cu orice metodă HTTP |
+
+`options` acceptă `headers`, `query` (un „record” de parametri de query-string; valorile nule sau nedefinite sunt omise) și un `AbortSignal` prin `signal`. Un obiect `body` care nu este de tip `FormData` este serializat automat în JSON. La un `401`, clientul reîmprospătează o dată tokenul de acces prin gazdă și reîncearcă cererea.
+
+URL-ul de bază și tokenul sunt rezolvate din mediu în mod implicit. Transmite suprascrieri către constructor atunci când este necesar — de exemplu, în teste:
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://api.example.com',
+  token: 'my-token',
+});
+```
+
+Cererile eșuate declanșează o eroare `RestApiClientError` care expune `status`, `statusText`, `url` și `body` analizat:
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const prs = await client.get('/s/github/fetch-prs', {
+    query: { state: 'open' },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
 
 ## Accesarea contextului de rulare
 
@@ -319,13 +338,14 @@ export default defineFrontComponent({
 
 Hook-uri disponibile:
 
-| Hook                                          | Returnează          | Descriere                                                                           |
-| --------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` sau `null` | ID-ul utilizatorului curent                                                         |
-| `useSelectedRecordIds()`                      | `string[]`          | Toate ID-urile înregistrărilor selectate (array gol dacă nu este selectată niciuna) |
-| `useRecordId()`                               | `string` sau `null` | **Învechit.** Folosiți `useSelectedRecordIds()` în schimb                           |
-| `useFrontComponentId()`                       | `string`            | ID-ul acestei instanțe de componentă                                                |
-| `useFrontComponentExecutionContext(selector)` | variază             | Accesați întregul context de execuție cu o funcție selector                         |
+| Hook                                          | Returnează             | Descriere                                                                                 |
+| --------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` sau `null`    | ID-ul utilizatorului curent                                                               |
+| `useSelectedRecordIds()`                      | `string[]`             | Toate ID-urile înregistrărilor selectate (array gol dacă nu este selectată niciuna)       |
+| `useRecordId()`                               | `string` sau `null`    | **Învechit.** Folosiți `useSelectedRecordIds()` în schimb                                 |
+| `useFrontComponentId()`                       | `string`               | ID-ul acestei instanțe de componentă                                                      |
+| `useColorScheme()`                            | `'light'` sau `'dark'` | Schema de culori activă a interfeței de utilizator a gazdei (`System` este deja rezolvat) |
+| `useFrontComponentExecutionContext(selector)` | variază                | Accesați întregul context de execuție cu o funcție selector                               |
 
 ## Variabile de aplicație
 
@@ -423,8 +443,8 @@ export default defineFrontComponent({
 Folosiți `useSelectedRecordIds()` pentru a gestiona mai multe înregistrări selectate. Acest lucru este util pentru operațiuni în masă:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 

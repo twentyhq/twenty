@@ -18,7 +18,10 @@ import {
 import { type PermissionFlagManifest } from './permissionFlagManifestType';
 import { type RoleManifest } from './roleManifestType';
 import { type SkillManifest } from './skillManifestType';
-import { type ViewManifest } from './viewManifestType';
+import {
+  type StandaloneViewFieldManifest,
+  type ViewManifest,
+} from './viewManifestType';
 
 export type Manifest = {
   application: ApplicationManifest;
@@ -34,6 +37,7 @@ export type Manifest = {
   connectionProviders?: ConnectionProviderManifest[];
   publicAssets: AssetManifest[];
   views: ViewManifest[];
+  viewFields: StandaloneViewFieldManifest[];
   navigationMenuItems: NavigationMenuItemManifest[];
   pageLayouts: PageLayoutManifest[];
   pageLayoutTabs: PageLayoutTabManifest[];

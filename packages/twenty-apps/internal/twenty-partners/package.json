@@ -1,6 +1,6 @@
 {
   "name": "twenty-partners",
-  "version": "0.3.1",
+  "version": "0.5.5",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -8,25 +8,25 @@
     "yarn": ">=4.0.2"
   },
   "keywords": [],
-  "packageManager": "yarn@4.9.2",
+  "packageManager": "yarn@4.13.0",
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "test": "vitest run",
+    "test:unit": "vitest run --config vitest.unit.config.ts",
     "test:watch": "vitest",
     "seed": "tsx src/scripts/seed.ts",
     "seed:prod": "ENV_FILE=.env.prod tsx src/scripts/seed.ts",
     "purge": "tsx src/scripts/purge-soft-deleted.ts",
     "purge:prod": "ENV_FILE=.env.prod tsx src/scripts/purge-soft-deleted.ts",
-    "import:dryrun": "tsx src/scripts/import-from-tft.ts",
-    "import:dryrun:prod": "ENV_FILE=.env.prod tsx src/scripts/import-from-tft.ts",
-    "import:apply": "IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts",
-    "import:apply:prod": "ENV_FILE=.env.prod IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts"
+    "rls:configure": "tsx src/scripts/configure-partner-rls.ts",
+    "rls:configure:prod": "ENV_FILE=.env.prod tsx src/scripts/configure-partner-rls.ts"
   },
   "dependencies": {
-    "twenty-client-sdk": "2.4.0",
-    "twenty-sdk": "2.4.0"
+    "twenty-client-sdk": "2.13.0",
+    "twenty-sdk": "2.13.0",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
@@ -38,6 +38,6 @@
     "tsx": "^4.0.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^3.1.1"
+    "vitest": "^4.0.0"
   }
 }

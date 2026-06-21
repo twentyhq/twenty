@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 
 import { LOGGER_DRIVER } from 'src/engine/core-modules/logger/logger.constants';
+import { type TwentyLogLevel } from 'src/engine/core-modules/logger/interfaces';
 
 type LoggerDriverType = ConsoleLogger & {
   options?: {
@@ -16,14 +17,24 @@ type LoggerDriverType = ConsoleLogger & {
 
 @Injectable()
 export class LoggerService implements LoggerServiceInterface {
+  private readonly perfTimers = new Map<string, number>();
+
   constructor(@Inject(LOGGER_DRIVER) private driver: LoggerDriverType) {}
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  private isPerfLoggingEnabled() {
+    return (
+      (
+        this.driver.options?.logLevels as TwentyLogLevel[] | undefined
+      )?.includes('performance') ?? false
+    );
+  }
+
+  // oxlint-disable-next-line typescript/no-explicit-any
   log(message: any, category: string, ...optionalParams: any[]) {
     this.driver.log.apply(this.driver, [message, category, ...optionalParams]);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   error(message: any, category: string, ...optionalParams: any[]) {
     this.driver.error.apply(this.driver, [
       message,
@@ -32,12 +43,12 @@ export class LoggerService implements LoggerServiceInterface {
     ]);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   warn(message: any, category: string, ...optionalParams: any[]) {
     this.driver.warn.apply(this.driver, [message, category, ...optionalParams]);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   debug?(message: any, category: string, ...optionalParams: any[]) {
     this.driver.debug?.apply(this.driver, [
       message,
@@ -46,7 +57,7 @@ export class LoggerService implements LoggerServiceInterface {
     ]);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   verbose?(message: any, category: string, ...optionalParams: any[]) {
     this.driver.verbose?.apply(this.driver, [
       message,
@@ -59,17 +70,42 @@ export class LoggerService implements LoggerServiceInterface {
     this.driver.setLogLevels?.apply(this.driver, [levels]);
   }
 
-  time(category: string, label: string) {
-    if (this.driver.options.logLevels?.includes('debug')) {
-      // oxlint-disable-next-line no-console
-      console.time(`[${category}] ${label}`);
+  // oxlint-disable-next-line typescript/no-explicit-any
+  perf(message: any, category: string, ...optionalParams: any[]) {
+    if (!this.isPerfLoggingEnabled()) {
+      return;
     }
+
+    this.driver.log.apply(this.driver, [message, category, ...optionalParams]);
   }
 
-  timeEnd(category: string, label: string) {
-    if (this.driver.options.logLevels?.includes('debug')) {
-      // oxlint-disable-next-line no-console
-      console.timeEnd(`[${category}] ${label}`);
+  perfTime(category: string, label: string) {
+    if (!this.isPerfLoggingEnabled()) {
+      return;
     }
+
+    this.perfTimers.set(`${category}::${label}`, performance.now());
+  }
+
+  perfTimeEnd(category: string, label: string) {
+    if (!this.isPerfLoggingEnabled()) {
+      return;
+    }
+
+    const key = `${category}::${label}`;
+    const startedAt = this.perfTimers.get(key);
+
+    if (startedAt === undefined) {
+      return;
+    }
+
+    this.perfTimers.delete(key);
+
+    const durationMs = performance.now() - startedAt;
+
+    this.driver.log.apply(this.driver, [
+      `${label}: ${durationMs.toFixed(1)}ms`,
+      category,
+    ]);
   }
 }

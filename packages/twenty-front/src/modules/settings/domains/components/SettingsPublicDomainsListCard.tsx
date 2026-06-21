@@ -5,7 +5,8 @@ import { selectedPublicDomainState } from '@/settings/domains/states/selectedPub
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
+import { Status } from 'twenty-ui/data-display';
+import { IconAt, IconMailCog } from 'twenty-ui/icon';
 import { useQuery } from '@apollo/client/react';
 import {
   type PublicDomain,

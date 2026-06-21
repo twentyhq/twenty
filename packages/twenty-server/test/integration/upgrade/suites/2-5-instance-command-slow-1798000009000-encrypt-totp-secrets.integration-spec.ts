@@ -6,7 +6,7 @@ import { DataSource } from 'typeorm';
 
 import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
@@ -190,7 +190,9 @@ describe('2-5 slow instance command 1798000009000 - EncryptTotpSecretsSlowInstan
       true,
     );
     expect(
-      secretEncryptionService.decryptVersioned(row.secret, { workspaceId }),
+      secretEncryptionService.decryptVersionedOrThrow(row.secret, {
+        workspaceId,
+      }),
     ).toBe(plaintext);
   });
 

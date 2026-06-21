@@ -1,0 +1,31 @@
+{
+  "name": "twenty-codex-plugin",
+  "version": "0.1.0",
+  "description": "Codex plugin for creating, managing, developing, publishing, and querying Twenty apps through Codex.",
+  "private": true,
+  "license": "AGPL-3.0",
+  "scripts": {
+    "setup:mcp": "bash ./scripts/setup-mcp.sh",
+    "validate": "node ./scripts/validate.js",
+    "test": "node --test ./scripts/__tests__/*.spec.js"
+  },
+  "files": [
+    ".codex-plugin",
+    ".mcp.json",
+    "AGENTS.md",
+    "CHANGELOG.md",
+    "CHECKLIST.md",
+    "CONTRIBUTING.md",
+    "README.md",
+    "assets",
+    "references",
+    "scripts",
+    "skills",
+    "templates"
+  ],
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  }
+}

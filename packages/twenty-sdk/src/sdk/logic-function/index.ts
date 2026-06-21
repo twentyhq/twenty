@@ -36,7 +36,10 @@ export type {
 
 export type { RoutePayload } from '@/sdk/define/logic-functions/triggers/route-payload-type';
 
-export type { InputJsonSchema } from 'twenty-shared/logic-function';
+export {
+  jsonSchemaToInputSchema,
+  type InputJsonSchema,
+} from 'twenty-shared/logic-function';
 
 export { getConnection } from '@/sdk/logic-function/connections/get-connection';
 export { listConnections } from '@/sdk/logic-function/connections/list-connections';
@@ -44,3 +47,9 @@ export type { ListConnectionsFilter } from '@/sdk/logic-function/connections/lis
 export { findConnectionForRequest } from '@/sdk/logic-function/connections/find-connection-for-request';
 export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+
+export { runAgent } from '@/sdk/logic-function/agents/run-agent';
+export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
+
+export { Response } from '@/sdk/logic-function/response';
+export type { ResponseInit } from '@/sdk/logic-function/response';

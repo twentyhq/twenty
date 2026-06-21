@@ -95,8 +95,10 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       filter: gqlOperationFilter,
       orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
       limit: workflowActionInput.limit,
+      offset: workflowActionInput.offset,
       authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
+      shouldBuildEffectiveSelectFields: false,
     });
 
     if (!toolOutput.success) {

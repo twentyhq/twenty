@@ -7,6 +7,7 @@ import {
   type LanguageModelUsage,
   Output,
   stepCountIs,
+  type StepResult,
   type ToolSet,
 } from 'ai';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
@@ -17,9 +18,13 @@ import { type Repository } from 'typeorm';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
+import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
+import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
@@ -28,6 +33,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
+import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
@@ -39,6 +45,7 @@ import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billi
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import {
   AiException,
@@ -78,6 +85,7 @@ export class AgentAsyncExecutorService {
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly aiBillingService: AiBillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly metricsService: MetricsService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -87,7 +95,6 @@ export class AgentAsyncExecutorService {
   private async getAgentRoleId(
     agentId: string,
     workspaceId: string,
-    rolePermissionConfig?: RolePermissionConfig,
   ): Promise<string | undefined> {
     const roleTarget = await this.roleTargetRepository.findOne(workspaceId, {
       where: {
@@ -121,6 +128,7 @@ export class AgentAsyncExecutorService {
     let accumulatedUsage: LanguageModelUsage = EMPTY_USAGE;
     let cacheCreationTokens = 0;
     let nativeWebSearchCallCount = 0;
+    let executionSteps: StepResult<ToolSet>[] = [];
 
     try {
       if (agent) {
@@ -188,22 +196,20 @@ export class AgentAsyncExecutorService {
           );
         }
 
-        const nativeBinding = this.nativeToolBinder.bind(
+        const nativeTools = this.nativeToolBinder.bind(
           registeredModel,
           nativeModelToolOptions,
         );
 
         tools = {
           ...registryTools,
-          ...nativeBinding.tools,
+          ...nativeTools,
         };
 
-        providerOptions = {
-          ...nativeBinding.providerOptions,
-          ...this.aiModelConfigService.getReasoningProviderOptions(
+        providerOptions =
+          this.aiModelConfigService.getReasoningProviderOptions(
             registeredModel,
-          ),
-        };
+          );
       }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
@@ -236,6 +242,38 @@ export class AgentAsyncExecutorService {
           if (stepHasNoMoreAvailableCredits) {
             hasNoMoreAvailableCredits = true;
           }
+
+          for (const part of step.content) {
+            if (part.type !== 'tool-result' && part.type !== 'tool-error') {
+              continue;
+            }
+
+            const succeeded =
+              part.type === 'tool-result' &&
+              isToolOutputSuccessful(part.output);
+
+            const toolAttributes = {
+              model: registeredModel.modelId,
+              tool: getToolMetricName(part.toolName),
+            };
+
+            this.metricsService.incrementCounterBy({
+              key: succeeded
+                ? MetricsKeys.WorkflowAgentToolExecutionSucceeded
+                : MetricsKeys.WorkflowAgentToolExecutionFailed,
+              amount: 1,
+              attributes: toolAttributes,
+            });
+
+            this.metricsService.recordHistogram({
+              key: MetricsKeys.WorkflowAgentToolOutputTokens,
+              value: estimateToolOutputTokens(
+                part.type === 'tool-result' ? part.output : part.error,
+              ),
+              unit: 'token',
+              attributes: toolAttributes,
+            });
+          }
         },
         experimental_repairToolCall: async ({
           toolCall,
@@ -260,69 +298,83 @@ export class AgentAsyncExecutorService {
       nativeWebSearchCallCount = countNativeWebSearchCallsFromSteps(
         textResponse.steps,
       );
+      executionSteps = textResponse.steps;
 
       const agentSchema =
         agent?.responseFormat?.type === 'json'
           ? agent.responseFormat.schema
           : undefined;
 
-      if (!agentSchema) {
-        return {
-          result: { response: textResponse.text },
-          usage: textResponse.usage,
-          cacheCreationTokens,
-          nativeWebSearchCallCount,
-          hasNoMoreAvailableCredits,
-        };
-      }
+      let result: object = { response: textResponse.text };
 
-      const structuredResult = await generateText({
-        system: WORKFLOW_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
-        model: registeredModel.model,
-        prompt: `Based on the following execution results, generate the structured output according to the schema:
+      if (agentSchema) {
+        const structuredResult = await generateText({
+          system: WORKFLOW_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
+          model: registeredModel.model,
+          prompt: `Based on the following execution results, generate the structured output according to the schema:
 
                  Execution Results: ${textResponse.text}
 
                  Please generate the structured output based on the execution results and context above.`,
-        output: Output.object({ schema: jsonSchema(agentSchema) }),
-        experimental_telemetry: AI_TELEMETRY_CONFIG,
-        onStepFinish: async (step) => {
-          const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-            await this.aiBillingService.decrementAndCheckAvailableCredits(
-              registeredModel.modelId,
-              {
-                usage: step.usage,
-                cacheCreationTokens: extractCacheCreationTokens(
-                  step.providerMetadata,
-                ),
-              },
-              workspaceId,
-            );
+          output: Output.object({ schema: jsonSchema(agentSchema) }),
+          experimental_telemetry: AI_TELEMETRY_CONFIG,
+          onStepFinish: async (step) => {
+            const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+              await this.aiBillingService.decrementAndCheckAvailableCredits(
+                registeredModel.modelId,
+                {
+                  usage: step.usage,
+                  cacheCreationTokens: extractCacheCreationTokens(
+                    step.providerMetadata,
+                  ),
+                },
+                workspaceId,
+              );
 
-          if (stepHasNoMoreAvailableCredits) {
-            hasNoMoreAvailableCredits = true;
-          }
-        },
-      });
+            if (stepHasNoMoreAvailableCredits) {
+              hasNoMoreAvailableCredits = true;
+            }
+          },
+        });
 
-      accumulatedUsage = mergeLanguageModelUsage(
-        textResponse.usage,
-        structuredResult.usage,
-      );
-
-      if (structuredResult.output == null) {
-        throw new AiException(
-          'Failed to generate structured output from execution results',
-          AiExceptionCode.AGENT_EXECUTION_FAILED,
+        accumulatedUsage = mergeLanguageModelUsage(
+          textResponse.usage,
+          structuredResult.usage,
         );
+        executionSteps = [...textResponse.steps, ...structuredResult.steps];
+
+        if (structuredResult.output == null) {
+          throw new AiException(
+            'Failed to generate structured output from execution results',
+            AiExceptionCode.AGENT_EXECUTION_FAILED,
+          );
+        }
+
+        result = structuredResult.output as object;
       }
 
+      const resolvedModelId = registeredModel.modelId;
+      const tokenCostInDollars = this.aiBillingService.calculateCost(
+        resolvedModelId,
+        { usage: accumulatedUsage, cacheCreationTokens },
+      );
+      const totalCostInDollars =
+        tokenCostInDollars +
+        nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
+      const creditsUsedMicro = Math.round(
+        convertDollarsToBillingCredits(totalCostInDollars),
+      );
+
       return {
-        result: structuredResult.output as object,
+        result,
         usage: accumulatedUsage,
         cacheCreationTokens,
         nativeWebSearchCallCount,
         hasNoMoreAvailableCredits,
+        steps: executionSteps,
+        modelId: resolvedModelId,
+        totalCostInDollars,
+        creditsUsedMicro,
       };
     } catch (error) {
       if (error instanceof AiException) {

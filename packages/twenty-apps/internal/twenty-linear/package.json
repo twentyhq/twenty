@@ -11,7 +11,7 @@
   "keywords": [
     "twenty-app"
   ],
-  "packageManager": "yarn@4.9.2",
+  "packageManager": "yarn@4.13.0",
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
@@ -20,13 +20,13 @@
     "test:watch": "vitest --config vitest.unit.config.ts"
   },
   "dependencies": {
-    "twenty-sdk": "2.3.1"
+    "twenty-sdk": "2.13.0"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
     "oxlint": "^0.16.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^3.1.1"
+    "vitest": "^4.0.0"
   }
 }

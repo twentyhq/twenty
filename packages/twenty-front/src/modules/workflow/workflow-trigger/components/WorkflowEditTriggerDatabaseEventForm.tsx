@@ -21,7 +21,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -266,7 +266,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             handleFieldsChange={handleFieldsChange}
             readonly={triggerOptions.readonly ?? false}
             defaultFields={trigger.settings.fields}
-            actionType="UPDATE_RECORD"
+            actionType="DATABASE_EVENT"
           />
         )}
       </WorkflowStepBody>
