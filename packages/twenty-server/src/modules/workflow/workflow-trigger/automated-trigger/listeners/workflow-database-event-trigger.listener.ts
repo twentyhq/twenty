@@ -42,6 +42,12 @@ import {
   type WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 
+type TriggerEvaluationArgs = {
+  eventPayload: ObjectRecordEvent;
+  eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
+  action: DatabaseEventAction;
+};
+
 @Injectable()
 export class WorkflowDatabaseEventTriggerListener {
   private readonly logger = new Logger(
@@ -388,11 +394,7 @@ export class WorkflowDatabaseEventTriggerListener {
     eventPayload,
     eventListener,
     action,
-  }: {
-    eventPayload: ObjectRecordEvent;
-    eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
-    action: DatabaseEventAction;
-  }) {
+  }: TriggerEvaluationArgs) {
     return (
       this.eventMatchesWatchedFields({ eventPayload, eventListener, action }) &&
       this.eventMatchesRecordFilter({ eventPayload, eventListener })
@@ -403,11 +405,7 @@ export class WorkflowDatabaseEventTriggerListener {
     eventPayload,
     eventListener,
     action,
-  }: {
-    eventPayload: ObjectRecordEvent;
-    eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
-    action: DatabaseEventAction;
-  }) {
+  }: TriggerEvaluationArgs) {
     if (
       action === DatabaseEventAction.UPDATED ||
       action === DatabaseEventAction.UPSERTED
@@ -430,10 +428,7 @@ export class WorkflowDatabaseEventTriggerListener {
   private eventMatchesRecordFilter({
     eventPayload,
     eventListener,
-  }: {
-    eventPayload: ObjectRecordEvent;
-    eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
-  }) {
+  }: Pick<TriggerEvaluationArgs, 'eventPayload' | 'eventListener'>) {
     const { filter } =
       eventListener.settings as BaseDatabaseEventTriggerSettings;
 
