@@ -6,7 +6,6 @@ import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
@@ -37,24 +36,6 @@ export const createGetWorkflowCurrentVersionTool = (
 
       return await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const workflowRepository =
-            await deps.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-              context.workspaceId,
-              'workflow',
-              { shouldBypassPermissionChecks: true },
-            );
-
-          const workflow = await workflowRepository.findOne({
-            where: { id: parameters.workflowId },
-          });
-
-          if (!isDefined(workflow)) {
-            return {
-              success: false,
-              error: `Workflow ${parameters.workflowId} not found`,
-            };
-          }
-
           const workflowVersionRepository =
             await deps.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
               context.workspaceId,
@@ -88,6 +69,7 @@ export const createGetWorkflowCurrentVersionTool = (
             return {
               success: false,
               error: `Workflow ${parameters.workflowId} has no draft or active version`,
+              failureType: 'no_current_version',
             };
           }
 
@@ -106,10 +88,14 @@ export const createGetWorkflowCurrentVersionTool = (
         authContext,
       );
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+
       return {
         success: false,
-        error: error.message,
-        message: `Failed to get workflow current version: ${error.message}`,
+        error: errorMessage,
+        message: `Failed to get workflow current version: ${errorMessage}`,
+        failureType: 'exception',
       };
     }
   },

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,9 +13,14 @@ import {
 } from 'src/engine/api/mcp/constants/mcp-progress-notification.const';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 type McpToolDefinition = ToolSet[string] & {
   annotations?: McpToolAnnotations;
+};
+
+type FailedToolOutput = ToolOutput & {
+  failureType?: string;
 };
 
 const unwrapJsonSchema = (schema: unknown) =>
@@ -23,8 +28,16 @@ const unwrapJsonSchema = (schema: unknown) =>
     ? schema.jsonSchema
     : schema;
 
+const isFailedToolOutput = (result: unknown): result is FailedToolOutput =>
+  isDefined(result) &&
+  typeof result === 'object' &&
+  'success' in result &&
+  result.success === false;
+
 @Injectable()
 export class McpToolExecutorService {
+  private readonly logger = new Logger(McpToolExecutorService.name);
+
   constructor(private readonly metricsService: MetricsService) {}
 
   async handleToolCall(
@@ -37,6 +50,19 @@ export class McpToolExecutorService {
     const tool = toolSet[toolName];
 
     if (!isDefined(tool) || !isDefined(tool.execute)) {
+      void this.metricsService.incrementCounterBy({
+        key: MetricsKeys.McpToolExecutionFailed,
+        amount: 1,
+        attributes: {
+          toolName: String(params.name),
+          failureType: 'unknown_tool',
+        },
+      });
+
+      this.logger.warn(
+        `MCP tool call rejected: unknown tool "${String(params.name)}"`,
+      );
+
       return wrapJsonRpcResponse(id, {
         error: {
           code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
@@ -63,22 +89,52 @@ export class McpToolExecutorService {
         messages: [],
       });
 
+      const hasExecutionError = isFailedToolOutput(result);
+      const failureType = hasExecutionError
+        ? result.failureType ?? 'execution_error'
+        : undefined;
+
       void this.metricsService.incrementCounterBy({
-        key: MetricsKeys.McpToolExecutionSucceeded,
+        key: hasExecutionError
+          ? MetricsKeys.McpToolExecutionFailed
+          : MetricsKeys.McpToolExecutionSucceeded,
         amount: 1,
+        attributes: {
+          toolName: String(toolName),
+          outcome: hasExecutionError ? 'error' : 'success',
+          ...(isDefined(failureType) ? { failureType } : {}),
+        },
       });
+
+      if (hasExecutionError) {
+        const message =
+          result.message ?? result.error ?? 'Tool returned an error payload';
+
+        this.logger.debug(
+          `MCP tool "${String(toolName)}" returned an execution error payload (${failureType}) - ${message}`,
+        );
+      }
 
       return wrapJsonRpcResponse(id, {
         result: {
           content: [{ type: 'text', text: JSON.stringify(result) }],
-          isError: false,
+          isError: hasExecutionError,
         },
       });
     } catch (executionError) {
       void this.metricsService.incrementCounterBy({
         key: MetricsKeys.McpToolExecutionFailed,
         amount: 1,
+        attributes: {
+          toolName: String(toolName),
+          failureType: 'exception',
+        },
       });
+
+      this.logger.error(
+        `MCP tool "${String(toolName)}" execution threw`,
+        executionError instanceof Error ? executionError.stack : undefined,
+      );
 
       return wrapJsonRpcResponse(id, {
         result: {

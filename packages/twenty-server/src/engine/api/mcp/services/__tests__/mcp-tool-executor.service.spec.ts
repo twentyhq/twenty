@@ -5,15 +5,17 @@ import {
   TOOL_CALL_PROGRESS_TOKEN_PREFIX,
 } from 'src/engine/api/mcp/constants/mcp-progress-notification.const';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 
 describe('McpToolExecutorService', () => {
   let service: McpToolExecutorService;
+  let metricsService: jest.Mocked<MetricsService>;
 
   beforeEach(() => {
-    const metricsService = {
+    metricsService = {
       incrementCounterBy: jest.fn().mockResolvedValue(undefined),
-    } as unknown as MetricsService;
+    } as unknown as jest.Mocked<MetricsService>;
 
     service = new McpToolExecutorService(metricsService);
   });
@@ -105,6 +107,14 @@ describe('McpToolExecutorService', () => {
           message: 'Unknown tool: nonexistent_tool',
         },
       });
+      expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
+        key: MetricsKeys.McpToolExecutionFailed,
+        amount: 1,
+        attributes: {
+          toolName: 'nonexistent_tool',
+          failureType: 'unknown_tool',
+        },
+      });
     });
 
     it('should return result with isError: false on success', async () => {
@@ -129,6 +139,14 @@ describe('McpToolExecutorService', () => {
           isError: false,
         },
       });
+      expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
+        key: MetricsKeys.McpToolExecutionSucceeded,
+        amount: 1,
+        attributes: {
+          toolName: 'my_tool',
+          outcome: 'success',
+        },
+      });
     });
 
     it('should return result with isError: true when tool execution throws', async () => {
@@ -151,6 +169,56 @@ describe('McpToolExecutorService', () => {
         result: {
           content: [{ type: 'text', text: 'API rate limited' }],
           isError: true,
+        },
+      });
+      expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
+        key: MetricsKeys.McpToolExecutionFailed,
+        amount: 1,
+        attributes: {
+          toolName: 'failing_tool',
+          failureType: 'exception',
+        },
+      });
+    });
+
+    it('should return isError true and failed metric when tool returns success false', async () => {
+      const toolSet = {
+        failing_tool: {
+          execute: jest.fn().mockResolvedValue({
+            success: false,
+            message: 'Validation error',
+            failureType: 'validation',
+          }),
+          description: 'A tool that returns failed output',
+          inputSchema: { type: 'object' },
+        },
+      } as any;
+
+      const result = await service.handleToolCall('123', toolSet, {
+        name: 'failing_tool',
+        arguments: {},
+      });
+
+      expect(result).toEqual({
+        id: '123',
+        jsonrpc: '2.0',
+        result: {
+          content: [
+            {
+              type: 'text',
+              text: '{"success":false,"message":"Validation error","failureType":"validation"}',
+            },
+          ],
+          isError: true,
+        },
+      });
+      expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
+        key: MetricsKeys.McpToolExecutionFailed,
+        amount: 1,
+        attributes: {
+          toolName: 'failing_tool',
+          outcome: 'error',
+          failureType: 'validation',
         },
       });
     });
