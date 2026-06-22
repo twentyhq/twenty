@@ -104,8 +104,18 @@ describe('filterOutInvalidTimelineActivities', () => {
 
   it('keeps linked note/task update events even without a diff', () => {
     const events = [
-      { id: '1', name: 'linked-task.updated', kind: 'linkedTask', properties: {} },
-      { id: '2', name: 'linked-note.updated', kind: 'linkedNote', properties: {} },
+      {
+        id: '1',
+        name: 'linked-task.updated',
+        kind: 'linkedTask',
+        properties: {},
+      },
+      {
+        id: '2',
+        name: 'linked-note.updated',
+        kind: 'linkedNote',
+        properties: {},
+      },
     ] as TimelineActivity[];
 
     expect(filter(events)).toEqual(events);
