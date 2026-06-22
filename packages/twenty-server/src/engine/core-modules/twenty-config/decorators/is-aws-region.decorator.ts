@@ -12,7 +12,7 @@ export class IsAWSRegionConstraint implements ValidatorConstraintInterface {
     const object = args?.object as any;
 
     if (args?.property === 'STORAGE_S3_REGION' && object?.STORAGE_S3_ENDPOINT) {
-      return typeof region === 'string' && region.length > 0;
+      return typeof region === 'string' && region.trim().length > 0;
     }
 
     const regex = /^[a-z]{2}-[a-z]+-\d{1}$/;
