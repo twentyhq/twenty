@@ -44,6 +44,12 @@ export type CreateDraftFromWorkflowVersionInput = {
   workflowVersionIdToCopy: Scalars['UUID']['input'];
 };
 
+export type CreateTimelineProjectionRuleInput = {
+  anchorObjectMetadataId: Scalars['UUID']['input'];
+  linkedObjectMetadataIds: Array<Scalars['UUID']['input']>;
+  sourceObjectMetadataId: Scalars['UUID']['input'];
+};
+
 export type CreateWorkflowVersionEdgeInput = {
   /** Workflow version source step ID */
   source: Scalars['String']['input'];
@@ -83,6 +89,10 @@ export type DateTimeFilter = {
   lt?: InputMaybe<Scalars['DateTime']['input']>;
   lte?: InputMaybe<Scalars['DateTime']['input']>;
   neq?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type DeleteTimelineProjectionRuleInput = {
+  id: Scalars['UUID']['input'];
 };
 
 export type DeleteWorkflowVersionStepInput = {
@@ -133,9 +143,11 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean']['output'];
   computeStepOutputSchema: Scalars['JSON']['output'];
   createDraftFromWorkflowVersion: WorkflowVersionDto;
+  createTimelineProjectionRule: TimelineProjectionRule;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
+  deleteTimelineProjectionRule: Scalars['Boolean']['output'];
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   dismissMaintenanceModeBanner: Scalars['Boolean']['output'];
@@ -147,6 +159,7 @@ export type Mutation = {
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
+  updateTimelineProjectionRule: TimelineProjectionRule;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -168,6 +181,11 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 };
 
 
+export type MutationCreateTimelineProjectionRuleArgs = {
+  input: CreateTimelineProjectionRuleInput;
+};
+
+
 export type MutationCreateWorkflowVersionEdgeArgs = {
   input: CreateWorkflowVersionEdgeInput;
 };
@@ -180,6 +198,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID']['input'];
+};
+
+
+export type MutationDeleteTimelineProjectionRuleArgs = {
+  input: DeleteTimelineProjectionRuleInput;
 };
 
 
@@ -233,6 +256,11 @@ export type MutationTestHttpRequestArgs = {
 };
 
 
+export type MutationUpdateTimelineProjectionRuleArgs = {
+  input: UpdateTimelineProjectionRuleInput;
+};
+
+
 export type MutationUpdateWorkflowRunStepArgs = {
   input: UpdateWorkflowRunStepInput;
 };
@@ -267,6 +295,7 @@ export type Query = {
   getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
   /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
+  getTimelineProjectionRules: Array<TimelineProjectionRule>;
   /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromObjectRecord: TimelineThreadsWithTotal;
@@ -479,6 +508,15 @@ export type TimelineCalendarEventsWithTotal = {
   totalNumberOfCalendarEvents: Scalars['Int']['output'];
 };
 
+export type TimelineProjectionRule = {
+  __typename?: 'TimelineProjectionRule';
+  anchorObjectMetadataId: Scalars['UUID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  linkedObjectMetadataIds: Array<Scalars['UUID']['output']>;
+  sourceObjectMetadataId: Scalars['UUID']['output'];
+};
+
 export type TimelineThread = {
   __typename?: 'TimelineThread';
   firstParticipant: TimelineThreadParticipant;
@@ -519,6 +557,13 @@ export type UuidFilter = {
   lt?: InputMaybe<Scalars['UUID']['input']>;
   lte?: InputMaybe<Scalars['UUID']['input']>;
   neq?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type UpdateTimelineProjectionRuleInput = {
+  anchorObjectMetadataId: Scalars['UUID']['input'];
+  id: Scalars['UUID']['input'];
+  linkedObjectMetadataIds: Array<Scalars['UUID']['input']>;
+  sourceObjectMetadataId: Scalars['UUID']['input'];
 };
 
 export type UpdateWorkflowRunStepInput = {
