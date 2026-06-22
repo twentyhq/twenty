@@ -34,7 +34,7 @@ import { CastToPositiveNumber } from 'src/engine/core-modules/twenty-config/deco
 import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-typeorm-log-level-array.decorator';
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
-import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
+import { IsRegion } from 'src/engine/core-modules/twenty-config/decorators/is-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/twenty-config/decorators/is-duration.decorator';
 import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/decorators/is-optional-or-empty-string.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
@@ -473,7 +473,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
-  @IsAWSRegion('STORAGE_S3_ENDPOINT')
+  @IsRegion('STORAGE_S3_ENDPOINT')
   STORAGE_S3_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
@@ -595,7 +595,7 @@ export class ConfigVariables {
   @ValidateIf(
     (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
-  @IsAWSRegion()
+  @IsRegion()
   LOGIC_FUNCTION_LAMBDA_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
@@ -664,7 +664,7 @@ export class ConfigVariables {
     (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   @IsOptional()
-  @IsAWSRegion()
+  @IsRegion()
   LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION?: AwsRegion;
 
   @ConfigVariablesMetadata({
@@ -1746,7 +1746,7 @@ export class ConfigVariables {
     description: 'AWS region',
     type: ConfigVariableType.STRING,
   })
-  @IsAWSRegion()
+  @IsRegion()
   @IsOptional()
   AWS_SES_REGION: AwsRegion;
 

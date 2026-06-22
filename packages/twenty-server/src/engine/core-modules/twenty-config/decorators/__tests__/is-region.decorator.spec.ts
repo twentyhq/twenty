@@ -1,14 +1,14 @@
 import { validate } from 'class-validator';
 
-import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
+import { IsRegion } from 'src/engine/core-modules/twenty-config/decorators/is-region.decorator';
 
 class AwsOnlyConfig {
-  @IsAWSRegion()
+  @IsRegion()
   region?: string;
 }
 
 class S3Config {
-  @IsAWSRegion('endpoint')
+  @IsRegion('endpoint')
   region?: string;
 
   endpoint?: string;
@@ -20,7 +20,7 @@ const getRegionErrors = async (instance: object) => {
   return errors.filter((error) => error.property === 'region');
 };
 
-describe('IsAWSRegion Decorator', () => {
+describe('IsRegion Decorator', () => {
   it('should accept an AWS-shaped region', async () => {
     const config = new AwsOnlyConfig();
 

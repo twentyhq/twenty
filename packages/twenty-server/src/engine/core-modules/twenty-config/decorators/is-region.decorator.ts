@@ -10,14 +10,10 @@ import {
 const AWS_REGION_REGEX = /^[a-z]{2}-[a-z]+-\d{1}$/;
 
 @ValidatorConstraint({ async: true })
-export class IsAWSRegionConstraint implements ValidatorConstraintInterface {
+export class IsRegionConstraint implements ValidatorConstraintInterface {
   validate(region: string, args?: ValidationArguments) {
     const [relaxIfPropertyPresent] = args?.constraints ?? [];
 
-    // S3-compatible providers (Scaleway "fr-par", DigitalOcean) sign requests
-    // with non-AWS region slugs. When the related property is set (a custom S3
-    // endpoint), the value is just a signing label, so any non-blank string is
-    // accepted instead of an AWS-shaped region.
     if (isNonEmptyString(relaxIfPropertyPresent)) {
       const relaxingValue = (args?.object as Record<string, unknown>)[
         relaxIfPropertyPresent
@@ -32,7 +28,7 @@ export class IsAWSRegionConstraint implements ValidatorConstraintInterface {
   }
 }
 
-export const IsAWSRegion =
+export const IsRegion =
   (relaxIfPropertyPresent?: string, validationOptions?: ValidationOptions) =>
   (object: object, propertyName: string) => {
     registerDecorator({
@@ -42,6 +38,6 @@ export const IsAWSRegion =
       constraints: isNonEmptyString(relaxIfPropertyPresent)
         ? [relaxIfPropertyPresent]
         : [],
-      validator: IsAWSRegionConstraint,
+      validator: IsRegionConstraint,
     });
   };
