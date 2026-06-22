@@ -269,8 +269,6 @@ describe('companies merge resolvers (integration)', () => {
       }
     });
 
-    // The duplicate's children (here a person via the many-to-one company
-    // relation) must be re-parented onto the survivor, not orphaned or deleted.
     it('should re-parent related records onto the survivor and delete the duplicate', async () => {
       const createCompaniesOperation = createManyOperationFactory({
         objectMetadataSingularName: 'company',
@@ -343,7 +341,6 @@ describe('companies merge resolvers (integration)', () => {
       const findPersonResponse =
         await makeGraphqlAPIRequest(findPersonOperation);
 
-      // person survived the merge and now points at the survivor company
       expect(findPersonResponse.body.data.person).not.toBeNull();
       expect(findPersonResponse.body.data.person.company.id).toBe(
         survivorCompanyId,
@@ -361,13 +358,9 @@ describe('companies merge resolvers (integration)', () => {
         findDuplicateOperation,
       );
 
-      // duplicate was deleted in the same transaction as the migration
       expect(findDuplicateResponse.body.data.company).toBeNull();
     });
 
-    // A merge can collapse more than two records at once. Children of every
-    // duplicate must be re-parented onto the survivor, while children that
-    // already belong to the survivor stay put.
     it('should re-parent children from every duplicate onto the survivor', async () => {
       const createCompaniesOperation = createManyOperationFactory({
         objectMetadataSingularName: 'company',

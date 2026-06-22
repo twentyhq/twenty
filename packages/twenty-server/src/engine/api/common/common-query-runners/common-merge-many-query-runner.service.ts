@@ -451,10 +451,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         context.authContext,
       );
 
-      // repository.update goes through the entity manager, which builds its
-      // query without the transaction's query runner and would therefore run
-      // outside the transaction. Build the query from the transaction-scoped
-      // repository so the relation migration rolls back with the rest.
+      // repository.update() runs outside the transaction; build from the transaction-scoped repository so the migration rolls back with the merge.
       await repository
         .createQueryBuilder(relationField.objectMetadata.nameSingular)
         .update()
