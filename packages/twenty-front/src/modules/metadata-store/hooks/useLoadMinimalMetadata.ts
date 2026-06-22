@@ -57,10 +57,23 @@ export const useLoadMinimalMetadata = () => {
       }
     }
 
+    // A persisted entity can keep a currentCollectionHash that still matches the
+    // server (so the hash check above treats it as fresh) while its status is
+    // not 'up-to-date' — e.g. a snapshot written mid-draft, before applyChanges
+    // promoted it, then captured by the async IndexedDB persistence across a
+    // reload. Boot readiness is gated on status, not hash, so such an entity
+    // would never be refetched nor promoted and the app would hang on the loader
+    // until storage is cleared. Force-refetch anything that isn't 'up-to-date'.
     for (const entityKey of ALL_METADATA_ENTITY_KEYS) {
+      if (staleEntityKeys.includes(entityKey)) {
+        continue;
+      }
+
+      const entry = store.get(metadataStoreState.atomFamily(entityKey));
+
       if (
-        !entityKeysWithServerHash.has(entityKey) &&
-        !staleEntityKeys.includes(entityKey)
+        !entityKeysWithServerHash.has(entityKey) ||
+        entry.status !== 'up-to-date'
       ) {
         staleEntityKeys.push(entityKey);
       }
