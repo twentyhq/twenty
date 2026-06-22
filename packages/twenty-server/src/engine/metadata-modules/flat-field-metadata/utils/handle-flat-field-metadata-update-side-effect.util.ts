@@ -15,11 +15,8 @@ import {
   type FieldMetadataUpdateIndexSideEffect,
   handleIndexChangesDuringFieldUpdate,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util';
-import {
-  type FieldMetadataUpdateSearchFieldMetadataSideEffect,
-  handleSearchFieldMetadataChangesDuringFieldUpdate,
-} from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-search-field-metadata-changes-during-field-update.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { recomputeSearchVectorOnFieldRename } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-search-vector-on-field-rename.util';
 import { type FlatViewFiltersToDeleteAndUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-filters-on-flat-field-metadata-options-update.util';
 import { type FlatViewGroupsToDeleteUpdateAndCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-groups-on-flat-field-metadata-options-update.util';
 
@@ -27,11 +24,7 @@ export type FlatFieldMetadataUpdateSideEffects =
   FlatViewFiltersToDeleteAndUpdate &
     FlatViewGroupsToDeleteUpdateAndCreate &
     FieldMetadataUpdateIndexSideEffect &
-    FieldMetadataDeactivationSideEffect &
-    Pick<
-      FieldMetadataUpdateSearchFieldMetadataSideEffect,
-      'searchFieldMetadatasToCreate' | 'searchFieldMetadatasToDelete'
-    > & {
+    FieldMetadataDeactivationSideEffect & {
       flatFieldMetadatasToUpdate: FlatFieldMetadata[];
     };
 
@@ -67,8 +60,6 @@ export const FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS: FlatFieldMetadataUpd
     flatViewFieldsToDelete: [],
     flatViewsToUpdate: [],
     flatFieldMetadatasToUpdate: [],
-    searchFieldMetadatasToCreate: [],
-    searchFieldMetadatasToDelete: [],
   };
 
 export const handleFlatFieldMetadataUpdateSideEffect = ({
@@ -154,11 +145,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
     flatEntityId: fromFlatFieldMetadata.objectMetadataId,
   });
 
-  const {
-    searchFieldMetadatasToCreate,
-    searchFieldMetadatasToDelete,
-    flatSearchVectorFieldToUpdate,
-  } = handleSearchFieldMetadataChangesDuringFieldUpdate({
+  const { flatSearchVectorFieldToUpdate } = recomputeSearchVectorOnFieldRename({
     fromFlatFieldMetadata,
     toFlatFieldMetadata,
     flatObjectMetadata,
@@ -171,13 +158,6 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
       flatSearchVectorFieldToUpdate,
     );
   }
-
-  sideEffectResult.searchFieldMetadatasToCreate.push(
-    ...searchFieldMetadatasToCreate,
-  );
-  sideEffectResult.searchFieldMetadatasToDelete.push(
-    ...searchFieldMetadatasToDelete,
-  );
 
   const {
     flatIndexMetadatasToUpdate,

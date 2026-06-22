@@ -176,8 +176,6 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       flatViewFieldsToDelete,
       flatViewsToUpdate,
       flatFieldMetadatasToUpdate: flatFieldMetadatasToUpdateFromSideEffect,
-      searchFieldMetadatasToCreate,
-      searchFieldMetadatasToDelete,
     } = sideEffectResult.result;
 
     return {
@@ -230,14 +228,6 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       flatViewsToUpdate: [
         ...accumulator.flatViewsToUpdate,
         ...flatViewsToUpdate,
-      ],
-      searchFieldMetadatasToCreate: [
-        ...accumulator.searchFieldMetadatasToCreate,
-        ...searchFieldMetadatasToCreate,
-      ],
-      searchFieldMetadatasToDelete: [
-        ...accumulator.searchFieldMetadatasToDelete,
-        ...searchFieldMetadatasToDelete,
       ],
       errors: accumulator.errors,
     };

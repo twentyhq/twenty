@@ -94,7 +94,7 @@ describe('Object metadata update - search vector side effect', () => {
     });
   });
 
-  it('should update search vector asExpression when updating label identifier and search should work with new field', async () => {
+  it('should preserve the name-only search surface when the label identifier is changed', async () => {
     await updateOneObjectMetadata({
       input: {
         idToUpdate: testObjectMetadataId,
@@ -146,27 +146,35 @@ describe('Object metadata update - search vector side effect', () => {
 
     jestExpectToBeDefined(settings);
     expect(settings.asExpression).toBeDefined();
-    expect(settings.asExpression).toContain(NEW_LABEL_IDENTIFIER_FIELD_NAME);
-    // A label-identifier change must not clobber existing searchFieldMetadata rows, so
-    // the provisioned `name` row is preserved.
+    // The search surface stays on the provisioned name row; changing the label identifier
+    // does not add the newly designated field to the search vector.
     expect(settings.asExpression).toContain('name');
+    expect(settings.asExpression).not.toContain(NEW_LABEL_IDENTIFIER_FIELD_NAME);
 
-    const searchResult = await search({
+    // The record remains reachable through its indexed name value.
+    const searchByName = await search({
+      searchInput: RECORD_NAME_FIELD_VALUE,
+      includedObjectNameSingulars: [OBJECT_NAME_SINGULAR],
+      limit: 10,
+      expectToFail: false,
+    });
+
+    expect(searchByName.data.search.edges.length).toBe(1);
+    expect(searchByName.data.search.edges[0].node.recordId).toBe(
+      createdRecordId,
+    );
+    expect(searchByName.data.search.edges[0].node.objectNameSingular).toBe(
+      OBJECT_NAME_SINGULAR,
+    );
+
+    // The newly designated label identifier field is outside the search surface.
+    const searchByNewLabelField = await search({
       searchInput: RECORD_FIELD_VALUE,
       includedObjectNameSingulars: [OBJECT_NAME_SINGULAR],
       limit: 10,
       expectToFail: false,
     });
 
-    expect(searchResult.data).toBeDefined();
-    expect(searchResult.data.search).toBeDefined();
-    expect(searchResult.data.search.edges).toBeDefined();
-    expect(searchResult.data.search.edges.length).toBe(1);
-    expect(searchResult.data.search.edges[0].node.recordId).toBe(
-      createdRecordId,
-    );
-    expect(searchResult.data.search.edges[0].node.objectNameSingular).toBe(
-      OBJECT_NAME_SINGULAR,
-    );
+    expect(searchByNewLabelField.data.search.edges.length).toBe(0);
   });
 });

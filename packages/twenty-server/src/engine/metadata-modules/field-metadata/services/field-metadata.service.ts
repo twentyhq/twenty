@@ -25,7 +25,6 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
-import { computeSearchFieldMetadataCreationForFields } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/compute-search-field-metadata-creation-for-fields.util';
 import { computeFlatViewFieldsFromFieldsWidgets } from 'src/engine/metadata-modules/flat-view-field/utils/compute-flat-view-fields-from-fields-widgets.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -296,8 +295,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatViewFieldsToDelete,
       flatViewsToUpdate,
       flatViewsToDelete,
-      searchFieldMetadatasToCreate,
-      searchFieldMetadatasToDelete,
     } = inputTranspilationResult.result;
 
     const validateAndBuildResult =
@@ -332,11 +329,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatViewFieldsToDelete,
-              flatEntityToUpdate: [],
-            },
-            searchFieldMetadata: {
-              flatEntityToCreate: searchFieldMetadatasToCreate,
-              flatEntityToDelete: searchFieldMetadatasToDelete,
               flatEntityToUpdate: [],
             },
           },
@@ -398,7 +390,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
-      flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
@@ -406,7 +397,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       'flatViewFieldMaps',
       'flatViewMaps',
       'flatViewFieldGroupMaps',
-      'flatSearchFieldMetadataMaps',
     ]);
 
     const allTranspiledTranspilationInputs: Awaited<
@@ -459,14 +449,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           resolvedOwnerFlatApplication.universalIdentifier,
       });
 
-    const { searchFieldMetadatasToCreate, flatSearchVectorFieldsToUpdate } =
-      computeSearchFieldMetadataCreationForFields({
-        flatFieldMetadatasToCreate,
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-        flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
-      });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -474,7 +456,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             fieldMetadata: {
               flatEntityToCreate: flatFieldMetadatasToCreate,
               flatEntityToDelete: [],
-              flatEntityToUpdate: flatSearchVectorFieldsToUpdate,
+              flatEntityToUpdate: [],
             },
             index: {
               flatEntityToCreate: flatIndexMetadatasToCreate,
@@ -483,11 +465,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             },
             viewField: {
               flatEntityToCreate: flatViewFieldsToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            searchFieldMetadata: {
-              flatEntityToCreate: searchFieldMetadatasToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },

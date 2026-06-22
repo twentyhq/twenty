@@ -12,21 +12,17 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
-// A searchable field added to an object is auto-included in global search (searchVector
-// derives from searchFieldMetadata rows); removing the field excludes it again.
-describe('Field metadata create/delete - search vector side effect', () => {
+// ISO search surface: a custom object's searchVector indexes the name field only. Creating or
+// deleting an additional searchable field must NOT change the search surface through the API.
+describe('Field metadata create/delete - search vector ISO surface', () => {
   let testObjectMetadataId: string;
-  let labelFieldMetadataId: string;
-  let searchableFieldMetadataId: string;
-  let createdRecordId: string;
+  let extraFieldMetadataId: string;
 
-  const OBJECT_NAME_SINGULAR = 'searchFieldLifecycleObject';
-  const OBJECT_NAME_PLURAL = 'searchFieldLifecycleObjects';
-  const LABEL_FIELD_NAME = 'label';
-  const SEARCHABLE_FIELD_NAME = 'extraSearchableField';
-  const SEARCHABLE_FIELD_COLUMN = 'extraSearchableField';
-  const RECORD_SEARCHABLE_VALUE = 'ZanzibarUniqueSearchToken42';
-  const RECORD_LABEL_VALUE = 'LabelValue';
+  const OBJECT_NAME_SINGULAR = 'searchSurfaceObject';
+  const OBJECT_NAME_PLURAL = 'searchSurfaceObjects';
+  const EXTRA_FIELD_NAME = 'extraSearchableField';
+  const RECORD_NAME_VALUE = 'SearchSurfaceNameToken11';
+  const RECORD_EXTRA_VALUE = 'SearchSurfaceExtraToken22';
 
   const getSearchVectorAsExpression = async (): Promise<string> => {
     const { objects } = await findManyObjectMetadata({
@@ -78,42 +74,14 @@ describe('Field metadata create/delete - search vector side effect', () => {
       input: {
         nameSingular: OBJECT_NAME_SINGULAR,
         namePlural: OBJECT_NAME_PLURAL,
-        labelSingular: 'Search Field Lifecycle Object',
-        labelPlural: 'Search Field Lifecycle Objects',
+        labelSingular: 'Search Surface Object',
+        labelPlural: 'Search Surface Objects',
         icon: 'IconSearch',
         isLabelSyncedWithName: false,
       },
     });
 
     testObjectMetadataId = objectMetadataId;
-
-    const {
-      data: {
-        createOneField: { id: labelFieldId },
-      },
-    } = await createOneFieldMetadata({
-      expectToFail: false,
-      input: {
-        name: LABEL_FIELD_NAME,
-        label: 'Label',
-        type: FieldMetadataType.TEXT,
-        objectMetadataId: testObjectMetadataId,
-        isLabelSyncedWithName: false,
-      },
-      gqlFields: `id name`,
-    });
-
-    labelFieldMetadataId = labelFieldId;
-
-    await updateOneObjectMetadata({
-      input: {
-        idToUpdate: testObjectMetadataId,
-        updatePayload: {
-          labelIdentifierFieldMetadataId: labelFieldMetadataId,
-        },
-      },
-      expectToFail: false,
-    });
   });
 
   afterAll(async () => {
@@ -130,15 +98,15 @@ describe('Field metadata create/delete - search vector side effect', () => {
     });
   });
 
-  it('should include a newly created searchable field in the search vector and in global search', async () => {
+  it('should not add a newly created searchable field to the search vector or to global search', async () => {
     const {
       data: {
-        createOneField: { id: searchableFieldId },
+        createOneField: { id: extraFieldId },
       },
     } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
-        name: SEARCHABLE_FIELD_NAME,
+        name: EXTRA_FIELD_NAME,
         label: 'Extra Searchable Field',
         type: FieldMetadataType.TEXT,
         objectMetadataId: testObjectMetadataId,
@@ -147,48 +115,51 @@ describe('Field metadata create/delete - search vector side effect', () => {
       gqlFields: `id name type`,
     });
 
-    searchableFieldMetadataId = searchableFieldId;
+    extraFieldMetadataId = extraFieldId;
 
     const asExpressionAfterCreate = await getSearchVectorAsExpression();
 
-    expect(asExpressionAfterCreate).toContain(SEARCHABLE_FIELD_COLUMN);
+    expect(asExpressionAfterCreate).not.toContain(EXTRA_FIELD_NAME);
 
-    const { data } = await createManyOperation({
+    await createManyOperation({
       objectMetadataSingularName: OBJECT_NAME_SINGULAR,
       objectMetadataPluralName: OBJECT_NAME_PLURAL,
-      gqlFields: `id ${LABEL_FIELD_NAME} ${SEARCHABLE_FIELD_NAME}`,
+      gqlFields: `id name ${EXTRA_FIELD_NAME}`,
       data: [
         {
-          [LABEL_FIELD_NAME]: RECORD_LABEL_VALUE,
-          [SEARCHABLE_FIELD_NAME]: RECORD_SEARCHABLE_VALUE,
+          name: RECORD_NAME_VALUE,
+          [EXTRA_FIELD_NAME]: RECORD_EXTRA_VALUE,
         },
       ],
       expectToFail: false,
     });
 
-    createdRecordId = data.createdRecords[0].id;
-
-    const searchResult = await search({
-      searchInput: RECORD_SEARCHABLE_VALUE,
+    // The name field is indexed, so the record is reachable through its name value.
+    const searchByName = await search({
+      searchInput: RECORD_NAME_VALUE,
       includedObjectNameSingulars: [OBJECT_NAME_SINGULAR],
       limit: 10,
       expectToFail: false,
     });
 
-    expect(searchResult.data.search.edges.length).toBe(1);
-    expect(searchResult.data.search.edges[0].node.recordId).toBe(
-      createdRecordId,
-    );
-    expect(searchResult.data.search.edges[0].node.objectNameSingular).toBe(
-      OBJECT_NAME_SINGULAR,
-    );
+    expect(searchByName.data.search.edges.length).toBe(1);
+
+    // The extra field is outside the search surface, so its value is not searchable.
+    const searchByExtraField = await search({
+      searchInput: RECORD_EXTRA_VALUE,
+      includedObjectNameSingulars: [OBJECT_NAME_SINGULAR],
+      limit: 10,
+      expectToFail: false,
+    });
+
+    expect(searchByExtraField.data.search.edges.length).toBe(0);
   });
 
-  it('should exclude the searchable field from the search vector after it is deleted', async () => {
+  it('should keep the search vector unchanged after the extra field is deleted', async () => {
     // Custom fields must be deactivated before deletion.
     await updateOneFieldMetadata({
       input: {
-        idToUpdate: searchableFieldMetadataId,
+        idToUpdate: extraFieldMetadataId,
         updatePayload: { isActive: false },
       },
       gqlFields: `id`,
@@ -196,12 +167,12 @@ describe('Field metadata create/delete - search vector side effect', () => {
     });
 
     await deleteOneFieldMetadata({
-      input: { idToDelete: searchableFieldMetadataId },
+      input: { idToDelete: extraFieldMetadataId },
       expectToFail: false,
     });
 
     const asExpressionAfterDelete = await getSearchVectorAsExpression();
 
-    expect(asExpressionAfterDelete).not.toContain(SEARCHABLE_FIELD_COLUMN);
+    expect(asExpressionAfterDelete).not.toContain(EXTRA_FIELD_NAME);
   });
 });
