@@ -7,6 +7,5 @@
  *                              |___/
  */
 
-export { resolveTimelineActivityDescriptor } from './resolveTimelineActivityDescriptor';
-export type { TimelineActivityAction } from './TimelineActivityAction';
-export type { TimelineActivityKind } from './TimelineActivityKind';
+export { parseTimelineActivityVerb } from './parseTimelineActivityVerb';
+export type { TimelineActivityVerb } from './TimelineActivityVerb';

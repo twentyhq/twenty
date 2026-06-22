@@ -1,17 +1,27 @@
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
-import { TIMELINE_ACTIVITY_PRESENTERS } from '@/activities/timeline-activities/rows/registry/timelineActivityPresenters';
-import { resolveTimelineActivityDescriptor } from 'twenty-shared/timeline';
+import { getTimelineActivityLinkedPresenter } from '@/activities/timeline-activities/rows/registry/timelineActivityPresenters';
+import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
+import { isDefined } from 'twenty-shared/utils';
 
 export const EventRowDynamicComponent = (
   props: EventRowDynamicComponentProps,
 ) => {
-  const { event, linkedObjectMetadataItem } = props;
+  const { linkedObjectMetadataItem } = props;
 
-  const { kind } = resolveTimelineActivityDescriptor({
-    kind: event.kind,
-    name: event.name,
-    linkedObjectNameSingular: linkedObjectMetadataItem?.nameSingular,
-  });
+  if (isDefined(linkedObjectMetadataItem)) {
+    return getTimelineActivityLinkedPresenter(
+      linkedObjectMetadataItem.nameSingular,
+    ).renderRow(props);
+  }
 
-  return TIMELINE_ACTIVITY_PRESENTERS[kind].renderRow(props);
+  return (
+    <EventRowMainObject
+      labelIdentifierValue={props.labelIdentifierValue}
+      event={props.event}
+      mainObjectMetadataItem={props.mainObjectMetadataItem}
+      linkedObjectMetadataItem={props.linkedObjectMetadataItem}
+      authorFullName={props.authorFullName}
+      createdAt={props.createdAt}
+    />
+  );
 };

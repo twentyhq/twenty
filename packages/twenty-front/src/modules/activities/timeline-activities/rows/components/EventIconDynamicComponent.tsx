@@ -2,8 +2,8 @@ import { type TimelineActivity } from '@/activities/timeline-activities/types/Ti
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
-  resolveTimelineActivityDescriptor,
-  type TimelineActivityAction,
+  parseTimelineActivityVerb,
+  type TimelineActivityVerb,
 } from 'twenty-shared/timeline';
 import {
   IconCirclePlus,
@@ -14,7 +14,7 @@ import {
 } from 'twenty-ui/icon';
 
 const RECORD_CHANGE_ICONS: Partial<
-  Record<TimelineActivityAction, IconComponent>
+  Record<TimelineActivityVerb, IconComponent>
 > = {
   created: IconCirclePlus,
   updated: IconEditCircle,
@@ -29,13 +29,9 @@ export const EventIconDynamicComponent = ({
   event: TimelineActivity;
   linkedObjectMetadataItem: EnrichedObjectMetadataItem | null;
 }) => {
-  const { action } = resolveTimelineActivityDescriptor({
-    kind: event.kind,
-    name: event.name,
-    linkedObjectNameSingular: linkedObjectMetadataItem?.nameSingular,
-  });
+  const verb = parseTimelineActivityVerb(event.name);
 
-  const ActionIcon = RECORD_CHANGE_ICONS[action];
+  const ActionIcon = RECORD_CHANGE_ICONS[verb];
 
   if (ActionIcon) {
     return <ActionIcon />;

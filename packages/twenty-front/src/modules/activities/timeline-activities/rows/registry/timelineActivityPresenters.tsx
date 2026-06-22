@@ -4,40 +4,21 @@ import { EventRowActivity } from '@/activities/timeline-activities/rows/activity
 import { EventRowCalendarEvent } from '@/activities/timeline-activities/rows/calendar/components/EventRowCalendarEvent';
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowGenericLinked } from '@/activities/timeline-activities/rows/generic/components/EventRowGenericLinked';
-import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
 import { EventRowMessage } from '@/activities/timeline-activities/rows/message/components/EventRowMessage';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type TimelineActivityKind } from 'twenty-shared/timeline';
 
-export type TimelineActivityPresenter = {
+export type TimelineActivityLinkedPresenter = {
   renderRow: (props: EventRowDynamicComponentProps) => ReactNode;
   needsLinkedRecordTitle?: boolean;
 };
 
-export const TIMELINE_ACTIVITY_PRESENTERS: Record<
-  TimelineActivityKind,
-  TimelineActivityPresenter
+// Linked-record rows are keyed by the linked object's nameSingular, so any
+// object (built-in or custom) can opt into a rich card; the generic presenter
+// is the default for everything else.
+export const TIMELINE_ACTIVITY_LINKED_PRESENTERS: Partial<
+  Record<string, TimelineActivityLinkedPresenter>
 > = {
-  recordChange: {
-    renderRow: ({
-      labelIdentifierValue,
-      event,
-      mainObjectMetadataItem,
-      linkedObjectMetadataItem,
-      authorFullName,
-      createdAt,
-    }) => (
-      <EventRowMainObject
-        labelIdentifierValue={labelIdentifierValue}
-        event={event}
-        mainObjectMetadataItem={mainObjectMetadataItem}
-        linkedObjectMetadataItem={linkedObjectMetadataItem}
-        authorFullName={authorFullName}
-        createdAt={createdAt}
-      />
-    ),
-  },
-  linkedMessage: {
+  message: {
     renderRow: ({
       labelIdentifierValue,
       event,
@@ -54,7 +35,7 @@ export const TIMELINE_ACTIVITY_PRESENTERS: Record<
       />
     ),
   },
-  linkedCalendarEvent: {
+  calendarEvent: {
     renderRow: ({
       labelIdentifierValue,
       event,
@@ -71,7 +52,7 @@ export const TIMELINE_ACTIVITY_PRESENTERS: Record<
       />
     ),
   },
-  linkedNote: {
+  note: {
     renderRow: ({
       labelIdentifierValue,
       event,
@@ -92,7 +73,7 @@ export const TIMELINE_ACTIVITY_PRESENTERS: Record<
     ),
     needsLinkedRecordTitle: true,
   },
-  linkedTask: {
+  task: {
     renderRow: ({
       labelIdentifierValue,
       event,
@@ -113,23 +94,30 @@ export const TIMELINE_ACTIVITY_PRESENTERS: Record<
     ),
     needsLinkedRecordTitle: true,
   },
-  linkedRecord: {
-    renderRow: ({
-      labelIdentifierValue,
-      event,
-      mainObjectMetadataItem,
-      linkedObjectMetadataItem,
-      authorFullName,
-      createdAt,
-    }) => (
-      <EventRowGenericLinked
-        labelIdentifierValue={labelIdentifierValue}
-        event={event}
-        mainObjectMetadataItem={mainObjectMetadataItem}
-        linkedObjectMetadataItem={linkedObjectMetadataItem}
-        authorFullName={authorFullName}
-        createdAt={createdAt}
-      />
-    ),
-  },
 };
+
+export const GENERIC_LINKED_PRESENTER: TimelineActivityLinkedPresenter = {
+  renderRow: ({
+    labelIdentifierValue,
+    event,
+    mainObjectMetadataItem,
+    linkedObjectMetadataItem,
+    authorFullName,
+    createdAt,
+  }) => (
+    <EventRowGenericLinked
+      labelIdentifierValue={labelIdentifierValue}
+      event={event}
+      mainObjectMetadataItem={mainObjectMetadataItem}
+      linkedObjectMetadataItem={linkedObjectMetadataItem}
+      authorFullName={authorFullName}
+      createdAt={createdAt}
+    />
+  ),
+};
+
+export const getTimelineActivityLinkedPresenter = (
+  linkedObjectNameSingular: string,
+): TimelineActivityLinkedPresenter =>
+  TIMELINE_ACTIVITY_LINKED_PRESENTERS[linkedObjectNameSingular] ??
+  GENERIC_LINKED_PRESENTER;

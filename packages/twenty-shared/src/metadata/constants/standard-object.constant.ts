@@ -2364,7 +2364,6 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-9526-4993-b339-c4318c4d39f0',
       },
       name: { universalIdentifier: '20202020-7207-46e8-9dab-849505ae8497' },
-      kind: { universalIdentifier: 'ccdc2cda-d4ce-4c27-9596-8a6d48bf358f' },
       properties: {
         universalIdentifier: '20202020-f142-4b04-b91b-6a2b4af3bf11',
       },

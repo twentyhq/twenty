@@ -5,7 +5,7 @@ import { type EventRowDynamicComponentProps } from '@/activities/timeline-activi
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { resolveTimelineActivityDescriptor } from 'twenty-shared/timeline';
+import { parseTimelineActivityVerb } from 'twenty-shared/timeline';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -63,11 +63,7 @@ export const EventRowActivity = ({
   objectNameSingular,
   createdAt,
 }: EventRowActivityProps & { objectNameSingular: CoreObjectNameSingular }) => {
-  const { action: eventAction } = resolveTimelineActivityDescriptor({
-    kind: event.kind,
-    name: event.name,
-    linkedObjectNameSingular: objectNameSingular,
-  });
+  const eventAction = parseTimelineActivityVerb(event.name);
 
   const eventObject = objectNameSingular;
 

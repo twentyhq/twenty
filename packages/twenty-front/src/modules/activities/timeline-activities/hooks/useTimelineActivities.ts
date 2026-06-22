@@ -34,6 +34,14 @@ export const useTimelineActivities = (
       objectNameSingular: CoreObjectNameSingular.TimelineActivity,
     });
 
+  const { objectMetadataItem: noteObjectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.Note,
+  });
+
+  const { objectMetadataItem: taskObjectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.Task,
+  });
+
   const hasTimelineActivityField = timelineActivityMetadata.fields.some(
     (field) =>
       isDefined(field.morphRelations) &&
@@ -97,11 +105,18 @@ export const useTimelineActivities = (
     objectMetadataItemId: timelineActivityMetadata.id,
   });
 
+  const linkedRecordTitleObjectMetadataIds = [
+    noteObjectMetadataItem.id,
+    taskObjectMetadataItem.id,
+  ];
+
   const activityIds = timelineActivities
     .filter(
       (timelineActivity) =>
-        timelineActivity.kind === 'linkedNote' ||
-        timelineActivity.kind === 'linkedTask',
+        isDefined(timelineActivity.linkedObjectMetadataId) &&
+        linkedRecordTitleObjectMetadataIds.includes(
+          timelineActivity.linkedObjectMetadataId,
+        ),
     )
     .map((timelineActivity) => timelineActivity.linkedRecordId)
     .filter(isDefined);

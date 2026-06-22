@@ -26,7 +26,6 @@ export const SEARCH_FIELDS_FOR_TIMELINE_ACTIVITY: FieldTypeAndNameMetadata[] = [
 export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   happensAt: Date;
   name: string | null;
-  kind: string | null;
   properties: JSON | null;
   linkedRecordCachedName: string | null;
   linkedRecordId: string | null;
