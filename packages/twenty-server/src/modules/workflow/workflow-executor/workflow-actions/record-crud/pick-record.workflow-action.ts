@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
-import { resolveInput } from 'twenty-shared/utils';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -10,6 +10,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -21,15 +22,21 @@ import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/fi
 import { isWorkflowPickRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-pick-record-action.guard';
 import {
   type WorkflowPickRecordActionInput,
+  type WorkflowPickRecordLoadBalance,
   type WorkflowPickRecordStrategy,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-pick-record-action-input.type';
 
 const ROUND_ROBIN_CURSOR_TTL_MS = 1000 * 60 * 60 * 24 * 90;
 
+type PickRecordExecutionContext = Awaited<
+  ReturnType<WorkflowExecutionContextService['getExecutionContext']>
+>;
+
 @Injectable()
 export class PickRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly findRecordsService: FindRecordsService,
+    private readonly groupByRecordsService: GroupByRecordsService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
@@ -53,7 +60,7 @@ export class PickRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { objectName, strategy, recordIds } = resolveInput(
+    const { objectName, strategy, recordIds, loadBalance } = resolveInput(
       step.settings.input,
       context,
     ) as WorkflowPickRecordActionInput;
@@ -94,6 +101,27 @@ export class PickRecordWorkflowAction implements WorkflowAction {
       String(recordA.id).localeCompare(String(recordB.id)),
     );
 
+    if (strategy === 'LOAD_BALANCED') {
+      if (!isDefined(loadBalance)) {
+        return {
+          error:
+            'Pick record action is missing its load balancing configuration',
+        };
+      }
+
+      const leastLoadedResult = await this.getLeastLoadedIndex({
+        orderedRecords,
+        loadBalance,
+        executionContext,
+      });
+
+      if ('error' in leastLoadedResult) {
+        return { error: leastLoadedResult.error };
+      }
+
+      return { result: orderedRecords[leastLoadedResult.index] };
+    }
+
     const pickedIndex = await this.getPickedIndex({
       strategy,
       candidateCount: orderedRecords.length,
@@ -102,6 +130,59 @@ export class PickRecordWorkflowAction implements WorkflowAction {
     });
 
     return { result: orderedRecords[pickedIndex] };
+  }
+
+  private async getLeastLoadedIndex({
+    orderedRecords,
+    loadBalance,
+    executionContext,
+  }: {
+    orderedRecords: ObjectRecord[];
+    loadBalance: WorkflowPickRecordLoadBalance;
+    executionContext: PickRecordExecutionContext;
+  }): Promise<{ index: number } | { error: string }> {
+    const candidateIds = orderedRecords.map((record) => String(record.id));
+
+    const groupByOutput = await this.groupByRecordsService.execute({
+      objectName: loadBalance.objectNameSingular,
+      groupBy: [{ [loadBalance.fieldName]: { id: true } }],
+      filter: { [loadBalance.fieldName]: { id: { in: candidateIds } } },
+      authContext: executionContext.authContext,
+      rolePermissionConfig: executionContext.rolePermissionConfig,
+    });
+
+    if (!groupByOutput.success) {
+      return {
+        error:
+          groupByOutput.error ||
+          groupByOutput.message ||
+          'Pick record action failed to count related records',
+      };
+    }
+
+    const countByCandidateId = new Map<string, number>();
+
+    for (const group of groupByOutput.result?.groups ?? []) {
+      const candidateId = group.dimensions[0];
+
+      if (isDefined(candidateId)) {
+        countByCandidateId.set(String(candidateId), Number(group.value ?? 0));
+      }
+    }
+
+    let leastLoadedIndex = 0;
+    let leastLoadedCount = countByCandidateId.get(candidateIds[0]) ?? 0;
+
+    for (let index = 1; index < candidateIds.length; index++) {
+      const candidateCount = countByCandidateId.get(candidateIds[index]) ?? 0;
+
+      if (candidateCount < leastLoadedCount) {
+        leastLoadedIndex = index;
+        leastLoadedCount = candidateCount;
+      }
+    }
+
+    return { index: leastLoadedIndex };
   }
 
   private async getPickedIndex({

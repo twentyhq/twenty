@@ -10,7 +10,9 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -50,10 +52,14 @@ type WorkflowEditActionPickRecordProps = {
 type PickRecordStrategy =
   WorkflowPickRecordAction['settings']['input']['strategy'];
 
+type PickRecordLoadBalance =
+  WorkflowPickRecordAction['settings']['input']['loadBalance'];
+
 type PickRecordFormData = {
   objectNameSingular: string;
   strategy: PickRecordStrategy;
   recordIds: string[];
+  loadBalance: PickRecordLoadBalance;
 };
 
 export const WorkflowEditActionPickRecord = ({
@@ -74,6 +80,7 @@ export const WorkflowEditActionPickRecord = ({
     objectNameSingular: action.settings.input.objectName,
     strategy: action.settings.input.strategy,
     recordIds: action.settings.input.recordIds,
+    loadBalance: action.settings.input.loadBalance,
   }));
 
   const isFormDisabled = actionOptions.readonly ?? false;
@@ -81,11 +88,45 @@ export const WorkflowEditActionPickRecord = ({
   const strategyOptions: SelectOption<PickRecordStrategy>[] = [
     { label: t`Random`, value: 'RANDOM' },
     { label: t`Round robin`, value: 'ROUND_ROBIN' },
+    { label: t`Load balanced`, value: 'LOAD_BALANCED' },
   ];
+
+  const loadBalanceObjectDropdownId = `workflow-edit-action-pick-record-load-balance-object-${action.id}`;
+
+  const loadBalanceObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === formData.loadBalance?.objectNameSingular,
+  );
+
+  const loadBalanceObjectOption = loadBalanceObjectMetadataItem
+    ? {
+        label: loadBalanceObjectMetadataItem.labelPlural,
+        value: loadBalanceObjectMetadataItem.nameSingular,
+        ...getSelectIconPropsFromObjectMetadataItem(
+          loadBalanceObjectMetadataItem,
+        ),
+      }
+    : { label: i18n._(defaultSelectedOptionMessage), value: '' };
+
+  const loadBalanceFieldOptions: SelectOption<string>[] = (
+    loadBalanceObjectMetadataItem?.fields ?? []
+  )
+    .filter(
+      (field) =>
+        isManyToOneRelationField(field) &&
+        field.relation?.targetObjectMetadata?.nameSingular ===
+          formData.objectNameSingular,
+    )
+    .map((field) => ({ label: field.label, value: field.name }));
+
+  const hasLoadBalanceFieldOptions = loadBalanceFieldOptions.length > 0;
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
   );
+
+  const loadBalancePoolObjectLabel =
+    selectedObjectMetadataItem?.labelSingular ?? t`the selected object`;
+
   const selectedOption = selectedObjectMetadataItem
     ? {
         label: selectedObjectMetadataItem.labelPlural,
@@ -108,6 +149,10 @@ export const WorkflowEditActionPickRecord = ({
             objectName: updatedFormData.objectNameSingular,
             strategy: updatedFormData.strategy,
             recordIds: updatedFormData.recordIds,
+            loadBalance:
+              updatedFormData.strategy === 'LOAD_BALANCED'
+                ? updatedFormData.loadBalance
+                : undefined,
           },
         },
       });
@@ -130,6 +175,9 @@ export const WorkflowEditActionPickRecord = ({
       ...formData,
       objectNameSingular: value,
       recordIds: [],
+      loadBalance: isDefined(formData.loadBalance)
+        ? { ...formData.loadBalance, fieldName: '' }
+        : undefined,
     };
 
     setFormData(newFormData);
@@ -159,6 +207,35 @@ export const WorkflowEditActionPickRecord = ({
     const newFormData: PickRecordFormData = {
       ...formData,
       recordIds,
+    };
+
+    setFormData(newFormData);
+    saveAction(newFormData);
+  };
+
+  const handleLoadBalanceObjectChange = (objectNameSingular: string) => {
+    if (isFormDisabled === true) {
+      return;
+    }
+
+    const newFormData: PickRecordFormData = {
+      ...formData,
+      loadBalance: { objectNameSingular, fieldName: '' },
+    };
+
+    setFormData(newFormData);
+    saveAction(newFormData);
+    closeDropdown(loadBalanceObjectDropdownId);
+  };
+
+  const handleLoadBalanceFieldChange = (fieldName: string) => {
+    if (isFormDisabled === true || !isDefined(formData.loadBalance)) {
+      return;
+    }
+
+    const newFormData: PickRecordFormData = {
+      ...formData,
+      loadBalance: { ...formData.loadBalance, fieldName },
     };
 
     setFormData(newFormData);
@@ -199,6 +276,57 @@ export const WorkflowEditActionPickRecord = ({
           options={strategyOptions}
           onChange={handleStrategyChange}
         />
+
+        {formData.strategy === 'LOAD_BALANCED' && (
+          <>
+            <StyledObjectSelectContainer>
+              <StyledLabel>{t`Balance by`}</StyledLabel>
+              <Dropdown
+                dropdownId={loadBalanceObjectDropdownId}
+                dropdownPlacement="bottom-start"
+                clickableComponent={
+                  <SelectControl
+                    isDisabled={isFormDisabled}
+                    selectedOption={loadBalanceObjectOption}
+                  />
+                }
+                dropdownComponents={
+                  !isFormDisabled && (
+                    <WorkflowObjectDropdownContent
+                      onOptionClick={handleLoadBalanceObjectChange}
+                    />
+                  )
+                }
+                dropdownOffset={{ y: 4 }}
+              />
+            </StyledObjectSelectContainer>
+
+            {isDefined(loadBalanceObjectMetadataItem) && (
+              <StyledObjectSelectContainer>
+                <Select
+                  dropdownId={`workflow-edit-action-pick-record-load-balance-field-${action.id}`}
+                  label={t`Count by`}
+                  fullWidth
+                  disabled={isFormDisabled || !hasLoadBalanceFieldOptions}
+                  emptyOption={{
+                    label: hasLoadBalanceFieldOptions
+                      ? i18n._(defaultSelectedOptionMessage)
+                      : t`No relation to count by`,
+                    value: '',
+                  }}
+                  value={formData.loadBalance?.fieldName ?? ''}
+                  options={loadBalanceFieldOptions}
+                  onChange={handleLoadBalanceFieldChange}
+                />
+                {!hasLoadBalanceFieldOptions && (
+                  <InputHint>
+                    {t`${loadBalanceObjectMetadataItem.labelPlural} have no relation to ${loadBalancePoolObjectLabel}. Pick a different object to balance by.`}
+                  </InputHint>
+                )}
+              </StyledObjectSelectContainer>
+            )}
+          </>
+        )}
 
         <HorizontalSeparator noMargin />
 
