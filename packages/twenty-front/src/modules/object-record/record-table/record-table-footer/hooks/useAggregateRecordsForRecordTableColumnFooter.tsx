@@ -5,6 +5,7 @@ import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-re
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -54,6 +55,12 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();
+
+  // Keep footer aggregates scoped to the host record's related records when this
+  // table is a relation field widget. Undefined for all other tables.
+  const { relationTableFilter } = useContext(
+    RecordFilterValueDependenciesContext,
+  );
 
   const requestFilters = computeRecordGqlOperationFilter({
     fieldMetadataItems: flattenedFieldMetadataItems,
@@ -117,7 +124,12 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { data, loading } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: { ...requestFilters, ...recordGroupFilter, ...anyFieldFilter },
+    filter: {
+      ...requestFilters,
+      ...recordGroupFilter,
+      ...anyFieldFilter,
+      ...(isDefined(relationTableFilter) ? relationTableFilter : {}),
+    },
     skip: !isDefined(aggregateOperationForViewField),
   });
 
