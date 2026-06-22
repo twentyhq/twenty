@@ -14,11 +14,6 @@ import { Menu } from '@/sections/menu';
 
 type PartnerProfileParams = { locale: string; slug: string };
 
-// Parent [locale] sets dynamicParams=false; partner slugs come from a live API at
-// build time, so a build-fetch failure bakes zero slugs and 404s the whole
-// marketplace until redeploy (generateStaticParams never re-runs at runtime).
-// Opt back into on-demand rendering so any slug resolves at request time;
-// generateStaticParams still prewarms known slugs when the build fetch works.
 export const dynamicParams = true;
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {

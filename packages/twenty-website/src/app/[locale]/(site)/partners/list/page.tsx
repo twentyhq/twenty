@@ -18,11 +18,6 @@ import { Menu } from '@/sections/menu';
 
 export const generateMetadata = buildRouteMetadata('partnersList');
 
-// Render at request time, never at build. The partner list comes from a live API;
-// a build-time fetch failure used to bake an empty marketplace into the static
-// page and freeze it in the OpenNext/R2 cache. Rendering dynamically fetches at
-// runtime where the API is reachable; the /s/partners fetch keeps its
-// next:{revalidate:300} cache, so responses stay cached and serve stale on blips.
 export const dynamic = 'force-dynamic';
 
 export default async function PartnersMarketplacePage({
