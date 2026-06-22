@@ -46,6 +46,7 @@ import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logi
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { messageQueueModuleFactory } from 'src/engine/core-modules/message-queue/message-queue.module-factory';
 import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
+import { TimelineFeedModule } from 'src/engine/core-modules/timeline-feed/timeline-feed.module';
 import { MessagingWebhooksModule } from 'src/modules/messaging-webhooks/messaging-webhooks.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -104,6 +105,7 @@ import { FileModule } from './file/file.module';
     AppTokenModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,
+    TimelineFeedModule,
     UserModule,
     WorkspaceModule,
     WorkspaceInvitationModule,
