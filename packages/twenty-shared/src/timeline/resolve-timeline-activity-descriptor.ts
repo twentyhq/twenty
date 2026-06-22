@@ -36,9 +36,7 @@ export const legacyDecodeTimelineActivityKind = ({
     return 'recordChange';
   }
 
-  return (
-    LINKED_OBJECT_NAME_TO_KIND[linkedObjectNameSingular] ?? 'linkedRecord'
-  );
+  return LINKED_OBJECT_NAME_TO_KIND[linkedObjectNameSingular] ?? 'linkedRecord';
 };
 
 export const resolveTimelineActivityDescriptor = ({
