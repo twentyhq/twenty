@@ -1,3 +1,5 @@
+import { timingSafeEqual } from 'crypto';
+
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -10,7 +12,6 @@ import { MessagingWebhookSubscriptionService } from 'src/modules/connected-accou
 import { WebhookSyncTriggerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service';
 import { type MicrosoftGraphNotification } from 'src/modules/connected-account-sync-webhooks/types/microsoft-graph-notification.type';
 import { type WebhookNotificationHandler } from 'src/modules/connected-account-sync-webhooks/types/webhook-notification-handler.type';
-import { areStringsEqualConstantTime } from 'src/modules/connected-account-sync-webhooks/utils/are-strings-equal-constant-time.util';
 
 @Injectable()
 export class MicrosoftMessagingNotificationHandler implements WebhookNotificationHandler<
@@ -42,11 +43,20 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
         continue;
       }
 
+      const clientState = notification.clientState;
+      const expectedClientState = messageChannel.webhookSubscriptionClientState;
+      const clientStateBuffer = isNonEmptyString(clientState)
+        ? Buffer.from(clientState)
+        : null;
+      const expectedClientStateBuffer = isNonEmptyString(expectedClientState)
+        ? Buffer.from(expectedClientState)
+        : null;
+
       if (
-        !areStringsEqualConstantTime(
-          notification.clientState,
-          messageChannel.webhookSubscriptionClientState,
-        )
+        !isDefined(clientStateBuffer) ||
+        !isDefined(expectedClientStateBuffer) ||
+        clientStateBuffer.length !== expectedClientStateBuffer.length ||
+        !timingSafeEqual(clientStateBuffer, expectedClientStateBuffer)
       ) {
         this.logger.warn(
           `Client state mismatch for subscription ${notification.subscriptionId}`,

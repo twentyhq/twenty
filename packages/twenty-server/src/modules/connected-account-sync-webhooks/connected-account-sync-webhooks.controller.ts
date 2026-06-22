@@ -19,11 +19,11 @@ import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { WEBHOOK_SUBSCRIPTION_ROUTE_PATHS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-route-paths.constant';
+import { GoogleCalendarNotificationHandler } from 'src/modules/connected-account-sync-webhooks/drivers/google/google-calendar-notification.handler';
+import { GoogleMessagingNotificationHandler } from 'src/modules/connected-account-sync-webhooks/drivers/google/google-messaging-notification.handler';
+import { MicrosoftCalendarNotificationHandler } from 'src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-calendar-notification.handler';
+import { MicrosoftMessagingNotificationHandler } from 'src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-messaging-notification.handler';
 import { ConnectedAccountSyncWebhookApiExceptionFilter } from 'src/modules/connected-account-sync-webhooks/filters/connected-account-sync-webhook-api-exception.filter';
-import { GoogleCalendarNotificationHandler } from 'src/modules/connected-account-sync-webhooks/handlers/google-calendar-notification.handler';
-import { GoogleMessagingNotificationHandler } from 'src/modules/connected-account-sync-webhooks/handlers/google-messaging-notification.handler';
-import { MicrosoftCalendarNotificationHandler } from 'src/modules/connected-account-sync-webhooks/handlers/microsoft-calendar-notification.handler';
-import { MicrosoftMessagingNotificationHandler } from 'src/modules/connected-account-sync-webhooks/handlers/microsoft-messaging-notification.handler';
 import { type GooglePubSubPushMessage } from 'src/modules/connected-account-sync-webhooks/types/google-pubsub-push.type';
 import { type MicrosoftGraphNotificationPayload } from 'src/modules/connected-account-sync-webhooks/types/microsoft-graph-notification.type';
 
