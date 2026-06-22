@@ -1,0 +1,47 @@
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.module.ts
+  s_b41d36b575c763::t_0f9cbd6fdf4866 4,12-15,30-33
+packages/twenty-server/src/modules/connected-account/channel-sync/services/channel-sync.service.ts
+  s_5a9f19baf103a3::t_f0af43e2e0ae81 10-11,17,24
+packages/twenty-server/src/modules/connected-account-sync-webhooks/handlers/microsoft-calendar-notification.handler.ts
+  s_b41d36b575c763::t_f96b9f3ef0efd8 17-19
+  s_b41d36b575c763::t_a34d3a92a8ed48 1-16,20-74
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.controller.ts
+  s_b41d36b575c763::t_9a1a47cf2b5e45 7,12,16,27,36-39,47-51,60-64,66-68,77-81,83-85
+  s_b41d36b575c763::t_07af876f3dc03e 18-21,30-33,41-44,53,72,89
+packages/twenty-server/src/modules/connected-account-sync-webhooks/handlers/google-calendar-notification.handler.ts
+  s_b41d36b575c763::t_f96b9f3ef0efd8 22
+  s_b41d36b575c763::t_65de0472b1fa75 2,6,8-10,15-17,19,21,23-27,29-31,34-35,38-43,45-47,49-54,56,61-62,65-68
+packages/twenty-server/src/modules/connected-account-sync-webhooks/types/webhook-notification-handler.type.ts
+  s_b41d36b575c763::t_ad4fbcb58a7b7a 1-3
+packages/twenty-server/src/modules/connected-account-sync-webhooks/handlers/microsoft-messaging-notification.handler.ts
+  s_b41d36b575c763::t_d8925dcc6669e5 4,10-11,13,20-22,28,31,36,42,54,59,64-65,67-71
+  s_b41d36b575c763::t_f96b9f3ef0efd8 17-19
+packages/twenty-server/src/modules/connected-account-sync-webhooks/handlers/google-messaging-notification.handler.ts
+  s_b41d36b575c763::t_09342ef25921d3 106
+  s_b41d36b575c763::t_f96b9f3ef0efd8 33
+  s_b41d36b575c763::t_b5beb45f643acf 1,5,8,10,15-16,25,27-30,32,35,38-39,43-44,46,48,59-77,82-84,87-91,94,96,98,103,105,107-126,128-132,135-136,138-139,141,144-149,151-152
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "7342a49046558e25cb98aa6584ad36897d29b42a",
+  "prompts": {},
+  "sessions": {
+    "s_5a9f19baf103a3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eefb0-fef9-7ca1-9240-9f383acdc374",
+        "model": "gpt-5.5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_b41d36b575c763": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b6d71fb-0935-4998-b4e1-1c5dff06f390",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
