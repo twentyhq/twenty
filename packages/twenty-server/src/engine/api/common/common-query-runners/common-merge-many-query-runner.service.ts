@@ -451,10 +451,17 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         context.authContext,
       );
 
-      await repository.update(
-        { [relationField.joinColumnName]: In(fromIds) },
-        { [relationField.joinColumnName]: toId },
-      );
+      // repository.update goes through the entity manager, which builds its
+      // query without the transaction's query runner and would therefore run
+      // outside the transaction. Build the query from the transaction-scoped
+      // repository so the relation migration rolls back with the rest.
+      await repository
+        .createQueryBuilder(relationField.objectMetadata.nameSingular)
+        .update()
+        .set({ [relationField.joinColumnName]: toId })
+        .where({ [relationField.joinColumnName]: In(fromIds) })
+        .returning('*')
+        .execute();
     }
   }
 
