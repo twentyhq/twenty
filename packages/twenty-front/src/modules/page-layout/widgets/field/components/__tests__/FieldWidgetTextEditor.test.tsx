@@ -2,11 +2,10 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { FieldWidgetTextEditor } from '@/page-layout/widgets/field/components/FieldWidgetTextEditor';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockUpdateOneRecord = jest.fn();
 
@@ -21,26 +20,25 @@ jest.mock('@/object-record/read-only/hooks/useIsRecordFieldReadOnly', () => ({
 }));
 
 const RECORD_ID = 'record-id';
-const FIELD_NAME = 'useCase';
+const FIELD_NAME = 'name';
 
-const fieldMetadataItem = {
-  id: 'field-metadata-id',
-  label: 'Use case',
-  name: FIELD_NAME,
-  type: FieldMetadataType.TEXT,
-} as FieldMetadataItem;
+const objectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
+  ({ nameSingular }) => nameSingular === 'opportunity',
+);
 
-const objectMetadataItem = {
-  id: 'object-metadata-id',
-  nameSingular: 'opportunity',
-  fields: [fieldMetadataItem],
-  readableFields: [fieldMetadataItem],
-  updatableFields: [fieldMetadataItem],
-  labelIdentifierFieldMetadataId: fieldMetadataItem.id,
-  indexMetadatas: [],
-} as EnrichedObjectMetadataItem;
+if (objectMetadataItem === undefined) {
+  throw new Error('Opportunity object metadata item not found');
+}
 
-const createRecord = (fieldValue: string) => ({
+const fieldMetadataItem = objectMetadataItem.fields.find(
+  ({ name }) => name === FIELD_NAME,
+);
+
+if (fieldMetadataItem === undefined) {
+  throw new Error('Opportunity name field metadata item not found');
+}
+
+const createRecord = (fieldValue: string): ObjectRecord => ({
   id: RECORD_ID,
   __typename: 'Opportunity',
   [FIELD_NAME]: fieldValue,
@@ -51,8 +49,16 @@ const setStoredFieldValue = (
   fieldValue: string,
 ) => {
   act(() => {
+    const currentRecord = store.get(
+      recordStoreFamilyState.atomFamily(RECORD_ID),
+    );
+
+    if (currentRecord === null || currentRecord === undefined) {
+      throw new Error('Stored record not found');
+    }
+
     store.set(recordStoreFamilyState.atomFamily(RECORD_ID), {
-      ...store.get(recordStoreFamilyState.atomFamily(RECORD_ID)),
+      ...currentRecord,
       [FIELD_NAME]: fieldValue,
     });
   });
