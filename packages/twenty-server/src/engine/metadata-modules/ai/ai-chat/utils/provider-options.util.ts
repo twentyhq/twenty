@@ -8,85 +8,40 @@ import {
   AI_SDK_OPENAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-
-export const mergeProviderOptions = (
-  providerOptions: ProviderOptions | undefined,
-  providerOptionsToMerge: ProviderOptions | undefined,
-): ProviderOptions | undefined => {
-  if (!providerOptions) {
-    return providerOptionsToMerge;
-  }
-
-  if (!providerOptionsToMerge) {
-    return providerOptions;
-  }
-
-  const mergedProviderOptions: Record<string, unknown> = {
-    ...providerOptions,
-  };
-
-  for (const [providerName, options] of Object.entries(
-    providerOptionsToMerge,
-  )) {
-    const existingOptions = mergedProviderOptions[providerName];
-
-    mergedProviderOptions[providerName] =
-      isRecord(existingOptions) && isRecord(options)
-        ? { ...existingOptions, ...options }
-        : options;
-  }
-
-  return mergedProviderOptions as ProviderOptions;
-};
-
-export const getCallLevelCacheProviderOptions = (
-  sdkPackage: AiSdkPackage,
-): ProviderOptions | undefined => {
-  if (sdkPackage === AI_SDK_ANTHROPIC) {
-    return { anthropic: { cacheControl: { type: 'ephemeral' } } };
-  }
-
-  return undefined;
-};
-
 export const getCacheProviderOptions = (
   sdkPackage: AiSdkPackage,
 ): ProviderOptions | undefined => {
-  if (sdkPackage === AI_SDK_BEDROCK) {
-    return { bedrock: { cachePoint: { type: 'default' } } };
+  switch (sdkPackage) {
+    case AI_SDK_BEDROCK:
+      return { bedrock: { cachePoint: { type: 'default' } } };
+    default:
+      return undefined;
   }
-
-  return undefined;
 };
-
-export const withOpenAIStoreDisabledProviderOptions = (
-  sdkPackage: AiSdkPackage,
-  providerOptions?: ProviderOptions,
-): ProviderOptions | undefined => {
-  if (sdkPackage !== AI_SDK_OPENAI) {
-    return providerOptions;
+export const getCallLevelProviderOptions = ({
+  sdkPackage,
+  providerOptions,
+  promptCacheKey,
+}: {
+  sdkPackage: AiSdkPackage;
+  providerOptions?: ProviderOptions;
+  promptCacheKey?: string;
+}): ProviderOptions | undefined => {
+  switch (sdkPackage) {
+    case AI_SDK_ANTHROPIC:
+      return {
+        ...(providerOptions ?? {}),
+        anthropic: { cacheControl: { type: 'ephemeral' } },
+      };
+    case AI_SDK_OPENAI:
+      return {
+        ...(providerOptions ?? {}),
+        openai: { store: false, ...(promptCacheKey ? { promptCacheKey } : {}) },
+      };
+    default:
+      return providerOptions;
   }
-
-  return mergeProviderOptions(providerOptions, {
-    openai: {
-      store: false,
-    },
-  });
 };
-
-export const getCallLevelProviderOptions = (
-  sdkPackage: AiSdkPackage,
-  providerOptions?: ProviderOptions,
-): ProviderOptions | undefined =>
-  withOpenAIStoreDisabledProviderOptions(
-    sdkPackage,
-    mergeProviderOptions(
-      providerOptions,
-      getCallLevelCacheProviderOptions(sdkPackage),
-    ),
-  );
 
 export const injectCacheBreakpoint = (
   messages: ModelMessage[],
@@ -105,10 +60,10 @@ export const injectCacheBreakpoint = (
 
     return {
       ...message,
-      providerOptions: mergeProviderOptions(
-        message.providerOptions,
-        cacheOptions,
-      ),
+      providerOptions: {
+        ...(message.providerOptions ?? {}),
+        ...cacheOptions,
+      },
     };
   });
 };

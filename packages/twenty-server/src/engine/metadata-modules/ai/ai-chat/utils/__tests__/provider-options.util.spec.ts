@@ -2,8 +2,6 @@ import {
   getCallLevelProviderOptions,
   getCacheProviderOptions,
   injectCacheBreakpoint,
-  mergeProviderOptions,
-  withOpenAIStoreDisabledProviderOptions,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import {
   AI_SDK_ANTHROPIC,
@@ -12,39 +10,11 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 
 describe('provider-options.util', () => {
-  describe('mergeProviderOptions', () => {
-    it('merges provider options without overwriting unrelated providers', () => {
-      expect(
-        mergeProviderOptions(
-          {
-            anthropic: {
-              cacheControl: { type: 'ephemeral' },
-            },
-            openai: {
-              reasoningEffort: 'medium',
-            },
-          },
-          {
-            openai: {
-              store: false,
-            },
-          },
-        ),
-      ).toEqual({
-        anthropic: {
-          cacheControl: { type: 'ephemeral' },
-        },
-        openai: {
-          reasoningEffort: 'medium',
-          store: false,
-        },
-      });
-    });
-  });
-
   describe('getCallLevelProviderOptions', () => {
     it('returns cache provider options for Anthropic models', () => {
-      expect(getCallLevelProviderOptions(AI_SDK_ANTHROPIC)).toEqual({
+      expect(
+        getCallLevelProviderOptions({ sdkPackage: AI_SDK_ANTHROPIC }),
+      ).toEqual({
         anthropic: {
           cacheControl: { type: 'ephemeral' },
         },
@@ -53,9 +23,12 @@ describe('provider-options.util', () => {
 
     it('merges existing provider options with call-level options', () => {
       expect(
-        getCallLevelProviderOptions(AI_SDK_OPENAI, {
-          xai: {
-            searchParameters: { mode: 'auto' },
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_OPENAI,
+          providerOptions: {
+            xai: {
+              searchParameters: { mode: 'auto' },
+            },
           },
         }),
       ).toEqual({
@@ -69,9 +42,38 @@ describe('provider-options.util', () => {
     });
 
     it('returns store false for OpenAI models', () => {
-      expect(getCallLevelProviderOptions(AI_SDK_OPENAI)).toEqual({
+      expect(
+        getCallLevelProviderOptions({ sdkPackage: AI_SDK_OPENAI }),
+      ).toEqual({
         openai: {
           store: false,
+        },
+      });
+    });
+
+    it('includes promptCacheKey for OpenAI when provided', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_OPENAI,
+          promptCacheKey: 'thread-123',
+        }),
+      ).toEqual({
+        openai: {
+          store: false,
+          promptCacheKey: 'thread-123',
+        },
+      });
+    });
+
+    it('omits promptCacheKey for non-OpenAI providers', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_ANTHROPIC,
+          promptCacheKey: 'thread-123',
+        }),
+      ).toEqual({
+        anthropic: {
+          cacheControl: { type: 'ephemeral' },
         },
       });
     });
@@ -84,52 +86,6 @@ describe('provider-options.util', () => {
           cachePoint: { type: 'default' },
         },
       });
-    });
-  });
-
-  describe('withOpenAIStoreDisabledProviderOptions', () => {
-    it('adds store false for OpenAI models', () => {
-      expect(
-        withOpenAIStoreDisabledProviderOptions(AI_SDK_OPENAI, {
-          openai: {
-            reasoningSummary: 'auto',
-          },
-        }),
-      ).toEqual({
-        openai: {
-          reasoningSummary: 'auto',
-          store: false,
-        },
-      });
-    });
-
-    it('overrides existing OpenAI store options', () => {
-      expect(
-        withOpenAIStoreDisabledProviderOptions(AI_SDK_OPENAI, {
-          openai: {
-            store: true,
-          },
-        }),
-      ).toEqual({
-        openai: {
-          store: false,
-        },
-      });
-    });
-
-    it('does not change non-OpenAI provider options', () => {
-      const providerOptions = {
-        anthropic: {
-          cacheControl: { type: 'ephemeral' },
-        },
-      };
-
-      expect(
-        withOpenAIStoreDisabledProviderOptions(
-          AI_SDK_ANTHROPIC,
-          providerOptions,
-        ),
-      ).toBe(providerOptions);
     });
   });
 

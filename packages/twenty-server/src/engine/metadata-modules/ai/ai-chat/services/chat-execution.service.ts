@@ -58,8 +58,8 @@ import {
   type ExtractedFile,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import {
-  getCallLevelProviderOptions,
   getCacheProviderOptions,
+  getCallLevelProviderOptions,
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
@@ -407,7 +407,11 @@ export class ChatExecutionService {
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) || hasNoMoreAvailableCredits,
       experimental_telemetry: AI_TELEMETRY_CONFIG,
-      providerOptions: getCallLevelProviderOptions(registeredModel.sdkPackage),
+      providerOptions: getCallLevelProviderOptions({
+        sdkPackage: registeredModel.sdkPackage,
+        providerOptions: undefined,
+        promptCacheKey: threadId,
+      }),
       prepareStep: ({ messages }) => {
         stepStartedAt = performance.now();
 

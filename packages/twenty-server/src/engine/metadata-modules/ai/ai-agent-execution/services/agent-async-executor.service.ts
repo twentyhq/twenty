@@ -149,9 +149,11 @@ export class AgentAsyncExecutorService {
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       let tools: ToolSet = {};
-      let providerOptions = getCallLevelProviderOptions(
-        registeredModel.sdkPackage,
-      );
+      let providerOptions = getCallLevelProviderOptions({
+        sdkPackage: registeredModel.sdkPackage,
+        providerOptions: undefined,
+        promptCacheKey: agent?.id,
+      });
 
       if (agent) {
         const agentRoleId = await this.getAgentRoleId(
@@ -209,12 +211,14 @@ export class AgentAsyncExecutorService {
           ...nativeTools,
         };
 
-        providerOptions = getCallLevelProviderOptions(
-          registeredModel.sdkPackage,
-          this.aiModelConfigService.getReasoningProviderOptions(
-            registeredModel,
-          ),
-        );
+        providerOptions = getCallLevelProviderOptions({
+          sdkPackage: registeredModel.sdkPackage,
+          providerOptions:
+            this.aiModelConfigService.getReasoningProviderOptions(
+              registeredModel,
+            ),
+          promptCacheKey: agent?.id,
+        });
       }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
@@ -322,9 +326,11 @@ export class AgentAsyncExecutorService {
 
                  Please generate the structured output based on the execution results and context above.`,
           output: Output.object({ schema: jsonSchema(agentSchema) }),
-          providerOptions: getCallLevelProviderOptions(
-            registeredModel.sdkPackage,
-          ),
+          providerOptions: getCallLevelProviderOptions({
+            sdkPackage: registeredModel.sdkPackage,
+            providerOptions: undefined,
+            promptCacheKey: agent?.id,
+          }),
           experimental_telemetry: AI_TELEMETRY_CONFIG,
           onStepFinish: async (step) => {
             const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
