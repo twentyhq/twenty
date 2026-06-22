@@ -3,7 +3,9 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   buildRawMirrorRecord,
   discoverRawMirrorTables,
+  discoverRawMirrorRestTables,
   getRawMirrorTargetTableName,
+  readRawMirrorRestTableRows,
   runXopureRawMirrorDryRun,
 } from './run-xopure-raw-mirror';
 
@@ -31,6 +33,117 @@ describe('raw mirror table discovery', () => {
         targetTableName: '_xopureRaw_payments',
       },
     ]);
+  });
+});
+
+describe('raw mirror REST fallback', () => {
+  it('discovers exposed PostgREST table paths as raw mirror targets', async () => {
+    const fetcher = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          paths: {
+            '/payments': {},
+            '/support_tickets': {},
+            '/rpc/rebuild_cache': {},
+            '/orders/{id}': {},
+          },
+        }),
+      ),
+    );
+
+    const tables = await discoverRawMirrorRestTables({
+      url: 'https://project.supabase.co',
+      key: 'rest-secret',
+      fetch: fetcher,
+    });
+
+    expect(fetcher).toHaveBeenCalledWith('https://project.supabase.co/rest/v1/', {
+      method: 'GET',
+      headers: expect.objectContaining({
+        Accept: 'application/openapi+json',
+        apikey: 'rest-secret',
+        Authorization: 'Bearer rest-secret',
+      }),
+    });
+    expect(tables).toEqual([
+      {
+        sourceSchema: 'public',
+        sourceTable: 'payments',
+        targetTableName: '_xopureRaw_payments',
+      },
+      {
+        sourceSchema: 'public',
+        sourceTable: 'support_tickets',
+        targetTableName: '_xopureRaw_support_tickets',
+      },
+    ]);
+  });
+
+  it('reads REST table rows with range pagination', async () => {
+    const fetcher = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify([
+        { id: 'payment-1' },
+        { id: 'payment-2' },
+      ])))
+      .mockResolvedValueOnce(new Response(JSON.stringify([])));
+
+    const rows = await readRawMirrorRestTableRows(
+      {
+        url: 'https://project.supabase.co/rest/v1',
+        key: 'rest-secret',
+        batchSize: 2,
+        fetch: fetcher,
+      },
+      {
+        sourceSchema: 'public',
+        sourceTable: 'payments',
+        targetTableName: '_xopureRaw_payments',
+      },
+    );
+
+    expect(fetcher).toHaveBeenNthCalledWith(
+      1,
+      'https://project.supabase.co/rest/v1/payments?select=*',
+      {
+        method: 'GET',
+        headers: expect.objectContaining({ Range: '0-1' }),
+      },
+    );
+    expect(fetcher).toHaveBeenNthCalledWith(
+      2,
+      'https://project.supabase.co/rest/v1/payments?select=*',
+      {
+        method: 'GET',
+        headers: expect.objectContaining({ Range: '2-3' }),
+      },
+    );
+    expect(rows).toEqual([{ id: 'payment-1' }, { id: 'payment-2' }]);
+  });
+
+  it('redacts REST URL and key from read errors', async () => {
+    const fetcher = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          message: 'denied https://project.supabase.co/rest/v1/payments rest-secret',
+        }),
+        { status: 401 },
+      ),
+    );
+
+    await expect(
+      readRawMirrorRestTableRows(
+        {
+          url: 'https://project.supabase.co',
+          key: 'rest-secret',
+          fetch: fetcher,
+        },
+        {
+          sourceSchema: 'public',
+          sourceTable: 'payments',
+          targetTableName: '_xopureRaw_payments',
+        },
+      ),
+    ).rejects.toThrow('[REDACTED]');
   });
 });
 

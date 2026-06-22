@@ -2,9 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   discoverRawMirrorTables,
+  discoverRawMirrorRestTables,
   readRawMirrorTableRows,
+  readRawMirrorRestTableRows,
 } from '../raw-mirror/run-xopure-raw-mirror';
-import { executeXopureRawMirrorCli } from './run-xopure-raw-mirror';
+import {
+  executeXopureRawMirrorCli,
+  redactRawMirrorCliError,
+} from './run-xopure-raw-mirror';
 
 vi.mock('pg', () => ({
   Pool: vi.fn().mockImplementation(() => ({ query: vi.fn() })),
@@ -18,6 +23,8 @@ vi.mock('../raw-mirror/run-xopure-raw-mirror', async (importOriginal) => {
     ...actual,
     discoverRawMirrorTables: vi.fn(),
     readRawMirrorTableRows: vi.fn(),
+    discoverRawMirrorRestTables: vi.fn(),
+    readRawMirrorRestTableRows: vi.fn(),
   };
 });
 
@@ -42,7 +49,20 @@ describe('executeXopureRawMirrorCli', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(discoverRawMirrorTables).mockResolvedValue(tables);
+    vi.mocked(discoverRawMirrorRestTables).mockResolvedValue(tables);
     vi.mocked(readRawMirrorTableRows).mockImplementation(async (_pool, table) => {
+      if (table.sourceTable === 'payments') {
+        return [
+          {
+            id: 'payment-1',
+            provider_payload: 'should-not-print',
+          },
+        ];
+      }
+
+      return [{ id: 'ticket-1', ticket_number: 'XO-1' }];
+    });
+    vi.mocked(readRawMirrorRestTableRows).mockImplementation(async (_opts, table) => {
       if (table.sourceTable === 'payments') {
         return [
           {
@@ -65,6 +85,7 @@ describe('executeXopureRawMirrorCli', () => {
     });
 
     expect(discoverRawMirrorTables).toHaveBeenCalledWith(expect.any(Object), 'public');
+    expect(discoverRawMirrorRestTables).not.toHaveBeenCalled();
     expect(readRawMirrorTableRows).toHaveBeenCalledTimes(2);
 
     const text = output.join('');
@@ -97,6 +118,46 @@ describe('executeXopureRawMirrorCli', () => {
     );
   });
 
+  it('falls back to REST discovery when the DSN is absent', async () => {
+    const output: string[] = [];
+
+    await executeXopureRawMirrorCli(['--source-table=support_tickets'], {
+      env: {
+        XOPURE_SUPABASE_READONLY_REST_URL: 'https://project.supabase.co',
+        XOPURE_SUPABASE_READONLY_REST_KEY: 'rest-secret',
+      },
+      write: (chunk) => output.push(chunk),
+    });
+
+    expect(discoverRawMirrorTables).not.toHaveBeenCalled();
+    expect(discoverRawMirrorRestTables).toHaveBeenCalledWith({
+      url: 'https://project.supabase.co',
+      key: 'rest-secret',
+      schema: 'public',
+    });
+    expect(readRawMirrorRestTableRows).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(output.join(''))).toMatchObject({
+      dryRun: true,
+      tableCount: 1,
+      scanned: 1,
+      hashed: 1,
+    });
+  });
+
+  it('prefers DSN discovery when both DSN and REST env vars exist', async () => {
+    await executeXopureRawMirrorCli([], {
+      env: {
+        ...baseEnv,
+        XOPURE_SUPABASE_READONLY_REST_URL: 'https://project.supabase.co',
+        XOPURE_SUPABASE_READONLY_REST_KEY: 'rest-secret',
+      },
+      write: () => undefined,
+    });
+
+    expect(discoverRawMirrorTables).toHaveBeenCalledTimes(1);
+    expect(discoverRawMirrorRestTables).not.toHaveBeenCalled();
+  });
+
   it('rejects live mode until raw mirror persistence exists', async () => {
     await expect(
       executeXopureRawMirrorCli(['--live'], {
@@ -114,8 +175,25 @@ describe('executeXopureRawMirrorCli', () => {
         env: {},
         write: () => undefined,
       }),
-    ).rejects.toThrow('XOPURE_SUPABASE_READONLY_DSN');
+    ).rejects.toThrow('XOPURE_SUPABASE_READONLY_DSN or XOPURE_SUPABASE_READONLY_REST_URL/XOPURE_SUPABASE_READONLY_REST_KEY');
 
     expect(discoverRawMirrorTables).not.toHaveBeenCalled();
+  });
+
+  it('redacts DSN and REST secrets from CLI error messages', () => {
+    const message = redactRawMirrorCliError(
+      new Error(
+        'failed postgres://readonly:secret@db.example.test/xopure https://project.supabase.co rest-secret',
+      ),
+      {
+        ...baseEnv,
+        XOPURE_SUPABASE_READONLY_REST_URL: 'https://project.supabase.co',
+        XOPURE_SUPABASE_READONLY_REST_KEY: 'rest-secret',
+      },
+    );
+
+    expect(message).toContain('[redacted]');
+    expect(message).not.toContain('secret');
+    expect(message).not.toContain('project.supabase.co');
   });
 });

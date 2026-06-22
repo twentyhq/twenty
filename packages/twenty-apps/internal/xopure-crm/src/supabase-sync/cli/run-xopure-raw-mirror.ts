@@ -5,12 +5,19 @@ import { Pool } from 'pg';
 
 import {
   discoverRawMirrorTables,
+  discoverRawMirrorRestTables,
   readRawMirrorTableRows,
+  readRawMirrorRestTableRows,
   runXopureRawMirrorDryRun,
   type RawMirrorDryRunResult,
+  type RawMirrorRestOptions,
 } from '../raw-mirror/run-xopure-raw-mirror';
 
-const SECRET_ENV_NAMES = ['XOPURE_SUPABASE_READONLY_DSN'];
+const SECRET_ENV_NAMES = [
+  'XOPURE_SUPABASE_READONLY_DSN',
+  'XOPURE_SUPABASE_READONLY_REST_URL',
+  'XOPURE_SUPABASE_READONLY_REST_KEY',
+];
 
 type Env = Record<string, string | undefined>;
 
@@ -26,6 +33,10 @@ type ExecuteCliDeps = {
 };
 
 type SummaryResult = Omit<RawMirrorDryRunResult, 'records'>;
+
+type RawMirrorSource =
+  | { kind: 'dsn'; dsn: string }
+  | { kind: 'rest'; options: RawMirrorRestOptions };
 
 const firstNonEmpty = (
   ...values: Array<string | undefined>
@@ -92,14 +103,37 @@ const redactSecrets = (message: string, env: Env): string => {
   return redacted;
 };
 
-const resolveDsn = (env: Env): string => {
+export const redactRawMirrorCliError = (error: unknown, env: Env): string => {
+  const message =
+    error instanceof Error ? error.message : 'Unknown raw mirror CLI error';
+
+  return redactSecrets(message, env);
+};
+
+const resolveSource = (env: Env, sourceSchema: string): RawMirrorSource => {
   const dsn = firstNonEmpty(env.XOPURE_SUPABASE_READONLY_DSN);
 
-  if (!dsn) {
-    throw new Error('XOPURE_SUPABASE_READONLY_DSN is required for raw mirror DSN discovery.');
+  if (dsn) {
+    return { kind: 'dsn', dsn };
   }
 
-  return dsn;
+  const url = firstNonEmpty(env.XOPURE_SUPABASE_READONLY_REST_URL);
+  const key = firstNonEmpty(env.XOPURE_SUPABASE_READONLY_REST_KEY);
+
+  if (url && key) {
+    return {
+      kind: 'rest',
+      options: {
+        url,
+        key,
+        schema: sourceSchema,
+      },
+    };
+  }
+
+  throw new Error(
+    'XOPURE_SUPABASE_READONLY_DSN or XOPURE_SUPABASE_READONLY_REST_URL/XOPURE_SUPABASE_READONLY_REST_KEY is required for raw mirror discovery.',
+  );
 };
 
 const toSummaryResult = (result: RawMirrorDryRunResult): SummaryResult => ({
@@ -122,8 +156,29 @@ export const executeXopureRawMirrorCli = async (
     throw new Error('Raw mirror live mode is not implemented yet. Run without --live for dry-run hashing.');
   }
 
+  const source = resolveSource(env, args.sourceSchema);
+
+  if (source.kind === 'rest') {
+    const result = await runXopureRawMirrorDryRun({
+      discoverTables: async () => {
+        const tables = await discoverRawMirrorRestTables(source.options);
+
+        return args.sourceTable
+          ? tables.filter((table) => table.sourceTable === args.sourceTable)
+          : tables;
+      },
+      readTableRows: (table) =>
+        readRawMirrorRestTableRows(source.options, table),
+    });
+
+    const write = deps.write ?? ((chunk: string) => process.stdout.write(chunk));
+
+    write(`${JSON.stringify(toSummaryResult(result), null, 2)}\n`);
+    return;
+  }
+
   const pool = new Pool({
-    connectionString: resolveDsn(env),
+    connectionString: source.dsn,
     max: 5,
     options: '-c default_transaction_read_only=on',
   });
@@ -154,10 +209,7 @@ const isExecutedDirectly = (): boolean => {
 
 if (isExecutedDirectly()) {
   executeXopureRawMirrorCli(process.argv.slice(2)).catch((error: unknown) => {
-    const message =
-      error instanceof Error ? error.message : 'Unknown raw mirror CLI error';
-
-    process.stderr.write(`${redactSecrets(message, process.env)}\n`);
+    process.stderr.write(`${redactRawMirrorCliError(error, process.env)}\n`);
     process.exit(1);
   });
 }
