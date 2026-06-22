@@ -1,10 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Pool } from 'pg';
 
 import {
   discoverRawMirrorTables,
   discoverRawMirrorRestTables,
   readRawMirrorTableRows,
   readRawMirrorRestTableRows,
+  runXopureRawMirrorLive,
+  verifyRawMirrorParity,
 } from '../raw-mirror/run-xopure-raw-mirror';
 import {
   executeXopureRawMirrorCli,
@@ -25,6 +28,8 @@ vi.mock('../raw-mirror/run-xopure-raw-mirror', async (importOriginal) => {
     readRawMirrorTableRows: vi.fn(),
     discoverRawMirrorRestTables: vi.fn(),
     readRawMirrorRestTableRows: vi.fn(),
+    runXopureRawMirrorLive: vi.fn(),
+    verifyRawMirrorParity: vi.fn(),
   };
 });
 
@@ -48,8 +53,34 @@ const tables = [
 describe('executeXopureRawMirrorCli', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(Pool).mockImplementation(() => ({ query: vi.fn() }) as never);
     vi.mocked(discoverRawMirrorTables).mockResolvedValue(tables);
     vi.mocked(discoverRawMirrorRestTables).mockResolvedValue(tables);
+    vi.mocked(runXopureRawMirrorLive).mockResolvedValue({
+      dryRun: false,
+      tableCount: 2,
+      scanned: 2,
+      hashed: 2,
+      upserted: 2,
+      failed: 0,
+      errors: [],
+    });
+    vi.mocked(verifyRawMirrorParity).mockResolvedValue({
+      verified: true,
+      tableCount: 2,
+      sourceScanned: 2,
+      sourceHashed: 2,
+      stored: 2,
+      matching: 2,
+      missing: 0,
+      changed: 0,
+      deleted: 0,
+      failed: 0,
+      missingRecords: [],
+      changedRecords: [],
+      deletedRecords: [],
+      errors: [],
+    });
     vi.mocked(readRawMirrorTableRows).mockImplementation(async (_pool, table) => {
       if (table.sourceTable === 'payments') {
         return [
@@ -158,15 +189,97 @@ describe('executeXopureRawMirrorCli', () => {
     expect(discoverRawMirrorRestTables).not.toHaveBeenCalled();
   });
 
-  it('rejects live mode until raw mirror persistence exists', async () => {
+  it('runs live mode with a Twenty target DB client', async () => {
+    const sourcePool = { query: vi.fn() };
+    const targetClient = { query: vi.fn(), release: vi.fn() };
+    const targetPool = {
+      connect: vi.fn().mockResolvedValue(targetClient),
+      end: vi.fn().mockResolvedValue(undefined),
+    };
+    vi.mocked(Pool)
+      .mockImplementationOnce(() => sourcePool as never)
+      .mockImplementationOnce(() => targetPool as never);
+    const output: string[] = [];
+
+    await executeXopureRawMirrorCli(['--live'], {
+      env: {
+        ...baseEnv,
+        TWENTY_DB_DSN: 'postgres://twenty:secret@db.example.test/twenty_v2',
+        TWENTY_WORKSPACE_SCHEMA: 'workspace_abc123',
+      },
+      write: (chunk) => output.push(chunk),
+    });
+
+    expect(targetPool.connect).toHaveBeenCalled();
+    expect(runXopureRawMirrorLive).toHaveBeenCalledWith({
+      discoverTables: expect.any(Function),
+      readTableRows: expect.any(Function),
+      target: {
+        client: targetClient,
+        workspaceSchema: 'workspace_abc123',
+      },
+    });
+    expect(targetClient.release).toHaveBeenCalled();
+    expect(targetPool.end).toHaveBeenCalled();
+    expect(JSON.parse(output.join(''))).toEqual({
+      dryRun: false,
+      tableCount: 2,
+      scanned: 2,
+      hashed: 2,
+      upserted: 2,
+      failed: 0,
+      errors: [],
+    });
+  });
+
+  it('requires Twenty target env only for live mode', async () => {
     await expect(
       executeXopureRawMirrorCli(['--live'], {
         env: baseEnv,
         write: () => undefined,
       }),
-    ).rejects.toThrow('Raw mirror live mode is not implemented');
+    ).rejects.toThrow('TWENTY_DB_DSN');
 
     expect(readRawMirrorTableRows).not.toHaveBeenCalled();
+  });
+
+  it('runs full parity verification against the target sync hash table', async () => {
+    const sourcePool = { query: vi.fn() };
+    const targetClient = { query: vi.fn(), release: vi.fn() };
+    const targetPool = {
+      connect: vi.fn().mockResolvedValue(targetClient),
+      end: vi.fn().mockResolvedValue(undefined),
+    };
+    vi.mocked(Pool)
+      .mockImplementationOnce(() => sourcePool as never)
+      .mockImplementationOnce(() => targetPool as never);
+    const output: string[] = [];
+
+    await executeXopureRawMirrorCli(['--verify-all'], {
+      env: {
+        ...baseEnv,
+        TWENTY_DB_DSN: 'postgres://twenty:secret@db.example.test/twenty_v2',
+        TWENTY_WORKSPACE_SCHEMA: 'workspace_abc123',
+      },
+      write: (chunk) => output.push(chunk),
+    });
+
+    expect(verifyRawMirrorParity).toHaveBeenCalledWith({
+      discoverTables: expect.any(Function),
+      readTableRows: expect.any(Function),
+      target: {
+        client: targetClient,
+        workspaceSchema: 'workspace_abc123',
+      },
+    });
+    expect(runXopureRawMirrorLive).not.toHaveBeenCalled();
+    expect(targetClient.release).toHaveBeenCalled();
+    expect(targetPool.end).toHaveBeenCalled();
+    expect(JSON.parse(output.join(''))).toMatchObject({
+      verified: true,
+      tableCount: 2,
+      matching: 2,
+    });
   });
 
   it('fails before connecting when the readonly DSN is missing', async () => {

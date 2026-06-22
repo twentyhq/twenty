@@ -5,8 +5,11 @@ import {
   discoverRawMirrorTables,
   discoverRawMirrorRestTables,
   getRawMirrorTargetTableName,
+  persistRawMirrorRecords,
   readRawMirrorRestTableRows,
+  runXopureRawMirrorLive,
   runXopureRawMirrorDryRun,
+  verifyRawMirrorParity,
 } from './run-xopure-raw-mirror';
 
 describe('raw mirror table discovery', () => {
@@ -242,6 +245,204 @@ describe('runXopureRawMirrorDryRun', () => {
     expect(result.records.map((record) => record.targetTableName)).toEqual([
       '_xopureRaw_support_tickets',
       '_xopureRaw_payments',
+    ]);
+  });
+});
+
+describe('raw mirror live persistence', () => {
+  it('creates raw target definitions and upserts raw rows plus sync hashes', async () => {
+    const query = vi.fn().mockResolvedValue({ rows: [], rowCount: 1 });
+    const record = buildRawMirrorRecord(
+      {
+        sourceSchema: 'public',
+        sourceTable: 'payments',
+        targetTableName: '_xopureRaw_payments',
+      },
+      { id: 'payment-1', amount_cents: 12900 },
+    );
+
+    const result = await persistRawMirrorRecords({
+      client: { query },
+      workspaceSchema: 'workspace_abc123',
+      records: [record],
+      syncedAt: '2026-06-22T21:00:00Z',
+    });
+
+    expect(result).toEqual({ upserted: 1 });
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('"workspace_abc123"."_xopureSyncHash"'),
+    );
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('"workspace_abc123"."_xopureRaw_payments"'),
+    );
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO "workspace_abc123"."_xopureRaw_payments"'),
+      [
+        'public',
+        'payments',
+        'payment-1',
+        JSON.stringify({ id: 'payment-1', amount_cents: 12900 }),
+        record.contentHash,
+        '2026-06-22T21:00:00Z',
+      ],
+    );
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO "workspace_abc123"."_xopureSyncHash"'),
+      [
+        'public',
+        'payments',
+        'payment-1',
+        '_xopureRaw_payments',
+        record.contentHash,
+        '2026-06-22T21:00:00Z',
+      ],
+    );
+  });
+
+  it('rejects unsafe workspace schemas before issuing SQL', async () => {
+    const query = vi.fn();
+
+    await expect(
+      persistRawMirrorRecords({
+        client: { query },
+        workspaceSchema: 'public;drop',
+        records: [],
+      }),
+    ).rejects.toThrow('TWENTY_WORKSPACE_SCHEMA');
+
+    expect(query).not.toHaveBeenCalled();
+  });
+
+  it('persists hashable rows and reports unhashable raw rows as failures', async () => {
+    const query = vi.fn().mockResolvedValue({ rows: [], rowCount: 1 });
+
+    const result = await runXopureRawMirrorLive({
+      discoverTables: async () => [
+        {
+          sourceSchema: 'public',
+          sourceTable: 'payments',
+          targetTableName: '_xopureRaw_payments',
+        },
+      ],
+      readTableRows: async () => [
+        { id: 'payment-1', amount_cents: 12900 },
+        { event_name: 'missing-id' },
+      ],
+      target: {
+        client: { query },
+        workspaceSchema: 'workspace_abc123',
+        syncedAt: '2026-06-22T21:00:00Z',
+      },
+    });
+
+    expect(result).toMatchObject({
+      dryRun: false,
+      tableCount: 1,
+      scanned: 2,
+      hashed: 1,
+      upserted: 1,
+      failed: 1,
+    });
+    expect(result.errors[0]?.error).toContain('stable source id');
+  });
+});
+
+describe('raw mirror parity verification', () => {
+  it('compares source hashes against persisted sync hashes', async () => {
+    const sourceTable = {
+      sourceSchema: 'public',
+      sourceTable: 'payments',
+      targetTableName: '_xopureRaw_payments',
+    };
+    const matchingRecord = buildRawMirrorRecord(sourceTable, {
+      id: 'payment-1',
+      amount_cents: 12900,
+    });
+    const changedRecord = buildRawMirrorRecord(sourceTable, {
+      id: 'payment-2',
+      amount_cents: 2500,
+    });
+    const missingRecord = buildRawMirrorRecord(sourceTable, {
+      id: 'payment-3',
+      amount_cents: 3300,
+    });
+    const query = vi.fn().mockResolvedValue({
+      rows: [
+        {
+          sourceSchema: 'public',
+          sourceTable: 'payments',
+          sourceRecordId: 'payment-1',
+          targetTableName: '_xopureRaw_payments',
+          contentHash: matchingRecord.contentHash,
+        },
+        {
+          sourceSchema: 'public',
+          sourceTable: 'payments',
+          sourceRecordId: 'payment-2',
+          targetTableName: '_xopureRaw_payments',
+          contentHash: 'stale-hash',
+        },
+        {
+          sourceSchema: 'public',
+          sourceTable: 'payments',
+          sourceRecordId: 'payment-deleted',
+          targetTableName: '_xopureRaw_payments',
+          contentHash: 'old-hash',
+        },
+      ],
+    });
+
+    const result = await verifyRawMirrorParity({
+      discoverTables: async () => [sourceTable],
+      readTableRows: async () => [
+        matchingRecord.payload,
+        changedRecord.payload,
+        missingRecord.payload,
+      ],
+      target: {
+        client: { query },
+        workspaceSchema: 'workspace_abc123',
+      },
+    });
+
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('FROM "workspace_abc123"."_xopureSyncHash"'),
+    );
+    expect(result).toMatchObject({
+      verified: false,
+      tableCount: 1,
+      sourceScanned: 3,
+      sourceHashed: 3,
+      stored: 3,
+      matching: 1,
+      missing: 1,
+      changed: 1,
+      deleted: 1,
+      failed: 0,
+    });
+    expect(result.missingRecords).toEqual([
+      {
+        sourceSchema: 'public',
+        sourceTable: 'payments',
+        sourceRecordId: 'payment-3',
+        targetTableName: '_xopureRaw_payments',
+      },
+    ]);
+    expect(result.changedRecords).toEqual([
+      {
+        sourceSchema: 'public',
+        sourceTable: 'payments',
+        sourceRecordId: 'payment-2',
+        targetTableName: '_xopureRaw_payments',
+      },
+    ]);
+    expect(result.deletedRecords).toEqual([
+      {
+        sourceSchema: 'public',
+        sourceTable: 'payments',
+        sourceRecordId: 'payment-deleted',
+        targetTableName: '_xopureRaw_payments',
+      },
     ]);
   });
 });

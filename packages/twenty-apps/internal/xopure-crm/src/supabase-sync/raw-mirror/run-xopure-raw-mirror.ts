@@ -34,11 +34,44 @@ export type RawMirrorDryRunResult = {
   errors: RawMirrorError[];
 };
 
+export type RawMirrorLiveResult = Omit<RawMirrorDryRunResult, 'dryRun' | 'records'> & {
+  dryRun: false;
+  upserted: number;
+};
+
+export type RawMirrorRecordReference = RawMirrorTable & {
+  sourceRecordId: string;
+};
+
+export type RawMirrorParityResult = {
+  verified: boolean;
+  tableCount: number;
+  sourceScanned: number;
+  sourceHashed: number;
+  stored: number;
+  matching: number;
+  missing: number;
+  changed: number;
+  deleted: number;
+  failed: number;
+  missingRecords: RawMirrorRecordReference[];
+  changedRecords: RawMirrorRecordReference[];
+  deletedRecords: RawMirrorRecordReference[];
+  errors: RawMirrorError[];
+};
+
 export interface RawMirrorPoolLike {
   query: (
     text: string,
     params?: unknown[],
   ) => Promise<{ rows: Array<Record<string, unknown>> }>;
+}
+
+export interface RawMirrorTargetClientLike {
+  query: (
+    text: string,
+    params?: unknown[],
+  ) => Promise<{ rows: Array<Record<string, unknown>>; rowCount?: number | null }>;
 }
 
 export type RawMirrorFetchLike = (
@@ -57,6 +90,18 @@ export type RawMirrorRestOptions = {
   fetch?: RawMirrorFetchLike;
 };
 
+export type RawMirrorTarget = {
+  client: RawMirrorTargetClientLike;
+  workspaceSchema: string;
+  syncedAt?: string;
+};
+
+export type RawMirrorLiveInput = RawMirrorDryRunInput & {
+  target: RawMirrorTarget;
+};
+
+export type RawMirrorParityInput = RawMirrorLiveInput;
+
 const IDENTIFIER_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 const PUBLIC_SCHEMA = 'public';
 const DEFAULT_REST_BATCH_SIZE = 1_000;
@@ -71,6 +116,23 @@ const quoteIdentifier = (identifier: string): string => {
   assertSafeIdentifier(identifier);
 
   return `"${identifier}"`;
+};
+
+const assertSafeWorkspaceSchema = (workspaceSchema: string): void => {
+  if (!/^workspace_[a-z0-9]+$/.test(workspaceSchema)) {
+    throw new Error(
+      `TWENTY_WORKSPACE_SCHEMA must match workspace_<base36>, received ${workspaceSchema}`,
+    );
+  }
+};
+
+const quoteWorkspaceTable = (
+  workspaceSchema: string,
+  tableName: string,
+): string => {
+  assertSafeWorkspaceSchema(workspaceSchema);
+
+  return `${quoteIdentifier(workspaceSchema)}.${quoteIdentifier(tableName)}`;
 };
 
 const stringValue = (value: unknown): string | undefined =>
@@ -431,6 +493,110 @@ export const buildRawMirrorRecord = (
   };
 };
 
+const getUniqueRawMirrorTables = (records: RawMirrorRecord[]): RawMirrorTable[] => {
+  const byTargetTable = new Map<string, RawMirrorTable>();
+
+  for (const record of records) {
+    byTargetTable.set(record.targetTableName, {
+      sourceSchema: record.sourceSchema,
+      sourceTable: record.sourceTable,
+      targetTableName: record.targetTableName,
+    });
+  }
+
+  return [...byTargetTable.values()].sort((left, right) =>
+    left.targetTableName.localeCompare(right.targetTableName),
+  );
+};
+
+const createRawMirrorTableSql = (
+  workspaceSchema: string,
+  tableName: string,
+): string => `
+CREATE TABLE IF NOT EXISTS ${quoteWorkspaceTable(workspaceSchema, tableName)} (
+  "sourceSchema" text NOT NULL,
+  "sourceTable" text NOT NULL,
+  "sourceRecordId" text NOT NULL,
+  "payload" jsonb NOT NULL,
+  "contentHash" text NOT NULL,
+  "syncedAt" timestamptz NOT NULL,
+  PRIMARY KEY ("sourceSchema", "sourceTable", "sourceRecordId")
+)`;
+
+const createRawMirrorSyncHashSql = (workspaceSchema: string): string => `
+CREATE TABLE IF NOT EXISTS ${quoteWorkspaceTable(workspaceSchema, '_xopureSyncHash')} (
+  "sourceSchema" text NOT NULL,
+  "sourceTable" text NOT NULL,
+  "sourceRecordId" text NOT NULL,
+  "targetTableName" text NOT NULL,
+  "contentHash" text NOT NULL,
+  "syncedAt" timestamptz NOT NULL,
+  PRIMARY KEY ("sourceSchema", "sourceTable", "sourceRecordId")
+)`;
+
+const upsertRawMirrorRecordSql = (
+  workspaceSchema: string,
+  tableName: string,
+): string => `
+INSERT INTO ${quoteWorkspaceTable(workspaceSchema, tableName)}
+  ("sourceSchema", "sourceTable", "sourceRecordId", "payload", "contentHash", "syncedAt")
+VALUES ($1, $2, $3, $4::jsonb, $5, $6::timestamptz)
+ON CONFLICT ("sourceSchema", "sourceTable", "sourceRecordId")
+DO UPDATE SET
+  "payload" = EXCLUDED."payload",
+  "contentHash" = EXCLUDED."contentHash",
+  "syncedAt" = EXCLUDED."syncedAt"`;
+
+const upsertRawMirrorSyncHashSql = (workspaceSchema: string): string => `
+INSERT INTO ${quoteWorkspaceTable(workspaceSchema, '_xopureSyncHash')}
+  ("sourceSchema", "sourceTable", "sourceRecordId", "targetTableName", "contentHash", "syncedAt")
+VALUES ($1, $2, $3, $4, $5, $6::timestamptz)
+ON CONFLICT ("sourceSchema", "sourceTable", "sourceRecordId")
+DO UPDATE SET
+  "targetTableName" = EXCLUDED."targetTableName",
+  "contentHash" = EXCLUDED."contentHash",
+  "syncedAt" = EXCLUDED."syncedAt"`;
+
+export const persistRawMirrorRecords = async (
+  input: RawMirrorTarget & { records: RawMirrorRecord[] },
+): Promise<{ upserted: number }> => {
+  const syncedAt = input.syncedAt ?? new Date().toISOString();
+
+  assertSafeWorkspaceSchema(input.workspaceSchema);
+
+  await input.client.query(createRawMirrorSyncHashSql(input.workspaceSchema));
+
+  for (const table of getUniqueRawMirrorTables(input.records)) {
+    await input.client.query(
+      createRawMirrorTableSql(input.workspaceSchema, table.targetTableName),
+    );
+  }
+
+  for (const record of input.records) {
+    await input.client.query(
+      upsertRawMirrorRecordSql(input.workspaceSchema, record.targetTableName),
+      [
+        record.sourceSchema,
+        record.sourceTable,
+        record.sourceRecordId,
+        JSON.stringify(record.payload),
+        record.contentHash,
+        syncedAt,
+      ],
+    );
+    await input.client.query(upsertRawMirrorSyncHashSql(input.workspaceSchema), [
+      record.sourceSchema,
+      record.sourceTable,
+      record.sourceRecordId,
+      record.targetTableName,
+      record.contentHash,
+      syncedAt,
+    ]);
+  }
+
+  return { upserted: input.records.length };
+};
+
 export const runXopureRawMirrorDryRun = async (
   input: RawMirrorDryRunInput,
 ): Promise<RawMirrorDryRunResult> => {
@@ -465,5 +631,169 @@ export const runXopureRawMirrorDryRun = async (
     failed: errors.length,
     records,
     errors,
+  };
+};
+
+export const runXopureRawMirrorLive = async (
+  input: RawMirrorLiveInput,
+): Promise<RawMirrorLiveResult> => {
+  const dryRunResult = await runXopureRawMirrorDryRun(input);
+  const { upserted } = await persistRawMirrorRecords({
+    ...input.target,
+    records: dryRunResult.records,
+  });
+
+  return {
+    dryRun: false,
+    tableCount: dryRunResult.tableCount,
+    scanned: dryRunResult.scanned,
+    hashed: dryRunResult.hashed,
+    upserted,
+    failed: dryRunResult.failed,
+    errors: dryRunResult.errors,
+  };
+};
+
+const recordKey = (
+  sourceSchema: string,
+  sourceTable: string,
+  sourceRecordId: string,
+): string => `${sourceSchema}\u0000${sourceTable}\u0000${sourceRecordId}`;
+
+const toRecordReference = (record: RawMirrorRecord): RawMirrorRecordReference => ({
+  sourceSchema: record.sourceSchema,
+  sourceTable: record.sourceTable,
+  sourceRecordId: record.sourceRecordId,
+  targetTableName: record.targetTableName,
+});
+
+const readPersistedRawMirrorHashes = async (
+  target: RawMirrorTarget,
+): Promise<Array<RawMirrorRecordReference & { contentHash: string }>> => {
+  assertSafeWorkspaceSchema(target.workspaceSchema);
+
+  const result = await target.client.query(
+    `SELECT "sourceSchema",
+            "sourceTable",
+            "sourceRecordId",
+            "targetTableName",
+            "contentHash"
+       FROM ${quoteWorkspaceTable(target.workspaceSchema, '_xopureSyncHash')}
+      ORDER BY "sourceSchema" ASC, "sourceTable" ASC, "sourceRecordId" ASC`,
+  );
+
+  return result.rows.flatMap((row) => {
+    const sourceSchema = stringValue(row.sourceSchema);
+    const sourceTable = stringValue(row.sourceTable);
+    const sourceRecordId = stringValue(row.sourceRecordId);
+    const targetTableName = stringValue(row.targetTableName);
+    const contentHash = stringValue(row.contentHash);
+
+    return sourceSchema && sourceTable && sourceRecordId && targetTableName && contentHash
+      ? [
+          {
+            sourceSchema,
+            sourceTable,
+            sourceRecordId,
+            targetTableName,
+            contentHash,
+          },
+        ]
+      : [];
+  });
+};
+
+export const verifyRawMirrorParity = async (
+  input: RawMirrorParityInput,
+): Promise<RawMirrorParityResult> => {
+  const sourceResult = await runXopureRawMirrorDryRun(input);
+  const storedRecords = await readPersistedRawMirrorHashes(input.target);
+  const sourceByKey = new Map<string, RawMirrorRecord>();
+  const storedByKey = new Map<
+    string,
+    RawMirrorRecordReference & { contentHash: string }
+  >();
+
+  for (const record of sourceResult.records) {
+    sourceByKey.set(
+      recordKey(record.sourceSchema, record.sourceTable, record.sourceRecordId),
+      record,
+    );
+  }
+
+  for (const record of storedRecords) {
+    storedByKey.set(
+      recordKey(record.sourceSchema, record.sourceTable, record.sourceRecordId),
+      record,
+    );
+  }
+
+  const missingRecords: RawMirrorRecordReference[] = [];
+  const changedRecords: RawMirrorRecordReference[] = [];
+  const deletedRecords: RawMirrorRecordReference[] = [];
+  let matching = 0;
+
+  for (const sourceRecord of sourceByKey.values()) {
+    const storedRecord = storedByKey.get(
+      recordKey(
+        sourceRecord.sourceSchema,
+        sourceRecord.sourceTable,
+        sourceRecord.sourceRecordId,
+      ),
+    );
+
+    if (!storedRecord) {
+      missingRecords.push(toRecordReference(sourceRecord));
+      continue;
+    }
+
+    if (storedRecord.contentHash !== sourceRecord.contentHash) {
+      changedRecords.push(toRecordReference(sourceRecord));
+      continue;
+    }
+
+    matching += 1;
+  }
+
+  for (const storedRecord of storedByKey.values()) {
+    if (
+      sourceByKey.has(
+        recordKey(
+          storedRecord.sourceSchema,
+          storedRecord.sourceTable,
+          storedRecord.sourceRecordId,
+        ),
+      )
+    ) {
+      continue;
+    }
+
+    deletedRecords.push({
+      sourceSchema: storedRecord.sourceSchema,
+      sourceTable: storedRecord.sourceTable,
+      sourceRecordId: storedRecord.sourceRecordId,
+      targetTableName: storedRecord.targetTableName,
+    });
+  }
+
+  return {
+    verified:
+      sourceResult.failed === 0 &&
+      missingRecords.length === 0 &&
+      changedRecords.length === 0 &&
+      deletedRecords.length === 0,
+    tableCount: sourceResult.tableCount,
+    sourceScanned: sourceResult.scanned,
+    sourceHashed: sourceResult.hashed,
+    stored: storedRecords.length,
+    matching,
+    missing: missingRecords.length,
+    changed: changedRecords.length,
+    deleted: deletedRecords.length,
+    failed: sourceResult.failed,
+    missingRecords,
+    changedRecords,
+    deletedRecords,
+    errors: sourceResult.errors,
   };
 };
