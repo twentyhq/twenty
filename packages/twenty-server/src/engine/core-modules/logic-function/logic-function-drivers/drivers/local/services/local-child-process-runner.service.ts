@@ -78,15 +78,13 @@ export class LocalChildProcessRunnerService {
       // Auto-generated. Do not edit.
       const { pathToFileURL } = require('node:url');
 
-      const HANDLER_NAME = ${JSON.stringify(handlerName)};
-
       (async () => {
         try {
           const builtUrl = pathToFileURL(${JSON.stringify(builtFileAbsPath)});
           const mod = await import(builtUrl.href);
           const handlerFn = ${handlerAccessor};
           if (typeof handlerFn !== 'function') {
-            throw new Error('Export "' + HANDLER_NAME + '" not found in function bundle');
+            throw new Error('Export "' + ${JSON.stringify(handlerName)} + '" not found in function bundle');
           }
 
           let payload = undefined;
