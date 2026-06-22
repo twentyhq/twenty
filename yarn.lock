@@ -27342,13 +27342,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async-limiter@npm:~1.0.0":
-  version: 1.0.1
-  resolution: "async-limiter@npm:1.0.1"
-  checksum: 10c0/0693d378cfe86842a70d4c849595a0bb50dc44c11649640ca982fa90cbfc74e3cc4753b5a0847e51933f2e9c65ce8e05576e75e5e1fd963a086e673735b35969
-  languageName: node
-  linkType: hard
-
 "async-retry@npm:1.2.3":
   version: 1.2.3
   resolution: "async-retry@npm:1.2.3"
@@ -37195,9 +37188,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"imapflow@npm:1.3.6":
-  version: 1.3.6
-  resolution: "imapflow@npm:1.3.6"
+"imapflow@npm:1.4.2":
+  version: 1.4.2
+  resolution: "imapflow@npm:1.4.2"
   dependencies:
     "@zone-eu/mailsplit": "npm:5.4.12"
     encoding-japanese: "npm:2.2.0"
@@ -37205,10 +37198,10 @@ __metadata:
     libbase64: "npm:1.3.0"
     libmime: "npm:5.3.8"
     libqp: "npm:2.1.1"
-    nodemailer: "npm:8.0.10"
+    nodemailer: "npm:9.0.1"
     pino: "npm:10.3.1"
     socks: "npm:2.8.9"
-  checksum: 10c0/9fd42d1f28a7761a405a3de89aae797504b500cf69c91bf5ffc4f13a7448cd7ba90ca82da92c714d09bb8d254ff6ae73b91fa40c33a3fa470424062f433f30b0
+  checksum: 10c0/568ed3981e3e402bcbe91f634894a5b57cc4ba7d00d0c2a2d9f05deea60d4868e874bac6745f52b3adc76e3a7c6e2cd28206f3ec6d94e39e5abdf5b6234f5859
   languageName: node
   linkType: hard
 
@@ -43384,15 +43377,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multer@npm:2.1.1":
-  version: 2.1.1
-  resolution: "multer@npm:2.1.1"
+"multer@npm:2.2.0":
+  version: 2.2.0
+  resolution: "multer@npm:2.2.0"
   dependencies:
     append-field: "npm:^1.0.0"
     busboy: "npm:^1.6.0"
     concat-stream: "npm:^2.0.0"
     type-is: "npm:^1.6.18"
-  checksum: 10c0/2ec4e02833b20f403cfb879d4b64d2a9070d902b9deae7aef18a6faadb707d7665385456cf540aa8a6dadfe3d4c5fc8e0e7b0675b94e1077048b1125426deee6
+  checksum: 10c0/7aa366d89042427347b6ab8e4a203405d7fe942e4a3095648a14526fcf3691d98ffc2da62abf85d8aca0a341f828168eb197b33cfdcfcce29d6ef593a5625591
   languageName: node
   linkType: hard
 
@@ -44112,14 +44105,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:8.0.10":
-  version: 8.0.10
-  resolution: "nodemailer@npm:8.0.10"
-  checksum: 10c0/b96fd2ea7146de58141219061e094509fd0f19aac5ac86ac35d9ce9c479dbf6c12b143fa7e7050a1be539a3542eb59520c33aabf5a119c8d28fc7d151bde329f
-  languageName: node
-  linkType: hard
-
-"nodemailer@npm:^9.0.1":
+"nodemailer@npm:9.0.1, nodemailer@npm:^9.0.1":
   version: 9.0.1
   resolution: "nodemailer@npm:9.0.1"
   checksum: 10c0/4213f01aa211127c1ce33243c5e45e7f831601a933d03fa864cd827b1bd5ea2782cb4b43722bee7028cbc193733d9802dad1120fe67181448eb0b7de52218a37
@@ -54260,7 +54246,7 @@ __metadata:
     graphql-upload: "npm:16.0.2"
     graphql-yoga: "npm:4.0.5"
     html-to-text: "npm:^9.0.5"
-    imapflow: "npm:1.3.6"
+    imapflow: "npm:1.4.2"
     ioredis: "npm:5.10.1"
     jest: "npm:29.7.0"
     jest-environment-node: "npm:^29.4.1"
@@ -57195,37 +57181,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:8.18.0":
-  version: 8.18.0
-  resolution: "ws@npm:8.18.0"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ">=5.0.2"
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10c0/25eb33aff17edcb90721ed6b0eb250976328533ad3cd1a28a274bd263682e7296a6591ff1436d6cbc50fa67463158b062f9d1122013b361cec99a05f84680e06
-  languageName: node
-  linkType: hard
-
-"ws@npm:8.20.1":
-  version: 8.20.1
-  resolution: "ws@npm:8.20.1"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ">=5.0.2"
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10c0/ce162433218399cdedeb76fd33363d4d86a7d910058d4e3c679dce08cea65d6da6b39f11baa4d7808d024cf46ed88f6a05c17611621aaad8fc5e62edacc30c5d
-  languageName: node
-  linkType: hard
-
-"ws@npm:8.21.0, ws@npm:^8.18.0, ws@npm:^8.18.3, ws@npm:^8.19.0, ws@npm:^8.20.0, ws@npm:^8.21.0":
+"ws@npm:8.21.0":
   version: 8.21.0
   resolution: "ws@npm:8.21.0"
   peerDependencies:
@@ -57237,45 +57193,6 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 10c0/ef4a243476283fc49bc7550966c4af4aa0eef56273837211e700de3b664e08604a760cdddcb5ba43c049140e74ccfec5b0ee0bb439e08c2adf9138902fdde5f9
-  languageName: node
-  linkType: hard
-
-"ws@npm:^5.2.0 || ^6.0.0 || ^7.0.0, ws@npm:^7.4.6":
-  version: 7.5.11
-  resolution: "ws@npm:7.5.11"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10c0/7972670b676fb1ccba73b0899ca3c2e04e8c2075629c2614cced7f556536f96a672bbf4619fc5a06c8b8720bb839a47ca88c69c95dc14c9c61a99fbecba1c866
-  languageName: node
-  linkType: hard
-
-"ws@npm:^6.1.4":
-  version: 6.2.4
-  resolution: "ws@npm:6.2.4"
-  dependencies:
-    async-limiter: "npm:~1.0.0"
-  checksum: 10c0/5c2b9474164f9cb68c7776a1d10b0461c186f3a69bffb1028fca33eba5ab7206a09173fb0b311d6c5a81c8cf148406f8deb0b7d899542ab8ca67407d99717dad
-  languageName: node
-  linkType: hard
-
-"ws@npm:~8.17.1":
-  version: 8.17.1
-  resolution: "ws@npm:8.17.1"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ">=5.0.2"
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10c0/f4a49064afae4500be772abdc2211c8518f39e1c959640457dcee15d4488628620625c783902a52af2dd02f68558da2868fd06e6fd0e67ebcd09e6881b1b5bfe
   languageName: node
   linkType: hard
 

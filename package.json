@@ -26,6 +26,8 @@
   "name": "twenty",
   "packageManager": "yarn@4.13.0",
   "resolutions": {
+    "multer": "2.2.0",
+    "ws": "8.21.0",
     "@remote-dom/react/@types/react": "^19.2.0",
     "graphql": "16.8.1",
     "graphql-redis-subscriptions/ioredis": "5.10.1",
