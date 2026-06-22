@@ -23,6 +23,7 @@ export default defineConfig({
     fileParallelism: false,
     include: ['src/**/*.integration-test.ts'],
     globalSetup: ['src/__tests__/global-setup.ts'],
+    setupFiles: ['src/__tests__/rate-limit-retry.setup.ts'],
     env: {
       TWENTY_API_URL,
       TWENTY_API_KEY,
