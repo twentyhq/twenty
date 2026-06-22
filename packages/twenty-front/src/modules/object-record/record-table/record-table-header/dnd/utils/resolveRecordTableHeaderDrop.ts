@@ -8,7 +8,7 @@ type ResolveRecordTableHeaderDropArgs = {
   recordFields: RecordField[];
 };
 
-export type ResolvedRecordTableHeaderDrop = {
+type ResolvedRecordTableHeaderDrop = {
   sourceIndex: number;
   dropTargetIndex: number;
   destinationIndex: number;

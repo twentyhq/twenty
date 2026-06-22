@@ -31,7 +31,7 @@ export const RecordTableHeaderDroppableSlot = ({
   disabled = false,
   collisionPriority = SLOT_COLLISION_PRIORITY,
 }: RecordTableHeaderDroppableSlotProps) => {
-  const id = `record-table-header-droppable::${index}`;
+  const id = `${droppableId}::${index}`;
   const data: RecordTableHeaderDndData = { droppableId, index };
   const { ref } = useDroppable({
     id,

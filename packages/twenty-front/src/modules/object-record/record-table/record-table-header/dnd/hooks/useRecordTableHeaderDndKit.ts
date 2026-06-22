@@ -41,7 +41,6 @@ type DragEndPayload = Parameters<
 >[0];
 
 export type RecordTableHeaderDndKitContextValues = {
-  isDragging: boolean;
   activeDropTargetIndex: number | null;
 };
 
@@ -72,7 +71,6 @@ export const useRecordTableHeaderDndKit = (): {
     isRecordTableCheckboxColumnHiddenComponentState,
   );
 
-  const [isDragging, setIsDragging] = useState(false);
   const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
     number | null
   >(null);
@@ -119,8 +117,6 @@ export const useRecordTableHeaderDndKit = (): {
   );
 
   const handleDragStart = (_event: DragStartPayload) => {
-    setIsDragging(true);
-
     store.set(isRecordTableHeaderDropProcessingCallbackState, true);
 
     setActiveDropTargetIndex(null);
@@ -156,7 +152,6 @@ export const useRecordTableHeaderDndKit = (): {
     const { operation } = event;
     const source = operation.source;
 
-    setIsDragging(false);
     setActiveDropTargetIndex(null);
     setDragSelectionStartEnabled(true);
     store.set(isRecordTableHeaderDropProcessingCallbackState, false);
@@ -179,7 +174,6 @@ export const useRecordTableHeaderDndKit = (): {
   };
 
   const contextValues: RecordTableHeaderDndKitContextValues = {
-    isDragging,
     activeDropTargetIndex,
   };
 

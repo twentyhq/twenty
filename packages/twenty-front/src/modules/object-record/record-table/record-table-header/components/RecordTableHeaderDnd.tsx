@@ -9,6 +9,7 @@ import { RecordTableHeaderLastEmptyColumn } from '@/object-record/record-table/r
 import { RecordTableHeaderDroppableSlot } from '@/object-record/record-table/record-table-header/dnd/components/RecordTableHeaderDroppableSlot';
 import { RecordTableHeaderDropTarget } from '@/object-record/record-table/record-table-header/dnd/components/RecordTableHeaderDropTarget';
 import { RecordTableHeaderSortableCell } from '@/object-record/record-table/record-table-header/dnd/components/RecordTableHeaderSortableCell';
+import { RECORD_TABLE_HEADER_DROPPABLE_ID } from '@/object-record/record-table/record-table-header/dnd/constants/RecordTableHeaderDroppableId';
 import { RecordTableHeaderDndKitProvider } from '@/object-record/record-table/record-table-header/dnd/providers/RecordTableHeaderDndKitProvider';
 import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -27,36 +28,32 @@ export const RecordTableHeaderDnd = () => {
 
   return (
     <RecordTableHeaderDndKitProvider>
-      {/* Drop target just after 1st cell */}
       <RecordTableHeaderDroppableSlot
-        droppableId={'record-table-header-droppable'}
+        droppableId={RECORD_TABLE_HEADER_DROPPABLE_ID}
         index={0}
         disabled={isRecordTableColumnHeadersReadOnly}
       >
         <RecordTableHeaderDropTarget index={0} compact />
       </RecordTableHeaderDroppableSlot>
 
-      {isDefined(firstScrollableRecordField) ? (
+      {isDefined(firstScrollableRecordField) && (
         <RecordTableHeaderSortableCell
           key={firstScrollableRecordField.fieldMetadataItemId}
           id={firstScrollableRecordField.fieldMetadataItemId}
           index={0}
-          group={'record-table-header-droppable'}
+          group={RECORD_TABLE_HEADER_DROPPABLE_ID}
           disabled={isRecordTableColumnHeadersReadOnly}
         >
           <RecordTableHeaderFirstScrollableCell
             firstScrollableRecordField={firstScrollableRecordField}
           />
         </RecordTableHeaderSortableCell>
-      ) : (
-        <></>
       )}
 
       {recordFieldsWithoutFirstTwo.map((recordField, index) => (
         <React.Fragment key={recordField.fieldMetadataItemId}>
-          {/* Drop target just before all visible cells */}
           <RecordTableHeaderDroppableSlot
-            droppableId={'record-table-header-droppable'}
+            droppableId={RECORD_TABLE_HEADER_DROPPABLE_ID}
             index={index + 1}
             disabled={isRecordTableColumnHeadersReadOnly}
           >
@@ -65,7 +62,7 @@ export const RecordTableHeaderDnd = () => {
           <RecordTableHeaderSortableCell
             id={recordField.fieldMetadataItemId}
             index={index + 1}
-            group={'record-table-header-droppable'}
+            group={RECORD_TABLE_HEADER_DROPPABLE_ID}
             disabled={isRecordTableColumnHeadersReadOnly}
           >
             <RecordTableHeaderCell
@@ -76,9 +73,8 @@ export const RecordTableHeaderDnd = () => {
           </RecordTableHeaderSortableCell>
         </React.Fragment>
       ))}
-      {/* Drop target just after last cell */}
       <RecordTableHeaderDroppableSlot
-        droppableId={'record-table-header-droppable'}
+        droppableId={RECORD_TABLE_HEADER_DROPPABLE_ID}
         index={visibleRecordFields.length}
         disabled={isRecordTableColumnHeadersReadOnly}
       >
