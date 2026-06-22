@@ -28,6 +28,14 @@ const convertProperty = (
 ): Leaf | Node => {
   const label = property.label ?? key;
 
+  if (property.type === 'record') {
+    return { isLeaf: true, type: 'string', label, value: null };
+  }
+
+  if (property.type === 'records') {
+    return { isLeaf: true, type: 'array', label, value: null };
+  }
+
   if (property.type === 'object') {
     return {
       isLeaf: false,

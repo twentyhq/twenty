@@ -3,12 +3,19 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const TabAvatar = ({ tab }: { tab: SingleTabProps }) => {
   const { theme } = useContext(ThemeContext);
 
   if (isDefined(tab.logo)) {
-    return <Avatar avatarUrl={tab.logo} size="md" placeholder={tab.title} />;
+    return (
+      <Avatar
+        avatarUrl={getAbsoluteImageUrl(tab.logo)}
+        size="md"
+        placeholder={tab.title}
+      />
+    );
   }
   return (
     tab.Icon && (

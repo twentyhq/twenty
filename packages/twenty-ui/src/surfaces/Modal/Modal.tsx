@@ -40,6 +40,7 @@ const OVERLAY_CLASS_NAMES: Record<ModalOverlay, string | undefined> = {
 
 export const Modal = ({
   isOpen,
+  ariaLabel,
   children,
   size = 'medium',
   padding = 'medium',
@@ -92,6 +93,7 @@ export const Modal = ({
             render={
               <div
                 ref={resolvedRef}
+                aria-label={ariaLabel}
                 className={clsx(
                   styles.modal,
                   styles[size],

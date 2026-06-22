@@ -205,20 +205,20 @@ export class WorkspaceMigrationBuildOrchestratorService {
         workspaceMigrationViewSortActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
-        ALL_METADATA_NAME.rowLevelPermissionPredicateGroup,
-        workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
-      ),
-      createEntityActionsBuilderTask(
-        ALL_METADATA_NAME.rowLevelPermissionPredicate,
-        workspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
-      ),
-      createEntityActionsBuilderTask(
         ALL_METADATA_NAME.logicFunction,
         workspaceMigrationLogicFunctionActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.role,
         workspaceMigrationRoleActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.rowLevelPermissionPredicateGroup,
+        workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.rowLevelPermissionPredicate,
+        workspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.objectPermission,

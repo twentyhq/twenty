@@ -1,0 +1,105 @@
+---
+title: CLI
+description: أوامر yarn twenty لتنفيذ الدوال، وبثّ السجلات، وإدارة تثبيتات التطبيقات، والتبديل بين الريموتات.
+icon: الطرفية
+---
+
+إلى جانب `dev` و`dev:build` و`dev:add` و`dev:typecheck`، يوفّر `yarn twenty` CLI أوامر لتنفيذ الدوال، وعرض السجلات، وإدارة تثبيتات التطبيقات.
+
+## تنفيذ الدوال (`yarn twenty dev:function:exec`)
+
+تشغيل دالة منطقية يدويًا دون تشغيلها عبر HTTP أو cron أو حدث قاعدة بيانات:
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty dev:function:exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty dev:function:exec --postInstall
+```
+
+## عرض سجلات الدوال (`yarn twenty dev:function:logs`)
+
+بثّ سجلات التنفيذ لدوال تطبيقك المنطقية:
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty dev:function:logs
+
+# Filter by function name
+yarn twenty dev:function:logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+يختلف هذا عن `yarn twenty docker:logs`، الذي يعرض سجلات حاوية Docker. يعرض `yarn twenty dev:function:logs` سجلات تنفيذ دوال تطبيقك من خادم Twenty.
+</Note>
+
+## توليد العميل محدد الأنواع (`yarn twenty dev:generate-client`)
+
+أعد توليد عميل واجهة برمجة التطبيقات محدد الأنواع (`twenty-client-sdk`) من مخطط الجهة البعيدة النشطة، دون بناء تطبيق أو مزامنته. استخدمه للحصول على عميل محدد الأنواع في أي مشروع — مثل خدمة خلفية موجودة في مستودع منفصل — يتواصل مع مثيل Twenty الخاص بك:
+
+```bash filename="Terminal"
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
+```
+
+ثم استورد العميل في شيفرتك:
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+أعد تشغيل الأمر كلما تغيّر نموذج البيانات لديك لتحديث الأنواع المُولَّدة.
+
+<Note>
+يتم إنشاء العميل البرمجي داخل `node_modules`، لذا لا يُدرج مع شيفرتك في الالتزامات (commits). شغّل `yarn twenty dev:generate-client` بعد كل عملية تثبيت (على سبيل المثال في سكربت `postinstall` أو في CI).
+</Note>
+
+## إلغاء تثبيت تطبيق (`yarn twenty app:uninstall`)
+
+أزل تطبيقك من مساحة العمل النشطة:
+
+```bash filename="Terminal"
+yarn twenty app:uninstall
+
+# Skip the confirmation prompt
+yarn twenty app:uninstall --yes
+```
+
+## إدارة الريموتات
+
+**الريموت** هو خادم Twenty يتصل به تطبيقك. أثناء الإعداد، تُنشئ أداة إنشاء الهيكل واحدًا لك تلقائيًا. يمكنك إضافة ريموتات أخرى أو التبديل بينها في أي وقت.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote:add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote:add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote:list
+
+# Set the active remote
+yarn twenty remote:use <name>
+```
+
+تُخزَّن بيانات اعتمادك في `~/.twenty/config.json`.

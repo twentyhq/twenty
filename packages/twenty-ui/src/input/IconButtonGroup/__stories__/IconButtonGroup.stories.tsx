@@ -13,9 +13,9 @@ const meta: Meta<typeof IconButtonGroup> = {
   component: IconButtonGroup,
   args: {
     iconButtons: [
-      { Icon: IconNotes },
-      { Icon: IconCheckbox },
-      { Icon: IconTimelineEvent },
+      { Icon: IconNotes, ariaLabel: 'Notes' },
+      { Icon: IconCheckbox, ariaLabel: 'Tasks' },
+      { Icon: IconTimelineEvent, ariaLabel: 'Timeline' },
     ],
   },
   argTypes: {
@@ -27,8 +27,6 @@ export default meta;
 type Story = StoryObj<typeof IconButtonGroup>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
   args: {
     disabled: false,
   },
@@ -40,8 +38,6 @@ export const Catalog: CatalogStory<Story, typeof IconButtonGroup> = {
     disabled: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
     catalog: {
       dimensions: [
         {

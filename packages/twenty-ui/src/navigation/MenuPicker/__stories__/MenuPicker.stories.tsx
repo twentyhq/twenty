@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconChartPie } from '@ui/icon';
 import { TooltipDelay } from '@ui/surfaces';
 import { MenuPicker } from '@ui/navigation/MenuPicker/MenuPicker';
-import { ComponentDecorator } from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { type ReactNode } from 'react';
 
 import styles from './MenuPicker.stories.module.scss';
@@ -32,8 +32,7 @@ export default meta;
 type Story = StoryObj<typeof MenuPicker>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
 };
 
 export const Selected: Story = {
@@ -59,8 +58,7 @@ const SectionTitle = ({ children }: { children?: ReactNode }) => {
 };
 
 export const AllStates: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   render: () => (
     <div
       style={{

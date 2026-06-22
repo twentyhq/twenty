@@ -6,14 +6,12 @@ import { format, getYear } from 'date-fns';
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
-import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromCompanyId';
-import { getTimelineCalendarEventsFromOpportunityId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromOpportunityId';
-import { getTimelineCalendarEventsFromPersonId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromPersonId';
+import { getTimelineCalendarEventsFromObjectRecord } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromObjectRecord';
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { H3Title } from 'twenty-ui/typography';
 import {
@@ -52,33 +50,25 @@ export const CalendarEventsCard = () => {
   const targetRecord = useTargetRecord();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  const [query, queryName] =
-    targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Person
-      ? [
-          getTimelineCalendarEventsFromPersonId,
-          'getTimelineCalendarEventsFromPersonId',
-        ]
-      : targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Company
-        ? [
-            getTimelineCalendarEventsFromCompanyId,
-            'getTimelineCalendarEventsFromCompanyId',
-          ]
-        : [
-            getTimelineCalendarEventsFromOpportunityId,
-            'getTimelineCalendarEventsFromOpportunityId',
-          ];
-
-  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
+  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords, refetch } =
     useCustomResolver<TimelineCalendarEventsWithTotal>(
-      query,
-      queryName,
+      getTimelineCalendarEventsFromObjectRecord,
+      'getTimelineCalendarEventsFromObjectRecord',
       'timelineCalendarEvents',
       targetRecord,
       TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     );
 
+  useSubscribeTimelineToParticipantChanges({
+    queryId: `calendar-${targetRecord.id}`,
+    participantObjectNameSingular: 'calendarEventParticipant',
+    relatedPersonIds:
+      data?.getTimelineCalendarEventsFromObjectRecord?.relatedPersonIds ?? [],
+    refetch,
+  });
+
   const { timelineCalendarEvents, totalNumberOfCalendarEvents } =
-    data?.[queryName] ?? {};
+    data?.getTimelineCalendarEventsFromObjectRecord ?? {};
 
   const {
     calendarEventsByDayTime,

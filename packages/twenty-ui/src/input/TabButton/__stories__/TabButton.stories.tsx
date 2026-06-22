@@ -10,11 +10,11 @@ import {
 } from '@ui/icon';
 import { TabButton } from '@ui/input/TabButton/TabButton';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   AVATAR_URL_MOCK,
   CatalogDecorator,
   type CatalogStory,
   ComponentWithRouterDecorator,
-  JotaiRootDecorator,
 } from '@ui/testing';
 import { type ReactNode } from 'react';
 
@@ -27,7 +27,7 @@ const TabContainer = ({ children }: { children?: ReactNode }) => {
 const meta: Meta<typeof TabButton> = {
   title: 'UI/Input/Button/TabButton',
   component: TabButton,
-  decorators: [ComponentWithRouterDecorator, JotaiRootDecorator],
+  decorators: [ComponentWithRouterDecorator],
   args: {
     id: 'tab-button',
     title: 'Tab Title',
@@ -181,8 +181,7 @@ export const Catalog: CatalogStory<Story, typeof TabButton> = {
     </TabContainer>
   ),
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.active'] },
     catalog: {
       dimensions: [

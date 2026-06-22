@@ -73,6 +73,8 @@ import { AddLogicFunctionExecutionModeFastInstanceCommand } from 'src/database/c
 import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1798400000000-encrypt-non-secret-application-variable';
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 import { AddHasPaymentMethodToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1781280240009-add-has-payment-method-to-billing-customer';
+import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action';
+import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781900000000-add-view-kanban-column-width';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -148,4 +150,6 @@ export const INSTANCE_COMMANDS = [
   SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand,
   AddIsSystemSideEffectFastInstanceCommand,
   BackfillConnectionSecuritySlowInstanceCommand,
+  AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand,
+  AddViewKanbanColumnWidthFastInstanceCommand,
 ];

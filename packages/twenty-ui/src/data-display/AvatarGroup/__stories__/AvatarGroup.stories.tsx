@@ -4,10 +4,10 @@ import { Avatar, type AvatarProps } from '@ui/data-display/Avatar/Avatar';
 import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   AVATAR_URL_MOCK,
   CatalogDecorator,
   ComponentDecorator,
-  JotaiRootDecorator,
 } from '@ui/testing';
 
 import {
@@ -42,13 +42,12 @@ export default meta;
 type Story = StoryObj<typeof AvatarGroup>;
 
 export const Default: Story = {
-  decorators: [ComponentDecorator, JotaiRootDecorator],
+  decorators: [ComponentDecorator],
 };
 
 export const Catalog: Story = {
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {
@@ -69,5 +68,5 @@ export const Catalog: Story = {
       ],
     },
   },
-  decorators: [CatalogDecorator, JotaiRootDecorator],
+  decorators: [CatalogDecorator],
 };

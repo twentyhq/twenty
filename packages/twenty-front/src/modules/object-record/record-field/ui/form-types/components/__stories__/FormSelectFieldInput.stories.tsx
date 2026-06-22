@@ -1,6 +1,6 @@
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 
@@ -46,9 +46,83 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const selectedOption = await canvas.findByText('Work Policy');
+    const label = await canvas.findByText('Work Policy');
+    expect(label).toBeVisible();
 
-    expect(selectedOption).toBeVisible();
+    const selectControl = await canvas.findByText('Work Policy 1');
+    expect(selectControl).toBeVisible();
+  },
+};
+
+export const Nullable: Story = {
+  args: {
+    label: 'Work Policy',
+    defaultValue: 'WORK_POLICY_1',
+    options: [
+      {
+        label: 'Work Policy 1',
+        value: 'WORK_POLICY_1',
+        color: 'blue',
+      },
+      {
+        label: 'Work Policy 2',
+        value: 'WORK_POLICY_2',
+        color: 'green',
+      },
+    ],
+    onChange: fn(),
+    isNullable: true,
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const selectControl = await canvas.findByText('Work Policy 1');
+    await userEvent.click(selectControl);
+
+    const dropdown = within(canvasElement.ownerDocument.body);
+
+    await waitFor(() => {
+      expect(dropdown.getByText('No Work Policy')).toBeVisible();
+    });
+
+    await userEvent.click(dropdown.getByText('No Work Policy'));
+
+    expect(args.onChange).toHaveBeenCalledWith(null);
+  },
+};
+
+export const NonNullable: Story = {
+  args: {
+    label: 'Work Policy',
+    defaultValue: 'WORK_POLICY_1',
+    options: [
+      {
+        label: 'Work Policy 1',
+        value: 'WORK_POLICY_1',
+        color: 'blue',
+      },
+      {
+        label: 'Work Policy 2',
+        value: 'WORK_POLICY_2',
+        color: 'green',
+      },
+    ],
+    onChange: fn(),
+    isNullable: false,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const selectControl = await canvas.findByText('Work Policy 1');
+    await userEvent.click(selectControl);
+
+    const dropdown = within(canvasElement.ownerDocument.body);
+
+    await waitFor(() => {
+      expect(dropdown.getByText('Work Policy 2')).toBeVisible();
+    });
+
+    expect(dropdown.queryByText('No Work Policy')).not.toBeInTheDocument();
   },
 };
 

@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
+import { A11Y_DEFER_COLOR_CONTRAST } from '@ui/testing/a11yParameters';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
 
 import { H2Title } from '@ui/typography/H2Title/H2Title';
@@ -27,8 +28,7 @@ export const Default: Story = {
 };
 
 export const WithDescription: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args,
   decorators: [ComponentDecorator],
 };

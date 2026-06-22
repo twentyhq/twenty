@@ -17,7 +17,17 @@ export { WORKFLOW_TRIGGER_METADATA_LABEL } from './constants/WorkflowTriggerMeta
 export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY } from './constants/WorkflowTriggerMetadataWorkspaceMemberIdKey';
 export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_LABEL } from './constants/WorkflowTriggerMetadataWorkspaceMemberIdLabel';
 export { WORKFLOW_TRIGGER_PAYLOAD_KEY } from './constants/WorkflowTriggerPayloadKey';
-export { WORKFLOW_TRIGGER_PAYLOAD_LABEL } from './constants/WorkflowTriggerPayloadLabel';
+export { WORKFLOW_TRIGGER_RECORD_LABEL } from './constants/WorkflowTriggerRecordLabel';
+export { WORKFLOW_TRIGGER_RECORDS_LABEL } from './constants/WorkflowTriggerRecordsLabel';
+export { WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS } from './layout/constants/WorkflowDiagramDefaultNodeDimensions';
+export { WORKFLOW_LAYOUT_DEFAULT_OPTIONS } from './layout/constants/WorkflowLayoutDefaultOptions';
+export type {
+  WorkflowLayoutNode,
+  WorkflowLayoutEdge,
+  WorkflowLayoutPosition,
+  WorkflowLayoutOptions,
+} from './layout/utils/compute-workflow-layout.util';
+export { computeWorkflowLayout } from './layout/utils/compute-workflow-layout.util';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
@@ -54,6 +64,11 @@ export { workflowLogicFunctionActionSchema } from './schemas/logic-function-acti
 export { workflowLogicFunctionActionSettingsSchema } from './schemas/logic-function-action-settings-schema';
 export { workflowManualTriggerSchema } from './schemas/manual-trigger-schema';
 export { objectRecordSchema } from './schemas/object-record-schema';
+export { workflowPickRecordActionSchema } from './schemas/pick-record-action-schema';
+export {
+  workflowPickRecordStrategySchema,
+  workflowPickRecordActionSettingsSchema,
+} from './schemas/pick-record-action-settings-schema';
 export { workflowSendEmailActionSchema } from './schemas/send-email-action-schema';
 export type { WorkflowEmailFiles } from './schemas/send-email-action-settings-schema';
 export {
@@ -85,6 +100,7 @@ export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
 export type { EmailRecipients } from './types/EmailRecipients';
 export type { FunctionInput } from './types/FunctionInput';
 export type {
+  RecordSchemaType,
   InputSchemaPropertyType,
   InputSchemaProperty,
   InputSchema,

@@ -96,6 +96,12 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
             objectUniversalIdentifier: personObject.universalIdentifier,
             icon: 'IconTable',
           },
+          {
+            universalIdentifier: 'v-2',
+            name: 'Record table widget',
+            type: 'TABLE_WIDGET',
+            objectUniversalIdentifier: personObject.universalIdentifier,
+          },
         ],
       } as unknown as Manifest;
 
@@ -109,6 +115,11 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
       expect(row.icon).toBe('IconTable');
       expect(row.secondary).toContain('Table');
       expect(row.secondary).toContain(personObject.labelSingular);
+
+      expect(result.current.viewRows[1].secondary).toContain('Table widget');
+      expect(result.current.viewRows[1].secondary).not.toContain(
+        'Table_widget',
+      );
     });
   });
 

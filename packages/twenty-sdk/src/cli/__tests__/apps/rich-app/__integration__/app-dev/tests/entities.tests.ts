@@ -27,6 +27,8 @@ export const defineEntitiesTests = (appPath: string): void => {
         'src/components/test.front-component.mjs',
         'src/components/test.front-component.mjs.map',
         'src/logic-functions',
+        'src/logic-functions/enrich-post-cards.function.mjs',
+        'src/logic-functions/enrich-post-cards.function.mjs.map',
         'src/logic-functions/greeting.function.mjs',
         'src/logic-functions/greeting.function.mjs.map',
         'src/logic-functions/lookup-recipient.function.mjs',

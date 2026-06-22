@@ -692,6 +692,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       calendarLayout: null,
       isCompact: false,
       shouldHideEmptyGroups: false,
+      kanbanColumnWidth: null,
       kanbanAggregateOperation: null,
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,

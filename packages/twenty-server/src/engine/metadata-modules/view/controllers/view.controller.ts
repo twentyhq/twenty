@@ -217,12 +217,12 @@ export class ViewController {
               labelSingular: objectMetadata.labelSingular,
               description: objectMetadata.description ?? undefined,
               icon: objectMetadata.icon ?? undefined,
-              isCustom: !belongsToTwentyStandardApp(objectMetadata),
               standardOverrides: objectMetadata.standardOverrides ?? undefined,
             },
             'labelPlural',
             locale,
             i18n,
+            belongsToTwentyStandardApp(objectMetadata),
           );
 
           processedName = this.viewService.processViewNameWithTemplate(

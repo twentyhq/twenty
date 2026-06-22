@@ -9,6 +9,7 @@ import styles from './InsideButton.module.scss';
 export type InsideButtonProps = {
   className?: string;
   Icon?: IconComponent;
+  ariaLabel?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
 };
@@ -16,6 +17,7 @@ export type InsideButtonProps = {
 export const InsideButton = ({
   className,
   Icon,
+  ariaLabel,
   onClick,
   disabled = false,
 }: InsideButtonProps) => {
@@ -24,11 +26,12 @@ export const InsideButton = ({
   return (
     <button
       className={clsx(styles.button, className)}
+      aria-label={ariaLabel}
       onClick={onClick}
       disabled={disabled}
       data-disabled={disabled || undefined}
     >
-      {Icon && <Icon size={theme.icon.size.sm} />}
+      {Icon && <Icon size={theme.icon.size.sm} aria-hidden={!!ariaLabel} />}
     </button>
   );
 };

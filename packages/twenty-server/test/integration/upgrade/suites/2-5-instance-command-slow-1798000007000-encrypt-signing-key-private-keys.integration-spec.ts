@@ -115,9 +115,9 @@ describe('2-5 slow instance command 1798000007000 - EncryptSigningKeyPrivateKeys
     expect(
       row.privateKey.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX),
     ).toBe(true);
-    expect(secretEncryptionService.decryptVersioned(row.privateKey)).toBe(
-      plaintextPem,
-    );
+    expect(
+      secretEncryptionService.decryptVersionedOrThrow(row.privateKey),
+    ).toBe(plaintextPem);
   });
 
   it('leaves NULL private keys untouched (revoked / rotated keys)', async () => {

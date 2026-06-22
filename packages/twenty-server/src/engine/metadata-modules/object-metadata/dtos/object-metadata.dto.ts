@@ -62,12 +62,6 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   color?: string;
 
-  @Field({
-    deprecationReason:
-      'isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application.',
-  })
-  isCustom: boolean;
-
   @FilterableField()
   isRemote: boolean;
 

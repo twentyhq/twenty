@@ -15,7 +15,8 @@ import {
   buildManualTriggerMetadataNode,
   WORKFLOW_TRIGGER_METADATA_KEY,
   WORKFLOW_TRIGGER_PAYLOAD_KEY,
-  WORKFLOW_TRIGGER_PAYLOAD_LABEL,
+  WORKFLOW_TRIGGER_RECORD_LABEL,
+  WORKFLOW_TRIGGER_RECORDS_LABEL,
 } from 'twenty-shared/workflow';
 import { DatabaseEventAction } from '~/generated-metadata/graphql';
 
@@ -130,7 +131,7 @@ export const computeStepOutputSchema = ({
             [WORKFLOW_TRIGGER_PAYLOAD_KEY]: {
               isLeaf: false,
               icon: objectMetadataItem.icon ?? undefined,
-              label: WORKFLOW_TRIGGER_PAYLOAD_LABEL,
+              label: WORKFLOW_TRIGGER_RECORD_LABEL,
               value: generateRecordOutputSchema(objectMetadataItem),
             },
             [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
@@ -142,7 +143,7 @@ export const computeStepOutputSchema = ({
           [WORKFLOW_TRIGGER_PAYLOAD_KEY]: {
             isLeaf: false,
             type: 'object',
-            label: WORKFLOW_TRIGGER_PAYLOAD_LABEL,
+            label: WORKFLOW_TRIGGER_RECORDS_LABEL,
             value: {
               [objectMetadataItem.namePlural]: {
                 isLeaf: true,
@@ -166,7 +167,8 @@ export const computeStepOutputSchema = ({
     case 'CREATE_RECORD':
     case 'UPDATE_RECORD':
     case 'DELETE_RECORD':
-    case 'UPSERT_RECORD': {
+    case 'UPSERT_RECORD':
+    case 'PICK_RECORD': {
       const objectName = step.settings?.input?.objectName;
 
       if (!isDefined(objectName)) {

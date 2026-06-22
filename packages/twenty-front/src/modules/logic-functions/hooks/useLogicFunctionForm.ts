@@ -41,8 +41,6 @@ export const useLogicFunctionForm = ({
         setFormValues((prevState: LogicFunctionFormValues) => ({
           ...prevState,
           sourceHandlerCode: value as string,
-          // Re-infer schemas for any active surface so they stay in sync
-          // with the source code.
           toolTriggerSettings: prevState.toolTriggerSettings
             ? {
                 ...prevState.toolTriggerSettings,

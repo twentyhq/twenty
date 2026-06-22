@@ -1,43 +1,23 @@
+export { AppleRainbowMark } from './AppleRainbowMark';
+export { ArrowLeft, type ArrowLeftProps } from './ArrowLeft';
+export { ArrowRight, type ArrowRightProps } from './ArrowRight';
+export { ArrowUpRight, type ArrowUpRightProps } from './ArrowUpRight';
+export { CheckMark, type CheckMarkProps } from './CheckMark';
+export { ChevronDown, type ChevronDownProps } from './ChevronDown';
+export { ClaudeMark } from './ClaudeMark';
+export { DiscordMark, type DiscordMarkProps } from './DiscordMark';
+export { FastPathIcon, type FastPathIconProps } from './FastPath';
+export { MarkerCursor, type MarkerCursorProps } from './MarkerCursor';
+export { PeopleGroupMark } from './PeopleGroupMark';
+export { GitHubMark, type GitHubMarkProps } from './GithubMark';
 export {
-  ActEducationIcon,
-  AlternativePartnersIcon,
-  CLIENT_ICONS,
-  ElevateConsultingIcon,
-  NetZeroIcon,
-  NineDotsIcon,
-  W3villaIcon,
-  type ClientIconKey,
-  type ClientIconProps,
-} from './clients';
-export { ArrowLeftIcon } from './functional/ArrowLeft';
-export { ArrowRightIcon } from './functional/ArrowRight';
-export { ArrowRightUpIcon } from './functional/ArrowRightUp';
-export { CloseIcon } from './functional/Close';
-export { FastPathIcon } from './functional/FastPath';
-export { LiveDataIcon } from './functional/LiveData';
-export { MenuIcon } from './functional/Menu';
-export { MinusIcon } from './functional/Minus';
-export { PlusIcon } from './functional/Plus';
-export { RatingStarIcon } from './functional/RatingStar';
-export { RectangleFillIcon } from './functional/RectangleFill';
-export { RectangleOutlineIcon } from './functional/RectangleOutline';
-export {
-  CheckIcon,
-  EditIcon,
-  EyeIcon,
-  INFORMATIVE_ICONS,
-  SearchIcon,
-  UsersIcon,
-  type InformativeIconKey,
-  type InformativeIconProps,
-} from './informative';
-export { Logo } from './logo/Logo';
-export {
-  DiscordIcon,
-  GitHubIcon,
-  LinkedInIcon,
-  SOCIAL_ICONS,
-  XIcon,
-  type SocialIconKey,
-  type SocialIconProps,
-} from './social';
+  INFORMATIVE_MARKS,
+  type InformativeMarkProps,
+} from './InformativeMarks';
+export { LiveDataIcon, type LiveDataIconProps } from './LiveData';
+export { MinusMark, type MinusMarkProps } from './MinusMark';
+export { PlusMark, type PlusMarkProps } from './PlusMark';
+export { RatingStar, type RatingStarProps } from './RatingStar';
+export { Search, type SearchProps } from './Search';
+export { TwentyLogo, type TwentyLogoProps } from './TwentyLogo';
+export { type IconComponent } from './icon-component';

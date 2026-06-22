@@ -1,5 +1,6 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
+import { type UnwrapWasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
@@ -29,9 +30,13 @@ type MetadataEntityPropertyConfiguration<
     toStringify: K extends ExtractJsonbProperties<MetadataEntity<TMetadataName>>
       ? true
       : K extends keyof MetadataEntity<TMetadataName>
-        ? NonNullable<MetadataEntity<TMetadataName>[K]> extends Date
+        ? NonNullable<
+            UnwrapWasRemovedInUpgrade<MetadataEntity<TMetadataName>[K]>
+          > extends Date
           ? false
-          : HasObjectInUnion<MetadataEntity<TMetadataName>[K]>
+          : HasObjectInUnion<
+              UnwrapWasRemovedInUpgrade<MetadataEntity<TMetadataName>[K]>
+            >
         : boolean;
     toCompare: boolean;
     isOverridable?: boolean;
@@ -366,6 +371,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     shouldHideEmptyGroups: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    kanbanColumnWidth: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
