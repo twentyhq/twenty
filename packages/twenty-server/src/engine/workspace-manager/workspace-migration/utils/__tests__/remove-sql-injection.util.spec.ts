@@ -130,6 +130,24 @@ describe('assertSafeTsVectorExpression', () => {
       ),
     ).toThrow('Unsafe tsvector expression detected');
   });
+
+  it('should reject dollar-quoting used to smuggle a breakout parenthesis', () => {
+    // PostgreSQL treats the quotes inside $$...$$ as literal text, so a single-quote-only scanner
+    // would skip the real ) between the two dollar-quoted segments and miscount it as balanced.
+    expect(() =>
+      assertSafeTsVectorExpression(
+        `to_tsvector('simple', $$'$$ ) STORED, ADD COLUMN "evil" text $$'$$`,
+      ),
+    ).toThrow('Unsafe tsvector expression detected');
+  });
+
+  it('should reject a double-quoted-identifier desync that hides a breakout parenthesis', () => {
+    // PostgreSQL reads "'" as identifiers (named '), so the middle ) is real code that breaks out.
+    // A single-quote-only scanner instead treats that ) as inside a string literal and accepts it.
+    expect(() => assertSafeTsVectorExpression(`"'")"'"`)).toThrow(
+      'Unsafe tsvector expression detected',
+    );
+  });
 });
 
 describe('isSafeTsVectorExpression', () => {
@@ -150,10 +168,18 @@ describe('isSafeTsVectorExpression', () => {
     expect(isSafeTsVectorExpression(`COALESCE("x", ')')`)).toBe(true);
   });
 
+  it('should accept parentheses that appear inside a double-quoted identifier', () => {
+    expect(isSafeTsVectorExpression(`COALESCE("weird)name", '')`)).toBe(true);
+  });
+
   it('should reject expressions with a forbidden token', () => {
     expect(isSafeTsVectorExpression(`to_tsvector('simple', '') ; DROP`)).toBe(
       false,
     );
+  });
+
+  it('should reject any expression containing a dollar sign', () => {
+    expect(isSafeTsVectorExpression(`to_tsvector('simple', $$x$$)`)).toBe(false);
   });
 
   it('should reject expressions with unbalanced parentheses', () => {

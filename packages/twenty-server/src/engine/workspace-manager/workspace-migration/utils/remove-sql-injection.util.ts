@@ -16,28 +16,48 @@ export const escapeIdentifier = (identifier: string): string => {
   return '"' + identifier.replace(/"/g, '""') + '"';
 };
 
-const FORBIDDEN_TS_VECTOR_EXPRESSION_TOKENS = ['\0', ';', '--', '/*', '*/'];
+const FORBIDDEN_TS_VECTOR_EXPRESSION_TOKENS = [
+  '\0',
+  ';',
+  '--',
+  '/*',
+  '*/',
+  '$',
+];
 
 const hasBalancedParentheses = (expression: string): boolean => {
   let depth = 0;
-  let isInsideStringLiteral = false;
+  let context: 'code' | 'string' | 'identifier' = 'code';
 
   for (let index = 0; index < expression.length; index++) {
     const character = expression[index];
 
-    if (isInsideStringLiteral) {
+    if (context === 'string') {
       if (character === "'") {
         if (expression[index + 1] === "'") {
           index++;
         } else {
-          isInsideStringLiteral = false;
+          context = 'code';
+        }
+      }
+      continue;
+    }
+
+    if (context === 'identifier') {
+      if (character === '"') {
+        if (expression[index + 1] === '"') {
+          index++;
+        } else {
+          context = 'code';
         }
       }
       continue;
     }
 
     if (character === "'") {
-      isInsideStringLiteral = true;
+      context = 'string';
+    } else if (character === '"') {
+      context = 'identifier';
     } else if (character === '(') {
       depth++;
     } else if (character === ')') {
@@ -49,13 +69,9 @@ const hasBalancedParentheses = (expression: string): boolean => {
     }
   }
 
-  return depth === 0 && !isInsideStringLiteral;
+  return depth === 0 && context === 'code';
 };
 
-// Returns true when a tsvector expression is safe to inline into generated-column DDL.
-// Intentionally exposes a boolean only: the specific failure reason is never surfaced, so a
-// caller cannot use the error as an oracle to probe the filter. Callers use this for validation;
-// the DDL sink uses assertSafeTsVectorExpression below as a hard last-resort guard.
 export const isSafeTsVectorExpression = (expression: string): boolean => {
   const hasForbiddenToken = FORBIDDEN_TS_VECTOR_EXPRESSION_TOKENS.some(
     (token) => expression.includes(token),
