@@ -54407,6 +54407,8 @@ __metadata:
     storybook-addon-pseudo-states: "npm:^10.3.3"
     ts-jest: "npm:^29.1.1"
     tsx: "npm:^4.19.3"
+    type-fest: "npm:^4.10.1"
+    typescript: "npm:^5.9.3"
     vite-plugin-checker: "npm:^0.10.2"
     vite-plugin-dts: "npm:^4.5.4"
     vite-plugin-sass-dts: "npm:^1.3.31"
@@ -54416,6 +54418,8 @@ __metadata:
     zod: "npm:^4.1.11"
   peerDependencies:
     monaco-editor: ">= 0.25.0 < 1"
+    react: ^19.0.0
+    react-dom: ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -54592,7 +54596,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^4.18.2, type-fest@npm:^4.21.0, type-fest@npm:^4.26.1, type-fest@npm:^4.27.0, type-fest@npm:^4.31.0, type-fest@npm:^4.39.1, type-fest@npm:^4.41.0, type-fest@npm:^4.6.0":
+"type-fest@npm:^4.10.1, type-fest@npm:^4.18.2, type-fest@npm:^4.21.0, type-fest@npm:^4.26.1, type-fest@npm:^4.27.0, type-fest@npm:^4.31.0, type-fest@npm:^4.39.1, type-fest@npm:^4.41.0, type-fest@npm:^4.6.0":
   version: 4.41.0
   resolution: "type-fest@npm:4.41.0"
   checksum: 10c0/f5ca697797ed5e88d33ac8f1fec21921839871f808dc59345c9cf67345bfb958ce41bd821165dbf3ae591cedec2bf6fe8882098dfdd8dc54320b859711a2c1e4
