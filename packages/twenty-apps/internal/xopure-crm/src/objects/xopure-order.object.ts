@@ -16,6 +16,7 @@ export default defineObject({
   fields: [
     { universalIdentifier: XOPURE_ORDER_NUMBER_FIELD_ID, type: FieldType.TEXT, name: 'orderNumber', label: 'Order number', icon: 'IconHash' },
     { universalIdentifier: '2af7359a-9d2b-42f8-b9f4-37acf0c60583', type: FieldType.TEXT, name: 'supabaseOrderId', label: 'Supabase order ID', icon: 'IconDatabase', isUnique: true },
+    { universalIdentifier: 'd4db6a4b-1791-42ce-b283-d31eb120d9fa', type: FieldType.TEXT, name: 'orderShort', label: 'Order short (XO-XXXXXXXX)', icon: 'IconHash', isNullable: true, defaultValue: null },
     { universalIdentifier: '537fe0dd-910d-46fd-a0fe-9202a45f7855', type: FieldType.TEXT, name: 'commerceOrderId', label: 'Commerce order ID', icon: 'IconShoppingCart' },
     {
       universalIdentifier: XOPURE_ORDER_STATUS_FIELD_ID,

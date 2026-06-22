@@ -1,16 +1,18 @@
 # Agent Instructions
 
-This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.
+
+This project uses **multica** for issue tracking and project management.
 
 ## Quick Reference
 
 ```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work atomically
-bd close <id>         # Complete work
-bd dolt push          # Push beads data to remote
+multica issue create --workspace-id d11337e4 --title "..." --priority medium
+multica --profile desktop-api.multica.ai issue list --limit 10
+multica --profile desktop-api.multica.ai ready
 ```
+
+The x0-pure workspace is `d11337e4-0c4e-43b8-8fc8-8216c70f1427`.
+The Ticketing project is `fb2e3c0e-27e0-47ac-b86d-3d2e18832fd6`.
 
 ## Non-Interactive Shell Commands
 
@@ -31,34 +33,45 @@ cp -rf source dest          # NOT: cp -r source dest
 ```
 
 **Other commands that may prompt:**
+
+
 - `scp` - use `-o BatchMode=yes` for non-interactive
 - `ssh` - use `-o BatchMode=yes` to fail instead of prompting
 - `apt-get` - use `-y` flag
 - `brew` - use `HOMEBREW_NO_AUTO_UPDATE=1` env var
 
-<!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
-## Beads Issue Tracker
+## Deployment Pipeline — CANONICAL
 
-This project uses **bd (beads)** for issue tracking. Run `bd prime` to see full workflow context and commands.
-
-### Quick Reference
-
-```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work
-bd close <id>         # Complete work
+```
+local dev ──→ twenty pod stack ──→ (manual verify) ──→ michael_crm ──→ (manual gate) ──→ prod
+  (workstation)  (podman sandbox)                                     (Railway)                    (crm.xopure.com)
 ```
 
-### Rules
+**NEVER deploy to Railway without explicit human approval.** All deploys past the pod
+stack require a manual gate. Auto-deploy is OFF for every Railway service. `michael_crm`
+is the sole agent-accessible target, and only after pod-stack verification passes.
+Production (`Xopure_crm`, `crm-v2`) is NEVER touched by automated or agent-triggered
+deployment.
 
-- Use `bd` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
-- Run `bd prime` for detailed command reference and session close protocol
-- Use `bd remember` for persistent knowledge — do NOT use MEMORY.md files
+Full pipeline: see `skill://x0-pure-deployment`.
+
+
+
+
+
+
+
+
+## Session Completion
+Full pipeline: see `skill://x0-pure-deployment`.
+
+## Session Completion
+Full pipeline: see `skill://x0-pure-deployment`.
 
 ## Session Completion
 
-**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
+**When ending a work session**, you MUST complete ALL steps below.
+Work is NOT complete until `git push` succeeds.
 
 **MANDATORY WORKFLOW:**
 
@@ -66,19 +79,13 @@ bd close <id>         # Complete work
 2. **Run quality gates** (if code changed) - Tests, linters, builds
 3. **Update issue status** - Close finished work, update in-progress items
 4. **PUSH TO REMOTE** - This is MANDATORY:
-   ```bash
+```bash
    git pull --rebase
-   bd dolt push
    git push
    git status  # MUST show "up to date with origin"
-   ```
+```
 5. **Clean up** - Clear stashes, prune remote branches
 6. **Verify** - All changes committed AND pushed
 7. **Hand off** - Provide context for next session
 
 **CRITICAL RULES:**
-- Work is NOT complete until `git push` succeeds
-- NEVER stop before pushing - that leaves work stranded locally
-- NEVER say "ready to push when you are" - YOU must push
-- If push fails, resolve and retry until it succeeds
-<!-- END BEADS INTEGRATION -->

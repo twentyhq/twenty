@@ -1,6 +1,6 @@
 import sys
-from pypdf import PdfReader
 
+from pypdf import PdfReader
 
 # Script for Claude to run to determine whether a PDF has fillable form fields. See forms.md.
 

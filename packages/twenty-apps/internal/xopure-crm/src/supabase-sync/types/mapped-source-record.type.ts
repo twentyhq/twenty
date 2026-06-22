@@ -8,6 +8,14 @@ export type SupportedSourceTable =
   | 'order_items'
   | 'commission_ledger';
 
+export type PartnerEndpoint =
+  | 'partner_orders'
+  | 'partner_shipments'
+  | 'partner_ambassadors'
+  | 'partner_fulfillment_exceptions';
+
+export type SourceSystem = 'supabase' | 'xopure-partner';
+
 export type TargetObjectName =
   | 'person'
   | 'xopureAmbassador'
@@ -31,9 +39,9 @@ export type RelationReference = {
 };
 
 export type MappedSourceRecord = {
-  sourceSystem: 'supabase';
+  sourceSystem: SourceSystem;
   sourceSchema: string;
-  sourceTable: SupportedSourceTable;
+  sourceTable: string;
   sourceRecordId: string;
   syncKey: string;
   targetObject: TargetObjectName;
@@ -66,7 +74,7 @@ export type MappingSuccess = {
 export type MappingResult = MappingSuccess | MappingError;
 
 export type SourceIdentity = {
-  sourceSystem: 'supabase';
+  sourceSystem: SourceSystem;
   sourceSchema: string;
   sourceTable: string;
   sourceRecordId: string;

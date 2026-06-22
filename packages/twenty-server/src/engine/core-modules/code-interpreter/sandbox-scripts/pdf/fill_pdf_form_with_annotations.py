@@ -4,7 +4,6 @@ import sys
 from pypdf import PdfReader, PdfWriter
 from pypdf.annotations import FreeText
 
-
 # Fills a PDF by adding text annotations defined in `fields.json`. See forms.md.
 
 

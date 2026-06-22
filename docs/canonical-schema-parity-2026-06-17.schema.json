@@ -1,0 +1,997 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xopure.com/schemas/canonical-schema-parity-2026-06-17.schema.json",
+  "title": "XO Pure Canonical Schema \u2014 Supabase \u2194 Twenty Full Parity",
+  "description": "Machine-readable parity map between Supabase tables and Twenty custom objects. JSON Schema properties describe Twenty-side object shapes; x-* annotations preserve Supabase source columns, types, sync status, unmapped datapoints, and support gaps.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "ambassador": {
+      "$ref": "#/$defs/Ambassador"
+    },
+    "customer": {
+      "$ref": "#/$defs/Customer"
+    },
+    "xoOrder": {
+      "$ref": "#/$defs/XoOrder"
+    },
+    "product": {
+      "$ref": "#/$defs/Product"
+    },
+    "period": {
+      "$ref": "#/$defs/Period"
+    }
+  },
+  "x-generated-at": "2026-06-17",
+  "x-sources": {
+    "supabase": {
+      "projectRef": "rahyvpnjpkgukepefrur",
+      "publicTablesCount": 68,
+      "schemaDoc": "docs/supabase-schema-2026-06-17.md"
+    },
+    "twenty": {
+      "url": "https://crm.xopure.com",
+      "customObjectCount": 5,
+      "method": "GraphQL introspection"
+    },
+    "parityDoc": "docs/canonical-schema-parity-2026-06-17.md"
+  },
+  "$defs": {
+    "Ambassador": {
+      "type": "object",
+      "additionalProperties": false,
+      "x-supabase-source": "affiliates",
+      "x-not-in-twenty": [
+        "rank",
+        "career_rank",
+        "enterprise_level",
+        "kit_enrollment_count_30d",
+        "group_cv_30d",
+        "custom_slug",
+        "show_peptides_link",
+        "elite_qualification_source",
+        "elite_promo_window_ends_at",
+        "elite_last_maintained_period",
+        "monthly_pv_cv_cents",
+        "monthly_gv_cv_cents",
+        "personal_customer_count",
+        "can_enroll_wholesale",
+        "wholesale_slug",
+        "wholesale_volume_cents",
+        "rank_override_until",
+        "converted_to_ambassador_at",
+        "conversion_source",
+        "signup_session_id",
+        "reparent_locked",
+        "needs_sponsor_review",
+        "payout_details"
+      ],
+      "properties": {
+        "supabaseId": {
+          "type": "string",
+          "format": "uuid",
+          "x-twenty-type": "UUID",
+          "x-supabase-column": "id",
+          "x-supabase-type": "string (uuid)",
+          "x-sync-status": "synced"
+        },
+        "name": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": "name",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "ambassadorCode": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": "tracking_code",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "status": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": "status",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "enrolledAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-twenty-type": "DateTime",
+          "x-supabase-column": "created_at",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "eliteQualifiedAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-twenty-type": "DateTime",
+          "x-supabase-column": "elite_qualified_at",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "eliteMaintainedAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-twenty-type": "DateTime",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "eliteMaintained": {
+          "type": "boolean",
+          "x-twenty-type": "Boolean",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "eliteLapsedThisPeriod": {
+          "type": "boolean",
+          "x-twenty-type": "Boolean",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "currentTier": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": "participation_tier",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "qualifiedRank": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": "rank_override",
+          "x-supabase-type": "string",
+          "x-sync-status": "partial"
+        },
+        "paidAsRank": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": "paid_as_rank",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "activeCustomerCount": {
+          "type": "number",
+          "x-twenty-type": "Float",
+          "x-supabase-column": "active_customer_count",
+          "x-supabase-type": "integer",
+          "x-sync-status": "synced"
+        },
+        "personalOrderCV": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": "personal_volume_cents",
+          "x-supabase-type": "integer",
+          "x-sync-status": "type-conversion"
+        },
+        "personalEnrollments": {
+          "type": "number",
+          "x-twenty-type": "Float",
+          "x-supabase-column": "enrollment_count",
+          "x-supabase-type": "integer",
+          "x-sync-status": "synced"
+        },
+        "customerCV": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": "personal_customer_count*CV",
+          "x-supabase-type": null,
+          "x-sync-status": "computed"
+        },
+        "groupCV": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": "team_volume_cents",
+          "x-supabase-type": "integer",
+          "x-sync-status": "type-conversion"
+        },
+        "lifetimeEarnings": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "communicationPreferences": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "complianceHoldReason": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": "reason",
+          "x-supabase-type": "string",
+          "x-sync-status": "partial"
+        },
+        "onboardingStage": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "internalNotes": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty RichText composite value",
+          "x-twenty-type": "RichText",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "crmTags": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "path": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": "account_type",
+          "x-supabase-type": "string",
+          "x-sync-status": "partial"
+        },
+        "personId": {
+          "type": "string",
+          "x-twenty-type": "ID",
+          "x-supabase-column": "user_id",
+          "x-supabase-type": "string",
+          "x-sync-status": "relational"
+        },
+        "sponsorId": {
+          "type": "string",
+          "x-twenty-type": "ID",
+          "x-supabase-column": "parent_id",
+          "x-supabase-type": "string",
+          "x-sync-status": "relational"
+        },
+        "fullName": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true,
+          "x-twenty-type": "FullName",
+          "x-supabase-column": "(via user)",
+          "x-supabase-type": null,
+          "x-sync-status": "relational"
+        },
+        "emails": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Emails composite value",
+          "x-twenty-type": "Emails",
+          "x-supabase-column": "email",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "phones": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Phones composite value",
+          "x-twenty-type": "Phones",
+          "x-supabase-column": "phone",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        }
+      }
+    },
+    "Customer": {
+      "type": "object",
+      "additionalProperties": false,
+      "x-supabase-source": "profiles + auth.users",
+      "x-not-in-twenty": [
+        "customer_expertise.*",
+        "quiz_results.*",
+        "notification_preferences.*",
+        "product_waitlist.*",
+        "customer_referral_attributions.*"
+      ],
+      "properties": {
+        "supabaseId": {
+          "type": "string",
+          "format": "uuid",
+          "x-twenty-type": "UUID",
+          "x-supabase-column": "id (profiles)",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "name": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": "auth.users.raw_user_meta_data.name",
+          "x-supabase-type": "json",
+          "x-sync-status": "synced"
+        },
+        "customerCode": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "emails": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Emails composite value",
+          "x-twenty-type": "Emails",
+          "x-supabase-column": "email (auth.users)",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "phones": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Phones composite value",
+          "x-twenty-type": "Phones",
+          "x-supabase-column": "phone (profiles)",
+          "x-supabase-type": "string?",
+          "x-sync-status": "partial"
+        },
+        "lifetimeSpend": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "lifetimeCV": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "orderCount": {
+          "type": "number",
+          "x-twenty-type": "Float",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "lastOrderAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-twenty-type": "DateTime",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "enrolledAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-twenty-type": "DateTime",
+          "x-supabase-column": "created_at (profiles)",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "isActive": {
+          "type": "boolean",
+          "x-twenty-type": "Boolean",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "subscriptionStatus": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "acquisitionSource": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "shippingAddress": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Address composite value",
+          "x-twenty-type": "Address",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "communicationPreferences": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "customerNotes": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty RichText composite value",
+          "x-twenty-type": "RichText",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "crmTags": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "personId": {
+          "type": "string",
+          "x-twenty-type": "ID",
+          "x-supabase-column": "user_id (profiles)",
+          "x-supabase-type": "string",
+          "x-sync-status": "relational"
+        },
+        "referrerId": {
+          "type": "string",
+          "x-twenty-type": "ID",
+          "x-supabase-column": "affiliate_id (referral attrib.)",
+          "x-supabase-type": "string",
+          "x-sync-status": "relational"
+        }
+      }
+    },
+    "XoOrder": {
+      "type": "object",
+      "additionalProperties": false,
+      "x-supabase-source": "orders",
+      "x-not-in-twenty": [
+        "tracking fields",
+        "tax fields",
+        "warehouse fields",
+        "QBO fields",
+        "Zamp fields",
+        "ShipHero fields",
+        "pre-order fields",
+        "payment processing fields"
+      ],
+      "properties": {
+        "supabaseId": {
+          "type": "string",
+          "format": "uuid",
+          "x-twenty-type": "UUID",
+          "x-supabase-column": "id",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "name": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "generated"
+        },
+        "orderCode": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": "commerce_order_id?",
+          "x-supabase-type": "string",
+          "x-sync-status": "partial"
+        },
+        "orderedAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-twenty-type": "DateTime",
+          "x-supabase-column": "created_at",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "settledAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-twenty-type": "DateTime",
+          "x-supabase-column": "paid_at",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "status": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": "fulfillment_status",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "totalRetail": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": "total_cents",
+          "x-supabase-type": "integer",
+          "x-sync-status": "type-conversion"
+        },
+        "totalCV": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": "cv_amount",
+          "x-supabase-type": "integer",
+          "x-sync-status": "type-conversion"
+        },
+        "quantity": {
+          "type": "number",
+          "x-twenty-type": "Float",
+          "x-supabase-column": "items count",
+          "x-supabase-type": "jsonb",
+          "x-sync-status": "computed"
+        },
+        "unitPrice": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": "subtotal_cents/quantity",
+          "x-supabase-type": "integer",
+          "x-sync-status": "computed"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": "payment_method_code",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "paypalCaptureId": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "stripePaymentIntentId": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": "stripe_setup_intent_id",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "isPersonalOrder": {
+          "type": "boolean",
+          "x-twenty-type": "Boolean",
+          "x-supabase-column": "is_self_order",
+          "x-supabase-type": "boolean",
+          "x-sync-status": "synced"
+        },
+        "fraudFlagged": {
+          "type": "boolean",
+          "x-twenty-type": "Boolean",
+          "x-supabase-column": "manual_review_required",
+          "x-supabase-type": "boolean",
+          "x-sync-status": "synced"
+        },
+        "fraudScore": {
+          "type": "number",
+          "x-twenty-type": "Float",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "discountCode": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": "discount_codes",
+          "x-supabase-type": null,
+          "x-sync-status": "relational"
+        },
+        "customerId": {
+          "type": "string",
+          "x-twenty-type": "ID",
+          "x-supabase-column": "customer_id",
+          "x-supabase-type": "string",
+          "x-sync-status": "relational"
+        },
+        "productId": {
+          "type": "string",
+          "x-twenty-type": "ID",
+          "x-supabase-column": "order_items",
+          "x-supabase-type": null,
+          "x-sync-status": "relational"
+        },
+        "periodId": {
+          "type": "string",
+          "x-twenty-type": "ID",
+          "x-supabase-column": "commission_periods",
+          "x-supabase-type": null,
+          "x-sync-status": "relational"
+        },
+        "referringAmbassadorId": {
+          "type": "string",
+          "x-twenty-type": "ID",
+          "x-supabase-column": "credited_ambassador_id",
+          "x-supabase-type": "string",
+          "x-sync-status": "relational"
+        }
+      }
+    },
+    "Product": {
+      "type": "object",
+      "additionalProperties": false,
+      "x-supabase-source": "products",
+      "x-not-in-twenty": [
+        "bundle_components",
+        "tax_code",
+        "tax_category_label",
+        "tax_code_verified",
+        "tax_code_notes",
+        "image_url",
+        "pv_amount_cents"
+      ],
+      "properties": {
+        "supabaseId": {
+          "type": "string",
+          "format": "uuid",
+          "x-twenty-type": "UUID",
+          "x-supabase-column": "id",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "name": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": "name",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "sku": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": "sku",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "category": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": "category",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "format": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "retailPrice": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": "price_cents",
+          "x-supabase-type": "integer",
+          "x-sync-status": "type-conversion"
+        },
+        "cvAmount": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": "cv_amount_cents",
+          "x-supabase-type": "integer",
+          "x-sync-status": "type-conversion"
+        },
+        "stripePriceId": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "isActive": {
+          "type": "boolean",
+          "x-twenty-type": "Boolean",
+          "x-supabase-column": "active",
+          "x-supabase-type": "boolean",
+          "x-sync-status": "synced"
+        },
+        "commissionEligible": {
+          "type": "boolean",
+          "x-twenty-type": "Boolean",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "safeDescription": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty RichText composite value",
+          "x-twenty-type": "RichText",
+          "x-supabase-column": "description",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "restrictedClaims": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "marketingNotes": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty RichText composite value",
+          "x-twenty-type": "RichText",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "crmTags": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": "metadata",
+          "x-supabase-type": "jsonb",
+          "x-sync-status": "partial"
+        }
+      }
+    },
+    "Period": {
+      "type": "object",
+      "additionalProperties": false,
+      "x-supabase-source": "commission_periods",
+      "x-not-in-twenty": [
+        "total_generation_cv_cents",
+        "generation_scale_factor",
+        "config_version_id"
+      ],
+      "properties": {
+        "supabaseId": {
+          "type": "string",
+          "format": "uuid",
+          "x-twenty-type": "UUID",
+          "x-supabase-column": "id",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "name": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "generated"
+        },
+        "periodCode": {
+          "type": "string",
+          "x-twenty-type": "String",
+          "x-supabase-column": "period_id",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "status": {
+          "type": "string",
+          "x-twenty-type": "Enum",
+          "x-supabase-column": "status",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date",
+          "x-twenty-type": "Date",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date",
+          "x-twenty-type": "Date",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "frozenAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-twenty-type": "DateTime",
+          "x-supabase-column": "completed_at",
+          "x-supabase-type": "string",
+          "x-sync-status": "synced"
+        },
+        "totalRetail": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "totalCV": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": "total_eligible_cv_cents",
+          "x-supabase-type": "integer",
+          "x-sync-status": "type-conversion"
+        },
+        "totalPayouts": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty Currency composite value",
+          "x-twenty-type": "Currency",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "payoutPercentOfRetail": {
+          "type": "number",
+          "x-twenty-type": "Float",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        },
+        "internalNotes": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Twenty RichText composite value",
+          "x-twenty-type": "RichText",
+          "x-supabase-column": null,
+          "x-supabase-type": null,
+          "x-sync-status": "twenty-only"
+        }
+      }
+    }
+  },
+  "x-standard-twenty-objects": {
+    "Person": {
+      "supabaseSource": "auth.users + profiles",
+      "syncStatus": "Name, email, phones synced; enrichment tags partial"
+    },
+    "Company": {
+      "supabaseSource": null,
+      "syncStatus": "Twenty-only manual CRM data"
+    },
+    "Opportunity": {
+      "supabaseSource": null,
+      "syncStatus": "Twenty-only manual CRM data"
+    },
+    "Note": {
+      "supabaseSource": null,
+      "syncStatus": "Twenty native"
+    },
+    "Task": {
+      "supabaseSource": null,
+      "syncStatus": "Twenty native"
+    },
+    "TimelineActivity": {
+      "supabaseSource": "crm.twenty_activity_log migration",
+      "syncStatus": "Bi-directional sync paper trail"
+    },
+    "Attachment": {
+      "supabaseSource": null,
+      "syncStatus": "Twenty native"
+    },
+    "Blocklist": {
+      "supabaseSource": null,
+      "syncStatus": "Twenty-only"
+    }
+  },
+  "x-support-relevant-unmapped-tables": {
+    "commission_ledger": [
+      "affiliate_id",
+      "order_id",
+      "amount_cents",
+      "status",
+      "explanation",
+      "hold_until",
+      "calculation_trace_json"
+    ],
+    "fraud_reviews": [
+      "order_id",
+      "affiliate_id",
+      "review_type",
+      "evidence",
+      "status",
+      "notes",
+      "reviewed_by",
+      "reviewed_at"
+    ],
+    "customer_expertise": [
+      "customer_id",
+      "expertise_data",
+      "drip_state",
+      "total_interactions"
+    ],
+    "payment_events": [
+      "order_id",
+      "gateway",
+      "event_type",
+      "payload"
+    ],
+    "affiliate_click_events": [
+      "affiliate_id",
+      "tracking_code",
+      "page_url",
+      "is_suspicious"
+    ],
+    "payment_refunds": [
+      "order_id",
+      "amount_cents",
+      "reason",
+      "status"
+    ],
+    "server_carts": [
+      "customer_id",
+      "items",
+      "affiliate_code",
+      "status"
+    ],
+    "discount_codes": [
+      "code",
+      "type",
+      "value",
+      "max_uses",
+      "current_uses",
+      "expires_at"
+    ],
+    "sync_logs": [
+      "source",
+      "rows_synced",
+      "status",
+      "error_message"
+    ],
+    "webhook_events": [
+      "provider",
+      "event_id",
+      "event_type",
+      "payload"
+    ],
+    "referral_claims": [
+      "claimant_email",
+      "claimed_referee_email",
+      "review_status",
+      "risk_level"
+    ],
+    "attribution_failures": [
+      "order_id",
+      "email",
+      "ref_code",
+      "reason",
+      "error_message"
+    ]
+  },
+  "x-gaps": {
+    "commissionSync": "commission_ledger not in Twenty \u2014 no ticket link to commission disputes",
+    "fraudSync": "fraud_reviews not in Twenty \u2014 fraud reviews are Section 5 recommendations",
+    "paymentEventSync": "payment_events (Stripe disputes) not in Twenty",
+    "customerContext": "customer_expertise, quiz_results not surfaced",
+    "authUserData": "phone, email_confirmed_at not synced to Person",
+    "trackingFunnel": "affiliate_click_events, server_carts attribution context",
+    "ticketing": "Existing support_tickets table being replaced by twenty-multica-tickets app",
+    "metadataField": "Custom objects lack JSONB-style metadata field for raw Supabase payload"
+  }
+}

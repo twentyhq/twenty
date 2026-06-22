@@ -3,7 +3,6 @@ import sys
 
 from pdf2image import convert_from_path
 
-
 # Converts each page of a PDF to a PNG image.
 
 

@@ -3,7 +3,6 @@ import sys
 
 from pypdf import PdfReader
 
-
 # Extracts data for the fillable form fields in a PDF and outputs JSON that
 # Claude uses to fill the fields. See forms.md.
 

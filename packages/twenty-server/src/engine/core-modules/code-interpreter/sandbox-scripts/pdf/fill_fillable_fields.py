@@ -1,10 +1,8 @@
 import json
 import sys
 
-from pypdf import PdfReader, PdfWriter
-
 from extract_form_field_info import get_field_info
-
+from pypdf import PdfReader, PdfWriter
 
 # Fills fillable form fields in a PDF. See forms.md.
 
@@ -88,8 +86,8 @@ def validation_error_for_field_value(field_info, field_value):
 # We call the original method and adjust the return value only if the argument to `get_inherited`
 # is `FA.Opt` and if the return value is a list of two-element lists.
 def monkeypatch_pydpf_method():
-    from pypdf.generic import DictionaryObject
     from pypdf.constants import FieldDictionaryAttributes
+    from pypdf.generic import DictionaryObject
 
     original_get_inherited = DictionaryObject.get_inherited
 

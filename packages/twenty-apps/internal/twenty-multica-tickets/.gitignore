@@ -1,0 +1,11 @@
+node_modules
+.pnp.*
+.yarn/*
+!.yarn/releases
+!.yarn/patches
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.twenty/output
+dist
+*.tgz

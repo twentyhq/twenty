@@ -3,7 +3,6 @@ import sys
 
 from PIL import Image, ImageDraw
 
-
 # Creates "validation" images with rectangles for the bounding box information that
 # Claude creates when determining where to add text annotations in PDFs. See forms.md.
 

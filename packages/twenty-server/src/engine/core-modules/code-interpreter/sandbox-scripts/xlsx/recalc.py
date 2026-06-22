@@ -5,11 +5,12 @@ Recalculates all formulas in an Excel file using LibreOffice
 """
 
 import json
-import sys
-import subprocess
 import os
 import platform
+import subprocess
+import sys
 from pathlib import Path
+
 from openpyxl import load_workbook
 
 

@@ -3,9 +3,10 @@
 
 import random
 import sys
-import defusedxml.minidom
 import zipfile
 from pathlib import Path
+
+import defusedxml.minidom
 
 # Get command line arguments
 assert len(sys.argv) == 3, "Usage: python unpack.py <office_file> <output_dir>"

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "bee-cli": {
+      "source": "bee-computer/bee-skill",
+      "sourceType": "github",
+      "skillPath": "bee-cli/SKILL.md",
+      "computedHash": "7adf85bb5aabf93cb3bcadae33bfb1f3157af7a004b3e4a894e54b3c8c310f49"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "twenty-multica-tickets",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "keywords": [
+    "twenty-app",
+    "support",
+    "multica"
+  ],
+  "packageManager": "yarn@4.9.2",
+  "scripts": {
+    "twenty": "twenty",
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json .",
+    "test": "vitest run -c vitest.unit.config.ts",
+    "test:watch": "vitest -c vitest.unit.config.ts"
+  },
+  "dependencies": {
+    "twenty-client-sdk": "2.3.0",
+    "twenty-sdk": "2.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "oxlint": "^0.16.0",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^3.1.1"
+  }
+}
