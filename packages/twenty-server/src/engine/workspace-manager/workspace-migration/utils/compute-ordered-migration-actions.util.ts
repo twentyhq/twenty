@@ -71,16 +71,13 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.fieldPermission.update,
     ///
 
-    // Permission flags
+    // Permission flag definitions and their role assignments.
     ...aggregatedOrchestratorActionsReport.rolePermissionFlag.delete,
-    ...aggregatedOrchestratorActionsReport.rolePermissionFlag.create,
-    ...aggregatedOrchestratorActionsReport.rolePermissionFlag.update,
-    ///
-
-    // Permission flag definitions
     ...aggregatedOrchestratorActionsReport.permissionFlag.delete,
     ...aggregatedOrchestratorActionsReport.permissionFlag.create,
+    ...aggregatedOrchestratorActionsReport.rolePermissionFlag.create,
     ...aggregatedOrchestratorActionsReport.permissionFlag.update,
+    ...aggregatedOrchestratorActionsReport.rolePermissionFlag.update,
     ///
 
     // Agents

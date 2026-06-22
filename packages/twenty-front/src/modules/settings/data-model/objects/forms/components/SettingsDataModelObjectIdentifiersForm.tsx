@@ -1,4 +1,5 @@
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
@@ -16,13 +17,9 @@ import {
   isLabelIdentifierFieldMetadataTypes,
   isSearchableFieldType,
 } from 'twenty-shared/utils';
-import {
-  IconCircleOff,
-  IconPlus,
-  useIcons,
-} from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/icon';
+import { type SelectOption } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type z } from 'zod';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
@@ -53,6 +50,9 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const isCustomObject = getIsMetadataItemCustom(objectMetadataItem);
 
   const readonly =
     isObjectMetadataReadOnly({
@@ -134,7 +134,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
               options={options}
               value={value}
               withSearchInput={label === t`Record label`}
-              disabled={!objectMetadataItem.isCustom || readonly}
+              disabled={!isCustomObject || readonly}
               callToActionButton={
                 label === t`Record label`
                   ? {

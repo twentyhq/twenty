@@ -19,11 +19,10 @@ import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiSt
 import { UserContext } from '../src/modules/users/contexts/UserContext';
 
 import 'react-loading-skeleton/dist/skeleton.css';
-import 'twenty-ui-deprecated/style.css';
-import 'twenty-ui-deprecated/theme-light.css';
-import 'twenty-ui-deprecated/theme-dark.css';
 import 'twenty-ui/style.css';
-import { ThemeProvider } from 'twenty-ui-deprecated/theme-constants';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 // oxlint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
 
@@ -99,6 +98,17 @@ const STORYBOOK_DEFAULT_USER_CONTEXT = {
   timeZone: 'UTC',
 };
 
+const INTER_FONT_WEIGHTS = ['400', '500', '600'];
+
+const waitForInterFontLoadedBeforeScreenshot = async () => {
+  await Promise.all(
+    INTER_FONT_WEIGHTS.map((weight) =>
+      document.fonts.load(`${weight} 1em Inter`),
+    ),
+  );
+  await document.fonts.ready;
+};
+
 const preview: Preview = {
   decorators: [
     (Story) => {
@@ -125,7 +135,7 @@ const preview: Preview = {
     resetJotaiStore();
   },
 
-  loaders: [mswLoader],
+  loaders: [mswLoader, waitForInterFontLoadedBeforeScreenshot],
 
   parameters: {
     controls: {

@@ -26,19 +26,19 @@ describe('getPieChartFormattedValue', () => {
 
   const mockEnrichedData: PieChartEnrichedData[] = [
     {
-      id: 'slice1',
+      key: 'slice1',
       value: 30,
       percentage: 30,
       colorScheme: mockColorScheme,
     },
     {
-      id: 'slice2',
+      key: 'slice2',
       value: 50,
       percentage: 50,
       colorScheme: mockColorScheme,
     },
     {
-      id: 'slice3',
+      key: 'slice3',
       value: 20,
       percentage: 20,
       colorScheme: mockColorScheme,
@@ -46,13 +46,13 @@ describe('getPieChartFormattedValue', () => {
   ];
 
   const createMockDatum = (
-    id: string,
+    key: string,
     options?: { computedId?: string },
   ): ComputedDatum<PieChartDataItemWithColor> =>
     ({
-      id: options?.computedId ?? id,
+      id: options?.computedId ?? key,
       value: 0,
-      data: { id, value: 0 },
+      data: { key, value: 0 },
     }) as unknown as ComputedDatum<PieChartDataItemWithColor>;
 
   const defaultFormatOptions = {
@@ -84,7 +84,7 @@ describe('getPieChartFormattedValue', () => {
       expect(result).toBeNull();
     });
 
-    it('should match by datum.data.id when computed id is namespaced per widget', () => {
+    it('should match by datum.data.key when computed id is namespaced per widget', () => {
       const datum = createMockDatum('slice1', {
         computedId: 'widget-abc:slice1',
       });
@@ -145,7 +145,7 @@ describe('getPieChartFormattedValue', () => {
     it('should format percentage to one decimal place', () => {
       const enrichedDataWithDecimal: PieChartEnrichedData[] = [
         {
-          id: 'slice1',
+          key: 'slice1',
           value: 33,
           percentage: 33.333,
           colorScheme: mockColorScheme,
@@ -168,7 +168,7 @@ describe('getPieChartFormattedValue', () => {
     it('should handle zero value', () => {
       const enrichedDataWithZero: PieChartEnrichedData[] = [
         {
-          id: 'zero',
+          key: 'zero',
           value: 0,
           percentage: 0,
           colorScheme: mockColorScheme,
@@ -189,7 +189,7 @@ describe('getPieChartFormattedValue', () => {
     it('should handle 100% value', () => {
       const enrichedDataWith100: PieChartEnrichedData[] = [
         {
-          id: 'full',
+          key: 'full',
           value: 100,
           percentage: 100,
           colorScheme: mockColorScheme,

@@ -13,7 +13,7 @@ import {
   IconChartPie,
   type IconComponent,
   IconSum,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export const GRAPH_TYPE_INFORMATION: Record<

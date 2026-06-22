@@ -22,6 +22,7 @@ vi.mock('src/logic-functions/recall-api/cancel-recall-bot.util', () => ({
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const FUTURE_STARTS_AT = '2026-01-01T13:00:00.000Z';
+const FUTURE_RECALL_BOT_JOIN_AT = '2026-01-01T12:59:00.000Z';
 const FUTURE_ENDS_AT = '2026-01-01T14:00:00.000Z';
 
 const buildCustomerSyncCallRecordingId = (
@@ -252,7 +253,7 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
     ]);
     expect(scheduleRecallBotMock).toHaveBeenCalledWith({
       meetingUrl: 'https://meet.example.com/customer-sync',
-      joinAt: FUTURE_STARTS_AT,
+      joinAt: FUTURE_RECALL_BOT_JOIN_AT,
       metadata: {
         twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
         twentyCalendarEventId: 'calendar-event-1',
@@ -402,7 +403,7 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
     expect(rescheduleRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'recall-bot-1',
       meetingUrl: 'https://meet.example.com/customer-sync',
-      joinAt: FUTURE_STARTS_AT,
+      joinAt: FUTURE_RECALL_BOT_JOIN_AT,
       metadata: {
         twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
         twentyCalendarEventId: 'calendar-event-1',
@@ -657,6 +658,7 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
 
   it('cancels the old occurrence and creates a fresh recording when the meeting moves to a new time', async () => {
     const NEW_STARTS_AT = '2026-01-02T13:00:00.000Z';
+    const NEW_RECALL_BOT_JOIN_AT = '2026-01-02T12:59:00.000Z';
     const NEW_ENDS_AT = '2026-01-02T14:00:00.000Z';
     const client = buildFakeCoreApiClient({
       calendarEvents: [
@@ -706,7 +708,7 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
       externalBotId: 'recall-bot-old',
     });
     expect(scheduleRecallBotMock).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ joinAt: NEW_STARTS_AT }),
+      expect.objectContaining({ joinAt: NEW_RECALL_BOT_JOIN_AT }),
     );
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
@@ -821,7 +823,7 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
     ]);
   });
 
-  it('recreates the bot when the existing Recall bot no longer exists', async () => {
+  it('clears the stale bot id for the stale-state cron to re-create when the existing Recall bot no longer exists', async () => {
     rescheduleRecallBotMock.mockResolvedValue({
       ok: false,
       status: 404,
@@ -859,20 +861,12 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
     expect(rescheduleRecallBotMock).toHaveBeenCalledWith(
       expect.objectContaining({ externalBotId: 'recall-bot-stale' }),
     );
-    expect(scheduleRecallBotMock).toHaveBeenCalledWith({
-      meetingUrl: 'https://meet.example.com/customer-sync',
-      joinAt: FUTURE_STARTS_AT,
-      metadata: {
-        twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
-        twentyCalendarEventId: 'calendar-event-1',
-        twentyRealMeetingKey:
-          'link:meet.example.com/customer-sync:2026-01-01T13:00:00.000Z',
-      },
-    });
+    // The event path no longer re-creates the bot; the stale id is cleared and the cron heals the botless row.
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
         id: buildCustomerSyncCallRecordingId(),
-        externalBotId: 'recall-bot-1',
+        externalBotId: null,
       }),
     ]);
   });

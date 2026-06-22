@@ -69,8 +69,15 @@ describe('successful find view with all sub-relations (e2e)', () => {
 
       jestExpectToBeDefined(testView);
 
-      expect(testView).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny({ ...testView }),
+      const stableTestView = {
+        ...testView,
+        viewFields: [...testView.viewFields].sort(
+          (a, b) => a.position - b.position,
+        ),
+      };
+
+      expect(stableTestView).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny({ ...stableTestView }),
       );
     });
   });

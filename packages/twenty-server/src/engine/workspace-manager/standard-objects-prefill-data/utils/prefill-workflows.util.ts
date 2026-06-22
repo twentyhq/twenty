@@ -8,6 +8,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { buildPersonSyncSourceFilter } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/build-person-sync-source-filter.util';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record-event';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
 import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
@@ -74,6 +75,22 @@ export const prefillWorkflows = async (
   if (!isDefined(companyDomainNameFieldMetadata)) {
     throw new Error('Company domainName field metadata not found');
   }
+
+  const personCreatedByFieldMetadata = Object.values(
+    flatFieldMetadataMaps.byUniversalIdentifier,
+  ).find(
+    (fieldMetadata) =>
+      fieldMetadata?.objectMetadataId === personObjectMetadataId &&
+      fieldMetadata?.name === 'createdBy',
+  );
+
+  if (!isDefined(personCreatedByFieldMetadata)) {
+    throw new Error('Person createdBy field metadata not found');
+  }
+
+  const personSyncSourceFilter = buildPersonSyncSourceFilter({
+    createdByFieldMetadataId: personCreatedByFieldMetadata.id,
+  });
 
   await entityManager
     .createQueryBuilder()
@@ -356,6 +373,7 @@ export const prefillWorkflows = async (
               },
               DatabaseEventAction.UPSERTED,
             ),
+            filter: personSyncSourceFilter,
           },
           nextStepIds: ['c30d7cbe-00e0-4966-bc1a-99b0a11a2cca'],
         }),
@@ -755,6 +773,7 @@ export const prefillWorkflows = async (
         settings: {
           eventName: 'person.upserted',
           fields: ['emails'],
+          filter: personSyncSourceFilter,
         },
       },
     ])

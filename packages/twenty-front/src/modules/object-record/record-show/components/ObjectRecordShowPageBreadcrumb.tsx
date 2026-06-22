@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -11,7 +12,7 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: center;
@@ -84,6 +85,8 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const { navigateToIndexView, rankInView, totalCount } =
     useRecordShowPagePagination(objectNameSingular, objectRecordId);
 
+  const { formatNumber } = useNumberFormat();
+
   if (!loading && isInitialLoad) {
     setIsInitialLoad(false);
   }
@@ -136,7 +139,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         </FieldContext.Provider>
       </StyledTitle>
       <StyledPaginationInformation>
-        {`(${rankInView + 1}/${totalCount})`}
+        {`(${formatNumber(rankInView + 1)}/${formatNumber(totalCount)})`}
       </StyledPaginationInformation>
     </StyledEditableTitleContainer>
   );

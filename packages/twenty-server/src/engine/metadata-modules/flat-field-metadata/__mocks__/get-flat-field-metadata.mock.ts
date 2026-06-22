@@ -32,6 +32,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     icon: 'icon',
     id: faker.string.uuid(),
     isActive: true,
+    isSystemSideEffect: false,
     name: 'flatFieldMetadataName',
     label: 'flat field metadata label',
     isNullable: true,

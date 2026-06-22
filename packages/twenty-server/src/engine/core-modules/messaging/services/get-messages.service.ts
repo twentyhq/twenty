@@ -4,16 +4,13 @@ import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/mess
 import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
-import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
 
 @Injectable()
 export class GetMessagesService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly timelineMessagingService: TimelineMessagingService,
+    private readonly relatedPersonIdsService: RelatedPersonIdsService,
   ) {}
 
   async getMessagesFromPersonIds(
@@ -67,100 +64,33 @@ export class GetMessagesService {
     };
   }
 
-  async getMessagesFromCompanyId(
+  async getMessagesFromObjectRecord(
     workspaceMemberId: string,
-    companyId: string,
+    objectNameSingular: string,
+    recordId: string,
     workspaceId: string,
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
-    const authContext = buildSystemAuthContext(workspaceId);
+    const personIds = await this.relatedPersonIdsService.getRelatedPersonIds({
+      workspaceId,
+      objectNameSingular,
+      recordId,
+    });
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const personRepository =
-          await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
-            workspaceId,
-            'person',
-            { shouldBypassPermissionChecks: true },
-          );
-        const personIds = (
-          await personRepository.find({
-            where: {
-              companyId,
-            },
-            select: {
-              id: true,
-            },
-          })
-        ).map((person) => person.id);
+    if (personIds.length === 0) {
+      return {
+        totalNumberOfThreads: 0,
+        timelineThreads: [],
+      };
+    }
 
-        if (personIds.length === 0) {
-          return {
-            totalNumberOfThreads: 0,
-            timelineThreads: [],
-          };
-        }
-
-        const messageThreads = await this.getMessagesFromPersonIds(
-          workspaceMemberId,
-          personIds,
-          workspaceId,
-          page,
-          pageSize,
-        );
-
-        return messageThreads;
-      },
-      authContext,
-    );
-  }
-
-  async getMessagesFromOpportunityId(
-    workspaceMemberId: string,
-    opportunityId: string,
-    workspaceId: string,
-    page = 1,
-    pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-  ): Promise<TimelineThreadsWithTotalDTO> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const opportunityRepository =
-          await this.globalWorkspaceOrmManager.getRepository<OpportunityWorkspaceEntity>(
-            workspaceId,
-            'opportunity',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const opportunity = await opportunityRepository.findOne({
-          where: {
-            id: opportunityId,
-          },
-          select: {
-            companyId: true,
-          },
-        });
-
-        if (!opportunity?.companyId) {
-          return {
-            totalNumberOfThreads: 0,
-            timelineThreads: [],
-          };
-        }
-
-        const messageThreads = await this.getMessagesFromCompanyId(
-          workspaceMemberId,
-          opportunity.companyId,
-          workspaceId,
-          page,
-          pageSize,
-        );
-
-        return messageThreads;
-      },
-      authContext,
+    return this.getMessagesFromPersonIds(
+      workspaceMemberId,
+      personIds,
+      workspaceId,
+      page,
+      pageSize,
     );
   }
 }

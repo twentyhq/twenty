@@ -26,11 +26,9 @@ import {
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Avatar, IconLock, useIcons } from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { Avatar } from 'twenty-ui/data-display';
+import { IconLock, useIcons } from 'twenty-ui/icon';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
@@ -87,11 +85,12 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const hasNavigationMenuItem = isRecord || isView || isObject;
 
   const navigationPath = hasNavigationMenuItem
-    ? getNavigationMenuItemComputedLink(
-        navigationMenuItem!,
+    ? getNavigationMenuItemComputedLink({
+        item: navigationMenuItem!,
         objectMetadataItems,
         views,
-      )
+        lastVisitedViewPerObjectMetadataItem,
+      })
     : getAppPath(
         AppPath.RecordIndexPage,
         { objectNamePlural: objectMetadataItem.namePlural },

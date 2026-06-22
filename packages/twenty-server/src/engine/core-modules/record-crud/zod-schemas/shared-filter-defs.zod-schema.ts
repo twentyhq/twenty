@@ -249,6 +249,9 @@ export const CurrencyFilterSchema = z
         in: z.array(z.number()).optional().describe('In array'),
         is: NullCheckEnum.optional(),
       })
+      .describe(
+        'Currency amount in micros (1 unit = 1,000,000 micros). Multiply the user-provided amount by 1,000,000 to build this filter.',
+      )
       .optional(),
     currencyCode: z
       .object({

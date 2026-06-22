@@ -50,6 +50,119 @@ export default defineRole({
 });
 ```
 
+## Segurança ao nível da linha
+
+As permissões de objeto e de campo determinam *quais objetos e campos* uma função pode acessar. **Predicados de permissão ao nível da linha** vão além e determinam *quais registros* uma função pode ver e atuar sobre — por exemplo, uma função de autoatendimento em que cada usuário externo vê apenas seus próprios registros.
+
+Declare predicados com `rowLevelPermissionPredicates` na função. Como o restante do manifesto, cada predicado carrega seu próprio `universalIdentifier` e faz referência a um objeto e a um campo por seus respectivos `universalIdentifier`, a um `operand` e, opcionalmente, a um campo de workspaceMember cujo valor é injetado no momento da consulta — assim, você pode expressar: "a relação de proprietário do registro **é** o membro de workspace atual":
+
+```ts src/roles/partner-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/account-owner.field';
+
+export default defineRole({
+  universalIdentifier: 'c3c1dc2e-1a08-4de5-abb7-2139b3d99343',
+  label: 'Partner',
+  description: 'External partner — sees only its own records',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+          .universalIdentifier,
+    },
+  ],
+});
+```
+
+Como os predicados são enviados no manifesto, eles são criados, atualizados e removidos junto com a
+função em cada instalação e atualização — não há uma etapa pós-instalação separada para manter em sincronia.
+
+### Combinando predicados com grupos
+
+Por padrão, os predicados de uma função são combinados com `AND`. Para combinar alguns deles com `OR` (ou para
+aninhar a lógica), declare uma entrada `rowLevelPermissionPredicateGroups` e faça cada predicado apontar para ela por meio de
+`predicateGroupUniversalIdentifier`. Essa função permite que um parceiro veja uma Oportunidade da qual ele **é proprietário**
+ou pela qual **é o ponto de contato**:
+
+```ts src/roles/partner-opportunities-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+const CURRENT_MEMBER =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+    .universalIdentifier;
+
+export default defineRole({
+  universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
+  label: 'Partner (opportunities)',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      canReadObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicateGroups: [
+    {
+      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+    {
+      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier:
+        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+  ],
+});
+```
+
+Notas:
+
+* Dê a cada predicado e grupo um `universalIdentifier` estável (qualquer uuid) — ele identifica a entidade
+  entre atualizações, e os predicados referenciam os grupos por meio dele.
+* Os predicados podem referenciar objetos e campos pertencentes ao seu app ou aos objetos padrão da Twenty.
+* A segurança ao nível da linha é aplicada para os workspaces em planos que a incluem; os predicados ainda são sincronizados
+  em outros planos; eles simplesmente não são aplicados.
+
 ## Papel de função padrão
 
 Ao criar um novo app com o scaffold, a CLI cria um arquivo de papel padrão declarado com `defineApplicationRole()`:

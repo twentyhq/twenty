@@ -25,11 +25,11 @@ Cuando importa un archivo que contiene un **identificador único** que coincide 
 | Falta en su archivo                | **Crear** un nuevo registro (con ID autogenerado) |
 
 <Warning>
-  **Los campos de selección múltiple se sobrescriben, no se combinan.**
+**Los campos de selección múltiple se sobrescriben, no se combinan.**
 
-  Si un registro tiene `Option A` y `Option B` seleccionadas, y usted importa `["Option C"]`, el registro solo tendrá `Option C` después de la importación. La importación reemplaza todas las selecciones anteriores—no las agrega.
+Si un registro tiene `Option A` y `Option B` seleccionadas, y usted importa `["Option C"]`, el registro solo tendrá `Option C` después de la importación. La importación reemplaza todas las selecciones anteriores—no las agrega.
 
-  Para conservar los valores existentes, inclúyalos todos en su importación: `["Option A","Option B","Option C"]`
+Para conservar los valores existentes, inclúyalos todos en su importación: `["Option A","Option B","Option C"]`
 </Warning>
 
 ## Paso 1: Exporte sus datos actuales
@@ -80,9 +80,9 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **No cambie los valores del identificador único.**
+**No cambie los valores del identificador único.**
 
-  Si cambia `john@acme.com` a `john.smith@acme.com`, Twenty creará un registro nuevo en lugar de actualizar el existente.
+Si cambia `john@acme.com` a `john.smith@acme.com`, Twenty creará un registro nuevo en lugar de actualizar el existente.
 </Warning>
 
 ## Paso 3: Importe el archivo actualizado

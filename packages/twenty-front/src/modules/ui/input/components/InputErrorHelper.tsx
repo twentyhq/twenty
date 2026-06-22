@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputErrorHelper = styled.div`
   color: ${themeCssVariables.color.red};

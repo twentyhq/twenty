@@ -1,35 +1,21 @@
-import { useContext, useRef } from 'react';
 import { styled } from '@linaria/react';
+import { useContext, useRef } from 'react';
 
-import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
-import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
+import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import {
-  IconCheck,
-  IconQuestionMark,
-  IconX,
-} from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui/icon';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledInlineCellBaseContainer = styled.div`
+const StyledResponseStatusRow = styled.div`
   align-items: center;
   box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-
+  min-height: ${themeCssVariables.spacing[6]};
   position: relative;
-
   user-select: none;
-  width: 100%;
-`;
-
-const StyledPropertyBoxContainer = styled.div`
-  height: ${themeCssVariables.spacing[6]};
   width: 100%;
 `;
 
@@ -60,7 +46,8 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   font-size: ${themeCssVariables.font.size.sm};
   width: ${({ width }) => (width !== undefined ? `${width}px` : 'auto')};
 `;
-const StyledDiv = styled.div`
+
+const StyledParticipantsContainer = styled.div`
   max-width: 70%;
 `;
 
@@ -79,36 +66,30 @@ export const CalendarEventParticipantsResponseStatusField = ({
     No: <IconX stroke={theme.icon.stroke.sm} />,
   }[responseStatus];
 
-  // We want to display external participants first
   const orderedParticipants = [
     ...participants.filter((participant) => participant.person),
+    ...participants.filter((participant) => participant.workspaceMember),
     ...participants.filter(
       (participant) => !participant.person && !participant.workspaceMember,
     ),
-    ...participants.filter((participant) => participant.workspaceMember),
   ];
 
   const participantsContainerRef = useRef<HTMLDivElement>(null);
-  const styledChips = orderedParticipants.map((participant, index) => (
-    <ParticipantChip key={index} participant={participant} />
+  const styledChips = orderedParticipants.map((participant) => (
+    <ParticipantChip key={participant.id} participant={participant} />
   ));
 
   return (
-    <StyledPropertyBoxContainer>
-      <PropertyBox>
-        <StyledInlineCellBaseContainer>
-          <StyledLabelAndIconContainer>
-            <StyledIconContainer>{Icon}</StyledIconContainer>
-
-            <StyledLabelContainer width={72}>
-              <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
-            </StyledLabelContainer>
-          </StyledLabelAndIconContainer>
-          <StyledDiv ref={participantsContainerRef}>
-            <ExpandableList isChipCountDisplayed>{styledChips}</ExpandableList>
-          </StyledDiv>
-        </StyledInlineCellBaseContainer>
-      </PropertyBox>
-    </StyledPropertyBoxContainer>
+    <StyledResponseStatusRow>
+      <StyledLabelAndIconContainer>
+        <StyledIconContainer>{Icon}</StyledIconContainer>
+        <StyledLabelContainer width={72}>
+          <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
+        </StyledLabelContainer>
+      </StyledLabelAndIconContainer>
+      <StyledParticipantsContainer ref={participantsContainerRef}>
+        <ExpandableList isChipCountDisplayed>{styledChips}</ExpandableList>
+      </StyledParticipantsContainer>
+    </StyledResponseStatusRow>
   );
 };

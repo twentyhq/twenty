@@ -7,6 +7,8 @@ import { v4 } from 'uuid';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
@@ -20,9 +22,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
 import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import {
-  type SeededEmptyWorkspacesIds,
   type SeededWorkspacesIds,
-  SEEDER_CREATE_EMPTY_WORKSPACE_INPUT,
   SEEDER_CREATE_WORKSPACE_INPUT,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
@@ -33,6 +33,7 @@ import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/u
 import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
+import { seedTwoFactorAuthenticationMethods } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-two-factor-authentication-methods.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
@@ -64,6 +65,7 @@ export class DevSeederService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly prefillFrontComponentService: PrefillFrontComponentService,
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
+    private readonly secretEncryptionService: SecretEncryptionService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
@@ -190,84 +192,6 @@ export class DevSeederService {
     await this.workspaceCacheStorageService.flush(workspaceId, undefined);
   }
 
-  public async seedEmptyWorkspace(
-    workspaceId: SeededEmptyWorkspacesIds,
-  ): Promise<void> {
-    const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
-    const lastAttemptedInstanceCommand =
-      await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
-    const initialCursor =
-      this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(
-        lastAttemptedInstanceCommand,
-      );
-
-    const createWorkspaceStaticInput =
-      SEEDER_CREATE_EMPTY_WORKSPACE_INPUT[workspaceId];
-    const queryRunner = this.coreDataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const workspaceCustomApplicationId = v4();
-
-      await createWorkspace({
-        queryRunner,
-        schemaName: 'core',
-        createWorkspaceInput: {
-          ...createWorkspaceStaticInput,
-          workspaceCustomApplicationId,
-        },
-      });
-
-      await this.applicationService.createWorkspaceCustomApplication(
-        {
-          workspaceId,
-          applicationId: workspaceCustomApplicationId,
-        },
-        queryRunner,
-      );
-
-      await this.applicationService.createTwentyStandardApplication(
-        {
-          workspaceId,
-          skipCacheInvalidation: true,
-        },
-        queryRunner,
-      );
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    await this.devSeederPermissionsService.initMinimalPermissionsAndActivateWorkspace(
-      {
-        workspaceId,
-        workspaceCustomFlatApplication,
-      },
-    );
-
-    await this.upgradeMigrationService.markAsWorkspaceInitial({
-      name: initialCursor.name,
-      workspaceId,
-      executedByVersion: appVersion,
-      status: initialCursor.status,
-    });
-
-    await this.workspaceCacheStorageService.flush(workspaceId, undefined);
-  }
-
   private async seedCoreSchema({
     workspaceId,
     appVersion,
@@ -310,6 +234,15 @@ export class DevSeederService {
       await seedServerId({ queryRunner, schemaName });
       await seedUsers({ queryRunner, schemaName });
       await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
+      await seedTwoFactorAuthenticationMethods({
+        queryRunner,
+        schemaName,
+        workspaceId,
+        encryptedSecret: this.secretEncryptionService.encryptVersioned(
+          'seed-totp-secret-test-fixture' as PlaintextString,
+          { workspaceId },
+        ),
+      });
 
       await this.applicationService.createTwentyStandardApplication(
         {

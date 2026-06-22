@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconSend } from 'twenty-ui-deprecated/display';
+import { IconSend } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';

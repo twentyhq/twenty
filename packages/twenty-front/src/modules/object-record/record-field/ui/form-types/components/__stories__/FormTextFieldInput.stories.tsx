@@ -8,7 +8,7 @@ import {
   waitForElementToBeRemoved,
   within,
 } from 'storybook/test';
-import { getUserDevice } from 'twenty-ui-deprecated/utilities';
+import { getUserDevice } from 'twenty-ui/utilities';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 
@@ -39,6 +39,25 @@ export const WithLabel: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText(/^Text$/);
+  },
+};
+
+export const WithError: Story = {
+  args: {
+    label: 'Variable Name',
+    placeholder: 'Text field...',
+    defaultValue: 'invalid name',
+    error:
+      'Use only letters, numbers, underscores, dots or hyphens (max 64 characters).',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const error = await canvas.findByText(
+      'Use only letters, numbers, underscores, dots or hyphens (max 64 characters).',
+    );
+
+    expect(error).toBeVisible();
   },
 };
 

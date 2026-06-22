@@ -30,6 +30,17 @@ describe('formatToShortNumber', () => {
     expect(formatToShortNumber(0)).toBe('0');
   });
 
+  it('promotes to the next unit when rounding reaches the boundary', () => {
+    expect(formatToShortNumber(999999)).toBe('1m');
+    expect(formatToShortNumber(999950)).toBe('1m');
+    expect(formatToShortNumber(999999999)).toBe('1b');
+  });
+
+  it('does not promote just below a rounding boundary', () => {
+    expect(formatToShortNumber(999949)).toBe('999.9k');
+    expect(formatToShortNumber(999)).toBe('999');
+  });
+
   describe('negative numbers', () => {
     it('formats negative numbers less than 1000 correctly', () => {
       expect(formatToShortNumber(-500)).toBe('-500');
@@ -49,6 +60,10 @@ describe('formatToShortNumber', () => {
     it('formats negative billions correctly', () => {
       expect(formatToShortNumber(-1200000000)).toBe('-1.2b');
       expect(formatToShortNumber(-987654321987)).toBe('-987.7b');
+    });
+
+    it('promotes negative numbers when rounding reaches the boundary', () => {
+      expect(formatToShortNumber(-999999)).toBe('-1m');
     });
   });
 });

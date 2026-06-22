@@ -58,7 +58,6 @@ describe('Standard field metadata update should be ignored', () => {
           description
           icon
           isActive
-          isCustom
           isLabelSyncedWithName
         }
       `,
@@ -69,7 +68,7 @@ describe('Standard field metadata update should be ignored', () => {
     jestExpectToBeDefined(companyObject);
 
     const companyNameField = companyObject.fieldsList?.find(
-      (field) => field.name === 'name' && !field.isCustom,
+      (field) => field.name === 'name',
     );
 
     jestExpectToBeDefined(companyNameField);
@@ -92,7 +91,6 @@ describe('Standard field metadata update should be ignored', () => {
           description
           icon
           isActive
-          isCustom
           isLabelSyncedWithName
         `,
       });
@@ -123,7 +121,6 @@ xdescribe('Standard field with standard unique index update should fail on isUni
           id
           name
           label
-          isCustom
           isUnique
         }
       `,
@@ -134,7 +131,7 @@ xdescribe('Standard field with standard unique index update should fail on isUni
     jestExpectToBeDefined(companyObject);
 
     const companyDomainNameField = companyObject.fieldsList?.find(
-      (field) => field.name === 'domainName' && !field.isCustom,
+      (field) => field.name === 'domainName',
     );
 
     jestExpectToBeDefined(companyDomainNameField);

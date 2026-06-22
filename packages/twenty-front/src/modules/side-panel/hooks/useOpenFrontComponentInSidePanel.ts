@@ -3,7 +3,7 @@ import { viewableFrontComponentIdComponentState } from '@/side-panel/pages/front
 import { viewableFrontComponentRecordContextComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentRecordContextComponentState';
 import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
-import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 export const useOpenFrontComponentInSidePanel = () => {

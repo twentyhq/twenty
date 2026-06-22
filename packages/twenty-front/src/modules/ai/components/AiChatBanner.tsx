@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AppTooltip,
   type IconComponent,
   IconAlertTriangle,
   IconInfoCircle,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { AppTooltip } from 'twenty-ui/surfaces';
+import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AiChatBannerVariant = 'default' | 'warning';
 

@@ -2,10 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { PagePanel } from './PagePanel';
-import {
-  MOBILE_VIEWPORT,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PageBodyProps = {
   children: ReactNode;

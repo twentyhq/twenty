@@ -68,6 +68,7 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   blocklist: 'blocklistRecordPageFields',
   calendarChannelEventAssociation:
     'calendarChannelEventAssociationRecordPageFields',
+  calendarEvent: 'calendarEventRecordPageFields',
   calendarEventParticipant: 'calendarEventParticipantRecordPageFields',
   callRecording: 'callRecordingRecordPageFields',
   company: 'companyRecordPageFields',

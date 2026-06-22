@@ -10,8 +10,8 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Label } from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Label } from 'twenty-ui/typography';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSectionHeader = styled.div`
   align-items: center;

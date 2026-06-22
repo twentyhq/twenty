@@ -1,7 +1,13 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { findResendContactsByEmail } from '@modules/resend/shared/utils/find-resend-contacts-by-email';
+
+type QueryArgs = {
+  resendContacts: {
+    __args: { filter: { email: { primaryEmail: { in: string[] } } } };
+  };
+};
 
 describe('findResendContactsByEmail', () => {
   const buildClient = (
@@ -71,7 +77,7 @@ describe('findResendContactsByEmail', () => {
 
     expect(query).toHaveBeenCalledTimes(1);
 
-    const args = query.mock.calls[0][0];
+    const [args] = query.mock.calls[0] as unknown as [QueryArgs];
 
     expect(args.resendContacts.__args.filter.email.primaryEmail.in).toEqual([
       'foo@example.com',

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { type IconComponent } from 'twenty-ui-deprecated/display';
-import { FloatingIconButton } from 'twenty-ui-deprecated/input';
-import { AnimatedContainer } from 'twenty-ui-deprecated/utilities';
+import { type IconComponent } from 'twenty-ui/icon';
+import { FloatingIconButton } from 'twenty-ui/input';
+import { AnimatedContainer } from 'twenty-ui/layout';
 
 const StyledInlineCellButtonContainer = styled.div`
   align-items: center;

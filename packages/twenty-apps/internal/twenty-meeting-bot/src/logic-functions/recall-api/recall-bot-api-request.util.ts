@@ -10,6 +10,7 @@ type RecallBotApiRequestArgs = {
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   body?: unknown;
   allowNotFound?: boolean;
+  maxAttempts?: number;
 };
 
 type RecallBotApiRequestResult<TData> =
@@ -24,15 +25,18 @@ type RecallBotApiRequestResult<TData> =
       errorMessage: string;
     };
 
-// Retried creates can duplicate bots; duplicates stay unclaimed and get reaped.
+// Bot creates tolerate retries because duplicates stay unclaimed and get reaped.
+// Callers that cannot retry idempotently can lower maxAttempts.
 export const recallBotApiRequest = async <TData>(
   requestArgs: RecallBotApiRequestArgs,
 ): Promise<RecallBotApiRequestResult<TData>> => {
+  const maxAttempts = requestArgs.maxAttempts ?? RECALL_API_MAX_ATTEMPTS;
+
   for (let attemptNumber = 1; ; attemptNumber++) {
     const { result, isRetryable } =
       await performRecallBotApiRequestAttempt<TData>(requestArgs);
 
-    if (!isRetryable || attemptNumber >= RECALL_API_MAX_ATTEMPTS) {
+    if (!isRetryable || attemptNumber >= maxAttempts) {
       return result;
     }
 

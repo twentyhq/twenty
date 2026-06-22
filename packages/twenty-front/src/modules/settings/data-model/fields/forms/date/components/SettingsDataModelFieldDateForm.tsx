@@ -12,9 +12,9 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconSlash } from 'twenty-ui-deprecated/display';
-import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconSlash } from 'twenty-ui/icon';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const fieldDateSettings = z.discriminatedUnion('displayFormat', [
   z.object({

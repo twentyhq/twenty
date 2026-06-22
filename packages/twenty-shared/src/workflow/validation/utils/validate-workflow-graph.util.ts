@@ -99,9 +99,9 @@ const validateBranchingStep = (
 
     if (branches.length < 2) {
       issues.push({
-        severity: 'error',
+        severity: 'warning',
         code: 'IF_ELSE_INSUFFICIENT_BRANCHES',
-        message: `If/Else step "${step.name ?? step.id}" must have at least two branches (a condition branch and an else branch).`,
+        message: `If/Else step "${step.name ?? step.id}" should have at least two branches (a condition branch and an else branch).`,
         stepId: step.id,
       });
     }

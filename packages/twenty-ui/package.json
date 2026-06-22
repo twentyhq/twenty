@@ -76,7 +76,6 @@
     "date-fns": "^4.4.0",
     "framer-motion": "^11.18.0",
     "glob": "^11.1.0",
-    "jotai": "^2.17.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-responsive": "^9.0.2",
@@ -93,17 +92,19 @@
     "dist",
     "accessibility",
     "assets",
-    "components",
-    "display",
+    "data-display",
     "feedback",
+    "icon",
     "input",
     "json-visualizer",
     "layout",
     "navigation",
     "styles",
+    "surfaces",
     "testing",
     "theme",
     "theme-constants",
+    "typography",
     "utilities"
   ],
   "exports": {
@@ -125,20 +126,20 @@
       "import": "./dist/assets.mjs",
       "require": "./dist/assets.cjs"
     },
-    "./components": {
-      "types": "./dist/components/index.d.ts",
-      "import": "./dist/components.mjs",
-      "require": "./dist/components.cjs"
-    },
-    "./display": {
-      "types": "./dist/display/index.d.ts",
-      "import": "./dist/display.mjs",
-      "require": "./dist/display.cjs"
+    "./data-display": {
+      "types": "./dist/data-display/index.d.ts",
+      "import": "./dist/data-display.mjs",
+      "require": "./dist/data-display.cjs"
     },
     "./feedback": {
       "types": "./dist/feedback/index.d.ts",
       "import": "./dist/feedback.mjs",
       "require": "./dist/feedback.cjs"
+    },
+    "./icon": {
+      "types": "./dist/icon/index.d.ts",
+      "import": "./dist/icon.mjs",
+      "require": "./dist/icon.cjs"
     },
     "./input": {
       "types": "./dist/input/index.d.ts",
@@ -165,6 +166,11 @@
       "import": "./dist/styles.mjs",
       "require": "./dist/styles.cjs"
     },
+    "./surfaces": {
+      "types": "./dist/surfaces/index.d.ts",
+      "import": "./dist/surfaces.mjs",
+      "require": "./dist/surfaces.cjs"
+    },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing.mjs",
@@ -180,6 +186,11 @@
       "import": "./dist/theme-constants.mjs",
       "require": "./dist/theme-constants.cjs"
     },
+    "./typography": {
+      "types": "./dist/typography/index.d.ts",
+      "import": "./dist/typography.mjs",
+      "require": "./dist/typography.cjs"
+    },
     "./utilities": {
       "types": "./dist/utilities/index.d.ts",
       "import": "./dist/utilities.mjs",
@@ -194,14 +205,14 @@
       "assets": [
         "dist/assets/index.d.ts"
       ],
-      "components": [
-        "dist/components/index.d.ts"
-      ],
-      "display": [
-        "dist/display/index.d.ts"
+      "data-display": [
+        "dist/data-display/index.d.ts"
       ],
       "feedback": [
         "dist/feedback/index.d.ts"
+      ],
+      "icon": [
+        "dist/icon/index.d.ts"
       ],
       "input": [
         "dist/input/index.d.ts"
@@ -218,6 +229,9 @@
       "styles": [
         "dist/styles/index.d.ts"
       ],
+      "surfaces": [
+        "dist/surfaces/index.d.ts"
+      ],
       "testing": [
         "dist/testing/index.d.ts"
       ],
@@ -226,6 +240,9 @@
       ],
       "theme-constants": [
         "dist/theme-constants/index.d.ts"
+      ],
+      "typography": [
+        "dist/typography/index.d.ts"
       ],
       "utilities": [
         "dist/utilities/index.d.ts"

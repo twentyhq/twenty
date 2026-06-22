@@ -1,0 +1,148 @@
+---
+title: Voci del menu comandi
+description: Esponi i componenti front-end come azioni rapide e voci del menu comandi (Cmd+K) con defineCommandMenuItem.
+icon: terminale
+---
+
+Un **elemento del menu comandi** è il collegamento tra l'utente e un [front component](/l/it/developers/extend/apps/layout/front-components). Registra il componente nel menu comandi (Cmd+K) di Twenty e, opzionalmente, come pulsante di azione rapida fissato nell'angolo in alto a destra della pagina.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+## Campi di configurazione
+
+| Campo                                   | Obbligatorio | Descrizione                                                                                                                                                                                          |
+| --------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Sì           | ID univoco stabile per il comando                                                                                                                                                                    |
+| `label`                                 | Sì           | Etichetta completa mostrata nel menu comandi (Cmd+K)                                                                                                                                                 |
+| `frontComponentUniversalIdentifier`     | Sì           | L'`universalIdentifier` del componente front-end che questo comando apre                                                                                                                             |
+| `shortLabel`                            | No           | Etichetta breve visualizzata sul pulsante di azione rapida fissato                                                                                                                                   |
+| `icon`                                  | No           | Nome dell'icona visualizzato accanto all'etichetta (ad es. `'IconBolt'`, `'IconSend'`)                                                                                                               |
+| `isPinned`                              | No           | Quando `true`, mostra il comando come pulsante di azione rapida nell'angolo in alto a destra della pagina                                                                                            |
+| `availabilityType`                      | No           | Controlla dove compare il comando: `'GLOBAL'` (sempre disponibile), `'RECORD_SELECTION'` (solo quando sono selezionati dei record) o `'FALLBACK'` (mostrato quando nessun altro comando corrisponde) |
+| `availabilityObjectUniversalIdentifier` | No           | Limita il comando alle pagine di uno specifico tipo di oggetto (ad es. solo sui record Company)                                                                                                      |
+| `conditionalAvailabilityExpression`     | No           | Un'espressione booleana che controlla dinamicamente la visibilità (vedi sotto)                                                                                                                       |
+
+## Comandi headless
+
+Un elemento del menu comandi abbinato a un [headless front component](/l/it/developers/extend/apps/layout/front-components#headless-vs-non-headless) è il modo idiomatico per distribuire un'azione con un clic: eseguire codice, navigare oppure confermare ed eseguire. La pagina Front Components tratta i [SDK Command components](/l/it/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) che gestiscono il pattern di action-and-unmount.
+
+Un flusso tipico:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+## Espressioni di disponibilità condizionale
+
+Il campo `conditionalAvailabilityExpression` consente di controllare quando un comando è visibile in base al contesto della pagina corrente. Importa variabili tipizzate e operatori da `twenty-sdk` per costruire espressioni:
+
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import {
+  defineCommandMenuItem,
+  objectPermissions,
+  everyEquals,
+} from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
+});
+```
+
+<Note>
+  `RECORD_SELECTION` implica già una selezione non vuota — usa `numberOfSelectedRecords` solo per conteggi specifici (ad es. `>= 2`).
+</Note>
+
+### Variabili di contesto
+
+Rappresentano lo stato corrente della pagina:
+
+| Variabile                      | Tipo      | Descrizione                                                              |
+| ------------------------------ | --------- | ------------------------------------------------------------------------ |
+| `pageType`                     | `string`  | Tipo di pagina corrente (ad es. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Indica se il componente è renderizzato in un pannello laterale           |
+| `numberOfSelectedRecords`      | `number`  | Numero di record attualmente selezionati                                 |
+| `isSelectAll`                  | `boolean` | Indica se "seleziona tutto" è attivo                                     |
+| `selectedRecords`              | `array`   | Gli oggetti dei record selezionati                                       |
+| `favoriteRecordIds`            | `array`   | ID dei record aggiunti ai preferiti                                      |
+| `objectPermissions`            | `object`  | Autorizzazioni per il tipo di oggetto corrente                           |
+| `targetObjectReadPermissions`  | `object`  | Autorizzazioni di lettura per l'oggetto di destinazione                  |
+| `targetObjectWritePermissions` | `object`  | Autorizzazioni di scrittura per l'oggetto di destinazione                |
+| `featureFlags`                 | `object`  | Flag delle funzionalità attivi                                           |
+| `objectMetadataItem`           | `object`  | Metadati del tipo di oggetto corrente                                    |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Indica se la vista corrente ha un filtro di soft-delete                  |
+
+### Operatori
+
+Combinano le variabili in espressioni booleane:
+
+| Operatore                           | Descrizione                                                          |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` se il valore non è null/undefined                             |
+| `isNonEmptyString(value)`           | `true` se il valore è una stringa non vuota                          |
+| `includes(array, value)`            | `true` se l'array contiene il valore                                 |
+| `includesEvery(array, prop, value)` | `true` se la proprietà di ogni elemento include il valore            |
+| `every(array, prop)`                | `true` se la proprietà è truthy su ogni elemento                     |
+| `everyDefined(array, prop)`         | `true` se la proprietà è definita su ogni elemento                   |
+| `everyEquals(array, prop, value)`   | `true` se la proprietà è uguale al valore su ogni elemento           |
+| `some(array, prop)`                 | `true` se la proprietà è truthy su almeno un elemento                |
+| `someDefined(array, prop)`          | `true` se la proprietà è definita su almeno un elemento              |
+| `someEquals(array, prop, value)`    | `true` se la proprietà è uguale al valore su almeno un elemento      |
+| `someNonEmptyString(array, prop)`   | `true` se la proprietà è una stringa non vuota su almeno un elemento |
+| `none(array, prop)`                 | `true` se la proprietà è falsy su ogni elemento                      |
+| `noneDefined(array, prop)`          | `true` se la proprietà è undefined su ogni elemento                  |
+| `noneEquals(array, prop, value)`    | `true` se la proprietà non è uguale al valore su alcun elemento      |

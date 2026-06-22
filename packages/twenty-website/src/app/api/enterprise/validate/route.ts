@@ -1,24 +1,39 @@
+import { NextResponse } from 'next/server';
+
 import {
+  getStripeClient,
+  getSubscriptionCurrentPeriodEnd,
   signValidityToken,
   verifyEnterpriseKey,
-} from '@/lib/enterprise/enterprise-jwt';
-import { getStripeClient } from '@/lib/enterprise/stripe-client';
-import { getSubscriptionCurrentPeriodEnd } from '@/lib/enterprise/stripe-subscription-helpers';
-import { NextResponse } from 'next/server';
+} from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
 
+const ACTIVATABLE_STATUSES = new Set(['active', 'trialing']);
+
 export async function POST(request: Request) {
+  if (
+    !process.env.STRIPE_SECRET_KEY ||
+    !process.env.ENTERPRISE_JWT_PUBLIC_KEY ||
+    !process.env.ENTERPRISE_JWT_PRIVATE_KEY
+  ) {
+    console.error(
+      '[enterprise-validate] 503 — STRIPE_SECRET_KEY, ENTERPRISE_JWT_PUBLIC_KEY and/or ENTERPRISE_JWT_PRIVATE_KEY are not configured',
+    );
+    return NextResponse.json(
+      { error: 'Enterprise validation is not configured.' },
+      { status: 503 },
+    );
+  }
+
   try {
-    const body = await request.json();
+    const body = (await request.json()) as { enterpriseKey?: unknown };
     const { enterpriseKey } = body;
 
     if (!enterpriseKey || typeof enterpriseKey !== 'string') {
       return NextResponse.json(
         { error: 'Missing enterpriseKey' },
-        {
-          status: 400,
-        },
+        { status: 400 },
       );
     }
 
@@ -27,24 +42,16 @@ export async function POST(request: Request) {
     if (!payload) {
       return NextResponse.json(
         { error: 'Invalid enterprise key' },
-        {
-          status: 403,
-        },
+        { status: 403 },
       );
     }
 
     const stripe = getStripeClient();
-
     const subscription = await stripe.subscriptions.retrieve(payload.sub);
 
-    const activeStatuses = ['active', 'trialing'];
-
-    if (!activeStatuses.includes(subscription.status)) {
+    if (!ACTIVATABLE_STATUSES.has(subscription.status)) {
       return NextResponse.json(
-        {
-          error: 'Subscription is not active',
-          status: subscription.status,
-        },
+        { error: 'Subscription is not active', status: subscription.status },
         { status: 403 },
       );
     }

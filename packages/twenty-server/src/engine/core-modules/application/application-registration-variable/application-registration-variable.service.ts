@@ -255,7 +255,7 @@ export class ApplicationRegistrationVariableService {
         encryptedValue !== ''
           ? variable.isSecret
             ? '•••••••••••••'
-            : this.encryptionService.decryptVersioned(encryptedValue)
+            : this.encryptionService.decryptVersionedOrThrow(encryptedValue)
           : null,
     };
   }

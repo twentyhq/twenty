@@ -1,0 +1,192 @@
+---
+title: 연결
+description: 앱이 OAuth를 통해 타사 서비스에서 사용자를 대신해 동작하도록 하세요.
+icon: plug
+---
+
+연결은 사용자가 외부 서비스(Linear, GitHub, Slack 등)에 대한 자격 증명을 보유하는 것을 말합니다. 앱은 해당 자격 증명을 **어떻게** 얻는지(즉, **연결 제공자**)를 선언하고, 런타임에 이를 사용해 서드파티 API에 인증된 호출을 수행합니다.
+
+현재는 OAuth 2.0만 지원됩니다. 향후 자격 증명 유형(개인 액세스 토큰, API 키, 기본 인증)은 동일한 인터페이스에 연동되며 — 이미 `defineConnectionProvider({ type: 'oauth', ... })`를 사용하는 앱은 마이그레이션이 필요하지 않습니다.
+
+<AccordionGroup>
+
+<Accordion title="defineConnectionProvider" description="앱의 연결을 얻는 방법을 선언합니다">
+
+연결 제공자는 앱에 필요한 OAuth 핸드셰이크를 설명합니다. 사용자가 앱 설정에서 "연결 추가"를 클릭하고 제공자의 동의 화면을 완료하면, 워크스페이스에 `ConnectedAccount` 행이 생성됩니다.
+
+정상 동작하려면 **두 개의 파일**이 필요합니다 — 연결 제공자, 그리고 OAuth 클라이언트 자격 증명을 보유하는 `defineApplication`의 해당 `serverVariables` 선언.
+
+```ts src/connection-providers/linear-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+export default defineConnectionProvider({
+  universalIdentifier: '9c7d1f5e-6a0b-4d44-be0c-3f8b5a9d4e6f',
+  name: 'linear',
+  displayName: 'Linear',
+  icon: 'IconBrandLinear',
+  type: 'oauth',
+  oauth: {
+    authorizationEndpoint: 'https://linear.app/oauth/authorize',
+    tokenEndpoint: 'https://api.linear.app/oauth/token',
+    scopes: ['read', 'write'],
+    // These must match keys in `defineApplication.serverVariables` below.
+    clientIdVariable: 'LINEAR_CLIENT_ID',
+    clientSecretVariable: 'LINEAR_CLIENT_SECRET',
+    // Optional: defaults to 'json'. Some providers (Linear, Slack) want
+    // 'form-urlencoded' for the token request.
+    tokenRequestContentType: 'form-urlencoded',
+    // Optional: defaults to true. Disable only if the provider rejects PKCE.
+    usePkce: false,
+    // Optional: extra query params on the authorize URL.
+    // authorizationParams: { prompt: 'consent' },
+    // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
+    // revokeEndpoint: 'https://example.com/oauth/revoke',
+  },
+});
+```
+
+```ts src/application.config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'Linear',
+  description: 'Connect Linear to Twenty.',
+  // OAuth client credentials live on the app registration (one OAuth app per
+  // Twenty server, configured by the admin) — not per-workspace. Declare them
+  // as serverVariables so the admin can fill them in once for all installs.
+  serverVariables: {
+    LINEAR_CLIENT_ID: {
+      description: 'OAuth client ID from your Linear OAuth application.',
+      isSecret: false,
+      isRequired: true,
+    },
+    LINEAR_CLIENT_SECRET: {
+      description: 'OAuth client secret from your Linear OAuth application.',
+      isSecret: true,
+      isRequired: true,
+    },
+  },
+});
+```
+
+핵심 요점:
+
+* `name`은 `listConnections({ providerName })`에서 사용하는 고유 식별자 문자열입니다(kebab-case, `^[a-z][a-z0-9-]*$`와 일치해야 함).
+* `displayName`은 앱별 설정 탭과 AI 도구 목록에 표시됩니다.
+* `clientIdVariable` / `clientSecretVariable`은 값이 아닌 **이름**이며, `defineApplication.serverVariables`에 선언된 키와 일치해야 합니다. 실제 `client_id`와 `client_secret`은 서버 관리자가 앱 등록 UI를 통해 입력하며, 저장소에 커밋되지 않습니다.
+* `serverVariables`(`applicationVariables` 아님)을 사용하세요 — OAuth 자격 증명은 서버 전체에 적용되며 Twenty 서버마다 하나의 OAuth 앱만 사용합니다.
+* 두 `serverVariables`가 모두 채워질 때까지, 앱별 설정 탭에는 "서버 관리자 필요" 힌트가 표시되고 "연결 추가" 버튼이 비활성화됩니다.
+* `type: 'oauth'`는 현재 지원되는 유일한 값입니다. 구분자는 전방 호환됩니다: 향후 유형(`'pat'`, `'api-key'`, ...) `oauth`와 함께 새로운 하위 구성 블록이 추가됩니다.
+
+제공자가 허용 목록에 추가해야 할 OAuth 콜백 URL은 다음과 같습니다:
+
+```
+https://<your-twenty-server>/auth/apps/callback
+```
+
+</Accordion>
+
+<Accordion title="listConnections / getConnection" description="로직 함수에서 연결 사용">
+
+로직 함수 핸들러 내부에서 `listConnections({ providerName })`는 지정된 제공자에 대한 이 앱의 `ConnectedAccount` 행을 갱신된 액세스 토큰과 함께 반환합니다.
+
+```ts src/logic-functions/handlers/create-linear-issue-handler.ts
+import { listConnections } from 'twenty-sdk/logic-function';
+
+export const createLinearIssueHandler = async (input: {
+  teamId?: string;
+  title?: string;
+}) => {
+  if (!input.teamId || !input.title) {
+    return { success: false, error: 'teamId and title are required' };
+  }
+
+  const connections = await listConnections({ providerName: 'linear' });
+
+  // Workspace-shared credentials win when present; fall back to the first
+  // user-visibility one. For HTTP-route triggers you typically pick the
+  // request user's connection via event.userWorkspaceId instead.
+  const connection =
+    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
+
+  if (!connection) {
+    return {
+      success: false,
+      error:
+        'Linear is not connected. Open the app settings and click "Add connection".',
+    };
+  }
+
+  // Use connection.accessToken to call the third-party API.
+  const response = await fetch('https://api.linear.app/graphql', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${connection.accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `mutation { issueCreate(input: { teamId: "${input.teamId}", title: "${input.title}" }) { success } }`,
+    }),
+  });
+
+  return { success: response.ok };
+};
+```
+
+각 연결에는 다음이 포함됩니다:
+
+| 필드                | 설명                                                              |
+| ----------------- | --------------------------------------------------------------- |
+| `id`              | 고유한 행 ID; 단일 항목을 다시 가져오려면 `getConnection(id)`에 전달하세요.           |
+| `visibility`      | `'user'`(한 워크스페이스 구성원에게만 비공개) 또는 `'workspace'`(모든 구성원과 공유)      |
+| `scopes`          | 상위 제공자가 부여한 OAuth 권한(`visibility`와는 구별됨 — 서로 관련 없음)             |
+| `userWorkspaceId` | 소유자의 userWorkspace ID — HTTP 경로 트리거에서 "요청 사용자의 연결"을 선택할 때 유용합니다 |
+| `accessToken`     | 최신 OAuth 액세스 토큰(만료 시 자동으로 갱신됨)                                  |
+| `name` / `handle` | 연결의 표시 이름(OAuth 콜백 시 자동으로 결정되며, 사용자가 이름을 변경할 수 있음)              |
+| `authFailedAt`    | 가장 최근 갱신이 실패했을 때 설정됩니다; 사용자가 다시 연결해야 합니다                        |
+
+핵심 요점:
+
+* 제공자별로 필터링하려면 `{ providerName }`를 전달하세요; 생략하면 이 앱이 모든 제공자에서 보유한 모든 연결을 가져옵니다.
+* 서버는 반환하기 전에 액세스 토큰을 투명하게 갱신합니다. 핸들러는 항상 사용 가능한 토큰(또는 `authFailedAt`이 설정된 상태)을 보게 됩니다.
+* `getConnection(id)`는 단일 행 버전입니다.
+
+</Accordion>
+
+<Accordion title="사용자별 대 워크스페이스 공유 가시성" description="사용자가 비공개 자격 증명과 공유 자격 증명 사이를 선택하는 방법">
+
+사용자가 "연결 추가"를 클릭하면, 가시성을 선택하라는 프롬프트가 표시됩니다:
+
+* **나만 사용** — 해당 자격 증명은 연결한 사용자에게만 비공개입니다. 그 사용자를 대신해 호출되는 모든 로직 함수(`isAuthRequired: true`가 설정된 HTTP 경로 트리거)는 이를 볼 수 있습니다; cron 트리거와 데이터베이스 이벤트는 볼 수 없습니다.
+* **워크스페이스 공유** — 모든 워크스페이스 구성원이 해당 자격 증명을 사용할 수 있습니다. 요청 사용자가 없으므로 Cron/데이터베이스 트리거도 이를 볼 수 있습니다.
+
+각 핸들러에 맞는 유형을 사용하세요:
+
+```ts
+// HTTP-route trigger — prefer the request user's own connection.
+const conn =
+  connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
+  connections.find((c) => c.visibility === 'workspace');
+
+// Cron trigger — no request user; only shared credentials are sensible.
+const conn = connections.find((c) => c.visibility === 'workspace');
+```
+
+각 (사용자, 제공자)당 여러 연결이 허용되므로, 동일한 사용자가 "Personal Linear"와 "Work Linear"를 나란히 보유할 수 있습니다.
+
+</Accordion>
+
+<Accordion title="일회성 제공자 설정" description="서드파티 서비스에 OAuth 앱을 등록하세요">
+
+각 연결 제공자마다 서버 관리자가 먼저 서드파티에 OAuth 앱을 등록해야 합니다.
+
+1. 제공자의 개발자 설정으로 이동하세요(예: https://linear.app/settings/api/applications/new).
+2. **Redirect URI**를 `\<SERVER_URL>/auth/apps/callback`으로 설정하세요.
+3. 생성된 **Client ID**와 **Client Secret**을 복사하세요.
+4. 서버 관리자 권한으로 Twenty에서 설치된 앱을 열고 → 해당 `serverVariables`에 값을 설정하세요.
+5. 그런 다음 워크스페이스 구성원은 앱별 **연결** 섹션에서 연결을 추가할 수 있습니다.
+
+</Accordion>
+
+</AccordionGroup>

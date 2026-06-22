@@ -8,12 +8,9 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import {
-  HorizontalSeparator,
-  IconCalendar,
-  IconHourglassHigh,
-} from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { IconCalendar, IconHourglassHigh } from 'twenty-ui/icon';
+import { HorizontalSeparator } from 'twenty-ui/layout';
+import { type SelectOption } from 'twenty-ui/input';
 
 type WorkflowEditActionDelayProps = {
   action: WorkflowDelayAction;

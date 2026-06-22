@@ -1,0 +1,1 @@
+export const RECORD_BOARD_COLUMN_MAX_WIDTH = 400;

@@ -146,6 +146,7 @@ describe('WorkspaceEntityManager', () => {
       label: 'Field Name',
       objectMetadataId: 'test-entity-id',
       isNullable: true,
+      isSystemSideEffect: false,
       isLabelSyncedWithName: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

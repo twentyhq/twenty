@@ -31,7 +31,7 @@ import {
   IllustrationIconToggle,
   IllustrationIconUid,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);
