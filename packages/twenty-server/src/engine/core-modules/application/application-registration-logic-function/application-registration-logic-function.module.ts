@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationLogicFunctionEntity } from 'src/engine/core-modules/application/application-registration-logic-function/application-registration-logic-function.entity';
+import { ApplicationRegistrationLogicFunctionSyncService } from 'src/engine/core-modules/application/application-registration-logic-function/application-registration-logic-function-sync.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 
 @Module({
@@ -11,7 +12,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
       ApplicationRegistrationEntity,
     ]),
   ],
-  providers: [],
-  exports: [],
+  providers: [ApplicationRegistrationLogicFunctionSyncService],
+  exports: [ApplicationRegistrationLogicFunctionSyncService],
 })
 export class ApplicationRegistrationLogicFunctionModule {}
