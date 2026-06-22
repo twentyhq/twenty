@@ -1,0 +1,19 @@
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+  s_f011b1af81af5a::t_60e9a8449739a8 114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "a3123ab1e9c9dea01840248b48016b34e1852f3d",
+  "prompts": {},
+  "sessions": {
+    "s_f011b1af81af5a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "34e01591-d566-45d2-99ea-0d6bf8506ec0",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
