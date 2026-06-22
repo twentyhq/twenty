@@ -1,5 +1,13 @@
+import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
+
+export type DatabaseEventTriggerFilterSettings = {
+  stepFilters: StepFilter[];
+  stepFilterGroups: StepFilterGroup[];
+};
+
 export type BaseDatabaseEventTriggerSettings = {
   eventName: string;
+  filter?: DatabaseEventTriggerFilterSettings;
 };
 
 export type DatabaseEventTriggerSettings =

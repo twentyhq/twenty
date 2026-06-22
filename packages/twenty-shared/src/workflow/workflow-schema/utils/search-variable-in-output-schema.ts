@@ -27,6 +27,7 @@ const RECORD_STEP_TYPES = [
   'UPDATE_RECORD',
   'DELETE_RECORD',
   'UPSERT_RECORD',
+  'PICK_RECORD',
 ];
 
 const isRecordOutputSchemaV2 = (
