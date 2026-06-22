@@ -1454,6 +1454,7 @@ __metadata:
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.0"
+    zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
 
@@ -4275,6 +4276,13 @@ __metadata:
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: 10c0/71cc2f2bbb537300c3f569e25693d37b3bc91f225cefce251a71c30bc6bb3e7f8e9420ca0eb57f2ac9e492b085b8dfa075fd1e8195c40b83c951dd59c6e4fbf8
+  languageName: node
+  linkType: hard
+
+"zod@npm:^4.1.11":
+  version: 4.4.3
+  resolution: "zod@npm:4.4.3"
+  checksum: 10c0/7ea31b558e88f9faf44f31dd185e2e1cbf51fed3081787fb96cc2534749b50c0acfc6da7f0922a7353ed092dd358c7d50c28ea96c94d04af64191bd33152eca3
   languageName: node
   linkType: hard
 
