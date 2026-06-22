@@ -1,15 +1,12 @@
 import { ViewType, defineView } from 'twenty-sdk/define';
 
 import {
+  APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
   APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   APPLICATION_OPPORTUNITY_FIELD_ID,
+  APPLICATION_PITCH_FIELD_ID,
   APPLICATION_STATE_FIELD_ID,
 } from 'src/objects/application.object';
-
-// pitch/lastActivityAt ids are inline literals in application.object.ts (not exported).
-const APPLICATION_PITCH_FIELD_ID = '0a6cd9c9-e1e9-4315-8356-b72077443805';
-const APPLICATION_LAST_ACTIVITY_AT_FIELD_ID =
-  'b184ac02-51b2-4442-9505-2b06f5c94112';
 
 export const MY_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER =
   'cba45e02-b3a7-420f-ace5-5e2773076080';

@@ -6,6 +6,7 @@ import {
 
 import { ALL_OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { OPPORTUNITY_IS_LISTED_FIELD_ID } from 'src/fields/opportunity-is-listed.field';
+import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-on-opportunity.field';
 
 // All opportunities, every stage. Kept last in the Matching folder.
 export default defineView({
@@ -28,7 +29,7 @@ export default defineView({
     },
     {
       universalIdentifier: '9f72d1ce-7c39-418c-95cb-480d1b176821',
-      fieldMetadataUniversalIdentifier: 'd9eeacaa-2f9e-44cc-b5f6-5e1526256d49',
+      fieldMetadataUniversalIdentifier: PARTNER_ON_OPPORTUNITY_FIELD_ID,
       position: 1,
       isVisible: true,
       size: 200,
