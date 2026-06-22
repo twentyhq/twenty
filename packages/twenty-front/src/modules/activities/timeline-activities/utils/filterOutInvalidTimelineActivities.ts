@@ -55,8 +55,6 @@ export const filterOutInvalidTimelineActivities = (
 
       const verb = parseTimelineActivityVerb(timelineActivity.name);
 
-      // Linked-record rows only validate when they carry a diff (notes/tasks);
-      // pointer rows (emails, calendar events) have none and pass through.
       if (isDefined(linkedObjectMetadataItem)) {
         if (!isDefined(timelineActivity.properties?.diff)) {
           return timelineActivity;

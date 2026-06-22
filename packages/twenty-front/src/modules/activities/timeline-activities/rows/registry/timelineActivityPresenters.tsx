@@ -12,9 +12,6 @@ export type TimelineActivityLinkedPresenter = {
   needsLinkedRecordTitle?: boolean;
 };
 
-// Linked-record rows are keyed by the linked object's nameSingular, so any
-// object (built-in or custom) can opt into a rich card; the generic presenter
-// is the default for everything else.
 export const TIMELINE_ACTIVITY_LINKED_PRESENTERS: Partial<
   Record<string, TimelineActivityLinkedPresenter>
 > = {
