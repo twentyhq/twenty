@@ -1,6 +1,7 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -41,6 +42,36 @@ export const useHandleRecordGroupField = () => {
       const view = getViewFromState(currentViewId);
 
       if (isUndefinedOrNull(view)) {
+        return;
+      }
+
+      if (isManyToOneRelationToWorkspaceMember(fieldMetadataItem)) {
+        const updatedRelationViewResult = await performViewAPIUpdate({
+          id: view.id,
+          input: {
+            mainGroupByFieldMetadataId: fieldMetadataItem.id,
+          },
+        });
+
+        if (updatedRelationViewResult.status === 'successful') {
+          const updatedRelationView = updatedRelationViewResult.response.data
+            ?.updateView as GqlView;
+
+          if (isDefined(updatedRelationView)) {
+            await loadRecordIndexStates(
+              updatedRelationView,
+              objectMetadataItem,
+            );
+          }
+        }
+
+        setRecordGroupsFromViewGroups({
+          viewId: view.id,
+          mainGroupByFieldMetadataId: fieldMetadataItem.id,
+          viewGroups: [],
+          objectMetadataItem,
+        });
+
         return;
       }
 
