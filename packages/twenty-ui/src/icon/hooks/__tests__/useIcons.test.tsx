@@ -1,11 +1,12 @@
 import { renderHook } from '@testing-library/react';
-import { Provider } from 'jotai';
+import { type ReactNode } from 'react';
 
 import {
   Icon123,
   IconBuildingSkyscraper,
   IconUser,
 } from '@ui/icon/components/TablerIcons';
+import { IconsContext } from '@ui/icon/internal/IconsContext';
 import { useIcons } from '@ui/icon/hooks/useIcons';
 
 const mockedStateIcons = {
@@ -14,14 +15,15 @@ const mockedStateIcons = {
   IconBuildingSkyscraper,
 };
 
-jest.mock('jotai', () => ({
-  ...jest.requireActual('jotai'),
-  useAtomValue: () => mockedStateIcons,
-}));
+const Wrapper = ({ children }: { children: ReactNode }) => (
+  <IconsContext.Provider value={mockedStateIcons}>
+    {children}
+  </IconsContext.Provider>
+);
 
 describe('useIcons', () => {
   const { result } = renderHook(() => useIcons(), {
-    wrapper: Provider,
+    wrapper: Wrapper,
   });
 
   it('returns default icon when no icon key is provided', () => {
