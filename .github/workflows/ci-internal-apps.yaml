@@ -66,7 +66,7 @@ jobs:
           // keep this PR small while the remaining apps are made CI-ready. Remove an
           // app from this list once its checks pass, and delete the list entirely
           // once every application is covered.
-          const CI_EXCLUDED_APPLICATIONS = ['call-recording', 'people-data-labs', 'twenty-for-twenty', 'twenty-meeting-bot', 'twenty-partners'];
+          const CI_EXCLUDED_APPLICATIONS = ['twenty-meeting-bot', 'twenty-partners'];
           const eventName = process.env.EVENT_NAME;
           const changedFiles = JSON.parse(process.env.CHANGED_FILES || '[]');
           const changedApps = new Set();
