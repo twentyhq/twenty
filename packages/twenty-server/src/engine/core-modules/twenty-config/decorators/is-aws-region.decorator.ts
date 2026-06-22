@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   registerDecorator,
   type ValidationArguments,
@@ -6,29 +7,41 @@ import {
   type ValidatorConstraintInterface,
 } from 'class-validator';
 
+const AWS_REGION_REGEX = /^[a-z]{2}-[a-z]+-\d{1}$/;
+
 @ValidatorConstraint({ async: true })
 export class IsAWSRegionConstraint implements ValidatorConstraintInterface {
   validate(region: string, args?: ValidationArguments) {
-    const object = args?.object as any;
+    const [relaxIfPropertyPresent] = args?.constraints ?? [];
 
-    if (args?.property === 'STORAGE_S3_REGION' && object?.STORAGE_S3_ENDPOINT) {
-      return typeof region === 'string' && region.trim().length > 0;
+    // S3-compatible providers (Scaleway "fr-par", DigitalOcean) sign requests
+    // with non-AWS region slugs. When the related property is set (a custom S3
+    // endpoint), the value is just a signing label, so any non-blank string is
+    // accepted instead of an AWS-shaped region.
+    if (isNonEmptyString(relaxIfPropertyPresent)) {
+      const relaxingValue = (args?.object as Record<string, unknown>)[
+        relaxIfPropertyPresent
+      ];
+
+      if (isNonEmptyString(relaxingValue)) {
+        return typeof region === 'string' && region.trim().length > 0;
+      }
     }
 
-    const regex = /^[a-z]{2}-[a-z]+-\d{1}$/;
-
-    return regex.test(region); // Returns true if region matches regex
+    return AWS_REGION_REGEX.test(region);
   }
 }
 
 export const IsAWSRegion =
-  (validationOptions?: ValidationOptions) =>
+  (relaxIfPropertyPresent?: string, validationOptions?: ValidationOptions) =>
   (object: object, propertyName: string) => {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      constraints: [],
+      constraints: isNonEmptyString(relaxIfPropertyPresent)
+        ? [relaxIfPropertyPresent]
+        : [],
       validator: IsAWSRegionConstraint,
     });
   };

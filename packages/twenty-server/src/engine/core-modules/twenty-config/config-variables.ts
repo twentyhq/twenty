@@ -473,7 +473,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
-  @IsAWSRegion()
+  @IsAWSRegion('STORAGE_S3_ENDPOINT')
   STORAGE_S3_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
