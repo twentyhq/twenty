@@ -19,6 +19,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type Manifest } from 'twenty-shared/application';
+import { ApplicationRegistrationLogicFunctionEntity } from 'src/engine/core-modules/application/application-registration-logic-function/application-registration-logic-function.entity';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -144,6 +145,13 @@ export class ApplicationRegistrationEntity {
     { onDelete: 'CASCADE' },
   )
   variables: Relation<ApplicationRegistrationVariableEntity[]>;
+
+  @OneToMany(
+    () => ApplicationRegistrationLogicFunctionEntity,
+    (logicFunction) => logicFunction.applicationRegistration,
+    { onDelete: 'CASCADE' },
+  )
+  logicFunctions: Relation<ApplicationRegistrationLogicFunctionEntity[]>;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })
