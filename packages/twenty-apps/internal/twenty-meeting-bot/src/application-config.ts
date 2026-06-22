@@ -7,9 +7,11 @@ import { MEETING_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTI
 import { MEETING_BOT_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/meeting-bot-join-early-minutes-app-variable-universal-identifier';
 import { MEETING_BOT_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/meeting-bot-name-app-variable-universal-identifier';
 import { MEETING_BOT_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/meeting-bot-noone-joined-timeout-seconds-app-variable-universal-identifier';
+import { MEETING_BOT_RECORDING_RETENTION_DAYS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/meeting-bot-recording-retention-days-app-variable-universal-identifier';
 import { MEETING_BOT_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/meeting-bot-waiting-room-timeout-seconds-app-variable-universal-identifier';
 import { DEFAULT_MEETING_BOT_JOIN_EARLY_MINUTES } from 'src/logic-functions/constants/default-meeting-bot-join-early-minutes';
 import { DEFAULT_MEETING_BOT_NAME } from 'src/logic-functions/constants/default-meeting-bot-name';
+import { DEFAULT_MEETING_BOT_RECORDING_RETENTION_DAYS } from 'src/logic-functions/constants/default-meeting-bot-recording-retention-days';
 import { DEFAULT_RECALL_REGION } from 'src/logic-functions/constants/default-recall-region';
 import { MEETING_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS } from 'src/logic-functions/constants/meeting-bot-everyone-left-timeout-seconds';
 import { MEETING_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-everyone-left-timeout-seconds-env-var-name';
@@ -17,6 +19,7 @@ import { MEETING_BOT_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions
 import { MEETING_BOT_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-name-env-var-name';
 import { MEETING_BOT_NOONE_JOINED_TIMEOUT_SECONDS } from 'src/logic-functions/constants/meeting-bot-noone-joined-timeout-seconds';
 import { MEETING_BOT_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-noone-joined-timeout-seconds-env-var-name';
+import { MEETING_BOT_RECORDING_RETENTION_DAYS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-recording-retention-days-env-var-name';
 import { MEETING_BOT_WAITING_ROOM_TIMEOUT_SECONDS } from 'src/logic-functions/constants/meeting-bot-waiting-room-timeout-seconds';
 import { MEETING_BOT_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-waiting-room-timeout-seconds-env-var-name';
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
@@ -66,6 +69,14 @@ export default defineApplication({
         'How many seconds the bot keeps recording after everyone else leaves the meeting.',
       isSecret: false,
       value: String(MEETING_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS),
+    },
+    [MEETING_BOT_RECORDING_RETENTION_DAYS_ENV_VAR_NAME]: {
+      universalIdentifier:
+        MEETING_BOT_RECORDING_RETENTION_DAYS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      description:
+        'How many days Recall.ai retains the recording after the meeting ends before deleting it automatically. Defaults to 7 days.',
+      isSecret: false,
+      value: String(DEFAULT_MEETING_BOT_RECORDING_RETENTION_DAYS),
     },
   },
   serverVariables: {
