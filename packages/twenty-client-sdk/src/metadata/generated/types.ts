@@ -5200,6 +5200,15 @@ export default {
             "name": [
                 1
             ],
+            "label": [
+                1
+            ],
+            "inProgressLabel": [
+                1
+            ],
+            "completedLabel": [
+                1
+            ],
             "description": [
                 1
             ],
