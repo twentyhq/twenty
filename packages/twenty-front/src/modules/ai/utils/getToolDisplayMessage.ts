@@ -14,7 +14,7 @@ const NestedQuerySchema = z.object({
 });
 const ModelGeneratedLabelSchema = z.object({
   loadingMessage: z.string(),
-  completedMessage: z.string(),
+  completedMessage: z.string().optional(),
 });
 const ExecuteToolSchema = z.object({
   toolName: z.coerce.string(),
@@ -97,7 +97,8 @@ const toLabelList = (
   names: string[],
   labelMap: Map<string, ToolLabel>,
   output?: unknown,
-): string => names.map((name) => resolveName(name, labelMap, output)).join(', ');
+): string =>
+  names.map((name) => resolveName(name, labelMap, output)).join(', ');
 
 const webSearchResolver: ToolLabelResolver = ({ input, isFinished }) => {
   const query = extractSearchQuery(input);
@@ -178,11 +179,7 @@ const modelGeneratedLabelResolver: ToolLabelResolver = ({
     );
   }
 
-  return pickByStatus(
-    isFinished,
-    t`Ran code`,
-    t`Running code`,
-  );
+  return pickByStatus(isFinished, t`Ran code`, t`Running code`);
 };
 
 const executeToolResolver: ToolLabelResolver = (context) => {
@@ -208,9 +205,7 @@ const TOOL_LABEL_RESOLVERS: Record<string, ToolLabelResolver> = {
   code_interpreter: modelGeneratedLabelResolver,
 };
 
-export const resolveToolDisplayMessage = (
-  context: ToolCallContext,
-): string => {
+export const resolveToolDisplayMessage = (context: ToolCallContext): string => {
   const resolver = TOOL_LABEL_RESOLVERS[context.toolName] ?? defaultResolver;
 
   return resolver(context);

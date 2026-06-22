@@ -17,7 +17,6 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { wrapWithErrorHandler } from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { stripLoadingMessage } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
@@ -118,7 +117,6 @@ export class ToolRegistryService {
       const executeFn = async (
         args: Record<string, unknown>,
       ): Promise<ToolOutput> => {
-
         const result = await this.toolExecutorService.dispatch(
           descriptor,
           args,
@@ -322,12 +320,8 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
-    const {
-      categories,
-      excludeTools,
-      wrapWithErrorContext,
-      compactOutput,
-    } = options;
+    const { categories, excludeTools, wrapWithErrorContext, compactOutput } =
+      options;
     const categorySet = categories ? new Set(categories) : undefined;
 
     const results = await Promise.all(

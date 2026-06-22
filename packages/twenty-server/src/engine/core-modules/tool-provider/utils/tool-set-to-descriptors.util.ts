@@ -12,6 +12,13 @@ export type ToolSetToDescriptorsOptions = {
   labels?: Record<string, string>;
 };
 
+const humanizeToolName = (name: string): string =>
+  name
+    .split('_')
+    .filter((word) => word.length > 0)
+    .map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`)
+    .join(' ');
+
 export const toolSetToDescriptors = (
   toolSet: ToolSet,
   category: ToolCategory,
@@ -22,7 +29,7 @@ export const toolSetToDescriptors = (
   return Object.entries(toolSet).map(([name, tool]) => {
     const base: ToolIndexEntry = {
       name,
-      label: options?.labels?.[name] ?? name,
+      label: options?.labels?.[name] ?? humanizeToolName(name),
       description: tool.description ?? '',
       category,
       executionRef: { kind: 'static' as const, toolId: name },

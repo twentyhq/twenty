@@ -13,7 +13,7 @@ const createMockToolSet = (
   for (const [name, def] of Object.entries(tools)) {
     toolSet[name] = {
       description: def.description,
-      parameters: def.inputSchema ?? z.object({}),
+      inputSchema: def.inputSchema ?? z.object({}),
       execute: async () => ({}),
     };
   }

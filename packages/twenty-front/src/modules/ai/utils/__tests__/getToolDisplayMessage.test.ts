@@ -186,9 +186,7 @@ describe('resolveToolDisplayMessage', () => {
 
     it('should resolve labels from output when not in the label map', () => {
       const output = {
-        tools: [
-          { name: 'app_unknown_tool', label: 'Unknown Tool Label' },
-        ],
+        tools: [{ name: 'app_unknown_tool', label: 'Unknown Tool Label' }],
       };
 
       const message = resolveToolDisplayMessage({

@@ -5,7 +5,6 @@ const LabelEntrySchema = z.object({
   label: z.string().optional(),
 });
 
-
 const ToolOutputWithLabelsSchema = z.object({
   tools: z.array(LabelEntrySchema).optional(),
   skills: z.array(LabelEntrySchema).optional(),
