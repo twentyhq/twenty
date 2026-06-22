@@ -23,7 +23,6 @@ const CONSTRAINT_VIOLATION_MESSAGES: Record<string, MessageDescriptor> = {
   [POSTGRESQL_ERROR_CODES.NOT_NULL_VIOLATION]: msg`A required field is missing. Please provide all required values and try again.`,
   [POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION]: msg`This operation references a record that does not exist or cannot be modified due to existing relationships.`,
   [POSTGRESQL_ERROR_CODES.RESTRICT_VIOLATION]: msg`This record cannot be deleted because it is still referenced by other records.`,
-  [POSTGRESQL_ERROR_CODES.CHECK_VIOLATION]: msg`One or more field values are invalid. Please check your input and try again.`,
 };
 
 export const computeTwentyORMException = async (
