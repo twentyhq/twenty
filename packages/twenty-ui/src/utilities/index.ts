@@ -14,7 +14,6 @@ export {
   stringToThemeColorP3String,
 } from './color/utils/stringToThemeColorP3String';
 export { themeColorSchema } from './color/utils/themeColorSchema';
-export { REACT_APP_SERVER_BASE_URL } from './config';
 export { getOsControlSymbol } from './device/getOsControlSymbol';
 export { getOsShortcutSeparator } from './device/getOsShortcutSeparator';
 export { getUserDevice } from './device/getUserDevice';
@@ -27,7 +26,6 @@ export { useScreenSize } from './screen-size/hooks/useScreenSize';
 export type { ClickOutsideAttributes } from './types/ClickOutsideAttributes';
 export type { Nullable } from './types/Nullable';
 export { getDisplayValueByUrlType } from './utils/getDisplayValueByUrlType';
-export { getImageAbsoluteURI } from './utils/getImageAbsoluteURI';
 export { getSafeUrl } from './utils/getSafeUrl';
 export { isDefined } from './utils/isDefined';
 export type { LinkifyMatch } from './utils/linkifyText';

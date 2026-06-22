@@ -1,4 +1,5 @@
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -59,7 +60,7 @@ export const MentionRecordChip = ({
           placeholder={label}
           placeholderColorSeed={recordId}
           avatarType="rounded"
-          avatarUrl={imageUrl}
+          avatarUrl={getAbsoluteImageUrl(imageUrl)}
         />
       }
     />

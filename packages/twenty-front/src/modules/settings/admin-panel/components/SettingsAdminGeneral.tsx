@@ -29,6 +29,7 @@ import {
   AdminPanelRecentUsersDocument,
   AdminPanelTopWorkspacesDocument,
 } from '~/generated-admin/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledEmptyState = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -136,7 +137,7 @@ export const SettingsAdminGeneral = () => {
                       overflow="hidden"
                     >
                       <Avatar
-                        avatarUrl={user.avatarUrl}
+                        avatarUrl={getAbsoluteImageUrl(user.avatarUrl)}
                         placeholder={
                           `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
                           user.email
@@ -160,7 +161,7 @@ export const SettingsAdminGeneral = () => {
                       {user.workspaceId ? (
                         <>
                           <Avatar
-                            avatarUrl={user.workspaceLogo}
+                            avatarUrl={getAbsoluteImageUrl(user.workspaceLogo)}
                             placeholder={user.workspaceName || ''}
                             placeholderColorSeed={user.workspaceId}
                             size="sm"
@@ -232,7 +233,7 @@ export const SettingsAdminGeneral = () => {
                       overflow="hidden"
                     >
                       <Avatar
-                        avatarUrl={workspace.logoUrl}
+                        avatarUrl={getAbsoluteImageUrl(workspace.logoUrl)}
                         placeholder={workspace.name || ''}
                         placeholderColorSeed={workspace.id}
                         size="md"
