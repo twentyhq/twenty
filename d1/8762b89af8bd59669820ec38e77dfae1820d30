@@ -1,0 +1,21 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1782144385668-add-connected-account-webhook-subscription.ts
+  s_b41d36b575c763::t_556b9630f82e3e 7
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_b41d36b575c763::t_cc46f30397b172 78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "d18762b89af8bd59669820ec38e77dfae1820d30",
+  "prompts": {},
+  "sessions": {
+    "s_b41d36b575c763": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b6d71fb-0935-4998-b4e1-1c5dff06f390",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
