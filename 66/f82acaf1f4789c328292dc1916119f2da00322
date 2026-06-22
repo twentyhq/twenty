@@ -1,0 +1,35 @@
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/google/google-calendar-notification.handler.ts
+  s_b41d36b575c763::t_4ebc7dfcac941a 50-57,60-61
+  s_b41d36b575c763::t_d269e574c4aed0 1-2
+  s_b41d36b575c763::t_1a07f6efcca299 58,62-63
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/google/google-webhook-driver.module.ts
+  s_b41d36b575c763::t_0fbf74be371a30 1-33
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.module.ts
+  s_b41d36b575c763::t_1d0944fe2ed80f 4-5,8
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.controller.ts
+  s_b41d36b575c763::t_7cac554f201ea6 22-25
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-webhook-driver.module.ts
+  s_b41d36b575c763::t_50c822ddeae2d4 1-28
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-messaging-notification.handler.ts
+  s_b41d36b575c763::t_ffd91fdba28c42 1-2
+  s_b41d36b575c763::t_9f8d2169cd248f 46-59
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-calendar-notification.handler.ts
+  s_b41d36b575c763::t_c571030e9b346a 1-2
+  s_b41d36b575c763::t_83a26db70c9572 46-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "66f82acaf1f4789c328292dc1916119f2da00322",
+  "prompts": {},
+  "sessions": {
+    "s_b41d36b575c763": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b6d71fb-0935-4998-b4e1-1c5dff06f390",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
