@@ -1,0 +1,77 @@
+name: Blocked Contributors Check
+
+# Fails a PR when any of its commits are attributed to a known bot
+# (author, committer, or `Co-Authored-By:` trailer).
+# Keeps automated agents (Claude, etc.) out of the contributor history.
+#
+# To block another bot, add a case-insensitive pattern to BLOCKED_PATTERNS below.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check-blocked-contributors:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      REPO: ${{ github.repository }}
+      # One regex pattern per line, matched case-insensitively against each
+      # commit's author/committer name + email and every Co-Authored-By trailer.
+      #
+      # Match bot *identities* (emails / [bot] handles), NOT bare first names —
+      # a pattern like "claude" would also flag a human contributor named Claude.
+      BLOCKED_PATTERNS: |
+        noreply@anthropic\.com
+        @anthropic\.com
+        cursoragent@cursor\.com
+        copilot-swe-agent\[bot\]
+    steps:
+      - name: Inspect PR commits for blocked contributors
+        run: |
+          set -euo pipefail
+
+          # Build a single alternation regex from the blocklist (skip blank lines).
+          PATTERN="$(printf '%s\n' "$BLOCKED_PATTERNS" | grep -v '^[[:space:]]*$' | paste -sd '|' -)"
+          echo "Blocking patterns: $PATTERN"
+
+          # Pull every commit on the PR: identities + full message (for trailers).
+          COMMITS_JSON="$(gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/commits")"
+
+          VIOLATIONS=0
+
+          # Each line: <sha>\t<haystack> where haystack = author/committer + message.
+          while IFS=$'\t' read -r SHA HAYSTACK; do
+            [ -z "$SHA" ] && continue
+            if printf '%s' "$HAYSTACK" | grep -iqE "$PATTERN"; then
+              MATCH="$(printf '%s' "$HAYSTACK" | grep -ioE "$PATTERN" | sort -u | paste -sd ', ' -)"
+              echo "::error::Commit $SHA is attributed to a blocked contributor (matched: $MATCH)"
+              VIOLATIONS=$((VIOLATIONS + 1))
+            fi
+          done < <(printf '%s' "$COMMITS_JSON" | jq -r '
+            .[]
+            | [
+                .sha,
+                ( [ .commit.author.name, .commit.author.email,
+                    .commit.committer.name, .commit.committer.email,
+                    .commit.message ]
+                  | join(" ") | gsub("[\n\t]"; " ") )
+              ]
+            | @tsv')
+
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            echo ""
+            echo "Found $VIOLATIONS commit(s) attributed to blocked bot contributors."
+            echo "Rewrite the author/committer and strip Co-Authored-By trailers, e.g.:"
+            echo "  git rebase -i --exec 'git commit --amend --reset-author --no-edit' origin/main"
+            echo "then force-push the branch."
+            exit 1
+          fi
+
+          echo "No blocked contributors found in PR commits."
