@@ -37195,9 +37195,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"imapflow@npm:1.3.6":
-  version: 1.3.6
-  resolution: "imapflow@npm:1.3.6"
+"imapflow@npm:1.4.2":
+  version: 1.4.2
+  resolution: "imapflow@npm:1.4.2"
   dependencies:
     "@zone-eu/mailsplit": "npm:5.4.12"
     encoding-japanese: "npm:2.2.0"
@@ -37205,10 +37205,10 @@ __metadata:
     libbase64: "npm:1.3.0"
     libmime: "npm:5.3.8"
     libqp: "npm:2.1.1"
-    nodemailer: "npm:8.0.10"
+    nodemailer: "npm:9.0.1"
     pino: "npm:10.3.1"
     socks: "npm:2.8.9"
-  checksum: 10c0/9fd42d1f28a7761a405a3de89aae797504b500cf69c91bf5ffc4f13a7448cd7ba90ca82da92c714d09bb8d254ff6ae73b91fa40c33a3fa470424062f433f30b0
+  checksum: 10c0/568ed3981e3e402bcbe91f634894a5b57cc4ba7d00d0c2a2d9f05deea60d4868e874bac6745f52b3adc76e3a7c6e2cd28206f3ec6d94e39e5abdf5b6234f5859
   languageName: node
   linkType: hard
 
@@ -43384,15 +43384,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multer@npm:2.1.1":
-  version: 2.1.1
-  resolution: "multer@npm:2.1.1"
+"multer@npm:2.2.0":
+  version: 2.2.0
+  resolution: "multer@npm:2.2.0"
   dependencies:
     append-field: "npm:^1.0.0"
     busboy: "npm:^1.6.0"
     concat-stream: "npm:^2.0.0"
     type-is: "npm:^1.6.18"
-  checksum: 10c0/2ec4e02833b20f403cfb879d4b64d2a9070d902b9deae7aef18a6faadb707d7665385456cf540aa8a6dadfe3d4c5fc8e0e7b0675b94e1077048b1125426deee6
+  checksum: 10c0/7aa366d89042427347b6ab8e4a203405d7fe942e4a3095648a14526fcf3691d98ffc2da62abf85d8aca0a341f828168eb197b33cfdcfcce29d6ef593a5625591
   languageName: node
   linkType: hard
 
@@ -44112,14 +44112,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:8.0.10":
-  version: 8.0.10
-  resolution: "nodemailer@npm:8.0.10"
-  checksum: 10c0/b96fd2ea7146de58141219061e094509fd0f19aac5ac86ac35d9ce9c479dbf6c12b143fa7e7050a1be539a3542eb59520c33aabf5a119c8d28fc7d151bde329f
-  languageName: node
-  linkType: hard
-
-"nodemailer@npm:^9.0.1":
+"nodemailer@npm:9.0.1, nodemailer@npm:^9.0.1":
   version: 9.0.1
   resolution: "nodemailer@npm:9.0.1"
   checksum: 10c0/4213f01aa211127c1ce33243c5e45e7f831601a933d03fa864cd827b1bd5ea2782cb4b43722bee7028cbc193733d9802dad1120fe67181448eb0b7de52218a37
@@ -54260,7 +54253,7 @@ __metadata:
     graphql-upload: "npm:16.0.2"
     graphql-yoga: "npm:4.0.5"
     html-to-text: "npm:^9.0.5"
-    imapflow: "npm:1.3.6"
+    imapflow: "npm:1.4.2"
     ioredis: "npm:5.10.1"
     jest: "npm:29.7.0"
     jest-environment-node: "npm:^29.4.1"
@@ -57211,21 +57204,6 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 10c0/25eb33aff17edcb90721ed6b0eb250976328533ad3cd1a28a274bd263682e7296a6591ff1436d6cbc50fa67463158b062f9d1122013b361cec99a05f84680e06
-  languageName: node
-  linkType: hard
-
-"ws@npm:8.20.1":
-  version: 8.20.1
-  resolution: "ws@npm:8.20.1"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ">=5.0.2"
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10c0/ce162433218399cdedeb76fd33363d4d86a7d910058d4e3c679dce08cea65d6da6b39f11baa4d7808d024cf46ed88f6a05c17611621aaad8fc5e62edacc30c5d
   languageName: node
   linkType: hard
 
