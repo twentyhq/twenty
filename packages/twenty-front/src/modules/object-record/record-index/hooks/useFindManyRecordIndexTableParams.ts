@@ -3,7 +3,6 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -12,11 +11,9 @@ import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useReco
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext } from 'react';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
-  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -52,13 +49,6 @@ export const useFindManyRecordIndexTableParams = (
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  // Hard relation filter injected by FieldWidgetRelationTable so a relation
-  // field rendered as a record table stays scoped to the host record even when
-  // a viewId supplies its columns. Undefined for all other tables.
-  const { relationTableFilter } = useContext(
-    RecordFilterValueDependenciesContext,
-  );
-
   const flattenedFieldMetadataItems = useAtomStateValue(
     flattenedFieldMetadataItemsSelector,
   );
@@ -91,7 +81,6 @@ export const useFindManyRecordIndexTableParams = (
     currentFilters,
     recordGroupFilter,
     anyFieldFilter,
-    ...(isDefined(relationTableFilter) ? [relationTableFilter] : []),
   ]);
 
   return {
