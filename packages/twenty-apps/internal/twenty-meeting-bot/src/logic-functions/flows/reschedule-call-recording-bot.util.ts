@@ -4,6 +4,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotMetadata } from 'src/logic-functions/domain/build-recall-bot-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
+import { fetchCurrentWorkspaceId } from 'src/logic-functions/data/fetch-current-workspace-id.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
@@ -28,11 +29,25 @@ export const rescheduleCallRecordingBot = async (
 
   const joinAt = computeRecallBotJoinAt(meetingStartsAt);
 
+  const workspaceId = await fetchCurrentWorkspaceId();
+
+  if (isUndefined(workspaceId)) {
+    console.warn(
+      `[twenty-meeting-bot] cannot reschedule Recall bot for callRecording ${callRecording.id}: workspace id unavailable`,
+    );
+
+    return;
+  }
+
   const rescheduleResult = await rescheduleRecallBot({
     externalBotId,
     meetingUrl,
     joinAt,
-    metadata: buildRecallBotMetadata({ callRecording, calendarEvent }),
+    metadata: buildRecallBotMetadata({
+      callRecording,
+      calendarEvent,
+      workspaceId,
+    }),
   });
 
   if (rescheduleResult.ok) {

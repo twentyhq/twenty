@@ -9,12 +9,14 @@ import { getApplicationVariableValue } from 'src/logic-functions/utils/get-appli
 export const buildRecallBotMetadata = ({
   callRecording,
   calendarEvent,
-}: MeetingRecording): RecallBotMetadata => {
+  workspaceId,
+}: MeetingRecording & { workspaceId: string }): RecallBotMetadata => {
   const applicationId = getApplicationVariableValue(
     APPLICATION_ID_ENV_VAR_NAME,
   );
 
   return {
+    twentyWorkspaceId: workspaceId,
     twentyCallRecordingId: callRecording.id,
     twentyCalendarEventId: calendarEvent.id,
     twentyRealMeetingKey: computeRealMeetingKey({

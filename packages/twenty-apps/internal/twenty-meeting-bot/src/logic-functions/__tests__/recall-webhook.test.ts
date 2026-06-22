@@ -2,7 +2,9 @@ import { createHmac } from 'crypto';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { recallWebhookRouteHandler } from 'src/logic-functions/recall-webhook';
+import recallWebhookLogicFunction, {
+  recallWebhookRouteHandler,
+} from 'src/logic-functions/recall-webhook';
 
 const getApplicationVariableValueMock = vi.hoisted(() => vi.fn());
 const handleRecallWebhookMock = vi.hoisted(() => vi.fn());
@@ -58,6 +60,29 @@ describe('recallWebhookRouteHandler', () => {
     getApplicationVariableValueMock.mockReturnValue(SECRET);
     handleRecallWebhookMock.mockReset();
     handleRecallWebhookMock.mockResolvedValue({ status: 'updated' });
+  });
+
+  it('declares a server webhook resolver for Recall bot workspace metadata', () => {
+    expect(recallWebhookLogicFunction.success).toBe(true);
+    expect(
+      recallWebhookLogicFunction.config.httpRouteTriggerSettings,
+    ).toBeUndefined();
+    expect(
+      recallWebhookLogicFunction.config.serverWebhookTriggerSettings,
+    ).toEqual({
+      workspaceIdResolver: {
+        source: 'body',
+        path: 'data.bot.metadata.twentyWorkspaceId',
+      },
+      forwardedRequestHeaders: [
+        'webhook-id',
+        'webhook-timestamp',
+        'webhook-signature',
+        'svix-id',
+        'svix-timestamp',
+        'svix-signature',
+      ],
+    });
   });
 
   it('responds 500 when the webhook secret is not configured', async () => {

@@ -71,10 +71,13 @@ export default defineLogicFunction({
     'Receives Recall.ai webhook events and updates the matching CallRecording lifecycle status.',
   timeoutSeconds: 30,
   handler: recallWebhookRouteHandler,
-  httpRouteTriggerSettings: {
-    path: '/webhook/recall',
-    httpMethod: 'POST',
-    isAuthRequired: false,
+  // Recall delivers every tenant's events to one shared URL, so the workspace is
+  // resolved from the bot metadata Recall echoes back instead of the request host.
+  serverWebhookTriggerSettings: {
+    workspaceIdResolver: {
+      source: 'body',
+      path: 'data.bot.metadata.twentyWorkspaceId',
+    },
     forwardedRequestHeaders: [
       'webhook-id',
       'webhook-timestamp',
