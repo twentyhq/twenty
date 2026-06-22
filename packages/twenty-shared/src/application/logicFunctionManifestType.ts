@@ -8,10 +8,12 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   name?: string;
   description?: string;
   timeoutSeconds?: number;
+  scope?: 'workspace' | 'server';
   cronTriggerSettings?: CronTriggerSettings;
   databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
   httpRouteTriggerSettings?: HttpRouteTriggerSettings;
   serverWebhookTriggerSettings?: ServerWebhookTriggerSettings;
+  serverCronTriggerSettings?: ServerCronTriggerSettings;
   toolTriggerSettings?: ToolTriggerSettings;
   workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
   sourceHandlerPath: string;
@@ -21,6 +23,10 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
 };
 
 export type CronTriggerSettings = {
+  pattern: string;
+};
+
+export type ServerCronTriggerSettings = {
   pattern: string;
 };
 

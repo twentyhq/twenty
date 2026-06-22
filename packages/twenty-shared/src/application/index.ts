@@ -41,6 +41,7 @@ export type { IndexManifest } from './indexManifestType';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
+  ServerCronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
@@ -70,10 +71,8 @@ export type {
 } from './roleManifestType';
 export type { RunAgentInput, RunAgentResult } from './runAgentType';
 export type { ServerVariables } from './server-variables.type';
-export type {
-  WebhookWorkspaceIdSource,
-  ServerWebhookTriggerSettings,
-} from './serverWebhookTriggerSettingsType';
+export type { ServerLogicFunctionResult } from './serverLogicFunctionResultType';
+export type { ServerWebhookTriggerSettings } from './serverWebhookTriggerSettingsType';
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
