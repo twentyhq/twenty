@@ -111,7 +111,7 @@ export const EmailThreadComposer = ({
     if (isComposerOpen && composerState.canSend) {
       composerState.handleSend();
     }
-  }, [isComposerOpen, composerState]);
+  }, [isComposerOpen, composerState.canSend, composerState.handleSend]);
 
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],
