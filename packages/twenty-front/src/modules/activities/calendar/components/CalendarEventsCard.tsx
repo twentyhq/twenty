@@ -11,6 +11,7 @@ import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
+import { useRefetchTimelineOnParticipantChange } from '@/activities/hooks/useRefetchTimelineOnParticipantChange';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { H3Title } from 'twenty-ui/typography';
 import {
@@ -49,7 +50,7 @@ export const CalendarEventsCard = () => {
   const targetRecord = useTargetRecord();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
+  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords, refetch } =
     useCustomResolver<TimelineCalendarEventsWithTotal>(
       getTimelineCalendarEventsFromObjectRecord,
       'getTimelineCalendarEventsFromObjectRecord',
@@ -57,6 +58,14 @@ export const CalendarEventsCard = () => {
       targetRecord,
       TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     );
+
+  useRefetchTimelineOnParticipantChange({
+    queryId: `calendar-${targetRecord.id}`,
+    participantObjectNameSingular: 'calendarEventParticipant',
+    relatedPersonIds:
+      data?.getTimelineCalendarEventsFromObjectRecord?.relatedPersonIds ?? [],
+    refetch,
+  });
 
   const { timelineCalendarEvents, totalNumberOfCalendarEvents } =
     data?.getTimelineCalendarEventsFromObjectRecord ?? {};

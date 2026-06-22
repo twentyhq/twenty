@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
@@ -9,6 +10,7 @@ import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInbox
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
 import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
+import { useRefetchTimelineOnParticipantChange } from '@/activities/hooks/useRefetchTimelineOnParticipantChange';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
@@ -49,7 +51,7 @@ const StyledEmailCount = styled.span`
 export const EmailsCard = () => {
   const targetRecord = useTargetRecord();
 
-  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
+  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords, refetch } =
     useCustomResolver<TimelineThreadsWithTotal>(
       getTimelineThreadsFromObjectRecord,
       'getTimelineThreadsFromObjectRecord',
@@ -57,6 +59,14 @@ export const EmailsCard = () => {
       targetRecord,
       TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
     );
+
+  useRefetchTimelineOnParticipantChange({
+    queryId: `emails-${targetRecord.id}`,
+    participantObjectNameSingular: CoreObjectNameSingular.MessageParticipant,
+    relatedPersonIds:
+      data?.getTimelineThreadsFromObjectRecord?.relatedPersonIds ?? [],
+    refetch,
+  });
 
   const { totalNumberOfThreads, timelineThreads } =
     data?.getTimelineThreadsFromObjectRecord ?? {};
