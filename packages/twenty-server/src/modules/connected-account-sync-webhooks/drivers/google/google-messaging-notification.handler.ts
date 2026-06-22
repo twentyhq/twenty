@@ -8,12 +8,11 @@ import {
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { WEBHOOK_SUBSCRIPTION_ROUTE_PATHS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-route-paths.constant';
 import { WebhookSyncTriggerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service';
 import {
   ConnectedAccountSyncWebhookException,
@@ -57,21 +56,26 @@ export class GoogleMessagingNotificationHandler implements WebhookNotificationHa
       },
     });
 
-    for (const connectedAccount of connectedAccounts) {
-      const messageChannels = await this.messageChannelRepository.find({
-        where: {
-          connectedAccountId: connectedAccount.id,
-          workspaceId: connectedAccount.workspaceId,
-          webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
-        },
-      });
+    const connectedAccountIds = connectedAccounts.map(
+      (connectedAccount) => connectedAccount.id,
+    );
 
-      for (const messageChannel of messageChannels) {
-        await this.webhookSyncTriggerService.triggerMessagingSync(
-          messageChannel.id,
-          messageChannel.workspaceId,
-        );
-      }
+    if (connectedAccountIds.length === 0) {
+      return;
+    }
+
+    const messageChannels = await this.messageChannelRepository.find({
+      where: {
+        connectedAccountId: In(connectedAccountIds),
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
+      },
+    });
+
+    for (const messageChannel of messageChannels) {
+      await this.webhookSyncTriggerService.triggerMessagingSync(
+        messageChannel.id,
+        messageChannel.workspaceId,
+      );
     }
   }
 
@@ -96,7 +100,7 @@ export class GoogleMessagingNotificationHandler implements WebhookNotificationHa
       );
     }
 
-    const expectedAudience = `${this.twentyConfigService.get('SERVER_URL')}/${WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.GOOGLE_MESSAGING}`;
+    const expectedAudience = `${this.twentyConfigService.get('SERVER_URL')}/webhooks/google/messaging`;
 
     try {
       const ticket = await new OAuth2Client().verifyIdToken({

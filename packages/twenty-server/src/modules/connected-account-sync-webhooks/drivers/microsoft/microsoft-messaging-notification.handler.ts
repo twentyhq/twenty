@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
@@ -29,12 +29,29 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
   ) {}
 
   async handle(notifications: MicrosoftGraphNotification[]): Promise<void> {
+    const subscriptionIds = notifications
+      .map((notification) => notification.subscriptionId)
+      .filter(isNonEmptyString);
+
+    if (subscriptionIds.length === 0) {
+      return;
+    }
+
+    const messageChannels = await this.messageChannelRepository.find({
+      where: { webhookSubscriptionExternalId: In(subscriptionIds) },
+    });
+
+    const messageChannelByExternalId = new Map(
+      messageChannels.map((messageChannel) => [
+        messageChannel.webhookSubscriptionExternalId,
+        messageChannel,
+      ]),
+    );
+
     for (const notification of notifications) {
-      const messageChannel = await this.messageChannelRepository.findOne({
-        where: {
-          webhookSubscriptionExternalId: notification.subscriptionId,
-        },
-      });
+      const messageChannel = messageChannelByExternalId.get(
+        notification.subscriptionId,
+      );
 
       if (!isDefined(messageChannel)) {
         this.logger.warn(

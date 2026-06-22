@@ -8,8 +8,7 @@ import { v4 } from 'uuid';
 import { WebhookSubscriptionChannelType } from 'twenty-shared/types';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { GOOGLE_CALENDAR_WATCH_TTL_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/google-calendar-watch-ttl-ms.constant';
-import { WEBHOOK_SUBSCRIPTION_ROUTE_PATHS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-route-paths.constant';
+import { GOOGLE_CALENDAR_WATCH_TTL_MS } from 'src/modules/connected-account/webhook-subscription-manager/drivers/google/google-calendar-watch-ttl-ms.constant';
 import {
   WebhookSubscriptionDriverException,
   WebhookSubscriptionDriverExceptionCode,
@@ -109,7 +108,7 @@ export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDrive
   ): Promise<WebhookSubscriptionResult> {
     const calendarClient = await this.getCalendarClient(connectedAccountId);
 
-    const notificationAddress = `${this.twentyConfigService.get('SERVER_URL')}/${WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.GOOGLE_CALENDAR}`;
+    const notificationAddress = `${this.twentyConfigService.get('SERVER_URL')}/webhooks/google/calendar`;
     const watchChannelId = v4();
 
     const { data } = await calendarClient.events.watch({

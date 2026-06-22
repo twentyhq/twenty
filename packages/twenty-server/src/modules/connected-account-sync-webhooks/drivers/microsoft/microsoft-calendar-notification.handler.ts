@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
@@ -29,12 +29,29 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
   ) {}
 
   async handle(notifications: MicrosoftGraphNotification[]): Promise<void> {
+    const subscriptionIds = notifications
+      .map((notification) => notification.subscriptionId)
+      .filter(isNonEmptyString);
+
+    if (subscriptionIds.length === 0) {
+      return;
+    }
+
+    const calendarChannels = await this.calendarChannelRepository.find({
+      where: { webhookSubscriptionExternalId: In(subscriptionIds) },
+    });
+
+    const calendarChannelByExternalId = new Map(
+      calendarChannels.map((calendarChannel) => [
+        calendarChannel.webhookSubscriptionExternalId,
+        calendarChannel,
+      ]),
+    );
+
     for (const notification of notifications) {
-      const calendarChannel = await this.calendarChannelRepository.findOne({
-        where: {
-          webhookSubscriptionExternalId: notification.subscriptionId,
-        },
-      });
+      const calendarChannel = calendarChannelByExternalId.get(
+        notification.subscriptionId,
+      );
 
       if (!isDefined(calendarChannel)) {
         this.logger.warn(

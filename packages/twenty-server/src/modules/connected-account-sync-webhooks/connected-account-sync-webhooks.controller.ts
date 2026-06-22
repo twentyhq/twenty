@@ -18,7 +18,6 @@ import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape
 
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { WEBHOOK_SUBSCRIPTION_ROUTE_PATHS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-route-paths.constant';
 import { GoogleCalendarNotificationHandler } from 'src/modules/connected-account-sync-webhooks/drivers/google/google-calendar-notification.handler';
 import { GoogleMessagingNotificationHandler } from 'src/modules/connected-account-sync-webhooks/drivers/google/google-messaging-notification.handler';
 import { MicrosoftCalendarNotificationHandler } from 'src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-calendar-notification.handler';
@@ -38,7 +37,7 @@ export class ConnectedAccountSyncWebhooksController {
     private readonly microsoftCalendarNotificationHandler: MicrosoftCalendarNotificationHandler,
   ) {}
 
-  @Post(WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.GOOGLE_MESSAGING)
+  @Post('webhooks/google/messaging')
   @HttpCode(HttpStatus.OK)
   async handleGoogleMessaging(
     @Body() body: GooglePubSubPushMessage,
@@ -50,7 +49,7 @@ export class ConnectedAccountSyncWebhooksController {
     });
   }
 
-  @Post(WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.GOOGLE_CALENDAR)
+  @Post('webhooks/google/calendar')
   @HttpCode(HttpStatus.OK)
   async handleGoogleCalendar(
     @Headers('x-goog-channel-id') channelId: string | undefined,
@@ -64,7 +63,7 @@ export class ConnectedAccountSyncWebhooksController {
     });
   }
 
-  @Post(WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.MICROSOFT_MESSAGING)
+  @Post('webhooks/microsoft/messaging')
   @HttpCode(HttpStatus.OK)
   async handleMicrosoftMessaging(
     @Body() body: MicrosoftGraphNotificationPayload,
@@ -80,7 +79,7 @@ export class ConnectedAccountSyncWebhooksController {
     return '';
   }
 
-  @Post(WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.MICROSOFT_CALENDAR)
+  @Post('webhooks/microsoft/calendar')
   @HttpCode(HttpStatus.OK)
   async handleMicrosoftCalendar(
     @Body() body: MicrosoftGraphNotificationPayload,

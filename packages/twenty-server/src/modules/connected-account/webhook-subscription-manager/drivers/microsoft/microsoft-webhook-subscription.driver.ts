@@ -6,8 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WebhookSubscriptionChannelType } from 'twenty-shared/types';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { MICROSOFT_SUBSCRIPTION_TTL_MINUTES } from 'src/modules/connected-account/webhook-subscription-manager/constants/microsoft-subscription-ttl-minutes.constant';
-import { WEBHOOK_SUBSCRIPTION_ROUTE_PATHS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-route-paths.constant';
+import { MICROSOFT_SUBSCRIPTION_TTL_MS } from 'src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/microsoft-subscription-ttl-ms.constant';
 import {
   WebhookSubscriptionDriverException,
   WebhookSubscriptionDriverExceptionCode,
@@ -19,9 +18,10 @@ import {
 } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
 
-type MicrosoftGraphResourceConfig = {
-  resource: string;
-  changeType: string;
+type MicrosoftGraphResourceConfig = Pick<
+  Subscription,
+  'resource' | 'changeType'
+> & {
   notificationPath: string;
 };
 
@@ -32,12 +32,12 @@ const MICROSOFT_GRAPH_RESOURCE_CONFIG_BY_CHANNEL_TYPE: Record<
   [WebhookSubscriptionChannelType.MESSAGING]: {
     resource: '/me/messages',
     changeType: 'created,updated',
-    notificationPath: WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.MICROSOFT_MESSAGING,
+    notificationPath: 'webhooks/microsoft/messaging',
   },
   [WebhookSubscriptionChannelType.CALENDAR]: {
     resource: '/me/events',
     changeType: 'created,updated,deleted',
-    notificationPath: WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.MICROSOFT_CALENDAR,
+    notificationPath: 'webhooks/microsoft/calendar',
   },
 };
 
@@ -60,18 +60,20 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
 
     const notificationUrl = `${this.twentyConfigService.get('SERVER_URL')}/${resourceConfig.notificationPath}`;
 
+    const subscriptionPayload: Subscription = {
+      changeType: resourceConfig.changeType,
+      notificationUrl,
+      lifecycleNotificationUrl: notificationUrl,
+      resource: resourceConfig.resource,
+      expirationDateTime: new Date(
+        Date.now() + MICROSOFT_SUBSCRIPTION_TTL_MS,
+      ).toISOString(),
+      clientState,
+    };
+
     const subscription: Subscription = await graphClient
       .api('/subscriptions')
-      .post({
-        changeType: resourceConfig.changeType,
-        notificationUrl,
-        lifecycleNotificationUrl: notificationUrl,
-        resource: resourceConfig.resource,
-        expirationDateTime: new Date(
-          Date.now() + MICROSOFT_SUBSCRIPTION_TTL_MINUTES * 60 * 1000,
-        ).toISOString(),
-        clientState,
-      });
+      .post(subscriptionPayload);
 
     return this.toResult(subscription);
   }
@@ -83,13 +85,15 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
       context.connectedAccountId,
     );
 
+    const subscriptionPatch: Subscription = {
+      expirationDateTime: new Date(
+        Date.now() + MICROSOFT_SUBSCRIPTION_TTL_MS,
+      ).toISOString(),
+    };
+
     const renewedSubscription: Subscription = await graphClient
       .api(`/subscriptions/${context.externalSubscriptionId}`)
-      .patch({
-        expirationDateTime: new Date(
-          Date.now() + MICROSOFT_SUBSCRIPTION_TTL_MINUTES * 60 * 1000,
-        ).toISOString(),
-      });
+      .patch(subscriptionPatch);
 
     return this.toResult(renewedSubscription);
   }
