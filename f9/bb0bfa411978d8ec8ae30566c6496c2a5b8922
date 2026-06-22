@@ -1,0 +1,157 @@
+packages/twenty-server/src/modules/connected-account-sync-webhooks/utils/is-secret-equal.util.ts
+  s_b41d36b575c763::t_745c1818647270 1-21
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription.constants.ts
+  s_b41d36b575c763::t_8b20fd715c2a79 5-8
+  s_b41d36b575c763::t_5dcf8a729df8d9 1
+  s_b41d36b575c763::t_591d2894e0a791 2-4,9-14
+packages/twenty-server/src/engine/core-modules/feature-flag/constants/public-feature-flag.const.ts
+  s_b41d36b575c763::t_43c926a713d633 31-38
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription.service.ts
+  s_b41d36b575c763::t_64db2df88c0384 227
+  s_b41d36b575c763::t_7d43845b4585da 109
+  s_b41d36b575c763::t_9d07fe78da1836 2-3,5-12,14-50,52-54,56-76,78-89,101-103,119,121-127,129-153,157-160,162-168,171-190,192,203-217,219-225,228-237,246-280,282
+  s_b41d36b575c763::t_0384121eba27a8 1,77,97-100,154-156,161,169,193-202,218,226,238-245
+  s_b41d36b575c763::t_274738a7a6c1f5 4,13
+  s_b41d36b575c763::t_1ccb33eacbbb21 90-96,128
+  s_b41d36b575c763::t_a2dd4163d8b437 104-108,110-112,117-118,120,281
+  s_b41d36b575c763::t_fafb40634128d2 113-116
+  s_b41d36b575c763::t_948301ef754a4b 51,191
+  s_b41d36b575c763::t_783abc2a3ff9c3 55
+  s_b41d36b575c763::t_8ebf661ab57f4a 170
+packages/twenty-server/src/database/commands/upgrade-version-command/2-15/2-15-instance-command-fast-1782000000000-add-connected-account-webhook-subscription.ts
+  s_b41d36b575c763::t_27895815d3be7c 17-18,27,29-31
+  s_b41d36b575c763::t_f4aa2f354c0219 1-16,19-26,28,32-53
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.module.ts
+  s_b41d36b575c763::t_166e5310061980 12,14-15,31-33
+  s_b41d36b575c763::t_745c1818647270 1-11,13,16-30,34-37
+packages/twenty-oxlint-rules/rules/prefer-workspace-scoped-repository.ts
+  s_b41d36b575c763::t_2e8372ffb0dae9 24
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service.ts
+  s_b41d36b575c763::t_4698d61df75e6f 2-96
+  s_b41d36b575c763::t_745c1818647270 1
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/listeners/webhook-subscription-channel-deleted.listener.ts
+  s_b41d36b575c763::t_948301ef754a4b 30,49
+  s_b41d36b575c763::t_d5a8970afbe51c 1-29,31-48,50-56
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver-exception-code.enum.ts
+  s_b41d36b575c763::t_b0e50e7e7abd04 1-5
+packages/twenty-server/src/engine/core-modules/core-engine.module.ts
+  s_b41d36b575c763::t_b26caa0a1d278a 50,92
+packages/twenty-server/src/modules/connected-account-sync-webhooks/types/google-calendar-notification.type.ts
+  s_b41d36b575c763::t_acefae0f300d57 1-5
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module.ts
+  s_b41d36b575c763::t_5dba703f26b06e 9-10
+  s_b41d36b575c763::t_b53964d04d56fe 1-8,12-25,32-34
+  s_b41d36b575c763::t_afb1dd005eed12 29-30
+  s_b41d36b575c763::t_03cfa43bf06cc5 11,26-28,31
+packages/twenty-server/src/modules/connected-account-sync-webhooks/guards/google-push-auth.guard.ts
+  s_b41d36b575c763::t_ed47ffaa73c32a 1-26
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job.ts
+  s_b41d36b575c763::t_306d2c3437f9b1 1-57
+packages/twenty-server/src/engine/metadata-modules/connected-account-webhook-subscription/entities/connected-account-webhook-subscription.entity.ts
+  s_b41d36b575c763::t_b0c3a9e2194e3d 46
+  s_b41d36b575c763::t_aecc9d57f741b0 10,19-20,28-31,47-48
+  s_b41d36b575c763::t_505edd0419e8db 1-9,11-13,15,17-18,21-27,32-45,69-90
+  s_b41d36b575c763::t_9b6c7078bb727b 14,16,49-68
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
+  s_b41d36b575c763::t_232d5cddda0ebc 1-33
+packages/twenty-server/src/modules/connected-account/channel-sync/channel-sync.module.ts
+  s_b41d36b575c763::t_cd1874f58a72e8 11,21
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/webhook-subscription-manager.module.ts
+  s_b41d36b575c763::t_cf818c76f9a679 3-4,11-12
+  s_b41d36b575c763::t_0faec157e04f48 1-2,5-10,13-17
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_b41d36b575c763::t_4c1d1052d71214 78
+  s_b41d36b575c763::t_6f2ff8bf26cf32 156
+packages/twenty-server/src/modules/connected-account-sync-webhooks/filters/connected-account-sync-webhook-api-exception.filter.ts
+  s_b41d36b575c763::t_745c1818647270 1-12,15-18,20-22,28-29
+  s_b41d36b575c763::t_011c0c92c588da 13,19,23-27
+  s_b41d36b575c763::t_5fbcfa346c2e32 14
+packages/twenty-server/src/modules/connected-account-sync-webhooks/services/google-pubsub-push-verifier.service.ts
+  s_b41d36b575c763::t_745c1818647270 1-80
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type.ts
+  s_b41d36b575c763::t_3ea337cda59b30 5
+  s_b41d36b575c763::t_52f3cffa1a03ff 20-35
+  s_b41d36b575c763::t_2a1d746d649d18 1-4,11
+  s_b41d36b575c763::t_ea65f6acf8f233 6-10,12-19
+packages/twenty-server/src/modules/connected-account-sync-webhooks/services/microsoft-webhook.service.ts
+  s_b41d36b575c763::t_b929e8ddf76221 11-18,40-42,47
+  s_b41d36b575c763::t_fbc2539eea3807 43-46
+  s_b41d36b575c763::t_3b083e60dea183 28-39,104
+  s_b41d36b575c763::t_1d45f07d1ef2f5 58,66,72-97,101
+  s_b41d36b575c763::t_0d1b44ab2dd02a 27
+packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts
+  s_b41d36b575c763::t_784d13900ae77f 178-200
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/microsoft-webhook-subscription.driver.ts
+  s_b41d36b575c763::t_c98aa44d5aa7bb 1-46,48-133
+  s_b41d36b575c763::t_ede682537600ea 47
+packages/twenty-server/src/modules/connected-account-sync-webhooks/types/google-pubsub-push.type.ts
+  s_b41d36b575c763::t_745c1818647270 1-13
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhook-exception-code.enum.ts
+  s_b41d36b575c763::t_745c1818647270 1-5
+packages/twenty-server/src/modules/connected-account-sync-webhooks/types/microsoft-graph-notification.type.ts
+  s_b41d36b575c763::t_745c1818647270 1-12
+packages/twenty-server/src/engine/twenty-orm/entity-manager/workspace-entity-manager.spec.ts
+  s_b41d36b575c763::t_7c617f409d4403 243
+packages/twenty-shared/src/types/FeatureFlagKey.ts
+  s_b41d36b575c763::t_2466b31fb23da7 12
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.controller.ts
+  s_b41d36b575c763::t_3bb1723fec1524 62
+  s_b41d36b575c763::t_15581279f00858 76
+  s_b41d36b575c763::t_fe1e9f1edc6cad 2,5,8,13,18-22,28-29,33,35,37,44-53,61,64-67,71-72,80,83-86,88,91
+  s_b41d36b575c763::t_81723b0273e5b7 42
+  s_b41d36b575c763::t_8d16d7603f940d 87
+  s_b41d36b575c763::t_8a2995efc2d032 68-70
+  s_b41d36b575c763::t_4ae6dedf1888ba 81
+  s_b41d36b575c763::t_745c1818647270 1,3-4,6-7,9-12,14-17,23-27,30-32,34,39-41,43,54-56,58-60,63,73-75,77-79,82,89-90,92-93
+  s_b41d36b575c763::t_9a8616bc3fe3de 57
+  s_b41d36b575c763::t_cabf809cae2816 36,38
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhook.exception.ts
+  s_b41d36b575c763::t_745c1818647270 1-34
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service.ts
+  s_b41d36b575c763::t_ede682537600ea 27
+  s_b41d36b575c763::t_2c13e74a5a2a6d 1-6,10-18,21-26,28-29,31,33-40
+  s_b41d36b575c763::t_bc3343a4ae20fd 7-8,19-20,30,32
+  s_b41d36b575c763::t_e4ed06be3c99a6 9
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/crons/commands/webhook-subscription-renewal.cron.command.ts
+  s_b41d36b575c763::t_175fd19c254f97 1-32
+packages/twenty-server/src/modules/connected-account/channel-sync/services/channel-sync.service.ts
+  s_b41d36b575c763::t_948301ef754a4b 88,130
+  s_b41d36b575c763::t_0fb6941f4c2191 48
+  s_b41d36b575c763::t_c7385deedddf15 129,131-134
+  s_b41d36b575c763::t_7a8195ba556123 28
+  s_b41d36b575c763::t_31c310bc9e07de 87,89-92
+packages/twenty-server/src/modules/connected-account-sync-webhooks/services/google-webhook.service.ts
+  s_b41d36b575c763::t_26bc9b453cb47d 42-43,48-50,59-62
+  s_b41d36b575c763::t_61f2df3f624c51 82-84
+  s_b41d36b575c763::t_9955a0df3d3d3e 96-98
+  s_b41d36b575c763::t_bfa6b9357482f0 95
+  s_b41d36b575c763::t_00453ed2381fff 23-24
+  s_b41d36b575c763::t_8d43ca219767b8 1
+  s_b41d36b575c763::t_14524a79a3cef5 129
+  s_b41d36b575c763::t_335b42be63dd55 33-36
+  s_b41d36b575c763::t_a14438e616c6e1 13-22,37-41,44-46,51-58,63-79,85-94,99-127,137-153
+  s_b41d36b575c763::t_b3fd9fe3691f65 47
+  s_b41d36b575c763::t_e17088cb06e952 81
+  s_b41d36b575c763::t_64a5bb057a4b18 130-132,136
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/google-webhook-subscription.driver.ts
+  s_b41d36b575c763::t_cb042c1529acee 1-23,25-176
+  s_b41d36b575c763::t_ede682537600ea 24
+packages/twenty-server/src/modules/connected-account-sync-webhooks/utils/get-connected-account-sync-webhook-exception-status-code.util.ts
+  s_b41d36b575c763::t_745c1818647270 1-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "f9bb0bfa411978d8ec8ae30566c6496c2a5b8922",
+  "prompts": {},
+  "sessions": {
+    "s_b41d36b575c763": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b6d71fb-0935-4998-b4e1-1c5dff06f390",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
