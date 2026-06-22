@@ -3,6 +3,7 @@ import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getRecordGroupByFieldColumnName } from '@/object-metadata/utils/getRecordGroupByFieldColumnName';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 
 export const computeRecordGroupOptionsFilter = ({
@@ -16,7 +17,7 @@ export const computeRecordGroupOptionsFilter = ({
     return {};
   }
 
-  const fieldName = recordGroupFieldMetadata.name;
+  const fieldName = getRecordGroupByFieldColumnName(recordGroupFieldMetadata);
   const hasNullValue = recordGroupValues.some(isNull);
   const nonNullValues = recordGroupValues.filter(
     (value): value is NonNullable<typeof value> => !isNull(value),

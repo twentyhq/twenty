@@ -1,5 +1,6 @@
 import { useStore } from 'jotai';
 
+import { getRecordGroupByFieldColumnName } from '@/object-metadata/utils/getRecordGroupByFieldColumnName';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { extractRecordPositions } from '@/object-record/record-drag/utils/extractRecordPositions';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
@@ -152,6 +153,10 @@ export const useUpdateDroppedRecordOnBoard = () => {
         );
       }
 
+      const groupByFieldColumnName = getRecordGroupByFieldColumnName(
+        selectFieldMetadataItem,
+      );
+
       upsertRecordsInStore({
         partialRecords: [
           {
@@ -160,7 +165,7 @@ export const useUpdateDroppedRecordOnBoard = () => {
             __typename:
               (initialRecord as { __typename?: string })?.__typename ??
               'Record',
-            [selectFieldMetadataItem.name]: targetRecordGroupValue,
+            [groupByFieldColumnName]: targetRecordGroupValue,
             ...(isDefined(newPosition) && { position: newPosition }),
           } as ObjectRecord,
         ],
@@ -169,7 +174,7 @@ export const useUpdateDroppedRecordOnBoard = () => {
       updateOneRecord({
         idToUpdate: recordId,
         updateOneRecordInput: {
-          [selectFieldMetadataItem.name]: targetRecordGroupValue,
+          [groupByFieldColumnName]: targetRecordGroupValue,
           ...(isDefined(newPosition) && { position: newPosition }),
         },
       });
