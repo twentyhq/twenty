@@ -43,7 +43,6 @@ const WORKSPACE_SCOPED_EXEMPTIONS = new Set<string>([
   // 20+ call sites across calendar/messaging modules; staged for a dedicated PR.
   'CalendarChannelEntity',
   'MessageChannelEntity',
-  'ConnectedAccountWebhookSubscriptionEntity',
   // The owning services `extends TypeOrmQueryService<E>` and pass the raw
   // repo to `super(...)`; the superclass type doesn't accept the wrapper.
   'FieldMetadataEntity',

@@ -1,10 +1,17 @@
-import { type ConnectedAccountWebhookSubscriptionEntity } from 'src/engine/metadata-modules/connected-account-webhook-subscription/entities/connected-account-webhook-subscription.entity';
-import { type WebhookSubscriptionChannelType } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-channel-type.enum';
+import { type WebhookSubscriptionChannelType } from 'twenty-shared/types';
 
 export type WebhookSubscriptionResult = {
   externalSubscriptionId: string | null;
   externalResourceId: string | null;
   expiresAt: Date;
+};
+
+export type WebhookSubscriptionContext = {
+  connectedAccountId: string;
+  channelType: WebhookSubscriptionChannelType;
+  externalSubscriptionId: string | null;
+  externalResourceId: string | null;
+  clientState: string;
 };
 
 export type WebhookSubscriptionDriver = {
@@ -15,10 +22,8 @@ export type WebhookSubscriptionDriver = {
   ): Promise<WebhookSubscriptionResult>;
 
   renewSubscription(
-    subscription: ConnectedAccountWebhookSubscriptionEntity,
+    context: WebhookSubscriptionContext,
   ): Promise<WebhookSubscriptionResult>;
 
-  deleteSubscription(
-    subscription: ConnectedAccountWebhookSubscriptionEntity,
-  ): Promise<void>;
+  deleteSubscription(context: WebhookSubscriptionContext): Promise<void>;
 };

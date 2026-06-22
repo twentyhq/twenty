@@ -2,12 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { WebhookSubscriptionStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ConnectedAccountWebhookSubscriptionEntity } from 'src/engine/metadata-modules/connected-account-webhook-subscription/entities/connected-account-webhook-subscription.entity';
-import { WebhookSubscriptionChannelType } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-channel-type.enum';
-import { WebhookSubscriptionStatus } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-status.enum';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { WebhookSyncTriggerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service';
 import {
   ConnectedAccountSyncWebhookException,
@@ -22,8 +21,8 @@ const GOOGLE_CALENDAR_SYNC_RESOURCE_STATE = 'sync';
 @Injectable()
 export class GoogleCalendarNotificationHandler implements WebhookNotificationHandler<GoogleCalendarChannelNotification> {
   constructor(
-    @InjectRepository(ConnectedAccountWebhookSubscriptionEntity)
-    private readonly webhookSubscriptionRepository: Repository<ConnectedAccountWebhookSubscriptionEntity>,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly webhookSyncTriggerService: WebhookSyncTriggerService,
   ) {}
 
@@ -36,22 +35,21 @@ export class GoogleCalendarNotificationHandler implements WebhookNotificationHan
       return;
     }
 
-    const subscription = await this.webhookSubscriptionRepository.findOne({
+    const calendarChannel = await this.calendarChannelRepository.findOne({
       where: {
-        externalSubscriptionId: request.channelId,
-        channelType: WebhookSubscriptionChannelType.CALENDAR,
-        status: WebhookSubscriptionStatus.ACTIVE,
+        webhookSubscriptionExternalId: request.channelId,
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
       },
     });
 
-    if (!isDefined(subscription)) {
+    if (!isDefined(calendarChannel)) {
       return;
     }
 
     if (
       !areStringsEqualConstantTime(
         request.channelToken,
-        subscription.clientState,
+        calendarChannel.webhookSubscriptionClientState,
       )
     ) {
       throw new ConnectedAccountSyncWebhookException(
@@ -60,13 +58,9 @@ export class GoogleCalendarNotificationHandler implements WebhookNotificationHan
       );
     }
 
-    if (!isDefined(subscription.calendarChannelId)) {
-      return;
-    }
-
     await this.webhookSyncTriggerService.triggerCalendarSync(
-      subscription.calendarChannelId,
-      subscription.workspaceId,
+      calendarChannel.id,
+      calendarChannel.workspaceId,
     );
   }
 }

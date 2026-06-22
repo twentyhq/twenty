@@ -5,8 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ConnectedAccountWebhookSubscriptionEntity } from 'src/engine/metadata-modules/connected-account-webhook-subscription/entities/connected-account-webhook-subscription.entity';
-import { WebhookSubscriptionChannelType } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-channel-type.enum';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
 import { WebhookSyncTriggerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service';
 import { type MicrosoftGraphNotification } from 'src/modules/connected-account-sync-webhooks/types/microsoft-graph-notification.type';
@@ -22,22 +21,21 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
   );
 
   constructor(
-    @InjectRepository(ConnectedAccountWebhookSubscriptionEntity)
-    private readonly webhookSubscriptionRepository: Repository<ConnectedAccountWebhookSubscriptionEntity>,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
     private readonly webhookSyncTriggerService: WebhookSyncTriggerService,
   ) {}
 
   async handle(notifications: MicrosoftGraphNotification[]): Promise<void> {
     for (const notification of notifications) {
-      const subscription = await this.webhookSubscriptionRepository.findOne({
+      const messageChannel = await this.messageChannelRepository.findOne({
         where: {
-          externalSubscriptionId: notification.subscriptionId,
-          channelType: WebhookSubscriptionChannelType.MESSAGING,
+          webhookSubscriptionExternalId: notification.subscriptionId,
         },
       });
 
-      if (!isDefined(subscription)) {
+      if (!isDefined(messageChannel)) {
         this.logger.warn(
           `No messaging subscription found for ${notification.subscriptionId}`,
         );
@@ -47,7 +45,7 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
       if (
         !areStringsEqualConstantTime(
           notification.clientState,
-          subscription.clientState,
+          messageChannel.webhookSubscriptionClientState,
         )
       ) {
         this.logger.warn(
@@ -61,18 +59,14 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
         notification.lifecycleEvent !== 'missed'
       ) {
         await this.messagingWebhookSubscriptionService.renewSubscription(
-          subscription,
+          messageChannel,
         );
         continue;
       }
 
-      if (!isDefined(subscription.messageChannelId)) {
-        continue;
-      }
-
       await this.webhookSyncTriggerService.triggerMessagingSync(
-        subscription.messageChannelId,
-        subscription.workspaceId,
+        messageChannel.id,
+        messageChannel.workspaceId,
       );
     }
   }

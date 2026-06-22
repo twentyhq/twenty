@@ -3,8 +3,8 @@ import { timingSafeEqual } from 'crypto';
 import { isDefined } from 'twenty-shared/utils';
 
 export const areStringsEqualConstantTime = (
-  a: string | undefined,
-  b: string | undefined,
+  a: string | null | undefined,
+  b: string | null | undefined,
 ): boolean => {
   if (!isDefined(a) || !isDefined(b)) {
     return false;

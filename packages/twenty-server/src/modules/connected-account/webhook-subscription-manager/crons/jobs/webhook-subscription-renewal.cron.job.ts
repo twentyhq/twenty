@@ -1,15 +1,15 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { WebhookSubscriptionStatus } from 'twenty-shared/types';
 import { LessThanOrEqual, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { ConnectedAccountWebhookSubscriptionEntity } from 'src/engine/metadata-modules/connected-account-webhook-subscription/entities/connected-account-webhook-subscription.entity';
-import { WebhookSubscriptionChannelType } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-channel-type.enum';
-import { WebhookSubscriptionStatus } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-status.enum';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-buffer-ms.constant';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_CRON_PATTERN } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-cron-pattern.constant';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
@@ -20,8 +20,10 @@ export class WebhookSubscriptionRenewalCronJob {
   private readonly logger = new Logger(WebhookSubscriptionRenewalCronJob.name);
 
   constructor(
-    @InjectRepository(ConnectedAccountWebhookSubscriptionEntity)
-    private readonly webhookSubscriptionRepository: Repository<ConnectedAccountWebhookSubscriptionEntity>,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
   ) {}
@@ -36,27 +38,22 @@ export class WebhookSubscriptionRenewalCronJob {
       Date.now() + WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS,
     );
 
-    const expiringMessagingSubscriptions =
-      await this.webhookSubscriptionRepository.find({
-        where: {
-          status: WebhookSubscriptionStatus.ACTIVE,
-          expiresAt: LessThanOrEqual(renewalThreshold),
-          channelType: WebhookSubscriptionChannelType.MESSAGING,
-        },
-      });
+    const expiringMessageChannels = await this.messageChannelRepository.find({
+      where: {
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
+        webhookSubscriptionExpiresAt: LessThanOrEqual(renewalThreshold),
+      },
+    });
 
-    const expiringCalendarSubscriptions =
-      await this.webhookSubscriptionRepository.find({
-        where: {
-          status: WebhookSubscriptionStatus.ACTIVE,
-          expiresAt: LessThanOrEqual(renewalThreshold),
-          channelType: WebhookSubscriptionChannelType.CALENDAR,
-        },
-      });
+    const expiringCalendarChannels = await this.calendarChannelRepository.find({
+      where: {
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
+        webhookSubscriptionExpiresAt: LessThanOrEqual(renewalThreshold),
+      },
+    });
 
     const expiringSubscriptionCount =
-      expiringMessagingSubscriptions.length +
-      expiringCalendarSubscriptions.length;
+      expiringMessageChannels.length + expiringCalendarChannels.length;
 
     if (expiringSubscriptionCount === 0) {
       return;
@@ -66,27 +63,27 @@ export class WebhookSubscriptionRenewalCronJob {
       `Renewing ${expiringSubscriptionCount} webhook subscriptions`,
     );
 
-    for (const subscription of expiringMessagingSubscriptions) {
+    for (const messageChannel of expiringMessageChannels) {
       try {
         await this.messagingWebhookSubscriptionService.renewSubscription(
-          subscription,
+          messageChannel,
         );
       } catch (error) {
         this.logger.warn(
-          `Failed to renew messaging webhook subscription ${subscription.id}`,
+          `Failed to renew messaging webhook subscription for channel ${messageChannel.id}`,
           error,
         );
       }
     }
 
-    for (const subscription of expiringCalendarSubscriptions) {
+    for (const calendarChannel of expiringCalendarChannels) {
       try {
         await this.calendarWebhookSubscriptionService.renewSubscription(
-          subscription,
+          calendarChannel,
         );
       } catch (error) {
         this.logger.warn(
-          `Failed to renew calendar webhook subscription ${subscription.id}`,
+          `Failed to renew calendar webhook subscription for channel ${calendarChannel.id}`,
           error,
         );
       }

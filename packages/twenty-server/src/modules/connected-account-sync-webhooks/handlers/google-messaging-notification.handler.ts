@@ -3,15 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { OAuth2Client } from 'google-auth-library';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  WebhookSubscriptionStatus,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { ConnectedAccountWebhookSubscriptionEntity } from 'src/engine/metadata-modules/connected-account-webhook-subscription/entities/connected-account-webhook-subscription.entity';
-import { WebhookSubscriptionChannelType } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-channel-type.enum';
-import { WebhookSubscriptionStatus } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-status.enum';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WEBHOOK_SUBSCRIPTION_ROUTE_PATHS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-route-paths.constant';
 import { WebhookSyncTriggerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service';
 import {
@@ -35,8 +36,8 @@ export class GoogleMessagingNotificationHandler implements WebhookNotificationHa
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(ConnectedAccountWebhookSubscriptionEntity)
-    private readonly webhookSubscriptionRepository: Repository<ConnectedAccountWebhookSubscriptionEntity>,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly webhookSyncTriggerService: WebhookSyncTriggerService,
   ) {}
 
@@ -57,23 +58,18 @@ export class GoogleMessagingNotificationHandler implements WebhookNotificationHa
     });
 
     for (const connectedAccount of connectedAccounts) {
-      const subscriptions = await this.webhookSubscriptionRepository.find({
+      const messageChannels = await this.messageChannelRepository.find({
         where: {
           connectedAccountId: connectedAccount.id,
           workspaceId: connectedAccount.workspaceId,
-          channelType: WebhookSubscriptionChannelType.MESSAGING,
-          status: WebhookSubscriptionStatus.ACTIVE,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
         },
       });
 
-      for (const subscription of subscriptions) {
-        if (!isDefined(subscription.messageChannelId)) {
-          continue;
-        }
-
+      for (const messageChannel of messageChannels) {
         await this.webhookSyncTriggerService.triggerMessagingSync(
-          subscription.messageChannelId,
-          subscription.workspaceId,
+          messageChannel.id,
+          messageChannel.workspaceId,
         );
       }
     }

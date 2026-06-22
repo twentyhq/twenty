@@ -5,8 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ConnectedAccountWebhookSubscriptionEntity } from 'src/engine/metadata-modules/connected-account-webhook-subscription/entities/connected-account-webhook-subscription.entity';
-import { WebhookSubscriptionChannelType } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-channel-type.enum';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { WebhookSyncTriggerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service';
 import { type MicrosoftGraphNotification } from 'src/modules/connected-account-sync-webhooks/types/microsoft-graph-notification.type';
@@ -22,22 +21,21 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
   );
 
   constructor(
-    @InjectRepository(ConnectedAccountWebhookSubscriptionEntity)
-    private readonly webhookSubscriptionRepository: Repository<ConnectedAccountWebhookSubscriptionEntity>,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
     private readonly webhookSyncTriggerService: WebhookSyncTriggerService,
   ) {}
 
   async handle(notifications: MicrosoftGraphNotification[]): Promise<void> {
     for (const notification of notifications) {
-      const subscription = await this.webhookSubscriptionRepository.findOne({
+      const calendarChannel = await this.calendarChannelRepository.findOne({
         where: {
-          externalSubscriptionId: notification.subscriptionId,
-          channelType: WebhookSubscriptionChannelType.CALENDAR,
+          webhookSubscriptionExternalId: notification.subscriptionId,
         },
       });
 
-      if (!isDefined(subscription)) {
+      if (!isDefined(calendarChannel)) {
         this.logger.warn(
           `No calendar subscription found for ${notification.subscriptionId}`,
         );
@@ -47,7 +45,7 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
       if (
         !areStringsEqualConstantTime(
           notification.clientState,
-          subscription.clientState,
+          calendarChannel.webhookSubscriptionClientState,
         )
       ) {
         this.logger.warn(
@@ -61,18 +59,14 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
         notification.lifecycleEvent !== 'missed'
       ) {
         await this.calendarWebhookSubscriptionService.renewSubscription(
-          subscription,
+          calendarChannel,
         );
         continue;
       }
 
-      if (!isDefined(subscription.calendarChannelId)) {
-        continue;
-      }
-
       await this.webhookSyncTriggerService.triggerCalendarSync(
-        subscription.calendarChannelId,
-        subscription.workspaceId,
+        calendarChannel.id,
+        calendarChannel.workspaceId,
       );
     }
   }

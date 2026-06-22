@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { type Subscription } from '@microsoft/microsoft-graph-types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { WebhookSubscriptionChannelType } from 'twenty-shared/types';
+
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type ConnectedAccountWebhookSubscriptionEntity } from 'src/engine/metadata-modules/connected-account-webhook-subscription/entities/connected-account-webhook-subscription.entity';
-import { WebhookSubscriptionChannelType } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-channel-type.enum';
 import { MICROSOFT_SUBSCRIPTION_TTL_MINUTES } from 'src/modules/connected-account/webhook-subscription-manager/constants/microsoft-subscription-ttl-minutes.constant';
 import { WEBHOOK_SUBSCRIPTION_ROUTE_PATHS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-route-paths.constant';
 import {
@@ -13,6 +13,7 @@ import {
   WebhookSubscriptionDriverExceptionCode,
 } from 'src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception';
 import {
+  type WebhookSubscriptionContext,
   type WebhookSubscriptionDriver,
   type WebhookSubscriptionResult,
 } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
@@ -76,14 +77,14 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
   }
 
   async renewSubscription(
-    subscription: ConnectedAccountWebhookSubscriptionEntity,
+    context: WebhookSubscriptionContext,
   ): Promise<WebhookSubscriptionResult> {
     const graphClient = await this.microsoftOAuth2ClientProvider.getClient(
-      subscription.connectedAccountId,
+      context.connectedAccountId,
     );
 
     const renewedSubscription: Subscription = await graphClient
-      .api(`/subscriptions/${subscription.externalSubscriptionId}`)
+      .api(`/subscriptions/${context.externalSubscriptionId}`)
       .patch({
         expirationDateTime: new Date(
           Date.now() + MICROSOFT_SUBSCRIPTION_TTL_MINUTES * 60 * 1000,
@@ -93,19 +94,17 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
     return this.toResult(renewedSubscription);
   }
 
-  async deleteSubscription(
-    subscription: ConnectedAccountWebhookSubscriptionEntity,
-  ): Promise<void> {
-    if (!isDefined(subscription.externalSubscriptionId)) {
+  async deleteSubscription(context: WebhookSubscriptionContext): Promise<void> {
+    if (!isDefined(context.externalSubscriptionId)) {
       return;
     }
 
     const graphClient = await this.microsoftOAuth2ClientProvider.getClient(
-      subscription.connectedAccountId,
+      context.connectedAccountId,
     );
 
     await graphClient
-      .api(`/subscriptions/${subscription.externalSubscriptionId}`)
+      .api(`/subscriptions/${context.externalSubscriptionId}`)
       .delete();
   }
 
