@@ -14,6 +14,34 @@ describe('getImageAbsoluteURI', () => {
     expect(result).toBe(imageUrl);
   });
 
+  it('should return http absolute url unchanged', () => {
+    const imageUrl = 'http://XXX/pic.png';
+    const baseUrl = 'http://localhost:3000';
+    const result = getImageAbsoluteURI({ imageUrl, baseUrl });
+    expect(result).toBe(imageUrl);
+  });
+
+  it('should return data URIs unchanged', () => {
+    const imageUrl = 'data:image/png;base64,iVBORw0KGgo=';
+    const baseUrl = 'http://localhost:3000';
+    const result = getImageAbsoluteURI({ imageUrl, baseUrl });
+    expect(result).toBe(imageUrl);
+  });
+
+  it('should return blob URLs unchanged', () => {
+    const imageUrl = 'blob:http://localhost:3000/123e4567-e89b-12d3';
+    const baseUrl = 'http://localhost:3000';
+    const result = getImageAbsoluteURI({ imageUrl, baseUrl });
+    expect(result).toBe(imageUrl);
+  });
+
+  it('should return protocol-relative URLs unchanged', () => {
+    const imageUrl = '//cdn.example.com/pic.png';
+    const baseUrl = 'http://localhost:3000';
+    const result = getImageAbsoluteURI({ imageUrl, baseUrl });
+    expect(result).toBe(imageUrl);
+  });
+
   it('should return fully formed url if imageUrl is a relative url starting with /', () => {
     const imageUrl = '/path/pic.png';
     const baseUrl = 'http://localhost:3000';

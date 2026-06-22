@@ -7,7 +7,10 @@ export const getImageAbsoluteURI = ({
   imageUrl,
   baseUrl,
 }: getImageAbsoluteURIProps): string => {
-  if (imageUrl.startsWith('https:') || imageUrl.startsWith('http:')) {
+  const isAlreadyAbsoluteUri =
+    /^[a-z][a-z\d+.-]*:/i.test(imageUrl) || imageUrl.startsWith('//');
+
+  if (isAlreadyAbsoluteUri) {
     return imageUrl;
   }
 
