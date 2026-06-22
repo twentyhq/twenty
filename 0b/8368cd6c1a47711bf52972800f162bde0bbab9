@@ -1,0 +1,27 @@
+packages/twenty-server/src/modules/connected-account/channel-sync/services/channel-sync.service.ts
+  s_5a9f19baf103a3::t_f0af43e2e0ae81 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "0b8368cd6c1a47711bf52972800f162bde0bbab9",
+  "prompts": {},
+  "sessions": {
+    "s_5a9f19baf103a3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eefb0-fef9-7ca1-9240-9f383acdc374",
+        "model": "gpt-5.5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_b41d36b575c763": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b6d71fb-0935-4998-b4e1-1c5dff06f390",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}

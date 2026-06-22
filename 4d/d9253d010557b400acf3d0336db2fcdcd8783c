@@ -1,0 +1,17 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "4dd9253d010557b400acf3d0336db2fcdcd8783c",
+  "prompts": {},
+  "sessions": {
+    "s_b41d36b575c763": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b6d71fb-0935-4998-b4e1-1c5dff06f390",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
