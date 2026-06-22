@@ -17,6 +17,7 @@ module.exports = {
 
     './src/modules/settings/**/graphql/**/*.{ts,tsx}',
     '!./src/modules/settings/admin-panel/**/graphql/**/*.{ts,tsx}',
+    '!./src/modules/settings/timeline/graphql/**/*.{ts,tsx}',
     './src/modules/logic-functions/graphql/**/*.{ts,tsx}',
 
     './src/modules/databases/graphql/**/*.{ts,tsx}',
