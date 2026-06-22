@@ -1,4 +1,5 @@
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
+import { isDefined } from 'twenty-shared/utils';
 
 export const dropChartRecordFiltersWithDeletedFields = ({
   chartFilters,
@@ -13,7 +14,6 @@ export const dropChartRecordFiltersWithDeletedFields = ({
 
   const recordFilterGroups = chartFilters.recordFilterGroups ?? [];
 
-  // Iteratively remove groups that have no valid filters and no child groups remaining.
   let remainingGroups = [...recordFilterGroups];
   let changed = true;
 
@@ -25,10 +25,10 @@ export const dropChartRecordFiltersWithDeletedFields = ({
       [
         ...validRecordFilters
           .map((f) => f.recordFilterGroupId)
-          .filter((id): id is string => id !== undefined),
+          .filter(isDefined),
         ...remainingGroups
           .map((g) => g.parentRecordFilterGroupId)
-          .filter((id): id is string => id !== undefined),
+          .filter(isDefined),
       ].filter((id) => remainingGroupIds.has(id)),
     );
 
@@ -45,7 +45,7 @@ export const dropChartRecordFiltersWithDeletedFields = ({
   const validRecordFiltersWithDroppedOrphanedGroups = validRecordFilters.filter(
     (f) => {
       const groupId = f.recordFilterGroupId;
-      if (groupId === undefined) return true;
+      if (!isDefined(groupId)) return true;
       return remainingGroups.some((g) => g.id === groupId);
     },
   );
