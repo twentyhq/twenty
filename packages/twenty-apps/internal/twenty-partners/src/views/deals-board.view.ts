@@ -5,6 +5,7 @@ import {
   defineView,
 } from 'twenty-sdk/define';
 
+import { OPPORTUNITY_IS_LISTED_FIELD_ID } from 'src/fields/opportunity-is-listed.field';
 import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-on-opportunity.field';
 import { APPLICATIONS_ON_OPPORTUNITY_FIELD_ID } from 'src/objects/application.object';
 
@@ -77,7 +78,7 @@ export default defineView({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.amount
           .universalIdentifier,
       position: 2,
-      isVisible: true,
+      isVisible: false,
     },
     {
       universalIdentifier: '65ddf983-822d-4fd7-97a3-6de34527b8de',
@@ -89,6 +90,12 @@ export default defineView({
       universalIdentifier: '48d052c0-b00f-40e7-81fa-d30d01a5e784',
       fieldMetadataUniversalIdentifier: APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
       position: 4,
+      isVisible: true,
+    },
+    {
+      universalIdentifier: '3ec96824-b543-4039-acb4-8e0aff422c90',
+      fieldMetadataUniversalIdentifier: OPPORTUNITY_IS_LISTED_FIELD_ID,
+      position: 5,
       isVisible: true,
     },
   ],
