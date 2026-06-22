@@ -1,4 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
 import {
   type RecordGroupDefinition,
   RecordGroupDefinitionType,
@@ -16,15 +17,26 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
   objectMetadataItem: EnrichedObjectMetadataItem;
   viewGroups: ViewGroup[];
 }): RecordGroupDefinition[] => {
+  const groupByFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === mainGroupByFieldMetadataId,
+  );
+
+  if (!isDefined(groupByFieldMetadataItem)) {
+    return [];
+  }
+
+  if (isManyToOneRelationToWorkspaceMember(groupByFieldMetadataItem)) {
+    return [];
+  }
+
   if (viewGroups?.length === 0) {
     return [];
   }
 
-  const selectFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) =>
-      field.id === mainGroupByFieldMetadataId &&
-      field.type === FieldMetadataType.SELECT,
-  );
+  const selectFieldMetadataItem =
+    groupByFieldMetadataItem.type === FieldMetadataType.SELECT
+      ? groupByFieldMetadataItem
+      : undefined;
 
   if (!selectFieldMetadataItem) {
     return [];
