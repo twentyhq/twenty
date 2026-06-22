@@ -1,0 +1,28 @@
+export const ENTITY_TYPE_NAMESPACE_BY_TYPE = {
+  object: '5a40f2f8-560f-49e3-9f21-0c8ddfb5ce63',
+  field: 'fd6c16a2-22c3-4846-be49-49fd3ea57740',
+  selectOption: 'c9b52b8c-7de5-49e4-abd0-62fa5aaa9550',
+  view: 'f710143f-7731-4da3-bd84-aba15b825336',
+  viewField: '723eccde-8238-462c-aefa-f04c3fc4e439',
+  viewSort: '1988a123-2c09-4c28-b5de-e20ac8a610e4',
+  viewGroup: '79a7ebf8-a565-48a9-9ffc-111ce743a127',
+  viewFilter: 'a61ee3ef-0de4-4088-9296-6681d45915e5',
+  index: '530d64ff-af2b-4255-804d-8e2318721a9d',
+  pageLayout: 'bae9cda9-ad8c-43f1-8d35-fd7603861979',
+  pageLayoutTab: 'cdec5198-7eb5-4f52-bb9e-f2b8d1e4000d',
+  pageLayoutWidget: '911b009e-d40c-4950-a43c-7ead7b7c8534',
+  role: 'cb45ffb4-a7c7-4d77-92f9-67fa4a663a86',
+  objectPermission: '283ee824-1d41-4e0c-bc44-506e36c28ecb',
+  fieldPermission: '70373b8d-c2f3-4982-9e3c-d651305df7f9',
+  permissionFlag: '64028634-6d1b-4a80-ac55-3c12cb7353a6',
+  commandMenuItem: 'bddb25bc-722d-4f1e-b64b-0b8235e3b32e',
+  navigationMenuItem: '3388bbc3-dfa9-40fa-8a38-3184f8710832',
+  frontComponent: '3ee9a263-7360-426d-b4ac-9472706a03f1',
+  logicFunction: '9f7ef2a7-8619-4cfc-94af-90d294d5d4f4',
+  agent: '466d0f14-f119-4b8b-bd46-54e29cbe1ad8',
+  skill: 'ba3a4b9e-aa36-4f79-8754-03012924222e',
+  connectionProvider: '7dec282b-dee7-46a0-91da-6da9c4409e38',
+} as const satisfies Record<string, string>;
+
+export type DeterministicEntityType =
+  keyof typeof ENTITY_TYPE_NAMESPACE_BY_TYPE;

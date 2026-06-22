@@ -26,6 +26,35 @@ export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
+export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
+export { computeUniversalIdentifier } from './deterministic-identifier/compute-universal-identifier.util';
+export type {
+  SystemRecordViewKind,
+  SystemIndexKind,
+  SystemRecordPageTabKind,
+  SystemRecordPageWidgetKind,
+} from './deterministic-identifier/deterministic-identifier-discriminator.constant';
+export {
+  DISCRIMINATOR_BY_ENTITY_TYPE,
+  SYSTEM_RECORD_VIEW_DISCRIMINATOR,
+  SYSTEM_INDEX_DISCRIMINATOR,
+  SYSTEM_RECORD_PAGE_LAYOUT_DISCRIMINATOR,
+  SYSTEM_RECORD_PAGE_TAB_DISCRIMINATOR,
+  SYSTEM_RECORD_PAGE_WIDGET_DISCRIMINATOR,
+  SYSTEM_NAVIGATION_COMMAND_DISCRIMINATOR,
+} from './deterministic-identifier/deterministic-identifier-discriminator.constant';
+export {
+  getSystemFieldUniversalIdentifier,
+  getRecordViewUniversalIdentifier,
+  getViewFieldUniversalIdentifier,
+  getDefaultIndexUniversalIdentifier,
+  getRecordPageLayoutUniversalIdentifier,
+  getRecordPageTabUniversalIdentifier,
+  getRecordPageWidgetUniversalIdentifier,
+  getNavigationCommandUniversalIdentifier,
+} from './deterministic-identifier/deterministic-identifier-reference.util';
+export type { DeterministicEntityType } from './deterministic-identifier/entity-type-namespace.constant';
+export { ENTITY_TYPE_NAMESPACE_BY_TYPE } from './deterministic-identifier/entity-type-namespace.constant';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
   RegularFieldManifest,

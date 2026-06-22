@@ -3,6 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import {
+  getNavigationCommandUniversalIdentifier,
+  getRecordViewUniversalIdentifier,
+} from 'twenty-shared/application';
+import {
   ViewKey,
   ViewOpenRecordIn,
   ViewType,
@@ -10,15 +14,12 @@ import {
 } from 'twenty-shared/types';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { v4, v5 } from 'uuid';
+import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import {
-  buildNavigationFlatCommandMenuItem,
-  NAVIGATION_COMMAND_UUID_NAMESPACE,
-} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
+import { buildNavigationFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -411,6 +412,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         this.findNavigationCommandMenuItemForObject({
           objectUniversalIdentifier:
             flatObjectMetadataToDelete.universalIdentifier,
+          ownerApplicationUniversalIdentifier:
+            flatObjectMetadataToDelete.applicationUniversalIdentifier,
           flatCommandMenuItemMaps,
         }),
       )
@@ -698,7 +701,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       mainGroupByFieldMetadataUniversalIdentifier: null,
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       position: 0,
-      universalIdentifier: v4(),
+      universalIdentifier: getRecordViewUniversalIdentifier({
+        ownerApplicationUniversalIdentifier:
+          flatApplication.universalIdentifier,
+        objectUniversalIdentifier: objectMetadata.universalIdentifier,
+        kind: 'index',
+      }),
       visibility: ViewVisibility.WORKSPACE,
       createdByUserWorkspaceId: null,
       isActive: true,
@@ -848,22 +856,29 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceId,
       position: nextPosition,
       now: new Date().toISOString(),
+      universalIdentifier: getNavigationCommandUniversalIdentifier({
+        ownerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+        objectUniversalIdentifier: objectMetadata.universalIdentifier,
+      }),
     });
   }
 
   private findNavigationCommandMenuItemForObject({
     objectUniversalIdentifier,
+    ownerApplicationUniversalIdentifier,
     flatCommandMenuItemMaps,
   }: {
     objectUniversalIdentifier: string;
+    ownerApplicationUniversalIdentifier: string;
     flatCommandMenuItemMaps: {
       byUniversalIdentifier: Record<string, FlatCommandMenuItem | undefined>;
     };
   }): FlatCommandMenuItem | undefined {
-    const commandMenuItemUniversalIdentifier = v5(
-      objectUniversalIdentifier,
-      NAVIGATION_COMMAND_UUID_NAMESPACE,
-    );
+    const commandMenuItemUniversalIdentifier =
+      getNavigationCommandUniversalIdentifier({
+        ownerApplicationUniversalIdentifier,
+        objectUniversalIdentifier,
+      });
 
     return findFlatEntityByUniversalIdentifier({
       flatEntityMaps: flatCommandMenuItemMaps,
@@ -904,6 +919,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         this.findNavigationCommandMenuItemForObject({
           objectUniversalIdentifier:
             existingFlatObjectMetadata.universalIdentifier,
+          ownerApplicationUniversalIdentifier:
+            existingFlatObjectMetadata.applicationUniversalIdentifier,
           flatCommandMenuItemMaps,
         });
 
@@ -937,6 +954,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         this.findNavigationCommandMenuItemForObject({
           objectUniversalIdentifier:
             existingFlatObjectMetadata.universalIdentifier,
+          ownerApplicationUniversalIdentifier:
+            existingFlatObjectMetadata.applicationUniversalIdentifier,
           flatCommandMenuItemMaps,
         });
 

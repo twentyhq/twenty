@@ -1,4 +1,4 @@
-import { v4 } from 'uuid';
+import { getViewFieldUniversalIdentifier } from 'twenty-shared/application';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
@@ -59,7 +59,12 @@ export const computeFlatViewFieldsToCreate = ({
       createdAt,
       updatedAt: createdAt,
       deletedAt: null,
-      universalIdentifier: v4(),
+      universalIdentifier: getViewFieldUniversalIdentifier({
+        ownerApplicationUniversalIdentifier:
+          flatApplication.universalIdentifier,
+        viewUniversalIdentifier,
+        fieldMetadataUniversalIdentifier: field.universalIdentifier,
+      }),
       isVisible: true,
       size: DEFAULT_VIEW_FIELD_SIZE,
       position: index,

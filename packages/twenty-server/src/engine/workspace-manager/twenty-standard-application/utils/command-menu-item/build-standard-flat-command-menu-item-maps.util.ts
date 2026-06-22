@@ -1,4 +1,7 @@
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import {
+  getNavigationCommandUniversalIdentifier,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -78,6 +81,11 @@ export const buildStandardFlatCommandMenuItemMaps = ({
       workspaceId,
       position,
       now,
+      universalIdentifier: getNavigationCommandUniversalIdentifier({
+        ownerApplicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: flatObject.universalIdentifier,
+      }),
     });
 
     addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

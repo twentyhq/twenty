@@ -1,3 +1,8 @@
+import {
+  getRecordPageLayoutUniversalIdentifier,
+  getRecordPageTabUniversalIdentifier,
+  getRecordPageWidgetUniversalIdentifier,
+} from 'twenty-shared/application';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -30,7 +35,10 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
 } => {
   const now = new Date().toISOString();
   const pageLayoutId = v4();
-  const pageLayoutUniversalIdentifier = v4();
+  const pageLayoutUniversalIdentifier = getRecordPageLayoutUniversalIdentifier({
+    ownerApplicationUniversalIdentifier: flatApplication.universalIdentifier,
+    objectUniversalIdentifier: objectMetadata.universalIdentifier,
+  });
 
   const tabDefinitions = [
     { key: 'home' as const, widgetKey: 'fields' as const },
@@ -47,9 +55,17 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
     const tabProps = TAB_PROPS[key];
     const widgetProps = WIDGET_PROPS[widgetKey];
     const tabId = v4();
-    const tabUniversalIdentifier = v4();
+    const tabUniversalIdentifier = getRecordPageTabUniversalIdentifier({
+      ownerApplicationUniversalIdentifier: flatApplication.universalIdentifier,
+      pageLayoutUniversalIdentifier,
+      tabKind: key,
+    });
     const widgetId = v4();
-    const widgetUniversalIdentifier = v4();
+    const widgetUniversalIdentifier = getRecordPageWidgetUniversalIdentifier({
+      ownerApplicationUniversalIdentifier: flatApplication.universalIdentifier,
+      pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
+      widgetKind: widgetKey,
+    });
 
     pageLayoutTabs.push({
       id: tabId,

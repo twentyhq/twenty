@@ -54,6 +54,7 @@ export const buildNavigationFlatCommandMenuItem = ({
   workspaceId,
   position,
   now,
+  universalIdentifier: providedUniversalIdentifier,
 }: {
   objectMetadata: {
     id: string;
@@ -67,11 +68,11 @@ export const buildNavigationFlatCommandMenuItem = ({
   workspaceId: string;
   position: number;
   now: string;
+  universalIdentifier?: string;
 }): FlatCommandMenuItem => {
-  const universalIdentifier = v5(
-    objectMetadata.universalIdentifier,
-    NAVIGATION_COMMAND_UUID_NAMESPACE,
-  );
+  const universalIdentifier =
+    providedUniversalIdentifier ??
+    v5(objectMetadata.universalIdentifier, NAVIGATION_COMMAND_UUID_NAMESPACE);
 
   const conditionalAvailabilityExpression =
     buildNavigationConditionalAvailabilityExpression({

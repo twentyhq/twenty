@@ -1,3 +1,4 @@
+import { getRecordViewUniversalIdentifier } from 'twenty-shared/application';
 import {
   ViewOpenRecordIn,
   ViewType,
@@ -40,7 +41,11 @@ export const computeFlatRecordPageFieldsViewToCreate = ({
     mainGroupByFieldMetadataUniversalIdentifier: null,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     position: 0,
-    universalIdentifier: v4(),
+    universalIdentifier: getRecordViewUniversalIdentifier({
+      ownerApplicationUniversalIdentifier: flatApplication.universalIdentifier,
+      objectUniversalIdentifier: objectMetadata.universalIdentifier,
+      kind: 'recordPageFields',
+    }),
     visibility: ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: null,
     isActive: true,

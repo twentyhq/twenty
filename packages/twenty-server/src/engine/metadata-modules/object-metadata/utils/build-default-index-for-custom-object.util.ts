@@ -1,4 +1,4 @@
-import { v4 } from 'uuid';
+import { getDefaultIndexUniversalIdentifier } from 'twenty-shared/application';
 
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
@@ -16,7 +16,13 @@ export const buildDefaultIndexesForCustomObject = ({
   objectFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   defaultFlatFieldForCustomObjectMaps: DefaultFlatFieldForCustomObjectMaps;
 }) => {
-  const tsFlatVectorIndexUniversalIdentifier = v4();
+  const tsFlatVectorIndexUniversalIdentifier =
+    getDefaultIndexUniversalIdentifier({
+      ownerApplicationUniversalIdentifier:
+        flatObjectMetadata.applicationUniversalIdentifier,
+      objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+      kind: 'searchVector',
+    });
   const createdAt = new Date();
   const tsVectorFlatIndex = generateFlatIndexMetadataWithNameOrThrow({
     objectFlatFieldMetadatas,
