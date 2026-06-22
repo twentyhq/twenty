@@ -21,6 +21,7 @@ const STRUCTURAL_EXEMPTIONS = new Set<string>([
   'BillingProductEntity',
   'BillingSubscriptionItemEntity',
   'ConnectedAccountEntity',
+  'ConnectedAccountWebhookSubscriptionEntity',
   'ConnectionProviderEntity',
   'FrontComponentEntity',
   'LogicFunctionEntity',
