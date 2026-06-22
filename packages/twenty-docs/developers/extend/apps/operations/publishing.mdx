@@ -219,9 +219,9 @@ yarn twenty app:publish --tag beta
 
 ### How marketplace discovery works
 
-The Twenty server syncs its marketplace catalog from the npm registry **every hour**.
+The Twenty server populates its marketplace catalog from the npm registry by running a catalog sync. This sync is **not scheduled by default** — an operator triggers it (or registers a recurring cron job) on each server.
 
-You can trigger the sync immediately instead of waiting:
+Trigger a sync manually:
 
 ```bash filename="Terminal"
 yarn twenty dev:catalog-sync
