@@ -1,6 +1,6 @@
 import { LOGIC_FUNCTION_HTTP_RESPONSE_MARKER } from 'twenty-shared/types';
 
-import { buildRouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
+import { buildRouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 
 describe('buildRouteTriggerResponse', () => {
   it('wraps a plain body with status 200 and no headers', () => {

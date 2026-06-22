@@ -20,7 +20,7 @@ import {
   IconChevronLeft,
   IconLayoutNavbar,
   IconLayoutSidebarRight,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownLayoutOpenInContent = () => {

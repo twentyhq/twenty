@@ -21,9 +21,10 @@ import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
+import { PickRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/pick-record.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
 import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/upsert-record.workflow-action';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 
 @Injectable()
 export class WorkflowActionFactory {
@@ -35,6 +36,7 @@ export class WorkflowActionFactory {
     private readonly updateRecordWorkflowAction: UpdateRecordWorkflowAction,
     private readonly deleteRecordWorkflowAction: DeleteRecordWorkflowAction,
     private readonly findRecordsWorkflowAction: FindRecordsWorkflowAction,
+    private readonly pickRecordWorkflowAction: PickRecordWorkflowAction,
     private readonly formWorkflowAction: FormWorkflowAction,
     private readonly filterWorkflowAction: FilterWorkflowAction,
     private readonly ifElseWorkflowAction: IfElseWorkflowAction,
@@ -67,6 +69,8 @@ export class WorkflowActionFactory {
         return this.deleteRecordWorkflowAction;
       case WorkflowActionType.FIND_RECORDS:
         return this.findRecordsWorkflowAction;
+      case WorkflowActionType.PICK_RECORD:
+        return this.pickRecordWorkflowAction;
       case WorkflowActionType.FORM:
         return this.formWorkflowAction;
       case WorkflowActionType.FILTER:

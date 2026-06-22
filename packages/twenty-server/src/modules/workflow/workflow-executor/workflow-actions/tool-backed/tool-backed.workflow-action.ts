@@ -42,6 +42,13 @@ export abstract class ToolBackedWorkflowAction<
     return rawInput;
   }
 
+  protected async postprocessInput(
+    resolvedInput: TInput,
+    _workspaceId: string,
+  ): Promise<TInput> {
+    return resolvedInput;
+  }
+
   protected abstract buildStepLog(
     args: BuildStepLogArgs<TInput>,
   ): WorkflowRunStepLog;
@@ -58,7 +65,10 @@ export abstract class ToolBackedWorkflowAction<
 
     const rawInput = step.settings.input as TInput;
     const preprocessed = await this.preprocessInput(rawInput, context);
-    const resolvedInput = resolveInput(preprocessed, context) as TInput;
+    const resolvedInput = await this.postprocessInput(
+      resolveInput(preprocessed, context) as TInput,
+      runInfo.workspaceId,
+    );
 
     const startedAt = Date.now();
     const toolOutput = await this.getTool().execute(resolvedInput, {

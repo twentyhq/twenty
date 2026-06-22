@@ -15,6 +15,7 @@ import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
@@ -50,6 +51,16 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     throw new FieldMetadataException(
       'Field to delete not found',
       FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+    );
+  }
+
+  if (
+    belongsToTwentyStandardApp(flatFieldMetadataToDelete) ||
+    flatFieldMetadataToDelete.isSystem
+  ) {
+    throw new FieldMetadataException(
+      `Cannot delete standard field "${flatFieldMetadataToDelete.name}"`,
+      FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
     );
   }
 

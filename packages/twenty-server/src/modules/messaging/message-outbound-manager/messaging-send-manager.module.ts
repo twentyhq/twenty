@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -24,7 +24,7 @@ import { SentMessagePersistenceService } from 'src/modules/messaging/message-out
     MessagingIMAPDriverModule,
     MessagingSmtpDriverModule,
     MessagingImportManagerModule,
-    EmailingDomainModule,
+    EmailingModule,
     TypeOrmModule.forFeature([
       MessageChannelEntity,
       MessageFolderEntity,

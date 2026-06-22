@@ -12,7 +12,7 @@ import {
   IconSparkles,
   IconTool,
   IconUsers,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 export type PermissionSummaryItem = {

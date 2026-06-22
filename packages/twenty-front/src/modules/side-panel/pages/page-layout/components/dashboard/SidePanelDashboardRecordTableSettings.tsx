@@ -1,5 +1,6 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
 import { useRecordTableWidgetFieldCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -10,6 +11,7 @@ import { RecordTableFieldsDropdownContent } from '@/side-panel/pages/page-layout
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions';
+import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -18,12 +20,13 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconArrowBarToDownDashed,
   IconArrowsSort,
   IconBox,
   IconFilter,
   IconListDetails,
   IconTable,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -56,6 +59,14 @@ export const SidePanelDashboardRecordTableSettings = () => {
       ? (configuration.viewId as string)
       : null;
 
+  const limit =
+    isRecordTableConfiguration &&
+    isDefined(configuration) &&
+    'recordLimit' in configuration &&
+    isDefined(configuration.recordLimit)
+      ? (configuration.recordLimit as number)
+      : undefined;
+
   const {
     sourceDescription,
     fieldsDescription,
@@ -65,6 +76,18 @@ export const SidePanelDashboardRecordTableSettings = () => {
     objectMetadataId: widgetInEditMode?.objectMetadataId,
     viewId,
   });
+
+  const { updateCurrentWidgetConfig } =
+    useUpdateCurrentWidgetConfig(pageLayoutId);
+
+  const handleLimitChange = (value: number | null) => {
+    const nextLimit =
+      !isDefined(value) || value < 1 ? undefined : Math.floor(value);
+
+    updateCurrentWidgetConfig({
+      configToUpdate: { recordLimit: nextLimit },
+    });
+  };
 
   const { handleFieldUpdated, handleFieldCreated } =
     useRecordTableWidgetFieldCallbacks({
@@ -82,7 +105,12 @@ export const SidePanelDashboardRecordTableSettings = () => {
   const selectableItemIds = [
     'record-table-source',
     ...(hasViewId
-      ? ['record-table-fields', 'record-table-filter', 'record-table-sort']
+      ? [
+          'record-table-fields',
+          'record-table-filter',
+          'record-table-sort',
+          'record-table-limit',
+        ]
       : []),
   ];
 
@@ -180,6 +208,16 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       onClick={handleSortClick}
                       description={sortDescription}
                       contextualTextPosition="right"
+                    />
+                  </SelectableListItem>
+                  <SelectableListItem itemId="record-table-limit">
+                    <CommandMenuItemNumberInput
+                      id="record-table-limit"
+                      label={t`Limit`}
+                      Icon={IconArrowBarToDownDashed}
+                      value={isDefined(limit) ? `${limit}` : ''}
+                      onChange={handleLimitChange}
+                      placeholder={t`No limit`}
                     />
                   </SelectableListItem>
                 </>

@@ -4,9 +4,8 @@ import { useContext } from 'react';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isDefined } from 'twenty-shared/utils';
+import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
 import {
-  Avatar,
-  getIconTileColorShades,
   IconCode,
   IconEdit,
   IconPlus,
@@ -14,7 +13,7 @@ import {
   IconTrash,
   useIcons,
   type IconComponent,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ApplicationInfo = {
@@ -148,7 +147,7 @@ export const SettingsToolIcon = ({
           <OperationIcon
             size="12px"
             stroke={theme.icon.stroke.md}
-            color={themeCssVariables.grayScale.gray10}
+            color={theme.font.color.tertiary}
           />
         </StyledOperationOverlay>
       </StyledCompositeContainer>
@@ -172,5 +171,11 @@ export const SettingsToolIcon = ({
     );
   }
 
-  return <MainIcon size={16} />;
+  return (
+    <MainIcon
+      size={16}
+      stroke={theme.icon.stroke.md}
+      color={theme.font.color.tertiary}
+    />
+  );
 };

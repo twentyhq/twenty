@@ -7,7 +7,9 @@ import type {
   ExtendedUIMessage,
   ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -228,6 +230,7 @@ export class StreamAgentChatJob {
             await this.chatExecutionService.streamChat({
               workspace,
               userWorkspaceId: data.userWorkspaceId,
+              threadId: data.threadId,
               messages: data.messages,
               browsingContext: data.browsingContext,
               modelId: data.modelId,
@@ -274,10 +277,13 @@ export class StreamAgentChatJob {
                   },
                 });
               },
-              onFinish: async ({ responseMessage }) => {
+              onFinish: async ({ responseMessage, isAborted }) => {
                 try {
                   await this.handleStreamFinish({
                     responseMessage,
+                    isAborted,
+                    streamError,
+                    outOfCredits: checkHasNoMoreAvailableCredits(),
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
                     userWorkspaceId: data.userWorkspaceId,
@@ -353,7 +359,6 @@ export class StreamAgentChatJob {
       type: string;
       usage?: {
         inputTokens?: number;
-        inputTokenDetails?: { cacheReadTokens?: number };
       };
       totalUsage?: {
         inputTokens?: number;
@@ -378,13 +383,12 @@ export class StreamAgentChatJob {
   }) {
     if (part.type === 'finish-step') {
       const stepInput = part.usage?.inputTokens ?? 0;
-      const stepCached = part.usage?.inputTokenDetails?.cacheReadTokens ?? 0;
       const stepCacheCreation = extractCacheCreationTokens(
         part.providerMetadata,
       );
 
       onUpdateCacheCreationTokens(totalCacheCreationTokens + stepCacheCreation);
-      onUpdateConversationSize(stepInput + stepCached + stepCacheCreation);
+      onUpdateConversationSize(stepInput);
     }
 
     if (part.type === 'finish') {
@@ -432,6 +436,9 @@ export class StreamAgentChatJob {
 
   private async handleStreamFinish({
     responseMessage,
+    isAborted,
+    streamError,
+    outOfCredits,
     threadId,
     workspaceId,
     userWorkspaceId,
@@ -442,6 +449,9 @@ export class StreamAgentChatJob {
     userMessagePromise,
   }: {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
+    isAborted: boolean;
+    streamError: unknown;
+    outOfCredits: boolean;
     threadId: string;
     workspaceId: string;
     userWorkspaceId: string;
@@ -457,6 +467,23 @@ export class StreamAgentChatJob {
     modelConfig: AiModelConfig;
     userMessagePromise: Promise<{ turnId: string | null }>;
   }): Promise<void> {
+    const hasText = responseMessage.parts.some(
+      (part) => part.type === 'text' && isNonEmptyString(part.text),
+    );
+
+    if (isAborted || !hasText) {
+      this.logAssistantTurnWithoutText({
+        responseMessage,
+        isAborted,
+        streamError,
+        outOfCredits,
+        hasText,
+        threadId,
+        workspaceId,
+        streamUsage,
+      });
+    }
+
     if (responseMessage.parts.length === 0) {
       return;
     }
@@ -505,5 +532,58 @@ export class StreamAgentChatJob {
       userWorkspaceId,
       workspaceId,
     });
+  }
+
+  private logAssistantTurnWithoutText({
+    responseMessage,
+    isAborted,
+    streamError,
+    outOfCredits,
+    hasText,
+    threadId,
+    workspaceId,
+    streamUsage,
+  }: {
+    responseMessage: Omit<ExtendedUIMessage, 'id'>;
+    isAborted: boolean;
+    streamError: unknown;
+    outOfCredits: boolean;
+    hasText: boolean;
+    threadId: string;
+    workspaceId: string;
+    streamUsage: {
+      inputTokens: number;
+      outputTokens: number;
+    };
+  }): void {
+    const reason = isAborted
+      ? 'user-cancelled'
+      : streamError
+        ? 'stream-error'
+        : outOfCredits
+          ? 'credits-exhausted'
+          : 'empty-completion';
+
+    const errorDetail =
+      streamError instanceof Error
+        ? `${streamError.name}: ${streamError.message}`
+        : isDefined(streamError)
+          ? String(streamError)
+          : 'none';
+
+    this.logger.warn(
+      `[AI_CHAT_NO_TEXT] Assistant turn ended without a text reply — ` +
+        `reason=${reason}, threadId=${threadId}, workspaceId=${workspaceId}, ` +
+        `isAborted=${isAborted}, outOfCredits=${outOfCredits}, hasText=${hasText}, ` +
+        `streamError=${errorDetail}, ` +
+        `inputTokens=${streamUsage.inputTokens},` +
+        `responseMessage.parts=${JSON.stringify(responseMessage.parts)}`,
+    );
+
+    if (streamError instanceof Error && isDefined(streamError.stack)) {
+      this.logger.warn(
+        `[AI_CHAT_NO_TEXT] streamError stack — threadId=${threadId}: ${streamError.stack}`,
+      );
+    }
   }
 }

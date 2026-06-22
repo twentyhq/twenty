@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { baseTriggerSchema } from './base-trigger-schema';
+import { stepFilterGroupSchema } from './step-filter-group-schema';
+import { stepFilterSchema } from './step-filter-schema';
 
 export const workflowDatabaseEventTriggerSchema = baseTriggerSchema
   .extend({
@@ -22,6 +24,15 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema
         ),
       objectType: z.string().optional(),
       fields: z.array(z.string()).optional().nullable(),
+      filter: z
+        .object({
+          stepFilterGroups: z.array(stepFilterGroupSchema),
+          stepFilters: z.array(stepFilterSchema),
+        })
+        .optional()
+        .describe(
+          'Optional condition evaluated against the triggering record. The workflow only runs when the record matches; non-matching events are skipped before a run is created.',
+        ),
     }),
   })
   .describe(

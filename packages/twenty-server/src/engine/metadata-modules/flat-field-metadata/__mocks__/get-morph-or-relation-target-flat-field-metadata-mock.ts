@@ -32,6 +32,7 @@ export const getRelationTargetFlatFieldMetadataMock = ({
   const createdAt = '2024-01-01T00:00:00.000Z';
 
   return {
+    isSystemSideEffect: false,
     calendarViewIds: [],
     mainGroupByFieldMetadataViewIds: [],
     viewFilterIds: [],
@@ -45,12 +46,11 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     icon: 'icon',
     id: faker.string.uuid(),
     isActive: true,
-    isCustom: true,
     name: 'flatFieldMetadataName',
     label: 'flat field metadata label',
     isNullable: true,
     isUnique: false,
-    isUIReadOnly: false,
+    isUIEditable: true,
     isLabelSyncedWithName: false,
     isSystem: false,
     standardOverrides: null,

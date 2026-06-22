@@ -1,4 +1,4 @@
-import { type ReasoningUIPart, type ToolUIPart } from 'ai';
+import { type ReasoningUIPart } from 'ai';
 import {
   type ExtendedFileUIPart,
   type ExtendedUIMessagePart,
@@ -64,9 +64,13 @@ export const mapDBPartToUIMessagePart = (
       };
     default:
       {
-        if (part.type.includes('tool-') === true) {
+        const isStaticToolPart = part.type.startsWith('tool-');
+        const isDynamicToolPart = part.type === 'dynamic-tool';
+
+        if (isStaticToolPart || isDynamicToolPart) {
           return {
-            type: part.type as `tool-${string}`,
+            type: part.type as `tool-${string}` | 'dynamic-tool',
+            ...(isDynamicToolPart && { toolName: part.toolName ?? '' }),
             toolCallId: part.toolCallId!,
             input: part.toolInput ?? {},
             output: part.toolOutput,
@@ -75,7 +79,10 @@ export const mapDBPartToUIMessagePart = (
             ...(part.providerExecuted != null && {
               providerExecuted: part.providerExecuted,
             }),
-          } as ToolUIPart;
+            ...(part.providerMetadata != null && {
+              callProviderMetadata: part.providerMetadata,
+            }),
+          } as ExtendedUIMessagePart;
         }
       }
       throw new Error(`Unsupported part type: ${part.type}`);

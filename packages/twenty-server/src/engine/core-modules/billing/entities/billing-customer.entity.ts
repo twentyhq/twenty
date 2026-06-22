@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -40,6 +40,11 @@ export class BillingCustomerEntity extends WorkspaceRelatedEntity {
 
   @Column({ nullable: false, unique: true })
   stripeCustomerId: string;
+
+  // Null means unknown (customer created before the flag existed and not synced yet).
+  @Field(() => Boolean, { nullable: true })
+  @Column({ nullable: true, type: 'boolean' })
+  hasPaymentMethod: boolean | null;
 
   @Column({
     type: 'bigint',

@@ -109,7 +109,7 @@ export const getMonthsDescription = (
     }
     const lastMonth = monthNames.pop();
     const remainingMonths = monthNames.join(', ');
-    return t`only in ${remainingMonths} and ${lastMonth}`;
+    return t`only in ${remainingMonths} and ${lastMonth ?? ''}`;
   }
 
   // Single month value

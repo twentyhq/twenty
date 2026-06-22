@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'src/utils/is-defined';
 
 import { type FirefliesCallSummary } from 'src/logic-functions/types/fireflies-call-list-result.type';
 import { type FirefliesTranscript } from 'src/logic-functions/types/fireflies-transcript.type';

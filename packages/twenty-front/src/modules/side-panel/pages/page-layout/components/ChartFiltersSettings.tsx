@@ -1,8 +1,10 @@
+import { ChartFiltersDeletedFieldsWarning } from '@/side-panel/pages/page-layout/components/ChartFiltersDeletedFieldsWarning';
 import { ChartFiltersSettingsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartWidget } from '@/side-panel/pages/page-layout/types/ChartWidget';
 import { type ChartWidgetConfiguration } from '@/side-panel/pages/page-layout/types/ChartWidgetConfiguration';
+import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
 import { getChartFiltersSettingsInstanceId } from '@/side-panel/pages/page-layout/utils/getChartFiltersSettingsInstanceId';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -16,6 +18,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
+import { useMemo } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChartFiltersPageContainer = styled.div`
@@ -59,16 +62,37 @@ export const ChartFiltersSettings = ({
   const store = useStore();
   const chartWidgetConfiguration = widget.configuration;
 
+  const validFieldMetadataIds = useMemo(
+    () =>
+      new Set(
+        objectMetadataItem.fields
+          .filter((fieldMetadataItem) => fieldMetadataItem.isActive)
+          .map((fieldMetadataItem) => fieldMetadataItem.id),
+      ),
+    [objectMetadataItem.fields],
+  );
+
   const handleFiltersUpdate = () => {
     const existingRecordFilters = store.get(currentRecordFilters);
     const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
+
+    const {
+      recordFilters: sanitizedRecordFilters,
+      recordFilterGroups: sanitizedRecordFilterGroups,
+    } = dropChartRecordFiltersWithDeletedFields({
+      chartFilters: {
+        recordFilters: existingRecordFilters,
+        recordFilterGroups: existingRecordFilterGroups,
+      },
+      validFieldMetadataIds,
+    });
 
     updateCurrentWidgetConfig({
       objectMetadataId: objectMetadataItem.id,
       configToUpdate: {
         filter: {
-          recordFilters: existingRecordFilters,
-          recordFilterGroups: existingRecordFilterGroups,
+          recordFilters: sanitizedRecordFilters,
+          recordFilterGroups: sanitizedRecordFilterGroups,
         },
       } satisfies Partial<ChartWidgetConfiguration>,
     });
@@ -84,6 +108,9 @@ export const ChartFiltersSettings = ({
           <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId }}
           >
+            <ChartFiltersDeletedFieldsWarning
+              validFieldMetadataIds={validFieldMetadataIds}
+            />
             <AdvancedFilterSidePanelContainer
               onUpdate={handleFiltersUpdate}
               objectMetadataItem={objectMetadataItem}

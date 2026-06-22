@@ -21,9 +21,9 @@ import {
   IconLock,
   IconPlayerPause,
   IconPlayerPlay,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Button, IconButton } from 'twenty-ui/input';
-import { Card } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
@@ -162,7 +162,7 @@ export const SettingsLogs = () => {
   };
 
   const renderUpgradeCard = () => (
-    <Card rounded>
+    <Card rounded backgroundColor={themeCssVariables.background.secondary}>
       <SettingsOptionCardContentButton
         Icon={IconLock}
         title={t`Upgrade to access audit logs`}
@@ -230,7 +230,11 @@ export const SettingsLogs = () => {
 
   return (
     <StyledRoot>
-      <Card rounded fullWidth>
+      <Card
+        rounded
+        fullWidth
+        backgroundColor={themeCssVariables.background.secondary}
+      >
         <StyledCardContent>
           <StyledSelectorRow>
             <StyledSelectorGrow>

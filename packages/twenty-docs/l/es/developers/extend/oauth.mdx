@@ -1,0 +1,189 @@
+---
+title: OAuth
+icon: clave
+description: Flujo de código de autorización con PKCE y credenciales de cliente para acceso de servidor a servidor.
+---
+
+Twenty implementa OAuth 2.0 con código de autorización + PKCE para aplicaciones orientadas al usuario y credenciales de cliente para acceso de servidor a servidor. Los clientes se registran dinámicamente mediante [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — sin configuración manual en un panel.
+
+## Cuándo usar OAuth
+
+| Escenario                                            | Método de autenticación                                                                     |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Scripts internos, automatización                     | [Clave de API](/l/es/developers/extend/api#authentication)                                       |
+| Aplicación externa que actúa en nombre de un usuario | **OAuth — Código de autorización**                                                          |
+| De servidor a servidor, sin contexto de usuario      | **OAuth — Credenciales de cliente**                                                         |
+| Aplicación de Twenty con extensiones de UI           | [Aplicaciones](/l/es/developers/extend/apps/getting-started) (OAuth se gestiona automáticamente) |
+
+## Registrar un cliente
+
+Twenty admite el **registro dinámico de clientes** según [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591). No se necesita configuración manual — regístrelo de forma programática:
+
+```bash
+POST /oauth/register
+Content-Type: application/json
+
+{
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"],
+  "grant_types": ["authorization_code"],
+  "token_endpoint_auth_method": "client_secret_post"
+}
+```
+
+**Respuesta:**
+
+```json
+{
+  "client_id": "abc123",
+  "client_secret": "secret456",
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"]
+}
+```
+
+<Warning>
+Almacene el `client_secret` de forma segura — no se puede recuperar más tarde.
+</Warning>
+
+## Ámbitos
+
+| Ámbito    | Acceso                                                            |
+| --------- | ----------------------------------------------------------------- |
+| `api`     | Acceso completo de lectura/escritura a las API de Core y Metadata |
+| `profile` | Leer la información de perfil del usuario autenticado             |
+
+Solicite los ámbitos como una cadena separada por espacios: `scope=api profile`
+
+## Flujo de código de autorización
+
+Use este flujo cuando su aplicación actúe en nombre de un usuario de Twenty.
+
+### 1. Redirija al usuario para autorizar
+
+```
+GET /oauth/authorize?
+  client_id=YOUR_CLIENT_ID&
+  response_type=code&
+  redirect_uri=https://myapp.com/callback&
+  scope=api&
+  state=random_state_value&
+  code_challenge=CHALLENGE&
+  code_challenge_method=S256
+```
+
+| Parámetro               | Obligatorio | Descripción                                                          |
+| ----------------------- | ----------- | -------------------------------------------------------------------- |
+| `client_id`             | Sí          | Su ID de cliente registrado                                          |
+| `response_type`         | Sí          | Debe ser `code`                                                      |
+| `redirect_uri`          | Sí          | Debe coincidir con un URI de redirección registrado                  |
+| `scope`                 | No          | Ámbitos separados por espacios (valor predeterminado: `api`)         |
+| `state`                 | Recomendado | Cadena aleatoria para evitar ataques CSRF                            |
+| `code_challenge`        | Recomendado | Desafío PKCE (hash SHA-256 del verificador, codificado en base64url) |
+| `code_challenge_method` | Recomendado | Debe ser `S256` al usar PKCE                                         |
+
+El usuario ve una pantalla de consentimiento y aprueba o deniega el acceso.
+
+### 2. Gestione el callback
+
+Tras la autorización, Twenty redirige de vuelta a su `redirect_uri`:
+
+```
+https://myapp.com/callback?code=AUTH_CODE&state=random_state_value
+```
+
+Verifique que `state` coincida con lo que envió.
+
+### 3. Intercambie el código por tokens
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&
+code=AUTH_CODE&
+redirect_uri=https://myapp.com/callback&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+code_verifier=YOUR_PKCE_VERIFIER
+```
+
+**Respuesta:**
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "dGhpcyBpcyBh..."
+}
+```
+
+### 4. Use el token de acceso
+
+```bash
+GET /rest/companies
+Authorization: Bearer ACCESS_TOKEN
+```
+
+### 5. Actualice cuando caduque
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&
+refresh_token=YOUR_REFRESH_TOKEN&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET
+```
+
+## Flujo de credenciales de cliente
+
+Para integraciones de servidor a servidor sin interacción del usuario:
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+scope=api
+```
+
+El token devuelto tiene acceso a nivel de espacio de trabajo, no está vinculado a ningún usuario específico.
+
+## Descubrimiento del servidor
+
+Twenty publica su configuración de OAuth en un endpoint de descubrimiento estándar:
+
+```
+GET /.well-known/oauth-authorization-server
+```
+
+Esto devuelve todos los endpoints, los tipos de concesión compatibles, los ámbitos y las capacidades — útil para crear clientes OAuth genéricos.
+
+## Resumen de Puntos de Acceso de API
+
+| Endpoint                                  | Propósito                                |
+| ----------------------------------------- | ---------------------------------------- |
+| `/.well-known/oauth-authorization-server` | Descubrimiento de metadatos del servidor |
+| `/oauth/register`                         | Registro dinámico de clientes            |
+| `/oauth/authorize`                        | Autorización del usuario                 |
+| `/oauth/token`                            | Intercambio y renovación de tokens       |
+
+| Entorno             | URL base                 |
+| ------------------- | ------------------------ |
+| **Nube**            | `https://api.twenty.com` |
+| **Autoalojamiento** | `https://{your-domain}`  |
+
+## OAuth frente a claves de API
+
+|                          | Claves API                              | OAuth                                             |
+| ------------------------ | --------------------------------------- | ------------------------------------------------- |
+| **Configuración**        | Generar en Ajustes                      | Registrar un cliente, implementar el flujo        |
+| **Contexto del usuario** | Ninguno (a nivel de espacio de trabajo) | Permisos de un usuario específico                 |
+| **Ideal para**           | Scripts, herramientas internas          | Aplicaciones externas, integraciones multiusuario |
+| **Rotación de tokens**   | Manual                                  | Automática mediante tokens de actualización       |
+| **Acceso con ámbitos**   | Acceso completo a la API                | Granular mediante ámbitos                         |

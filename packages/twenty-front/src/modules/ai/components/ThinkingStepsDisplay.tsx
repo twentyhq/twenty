@@ -1,15 +1,14 @@
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { type ToolUIPart } from 'ai';
+import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
   IconCpu,
-  OverflowingTextWithTooltip,
   ThinkingOrbitLoaderIcon,
-  TooltipDelay,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -258,12 +257,12 @@ const ThinkingToolStepRow = ({
   rowIndex,
 }: {
   isActive: boolean;
-  part: ToolUIPart;
+  part: ToolUIPart | DynamicToolUIPart;
   rowIndex: number;
 }) => {
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
-  const rawToolName = part.type.split('-')[1];
+  const rawToolName = getToolName(part);
   const { resolvedInput: toolInput, resolvedToolName } = resolveToolInput(
     part.input,
     rawToolName,

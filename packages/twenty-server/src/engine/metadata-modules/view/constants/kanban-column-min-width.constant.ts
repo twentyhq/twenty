@@ -1,0 +1,1 @@
+export const KANBAN_COLUMN_MIN_WIDTH = 150;

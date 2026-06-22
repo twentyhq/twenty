@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 
 import { useCreateEmailGroupChannel } from '@/settings/accounts/hooks/useCreateEmailGroupChannel';
@@ -39,14 +39,14 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
       }
     } catch {
       enqueueErrorSnackBar({
-        message: t`Failed to create email handle. Email handles may not be configured on this server.`,
+        message: t`Failed to create email channel. Email channels may not be configured on this server.`,
       });
     }
   }, [createEmailGroupChannel, handle, navigate, enqueueErrorSnackBar, t]);
 
   return (
     <SettingsPageLayout
-      title={t`New Email Handle`}
+      title={t`New Email Channel`}
       links={[
         {
           children: t`Workspace`,
@@ -56,7 +56,7 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
           children: t`Email`,
           href: getSettingsPath(SettingsPath.WorkspaceEmail),
         },
-        { children: t`New Email Handle` },
+        { children: t`New Email Channel` },
       ]}
       actionButton={
         <SaveAndCancelButtons

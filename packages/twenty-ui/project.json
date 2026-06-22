@@ -6,19 +6,19 @@
   "tags": ["scope:shared"],
   "targets": {
     "build": {
-      "dependsOn": ["^build", "generateBarrels"],
+      "dependsOn": ["^build"],
       "outputs": [
         "{projectRoot}/dist",
         "{projectRoot}/accessibility/package.json",
         "{projectRoot}/accessibility/dist",
         "{projectRoot}/assets/package.json",
         "{projectRoot}/assets/dist",
-        "{projectRoot}/components/package.json",
-        "{projectRoot}/components/dist",
-        "{projectRoot}/display/package.json",
-        "{projectRoot}/display/dist",
+        "{projectRoot}/data-display/package.json",
+        "{projectRoot}/data-display/dist",
         "{projectRoot}/feedback/package.json",
         "{projectRoot}/feedback/dist",
+        "{projectRoot}/icon/package.json",
+        "{projectRoot}/icon/dist",
         "{projectRoot}/input/package.json",
         "{projectRoot}/input/dist",
         "{projectRoot}/json-visualizer/package.json",
@@ -27,31 +27,29 @@
         "{projectRoot}/layout/dist",
         "{projectRoot}/navigation/package.json",
         "{projectRoot}/navigation/dist",
+        "{projectRoot}/styles/package.json",
+        "{projectRoot}/styles/dist",
+        "{projectRoot}/surfaces/package.json",
+        "{projectRoot}/surfaces/dist",
         "{projectRoot}/testing/package.json",
         "{projectRoot}/testing/dist",
         "{projectRoot}/theme/package.json",
         "{projectRoot}/theme/dist",
         "{projectRoot}/theme-constants/package.json",
         "{projectRoot}/theme-constants/dist",
+        "{projectRoot}/typography/package.json",
+        "{projectRoot}/typography/dist",
         "{projectRoot}/utilities/package.json",
         "{projectRoot}/utilities/dist"
       ]
-    },
-    "generateThemeConstants": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
-      "cache": true,
-      "inputs": ["{projectRoot}/scripts/generateThemeConstants.ts"],
-      "outputs": ["{projectRoot}/src/theme-constants/generated"],
-      "options": {
-        "command": "tsx {projectRoot}/scripts/generateThemeConstants.ts"
-      }
     },
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": ["production", "{projectRoot}/scripts/generateBarrels.ts"],
       "outputs": [
+        "{projectRoot}/src/index.ts",
+        "{projectRoot}/src/individual-entry.ts",
         "{projectRoot}/src/**/*/index.ts",
         "{projectRoot}/package.json"
       ],
@@ -68,6 +66,14 @@
         "command": "npx vite build -c vite.config.individual.ts"
       }
     },
+    "size": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["build"],
+      "inputs": ["{projectRoot}/dist", "{projectRoot}/.size-limit.json"],
+      "options": { "cwd": "{projectRoot}", "command": "npx size-limit" },
+      "configurations": { "why": { "command": "npx size-limit --why" } }
+    },
     "clean": {
       "executor": "nx:run-commands",
       "options": { "command": "rimraf {projectRoot}/dist" }
@@ -77,9 +83,9 @@
     "test": {},
     "typecheck": {},
     "storybook:build": { "configurations": { "test": {} } },
-    "storybook:serve:dev": { "options": { "port": 6007 } },
+    "storybook:serve:dev": { "options": { "port": 6008 } },
     "storybook:serve:static": {
-      "options": { "buildTarget": "twenty-ui:storybook:build", "port": 6007 },
+      "options": { "buildTarget": "twenty-ui:storybook:build", "port": 6008 },
       "configurations": { "test": {} }
     },
     "storybook:test": {},

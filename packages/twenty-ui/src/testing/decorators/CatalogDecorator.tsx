@@ -1,75 +1,9 @@
-import { styled } from '@linaria/react';
 import { isNumber, isString } from '@sniptt/guards';
 import { type Decorator } from '@storybook/react-vite';
+import { clsx } from 'clsx';
 import { type ComponentProps, type JSX } from 'react';
-import { themeCssVariables } from '@ui/theme-constants';
 
-const StyledColumnTitle = styled.h1`
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledRowsTitle = styled.h2`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: ${themeCssVariables.spacing[2]};
-  width: 100px;
-`;
-
-const StyledRowTitle = styled.h3`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: ${themeCssVariables.spacing[2]};
-  width: 100px;
-`;
-
-const StyledElementTitle = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin-bottom: ${themeCssVariables.spacing[1]};
-  text-align: center;
-  text-transform: uppercase;
-`;
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-
-const StyledColumnContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledRowsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledRowContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledElementContainer = styled.div<{ width: number }>`
-  display: flex;
-  min-width: ${({ width }) => (width ? `${width}px` : 'auto')};
-`;
-
-const StyledCellContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  padding: ${themeCssVariables.spacing[2]};
-`;
+import styles from './CatalogDecorator.module.scss';
 
 const emptyDimension = {
   name: '',
@@ -117,36 +51,51 @@ export const CatalogDecorator: Decorator = (Story, context) => {
   ] = dimensions as CatalogDimension[];
 
   return (
-    <StyledContainer>
+    <div className={styles.container}>
       {dimension4.values.map((value4: any, index4: number) => (
-        <StyledColumnContainer key={`d4-${index4}`}>
-          <StyledColumnTitle>
+        <div className={styles.columnContainer} key={`d4-${index4}`}>
+          <div className={styles.columnTitle}>
             {dimension4.labels?.(value4) ??
               (isStringOrNumber(value4) ? value4 : '')}
-          </StyledColumnTitle>
+          </div>
           {dimension3.values.map((value3: any, index3: number) => (
-            <StyledRowsContainer key={`d3-${index3}`}>
-              <StyledRowsTitle>
+            <div className={styles.rowsContainer} key={`d3-${index3}`}>
+              <div className={styles.rowsTitle}>
                 {dimension3.labels?.(value3) ??
                   (isStringOrNumber(value3) ? value3 : '')}
-              </StyledRowsTitle>
+              </div>
               {dimension2.values.map((value2: any, index2: number) => (
-                <StyledRowContainer key={`d2-${index2}`}>
-                  <StyledRowTitle>
+                <div className={styles.rowContainer} key={`d2-${index2}`}>
+                  <div className={styles.rowTitle}>
                     {dimension2.labels?.(value2) ??
                       (isStringOrNumber(value2) ? value2 : '')}
-                  </StyledRowTitle>
+                  </div>
                   {dimension1.values.map((value1: any, index1: number) => {
                     return (
-                      <StyledCellContainer key={`d1-${index1}`} id={value1}>
-                        <StyledElementTitle>
+                      <div
+                        className={styles.cellContainer}
+                        key={`d1-${index1}`}
+                        id={
+                          dimensions.length > 1
+                            ? `catalog-cell-${index4}-${index3}-${index2}-${index1}`
+                            : value1
+                        }
+                      >
+                        <span className={styles.elementTitle}>
                           {dimension1.labels?.(value1) ??
                             (isStringOrNumber(value1) ? value1 : '')}
-                        </StyledElementTitle>
-                        <StyledElementContainer
-                          width={options?.elementContainer?.width}
-                          style={options?.elementContainer?.style}
-                          className={options?.elementContainer?.className}
+                        </span>
+                        <div
+                          className={clsx(
+                            styles.elementContainer,
+                            options?.elementContainer?.className,
+                          )}
+                          style={{
+                            minWidth: options?.elementContainer?.width
+                              ? `${options.elementContainer.width}px`
+                              : 'auto',
+                            ...options?.elementContainer?.style,
+                          }}
                         >
                           <Story
                             args={{
@@ -157,16 +106,16 @@ export const CatalogDecorator: Decorator = (Story, context) => {
                               ...dimension4.props(value4),
                             }}
                           />
-                        </StyledElementContainer>
-                      </StyledCellContainer>
+                        </div>
+                      </div>
                     );
                   })}
-                </StyledRowContainer>
+                </div>
               ))}
-            </StyledRowsContainer>
+            </div>
           ))}
-        </StyledColumnContainer>
+        </div>
       ))}
-    </StyledContainer>
+    </div>
   );
 };

@@ -14,6 +14,8 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "OnDeleteAction",
     "PageLayoutTabLayoutMode",
     "RelationType",
+    "RowLevelPermissionPredicateGroupLogicalOperator",
+    "RowLevelPermissionPredicateOperand",
     "STANDARD_OBJECT",
     "STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS",
     "STANDARD_PAGE_LAYOUT",

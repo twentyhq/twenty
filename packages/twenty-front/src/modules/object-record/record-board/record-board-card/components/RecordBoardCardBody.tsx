@@ -1,3 +1,4 @@
+import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -54,6 +55,8 @@ export const RecordBoardCardBody = () => {
   const setRecordBoardCardHoverPosition = useSetAtomComponentState(
     recordBoardCardHoverPositionComponentState,
   );
+  const getIsMetadataItemFromStandardApplication =
+    useGetIsMetadataItemFromStandardApplication();
 
   const handleMouseEnter = (index: number) => {
     setRecordBoardCardHoverPosition(index);
@@ -75,14 +78,17 @@ export const RecordBoardCardBody = () => {
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
                   isSystemObject: objectMetadataItem.isSystem,
+                  isFieldFromStandardApplication:
+                    getIsMetadataItemFromStandardApplication({
+                      applicationId:
+                        correspondingFieldDefinition.metadata.applicationId,
+                    }),
                   objectPermissions,
                   fieldMetadataItem: {
                     id: recordField.fieldMetadataItemId,
-                    isUIReadOnly:
-                      correspondingFieldDefinition.metadata.isUIReadOnly ??
-                      false,
-                    isCustom:
-                      correspondingFieldDefinition.metadata.isCustom ?? false,
+                    isUIEditable:
+                      correspondingFieldDefinition.metadata.isUIEditable ??
+                      true,
                   },
                   fieldDefinition: correspondingFieldDefinition,
                   objectPermissionsByObjectMetadataId,

@@ -31,7 +31,7 @@ export const TrialCard = ({ duration, withCreditCard }: TrialCardProps) => {
     <StyledTrialCardContainer>
       <StyledTrialDurationContainer>{t`${duration} days trial`}</StyledTrialDurationContainer>
       <StyledCreditCardRequirementContainer>
-        {withCreditCard ? t`With Credit Card` : t`Without Credit Card`}
+        {withCreditCard ? t`With Credit Card` : t`No Credit Card`}
       </StyledCreditCardRequirementContainer>
     </StyledTrialCardContainer>
   );

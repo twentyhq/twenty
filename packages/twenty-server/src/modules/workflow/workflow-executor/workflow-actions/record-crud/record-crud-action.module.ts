@@ -10,6 +10,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
+import { PickRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/pick-record.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
 import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/upsert-record.workflow-action';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
@@ -31,6 +32,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     UpdateRecordWorkflowAction,
     DeleteRecordWorkflowAction,
     FindRecordsWorkflowAction,
+    PickRecordWorkflowAction,
   ],
   exports: [
     CreateRecordWorkflowAction,
@@ -38,6 +40,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     UpdateRecordWorkflowAction,
     DeleteRecordWorkflowAction,
     FindRecordsWorkflowAction,
+    PickRecordWorkflowAction,
   ],
 })
 export class RecordCRUDActionModule {}

@@ -8,6 +8,7 @@ import { CalendarChannelGraphqlApiExceptionInterceptor } from 'src/engine/metada
 import { CalendarChannelResolver } from 'src/engine/metadata-modules/calendar-channel/resolvers/calendar-channel.resolver';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PermissionsModule,
     FeatureFlagModule,
     ConnectedAccountMetadataModule,
+    WorkspaceEventEmitterModule,
   ],
   providers: [
     CalendarChannelMetadataService,

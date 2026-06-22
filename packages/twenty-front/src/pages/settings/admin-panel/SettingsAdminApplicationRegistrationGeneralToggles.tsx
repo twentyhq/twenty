@@ -1,6 +1,7 @@
-import { Card, Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { IconArrowBarToDown } from 'twenty-ui/display';
+import { IconArrowBarToDown } from 'twenty-ui/icon';
 import {
   type ApplicationRegistration,
   UpdateApplicationRegistrationDocument,

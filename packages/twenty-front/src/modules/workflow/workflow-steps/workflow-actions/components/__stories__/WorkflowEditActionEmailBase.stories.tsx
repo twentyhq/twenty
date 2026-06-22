@@ -23,6 +23,7 @@ const mockedConnectedAccounts = [
     handle: 'tim@apple.dev',
     provider: 'google',
     authFailedAt: null,
+    archivedAt: null,
     scopes: ['email', 'calendar'],
     handleAliases: '',
     lastSignedInAt: null,
@@ -112,6 +113,36 @@ const DEFAULT_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
       },
       subject: '',
       body: '',
+      files: [],
+      inReplyTo: '',
+    },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: {
+        value: false,
+      },
+      continueOnFailure: {
+        value: false,
+      },
+    },
+  },
+};
+
+const VARIABLE_SENDER_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
+  id: getWorkflowNodeIdMock(),
+  name: 'Draft Email',
+  type: 'DRAFT_EMAIL',
+  valid: true,
+  settings: {
+    input: {
+      connectedAccountId: '{{trigger._metadata.workspaceMemberId}}',
+      recipients: {
+        to: 'test@twenty.com',
+        cc: '',
+        bcc: '',
+      },
+      subject: 'Welcome to Twenty!',
+      body: 'Hello',
       files: [],
       inReplyTo: '',
     },
@@ -229,5 +260,46 @@ export const DraftEmail: Story = {
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
     expect(await canvas.findByText('Advanced options')).toBeVisible();
+  },
+};
+
+export const VariableSender: Story = {
+  args: {
+    action: VARIABLE_SENDER_DRAFT_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Account')).toBeVisible();
+    expect(await canvas.findByLabelText('Remove variable')).toBeInTheDocument();
+    expect(
+      await canvas.findByText(
+        'Pick a connected account or set a workspace member as variable',
+      ),
+    ).toBeVisible();
+  },
+};
+
+// SEND_EMAIL does not expose the sender variable picker yet (DRAFT_EMAIL only),
+// so the account field stays a plain select with no variable hint.
+export const SendEmailHasNoVariablePicker: Story = {
+  args: {
+    action: DEFAULT_SEND_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Account')).toBeVisible();
+    expect(
+      canvas.queryByText(
+        'Pick a connected account or set a workspace member as variable',
+      ),
+    ).not.toBeInTheDocument();
   },
 };

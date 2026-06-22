@@ -8,7 +8,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronRight } from 'twenty-ui/display';
+import { IconChevronRight } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
 import {
@@ -94,6 +94,7 @@ export const SettingsAgentToolsTable = ({
                   <IconChevronRight
                     size={theme.icon.size.md}
                     stroke={theme.icon.stroke.sm}
+                    color={theme.font.color.tertiary}
                   />
                 }
                 link={getToolLink(tool)}

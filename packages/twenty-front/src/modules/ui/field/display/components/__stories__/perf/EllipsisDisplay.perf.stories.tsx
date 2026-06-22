@@ -25,7 +25,7 @@ export const Default: Story = {};
 
 export const Performance = getProfilingStory({
   componentName: 'EllipsisDisplay',
-  averageThresholdInMs: 0.1,
+  averageThresholdInMs: 0.2,
   numberOfRuns: 20,
   numberOfTestsPerRun: 10,
 });

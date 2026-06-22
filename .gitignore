@@ -1,7 +1,8 @@
 **/**/.env
 .DS_Store
 /.idea
-.claude/
+.claude/*
+!.claude/settings.json
 .cursor/debug-*.log
 **/**/node_modules/
 .cache
@@ -57,3 +58,5 @@ TRANSLATION_QA_REPORT.md
 .playwright-cli/
 output/playwright/
 screenshots/
+!**/public/screenshots/
+!**/assets/screenshots/

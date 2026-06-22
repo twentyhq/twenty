@@ -5,6 +5,7 @@ import requestDb, {
   requestSchema,
 } from 'src/utils/requestDb';
 import handleQueryParams from 'src/utils/handleQueryParams';
+import { type InputData } from 'src/utils/data.types';
 
 export enum DatabaseEventAction {
   CREATED = 'created',
@@ -84,7 +85,7 @@ const getNamePluralFromNameSingular = async (
 
 export const performList = async (
   z: ZObject,
-  bundle: Bundle,
+  bundle: Bundle<InputData>,
 ): Promise<{ record: Record<string, any>; updatedFields?: string[] }[]> => {
   const nameSingular = bundle.inputData.nameSingular;
   const namePlural = await getNamePluralFromNameSingular(

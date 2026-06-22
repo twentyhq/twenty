@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
-import { IconApi, IconBrandGraphql } from 'twenty-ui/display';
+import { IconApi, IconBrandGraphql } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';

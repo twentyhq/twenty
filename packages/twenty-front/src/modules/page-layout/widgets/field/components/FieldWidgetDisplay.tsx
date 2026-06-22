@@ -1,3 +1,4 @@
+import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -53,6 +54,8 @@ export const FieldWidgetDisplay = ({
   });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getIsMetadataItemFromStandardApplication =
+    useGetIsMetadataItemFromStandardApplication();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -95,10 +98,11 @@ export const FieldWidgetDisplay = ({
                       objectPermissionsByObjectMetadataId,
                       objectMetadataId: objectMetadataItem.id,
                     }),
+                  isFieldFromStandardApplication:
+                    getIsMetadataItemFromStandardApplication(fieldMetadataItem),
                   fieldMetadataItem: {
                     id: fieldMetadataItem.id,
-                    isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
-                    isCustom: fieldMetadataItem.isCustom ?? false,
+                    isUIEditable: fieldMetadataItem.isUIEditable ?? true,
                   },
                   fieldDefinition,
                   objectPermissionsByObjectMetadataId,

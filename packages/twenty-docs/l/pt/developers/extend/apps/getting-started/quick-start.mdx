@@ -123,18 +123,20 @@ Passe `--once` para executar uma única compilação + sincronização e sair �
 yarn twenty dev --once
 ```
 
-| Comando                  | Comportamento                                                                                                                    | Quando usar                                                                      |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `yarn twenty dev`        | Monitora e ressincroniza a cada alteração. Fica em execução até você interrompê-lo.                                              | Desenvolvimento local interativo.                                                |
-| `yarn twenty dev --once` | Executa uma única compilação + sincronização e, em seguida, encerra com o código `0` em caso de sucesso ou `1` em caso de falha. | Scripts, CI, hooks de pre-commit, agentes de IA e fluxos de trabalho com script. |
+| Comando                            | Comportamento                                                                                                                    | Quando usar                                                                      |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `yarn twenty dev`                  | Monitora e ressincroniza a cada alteração. Fica em execução até você interrompê-lo.                                              | Desenvolvimento local interativo.                                                |
+| `yarn twenty dev --once`           | Executa uma única compilação + sincronização e, em seguida, encerra com o código `0` em caso de sucesso ou `1` em caso de falha. | Scripts, CI, hooks de pre-commit, agentes de IA e fluxos de trabalho com script. |
+| `yarn twenty dev --once --dry-run` | Compila e imprime as alterações de metadados **sem aplicá-las**.                                                                 | Inspecionar o que uma sincronização mudaria antes de confirmá-la.                |
 
-Ambos os modos precisam de um remoto autenticado.
+Ambos os modos precisam de um remoto autenticado. Veja [Sincronização e recuperação](/l/pt/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run) para mais detalhes sobre `--dry-run`.
 
 ### Opções do modo de desenvolvimento
 
 | Opção                                 | Descrição                                                                                         |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `--once`                              | Compila e sincroniza uma vez e, em seguida, sai.                                                  |
+| `--dry-run`                           | Com `--once`, visualize as alterações de metadados sem aplicá‑las. Não grava nada.                |
 | `--debounceMs \<ms>` | Define o atraso de debounce para alterações de arquivo em milissegundos (padrão: `2000`).         |
 | `--verbose` / `--debug`               | Mostra registros detalhados de compilação, solicitações de sincronização e rastreamentos de erro. |
 

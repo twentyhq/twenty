@@ -1,287 +1,94 @@
-import { randomUUID } from 'node:crypto';
-
-import { Test, type TestingModule } from '@nestjs/testing';
-
-import { ConnectedAccountProvider, FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
-import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type';
-import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
-const WORKSPACE_ID = randomUUID();
-const ALICE_USER_WORKSPACE_ID = randomUUID();
-const BOB_USER_WORKSPACE_ID = randomUUID();
+const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
+const CONNECTED_ACCOUNT_ID = '20202020-1111-4111-8111-111111111111';
 
-const ALICE_ACCOUNT_ID = randomUUID();
-const BOB_ACCOUNT_ID = randomUUID();
-const SHARED_ACCOUNT_ID = randomUUID();
-
-// In-memory connected accounts that mimic the rows TypeORM would return.
-type FakeAccount = Partial<ConnectedAccountEntity> & { id: string };
-
-const aliceUserPrivateAccount: FakeAccount = {
-  id: ALICE_ACCOUNT_ID,
-  workspaceId: WORKSPACE_ID,
-  userWorkspaceId: ALICE_USER_WORKSPACE_ID,
-  visibility: 'user',
-  handle: 'alice@example.com',
+const buildAccount = (id: string) => ({
+  id,
+  handle: 'tim@apple.dev',
   provider: ConnectedAccountProvider.GOOGLE,
+  scopes: ['email'],
   connectionParameters: null,
-  messageChannels: [{ id: 'mc-alice', handle: 'alice@example.com' }] as never,
-};
-
-const bobUserPrivateAccount: FakeAccount = {
-  id: BOB_ACCOUNT_ID,
-  workspaceId: WORKSPACE_ID,
-  userWorkspaceId: BOB_USER_WORKSPACE_ID,
-  visibility: 'user',
-  handle: 'bob@example.com',
-  provider: ConnectedAccountProvider.GOOGLE,
-  connectionParameters: null,
-  messageChannels: [{ id: 'mc-bob', handle: 'bob@example.com' }] as never,
-};
-
-// Workspace-visibility account (owned by Alice but shared with the workspace).
-const sharedWorkspaceAccount: FakeAccount = {
-  id: SHARED_ACCOUNT_ID,
-  workspaceId: WORKSPACE_ID,
-  userWorkspaceId: ALICE_USER_WORKSPACE_ID,
-  visibility: 'workspace',
-  handle: 'team@example.com',
-  provider: ConnectedAccountProvider.GOOGLE,
-  connectionParameters: null,
-  messageChannels: [{ id: 'mc-shared', handle: 'team@example.com' }] as never,
-};
-
-// Mirrors ConnectedAccountMetadataService's visibility rule: an account is
-// usable by a caller when it is workspace-shared, or it belongs to the caller's
-// own user workspace. The authoritative scoping is proven directly against the
-// repository in connected-account-metadata.service.spec.ts; here we stub the
-// finders so these tests focus on the composer's own selection/rejection logic.
-const isVisibleToCaller = (
-  account: FakeAccount,
-  userWorkspaceId: string | undefined,
-): boolean =>
-  account.visibility === 'workspace' ||
-  (isDefined(userWorkspaceId) && account.userWorkspaceId === userWorkspaceId);
-
-const buildComposeParams = (
-  overrides: Partial<ComposeEmailParams> = {},
-): ComposeEmailParams => ({
-  recipients: { to: 'recipient@example.com' },
-  subject: 'Hello',
-  body: '<p>Hello</p>',
-  ...overrides,
+  messageChannels: [{ id: 'message-channel-1', handle: 'tim@apple.dev' }],
 });
 
-describe('EmailComposerService - connected account authorization', () => {
+const baseParams = {
+  recipients: { to: 'test@example.com' },
+  subject: 'Subject',
+  body: '<p>body</p>',
+  files: [],
+};
+
+const context = { workspaceId: WORKSPACE_ID };
+
+describe('EmailComposerService connected account resolution', () => {
   let service: EmailComposerService;
-  let accounts: FakeAccount[];
+  let connectedAccountRepository: {
+    findOne: jest.Mock;
+    find: jest.Mock;
+  };
+  let globalWorkspaceOrmManager: {
+    executeInWorkspaceContext: jest.Mock;
+    getRepository: jest.Mock;
+  };
 
-  beforeEach(async () => {
-    accounts = [
-      aliceUserPrivateAccount,
-      bobUserPrivateAccount,
-      sharedWorkspaceAccount,
-    ];
+  beforeEach(() => {
+    jest.clearAllMocks();
 
-    const mockConnectedAccountMetadataService = {
-      findAccessibleConnectedAccountById: jest.fn(
-        ({ id, userWorkspaceId, workspaceId }) =>
-          Promise.resolve(
-            accounts.find(
-              (account) =>
-                account.id === id &&
-                account.workspaceId === workspaceId &&
-                isVisibleToCaller(account, userWorkspaceId),
-            ) ?? null,
-          ),
-      ),
-      findAccessibleConnectedAccounts: jest.fn(
-        ({ userWorkspaceId, workspaceId }) => {
-          const accessibleAccounts = accounts.filter(
-            (account) =>
-              account.workspaceId === workspaceId &&
-              isVisibleToCaller(account, userWorkspaceId),
-          );
-
-          return Promise.resolve({
-            userConnectedAccounts: accessibleAccounts.filter(
-              (account) => account.userWorkspaceId === userWorkspaceId,
-            ),
-            workspaceSharedConnectedAccounts: accessibleAccounts.filter(
-              (account) => account.userWorkspaceId !== userWorkspaceId,
-            ),
-          });
-        },
-      ),
-    };
-
-    const mockGlobalWorkspaceOrmManager = {
-      executeInWorkspaceContext: jest
-        .fn()
-        .mockImplementation((fn: () => unknown) => fn()),
+    connectedAccountRepository = { findOne: jest.fn(), find: jest.fn() };
+    globalWorkspaceOrmManager = {
+      executeInWorkspaceContext: jest.fn((callback) => callback()),
       getRepository: jest.fn(),
     };
 
-    const mockFileRepository = {
-      find: jest.fn().mockResolvedValue([]),
-    };
-
-    const mockFileService = {
-      getFileStreamById: jest.fn(),
-    };
-
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EmailComposerService,
-        {
-          provide: GlobalWorkspaceOrmManager,
-          useValue: mockGlobalWorkspaceOrmManager,
-        },
-        {
-          provide: ConnectedAccountMetadataService,
-          useValue: mockConnectedAccountMetadataService,
-        },
-        {
-          provide: getWorkspaceScopedRepositoryToken(FileEntity),
-          useValue: mockFileRepository,
-        },
-        {
-          provide: FileService,
-          useValue: mockFileService,
-        },
-      ],
-    }).compile();
-
-    service = module.get<EmailComposerService>(EmailComposerService);
+    service = new EmailComposerService(
+      globalWorkspaceOrmManager as never,
+      connectedAccountRepository as never,
+      { find: jest.fn() } as never,
+      {} as never,
+    );
   });
 
-  const compose = (params: ComposeEmailParams, context: ToolExecutionContext) =>
-    service.composeEmail(params, context, {
-      attachmentsFileFolder: FileFolder.Workflow,
-    });
+  it('uses the connected account matching the provided id', async () => {
+    connectedAccountRepository.findOne.mockResolvedValue(
+      buildAccount(CONNECTED_ACCOUNT_ID),
+    );
 
-  describe('explicit connectedAccountId', () => {
-    it("should reject sending from another member's user-private account (impersonation)", async () => {
-      const bobContext: ToolExecutionContext = {
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: BOB_USER_WORKSPACE_ID,
-      };
+    const result = await service.composeEmail(
+      { ...baseParams, connectedAccountId: CONNECTED_ACCOUNT_ID },
+      context,
+    );
 
-      // Bob asks to send FROM Alice's private account.
-      await expect(
-        compose(
-          buildComposeParams({
-            connectedAccountId: aliceUserPrivateAccount.id,
-          }),
-          bobContext,
-        ),
-      ).rejects.toThrow();
-    });
-
-    it('should allow a member to use their own user-private account', async () => {
-      const bobContext: ToolExecutionContext = {
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: BOB_USER_WORKSPACE_ID,
-      };
-
-      const result = await compose(
-        buildComposeParams({ connectedAccountId: bobUserPrivateAccount.id }),
-        bobContext,
-      );
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.connectedAccount.id).toBe(bobUserPrivateAccount.id);
-      }
-    });
-
-    it('should allow any member to use a workspace-visibility account', async () => {
-      const bobContext: ToolExecutionContext = {
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: BOB_USER_WORKSPACE_ID,
-      };
-
-      const result = await compose(
-        buildComposeParams({ connectedAccountId: sharedWorkspaceAccount.id }),
-        bobContext,
-      );
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.connectedAccount.id).toBe(sharedWorkspaceAccount.id);
-      }
-    });
+    expect(result.success).toBe(true);
+    expect(result.success && result.data.connectedAccount.id).toBe(
+      CONNECTED_ACCOUNT_ID,
+    );
+    expect(connectedAccountRepository.findOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: CONNECTED_ACCOUNT_ID, workspaceId: WORKSPACE_ID },
+      }),
+    );
   });
 
-  describe('omitted connectedAccountId (default selection)', () => {
-    it("should not silently default to another member's user-private account", async () => {
-      // Only Alice's user-private account exists; Bob has none of his own.
-      accounts = [aliceUserPrivateAccount];
-
-      const bobContext: ToolExecutionContext = {
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: BOB_USER_WORKSPACE_ID,
-      };
-
-      await expect(compose(buildComposeParams(), bobContext)).rejects.toThrow();
-    });
-
-    it('should prefer the caller own account over a workspace-visibility account', async () => {
-      const bobContext: ToolExecutionContext = {
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: BOB_USER_WORKSPACE_ID,
-      };
-
-      const result = await compose(buildComposeParams(), bobContext);
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.connectedAccount.userWorkspaceId).toBe(
-          BOB_USER_WORKSPACE_ID,
-        );
-      }
-    });
+  it('throws when the id is not a valid UUID', async () => {
+    await expect(
+      service.composeEmail(
+        { ...baseParams, connectedAccountId: 'not-a-uuid' },
+        context,
+      ),
+    ).rejects.toThrow('Connected account id is not a valid UUID');
   });
 
-  describe('system/workflow execution without a user identity', () => {
-    it('should reject a user-private account when no userWorkspaceId is present', async () => {
-      const systemContext: ToolExecutionContext = {
-        workspaceId: WORKSPACE_ID,
-      };
+  it('throws when no connected account matches the provided id', async () => {
+    connectedAccountRepository.findOne.mockResolvedValue(null);
 
-      await expect(
-        compose(
-          buildComposeParams({
-            connectedAccountId: aliceUserPrivateAccount.id,
-          }),
-          systemContext,
-        ),
-      ).rejects.toThrow();
-    });
-
-    it('should allow a workspace-visibility account when no userWorkspaceId is present', async () => {
-      const systemContext: ToolExecutionContext = {
-        workspaceId: WORKSPACE_ID,
-      };
-
-      const result = await compose(
-        buildComposeParams({ connectedAccountId: sharedWorkspaceAccount.id }),
-        systemContext,
-      );
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.connectedAccount.id).toBe(sharedWorkspaceAccount.id);
-      }
-    });
+    await expect(
+      service.composeEmail(
+        { ...baseParams, connectedAccountId: CONNECTED_ACCOUNT_ID },
+        context,
+      ),
+    ).rejects.toThrow(`No connected account found for id`);
   });
 });

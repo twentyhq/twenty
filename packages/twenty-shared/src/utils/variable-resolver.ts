@@ -78,6 +78,10 @@ const resolveString = (
   return input.replace(VARIABLE_PATTERN, (matchedToken, _) => {
     const processedToken = evalFromContext(matchedToken, context);
 
+    if (typeof processedToken === 'object' && processedToken !== null) {
+      return JSON.stringify(processedToken);
+    }
+
     return processedToken;
   });
 };

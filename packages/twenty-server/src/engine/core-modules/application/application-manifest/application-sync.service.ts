@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
@@ -6,17 +6,19 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 
+import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
+import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
+import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
-import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
+import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -35,6 +37,8 @@ export class ApplicationSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
+    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
+    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
   ) {}
 
   public async synchronizeFromManifest({
@@ -52,10 +56,7 @@ export class ApplicationSyncService {
     hasSchemaMetadataChanged: boolean;
   }> {
     const ownerFlatApplication: FlatApplication = dryRun
-      ? await this.applicationService.findOneApplicationOrThrow({
-          universalIdentifier: manifest.application.universalIdentifier,
-          workspaceId,
-        })
+      ? await this.findInstalledApplicationOrThrow({ workspaceId, manifest })
       : await this.syncApplication({
           workspaceId,
           manifest,
@@ -75,6 +76,30 @@ export class ApplicationSyncService {
     );
 
     return syncResult;
+  }
+
+  private async findInstalledApplicationOrThrow({
+    workspaceId,
+    manifest,
+  }: {
+    workspaceId: string;
+    manifest: Manifest;
+  }): Promise<ApplicationEntity> {
+    const application = await this.applicationService.findByUniversalIdentifier(
+      {
+        universalIdentifier: manifest.application.universalIdentifier,
+        workspaceId,
+      },
+    );
+
+    if (!application) {
+      throw new ApplicationException(
+        `Application "${manifest.application.universalIdentifier}" is not installed in workspace "${workspaceId}". Install it first.`,
+        ApplicationExceptionCode.APP_NOT_INSTALLED,
+      );
+    }
+
+    return application;
   }
 
   // Registers the application + only the pre-install logic function in
@@ -226,6 +251,32 @@ export class ApplicationSyncService {
       workspaceId,
     );
 
+    await this.cleanupApplicationRuntimeResources({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+
     return validateAndBuildResult.workspaceMigration;
+  }
+
+  private async cleanupApplicationRuntimeResources({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    try {
+      const driver = this.logicFunctionDriverFactory.getCurrentDriver();
+
+      await driver.deleteApplicationResources({
+        workspaceId,
+        applicationUniversalIdentifier,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to clean up runtime resources for application ${applicationUniversalIdentifier} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 }

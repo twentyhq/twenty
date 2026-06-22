@@ -4,6 +4,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
@@ -37,8 +38,14 @@ export const useQueryVariablesFromParentView = ({
     filterValueDependencies,
   });
 
+  const isSoftDeleteFilterActive =
+    contextStoreRecordShowParentView?.parentViewFilters.some((recordFilter) =>
+      isRecordFilterAboutSoftDelete({ recordFilter, objectMetadataItems }),
+    ) ?? false;
+
   return {
     filter,
     orderBy,
+    isSoftDeleteFilterActive,
   };
 };

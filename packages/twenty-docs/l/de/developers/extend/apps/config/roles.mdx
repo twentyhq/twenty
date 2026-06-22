@@ -50,6 +50,118 @@ export default defineRole({
 });
 ```
 
+## Zeilenbasierte Sicherheit
+
+Objekt- und Feldberechtigungen legen fest, *auf welche Objekte und Felder* eine Rolle zugreifen kann. **Zeilenbasierte
+Berechtigungsprädikate** gehen noch weiter und legen fest, *welche Datensätze* eine Rolle sehen und bearbeiten kann — zum
+Beispiel eine Self-Service-Rolle, bei der jeder externe Benutzer nur seine eigenen Datensätze sieht.
+
+Deklarieren Sie Prädikate mit `rowLevelPermissionPredicates` für die Rolle. Wie beim Rest des Manifests hat
+jedes Prädikat einen eigenen `universalIdentifier` und referenziert ein Objekt und ein Feld über deren
+`universalIdentifier`; außerdem besitzt es einen `operand` und (optional) ein workspaceMember-Feld, dessen Wert zur Abfragezeit injiziert wird — sodass Sie ausdrücken können: "Die Eigentümerbeziehung des Datensatzes **ist** das aktuelle workspaceMember":
+
+```ts src/roles/partner-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/account-owner.field';
+
+export default defineRole({
+  universalIdentifier: 'c3c1dc2e-1a08-4de5-abb7-2139b3d99343',
+  label: 'Partner',
+  description: 'External partner — sees only its own records',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+          .universalIdentifier,
+    },
+  ],
+});
+```
+
+Da Prädikate im Manifest ausgeliefert werden, werden sie zusammen mit der Rolle bei jeder Installation und jedem Upgrade erstellt, aktualisiert und entfernt – es ist kein separater Post-Installationsschritt erforderlich, um sie zu synchronisieren.
+
+### Kombinieren von Prädikaten mit Gruppen
+
+Standardmäßig werden die Prädikate einer Rolle mit `AND` verknüpft. Um einige von ihnen mit `OR` zu verknüpfen (oder um Logik zu verschachteln), deklarieren Sie einen Eintrag `rowLevelPermissionPredicateGroups` und verweisen Sie von jedem Prädikat aus über `predicateGroupUniversalIdentifier` darauf. Diese Rolle ermöglicht es einem Partner, eine Opportunity zu sehen, deren er entweder **Eigentümer**
+oder der **Ansprechpartner** ist:
+
+```ts src/roles/partner-opportunities-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+const CURRENT_MEMBER =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+    .universalIdentifier;
+
+export default defineRole({
+  universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
+  label: 'Partner (opportunities)',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      canReadObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicateGroups: [
+    {
+      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+    {
+      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier:
+        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+  ],
+});
+```
+
+Notizen:
+
+* Geben Sie jedem Prädikat und jeder Gruppe einen stabilen `universalIdentifier` (beliebige uuid) – er identifiziert die Entität über Upgrades hinweg eindeutig, und Prädikate verweisen über ihn auf Gruppen.
+* Prädikate können auf Objekte und Felder verweisen, die Ihrer App gehören, oder auf Standardobjekte von Twenty.
+* Zeilenbasierte Sicherheit wird für Workspaces in Tarifen durchgesetzt, die sie enthalten; die Prädikate werden auch in anderen Tarifen weiterhin synchronisiert, sie werden dort einfach nicht durchgesetzt.
+
 ## Die Standard-Funktionsrolle
 
 Wenn Sie eine neue App erzeugen, erstellt die CLI eine Datei für die Standardrolle, die mit `defineApplicationRole()` deklariert ist:

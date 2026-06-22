@@ -2,6 +2,7 @@ import { SidePanelBackButton } from '@/side-panel/components/SidePanelBackButton
 import { SidePanelPageInfo } from '@/side-panel/components/SidePanelPageInfo';
 import { SidePanelTopBarInputFocusEffect } from '@/side-panel/components/SidePanelTopBarInputFocusEffect';
 import { SidePanelTopBarRightCornerIcon } from '@/side-panel/components/SidePanelTopBarRightCornerIcon';
+import { COMMAND_MENU_SIDE_PANEL_PAGES } from '@/side-panel/constants/CommandMenuSidePanelPages';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
@@ -19,8 +20,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useRef } from 'react';
-import { SidePanelPages } from 'twenty-shared/types';
-import { IconX } from 'twenty-ui/display';
+import { IconX } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -39,7 +39,6 @@ const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   gap: ${themeCssVariables.spacing[4]};
   height: ${({ isMobile }) =>
     isMobile ? SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE : SIDE_PANEL_TOP_BAR_HEIGHT}px;
-  justify-content: space-between;
   justify-content: space-between;
   margin: 0;
 
@@ -74,6 +73,13 @@ const StyledContentContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   overflow: hidden;
+`;
+
+const StyledRightControlsContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const SidePanelTopBar = () => {
@@ -124,12 +130,19 @@ export const SidePanelTopBar = () => {
     });
   };
 
-  const canGoBack = sidePanelNavigationStack.length > 1;
+  const currentPage = sidePanelNavigationStack.at(-1)?.page;
+  const previousPage = sidePanelNavigationStack.at(-2)?.page;
 
-  const shouldShowCloseButton =
-    !isMobile && sidePanelNavigationStack.length === 1;
+  const canGoBack =
+    currentPage !== undefined &&
+    COMMAND_MENU_SIDE_PANEL_PAGES.includes(currentPage)
+      ? previousPage !== undefined &&
+        COMMAND_MENU_SIDE_PANEL_PAGES.includes(previousPage)
+      : sidePanelNavigationStack.length > 1;
 
   const shouldShowBackButton = canGoBack;
+
+  const shouldShowCloseButton = !isMobile;
 
   const lastChip = contextChips.at(-1);
 
@@ -139,6 +152,7 @@ export const SidePanelTopBar = () => {
         <AnimatePresence>
           {shouldShowBackButton && (
             <motion.div
+              key="side-panel-back-button"
               exit={{ opacity: 0, width: 0 }}
               transition={{
                 duration: theme.animation.duration.instant,
@@ -147,31 +161,11 @@ export const SidePanelTopBar = () => {
               <SidePanelBackButton />
             </motion.div>
           )}
-          {shouldShowCloseButton && (
-            <motion.div
-              exit={{ opacity: 0, width: 0 }}
-              transition={{
-                duration: theme.animation.duration.instant,
-              }}
-            >
-              <IconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
-                onClick={closeSidePanelMenu}
-              />
-            </motion.div>
-          )}
         </AnimatePresence>
-        {lastChip &&
-          sidePanelPage !== SidePanelPages.CommandMenuDisplay &&
-          sidePanelPage !== SidePanelPages.CommandMenuEdit &&
-          sidePanelPage !== SidePanelPages.SearchRecords && (
-            <SidePanelPageInfo pageChip={lastChip} />
-          )}
-        {(sidePanelPage === SidePanelPages.CommandMenuDisplay ||
-          sidePanelPage === SidePanelPages.CommandMenuEdit ||
-          sidePanelPage === SidePanelPages.SearchRecords) && (
+        {lastChip && !COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
+          <SidePanelPageInfo pageChip={lastChip} />
+        )}
+        {COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
           <>
             <StyledInput
               data-testid={SIDE_PANEL_FOCUS_ID}
@@ -186,7 +180,18 @@ export const SidePanelTopBar = () => {
           </>
         )}
       </StyledContentContainer>
-      <SidePanelTopBarRightCornerIcon />
+      <StyledRightControlsContainer>
+        <SidePanelTopBarRightCornerIcon />
+        {shouldShowCloseButton && (
+          <IconButton
+            Icon={IconX}
+            size="small"
+            variant="secondary"
+            onClick={closeSidePanelMenu}
+            ariaLabel={t`Close side panel`}
+          />
+        )}
+      </StyledRightControlsContainer>
     </StyledInputContainer>
   );
 };

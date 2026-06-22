@@ -9,7 +9,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsAccountsPasswordController } from '@/settings/accounts/components/SettingsAccountsPasswordController';
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { type AccountType } from 'twenty-shared/constants';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -189,18 +189,19 @@ export const SettingsAccountsConnectionForm = ({
 
             <StyledFieldGroup>
               <Controller
-                name="IMAP.secure"
+                name="IMAP.connectionSecurity"
                 control={control}
                 render={({ field }) => (
                   <Select
-                    label={t`IMAP Encryption`}
+                    label={t`IMAP Connection security`}
                     options={[
-                      { label: 'SSL/TLS', value: true },
-                      { label: 'None', value: false },
+                      { label: 'None', value: 'NONE' },
+                      { label: 'STARTTLS', value: 'STARTTLS' },
+                      { label: 'SSL/TLS', value: 'SSL_TLS' },
                     ]}
                     value={field.value}
                     onChange={field.onChange}
-                    dropdownId="imap-secure-dropdown"
+                    dropdownId="imap-connection-security-dropdown"
                   />
                 )}
               />
@@ -284,18 +285,19 @@ export const SettingsAccountsConnectionForm = ({
 
             <StyledFieldGroup>
               <Controller
-                name="SMTP.secure"
+                name="SMTP.connectionSecurity"
                 control={control}
                 render={({ field }) => (
                   <Select
-                    label={t`SMTP Encryption`}
+                    label={t`SMTP Connection security`}
                     options={[
-                      { label: 'SSL/TLS', value: true },
-                      { label: 'STARTTLS', value: false },
+                      { label: 'None', value: 'NONE' },
+                      { label: 'STARTTLS', value: 'STARTTLS' },
+                      { label: 'SSL/TLS', value: 'SSL_TLS' },
                     ]}
                     value={field.value}
                     onChange={field.onChange}
-                    dropdownId="smtp-secure-dropdown"
+                    dropdownId="smtp-connection-security-dropdown"
                   />
                 )}
               />

@@ -5,21 +5,13 @@ import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
 import { hasInitializedCurrentStepFilterGroupsComponentFamilyState } from '@/workflow/workflow-steps/filters/states/hasInitializedCurrentStepFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentStepFiltersComponentFamilyState } from '@/workflow/workflow-steps/filters/states/hasInitializedCurrentStepFiltersComponentFamilyState';
+import { type FilterSettingsWithPotentiallyDeprecatedOperand } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { useEffect, useMemo } from 'react';
-import {
-  type StepFilterGroup,
-  type StepFilterWithPotentiallyDeprecatedOperand,
-} from 'twenty-shared/types';
 import {
   convertViewFilterOperandToCoreOperand,
   isDefined,
 } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-
-type FilterSettingsWithPotentiallyDeprecatedOperand = {
-  stepFilterGroups?: StepFilterGroup[];
-  stepFilters?: StepFilterWithPotentiallyDeprecatedOperand[];
-};
 
 export const WorkflowEditActionFilterBodyEffect = ({
   stepId,

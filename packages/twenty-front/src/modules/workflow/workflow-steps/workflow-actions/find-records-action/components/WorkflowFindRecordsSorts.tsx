@@ -4,7 +4,7 @@ import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconArrowsSort, IconTrash, useIcons } from 'twenty-ui/display';
+import { IconArrowsSort, IconTrash, useIcons } from 'twenty-ui/icon';
 import { Button, type SelectOption } from 'twenty-ui/input';
 import { v4 as uuidv4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
