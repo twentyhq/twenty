@@ -45,6 +45,7 @@ import {
 } from 'twenty-ui/navigation';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledDescription = styled.div`
   color: ${themeCssVariables.font.color.light};
@@ -100,7 +101,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             Avatar={
               <Avatar
                 placeholder={currentWorkspace?.displayName || ''}
-                avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
+                avatarUrl={getAbsoluteImageUrl(
+                  currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
+                )}
               />
             }
           />
@@ -161,9 +164,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     avatar={
                       <Avatar
                         placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={
-                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO
-                        }
+                        avatarUrl={getAbsoluteImageUrl(
+                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                        )}
                       />
                     }
                     selected={false}

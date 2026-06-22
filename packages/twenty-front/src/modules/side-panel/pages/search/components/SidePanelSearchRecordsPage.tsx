@@ -5,6 +5,7 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
@@ -70,7 +71,7 @@ export const SidePanelSearchRecordsPage = () => {
                   LeftComponent={
                     <Avatar
                       type={item.avatarType}
-                      avatarUrl={item.imageUrl}
+                      avatarUrl={getAbsoluteImageUrl(item.imageUrl)}
                       placeholderColorSeed={item.recordId}
                       placeholder={item.label}
                     />
