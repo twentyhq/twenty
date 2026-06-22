@@ -83,6 +83,9 @@ export const opsCommandCenterBlueprint: DashboardBlueprint = {
             aggregateOperation: 'COUNT',
             groupByFieldName: 'fulfillmentStatus',
             orderBy: 'VALUE_DESC',
+            filter: {
+              status: { in: ['PAID'] },
+            },
             displayDataLabel: true,
           },
         },
@@ -95,7 +98,7 @@ export const opsCommandCenterBlueprint: DashboardBlueprint = {
             configurationType: 'PIE_CHART',
             aggregateFieldName: 'id',
             aggregateOperation: 'COUNT',
-            groupByFieldName: 'status',
+            groupByFieldName: 'fulfillmentStatus',
             orderBy: 'VALUE_DESC',
             displayDataLabel: true,
           },
