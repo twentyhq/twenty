@@ -1,46 +1,61 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
-  SOURCE_TABLE_TO_PUBLIC_SOURCE,
+  SOURCE_TABLE_TO_CRM_VIEW,
   createSupabaseReader,
   createSupabaseReaderFromEnv,
+  defaultCreatePool,
 } from './read-supabase-source';
 
-describe('SOURCE_TABLE_TO_PUBLIC_SOURCE', () => {
-  it('maps physical source tables to public.* tables', () => {
-    expect(SOURCE_TABLE_TO_PUBLIC_SOURCE.products.table).toBe(
-      'public.products',
+import { Pool } from 'pg';
+
+vi.mock('pg', () => {
+  const mockQuery = vi.fn().mockResolvedValue({ rows: [] });
+  return {
+    Pool: vi.fn().mockImplementation(() => ({ query: mockQuery })),
+  };
+});
+
+describe('SOURCE_TABLE_TO_CRM_VIEW', () => {
+  it('maps physical source tables to crm.v_twenty_* views', () => {
+    expect(SOURCE_TABLE_TO_CRM_VIEW.profiles.table).toBe(
+      'crm.v_twenty_people',
     );
-    expect(SOURCE_TABLE_TO_PUBLIC_SOURCE.affiliates.table).toBe(
-      'public.affiliates',
+    expect(SOURCE_TABLE_TO_CRM_VIEW.customer_expertise.table).toBe(
+      'crm.v_twenty_customer_expertise',
     );
-    expect(SOURCE_TABLE_TO_PUBLIC_SOURCE.orders.table).toBe(
-      'public.orders',
+    expect(SOURCE_TABLE_TO_CRM_VIEW.affiliates.table).toBe(
+      'crm.v_twenty_ambassadors',
     );
-    expect(SOURCE_TABLE_TO_PUBLIC_SOURCE.order_items.table).toBe(
-      'public.order_items',
+    expect(SOURCE_TABLE_TO_CRM_VIEW.products.table).toBe(
+      'crm.v_twenty_products',
     );
-    expect(SOURCE_TABLE_TO_PUBLIC_SOURCE.commission_ledger.table).toBe(
-      'public.commission_ledger',
+    expect(SOURCE_TABLE_TO_CRM_VIEW.orders.table).toBe(
+      'crm.v_twenty_orders',
+    );
+    expect(SOURCE_TABLE_TO_CRM_VIEW.payments.table).toBe(
+      'crm.v_twenty_payments',
+    );
+    expect(SOURCE_TABLE_TO_CRM_VIEW.order_items.table).toBe(
+      'crm.v_twenty_order_items',
+    );
+    expect(SOURCE_TABLE_TO_CRM_VIEW.commission_ledger.table).toBe(
+      'crm.v_twenty_commissions',
     );
   });
 
-  it('derives payments logical source from public.orders with column aliases', () => {
-    const payments = SOURCE_TABLE_TO_PUBLIC_SOURCE.payments;
-    expect(payments.table).toBe('public.orders');
-    expect(payments.select).toContain('payment_gateway AS provider');
-    expect(payments.select).toContain('payment_method_code AS method_code');
-    expect(payments.select).toContain('total_cents AS amount_cents');
-    expect(payments.select).toContain('payment_status AS status');
-    expect(payments.select).toContain('id AS order_id');
-    expect(payments.select).not.toContain('SELECT *');
+  it('maps payments to crm.v_twenty_payments with SELECT *', () => {
+    const payments = SOURCE_TABLE_TO_CRM_VIEW.payments;
+    expect(payments.table).toBe('crm.v_twenty_payments');
+    expect(payments.select).toBe('*');
+    expect(payments.select).not.toContain('public.orders');
+    expect(payments.select).not.toContain(' AS ');
   });
 
   it('has exactly 8 entries', () => {
-    expect(Object.keys(SOURCE_TABLE_TO_PUBLIC_SOURCE)).toHaveLength(8);
+    expect(Object.keys(SOURCE_TABLE_TO_CRM_VIEW)).toHaveLength(8);
   });
 });
-
 describe('createSupabaseReader', () => {
   it('queries the mapped view with limit/offset and concatenates pages', async () => {
     const page1 = [
@@ -72,12 +87,12 @@ describe('createSupabaseReader', () => {
     expect(query).toHaveBeenCalledTimes(2);
 
     expect(query).toHaveBeenNthCalledWith(1,
-      expect.stringMatching(/public\.profiles/i),
+      expect.stringMatching(/crm\.v_twenty_people/i),
       [2, 0],
     );
 
     expect(query).toHaveBeenNthCalledWith(2,
-      expect.stringMatching(/public\.profiles/i),
+      expect.stringMatching(/crm\.v_twenty_people/i),
       [2, 2],
     );
 
@@ -107,11 +122,11 @@ describe('createSupabaseReader', () => {
     expect(rows).toEqual([...fullPage, ...shortPage]);
     expect(query).toHaveBeenCalledTimes(2);
     expect(query).toHaveBeenNthCalledWith(1,
-      expect.stringMatching(/public\.products/i),
+      expect.stringMatching(/crm\.v_twenty_products/i),
       [3, 0],
     );
     expect(query).toHaveBeenNthCalledWith(2,
-      expect.stringMatching(/public\.products/i),
+      expect.stringMatching(/crm\.v_twenty_products/i),
       [3, 3],
     );
   });
@@ -167,7 +182,7 @@ describe('createSupabaseReader', () => {
     expect(rows).toEqual([]);
     expect(query).toHaveBeenCalledTimes(1);
     expect(query).toHaveBeenCalledWith(
-      expect.stringMatching(/public\.affiliates/i),
+      expect.stringMatching(/crm\.v_twenty_ambassadors/i),
       [50, 0],
     );
   });
@@ -187,7 +202,7 @@ describe('createSupabaseReaderFromEnv', () => {
 
     expect(rows).toEqual([{ id: '1' }]);
     expect(query).toHaveBeenCalledWith(
-      expect.stringMatching(/public\.profiles/i),
+      expect.stringMatching(/crm\.v_twenty_people/i),
       [expect.any(Number), 0],
     );
   });
@@ -233,5 +248,15 @@ describe('createSupabaseReaderFromEnv', () => {
         { createPool: () => ({ query: vi.fn() }) as never },
       ),
     ).toThrow('XOPURE_SUPABASE_READONLY_DSN is required');
+  });
+});
+describe('defaultCreatePool', () => {
+  it('creates the pool with default_transaction_read_only enabled', () => {
+    defaultCreatePool('postgres://u:p@h:5432/db');
+    expect(Pool).toHaveBeenCalledWith({
+      connectionString: 'postgres://u:p@h:5432/db',
+      max: 5,
+      options: '-c default_transaction_read_only=on',
+    });
   });
 });

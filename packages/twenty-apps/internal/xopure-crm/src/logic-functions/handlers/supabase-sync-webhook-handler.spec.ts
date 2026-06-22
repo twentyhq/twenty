@@ -49,7 +49,9 @@ const buildPaymentRecordFromOrderForTest = (
   method_code: record.payment_method_code ?? record.payment_gateway,
   amount_cents: record.total_cents ?? record.subtotal_cents,
   status: record.payment_status,
-  refund_amount_cents: record.refund_amount_cents ?? 0,
+  ...(Object.prototype.hasOwnProperty.call(record, 'refund_amount_cents')
+    ? { refund_amount_cents: record.refund_amount_cents }
+    : {}),
 });
 
 const getMappedContentHash = (params: {
@@ -75,6 +77,87 @@ const getMappedContentHash = (params: {
 };
 
 describe('handleSupabaseSyncWebhook', () => {
+  it('rejects requests when expectedSecret is not configured (undefined)', async () => {
+    const client = buildClient({});
+
+    const result = await handleSupabaseSyncWebhook({
+      event: buildEvent({
+        secret: 'any-secret',
+        body: { table: 'products', record: { id: 'product-1' } },
+      }),
+      expectedSecret: undefined,
+      client,
+    });
+
+    expect(result).toEqual({
+      statusCode: 500,
+      body: {
+        ok: false,
+        error: {
+          code: 'SYNC_SECRET_NOT_CONFIGURED',
+          message: 'Sync secret is not configured. Refusing to process request.',
+          retryable: true,
+        },
+      },
+    });
+    expect(client.query).not.toHaveBeenCalled();
+    expect(client.mutation).not.toHaveBeenCalled();
+  });
+
+  it('rejects requests when expectedSecret is blank (empty string)', async () => {
+    const client = buildClient({});
+
+    const result = await handleSupabaseSyncWebhook({
+      event: buildEvent({
+        secret: 'any-secret',
+        body: { table: 'products', record: { id: 'product-1' } },
+      }),
+      expectedSecret: '',
+      client,
+    });
+
+    expect(result).toEqual({
+      statusCode: 500,
+      body: {
+        ok: false,
+        error: {
+          code: 'SYNC_SECRET_NOT_CONFIGURED',
+          message: 'Sync secret is not configured. Refusing to process request.',
+          retryable: true,
+        },
+      },
+    });
+    expect(client.query).not.toHaveBeenCalled();
+    expect(client.mutation).not.toHaveBeenCalled();
+  });
+
+  it('rejects requests when expectedSecret is whitespace-only', async () => {
+    const client = buildClient({});
+
+    const result = await handleSupabaseSyncWebhook({
+      event: buildEvent({
+        secret: 'any-secret',
+        body: { table: 'products', record: { id: 'product-1' } },
+      }),
+      expectedSecret: '   ',
+      client,
+    });
+
+    expect(result).toEqual({
+      statusCode: 500,
+      body: {
+        ok: false,
+        error: {
+          code: 'SYNC_SECRET_NOT_CONFIGURED',
+          message: 'Sync secret is not configured. Refusing to process request.',
+          retryable: true,
+        },
+      },
+    });
+    expect(client.query).not.toHaveBeenCalled();
+    expect(client.mutation).not.toHaveBeenCalled();
+  });
+
   it('rejects requests without the configured shared secret', async () => {
     const client = buildClient({});
 
@@ -271,7 +354,6 @@ describe('handleSupabaseSyncWebhook', () => {
             methodCode: 'card',
             amountCents: 12_900,
             status: 'SUCCEEDED',
-            refundCents: 0,
             orderId: 'twenty-order-1',
           },
         },
@@ -600,5 +682,115 @@ describe('handleSupabaseSyncWebhook', () => {
         syncMapId: 'sync-map-failed',
       },
     });
+  });
+
+  it('tombstones a DELETE webhook for a record with an existing sync map', async () => {
+    const client = buildClient({
+      queryResults: [
+        {
+          xopureSyncMaps: {
+            edges: [
+              {
+                node: {
+                  id: 'sync-map-1',
+                  targetRecordId: 'twenty-product-1',
+                  payloadHash: 'stale',
+                },
+              },
+      ],
+          },
+        },
+      ],
+      mutationResults: [
+        { updateXopureSyncMap: { id: 'sync-map-1' } },
+      ],
+    });
+
+    const result = await handleSupabaseSyncWebhook({
+      event: buildEvent({
+        secret: 'secret',
+        body: {
+          type: 'DELETE',
+          schema: 'public',
+          table: 'products',
+          old_record: {
+            id: 'product-1',
+            sku: 'XO-PEP',
+            name: 'Peptide Serum',
+            price_cents: 12900,
+            active: true,
+            updated_at: '2026-05-01T00:00:00.000Z',
+          },
+        },
+      }),
+      expectedSecret: 'secret',
+      client,
+    });
+
+    expect(result).toMatchObject({
+      statusCode: 200,
+      body: {
+        ok: true,
+        status: 'tombstoned',
+        tombstoned: 1,
+        sourceTable: 'products',
+        sourceRecordId: 'product-1',
+      },
+    });
+    // No target-object create/update — DELETED sync map is the only mutation
+    const mutationCalls = client.mutation.mock.calls;
+    expect(mutationCalls).toHaveLength(1);
+    expect(mutationCalls[0]?.[0]).toMatchObject({
+      updateXopureSyncMap: {
+        __args: {
+          data: {
+            lastStatus: 'DELETED',
+          },
+        },
+      },
+    });
+  });
+
+  it('skips DELETE webhook when no sync map exists for the record', async () => {
+    const client = buildClient({
+      queryResults: [
+        { xopureSyncMaps: { edges: [] } },
+      ],
+      mutationResults: [],
+    });
+
+    const result = await handleSupabaseSyncWebhook({
+      event: buildEvent({
+        secret: 'secret',
+        body: {
+          type: 'DELETE',
+          schema: 'public',
+          table: 'products',
+          old_record: {
+            id: 'product-ghost',
+            sku: 'XO-GHOST',
+            name: 'Ghost Product',
+            price_cents: 5000,
+            active: false,
+            updated_at: '2026-05-01T00:00:00.000Z',
+          },
+        },
+      }),
+      expectedSecret: 'secret',
+      client,
+    });
+
+    expect(result).toMatchObject({
+      statusCode: 200,
+      body: {
+        ok: true,
+        status: 'tombstoned',
+        tombstoned: 0,
+        sourceTable: 'products',
+        sourceRecordId: 'product-ghost',
+      },
+    });
+    // No mutations at all — no target write, no sync map write
+    expect(client.mutation).not.toHaveBeenCalled();
   });
 });

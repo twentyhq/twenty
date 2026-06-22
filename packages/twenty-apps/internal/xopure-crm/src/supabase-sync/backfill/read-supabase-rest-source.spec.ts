@@ -42,6 +42,15 @@ describe('SOURCE_TABLE_TO_REST_SOURCE', () => {
       'gateway_payload',
     );
   });
+
+  it('selects commission release_at for payableAt mapping', () => {
+    expect(SOURCE_TABLE_TO_REST_SOURCE.commission_ledger.select).toContain(
+      'release_at',
+    );
+    expect(SOURCE_TABLE_TO_REST_SOURCE.commission_ledger.select).not.toContain(
+      'payable_at',
+    );
+  });
 });
 
 describe('createSupabaseRestReader', () => {

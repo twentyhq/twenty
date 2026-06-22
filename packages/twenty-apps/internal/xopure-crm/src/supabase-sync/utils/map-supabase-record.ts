@@ -252,14 +252,17 @@ const mapAmbassador = (record: Record<string, unknown>) =>
     teamVolumeCents: integerValue(record.team_volume_cents) ?? 0,
     activeCustomerCount: integerValue(record.active_customer_count) ?? 0,
     attributedRevenueCents: integerValue(record.team_volume_cents) ?? 0,
-    totalCommissionEarnedCents: 0,
     researchSummary: stringValue(record.reason),
     phone: stringValue(record.phone),
     showPeptidesLink: booleanValue(record.show_peptides_link) ?? false,
-    heldCommissionCents: integerValue(record.held_commission_cents) ?? 0,
-    payableCommissionCents: integerValue(record.payable_commission_cents) ?? 0,
-    paidCommissionCents: integerValue(record.paid_commission_cents) ?? 0,
-    lifetimeCommissionCents: integerValue(record.lifetime_commission_cents) ?? integerValue(record.total_commission_earned_cents) ?? 0,
+    ...(integerValue(record.held_commission_cents) !== undefined && { heldCommissionCents: integerValue(record.held_commission_cents) }),
+    ...(integerValue(record.payable_commission_cents) !== undefined && { payableCommissionCents: integerValue(record.payable_commission_cents) }),
+    ...(integerValue(record.paid_commission_cents) !== undefined && { paidCommissionCents: integerValue(record.paid_commission_cents) }),
+    ...(integerValue(record.lifetime_commission_cents) !== undefined
+      ? { lifetimeCommissionCents: integerValue(record.lifetime_commission_cents) }
+      : integerValue(record.total_commission_earned_cents) !== undefined
+        ? { lifetimeCommissionCents: integerValue(record.total_commission_earned_cents) }
+        : {}),
     lastCommissionAt: isoDateValue(record.last_commission_at),
   });
 
@@ -420,7 +423,7 @@ const mapOrder = (record: Record<string, unknown>) =>
     shippingCents: integerValue(record.shipping_cents) ?? 0,
     taxCents: integerValue(record.tax_cents) ?? 0,
     discountCents: integerValue(record.discount_amount_cents) ?? 0,
-    refundCents: integerValue(record.refund_amount_cents) ?? 0,
+    ...(integerValue(record.refund_amount_cents) !== undefined && { refundCents: integerValue(record.refund_amount_cents) }),
     totalCents:
       integerValue(record.total_cents) ?? integerValue(record.subtotal_cents) ?? 0,
     currencyCode: stringValue(record.currency) ?? 'USD',
@@ -485,7 +488,7 @@ const mapOrderItem = (record: Record<string, unknown>) =>
     quantity: integerValue(record.quantity) ?? 1,
     unitPriceCents: integerValue(record.unit_price_cents) ?? 0,
     lineTotalCents: integerValue(record.line_total_cents) ?? 0,
-    cvAmount: integerValue(record.cv_amount) ?? 0,
+    ...(integerValue(record.cv_amount) !== undefined && { cvAmount: integerValue(record.cv_amount) }),
     category: stringValue(record.category),
   });
 
@@ -543,8 +546,8 @@ const mapCommission = (record: Record<string, unknown>) => {
     holdUntil: isoDateValue(record.hold_until),
     paidAt: isoDateValue(record.paid_at),
     baseCvAmount: integerValue(record.base_cv_amount) ?? 0,
-    sourceOrderId: stringValue(record.source_order_id) ?? stringValue(record.order_id),
-    payableAt: isoDateValue(record.payable_at),
+    sourceOrderId: stringValue(record.order_id),
+    payableAt: isoDateValue(record.release_at),
   });
 };
 
@@ -580,7 +583,7 @@ const mapPayment = (record: Record<string, unknown>) =>
     currencyCode: stringValue(record.currency) ?? 'USD',
     status: mapPaymentStatus(record.status),
     providerPaymentId: stringValue(record.provider_payment_id),
-    refundCents: integerValue(record.refund_amount_cents) ?? 0,
+    ...(integerValue(record.refund_amount_cents) !== undefined && { refundCents: integerValue(record.refund_amount_cents) }),
     description: stringValue(record.description),
   });
 

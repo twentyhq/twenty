@@ -327,4 +327,183 @@ describe('mapSupabaseRecord', () => {
       },
     });
   });
+
+  it('omits ambassador commission rollup fields when source data is absent', () => {
+    const result = mapSupabaseRecord({
+      ...baseWebhook,
+      sourceTable: 'affiliates',
+      record: {
+        id: 'ambassador-no-rollup',
+        name: 'No Rollup Ambassador',
+        status: 'active',
+        updated_at: '2026-05-01T00:00:00.000Z',
+      },
+    });
+
+    expect(result.ok).toBe(true);
+
+    if (!result.ok) {
+      throw new Error('Expected ambassador to map');
+    }
+
+    expect(result.record.fieldValues).not.toHaveProperty('totalCommissionEarnedCents');
+    expect(result.record.fieldValues).not.toHaveProperty('heldCommissionCents');
+    expect(result.record.fieldValues).not.toHaveProperty('payableCommissionCents');
+    expect(result.record.fieldValues).not.toHaveProperty('paidCommissionCents');
+    expect(result.record.fieldValues).not.toHaveProperty('lifetimeCommissionCents');
+  });
+
+  it('maps ambassador commission rollup fields only when source values are present', () => {
+    const result = mapSupabaseRecord({
+      ...baseWebhook,
+      sourceTable: 'affiliates',
+      record: {
+        id: 'ambassador-with-rollup',
+        name: 'With Rollup Ambassador',
+        status: 'active',
+        held_commission_cents: 1500,
+        payable_commission_cents: 3200,
+        paid_commission_cents: 10000,
+        lifetime_commission_cents: 50000,
+        updated_at: '2026-05-01T00:00:00.000Z',
+      },
+    });
+
+    expect(result.ok).toBe(true);
+
+    if (!result.ok) {
+      throw new Error('Expected ambassador to map');
+    }
+
+    expect(result.record.fieldValues).toMatchObject({
+      heldCommissionCents: 1500,
+      payableCommissionCents: 3200,
+      paidCommissionCents: 10000,
+      lifetimeCommissionCents: 50000,
+    });
+  });
+
+  it('derives commission payableAt from release_at', () => {
+    const result = mapSupabaseRecord({
+      ...baseWebhook,
+      sourceTable: 'commission_ledger',
+      record: {
+        id: 'commission-rel',
+        affiliate_id: 'ambassador-1',
+        order_id: 'order-1',
+        amount_cents: 1000,
+        release_at: '2026-06-15T00:00:00.000Z',
+        updated_at: '2026-05-01T12:00:00.000Z',
+      },
+    });
+
+    expect(result.ok).toBe(true);
+
+    if (!result.ok) {
+      throw new Error('Expected commission to map');
+    }
+
+    expect(result.record.fieldValues.payableAt).toBe('2026-06-15T00:00:00.000Z');
+    expect(result.record.fieldValues.sourceOrderId).toBe('order-1');
+  });
+
+  it('omits order-item cvAmount when cv_amount is absent', () => {
+    const result = mapSupabaseRecord({
+      ...baseWebhook,
+      sourceTable: 'order_items',
+      record: {
+        id: 'line-no-cv',
+        order_id: 'order-1',
+        product_id: 'product-1',
+        sku: 'XO-PEP',
+        name: 'Peptide Serum',
+        quantity: 1,
+        unit_price_cents: 12900,
+        line_total_cents: 12900,
+        updated_at: '2026-05-01T00:00:00.000Z',
+      },
+    });
+
+    expect(result.ok).toBe(true);
+
+    if (!result.ok) {
+      throw new Error('Expected order item to map');
+    }
+
+    expect(result.record.fieldValues).not.toHaveProperty('cvAmount');
+  });
+
+  it('includes order-item cvAmount when cv_amount is present', () => {
+    const result = mapSupabaseRecord({
+      ...baseWebhook,
+      sourceTable: 'order_items',
+      record: {
+        id: 'line-with-cv',
+        order_id: 'order-1',
+        product_id: 'product-1',
+        sku: 'XO-PEP',
+        name: 'Peptide Serum',
+        quantity: 1,
+        unit_price_cents: 12900,
+        line_total_cents: 12900,
+        cv_amount: 40,
+        updated_at: '2026-05-01T00:00:00.000Z',
+      },
+    });
+
+    expect(result.ok).toBe(true);
+
+    if (!result.ok) {
+      throw new Error('Expected order item to map');
+    }
+
+    expect(result.record.fieldValues.cvAmount).toBe(40);
+  });
+
+  it('omits order refundCents when refund_amount_cents is absent', () => {
+    const result = mapSupabaseRecord({
+      ...baseWebhook,
+      sourceTable: 'orders',
+      record: {
+        id: 'order-no-refund',
+        user_email: 'customer@example.test',
+        customer_id: 'customer-1',
+        subtotal_cents: 5000,
+        total_cents: 5675,
+        affiliate_chain: ['ambassador-1'],
+        updated_at: '2026-05-01T12:00:00.000Z',
+      },
+    });
+
+    expect(result.ok).toBe(true);
+
+    if (!result.ok) {
+      throw new Error('Expected order to map');
+    }
+
+    expect(result.record.fieldValues).not.toHaveProperty('refundCents');
+  });
+
+  it('omits payment refundCents when refund_amount_cents is absent', () => {
+    const result = mapSupabaseRecord({
+      ...baseWebhook,
+      sourceTable: 'payments',
+      record: {
+        id: 'payment-no-refund',
+        order_id: 'order-1',
+        amount_cents: 5000,
+        provider: 'stripe',
+        status: 'succeeded',
+        updated_at: '2026-05-01T12:00:00.000Z',
+      },
+    });
+
+    expect(result.ok).toBe(true);
+
+    if (!result.ok) {
+      throw new Error('Expected payment to map');
+    }
+
+    expect(result.record.fieldValues).not.toHaveProperty('refundCents');
+  });
 });

@@ -1,10 +1,8 @@
 import type { SupabaseWebhookPayload } from '../types/supabase-webhook-payload.type';
 import type {
-  SyncStatus,
   UpsertResult,
 } from 'src/supabase-sync/types/mapped-source-record.type';
 import type { TwentyClientLike } from 'src/supabase-sync/types/twenty-client-like.type';
-import { computeContentHash } from 'src/supabase-sync/utils/compute-content-hash';
 import {
   getSafeSourceRecordId,
   mapSupabaseRecords,
@@ -88,6 +86,30 @@ const hasOrderPaymentFields = (record: Record<string, unknown>): boolean =>
     Object.prototype.hasOwnProperty.call(record, fieldName),
   );
 
+const syncSecretNotConfiguredResponse = (): HandlerResponse => ({
+  statusCode: 500,
+  body: {
+    ok: false,
+    error: {
+      code: 'SYNC_SECRET_NOT_CONFIGURED',
+      message: 'Sync secret is not configured. Refusing to process request.',
+      retryable: true,
+    },
+  },
+});
+
+const unauthorizedResponse = (): HandlerResponse => ({
+  statusCode: 401,
+  body: {
+    ok: false,
+    error: {
+      code: 'UNAUTHORIZED',
+      message: 'Unauthorized',
+      retryable: false,
+    },
+  },
+});
+
 const buildPaymentRecordFromOrder = (
   record: Record<string, unknown>,
 ): Record<string, unknown> => ({
@@ -97,7 +119,9 @@ const buildPaymentRecordFromOrder = (
   method_code: record.payment_method_code ?? record.payment_gateway,
   amount_cents: record.total_cents ?? record.subtotal_cents,
   status: record.payment_status,
-  refund_amount_cents: record.refund_amount_cents ?? 0,
+  ...(Object.prototype.hasOwnProperty.call(record, 'refund_amount_cents')
+    ? { refund_amount_cents: record.refund_amount_cents }
+    : {}),
 });
 
 const expandWebhookMappingInputs = (
@@ -130,18 +154,27 @@ export const handleSupabaseSyncWebhook = async (
   const expectedSecret = input.expectedSecret;
   const providedSecret = getHeader(input.event.headers, 'x-xopure-sync-secret');
 
-  if (expectedSecret && providedSecret !== expectedSecret) {
+  if (!expectedSecret || (typeof expectedSecret === 'string' && expectedSecret.trim() === '')) {
     return {
-      statusCode: 401,
+      statusCode: 500,
       body: {
         ok: false,
         error: {
-          code: 'UNAUTHORIZED',
-          message: 'Unauthorized',
-          retryable: false,
+          code: 'SYNC_SECRET_NOT_CONFIGURED',
+          message:
+            'Sync secret is not configured. Refusing to process request.',
+          retryable: true,
         },
       },
     };
+  }
+
+  if (!expectedSecret) {
+    return syncSecretNotConfiguredResponse();
+  }
+
+  if (providedSecret !== expectedSecret) {
+    return unauthorizedResponse();
   }
 
   const payload = parsePayload(input.event.body);
@@ -216,32 +249,14 @@ export const handleSupabaseSyncWebhook = async (
         continue;
       }
 
-      if (
-        Object.prototype.hasOwnProperty.call(
-          mappedRecord.fieldValues,
-          'status',
-        )
-      ) {
-        mappedRecord.fieldValues.status = 'DELETED';
-      }
 
-      mappedRecord.contentHash = computeContentHash({
-        targetObject: mappedRecord.targetObject,
-        externalIdField: mappedRecord.externalIdField,
-        externalIdValue: mappedRecord.externalIdValue,
-        fieldValues: mappedRecord.fieldValues,
-      });
-
-      if (existingSyncMap.targetRecordId) {
-        await upsertTwentyRecord(input.client, mappedRecord);
-      }
 
       await updateExistingSyncMap({
         client: input.client,
         syncMapId: existingSyncMap.id,
         record: mappedRecord,
         targetRecordId: existingSyncMap.targetRecordId,
-        status: 'DELETED' as SyncStatus,
+        status: 'DELETED',
       });
 
       tombstoned += 1;

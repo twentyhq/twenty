@@ -52,7 +52,9 @@ const normalizePaymentFromOrder = (row: SupabaseRestRow): SupabaseRestRow => ({
   rail: row.rail ?? null,
   method_code: row.method_code ?? row.provider,
   amount_cents: row.amount_cents ?? row.subtotal_cents ?? 0,
-  refund_amount_cents: row.refund_amount_cents ?? 0,
+  ...(Object.prototype.hasOwnProperty.call(row, 'refund_amount_cents')
+    ? { refund_amount_cents: row.refund_amount_cents }
+    : {}),
   provider_payment_id: row.provider_payment_id ?? null,
   description: row.description ?? null,
 });
@@ -200,6 +202,7 @@ export const SOURCE_TABLE_TO_REST_SOURCE: Record<
       'pay_area',
       'rate_used',
       'base_cv_amount',
+      'release_at',
       'source_affiliate_id',
       'period_id',
       'created_at',

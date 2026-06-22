@@ -120,10 +120,25 @@ export const handleSyncBackfill = async (
 ): Promise<HandlerResponse> => {
   const startedAt = Date.now();
 
-  const expectedSecret = input.expectedSecret;
+  const expectedSecret = input.expectedSecret?.trim();
   const providedSecret = getHeader(input.event.headers, 'x-xopure-sync-secret');
 
-  if (expectedSecret && providedSecret !== expectedSecret) {
+  if (!expectedSecret) {
+    return {
+      statusCode: 500,
+      body: {
+        ok: false,
+        error: {
+          code: 'SYNC_SECRET_NOT_CONFIGURED',
+          message:
+            'Sync secret is not configured. Refusing to process request.',
+          retryable: true,
+        },
+      },
+    };
+  }
+
+  if (providedSecret !== expectedSecret) {
     return {
       statusCode: 401,
       body: {

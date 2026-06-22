@@ -27,7 +27,7 @@ export type TargetObjectName =
   | 'xopureCommission'
   | 'xopureReferralRelationship';
 
-export type SyncStatus = 'SYNCED' | 'FAILED_RETRYABLE' | 'FAILED_PERMANENT';
+export type SyncStatus = 'SYNCED' | 'FAILED_RETRYABLE' | 'FAILED_PERMANENT' | 'DELETED';
 
 export type RelationReference = {
   fieldName: string;
