@@ -12,7 +12,6 @@ export { AnimatedCheckmark } from './AnimatedCheckmark/AnimatedCheckmark';
 export type { AvatarProps } from './Avatar/Avatar';
 export { Avatar } from './Avatar/Avatar';
 export { AVATAR_PROPERTIES_BY_SIZE } from './Avatar/constants/AvatarPropertiesBySize';
-export { invalidAvatarUrlsAtomV2 } from './Avatar/states/invalidAvatarUrlsAtomV2';
 export type { AvatarSize } from './Avatar/types/AvatarSize';
 export type { AvatarType } from './Avatar/types/AvatarType';
 export type { AvatarGroupProps } from './AvatarGroup/AvatarGroup';
