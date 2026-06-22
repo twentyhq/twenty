@@ -85,7 +85,7 @@ export const getCrudToolLabels = (
     objectLabel,
     i18nService,
     locale,
-  ).toLowerCase();
+  ).toLocaleLowerCase(locale);
 
   return {
     label: `${i18n._(verbs.imperative)} ${object}`,

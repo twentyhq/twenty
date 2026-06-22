@@ -264,7 +264,7 @@ export const ToolStepRenderer = ({
         <CodeExecutionDisplay
           code={codeInput?.code ?? ''}
           stdout={codeOutput?.stdout ?? ''}
-          stderr={codeOutput?.stderr ?? errorText ?? ''}
+          stderr={codeOutput?.stderr || errorText || ''}
           exitCode={codeOutput?.exitCode}
           files={codeOutput?.files}
         />

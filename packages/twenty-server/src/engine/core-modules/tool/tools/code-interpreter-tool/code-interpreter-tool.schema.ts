@@ -20,6 +20,7 @@ export const CodeInterpreterInputZodSchema = z.object({
     ),
   completedMessage: z
     .string()
+    .optional()
     .describe(
       "A brief, past-tense status message shown to the user after the code finishes (e.g., 'Analyzed sales data'). No exclamation marks. Don't be optimistic, stay neutral on completion state. Falls back to the loading message when omitted.",
     ),

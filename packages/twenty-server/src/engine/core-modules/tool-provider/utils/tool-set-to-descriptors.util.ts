@@ -12,7 +12,7 @@ export type ToolSetToDescriptorsOptions = {
   labels?: Record<string, string>;
 };
 
-const humanizeToolName = (name: string): string =>
+export const humanizeToolName = (name: string): string =>
   name
     .split('_')
     .filter((word) => word.length > 0)

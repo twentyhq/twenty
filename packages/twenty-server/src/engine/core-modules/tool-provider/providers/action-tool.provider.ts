@@ -9,6 +9,7 @@ import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-pro
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { translateToolLabel } from 'src/engine/core-modules/tool-provider/utils/translate-tool-label.util';
+import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 
 import { ToolCategory } from 'twenty-shared/ai';
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
@@ -179,7 +180,7 @@ export class ActionToolProvider implements ToolProvider {
       name: toolId,
       label: labels
         ? translateToolLabel(labels.label, this.i18nService, locale)
-        : toolId,
+        : humanizeToolName(toolId),
       ...(labels?.inProgressLabel && {
         inProgressLabel: translateToolLabel(
           labels.inProgressLabel,
