@@ -94,7 +94,7 @@ describe('Object metadata update - search vector side effect', () => {
     });
   });
 
-  it('should preserve the name-only search surface when the label identifier is changed', async () => {
+  it('should index the new label identifier without dropping the existing name surface', async () => {
     await updateOneObjectMetadata({
       input: {
         idToUpdate: testObjectMetadataId,
@@ -146,12 +146,28 @@ describe('Object metadata update - search vector side effect', () => {
 
     jestExpectToBeDefined(settings);
     expect(settings.asExpression).toBeDefined();
-    // The search surface stays on the provisioned name row; changing the label identifier
-    // does not add the newly designated field to the search vector.
+    // Relabeling is additive: the new label identifier joins the search surface while the
+    // previously provisioned name row is preserved.
+    expect(settings.asExpression).toContain(NEW_LABEL_IDENTIFIER_FIELD_NAME);
     expect(settings.asExpression).toContain('name');
-    expect(settings.asExpression).not.toContain(NEW_LABEL_IDENTIFIER_FIELD_NAME);
 
-    // The record remains reachable through its indexed name value.
+    // The record is now reachable through the new label identifier value.
+    const searchByNewLabelField = await search({
+      searchInput: RECORD_FIELD_VALUE,
+      includedObjectNameSingulars: [OBJECT_NAME_SINGULAR],
+      limit: 10,
+      expectToFail: false,
+    });
+
+    expect(searchByNewLabelField.data.search.edges.length).toBe(1);
+    expect(searchByNewLabelField.data.search.edges[0].node.recordId).toBe(
+      createdRecordId,
+    );
+    expect(
+      searchByNewLabelField.data.search.edges[0].node.objectNameSingular,
+    ).toBe(OBJECT_NAME_SINGULAR);
+
+    // The previously indexed name field remains searchable.
     const searchByName = await search({
       searchInput: RECORD_NAME_FIELD_VALUE,
       includedObjectNameSingulars: [OBJECT_NAME_SINGULAR],
@@ -163,18 +179,5 @@ describe('Object metadata update - search vector side effect', () => {
     expect(searchByName.data.search.edges[0].node.recordId).toBe(
       createdRecordId,
     );
-    expect(searchByName.data.search.edges[0].node.objectNameSingular).toBe(
-      OBJECT_NAME_SINGULAR,
-    );
-
-    // The newly designated label identifier field is outside the search surface.
-    const searchByNewLabelField = await search({
-      searchInput: RECORD_FIELD_VALUE,
-      includedObjectNameSingulars: [OBJECT_NAME_SINGULAR],
-      limit: 10,
-      expectToFail: false,
-    });
-
-    expect(searchByNewLabelField.data.search.edges.length).toBe(0);
   });
 });

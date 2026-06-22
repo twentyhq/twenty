@@ -103,6 +103,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       flatViewFieldsToUpdate,
       otherObjectFlatFieldMetadatasToUpdate,
       sameObjectFlatFieldMetadatasToUpdate,
+      searchFieldMetadatasToCreate,
     } = handleFlatObjectMetadataUpdateSideEffect({
       fromFlatObjectMetadata: existingFlatObjectMetadata,
       toFlatObjectMetadata,
@@ -121,5 +122,6 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       flatViewFieldsToUpdate,
       otherObjectFlatFieldMetadatasToUpdate,
       sameObjectFlatFieldMetadatasToUpdate,
+      searchFieldMetadatasToCreate,
     };
   };
