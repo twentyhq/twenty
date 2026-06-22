@@ -10,7 +10,10 @@ const mainObjectMetadataItem = {
   updatableFields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
 } as EnrichedObjectMetadataItem;
 
+const NOTE_OBJECT_METADATA_ID = '20202020-0000-4000-8000-00000000note';
+
 const noteObjectMetadataItem = {
+  id: NOTE_OBJECT_METADATA_ID,
   nameSingular: 'note',
   namePlural: 'notes',
   readableFields: [{ name: 'title' }, { name: 'body' }],
@@ -101,8 +104,8 @@ describe('filterOutInvalidTimelineActivities', () => {
 
   it('keeps linked note/task update events even without a diff', () => {
     const events = [
-      { id: '1', name: 'linked-task.updated', properties: {} },
-      { id: '2', name: 'linked-note.updated', properties: {} },
+      { id: '1', name: 'linked-task.updated', kind: 'linkedTask', properties: {} },
+      { id: '2', name: 'linked-note.updated', kind: 'linkedNote', properties: {} },
     ] as TimelineActivity[];
 
     expect(filter(events)).toEqual(events);
@@ -113,6 +116,8 @@ describe('filterOutInvalidTimelineActivities', () => {
       {
         id: '1',
         name: 'linked-note.updated',
+        kind: 'linkedNote',
+        linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
         properties: {
           diff: {
             title: { before: 'a', after: 'b' },
@@ -126,6 +131,8 @@ describe('filterOutInvalidTimelineActivities', () => {
       {
         id: '1',
         name: 'linked-note.updated',
+        kind: 'linkedNote',
+        linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
         properties: { diff: { title: { before: 'a', after: 'b' } } },
       },
     ]);
@@ -136,6 +143,8 @@ describe('filterOutInvalidTimelineActivities', () => {
       {
         id: '1',
         name: 'linked-note.updated',
+        kind: 'linkedNote',
+        linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
         properties: { diff: { field1: { before: 'c', after: 'd' } } },
       },
     ] as TimelineActivity[];
