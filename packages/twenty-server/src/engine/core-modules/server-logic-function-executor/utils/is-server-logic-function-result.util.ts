@@ -1,4 +1,5 @@
 import { type ServerLogicFunctionResult } from 'twenty-shared/application';
+import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 
 export const isServerLogicFunctionResult = (
   value: unknown,
@@ -7,10 +8,21 @@ export const isServerLogicFunctionResult = (
     return false;
   }
 
-  const workspaceIds = (value as { workspaceIds?: unknown }).workspaceIds;
+  const { workspaceIds, response } = value as {
+    workspaceIds?: unknown;
+    response?: unknown;
+  };
 
-  return (
-    Array.isArray(workspaceIds) &&
-    workspaceIds.every((id) => typeof id === 'string')
-  );
+  if (
+    !Array.isArray(workspaceIds) ||
+    !workspaceIds.every((id) => typeof id === 'string')
+  ) {
+    return false;
+  }
+
+  if (response !== undefined && !isLogicFunctionHttpResponse(response)) {
+    return false;
+  }
+
+  return true;
 };

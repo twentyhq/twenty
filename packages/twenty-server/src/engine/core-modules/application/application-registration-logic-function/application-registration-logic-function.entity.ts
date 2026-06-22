@@ -15,7 +15,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   type Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -24,10 +23,14 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 
 @Entity({ name: 'applicationRegistrationLogicFunction', schema: 'core' })
 @ObjectType('ApplicationRegistrationLogicFunction')
-@Unique('IDX_APP_REG_LOGIC_FN_UID_APP_REGISTRATION_ID_UNIQUE', [
-  'universalIdentifier',
-  'applicationRegistrationId',
-])
+@Index(
+  'IDX_APP_REG_LOGIC_FN_UID_APP_REGISTRATION_ID_UNIQUE',
+  ['universalIdentifier', 'applicationRegistrationId'],
+  {
+    unique: true,
+    where: '"deletedAt" IS NULL',
+  },
+)
 @Index('IDX_APP_REG_LOGIC_FN_APP_REGISTRATION_ID', [
   'applicationRegistrationId',
 ])

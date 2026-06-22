@@ -48,6 +48,7 @@ export class ServerCronTriggerCronJob {
       .andWhere('serverLogicFunction."disabledAt" IS NULL')
       .andWhere('serverLogicFunction."deletedAt" IS NULL')
       .andWhere('applicationRegistration."workspaceId" IS NOT NULL')
+      .andWhere('applicationRegistration."deletedAt" IS NULL')
       .getMany();
 
     for (const serverCron of serverCrons) {

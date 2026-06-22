@@ -76,15 +76,19 @@ describe('ServerLogicFunctionExecutorService', () => {
       payload: { headers: {}, body: {} },
     });
 
-  it('delegates to the executor with the owner workspace and returns workspaceIds', async () => {
-    const outcome = await run();
+  it('delegates to the executor with the owner workspace and forwards the payload', async () => {
+    const payload = { headers: {}, body: { hello: 'world' } };
+    const outcome = await service.run({
+      applicationRegistrationUniversalIdentifier: REGISTRATION_UID,
+      logicFunctionUniversalIdentifier: LOGIC_FN_UID,
+      payload,
+    });
 
-    expect(logicFunctionExecutorService.execute).toHaveBeenCalledWith(
-      expect.objectContaining({
-        logicFunctionId: 'lf-1',
-        workspaceId: OWNER_WORKSPACE_ID,
-      }),
-    );
+    expect(logicFunctionExecutorService.execute).toHaveBeenCalledWith({
+      logicFunctionId: 'lf-1',
+      workspaceId: OWNER_WORKSPACE_ID,
+      payload,
+    });
     expect(outcome).toEqual(
       expect.objectContaining({ kind: 'response', workspaceIds: ['w1'] }),
     );

@@ -21,7 +21,7 @@ describe('ServerCronTriggerCronJob', () => {
       messageQueueService as any,
     );
 
-    return { job, messageQueueService };
+    return { job, messageQueueService, queryBuilder };
   };
 
   it('enqueues a due cron with a valid pattern and owner', async () => {
@@ -71,5 +71,56 @@ describe('ServerCronTriggerCronJob', () => {
     await job.handle();
 
     expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
+  it('skips rows whose cron pattern does not match the current minute', async () => {
+    // 0 0 * * 0 = midnight on Sundays; using a non-Sunday non-midnight clock
+    // guarantees shouldRunNow returns false.
+    jest.useFakeTimers().setSystemTime(new Date('2026-06-23T10:30:00.000Z'));
+
+    const { job, messageQueueService } = buildJob({
+      rows: [
+        {
+          id: 'srv-3',
+          universalIdentifier: 'fn-uid',
+          disabledAt: null,
+          serverCronTriggerSettings: { pattern: '0 0 * * 0' },
+          applicationRegistration: {
+            universalIdentifier: 'reg-uid',
+            ownerWorkspaceId: 'ws-1',
+          },
+        },
+      ],
+    });
+
+    await job.handle();
+
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+    jest.useRealTimers();
+  });
+
+  it('filters disabledAt and deletedAt at the SQL layer', async () => {
+    const { job, queryBuilder } = buildJob({ rows: [] });
+
+    await job.handle();
+
+    const whereCalls = [
+      ...queryBuilder.where.mock.calls,
+      ...queryBuilder.andWhere.mock.calls,
+    ].flat();
+
+    expect(whereCalls).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining(
+          'serverLogicFunction."serverCronTriggerSettings" IS NOT NULL',
+        ),
+        expect.stringContaining('serverLogicFunction."disabledAt" IS NULL'),
+        expect.stringContaining('serverLogicFunction."deletedAt" IS NULL'),
+        expect.stringContaining(
+          'applicationRegistration."workspaceId" IS NOT NULL',
+        ),
+        expect.stringContaining('applicationRegistration."deletedAt" IS NULL'),
+      ]),
+    );
   });
 });

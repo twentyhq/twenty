@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Not, type Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -384,7 +384,6 @@ export class ApplicationRegistrationService {
       where: {
         isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
-        ownerWorkspaceId: Not(IsNull()),
       },
     });
   }

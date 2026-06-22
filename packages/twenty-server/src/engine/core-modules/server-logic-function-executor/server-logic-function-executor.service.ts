@@ -8,7 +8,10 @@ import { IsNull, Repository } from 'typeorm';
 import { ApplicationRegistrationLogicFunctionEntity } from 'src/engine/core-modules/application/application-registration-logic-function/application-registration-logic-function.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import {
+  LogicFunctionExecutionException,
+  LogicFunctionExecutorService,
+} from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import {
   type RouteTriggerResponse,
@@ -19,6 +22,10 @@ import {
   ServerLogicFunctionExecutorExceptionCode,
 } from 'src/engine/core-modules/server-logic-function-executor/server-logic-function-executor.exception';
 import { isServerLogicFunctionResult } from 'src/engine/core-modules/server-logic-function-executor/utils/is-server-logic-function-result.util';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -164,6 +171,18 @@ export class ServerLogicFunctionExecutorService {
         `Server logic function ${serverFunction.id} failed: ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
       );
+
+      // Preserve typed errors (throttle, function-not-found, etc.) so
+      // callers can map them to accurate response codes instead of a
+      // generic platform error.
+      if (
+        error instanceof ThrottlerException ||
+        error instanceof LogicFunctionExecutionException ||
+        error instanceof ServerLogicFunctionExecutorException
+      ) {
+        throw error;
+      }
+
       throw new ServerLogicFunctionExecutorException(
         'Server logic function execution failed',
         ServerLogicFunctionExecutorExceptionCode.PLATFORM_ERROR,
@@ -196,11 +215,19 @@ export class ServerLogicFunctionExecutorService {
         THROTTLE_LIMIT,
         THROTTLE_TTL_MS,
       );
-    } catch {
-      throw new ServerLogicFunctionExecutorException(
-        'Server logic function execution rate limit exceeded',
-        ServerLogicFunctionExecutorExceptionCode.THROTTLED,
-      );
+    } catch (error) {
+      // Only translate actual rate-limit errors. Cache outages and other
+      // platform failures must surface as PLATFORM_ERROR, not THROTTLED.
+      if (
+        error instanceof ThrottlerException &&
+        error.code === ThrottlerExceptionCode.LIMIT_REACHED
+      ) {
+        throw new ServerLogicFunctionExecutorException(
+          'Server logic function execution rate limit exceeded',
+          ServerLogicFunctionExecutorExceptionCode.THROTTLED,
+        );
+      }
+      throw error;
     }
   }
 }

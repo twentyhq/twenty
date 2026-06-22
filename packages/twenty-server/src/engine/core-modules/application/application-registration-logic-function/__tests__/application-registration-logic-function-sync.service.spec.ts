@@ -64,6 +64,8 @@ describe('ApplicationRegistrationLogicFunctionSyncService', () => {
         universalIdentifier: 'a',
         applicationRegistrationId: APP_REGISTRATION_ID,
         serverWebhookTriggerSettings: {},
+        // re-adding a previously soft-deleted row must clear `deletedAt`
+        deletedAt: null,
       }),
     ]);
   });

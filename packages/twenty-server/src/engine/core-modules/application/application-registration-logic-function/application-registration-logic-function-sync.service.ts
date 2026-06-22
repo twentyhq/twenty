@@ -24,6 +24,8 @@ export class ApplicationRegistrationLogicFunctionSyncService {
       (logicFunction) => logicFunction.scope === 'server',
     );
 
+    // Clear `deletedAt` on upsert so re-adding a previously soft-deleted
+    // function reactivates the existing row instead of leaving it deleted.
     const rows = serverFunctions.map((logicFunction) => ({
       universalIdentifier: logicFunction.universalIdentifier,
       applicationRegistrationId,
@@ -32,6 +34,7 @@ export class ApplicationRegistrationLogicFunctionSyncService {
         logicFunction.serverWebhookTriggerSettings ?? null,
       serverCronTriggerSettings:
         logicFunction.serverCronTriggerSettings ?? null,
+      deletedAt: null,
     }));
 
     if (rows.length > 0) {

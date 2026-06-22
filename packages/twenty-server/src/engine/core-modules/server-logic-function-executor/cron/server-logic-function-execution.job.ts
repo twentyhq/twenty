@@ -21,11 +21,17 @@ export class ServerLogicFunctionExecutionJob {
 
   @Process(ServerLogicFunctionExecutionJob.name)
   async handle(data: ServerLogicFunctionExecutionJobData): Promise<void> {
-    await this.serverLogicFunctionExecutorService.run({
+    const outcome = await this.serverLogicFunctionExecutorService.run({
       applicationRegistrationUniversalIdentifier:
         data.applicationRegistrationUniversalIdentifier,
       logicFunctionUniversalIdentifier: data.logicFunctionUniversalIdentifier,
       payload: { source: 'cron' },
     });
+
+    // Surface user-thrown failures so BullMQ retries / DLQs the job instead of
+    // silently acknowledging a failed run.
+    if (outcome.kind === 'userError') {
+      throw new Error(outcome.errorMessage);
+    }
   }
 }
