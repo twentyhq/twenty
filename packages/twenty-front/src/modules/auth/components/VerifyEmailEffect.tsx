@@ -74,12 +74,6 @@ export const VerifyEmailEffect = () => {
 
           enqueueSuccessSnackBar(successSnackbarParams);
 
-          // On the central (workspace-agnostic) domain, verifying the email
-          // only sets the next sign-in-up step (WorkspaceCreation /
-          // WorkspaceSelection) or redirects to a single existing workspace.
-          // That step UI lives on the SignInUp page, so we must leave
-          // /verify-email for it to render — otherwise the user is stuck on an
-          // empty modal.
           return navigate(AppPath.SignInUp);
         }
 
