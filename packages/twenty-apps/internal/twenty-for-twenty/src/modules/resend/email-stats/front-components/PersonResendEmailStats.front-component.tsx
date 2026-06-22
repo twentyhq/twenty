@@ -5,7 +5,6 @@ import {
   IconAlertCircle,
   IconMail,
   IconRefresh,
-  themeCssVariables,
 } from 'twenty-sdk/ui';
 
 import { isDefined } from '@utils/is-defined';
@@ -17,6 +16,81 @@ import {
   type ThemeColor,
 } from '@modules/resend/email-stats/constants/email-status-groups';
 import { usePersonResendEmailStats } from '@modules/resend/email-stats/hooks/usePersonResendEmailStats';
+
+// Workaround: 'twenty-sdk/ui' currently fails typecheck because it re-exports
+// from the unresolvable 'twenty-ui-deprecated'. Inline only the theme tokens
+// this component uses, keeping the same runtime CSS-variable values. Revert to
+// `import { themeCssVariables } from 'twenty-sdk/ui'` once the SDK export is fixed.
+const THEME_COLORS: ReadonlyArray<ThemeColor> = [
+  'red',
+  'ruby',
+  'crimson',
+  'tomato',
+  'orange',
+  'amber',
+  'yellow',
+  'lime',
+  'grass',
+  'green',
+  'jade',
+  'mint',
+  'turquoise',
+  'cyan',
+  'sky',
+  'blue',
+  'iris',
+  'violet',
+  'purple',
+  'plum',
+  'pink',
+  'bronze',
+  'gold',
+  'brown',
+  'gray',
+];
+
+const buildTagColorRecord = (variant: string): Record<ThemeColor, string> =>
+  Object.fromEntries(
+    THEME_COLORS.map((color) => [color, `var(--t-tag-${variant}-${color})`]),
+  ) as Record<ThemeColor, string>;
+
+const themeCssVariables = {
+  spacing: {
+    '2': 'var(--t-spacing-2)',
+    '3': 'var(--t-spacing-3)',
+    '4': 'var(--t-spacing-4)',
+    '5': 'var(--t-spacing-5)',
+  },
+  background: {
+    secondary: 'var(--t-background-secondary)',
+  },
+  border: {
+    color: {
+      light: 'var(--t-border-color-light)',
+    },
+    radius: {
+      sm: 'var(--t-border-radius-sm)',
+      md: 'var(--t-border-radius-md)',
+      pill: 'var(--t-border-radius-pill)',
+    },
+  },
+  font: {
+    color: {
+      primary: 'var(--t-font-color-primary)',
+      secondary: 'var(--t-font-color-secondary)',
+      tertiary: 'var(--t-font-color-tertiary)',
+    },
+    size: {
+      xs: 'var(--t-font-size-xs)',
+      sm: 'var(--t-font-size-sm)',
+    },
+    family: 'var(--t-font-family)',
+  },
+  tag: {
+    background: buildTagColorRecord('background'),
+    text: buildTagColorRecord('text'),
+  },
+};
 
 const getDeliverabilityColor = (rate: number): ThemeColor => {
   if (rate >= 0.95) return 'green';

@@ -10,33 +10,37 @@ import { GoogleWebhookSubscriptionDriver } from 'src/modules/connected-account/w
 import { MicrosoftWebhookSubscriptionDriver } from 'src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/microsoft-webhook-subscription.driver';
 import { type WebhookSubscriptionDriver } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 
-export const WEBHOOK_SUBSCRIPTION_SUPPORTED_PROVIDERS = [
-  ConnectedAccountProvider.GOOGLE,
-  ConnectedAccountProvider.MICROSOFT,
-];
-
 @Injectable()
 export class WebhookSubscriptionDriverFactory {
+  private readonly driversByProvider: Partial<
+    Record<ConnectedAccountProvider, WebhookSubscriptionDriver>
+  >;
+
   constructor(
     private readonly googleWebhookSubscriptionDriver: GoogleWebhookSubscriptionDriver,
     private readonly microsoftWebhookSubscriptionDriver: MicrosoftWebhookSubscriptionDriver,
-  ) {}
+  ) {
+    this.driversByProvider = {
+      [ConnectedAccountProvider.GOOGLE]: this.googleWebhookSubscriptionDriver,
+      [ConnectedAccountProvider.MICROSOFT]:
+        this.microsoftWebhookSubscriptionDriver,
+    };
+  }
 
   isProviderSupported(provider: ConnectedAccountProvider): boolean {
-    return WEBHOOK_SUBSCRIPTION_SUPPORTED_PROVIDERS.includes(provider);
+    return provider in this.driversByProvider;
   }
 
   getDriver(provider: ConnectedAccountProvider): WebhookSubscriptionDriver {
-    switch (provider) {
-      case ConnectedAccountProvider.GOOGLE:
-        return this.googleWebhookSubscriptionDriver;
-      case ConnectedAccountProvider.MICROSOFT:
-        return this.microsoftWebhookSubscriptionDriver;
-      default:
-        throw new WebhookSubscriptionDriverException(
-          `Webhook subscriptions are not supported for provider ${provider}`,
-          WebhookSubscriptionDriverExceptionCode.UNSUPPORTED_PROVIDER,
-        );
+    const driver = this.driversByProvider[provider];
+
+    if (!driver) {
+      throw new WebhookSubscriptionDriverException(
+        `Webhook subscriptions are not supported for provider ${provider}`,
+        WebhookSubscriptionDriverExceptionCode.UNSUPPORTED_PROVIDER,
+      );
     }
+
+    return driver;
   }
 }

@@ -56,7 +56,10 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
         continue;
       }
 
-      if (isNonEmptyString(notification.lifecycleEvent)) {
+      if (
+        isNonEmptyString(notification.lifecycleEvent) &&
+        notification.lifecycleEvent !== 'missed'
+      ) {
         await this.calendarWebhookSubscriptionService.renewSubscription(
           subscription,
         );

@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 
 import { ConnectedAccountWebhookSubscriptionEntity } from 'src/engine/metadata-modules/connected-account-webhook-subscription/entities/connected-account-webhook-subscription.entity';
 import { WebhookSubscriptionChannelType } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-channel-type.enum';
+import { WebhookSubscriptionStatus } from 'src/engine/metadata-modules/connected-account-webhook-subscription/enums/webhook-subscription-status.enum';
 import { WebhookSyncTriggerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service';
 import {
   ConnectedAccountSyncWebhookException,
@@ -39,6 +40,7 @@ export class GoogleCalendarNotificationHandler implements WebhookNotificationHan
       where: {
         externalSubscriptionId: request.channelId,
         channelType: WebhookSubscriptionChannelType.CALENDAR,
+        status: WebhookSubscriptionStatus.ACTIVE,
       },
     });
 

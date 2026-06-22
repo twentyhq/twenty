@@ -1,5 +1,5 @@
 import type { Resend } from 'resend';
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from '@utils/is-defined';
 
 import type { ContactDto } from '@modules/resend/sync/types/contact.dto';

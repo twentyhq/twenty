@@ -58,10 +58,26 @@ export class WebhookSyncTriggerService {
       return;
     }
 
-    await this.messagingQueueService.add<MessagingMessageListFetchJobData>(
-      MessagingMessageListFetchJob.name,
-      { workspaceId, messageChannelId },
-    );
+    try {
+      await this.messagingQueueService.add<MessagingMessageListFetchJobData>(
+        MessagingMessageListFetchJob.name,
+        { workspaceId, messageChannelId },
+      );
+    } catch (error) {
+      await this.messageChannelRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+        })
+        .where({
+          id: messageChannelId,
+          workspaceId,
+        })
+        .execute();
+
+      throw error;
+    }
   }
 
   async triggerCalendarSync(
@@ -88,9 +104,25 @@ export class WebhookSyncTriggerService {
       return;
     }
 
-    await this.calendarQueueService.add<CalendarEventListFetchJobData>(
-      CalendarEventListFetchJob.name,
-      { workspaceId, calendarChannelId },
-    );
+    try {
+      await this.calendarQueueService.add<CalendarEventListFetchJobData>(
+        CalendarEventListFetchJob.name,
+        { workspaceId, calendarChannelId },
+      );
+    } catch (error) {
+      await this.calendarChannelRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+        })
+        .where({
+          id: calendarChannelId,
+          workspaceId,
+        })
+        .execute();
+
+      throw error;
+    }
   }
 }

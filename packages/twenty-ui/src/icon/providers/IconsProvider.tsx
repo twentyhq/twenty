@@ -1,20 +1,22 @@
-import { useSetAtom } from 'jotai';
-import { type JSX, useEffect } from 'react';
+import { type JSX, useEffect, useState } from 'react';
 
-import { iconsState } from '@ui/icon/states/iconsState';
+import { IconsContext } from '@ui/icon/internal/IconsContext';
+import { type IconComponent } from '@ui/icon/types/IconComponent';
 
 type IconsProviderProps = {
   children: JSX.Element;
 };
 
 export const IconsProvider = ({ children }: IconsProviderProps) => {
-  const setIcons = useSetAtom(iconsState);
+  const [icons, setIcons] = useState<Record<string, IconComponent>>({});
 
   useEffect(() => {
     import('./internal/AllIcons').then(({ ALL_ICONS }) => {
       setIcons(ALL_ICONS);
     });
-  }, [setIcons]);
+  }, []);
 
-  return children;
+  return (
+    <IconsContext.Provider value={icons}>{children}</IconsContext.Provider>
+  );
 };

@@ -67,15 +67,29 @@ export class WebhookSubscriptionRenewalCronJob {
     );
 
     for (const subscription of expiringMessagingSubscriptions) {
-      await this.messagingWebhookSubscriptionService.renewSubscription(
-        subscription,
-      );
+      try {
+        await this.messagingWebhookSubscriptionService.renewSubscription(
+          subscription,
+        );
+      } catch (error) {
+        this.logger.warn(
+          `Failed to renew messaging webhook subscription ${subscription.id}`,
+          error,
+        );
+      }
     }
 
     for (const subscription of expiringCalendarSubscriptions) {
-      await this.calendarWebhookSubscriptionService.renewSubscription(
-        subscription,
-      );
+      try {
+        await this.calendarWebhookSubscriptionService.renewSubscription(
+          subscription,
+        );
+      } catch (error) {
+        this.logger.warn(
+          `Failed to renew calendar webhook subscription ${subscription.id}`,
+          error,
+        );
+      }
     }
   }
 }

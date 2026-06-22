@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Headers,
+  HttpCode,
+  HttpStatus,
   Post,
   Query,
   Res,
@@ -11,6 +13,8 @@ import {
 
 import { type Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
+
+import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -35,6 +39,7 @@ export class ConnectedAccountSyncWebhooksController {
   ) {}
 
   @Post(WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.GOOGLE_MESSAGING)
+  @HttpCode(HttpStatus.OK)
   async handleGoogleMessaging(
     @Body() body: GooglePubSubPushMessage,
     @Headers('authorization') authorizationHeader: string | undefined,
@@ -46,6 +51,7 @@ export class ConnectedAccountSyncWebhooksController {
   }
 
   @Post(WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.GOOGLE_CALENDAR)
+  @HttpCode(HttpStatus.OK)
   async handleGoogleCalendar(
     @Headers('x-goog-channel-id') channelId: string | undefined,
     @Headers('x-goog-resource-state') resourceState: string | undefined,
@@ -59,15 +65,14 @@ export class ConnectedAccountSyncWebhooksController {
   }
 
   @Post(WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.MICROSOFT_MESSAGING)
+  @HttpCode(HttpStatus.OK)
   async handleMicrosoftMessaging(
     @Body() body: MicrosoftGraphNotificationPayload,
     @Query('validationToken') validationToken: string | undefined,
     @Res({ passthrough: true }) response: Response,
   ): Promise<string> {
     if (isDefined(validationToken)) {
-      response.type('text/plain');
-
-      return validationToken;
+      return this.respondToValidationHandshake(validationToken, response);
     }
 
     await this.microsoftMessagingNotificationHandler.handle(body.value ?? []);
@@ -76,19 +81,27 @@ export class ConnectedAccountSyncWebhooksController {
   }
 
   @Post(WEBHOOK_SUBSCRIPTION_ROUTE_PATHS.MICROSOFT_CALENDAR)
+  @HttpCode(HttpStatus.OK)
   async handleMicrosoftCalendar(
     @Body() body: MicrosoftGraphNotificationPayload,
     @Query('validationToken') validationToken: string | undefined,
     @Res({ passthrough: true }) response: Response,
   ): Promise<string> {
     if (isDefined(validationToken)) {
-      response.type('text/plain');
-
-      return validationToken;
+      return this.respondToValidationHandshake(validationToken, response);
     }
 
     await this.microsoftCalendarNotificationHandler.handle(body.value ?? []);
 
     return '';
+  }
+
+  private respondToValidationHandshake(
+    validationToken: string,
+    response: Response,
+  ): string {
+    response.type('text/plain');
+
+    return escapeHtml(validationToken);
   }
 }

@@ -405,6 +405,7 @@ describe('WorkspaceRepository', () => {
         'test-entity',
         { id: 'test-id' },
         { name: 'test' },
+        undefined,
         {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,

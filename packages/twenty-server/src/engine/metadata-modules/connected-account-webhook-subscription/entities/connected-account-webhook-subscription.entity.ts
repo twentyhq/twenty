@@ -37,6 +37,14 @@ registerEnumType(WebhookSubscriptionStatus, {
 @Index('IDX_WEBHOOK_SUBSCRIPTION_EXTERNAL_SUBSCRIPTION_ID', [
   'externalSubscriptionId',
 ])
+@Index('IDX_WEBHOOK_SUBSCRIPTION_WORKSPACE_MESSAGE_CHANNEL', [
+  'workspaceId',
+  'messageChannelId',
+])
+@Index('IDX_WEBHOOK_SUBSCRIPTION_WORKSPACE_CALENDAR_CHANNEL', [
+  'workspaceId',
+  'calendarChannelId',
+])
 export class ConnectedAccountWebhookSubscriptionEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
