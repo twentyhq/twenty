@@ -65,6 +65,7 @@ export const results = {
         customUrl: 'https://custom.twenty.com',
       },
     },
+    isEmailVerificationRequired: false,
   },
   getCurrentUser: {
     currentUser: {

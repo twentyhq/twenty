@@ -31,6 +31,7 @@ export const SIGN_UP_IN_WORKSPACE = gql`
           customUrl
         }
       }
+      isEmailVerificationRequired
     }
   }
 `;

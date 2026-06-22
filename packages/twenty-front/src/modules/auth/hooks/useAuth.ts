@@ -478,7 +478,12 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
-      if (isEmailVerificationRequired) {
+      const signUp = signUpInWorkspaceResult.data.signUpInWorkspace;
+
+      // Whether the verification step is required is decided by the backend per
+      // sign-up: users who joined through a personal invitation are already
+      // verified and must skip it instead of relying on the global setting.
+      if (signUp.isEmailVerificationRequired) {
         setSearchParams({ email });
         setSignInUpStep(SignInUpStep.EmailVerification);
         return null;
@@ -486,24 +491,16 @@ export const useAuth = () => {
 
       if (isMultiWorkspaceEnabled) {
         return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(
-            signUpInWorkspaceResult.data.signUpInWorkspace.workspace
-              .workspaceUrls,
-          ),
-          isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
+          getWorkspaceUrl(signUp.workspace.workspaceUrls),
+          AppPath.Verify,
           {
-            ...(!isEmailVerificationRequired && {
-              loginToken:
-                signUpInWorkspaceResult.data.signUpInWorkspace.loginToken.token,
-            }),
+            loginToken: signUp.loginToken.token,
             email,
           },
         );
       }
 
-      await handleGetAuthTokensFromLoginToken(
-        signUpInWorkspaceResult.data?.signUpInWorkspace.loginToken.token,
-      );
+      await handleGetAuthTokensFromLoginToken(signUp.loginToken.token);
     },
     [
       signUpInWorkspace,
@@ -512,7 +509,6 @@ export const useAuth = () => {
       handleGetAuthTokensFromLoginToken,
       setSignInUpStep,
       setSearchParams,
-      isEmailVerificationRequired,
       redirectToWorkspaceDomain,
     ],
   );

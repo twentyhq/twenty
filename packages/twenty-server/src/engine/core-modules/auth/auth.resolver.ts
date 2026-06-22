@@ -493,14 +493,22 @@ export class AuthResolver {
       },
     });
 
-    await this.emailVerificationService.sendVerificationEmail({
-      userId: user.id,
-      email: user.email,
-      workspace,
-      locale: signUpInput.locale ?? SOURCE_LOCALE,
-      verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
-      verificationTrigger: EmailVerificationTrigger.SIGN_UP,
-    });
+    // A user who signed up through a personal invitation is already added to the
+    // workspace and email-verified, so we must not send them a verification email
+    // (the link would later throw EMAIL_ALREADY_VERIFIED) nor gate them on it.
+    // Everyone else still requires verification when it is enabled.
+    const isEmailVerificationRequired = user.isEmailVerified
+      ? false
+      : (
+          await this.emailVerificationService.sendVerificationEmail({
+            userId: user.id,
+            email: user.email,
+            workspace,
+            locale: signUpInput.locale ?? SOURCE_LOCALE,
+            verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
+            verificationTrigger: EmailVerificationTrigger.SIGN_UP,
+          })
+        ).success;
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -514,6 +522,7 @@ export class AuthResolver {
         id: workspace.id,
         workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       },
+      isEmailVerificationRequired,
     };
   }
 
@@ -563,6 +572,9 @@ export class AuthResolver {
         id: workspace.id,
         workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       },
+      // The user is already authenticated when creating a new workspace, so
+      // their email is verified by this point.
+      isEmailVerificationRequired: false,
     };
   }
 

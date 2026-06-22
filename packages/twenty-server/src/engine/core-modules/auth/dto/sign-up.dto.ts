@@ -11,4 +11,7 @@ export class SignUpDTO {
 
   @Field(() => WorkspaceUrlsAndIdDTO)
   workspace: WorkspaceUrlsAndIdDTO;
+
+  @Field(() => Boolean)
+  isEmailVerificationRequired: boolean;
 }

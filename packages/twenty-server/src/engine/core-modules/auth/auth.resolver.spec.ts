@@ -2,6 +2,8 @@ import { type CanActivate } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { type SignUpInput } from 'src/engine/core-modules/auth/dto/sign-up.input';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -36,6 +38,11 @@ import { TransientTokenService } from './token/services/transient-token.service'
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
+  let authService: AuthService;
+  let userService: UserService;
+  let emailVerificationService: EmailVerificationService;
+  let loginTokenService: LoginTokenService;
+  let workspaceDomainsService: WorkspaceDomainsService;
   const mock_CaptchaGuard: CanActivate = { canActivate: jest.fn(() => true) };
 
   beforeEach(async () => {
@@ -165,9 +172,96 @@ describe('AuthResolver', () => {
       .compile();
 
     resolver = module.get<AuthResolver>(AuthResolver);
+    authService = module.get<AuthService>(AuthService);
+    userService = module.get<UserService>(UserService);
+    emailVerificationService = module.get<EmailVerificationService>(
+      EmailVerificationService,
+    );
+    loginTokenService = module.get<LoginTokenService>(LoginTokenService);
+    workspaceDomainsService = module.get<WorkspaceDomainsService>(
+      WorkspaceDomainsService,
+    );
   });
 
   it('should be defined', () => {
     expect(resolver).toBeDefined();
+  });
+
+  describe('signUpInWorkspace', () => {
+    const signUpInput: SignUpInput = {
+      email: 'invited@example.com',
+      password: 'Password123!',
+      workspaceInviteHash: 'invite-hash',
+      workspacePersonalInviteToken: 'personal-invite-token',
+    };
+
+    const setupCommonMocks = () => {
+      const workspace = { id: 'workspace-id' };
+
+      authService.findWorkspaceForSignInUp = jest
+        .fn()
+        .mockResolvedValue(workspace);
+      authService.findInvitationForSignInUp = jest
+        .fn()
+        .mockResolvedValue({ id: 'invitation-id' });
+      authService.formatUserDataPayload = jest
+        .fn()
+        .mockReturnValue({ userData: { type: 'existingUser' } });
+      authService.checkAccessForSignIn = jest.fn().mockResolvedValue(undefined);
+      userService.findUserByEmail = jest.fn().mockResolvedValue(undefined);
+      loginTokenService.generateLoginToken = jest
+        .fn()
+        .mockResolvedValue({ token: 'login-token', expiresAt: new Date() });
+      workspaceDomainsService.getWorkspaceUrls = jest
+        .fn()
+        .mockReturnValue({ subdomainUrl: 'https://invited.twenty.com' });
+    };
+
+    it('should not require email verification nor send a verification email when the user was verified through a personal invitation', async () => {
+      setupCommonMocks();
+      // A personal invitation marks the email as verified during sign-in-up.
+      authService.signInUp = jest.fn().mockResolvedValue({
+        user: {
+          id: 'user-id',
+          email: 'invited@example.com',
+          isEmailVerified: true,
+        },
+        workspace: { id: 'workspace-id' },
+      });
+      emailVerificationService.sendVerificationEmail = jest.fn();
+
+      const result = await resolver.signUpInWorkspace(
+        signUpInput,
+        AuthProviderEnum.Password,
+      );
+
+      expect(result.isEmailVerificationRequired).toBe(false);
+      expect(
+        emailVerificationService.sendVerificationEmail,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should require email verification when the user is not yet verified and verification is enabled', async () => {
+      setupCommonMocks();
+      authService.signInUp = jest.fn().mockResolvedValue({
+        user: {
+          id: 'user-id',
+          email: 'new@example.com',
+          isEmailVerified: false,
+        },
+        workspace: { id: 'workspace-id' },
+      });
+      emailVerificationService.sendVerificationEmail = jest
+        .fn()
+        .mockResolvedValue({ success: true });
+
+      const result = await resolver.signUpInWorkspace(
+        signUpInput,
+        AuthProviderEnum.Password,
+      );
+
+      expect(result.isEmailVerificationRequired).toBe(true);
+      expect(emailVerificationService.sendVerificationEmail).toHaveBeenCalled();
+    });
   });
 });
