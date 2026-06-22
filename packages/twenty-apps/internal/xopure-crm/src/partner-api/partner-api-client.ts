@@ -47,7 +47,7 @@ const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 const redactKey = (message: string, apiKey: string): string =>
-  apiKey.length > 0 ? message.replaceAll(apiKey, '[REDACTED]') : message;
+  apiKey.length > 0 ? message.split(apiKey).join('[REDACTED]') : message;
 
 const asString = (value: unknown): string | null =>
   typeof value === 'string' ? value : null;

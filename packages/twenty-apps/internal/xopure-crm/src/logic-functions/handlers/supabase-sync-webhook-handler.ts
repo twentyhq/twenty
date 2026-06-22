@@ -1,10 +1,18 @@
 import type { SupabaseWebhookPayload } from '../types/supabase-webhook-payload.type';
-import type { UpsertResult } from 'src/supabase-sync/types/mapped-source-record.type';
+import type {
+  SyncStatus,
+  UpsertResult,
+} from 'src/supabase-sync/types/mapped-source-record.type';
 import type { TwentyClientLike } from 'src/supabase-sync/types/twenty-client-like.type';
+import { computeContentHash } from 'src/supabase-sync/utils/compute-content-hash';
 import {
   getSafeSourceRecordId,
   mapSupabaseRecords,
 } from 'src/supabase-sync/utils/map-supabase-record';
+import {
+  findSyncMap,
+  updateExistingSyncMap,
+} from 'src/supabase-sync/utils/upsert-sync-map';
 import { upsertTwentyRecord } from 'src/supabase-sync/utils/upsert-twenty-record';
 
 type WebhookEvent = {
@@ -137,6 +145,125 @@ export const handleSupabaseSyncWebhook = async (
   }
 
   const payload = parsePayload(input.event.body);
+
+  if (payload?.type === 'DELETE') {
+    const oldRecord = payload.old_record;
+
+    if (!payload.table || !oldRecord || !isRecord(oldRecord)) {
+      return {
+        statusCode: 400,
+        body: {
+          ok: false,
+          error: {
+            code: 'MALFORMED_PAYLOAD',
+            message: 'DELETE webhook must include table and old_record.',
+            retryable: false,
+          },
+        },
+      };
+    }
+
+    const sourceRecordId = getSafeSourceRecordId(oldRecord);
+    const mappingResults: MappingResult[] = [];
+
+    for (const mappingInput of expandWebhookMappingInputs({
+      type: payload.type,
+      schema: payload.schema,
+      table: payload.table,
+      record: oldRecord,
+    })) {
+      mappingResults.push(...mapSupabaseRecords(mappingInput));
+    }
+
+    const firstMappingError = mappingResults.find((result) => !result.ok);
+
+    if (firstMappingError && !firstMappingError.ok) {
+      if (firstMappingError.code === 'UNSUPPORTED_SOURCE_TABLE') {
+        return {
+          statusCode: 202,
+          body: {
+            ok: true,
+            status: 'skipped',
+            skipped: 1,
+            error: firstMappingError,
+          },
+        };
+      }
+
+      return {
+        statusCode: 400,
+        body: {
+          ok: false,
+          status: 'failed',
+          failed: 1,
+          error: firstMappingError,
+        },
+      };
+    }
+
+    const mappedRecords = mappingResults.flatMap((result) =>
+      result.ok ? [result.record] : [],
+    );
+    let tombstoned = 0;
+
+    for (const mappedRecord of mappedRecords) {
+      const existingSyncMap = await findSyncMap(
+        input.client,
+        mappedRecord.syncKey,
+      );
+
+      if (!existingSyncMap) {
+        continue;
+      }
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          mappedRecord.fieldValues,
+          'status',
+        )
+      ) {
+        mappedRecord.fieldValues.status = 'DELETED';
+      }
+
+      mappedRecord.contentHash = computeContentHash({
+        targetObject: mappedRecord.targetObject,
+        externalIdField: mappedRecord.externalIdField,
+        externalIdValue: mappedRecord.externalIdValue,
+        fieldValues: mappedRecord.fieldValues,
+      });
+
+      if (existingSyncMap.targetRecordId) {
+        await upsertTwentyRecord(input.client, mappedRecord);
+      }
+
+      await updateExistingSyncMap({
+        client: input.client,
+        syncMapId: existingSyncMap.id,
+        record: mappedRecord,
+        targetRecordId: existingSyncMap.targetRecordId,
+        status: 'DELETED' as SyncStatus,
+      });
+
+      tombstoned += 1;
+
+      console.info('xopure_supabase_sync_row_tombstoned', {
+        sourceTable: mappedRecord.sourceTable,
+        sourceRecordId: mappedRecord.sourceRecordId,
+        targetObject: mappedRecord.targetObject,
+      });
+    }
+
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        status: 'tombstoned',
+        tombstoned,
+        sourceTable: payload.table,
+        sourceRecordId,
+      },
+    };
+  }
 
   if (!payload || !payload.table || !payload.record) {
     return {

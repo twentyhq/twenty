@@ -151,6 +151,9 @@ export const opsCommandCenterBlueprint: DashboardBlueprint = {
             aggregateFieldName: 'id',
             aggregateOperation: 'COUNT',
             label: 'Total payments',
+            filter: {
+              status: { in: ['FAILED'] },
+            },
             displayDataLabel: true,
           },
         },
