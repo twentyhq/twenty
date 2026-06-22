@@ -1,10 +1,15 @@
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/constants/RecordBoardQueryPageSize';
 import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
+import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
+import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { buildRelationRecordGroupDefinitions } from '@/object-record/record-group/utils/buildRelationRecordGroupDefinitions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { useRecordIndexGroupsRecordsLazyGroupBy } from '@/object-record/record-index/hooks/useRecordIndexGroupsRecordsLazyGroupBy';
@@ -18,6 +23,7 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
@@ -29,11 +35,17 @@ export const useTriggerRecordBoardInitialQuery = () => {
     recordGroupDefinitionsComponentSelector,
   );
 
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
+
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
+
+  const { setRecordGroups } = useSetRecordGroups();
 
   const setLastRecordBoardQueryIdentifier = useSetAtomComponentState(
     lastRecordBoardQueryIdentifierComponentState,
@@ -92,7 +104,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
       };
 
       const recordIndexGroupsRecordsGroupByLazyQueryResult =
-        await executeRecordIndexGroupsRecordsLazyGroupBy();
+        await executeRecordIndexGroupsRecordsLazyGroupBy().catch(() => null);
 
       if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
         cleanStateBeforeExit();
@@ -112,7 +124,31 @@ export const useTriggerRecordBoardInitialQuery = () => {
         return;
       }
 
-      for (const recordGroupDefinition of recordGroupDefinitions) {
+      let recordGroupDefinitionsToFill: RecordGroupDefinition[] =
+        recordGroupDefinitions;
+
+      if (
+        isDefined(recordIndexGroupFieldMetadataItem) &&
+        isManyToOneRelationToWorkspaceMember(recordIndexGroupFieldMetadataItem)
+      ) {
+        recordGroupDefinitionsToFill = buildRelationRecordGroupDefinitions({
+          groupValues: groups.map(
+            (recordGroup: any) =>
+              (recordGroup.groupByDimensionValues[0] as string | null) ?? null,
+          ),
+          mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
+          workspaceMembers: currentWorkspaceMembers,
+        });
+
+        setRecordGroups({
+          mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
+          recordGroups: recordGroupDefinitionsToFill,
+          recordIndexId,
+          objectMetadataItemId: objectMetadataItem.id,
+        });
+      }
+
+      for (const recordGroupDefinition of recordGroupDefinitionsToFill) {
         const foundGroupInResult = groups?.find(
           (recordGroup: any) =>
             (recordGroup.groupByDimensionValues[0] as string) ===
@@ -178,6 +214,10 @@ export const useTriggerRecordBoardInitialQuery = () => {
       setRecordBoardCurrentGroupByQueryOffset,
       scrollWrapperHTMLElement,
       recordGroupDefinitions,
+      recordIndexGroupFieldMetadataItem,
+      currentWorkspaceMembers,
+      setRecordGroups,
+      recordIndexId,
       upsertRecordsInStore,
       setRecordIdsForColumn,
       recordBoardShouldFetchMoreInColumnFamilyCallbackState,
