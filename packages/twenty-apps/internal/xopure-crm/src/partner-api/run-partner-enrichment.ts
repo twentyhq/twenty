@@ -84,14 +84,12 @@ const runEndpoint = async (
   let step: CursorStep | null = null;
   let rows: Record<string, unknown>[] = [];
   let watermarkField: string | null = null;
-  let fuzzyLookupFactory: (() => Promise<{ id: string } | null>) | null = null;
 
   if (endpoint === 'orders') {
     step = 'partner-orders';
     watermarkField = 'created_at';
     const watermark = input.dryRun ? undefined : await getWatermark(input.twentyClient, step);
     rows = await input.apiClient.fetchOrders(watermark);
-    fuzzyLookupFactory = null;
   } else if (endpoint === 'shipments') {
     step = 'partner-shipments';
     watermarkField = 'shiphero_synced_at';

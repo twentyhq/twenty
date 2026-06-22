@@ -51,6 +51,21 @@ describe('SOURCE_TABLE_TO_REST_SOURCE', () => {
       'payable_at',
     );
   });
+
+  it('reads support tickets from the public support_tickets table', () => {
+    expect(SOURCE_TABLE_TO_REST_SOURCE.support_tickets.table).toBe(
+      'support_tickets',
+    );
+    expect(SOURCE_TABLE_TO_REST_SOURCE.support_tickets.select).toContain(
+      'ticket_number',
+    );
+    expect(SOURCE_TABLE_TO_REST_SOURCE.support_tickets.select).toContain(
+      'requester_email',
+    );
+    expect(SOURCE_TABLE_TO_REST_SOURCE.support_tickets.select).not.toContain(
+      'source_metadata',
+    );
+  });
 });
 
 describe('createSupabaseRestReader', () => {

@@ -6,7 +6,8 @@ export type SupportedSourceTable =
   | 'orders'
   | 'payments'
   | 'order_items'
-  | 'commission_ledger';
+  | 'commission_ledger'
+  | 'support_tickets';
 
 export type PartnerEndpoint =
   | 'partner_orders'
@@ -25,7 +26,8 @@ export type TargetObjectName =
   | 'xopurePayment'
   | 'xopureOrderLine'
   | 'xopureCommission'
-  | 'xopureReferralRelationship';
+  | 'xopureReferralRelationship'
+  | 'xopureSupportTicket';
 
 export type SyncStatus = 'SYNCED' | 'FAILED_RETRYABLE' | 'FAILED_PERMANENT' | 'DELETED';
 

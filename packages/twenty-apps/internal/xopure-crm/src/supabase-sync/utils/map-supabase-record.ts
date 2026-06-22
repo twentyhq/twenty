@@ -206,6 +206,49 @@ const mapPaymentStatus = (value: unknown): string => {
   }
 };
 
+const mapSupportTicketStatus = (value: unknown): string => {
+  const normalized = normalizeToken(value);
+
+  switch (normalized) {
+    case 'CLOSED':
+      return 'CLOSED';
+    case 'RESOLVED':
+      return 'RESOLVED';
+    case 'PENDING':
+    case 'PENDING_CUSTOMER':
+    case 'WAITING_ON_CUSTOMER':
+      return 'PENDING_CUSTOMER';
+    default:
+      return 'NEW';
+  }
+};
+
+const mapSupportTicketPriority = (value: unknown): string => {
+  const normalized = normalizeToken(value);
+
+  switch (normalized) {
+    case 'LOW':
+      return 'LOW';
+    case 'HIGH':
+      return 'HIGH';
+    case 'URGENT':
+    case 'CRITICAL':
+      return 'URGENT';
+    default:
+      return 'NORMAL';
+  }
+};
+
+const mapSupportTicketSelect = (
+  value: unknown,
+  allowedValues: Set<string>,
+  fallback: string,
+): string => {
+  const normalized = normalizeToken(value);
+
+  return normalized && allowedValues.has(normalized) ? normalized : fallback;
+};
+
 const withLastSyncedAt = (
   record: Record<string, unknown>,
   fieldValues: Record<string, unknown>,
@@ -587,6 +630,72 @@ const mapPayment = (record: Record<string, unknown>) =>
     description: stringValue(record.description),
   });
 
+const SUPPORT_TICKET_TYPES = new Set([
+  'REFUND',
+  'SHIPPING',
+  'PRODUCT',
+  'BILLING',
+  'GENERAL',
+]);
+
+const SUPPORT_TICKET_SEVERITIES = new Set([
+  'LOW',
+  'MEDIUM',
+  'HIGH',
+  'CRITICAL',
+]);
+
+const SUPPORT_TICKET_CHANNELS = new Set([
+  'EMAIL',
+  'CHAT',
+  'PHONE',
+  'DISPUTE',
+  'INQUIRY',
+]);
+
+const mapSupportTicket = (record: Record<string, unknown>) =>
+  withLastSyncedAt(record, {
+    ticketNumber: stringValue(record.ticket_number) ?? stringValue(record.id),
+    supabaseTicketId: stringValue(record.id),
+    status: mapSupportTicketStatus(record.status),
+    priority: mapSupportTicketPriority(record.priority),
+    category: stringValue(record.category) ?? 'general',
+    ticketType: mapSupportTicketSelect(
+      record.ticket_type ?? record.category,
+      SUPPORT_TICKET_TYPES,
+      'GENERAL',
+    ),
+    severity: mapSupportTicketSelect(
+      record.severity,
+      SUPPORT_TICKET_SEVERITIES,
+      'MEDIUM',
+    ),
+    productTag:
+      stringValue(record.product_tag) ?? stringValue(record.related_product_id),
+    channel: mapSupportTicketSelect(
+      record.channel,
+      SUPPORT_TICKET_CHANNELS,
+      'INQUIRY',
+    ),
+    relatedOrderId: stringValue(record.related_order_id),
+    subject: stringValue(record.subject) ?? 'Support ticket',
+    body: stringValue(record.body) ?? '',
+    requesterEmail: stringValue(record.requester_email) ?? '',
+    requesterName: stringValue(record.requester_name) ?? '',
+    requesterPhone: stringValue(record.requester_phone),
+    messageCount: integerValue(record.message_count) ?? 0,
+    firstResponseAt: isoDateValue(record.first_response_at),
+    resolvedAt: isoDateValue(record.resolved_at),
+    slaDeadline: isoDateValue(record.sla_deadline),
+    slaBreached: booleanValue(record.sla_breached) ?? false,
+    closedAt: isoDateValue(record.closed_at),
+    lastActivityAt:
+      isoDateValue(record.last_activity_at) ??
+      isoDateValue(record.updated_at) ??
+      isoDateValue(record.created_at) ??
+      new Date().toISOString(),
+  });
+
 const mapFieldValues = (
   sourceTable: SupportedSourceTable,
   record: Record<string, unknown>,
@@ -608,6 +717,8 @@ const mapFieldValues = (
       return mapCommission(record);
     case 'payments':
       return mapPayment(record);
+    case 'support_tickets':
+      return mapSupportTicket(record);
   }
 };
 
@@ -628,6 +739,7 @@ const mapRelations = (
     case 'customer_expertise':
     case 'affiliates':
     case 'products':
+    case 'support_tickets':
       return [];
   }
 };

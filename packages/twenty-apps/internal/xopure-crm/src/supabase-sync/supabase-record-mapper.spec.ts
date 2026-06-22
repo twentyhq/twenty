@@ -232,6 +232,72 @@ describe('mapSupabaseRecord', () => {
     ]);
   });
 
+  it('maps support tickets into the support ticket object', () => {
+    const result = mapSupabaseRecord({
+      ...baseWebhook,
+      sourceTable: 'support_tickets',
+      record: {
+        id: 'ticket-1',
+        ticket_number: 'XO-1001',
+        status: 'open',
+        priority: 'urgent',
+        category: 'shipping',
+        channel: 'email',
+        subject: 'Where is my order?',
+        body: 'The tracking link has not updated.',
+        requester_email: 'customer@example.test',
+        requester_name: 'Ada Customer',
+        requester_phone: '+15551234567',
+        related_order_id: 'order-1',
+        related_product_id: 'product-1',
+        message_count: 3,
+        first_response_at: '2026-06-20T12:00:00.000Z',
+        resolved_at: '2026-06-21T12:00:00.000Z',
+        closed_at: '2026-06-22T12:00:00.000Z',
+        last_activity_at: '2026-06-22T13:00:00.000Z',
+        created_at: '2026-06-20T11:00:00.000Z',
+        updated_at: '2026-06-22T14:00:00.000Z',
+        source_metadata: { should: 'not sync' },
+      },
+    });
+
+    expect(result.ok).toBe(true);
+
+    if (!result.ok) {
+      throw new Error('Expected support ticket to map');
+    }
+
+    expect(result.record).toMatchObject({
+      sourceTable: 'support_tickets',
+      sourceRecordId: 'ticket-1',
+      targetObject: 'xopureSupportTicket',
+      externalIdField: 'supabaseTicketId',
+      externalIdValue: 'ticket-1',
+      fieldValues: {
+        ticketNumber: 'XO-1001',
+        supabaseTicketId: 'ticket-1',
+        status: 'NEW',
+        priority: 'URGENT',
+        category: 'shipping',
+        channel: 'EMAIL',
+        relatedOrderId: 'order-1',
+        subject: 'Where is my order?',
+        body: 'The tracking link has not updated.',
+        requesterEmail: 'customer@example.test',
+        requesterName: 'Ada Customer',
+        requesterPhone: '+15551234567',
+        messageCount: 3,
+        firstResponseAt: '2026-06-20T12:00:00.000Z',
+        resolvedAt: '2026-06-21T12:00:00.000Z',
+        closedAt: '2026-06-22T12:00:00.000Z',
+        lastActivityAt: '2026-06-22T13:00:00.000Z',
+        lastSyncedAt: '2026-06-22T14:00:00.000Z',
+      },
+    });
+    expect(result.record.fieldValues).not.toHaveProperty('source_metadata');
+    expect(result.record.contentHash).toBeTruthy();
+  });
+
   it('builds a stable sync key from source identity', () => {
     expect(
       toSyncKey({

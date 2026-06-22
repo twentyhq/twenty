@@ -209,6 +209,31 @@ export const SOURCE_TABLE_TO_REST_SOURCE: Record<
       'updated_at',
     ].join(','),
   },
+  support_tickets: {
+    table: 'support_tickets',
+    select: [
+      'id',
+      'ticket_number',
+      'status',
+      'priority',
+      'category',
+      'channel',
+      'subject',
+      'body',
+      'requester_email',
+      'requester_name',
+      'requester_phone',
+      'related_order_id',
+      'related_product_id',
+      'message_count',
+      'first_response_at',
+      'resolved_at',
+      'closed_at',
+      'last_activity_at',
+      'created_at',
+      'updated_at',
+    ].join(','),
+  },
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

@@ -42,6 +42,9 @@ describe('SOURCE_TABLE_TO_CRM_VIEW', () => {
     expect(SOURCE_TABLE_TO_CRM_VIEW.commission_ledger.table).toBe(
       'crm.v_twenty_commissions',
     );
+    expect(SOURCE_TABLE_TO_CRM_VIEW.support_tickets.table).toBe(
+      'crm.v_twenty_support_tickets',
+    );
   });
 
   it('maps payments to crm.v_twenty_payments with SELECT *', () => {
@@ -52,8 +55,8 @@ describe('SOURCE_TABLE_TO_CRM_VIEW', () => {
     expect(payments.select).not.toContain(' AS ');
   });
 
-  it('has exactly 8 entries', () => {
-    expect(Object.keys(SOURCE_TABLE_TO_CRM_VIEW)).toHaveLength(8);
+  it('has exactly 9 entries', () => {
+    expect(Object.keys(SOURCE_TABLE_TO_CRM_VIEW)).toHaveLength(9);
   });
 });
 describe('createSupabaseReader', () => {

@@ -80,6 +80,14 @@ export const SOURCE_TABLE_MAPPINGS: Record<
     createMutationName: 'createXopurePayment',
     updateMutationName: 'updateXopurePayment',
   },
+  support_tickets: {
+    sourceTable: 'support_tickets',
+    targetObject: 'xopureSupportTicket',
+    externalIdField: 'supabaseTicketId',
+    pluralApiName: 'xopureSupportTickets',
+    createMutationName: 'createXopureSupportTicket',
+    updateMutationName: 'updateXopureSupportTicket',
+  },
 };
 
 export const TABLE_ALIASES: Record<string, SupportedSourceTable> = {
@@ -91,6 +99,7 @@ export const TABLE_ALIASES: Record<string, SupportedSourceTable> = {
   customer: 'customer_expertise',
   profile: 'profiles',
   payment: 'payments',
+  support_ticket: 'support_tickets',
 };
 
 export const getSourceTableMapping = (

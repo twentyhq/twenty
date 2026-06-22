@@ -48,6 +48,10 @@ export const SOURCE_TABLE_TO_CRM_VIEW: Record<
     table: 'crm.v_twenty_commissions',
     select: '*',
   },
+  support_tickets: {
+    table: 'crm.v_twenty_support_tickets',
+    select: '*',
+  },
 };
 
 /**
