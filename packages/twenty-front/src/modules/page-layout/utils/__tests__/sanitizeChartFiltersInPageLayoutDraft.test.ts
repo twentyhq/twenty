@@ -4,8 +4,14 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { sanitizeChartFiltersInPageLayoutDraft } from '@/page-layout/utils/sanitizeChartFiltersInPageLayoutDraft';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
-import { RecordFilterGroupLogicalOperator, ViewFilterOperand } from 'twenty-shared/types';
-import { FieldMetadataType, PageLayoutType } from '~/generated-metadata/graphql';
+import {
+  RecordFilterGroupLogicalOperator,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  PageLayoutType,
+} from '~/generated-metadata/graphql';
 import {
   TEST_BAR_CHART_CONFIGURATION,
   TEST_FIELDS_CONFIGURATION,
@@ -205,6 +211,8 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
       filter: ChartFilters;
     };
 
-    expect(sanitizedConfiguration.filter.recordFilters).toEqual([invalidFilter]);
+    expect(sanitizedConfiguration.filter.recordFilters).toEqual([
+      invalidFilter,
+    ]);
   });
 });
