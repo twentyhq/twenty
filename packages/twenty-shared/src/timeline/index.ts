@@ -7,19 +7,6 @@
  *                              |___/
  */
 
-export {
-  parseTimelineActivityAction,
-  legacyDecodeTimelineActivityKind,
-  resolveTimelineActivityDescriptor,
-} from './resolve-timeline-activity-descriptor';
-export type {
-  TimelineActivityKind,
-  TimelineActivityAction,
-  TimelineActivityDescriptor,
-} from './timeline-activity-kind';
-export {
-  TIMELINE_ACTIVITY_KINDS,
-  TIMELINE_ACTIVITY_ACTIONS,
-  isTimelineActivityKind,
-  isTimelineActivityAction,
-} from './timeline-activity-kind';
+export { resolveTimelineActivityDescriptor } from './resolveTimelineActivityDescriptor';
+export type { TimelineActivityAction } from './TimelineActivityAction';
+export type { TimelineActivityKind } from './TimelineActivityKind';
