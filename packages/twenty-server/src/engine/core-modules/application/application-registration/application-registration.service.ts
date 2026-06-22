@@ -233,10 +233,12 @@ export class ApplicationRegistrationService {
       ...(sourceType !== undefined && { sourceType }),
     });
 
-    await this.applicationRegistrationLogicFunctionSyncService.syncFromManifest({
-      applicationRegistrationId,
-      manifest,
-    });
+    await this.applicationRegistrationLogicFunctionSyncService.syncFromManifest(
+      {
+        applicationRegistrationId,
+        manifest,
+      },
+    );
   }
 
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {

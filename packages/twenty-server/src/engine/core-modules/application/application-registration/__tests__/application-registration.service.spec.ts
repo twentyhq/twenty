@@ -10,7 +10,9 @@ describe('ApplicationRegistrationService', () => {
   describe('findManyListed', () => {
     it('filters out registrations without an owner workspace', async () => {
       const find = jest.fn().mockResolvedValue([]);
-      const repository = { find } as unknown as Repository<ApplicationRegistrationEntity>;
+      const repository = {
+        find,
+      } as unknown as Repository<ApplicationRegistrationEntity>;
 
       const service = new ApplicationRegistrationService(
         repository,

@@ -10,6 +10,7 @@ const STRUCTURAL_EXEMPTIONS = new Set<string>([
   'UserWorkspaceEntity',
   'AppTokenEntity',
   'ApplicationRegistrationEntity',
+  'ApplicationRegistrationLogicFunctionEntity',
   'ApplicationRegistrationVariableEntity',
   // nullable workspaceId — both rows support instance-level and per-workspace use
   'KeyValuePairEntity',

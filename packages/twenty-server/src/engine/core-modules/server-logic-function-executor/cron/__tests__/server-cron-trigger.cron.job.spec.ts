@@ -2,11 +2,7 @@ import { ServerCronTriggerCronJob } from 'src/engine/core-modules/server-logic-f
 import { ServerLogicFunctionExecutionJob } from 'src/engine/core-modules/server-logic-function-executor/cron/server-logic-function-execution.job';
 
 describe('ServerCronTriggerCronJob', () => {
-  const buildJob = ({
-    rows,
-  }: {
-    rows: Array<Record<string, unknown>>;
-  }) => {
+  const buildJob = ({ rows }: { rows: Array<Record<string, unknown>> }) => {
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const queryBuilder = {
       innerJoinAndSelect: jest.fn().mockReturnThis(),
