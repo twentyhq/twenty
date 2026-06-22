@@ -73,22 +73,18 @@ export class LocalChildProcessRunnerService {
     }
 
     const runnerPath = join(dir, '__runner.cjs');
+    const handlerAccessor = `mod?.${handlerName.split('.').join('?.')}`;
     const code = `
       // Auto-generated. Do not edit.
       const { pathToFileURL } = require('node:url');
 
       const HANDLER_NAME = ${JSON.stringify(handlerName)};
-      const resolveHandler = (mod) =>
-        HANDLER_NAME.split('.').reduce(
-          (target, key) => (target == null ? undefined : target[key]),
-          mod,
-        );
 
       (async () => {
         try {
           const builtUrl = pathToFileURL(${JSON.stringify(builtFileAbsPath)});
           const mod = await import(builtUrl.href);
-          const handlerFn = resolveHandler(mod);
+          const handlerFn = ${handlerAccessor};
           if (typeof handlerFn !== 'function') {
             throw new Error('Export "' + HANDLER_NAME + '" not found in function bundle');
           }
