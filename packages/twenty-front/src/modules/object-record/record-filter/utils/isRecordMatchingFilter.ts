@@ -51,6 +51,7 @@ import {
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
+import { reportMalformedTSVectorFilter } from '@/object-record/record-filter/utils/reportMalformedTSVectorFilter';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -438,8 +439,22 @@ export const isRecordMatchingFilter = ({
         );
       }
       case FieldMetadataType.TS_VECTOR: {
+        const tsVectorFilter = filterValue as TSVectorFilter;
+
+        if (
+          isObject(tsVectorFilter) &&
+          'search' in tsVectorFilter &&
+          typeof tsVectorFilter.search !== 'string'
+        ) {
+          void reportMalformedTSVectorFilter({
+            objectMetadataNameSingular: objectMetadataItem.nameSingular,
+            filterKey,
+            search: tsVectorFilter.search,
+          });
+        }
+
         return isMatchingTSVectorFilter({
-          tsVectorFilter: filterValue as TSVectorFilter,
+          tsVectorFilter,
           value: record[filterKey],
         });
       }

@@ -46,6 +46,15 @@ describe('isMatchingTSVectorFilter', () => {
         }),
       ).toBe(true);
     });
+
+    it('returns false when search is not a string', () => {
+      expect(
+        isMatchingTSVectorFilter({
+          tsVectorFilter: { search: 42 } as any,
+          value: 'test document',
+        }),
+      ).toBe(false);
+    });
   });
 
   describe('error handling', () => {

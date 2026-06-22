@@ -13,11 +13,14 @@ export const isMatchingTSVectorFilter = ({
   }
 
   switch (true) {
-    case tsVectorFilter.search !== undefined: {
+    case typeof tsVectorFilter.search === 'string': {
       const searchQuery = tsVectorFilter.search.toLowerCase();
       const searchValue = value.toLowerCase();
       const searchWords = searchQuery.split(/\s+/).filter(Boolean);
       return searchWords.every((word) => searchValue.includes(word));
+    }
+    case tsVectorFilter.search !== undefined: {
+      return false;
     }
     default: {
       throw new Error(
