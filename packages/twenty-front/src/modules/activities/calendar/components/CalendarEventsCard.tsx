@@ -11,7 +11,7 @@ import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { useRefetchTimelineOnParticipantChange } from '@/activities/hooks/useRefetchTimelineOnParticipantChange';
+import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { H3Title } from 'twenty-ui/typography';
 import {
@@ -59,7 +59,7 @@ export const CalendarEventsCard = () => {
       TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     );
 
-  useRefetchTimelineOnParticipantChange({
+  useSubscribeTimelineToParticipantChanges({
     queryId: `calendar-${targetRecord.id}`,
     participantObjectNameSingular: 'calendarEventParticipant',
     relatedPersonIds:

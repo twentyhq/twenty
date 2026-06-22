@@ -4,19 +4,19 @@ import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/ho
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 
-type UseRefetchTimelineOnParticipantChangeParams = {
+type UseSubscribeTimelineToParticipantChangesParams = {
   queryId: string;
   participantObjectNameSingular: string;
   relatedPersonIds: string[];
   refetch: () => void;
 };
 
-export const useRefetchTimelineOnParticipantChange = ({
+export const useSubscribeTimelineToParticipantChanges = ({
   queryId,
   participantObjectNameSingular,
   relatedPersonIds,
   refetch,
-}: UseRefetchTimelineOnParticipantChangeParams) => {
+}: UseSubscribeTimelineToParticipantChangesParams) => {
   const { objectMetadataItem: participantMetadata } = useObjectMetadataItem({
     objectNameSingular: participantObjectNameSingular,
   });
@@ -47,6 +47,6 @@ export const useRefetchTimelineOnParticipantChange = ({
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: handleParticipantOperation,
-    objectMetadataItemId: participantMetadata.id,
+    objectMetadataItemId: participantMetadata?.id,
   });
 };

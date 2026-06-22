@@ -10,7 +10,7 @@ import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInbox
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
 import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { useRefetchTimelineOnParticipantChange } from '@/activities/hooks/useRefetchTimelineOnParticipantChange';
+import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
@@ -60,7 +60,7 @@ export const EmailsCard = () => {
       TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
     );
 
-  useRefetchTimelineOnParticipantChange({
+  useSubscribeTimelineToParticipantChanges({
     queryId: `emails-${targetRecord.id}`,
     participantObjectNameSingular: CoreObjectNameSingular.MessageParticipant,
     relatedPersonIds:
