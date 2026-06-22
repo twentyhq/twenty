@@ -1,17 +1,6 @@
 {
-  "compileOnSave": false,
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "../..",
-    "sourceMap": true,
-    "declaration": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "module": "esnext",
-    "lib": ["es2020", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "resolveJsonModule": true,
     "target": "ES2020",
     "jsx": "react-jsx",
     "allowJs": false,
@@ -37,6 +26,5 @@
     "jest.config.mjs",
     "setupTests.ts",
     "vite.config.ts"
-  ],
-  "exclude": ["node_modules", "tmp"]
+  ]
 }
