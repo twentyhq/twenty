@@ -179,7 +179,9 @@ describe('isSafeTsVectorExpression', () => {
   });
 
   it('should reject any expression containing a dollar sign', () => {
-    expect(isSafeTsVectorExpression(`to_tsvector('simple', $$x$$)`)).toBe(false);
+    expect(isSafeTsVectorExpression(`to_tsvector('simple', $$x$$)`)).toBe(
+      false,
+    );
   });
 
   it('should reject expressions with unbalanced parentheses', () => {
