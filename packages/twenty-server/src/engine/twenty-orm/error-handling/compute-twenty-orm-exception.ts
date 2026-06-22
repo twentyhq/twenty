@@ -1,3 +1,4 @@
+import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { QueryFailedError } from 'typeorm';
@@ -17,6 +18,12 @@ import {
 interface QueryFailedErrorWithCode extends QueryFailedError {
   code?: string;
 }
+
+const CONSTRAINT_VIOLATION_MESSAGES: Record<string, MessageDescriptor> = {
+  [POSTGRESQL_ERROR_CODES.NOT_NULL_VIOLATION]: msg`A required field is missing. Please provide all required values and try again.`,
+  [POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION]: msg`This operation references a record that does not exist or cannot be modified due to existing relationships.`,
+  [POSTGRESQL_ERROR_CODES.RESTRICT_VIOLATION]: msg`This record cannot be deleted because it is still referenced by other records.`,
+};
 
 export const computeTwentyORMException = async (
   error: Error,
@@ -53,8 +60,18 @@ export const computeTwentyORMException = async (
 
     if (errorCode === POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION) {
       return new TwentyORMException(
-        error.message, // safe and useful
+        error.message,
         TwentyORMExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (isDefined(errorCode) && errorCode in CONSTRAINT_VIOLATION_MESSAGES) {
+      return new TwentyORMException(
+        error.message,
+        TwentyORMExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: CONSTRAINT_VIOLATION_MESSAGES[errorCode],
+        },
       );
     }
 
