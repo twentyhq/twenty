@@ -1,14 +1,11 @@
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { fromPageLayoutWidgetOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-overrides-to-universal-overrides.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-cache/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
 type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs =
   FromEntityToFlatEntityArgs<'pageLayoutWidget'> & {
@@ -18,60 +15,28 @@ type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs =
     viewUniversalIdentifierById?: Partial<Record<string, string>>;
   };
 
-export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
-  entity: pageLayoutWidgetEntity,
-  applicationIdToUniversalIdentifierMap,
-  pageLayoutTabIdToUniversalIdentifierMap,
-  objectMetadataIdToUniversalIdentifierMap,
-  fieldMetadataUniversalIdentifierById,
-  frontComponentUniversalIdentifierById,
-  viewFieldGroupUniversalIdentifierById,
-  viewUniversalIdentifierById,
-}: FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs): FlatPageLayoutWidget => {
+export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
+  args: FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs,
+): FlatPageLayoutWidget => {
+  const {
+    entity: pageLayoutWidgetEntity,
+    pageLayoutTabIdToUniversalIdentifierMap,
+    fieldMetadataUniversalIdentifierById,
+    frontComponentUniversalIdentifierById,
+    viewFieldGroupUniversalIdentifierById,
+    viewUniversalIdentifierById,
+  } = args;
+
   const pageLayoutWidgetEntityWithoutRelations = removePropertiesFromRecord(
     pageLayoutWidgetEntity,
     getMetadataEntityRelationProperties('pageLayoutWidget'),
   );
 
-  const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(
-      pageLayoutWidgetEntity.applicationId,
-    );
-
-  if (!isDefined(applicationUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Application with id ${pageLayoutWidgetEntity.applicationId} not found for pageLayoutWidget ${pageLayoutWidgetEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
-
-  const pageLayoutTabUniversalIdentifier =
-    pageLayoutTabIdToUniversalIdentifierMap.get(
-      pageLayoutWidgetEntity.pageLayoutTabId,
-    );
-
-  if (!isDefined(pageLayoutTabUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `PageLayoutTab with id ${pageLayoutWidgetEntity.pageLayoutTabId} not found for pageLayoutWidget ${pageLayoutWidgetEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
-
-  let objectMetadataUniversalIdentifier: string | null = null;
-
-  if (isDefined(pageLayoutWidgetEntity.objectMetadataId)) {
-    objectMetadataUniversalIdentifier =
-      objectMetadataIdToUniversalIdentifierMap.get(
-        pageLayoutWidgetEntity.objectMetadataId,
-      ) ?? null;
-
-    if (!isDefined(objectMetadataUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `ObjectMetadata with id ${pageLayoutWidgetEntity.objectMetadataId} not found for pageLayoutWidget ${pageLayoutWidgetEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-  }
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'pageLayoutWidget',
+      ...args,
+    });
 
   const configurationWithUniversalIdentifiers =
     fromPageLayoutWidgetConfigurationToUniversalConfiguration({
@@ -101,10 +66,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
     deletedAt: pageLayoutWidgetEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier:
       pageLayoutWidgetEntityWithoutRelations.universalIdentifier,
-    applicationId: pageLayoutWidgetEntityWithoutRelations.applicationId,
-    applicationUniversalIdentifier,
-    pageLayoutTabUniversalIdentifier,
-    objectMetadataUniversalIdentifier,
+    ...relationUniversalIdentifiers,
     universalConfiguration: configurationWithUniversalIdentifiers,
     universalOverrides,
   };

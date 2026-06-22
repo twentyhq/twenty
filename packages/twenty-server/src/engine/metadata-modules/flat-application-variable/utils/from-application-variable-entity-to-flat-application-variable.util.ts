@@ -1,39 +1,32 @@
-import { isDefined } from 'twenty-shared/utils';
+import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-cache/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
-export const fromApplicationVariableEntityToFlatApplicationVariable = ({
-  entity: applicationVariableEntity,
-  applicationIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'applicationVariable'>): FlatApplicationVariable => {
-  const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(
-      applicationVariableEntity.applicationId,
-    );
+export const fromApplicationVariableEntityToFlatApplicationVariable = (
+  args: FromEntityToFlatEntityArgs<'applicationVariable'>,
+): FlatApplicationVariable => {
+  const { entity: applicationVariableEntity } = args;
 
-  if (!isDefined(applicationUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Application with id ${applicationVariableEntity.applicationId} not found for applicationVariable ${applicationVariableEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
+  const applicationVariableEntityWithoutRelations = removePropertiesFromRecord(
+    applicationVariableEntity,
+    getMetadataEntityRelationProperties('applicationVariable'),
+  );
+
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'applicationVariable',
+      ...args,
+    });
 
   return {
-    id: applicationVariableEntity.id,
-    key: applicationVariableEntity.key,
-    value: applicationVariableEntity.value,
-    description: applicationVariableEntity.description,
-    isSecret: applicationVariableEntity.isSecret,
-    workspaceId: applicationVariableEntity.workspaceId,
-    universalIdentifier: applicationVariableEntity.universalIdentifier,
-    applicationId: applicationVariableEntity.applicationId,
+    ...applicationVariableEntityWithoutRelations,
     createdAt: applicationVariableEntity.createdAt.toISOString(),
     updatedAt: applicationVariableEntity.updatedAt.toISOString(),
-    applicationUniversalIdentifier,
+    universalIdentifier:
+      applicationVariableEntityWithoutRelations.universalIdentifier,
+    ...relationUniversalIdentifiers,
   };
 };

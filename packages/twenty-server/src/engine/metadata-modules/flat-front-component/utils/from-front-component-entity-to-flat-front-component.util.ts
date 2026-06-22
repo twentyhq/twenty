@@ -1,43 +1,32 @@
-import { isDefined } from 'twenty-shared/utils';
+import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-cache/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
-export const fromFrontComponentEntityToFlatFrontComponent = ({
-  entity: frontComponentEntity,
-  applicationIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'frontComponent'>): FlatFrontComponent => {
-  const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(
-      frontComponentEntity.applicationId,
-    );
+export const fromFrontComponentEntityToFlatFrontComponent = (
+  args: FromEntityToFlatEntityArgs<'frontComponent'>,
+): FlatFrontComponent => {
+  const { entity: frontComponentEntity } = args;
 
-  if (!isDefined(applicationUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Application with id ${frontComponentEntity.applicationId} not found for frontComponent ${frontComponentEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
+  const frontComponentEntityWithoutRelations = removePropertiesFromRecord(
+    frontComponentEntity,
+    getMetadataEntityRelationProperties('frontComponent'),
+  );
+
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'frontComponent',
+      ...args,
+    });
 
   return {
-    id: frontComponentEntity.id,
-    name: frontComponentEntity.name,
-    description: frontComponentEntity.description,
-    sourceComponentPath: frontComponentEntity.sourceComponentPath,
-    builtComponentPath: frontComponentEntity.builtComponentPath,
-    componentName: frontComponentEntity.componentName,
-    builtComponentChecksum: frontComponentEntity.builtComponentChecksum,
-    isHeadless: frontComponentEntity.isHeadless,
-    usesSdkClient: frontComponentEntity.usesSdkClient,
-    workspaceId: frontComponentEntity.workspaceId,
-    universalIdentifier: frontComponentEntity.universalIdentifier,
-    applicationId: frontComponentEntity.applicationId,
+    ...frontComponentEntityWithoutRelations,
     createdAt: frontComponentEntity.createdAt.toISOString(),
     updatedAt: frontComponentEntity.updatedAt.toISOString(),
-    applicationUniversalIdentifier,
+    universalIdentifier:
+      frontComponentEntityWithoutRelations.universalIdentifier,
+    ...relationUniversalIdentifiers,
   };
 };

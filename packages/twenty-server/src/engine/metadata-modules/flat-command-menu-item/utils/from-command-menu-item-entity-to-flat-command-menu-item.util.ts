@@ -1,79 +1,30 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import { fromCommandMenuItemOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-overrides-to-universal-overrides.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { fromCommandMenuItemOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-overrides-to-universal-overrides.util';
+import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-cache/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
-export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
-  entity: commandMenuItemEntity,
-  applicationIdToUniversalIdentifierMap,
-  objectMetadataIdToUniversalIdentifierMap,
-  frontComponentIdToUniversalIdentifierMap,
-  pageLayoutIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'commandMenuItem'>): FlatCommandMenuItem => {
-  const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(
-      commandMenuItemEntity.applicationId,
-    );
+export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
+  args: FromEntityToFlatEntityArgs<'commandMenuItem'>,
+): FlatCommandMenuItem => {
+  const {
+    entity: commandMenuItemEntity,
+    objectMetadataIdToUniversalIdentifierMap,
+    pageLayoutIdToUniversalIdentifierMap,
+  } = args;
 
-  if (!isDefined(applicationUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Application with id ${commandMenuItemEntity.applicationId} not found for commandMenuItem ${commandMenuItemEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
+  const commandMenuItemEntityWithoutRelations = removePropertiesFromRecord(
+    commandMenuItemEntity,
+    getMetadataEntityRelationProperties('commandMenuItem'),
+  );
 
-  let availabilityObjectMetadataUniversalIdentifier: string | null = null;
-
-  if (isDefined(commandMenuItemEntity.availabilityObjectMetadataId)) {
-    availabilityObjectMetadataUniversalIdentifier =
-      objectMetadataIdToUniversalIdentifierMap.get(
-        commandMenuItemEntity.availabilityObjectMetadataId,
-      ) ?? null;
-
-    if (!isDefined(availabilityObjectMetadataUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `ObjectMetadata with id ${commandMenuItemEntity.availabilityObjectMetadataId} not found for commandMenuItem ${commandMenuItemEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-  }
-
-  let frontComponentUniversalIdentifier: string | null = null;
-
-  if (isDefined(commandMenuItemEntity.frontComponentId)) {
-    frontComponentUniversalIdentifier =
-      frontComponentIdToUniversalIdentifierMap.get(
-        commandMenuItemEntity.frontComponentId,
-      ) ?? null;
-
-    if (!isDefined(frontComponentUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `FrontComponent with id ${commandMenuItemEntity.frontComponentId} not found for commandMenuItem ${commandMenuItemEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-  }
-
-  let pageLayoutUniversalIdentifier: string | null = null;
-
-  if (isDefined(commandMenuItemEntity.pageLayoutId)) {
-    pageLayoutUniversalIdentifier =
-      pageLayoutIdToUniversalIdentifierMap.get(
-        commandMenuItemEntity.pageLayoutId,
-      ) ?? null;
-
-    if (!isDefined(pageLayoutUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `PageLayout with id ${commandMenuItemEntity.pageLayoutId} not found for commandMenuItem ${commandMenuItemEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-  }
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'commandMenuItem',
+      ...args,
+    });
 
   const universalOverrides = isDefined(commandMenuItemEntity.overrides)
     ? fromCommandMenuItemOverridesToUniversalOverrides({
@@ -89,35 +40,12 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
     : null;
 
   return {
-    id: commandMenuItemEntity.id,
-    workflowVersionId: commandMenuItemEntity.workflowVersionId,
-    frontComponentId: commandMenuItemEntity.frontComponentId,
-    engineComponentKey: commandMenuItemEntity.engineComponentKey,
-    label: commandMenuItemEntity.label,
-    icon: commandMenuItemEntity.icon,
-    shortLabel: commandMenuItemEntity.shortLabel,
-    position: commandMenuItemEntity.position,
-    isPinned: commandMenuItemEntity.isPinned,
-    payload: commandMenuItemEntity.payload,
-    hotKeys: commandMenuItemEntity.hotKeys,
-    availabilityType: commandMenuItemEntity.availabilityType,
-    availabilityObjectMetadataId:
-      commandMenuItemEntity.availabilityObjectMetadataId,
-    workspaceId: commandMenuItemEntity.workspaceId,
-    universalIdentifier: commandMenuItemEntity.universalIdentifier,
-    applicationId: commandMenuItemEntity.applicationId,
+    ...commandMenuItemEntityWithoutRelations,
     createdAt: commandMenuItemEntity.createdAt.toISOString(),
     updatedAt: commandMenuItemEntity.updatedAt.toISOString(),
-    applicationUniversalIdentifier,
-    conditionalAvailabilityExpression:
-      commandMenuItemEntity.conditionalAvailabilityExpression,
-    availabilityObjectMetadataUniversalIdentifier,
-    frontComponentUniversalIdentifier,
-    pageLayoutId: commandMenuItemEntity.pageLayoutId,
-    pageLayoutUniversalIdentifier,
-    isActive: commandMenuItemEntity.isActive,
-    isSystemSideEffect: commandMenuItemEntity.isSystemSideEffect,
-    overrides: commandMenuItemEntity.overrides,
+    universalIdentifier:
+      commandMenuItemEntityWithoutRelations.universalIdentifier,
+    ...relationUniversalIdentifiers,
     universalOverrides,
   };
 };

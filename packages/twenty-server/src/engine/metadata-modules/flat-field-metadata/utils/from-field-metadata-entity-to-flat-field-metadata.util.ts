@@ -2,79 +2,29 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-cache/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
-export const fromFieldMetadataEntityToFlatFieldMetadata = ({
-  entity: fieldMetadataEntity,
-  fieldMetadataIdToUniversalIdentifierMap,
-  objectMetadataIdToUniversalIdentifierMap,
-  applicationIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'fieldMetadata'>): FlatFieldMetadata => {
+export const fromFieldMetadataEntityToFlatFieldMetadata = (
+  args: FromEntityToFlatEntityArgs<'fieldMetadata'>,
+): FlatFieldMetadata => {
+  const {
+    entity: fieldMetadataEntity,
+    fieldMetadataIdToUniversalIdentifierMap,
+  } = args;
+
   const fieldMetadataWithoutRelations = removePropertiesFromRecord(
     fieldMetadataEntity,
     getMetadataEntityRelationProperties('fieldMetadata'),
   );
-  const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(
-      fieldMetadataEntity.applicationId,
-    );
 
-  if (!isDefined(applicationUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Application with id ${fieldMetadataEntity.applicationId} not found when building flat field metadata for field ${fieldMetadataEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
-
-  const objectMetadataUniversalIdentifier =
-    objectMetadataIdToUniversalIdentifierMap.get(
-      fieldMetadataEntity.objectMetadataId,
-    );
-
-  if (!isDefined(objectMetadataUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Object metadata with id ${fieldMetadataEntity.objectMetadataId} not found when building flat field metadata for field ${fieldMetadataEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
-
-  let relationTargetObjectMetadataUniversalIdentifier: string | null = null;
-
-  if (isDefined(fieldMetadataEntity.relationTargetObjectMetadataId)) {
-    relationTargetObjectMetadataUniversalIdentifier =
-      objectMetadataIdToUniversalIdentifierMap.get(
-        fieldMetadataEntity.relationTargetObjectMetadataId,
-      ) ?? null;
-
-    if (!isDefined(relationTargetObjectMetadataUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `Relation target object metadata with id ${fieldMetadataEntity.relationTargetObjectMetadataId} not found when building flat field metadata for field ${fieldMetadataEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-  }
-
-  let relationTargetFieldMetadataUniversalIdentifier: string | null = null;
-
-  if (isDefined(fieldMetadataEntity.relationTargetFieldMetadataId)) {
-    relationTargetFieldMetadataUniversalIdentifier =
-      fieldMetadataIdToUniversalIdentifierMap.get(
-        fieldMetadataEntity.relationTargetFieldMetadataId,
-      ) ?? null;
-
-    if (!isDefined(relationTargetFieldMetadataUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `Relation target field metadata with id ${fieldMetadataEntity.relationTargetFieldMetadataId} not found when building flat field metadata for field ${fieldMetadataEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-  }
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'fieldMetadata',
+      ...args,
+    });
 
   const settings = fieldMetadataEntity.settings;
   const isRelationSettings =
@@ -98,6 +48,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
     universalIdentifier: fieldMetadataWithoutRelations.universalIdentifier,
     createdAt: fieldMetadataWithoutRelations.createdAt.toISOString(),
     updatedAt: fieldMetadataWithoutRelations.updatedAt.toISOString(),
+    ...relationUniversalIdentifiers,
     kanbanAggregateOperationViewIds:
       fieldMetadataEntity.kanbanAggregateOperationViews.map(({ id }) => id),
     calendarViewIds: fieldMetadataEntity.calendarViews.map(({ id }) => id),
@@ -108,10 +59,6 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
     viewFilterIds: fieldMetadataEntity.viewFilters.map(({ id }) => id),
     fieldPermissionIds:
       fieldMetadataEntity.fieldPermissions?.map(({ id }) => id) ?? [],
-    applicationUniversalIdentifier,
-    objectMetadataUniversalIdentifier,
-    relationTargetObjectMetadataUniversalIdentifier,
-    relationTargetFieldMetadataUniversalIdentifier,
     viewFieldUniversalIdentifiers: fieldMetadataEntity.viewFields.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),

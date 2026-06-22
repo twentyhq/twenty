@@ -1,39 +1,32 @@
-import { isDefined } from 'twenty-shared/utils';
+import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-cache/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
-export const fromConnectionProviderEntityToFlatConnectionProvider = ({
-  entity: connectionProviderEntity,
-  applicationIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'connectionProvider'>): FlatConnectionProvider => {
-  const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(
-      connectionProviderEntity.applicationId,
-    );
+export const fromConnectionProviderEntityToFlatConnectionProvider = (
+  args: FromEntityToFlatEntityArgs<'connectionProvider'>,
+): FlatConnectionProvider => {
+  const { entity: connectionProviderEntity } = args;
 
-  if (!isDefined(applicationUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Application with id ${connectionProviderEntity.applicationId} not found for connection provider ${connectionProviderEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
+  const connectionProviderEntityWithoutRelations = removePropertiesFromRecord(
+    connectionProviderEntity,
+    getMetadataEntityRelationProperties('connectionProvider'),
+  );
+
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'connectionProvider',
+      ...args,
+    });
 
   return {
-    id: connectionProviderEntity.id,
-    universalIdentifier: connectionProviderEntity.universalIdentifier,
-    applicationId: connectionProviderEntity.applicationId,
-    workspaceId: connectionProviderEntity.workspaceId,
-    name: connectionProviderEntity.name,
-    displayName: connectionProviderEntity.displayName,
-    type: connectionProviderEntity.type,
-    oauthConfig: connectionProviderEntity.oauthConfig,
+    ...connectionProviderEntityWithoutRelations,
     createdAt: connectionProviderEntity.createdAt.toISOString(),
     updatedAt: connectionProviderEntity.updatedAt.toISOString(),
-    applicationUniversalIdentifier,
+    universalIdentifier:
+      connectionProviderEntityWithoutRelations.universalIdentifier,
+    ...relationUniversalIdentifiers,
   };
 };

@@ -7,43 +7,31 @@ import {
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-cache/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
-export const fromIndexMetadataEntityToFlatIndexMetadata = ({
-  entity: indexMetadataEntity,
-  applicationIdToUniversalIdentifierMap,
-  objectMetadataIdToUniversalIdentifierMap,
-  fieldMetadataIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'index'> & {
-  fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
-}): FlatIndexMetadata => {
-  const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(
-      indexMetadataEntity.applicationId,
-    );
+type FromIndexMetadataEntityToFlatIndexMetadataArgs =
+  FromEntityToFlatEntityArgs<'index'> & {
+    fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
+  };
 
-  if (!isDefined(applicationUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Application with id ${indexMetadataEntity.applicationId} not found for index ${indexMetadataEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
-
-  const objectMetadataUniversalIdentifier =
-    objectMetadataIdToUniversalIdentifierMap.get(
-      indexMetadataEntity.objectMetadataId,
-    );
-
-  if (!isDefined(objectMetadataUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `ObjectMetadata with id ${indexMetadataEntity.objectMetadataId} not found for index ${indexMetadataEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
+export const fromIndexMetadataEntityToFlatIndexMetadata = (
+  args: FromIndexMetadataEntityToFlatIndexMetadataArgs,
+): FlatIndexMetadata => {
+  const {
+    entity: indexMetadataEntity,
+    fieldMetadataIdToUniversalIdentifierMap,
+  } = args;
 
   const indexMetadataEntityWithoutRelations = removePropertiesFromRecord(
     indexMetadataEntity,
     getMetadataEntityRelationProperties('index'),
   );
+
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'index',
+      ...args,
+    });
 
   return {
     ...indexMetadataEntityWithoutRelations,
@@ -51,6 +39,7 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = ({
     updatedAt: indexMetadataEntity.updatedAt.toISOString(),
     universalIdentifier:
       indexMetadataEntityWithoutRelations.universalIdentifier,
+    ...relationUniversalIdentifiers,
     flatIndexFieldMetadatas: indexMetadataEntity.indexFieldMetadatas.map(
       (indexFieldMetadata) => ({
         ...removePropertiesFromRecord(indexFieldMetadata, [
@@ -86,7 +75,5 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = ({
           fieldMetadataUniversalIdentifier,
         };
       }),
-    applicationUniversalIdentifier,
-    objectMetadataUniversalIdentifier,
   };
 };
