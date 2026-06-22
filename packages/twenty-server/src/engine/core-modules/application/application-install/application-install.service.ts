@@ -512,7 +512,10 @@ export class ApplicationInstallService {
       { relativePath: 'manifest.json', fileFolder: FileFolder.Source },
     );
 
-    for (const logicFunction of manifest.logicFunctions ?? []) {
+    for (const logicFunction of [
+      ...(manifest.logicFunctions ?? []),
+      ...(manifest.serverLogicFunctions ?? []),
+    ]) {
       files.push({
         relativePath: logicFunction.builtHandlerPath,
         fileFolder: FileFolder.BuiltLogicFunction,

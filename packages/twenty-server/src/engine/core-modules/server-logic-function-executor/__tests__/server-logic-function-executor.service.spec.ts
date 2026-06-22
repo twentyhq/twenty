@@ -18,8 +18,6 @@ describe('ServerLogicFunctionExecutorService', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let logicFunctionExecutorService: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let throttlerService: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let twentyConfigService: any;
 
   const buildService = () =>
@@ -29,7 +27,6 @@ describe('ServerLogicFunctionExecutorService', () => {
       applicationRepository,
       logicFunctionRepository,
       logicFunctionExecutorService,
-      throttlerService,
       twentyConfigService,
     );
 
@@ -58,23 +55,13 @@ describe('ServerLogicFunctionExecutorService', () => {
     };
     logicFunctionExecutorService = {
       execute: jest.fn().mockResolvedValue({
-        data: { workspaceIds: ['w1'] },
+        data: { ok: true },
         error: undefined,
       }),
-    };
-    throttlerService = {
-      tokenBucketThrottleOrThrow: jest.fn().mockResolvedValue(1),
     };
     twentyConfigService = { get: jest.fn().mockReturnValue(true) };
     service = buildService();
   });
-
-  const run = () =>
-    service.run({
-      applicationRegistrationUniversalIdentifier: REGISTRATION_UID,
-      logicFunctionUniversalIdentifier: LOGIC_FN_UID,
-      payload: { headers: {}, body: {} },
-    });
 
   it('delegates to the executor with the owner workspace and forwards the payload', async () => {
     const payload = { headers: {}, body: { hello: 'world' } };
@@ -89,15 +76,21 @@ describe('ServerLogicFunctionExecutorService', () => {
       workspaceId: OWNER_WORKSPACE_ID,
       payload,
     });
-    expect(outcome).toEqual(
-      expect.objectContaining({ kind: 'response', workspaceIds: ['w1'] }),
-    );
+    expect(outcome).toEqual({
+      kind: 'response',
+      response: { statusCode: 200, headers: {}, body: { ok: true } },
+    });
   });
 
   it('refuses when the feature is disabled', async () => {
     twentyConfigService.get.mockReturnValue(false);
 
-    await expect(run()).rejects.toMatchObject({
+    await expect(
+      service.run({
+        applicationRegistrationUniversalIdentifier: REGISTRATION_UID,
+        logicFunctionUniversalIdentifier: LOGIC_FN_UID,
+      }),
+    ).rejects.toMatchObject({
       code: ServerLogicFunctionExecutorExceptionCode.FEATURE_DISABLED,
     });
   });
@@ -108,7 +101,12 @@ describe('ServerLogicFunctionExecutorService', () => {
       ownerWorkspaceId: null,
     });
 
-    await expect(run()).rejects.toMatchObject({
+    await expect(
+      service.run({
+        applicationRegistrationUniversalIdentifier: REGISTRATION_UID,
+        logicFunctionUniversalIdentifier: LOGIC_FN_UID,
+      }),
+    ).rejects.toMatchObject({
       code: ServerLogicFunctionExecutorExceptionCode.OWNER_WORKSPACE_NOT_SET,
     });
   });
@@ -120,19 +118,27 @@ describe('ServerLogicFunctionExecutorService', () => {
       disabledAt: new Date(),
     });
 
-    await expect(run()).rejects.toMatchObject({
+    await expect(
+      service.run({
+        applicationRegistrationUniversalIdentifier: REGISTRATION_UID,
+        logicFunctionUniversalIdentifier: LOGIC_FN_UID,
+      }),
+    ).rejects.toMatchObject({
       code: ServerLogicFunctionExecutorExceptionCode.FUNCTION_DISABLED,
     });
   });
 
-  it('rejects an invalid return shape', async () => {
+  it('surfaces userError when the underlying executor returned an error', async () => {
     logicFunctionExecutorService.execute.mockResolvedValue({
-      data: { nope: true },
-      error: undefined,
+      data: undefined,
+      error: { errorMessage: 'boom' },
     });
 
-    await expect(run()).rejects.toMatchObject({
-      code: ServerLogicFunctionExecutorExceptionCode.INVALID_RETURN_SHAPE,
+    const outcome = await service.run({
+      applicationRegistrationUniversalIdentifier: REGISTRATION_UID,
+      logicFunctionUniversalIdentifier: LOGIC_FN_UID,
     });
+
+    expect(outcome).toEqual({ kind: 'userError', errorMessage: 'boom' });
   });
 });

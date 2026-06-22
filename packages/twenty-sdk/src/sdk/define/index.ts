@@ -81,6 +81,8 @@ export type {
 export { defineLogicFunction } from '@/sdk/define/logic-functions/define-logic-function';
 export { definePostInstallLogicFunction } from '@/sdk/define/logic-functions/define-post-install-logic-function';
 export { definePreInstallLogicFunction } from '@/sdk/define/logic-functions/define-pre-install-logic-function';
+export { defineServerLogicFunction } from '@/sdk/define/logic-functions/define-server-logic-function';
+export type { ServerLogicFunctionConfig } from '@/sdk/define/logic-functions/server-logic-function-config';
 export type {
   InstallHandler,
   InstallPayload,

@@ -8,10 +8,7 @@ import { IsNull, Repository } from 'typeorm';
 import { ApplicationRegistrationLogicFunctionEntity } from 'src/engine/core-modules/application/application-registration-logic-function/application-registration-logic-function.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import {
-  LogicFunctionExecutionException,
-  LogicFunctionExecutorService,
-} from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import {
   type RouteTriggerResponse,
@@ -21,21 +18,12 @@ import {
   ServerLogicFunctionExecutorException,
   ServerLogicFunctionExecutorExceptionCode,
 } from 'src/engine/core-modules/server-logic-function-executor/server-logic-function-executor.exception';
-import { isServerLogicFunctionResult } from 'src/engine/core-modules/server-logic-function-executor/utils/is-server-logic-function-result.util';
-import {
-  ThrottlerException,
-  ThrottlerExceptionCode,
-} from 'src/engine/core-modules/throttler/throttler.exception';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 export type ServerLogicFunctionOutcome =
-  | { kind: 'response'; workspaceIds: string[]; response: RouteTriggerResponse }
+  | { kind: 'response'; response: RouteTriggerResponse }
   | { kind: 'userError'; errorMessage: string };
-
-const THROTTLE_LIMIT = 1000;
-const THROTTLE_TTL_MS = 60_000;
 
 @Injectable()
 export class ServerLogicFunctionExecutorService {
@@ -51,7 +39,6 @@ export class ServerLogicFunctionExecutorService {
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -116,8 +103,6 @@ export class ServerLogicFunctionExecutorService {
       );
     }
 
-    await this.throttle(registration.id);
-
     const application = await this.applicationRepository.findOne({
       where: {
         applicationRegistrationId: registration.id,
@@ -158,76 +143,26 @@ export class ServerLogicFunctionExecutorService {
         })
       : (payload ?? {});
 
-    let result;
-
-    try {
-      result = await this.logicFunctionExecutorService.execute({
-        logicFunctionId: ownerLogicFunction.id,
-        workspaceId: registration.ownerWorkspaceId,
-        payload: executionPayload,
-      });
-    } catch (error) {
-      this.logger.error(
-        `Server logic function ${serverFunction.id} failed: ${error instanceof Error ? error.message : String(error)}`,
-        error instanceof Error ? error.stack : undefined,
-      );
-
-      // Preserve typed errors (throttle, function-not-found, etc.) so
-      // callers can map them to accurate response codes instead of a
-      // generic platform error.
-      if (
-        error instanceof ThrottlerException ||
-        error instanceof LogicFunctionExecutionException ||
-        error instanceof ServerLogicFunctionExecutorException
-      ) {
-        throw error;
-      }
-
-      throw new ServerLogicFunctionExecutorException(
-        'Server logic function execution failed',
-        ServerLogicFunctionExecutorExceptionCode.PLATFORM_ERROR,
-      );
-    }
+    // Throttling, output-shape and timeout constraints are enforced by the
+    // underlying LogicFunctionExecutorService against the owner workspace —
+    // no special-casing here.
+    const result = await this.logicFunctionExecutorService.execute({
+      logicFunctionId: ownerLogicFunction.id,
+      workspaceId: registration.ownerWorkspaceId,
+      payload: executionPayload,
+    });
 
     if (isDefined(result.error)) {
-      return { kind: 'userError', errorMessage: result.error.errorMessage };
-    }
-
-    if (!isServerLogicFunctionResult(result.data)) {
-      throw new ServerLogicFunctionExecutorException(
-        'Server logic function must return { workspaceIds: string[]; response? }',
-        ServerLogicFunctionExecutorExceptionCode.INVALID_RETURN_SHAPE,
+      this.logger.warn(
+        `Server logic function ${serverFunction.id} returned user error: ${result.error.errorMessage}`,
       );
+
+      return { kind: 'userError', errorMessage: result.error.errorMessage };
     }
 
     return {
       kind: 'response',
-      workspaceIds: result.data.workspaceIds,
-      response: buildRouteTriggerResponse(result.data.response),
+      response: buildRouteTriggerResponse(result.data),
     };
-  }
-
-  private async throttle(applicationRegistrationId: string): Promise<void> {
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `${applicationRegistrationId}-server-logic-function-execution`,
-        1,
-        THROTTLE_LIMIT,
-        THROTTLE_TTL_MS,
-      );
-    } catch (error) {
-      // Only translate actual rate-limit errors. Cache outages and other
-      // platform failures must surface as PLATFORM_ERROR, not THROTTLED.
-      if (
-        error instanceof ThrottlerException &&
-        error.code === ThrottlerExceptionCode.LIMIT_REACHED
-      ) {
-        throw new ServerLogicFunctionExecutorException(
-          'Server logic function execution rate limit exceeded',
-          ServerLogicFunctionExecutorExceptionCode.THROTTLED,
-        );
-      }
-      throw error;
-    }
   }
 }

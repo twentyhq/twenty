@@ -17,6 +17,7 @@ import {
 } from './pageLayoutManifestType';
 import { type PermissionFlagManifest } from './permissionFlagManifestType';
 import { type RoleManifest } from './roleManifestType';
+import { type ServerLogicFunctionManifest } from './serverLogicFunctionManifestType';
 import { type SkillManifest } from './skillManifestType';
 import {
   type StandaloneViewFieldManifest,
@@ -29,6 +30,7 @@ export type Manifest = {
   fields: FieldManifest[];
   indexes?: IndexManifest[];
   logicFunctions: LogicFunctionManifest[];
+  serverLogicFunctions?: ServerLogicFunctionManifest[];
   frontComponents: FrontComponentManifest[];
   permissionFlags: PermissionFlagManifest[];
   roles: RoleManifest[];

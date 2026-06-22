@@ -40,6 +40,12 @@ export const normalizeManifestForComparison = <T extends Manifest>(
       builtHandlerChecksum: fn.builtHandlerChecksum ? '[checksum]' : null,
     })),
   ),
+  serverLogicFunctions: sortById(
+    (manifest.serverLogicFunctions ?? []).map((fn) => ({
+      ...fn,
+      builtHandlerChecksum: fn.builtHandlerChecksum ? '[checksum]' : null,
+    })),
+  ),
   frontComponents: sortById(
     manifest.frontComponents?.map((component) => ({
       ...component,

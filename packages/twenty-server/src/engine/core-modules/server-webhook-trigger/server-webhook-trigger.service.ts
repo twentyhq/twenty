@@ -70,9 +70,6 @@ const mapExecutorCodeToWebhookCode = (
     case ServerLogicFunctionExecutorExceptionCode.FEATURE_DISABLED:
     case ServerLogicFunctionExecutorExceptionCode.OWNER_WORKSPACE_NOT_SET:
     case ServerLogicFunctionExecutorExceptionCode.FUNCTION_DISABLED:
-    case ServerLogicFunctionExecutorExceptionCode.INVALID_RETURN_SHAPE:
-    case ServerLogicFunctionExecutorExceptionCode.THROTTLED:
-    case ServerLogicFunctionExecutorExceptionCode.PLATFORM_ERROR:
     default:
       return ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_PLATFORM_ERROR;
   }

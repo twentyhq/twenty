@@ -9,7 +9,6 @@ import { ServerCronTriggerCronCommand } from 'src/engine/core-modules/server-log
 import { ServerCronTriggerCronJob } from 'src/engine/core-modules/server-logic-function-executor/cron/server-cron-trigger.cron.job';
 import { ServerLogicFunctionExecutionJob } from 'src/engine/core-modules/server-logic-function-executor/cron/server-logic-function-execution.job';
 import { ServerLogicFunctionExecutorService } from 'src/engine/core-modules/server-logic-function-executor/server-logic-function-executor.service';
-import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 @Module({
@@ -21,7 +20,6 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
       LogicFunctionEntity,
     ]),
     LogicFunctionExecutorModule,
-    ThrottlerModule,
   ],
   providers: [
     ServerLogicFunctionExecutorService,

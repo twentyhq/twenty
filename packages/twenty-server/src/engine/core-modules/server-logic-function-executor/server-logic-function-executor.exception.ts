@@ -10,10 +10,7 @@ export enum ServerLogicFunctionExecutorExceptionCode {
   FUNCTION_DISABLED = 'FUNCTION_DISABLED',
   APP_NOT_INSTALLED_IN_OWNER_WORKSPACE = 'APP_NOT_INSTALLED_IN_OWNER_WORKSPACE',
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
-  INVALID_RETURN_SHAPE = 'INVALID_RETURN_SHAPE',
   USER_UNCAUGHT_ERROR = 'USER_UNCAUGHT_ERROR',
-  THROTTLED = 'THROTTLED',
-  PLATFORM_ERROR = 'PLATFORM_ERROR',
 }
 
 const getServerLogicFunctionExecutorExceptionUserFriendlyMessage = (
@@ -30,14 +27,8 @@ const getServerLogicFunctionExecutorExceptionUserFriendlyMessage = (
       return msg`Application is not installed in the owner workspace.`;
     case ServerLogicFunctionExecutorExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
       return msg`Server logic function not found.`;
-    case ServerLogicFunctionExecutorExceptionCode.INVALID_RETURN_SHAPE:
-      return msg`Server logic function returned an invalid shape.`;
     case ServerLogicFunctionExecutorExceptionCode.USER_UNCAUGHT_ERROR:
       return msg`Server logic function execution failed.`;
-    case ServerLogicFunctionExecutorExceptionCode.THROTTLED:
-      return msg`Server logic function execution rate limit exceeded.`;
-    case ServerLogicFunctionExecutorExceptionCode.PLATFORM_ERROR:
-      return msg`An unexpected error occurred while running the server logic function.`;
     default:
       assertUnreachable(code);
   }

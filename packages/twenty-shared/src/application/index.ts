@@ -71,7 +71,7 @@ export type {
 } from './roleManifestType';
 export type { RunAgentInput, RunAgentResult } from './runAgentType';
 export type { ServerVariables } from './server-variables.type';
-export type { ServerLogicFunctionResult } from './serverLogicFunctionResultType';
+export type { ServerLogicFunctionManifest } from './serverLogicFunctionManifestType';
 export type { ServerWebhookTriggerSettings } from './serverWebhookTriggerSettingsType';
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';

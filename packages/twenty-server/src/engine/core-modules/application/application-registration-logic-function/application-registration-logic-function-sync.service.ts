@@ -20,9 +20,7 @@ export class ApplicationRegistrationLogicFunctionSyncService {
     applicationRegistrationId: string;
     manifest: Manifest;
   }): Promise<void> {
-    const serverFunctions = (manifest.logicFunctions ?? []).filter(
-      (logicFunction) => logicFunction.scope === 'server',
-    );
+    const serverFunctions = manifest.serverLogicFunctions ?? [];
 
     // Clear `deletedAt` on upsert so re-adding a previously soft-deleted
     // function reactivates the existing row instead of leaving it deleted.

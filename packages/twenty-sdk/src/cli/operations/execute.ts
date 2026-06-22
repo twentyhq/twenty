@@ -32,7 +32,12 @@ const belongsToApplication = (
   logicFunction: LogicFunction,
   manifest: Manifest,
 ): boolean => {
-  return manifest.logicFunctions.some(
+  const allFunctions = [
+    ...manifest.logicFunctions,
+    ...(manifest.serverLogicFunctions ?? []),
+  ];
+
+  return allFunctions.some(
     (manifestFn) =>
       manifestFn.universalIdentifier === logicFunction.universalIdentifier,
   );
