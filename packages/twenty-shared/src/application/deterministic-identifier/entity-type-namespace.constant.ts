@@ -1,3 +1,28 @@
+export type DeterministicEntityType =
+  | 'object'
+  | 'field'
+  | 'selectOption'
+  | 'view'
+  | 'viewField'
+  | 'viewSort'
+  | 'viewGroup'
+  | 'viewFilter'
+  | 'index'
+  | 'pageLayout'
+  | 'pageLayoutTab'
+  | 'pageLayoutWidget'
+  | 'role'
+  | 'objectPermission'
+  | 'fieldPermission'
+  | 'permissionFlag'
+  | 'commandMenuItem'
+  | 'navigationMenuItem'
+  | 'frontComponent'
+  | 'logicFunction'
+  | 'agent'
+  | 'skill'
+  | 'connectionProvider';
+
 export const ENTITY_TYPE_NAMESPACE_BY_TYPE = {
   object: '5a40f2f8-560f-49e3-9f21-0c8ddfb5ce63',
   field: 'fd6c16a2-22c3-4846-be49-49fd3ea57740',
@@ -22,7 +47,4 @@ export const ENTITY_TYPE_NAMESPACE_BY_TYPE = {
   agent: '466d0f14-f119-4b8b-bd46-54e29cbe1ad8',
   skill: 'ba3a4b9e-aa36-4f79-8754-03012924222e',
   connectionProvider: '7dec282b-dee7-46a0-91da-6da9c4409e38',
-} as const satisfies Record<string, string>;
-
-export type DeterministicEntityType =
-  keyof typeof ENTITY_TYPE_NAMESPACE_BY_TYPE;
+} as const satisfies Record<DeterministicEntityType, string>;
