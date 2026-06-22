@@ -99,7 +99,7 @@ export const generateColumns = (
               onRowSelectionChange({
                 row: props.row,
                 checked: event.target.checked,
-                isShiftClick: (event.nativeEvent as MouseEvent).shiftKey,
+                isShiftClick: event.nativeEvent?.shiftKey ?? false,
               });
             }}
           />

@@ -21,7 +21,7 @@ const SelectFormatter = (props: SelectFormatterProps) => {
         onRowSelectionChange({
           row: props.row,
           checked: Boolean(event.target.checked),
-          isShiftClick: (event.nativeEvent as MouseEvent).shiftKey,
+          isShiftClick: event.nativeEvent?.shiftKey ?? false,
         });
       }}
     />
