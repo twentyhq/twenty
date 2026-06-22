@@ -1,0 +1,46 @@
+packages/twenty-server/src/modules/connected-account-sync-webhooks/handlers/microsoft-calendar-notification.handler.ts
+  s_b41d36b575c763::t_70aa6c02b340d2 46-50,52-54
+  s_b41d36b575c763::t_79f57fd6468e50 1-2
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhook.exception.ts
+  s_b41d36b575c763::t_66596a738f2ed8 20
+  s_b41d36b575c763::t_e4ee4a70cb9420 11
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.module.ts
+  s_b41d36b575c763::t_64d9574313c9b4 29
+  s_b41d36b575c763::t_eeed8cca368ccb 15
+packages/twenty-server/src/modules/connected-account-sync-webhooks/types/webhook-notification-handler.type.ts
+  s_b41d36b575c763::t_eeadaf6e590042 1-4,8-13
+  s_b41d36b575c763::t_11cb3bb3314fa9 15-17
+packages/twenty-server/src/modules/connected-account-sync-webhooks/handlers/microsoft-messaging-notification.handler.ts
+  s_b41d36b575c763::t_45d0371e7bf1a3 1-2
+  s_b41d36b575c763::t_2f0d1fec4964ac 46-50,52-54
+packages/twenty-server/src/modules/connected-account-sync-webhooks/handlers/google-messaging-notification.handler.ts
+  s_b41d36b575c763::t_6432e979e59d13 22
+packages/twenty-server/src/modules/connected-account-sync-webhooks/utils/get-connected-account-sync-webhook-exception-status-code.util.ts
+  s_b41d36b575c763::t_3815138ba2fc88 14
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.controller.ts
+  s_b41d36b575c763::t_2057b2845fd8d2 15-18,27,36,45-50,60-65,79-84,100-105
+packages/twenty-server/src/modules/connected-account-sync-webhooks/services/webhook-notification-handler-factory.service.ts
+  s_b41d36b575c763::t_c8dd16fc485cca 1-62
+packages/twenty-server/src/modules/connected-account-sync-webhooks/handlers/google-calendar-notification.handler.ts
+  s_b41d36b575c763::t_aafde4cb5ae644 1-2
+  s_b41d36b575c763::t_48b48edae58ded 50-54,57-58
+  s_b41d36b575c763::t_c322c5b67caf64 56
+packages/twenty-server/src/modules/connected-account-sync-webhooks/types/google-messaging-notification-request.type.ts
+  s_b41d36b575c763::t_9d388e727546e1 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "d6d0dd93a0df69d0d77fe64ffac2c2931f431bde",
+  "prompts": {},
+  "sessions": {
+    "s_b41d36b575c763": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b6d71fb-0935-4998-b4e1-1c5dff06f390",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
