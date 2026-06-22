@@ -14,9 +14,10 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
+import { useToolLabelMap } from '@/ai/hooks/useToolLabel';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import {
-  getToolDisplayMessage,
+  resolveToolDisplayMessage,
   resolveToolInput,
 } from '@/ai/utils/getToolDisplayMessage';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
@@ -268,8 +269,15 @@ const ThinkingToolStepRow = ({
     rawToolName,
   );
 
+  const labelMap = useToolLabelMap();
   const ToolIcon = getToolIcon(resolvedToolName);
-  const label = getToolDisplayMessage(part.input, rawToolName, !isActive);
+  const label = resolveToolDisplayMessage({
+    input: part.input,
+    toolName: rawToolName,
+    isFinished: !isActive,
+    labelMap,
+    output: part.output,
+  });
   const hasError = isDefined(part.errorText);
   const isExpandable = isDefined(part.output) || hasError;
 

@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet, jsonSchema } from 'ai';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -16,10 +17,7 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { wrapWithErrorHandler } from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import {
-  stripLoadingMessage,
-  wrapJsonSchemaForExecution,
-} from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
+import { stripLoadingMessage } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
@@ -108,30 +106,22 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options?: {
       wrapWithErrorContext?: boolean;
-      includeLoadingMessage?: boolean;
       compactOutput?: boolean;
     },
   ): ToolSet {
     const toolSet: ToolSet = {};
-    const includeLoadingMessage = options?.includeLoadingMessage ?? true;
     const compactOutput = options?.compactOutput ?? false;
 
     for (const descriptor of descriptors) {
-      const baseSchema = descriptor.inputSchema as Record<string, unknown>;
-      const schema = includeLoadingMessage
-        ? wrapJsonSchemaForExecution(baseSchema)
-        : baseSchema;
+      const schema = descriptor.inputSchema as Record<string, unknown>;
 
       const executeFn = async (
         args: Record<string, unknown>,
       ): Promise<ToolOutput> => {
-        const cleanArgs = includeLoadingMessage
-          ? stripLoadingMessage(args ?? {})
-          : (args ?? {});
 
         const result = await this.toolExecutorService.dispatch(
           descriptor,
-          cleanArgs,
+          args,
           context,
         );
 
@@ -155,13 +145,18 @@ export class ToolRegistryService {
   async buildToolIndex(
     workspaceId: string,
     roleId: string,
-    options?: { userId?: string; userWorkspaceId?: string },
+    options?: {
+      userId?: string;
+      userWorkspaceId?: string;
+      locale?: keyof typeof APP_LOCALES;
+    },
   ): Promise<ToolIndexEntry[]> {
     const context = this.buildContextFromToolContext({
       workspaceId,
       roleId,
       userId: options?.userId,
       userWorkspaceId: options?.userWorkspaceId,
+      locale: options?.locale,
     });
 
     return this.getCatalog(context);
@@ -171,7 +166,6 @@ export class ToolRegistryService {
     names: string[],
     context: ToolContext,
     options?: {
-      includeLoadingMessage?: boolean;
       compactOutput?: boolean;
     },
   ): Promise<ToolSet> {
@@ -195,7 +189,6 @@ export class ToolRegistryService {
       }));
 
     return this.hydrateToolSet(descriptors, fullContext, {
-      includeLoadingMessage: options?.includeLoadingMessage,
       compactOutput: options?.compactOutput,
     });
   }
@@ -205,7 +198,11 @@ export class ToolRegistryService {
     context: ToolContext,
     aspects: LearnToolsAspect[] = ['description', 'schema'],
   ): Promise<
-    Array<{ name: string; description?: string; inputSchema?: object }>
+    Array<{
+      name: string;
+      description?: string;
+      inputSchema?: object;
+    }>
   > {
     const fullContext = this.buildContextFromToolContext(context);
 
@@ -329,7 +326,6 @@ export class ToolRegistryService {
       categories,
       excludeTools,
       wrapWithErrorContext,
-      includeLoadingMessage,
       compactOutput,
     } = options;
     const categorySet = categories ? new Set(categories) : undefined;
@@ -364,7 +360,6 @@ export class ToolRegistryService {
 
     const toolSet = this.hydrateToolSet(filteredDescriptors, context, {
       wrapWithErrorContext,
-      includeLoadingMessage,
       compactOutput,
     });
 
@@ -390,6 +385,7 @@ export class ToolRegistryService {
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
       threadId: context.threadId,
+      locale: context.locale,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
     };
   }

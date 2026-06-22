@@ -3,14 +3,19 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { z } from 'zod';
 
+import { type ToolLabel } from '@/ai/hooks/useToolLabel';
 import { type ToolInput } from '@/ai/types/ToolInput';
+import { getToolOutputLabelEntries } from '@/ai/utils/getToolOutputLabelEntries';
 import { isDefined } from 'twenty-shared/utils';
 
 const DirectQuerySchema = z.object({ query: z.string() });
 const NestedQuerySchema = z.object({
   action: z.object({ query: z.string() }),
 });
-const CustomLoadingMessageSchema = z.object({ loadingMessage: z.string() });
+const ModelGeneratedLabelSchema = z.object({
+  loadingMessage: z.string(),
+  completedMessage: z.string(),
+});
 const ExecuteToolSchema = z.object({
   toolName: z.coerce.string(),
   arguments: z.unknown(),
@@ -34,12 +39,6 @@ const extractSearchQuery = (input: ToolInput): string => {
   return '';
 };
 
-const extractCustomLoadingMessage = (input: ToolInput): string | null => {
-  const parsed = CustomLoadingMessageSchema.safeParse(input);
-
-  return parsed.success ? parsed.data.loadingMessage : null;
-};
-
 export const resolveToolInput = (
   input: ToolInput,
   toolName: string,
@@ -60,75 +59,159 @@ export const resolveToolInput = (
   };
 };
 
-const extractLearnToolNames = (input: ToolInput): string => {
-  const parsed = LearnToolsSchema.safeParse(input);
+const pickByStatus = (
+  isFinished: boolean,
+  finished: string,
+  inProgress: string,
+): string => (isFinished ? finished : inProgress);
 
-  return parsed.success ? parsed.data.toolNames.join(', ') : '';
+type ToolCallContext = {
+  input: ToolInput;
+  toolName: string;
+  isFinished: boolean;
+  labelMap: Map<string, ToolLabel>;
+  output?: unknown;
 };
 
-const extractSkillNames = (input: ToolInput): string => {
-  const parsed = LoadSkillsSchema.safeParse(input);
+type ToolLabelResolver = (context: ToolCallContext) => string;
 
-  return parsed.success ? parsed.data.skillNames.join(', ') : '';
-};
-
-const formatToolName = (toolName: string): string => {
-  return toolName.replace(/_/g, ' ');
-};
-
-export const getToolDisplayMessage = (
-  input: ToolInput,
-  toolName: string,
-  isFinished?: boolean,
+const resolveName = (
+  name: string,
+  labelMap: Map<string, ToolLabel>,
+  output?: unknown,
 ): string => {
-  const { resolvedInput, resolvedToolName } = resolveToolInput(input, toolName);
+  const indexLabel = labelMap.get(name)?.label;
 
-  const byStatus = (finished: string, inProgress: string): string =>
-    isFinished ? finished : inProgress;
-
-  if (
-    resolvedToolName === 'web_search' ||
-    resolvedToolName === 'app_exa_web_search'
-  ) {
-    const query = extractSearchQuery(resolvedInput);
-
-    if (isNonEmptyString(query)) {
-      return byStatus(
-        t`Searched the web for ${query}`,
-        t`Searching the web for ${query}`,
-      );
-    }
-
-    return byStatus(t`Searched the web`, t`Searching the web`);
+  if (isDefined(indexLabel)) {
+    return indexLabel;
   }
 
-  if (resolvedToolName === 'learn_tools') {
-    const names = extractLearnToolNames(resolvedInput);
+  const outputEntry = getToolOutputLabelEntries(output).find(
+    (entry) => entry.name === name,
+  );
 
-    if (isNonEmptyString(names)) {
-      return byStatus(t`Learned ${names}`, t`Learning ${names}`);
-    }
+  return outputEntry?.label ?? name;
+};
 
-    return byStatus(t`Learned tools`, t`Learning tools...`);
+const toLabelList = (
+  names: string[],
+  labelMap: Map<string, ToolLabel>,
+  output?: unknown,
+): string => names.map((name) => resolveName(name, labelMap, output)).join(', ');
+
+const webSearchResolver: ToolLabelResolver = ({ input, isFinished }) => {
+  const query = extractSearchQuery(input);
+
+  if (isNonEmptyString(query)) {
+    return pickByStatus(
+      isFinished,
+      t`Searched the web for ${query}`,
+      t`Searching the web for ${query}`,
+    );
   }
 
-  if (resolvedToolName === 'load_skills') {
-    const names = extractSkillNames(resolvedInput);
+  return pickByStatus(isFinished, t`Searched the web`, t`Searching the web`);
+};
 
-    if (isNonEmptyString(names)) {
-      return byStatus(t`Loaded ${names}`, t`Loading ${names}`);
-    }
+const learnToolsResolver: ToolLabelResolver = ({
+  input,
+  isFinished,
+  labelMap,
+  output,
+}) => {
+  const parsed = LearnToolsSchema.safeParse(input);
+  const names = parsed.success
+    ? toLabelList(parsed.data.toolNames, labelMap, output)
+    : '';
 
-    return byStatus(t`Loaded skills`, t`Loading skills...`);
+  if (isNonEmptyString(names)) {
+    return pickByStatus(isFinished, t`Learned ${names}`, t`Learning ${names}`);
   }
 
-  const customMessage = extractCustomLoadingMessage(resolvedInput);
+  return pickByStatus(isFinished, t`Learned tools`, t`Learning tools...`);
+};
 
-  if (isDefined(customMessage)) {
-    return customMessage;
+const loadSkillsResolver: ToolLabelResolver = ({
+  input,
+  isFinished,
+  labelMap,
+  output,
+}) => {
+  const parsed = LoadSkillsSchema.safeParse(input);
+  const names = parsed.success
+    ? toLabelList(parsed.data.skillNames, labelMap, output)
+    : '';
+
+  if (isNonEmptyString(names)) {
+    return pickByStatus(isFinished, t`Loaded ${names}`, t`Loading ${names}`);
   }
 
-  const formattedName = formatToolName(resolvedToolName);
+  return pickByStatus(isFinished, t`Loaded skills`, t`Loading skills...`);
+};
 
-  return byStatus(t`Ran ${formattedName}`, t`Running ${formattedName}`);
+const defaultResolver: ToolLabelResolver = ({
+  toolName,
+  isFinished,
+  labelMap,
+}) => {
+  const labels = labelMap.get(toolName);
+  const displayName = labels?.label ?? toolName;
+
+  return pickByStatus(
+    isFinished,
+    labels?.completedLabel ?? t`Ran ${displayName}`,
+    labels?.inProgressLabel ?? t`Running ${displayName}`,
+  );
+};
+
+const modelGeneratedLabelResolver: ToolLabelResolver = ({
+  input,
+  isFinished,
+}) => {
+  const parsed = ModelGeneratedLabelSchema.safeParse(input);
+
+  if (parsed.success) {
+    return pickByStatus(
+      isFinished,
+      parsed.data.completedMessage ?? parsed.data.loadingMessage,
+      parsed.data.loadingMessage,
+    );
+  }
+
+  return pickByStatus(
+    isFinished,
+    t`Ran code`,
+    t`Running code`,
+  );
+};
+
+const executeToolResolver: ToolLabelResolver = (context) => {
+  const parsed = ExecuteToolSchema.safeParse(context.input);
+
+  if (!parsed.success) {
+    return defaultResolver(context);
+  }
+
+  return resolveToolDisplayMessage({
+    ...context,
+    input: parsed.data.arguments as ToolInput,
+    toolName: parsed.data.toolName,
+  });
+};
+
+const TOOL_LABEL_RESOLVERS: Record<string, ToolLabelResolver> = {
+  execute_tool: executeToolResolver,
+  web_search: webSearchResolver,
+  app_exa_web_search: webSearchResolver,
+  learn_tools: learnToolsResolver,
+  load_skills: loadSkillsResolver,
+  code_interpreter: modelGeneratedLabelResolver,
+};
+
+export const resolveToolDisplayMessage = (
+  context: ToolCallContext,
+): string => {
+  const resolver = TOOL_LABEL_RESOLVERS[context.toolName] ?? defaultResolver;
+
+  return resolver(context);
 };

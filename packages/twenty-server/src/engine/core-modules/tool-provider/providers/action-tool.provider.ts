@@ -3,9 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
+import { ACTION_TOOL_LABELS } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.const';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { translateToolLabel } from 'src/engine/core-modules/tool-provider/utils/translate-tool-label.util';
 
 import { ToolCategory } from 'twenty-shared/ai';
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
@@ -37,6 +40,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly navigateAppTool: NavigateAppTool,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly permissionsService: PermissionsService,
+    private readonly i18nService: I18nService,
   ) {
     this.toolMap = new Map<string, Tool>([
       ['http_request', this.httpTool],
@@ -67,7 +71,12 @@ export class ActionToolProvider implements ToolProvider {
 
     if (hasHttpPermission) {
       descriptors.push(
-        this.buildDescriptor('http_request', this.httpTool, includeSchemas),
+        this.buildDescriptor(
+          'http_request',
+          this.httpTool,
+          includeSchemas,
+          context.locale,
+        ),
       );
     }
 
@@ -79,13 +88,19 @@ export class ActionToolProvider implements ToolProvider {
 
     if (hasEmailPermission) {
       descriptors.push(
-        this.buildDescriptor('send_email', this.sendEmailTool, includeSchemas),
+        this.buildDescriptor(
+          'send_email',
+          this.sendEmailTool,
+          includeSchemas,
+          context.locale,
+        ),
       );
       descriptors.push(
         this.buildDescriptor(
           'draft_email',
           this.draftEmailTool,
           includeSchemas,
+          context.locale,
         ),
       );
     }
@@ -95,6 +110,7 @@ export class ActionToolProvider implements ToolProvider {
         'search_help_center',
         this.searchHelpCenterTool,
         includeSchemas,
+        context.locale,
       ),
     );
 
@@ -103,6 +119,7 @@ export class ActionToolProvider implements ToolProvider {
         'navigate_app',
         this.navigateAppTool,
         includeSchemas,
+        context.locale,
       ),
     );
 
@@ -120,6 +137,7 @@ export class ActionToolProvider implements ToolProvider {
           'code_interpreter',
           this.codeInterpreterTool,
           includeSchemas,
+          context.locale,
         ),
       );
     }
@@ -153,9 +171,29 @@ export class ActionToolProvider implements ToolProvider {
     toolId: string,
     tool: Tool,
     includeSchemas: boolean,
+    locale?: ToolProviderContext['locale'],
   ): ToolIndexEntry | ToolDescriptor {
+    const labels = ACTION_TOOL_LABELS[toolId];
+
     return {
       name: toolId,
+      label: labels
+        ? translateToolLabel(labels.label, this.i18nService, locale)
+        : toolId,
+      ...(labels?.inProgressLabel && {
+        inProgressLabel: translateToolLabel(
+          labels.inProgressLabel,
+          this.i18nService,
+          locale,
+        ),
+      }),
+      ...(labels?.completedLabel && {
+        completedLabel: translateToolLabel(
+          labels.completedLabel,
+          this.i18nService,
+          locale,
+        ),
+      }),
       description: tool.description,
       category: ToolCategory.ACTION,
       icon: 'IconPlayerPlay',

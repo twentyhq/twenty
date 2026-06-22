@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { type AiToolCallLog } from 'twenty-shared/workflow';
 
-import { getToolDisplayMessage } from '@/ai/utils/getToolDisplayMessage';
+import { useToolLabelMap } from '@/ai/hooks/useToolLabel';
+import { resolveToolDisplayMessage } from '@/ai/utils/getToolDisplayMessage';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { useLingui } from '@lingui/react/macro';
 import { type JsonValue } from 'type-fest';
@@ -160,11 +161,14 @@ export const WorkflowRunStepLogsToolCallRow = ({
     ? themeCssVariables.color.red
     : themeCssVariables.color.green;
 
-  const displayMessage = getToolDisplayMessage(
-    toolCall.input ?? {},
-    toolCall.toolName,
-    true,
-  );
+  const labelMap = useToolLabelMap();
+  const displayMessage = resolveToolDisplayMessage({
+    input: toolCall.input ?? {},
+    toolName: toolCall.toolName,
+    isFinished: true,
+    labelMap,
+    output: toolCall.output,
+  });
 
   return (
     <StyledContainer>

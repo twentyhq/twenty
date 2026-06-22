@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Field, ObjectType, Query } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -10,6 +11,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -18,6 +20,15 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 export class ToolIndexEntryDTO {
   @Field()
   name: string;
+
+  @Field()
+  label: string;
+
+  @Field({ nullable: true })
+  inProgressLabel?: string;
+
+  @Field({ nullable: true })
+  completedLabel?: string;
 
   @Field()
   description: string;
@@ -49,6 +60,7 @@ export class ToolIndexResolver {
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<ToolIndexEntryDTO[]> {
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       userWorkspaceId,
@@ -62,6 +74,7 @@ export class ToolIndexResolver {
     return this.toolRegistryService.buildToolIndex(workspace.id, roleId, {
       userId: user?.id,
       userWorkspaceId,
+      locale,
     });
   }
 

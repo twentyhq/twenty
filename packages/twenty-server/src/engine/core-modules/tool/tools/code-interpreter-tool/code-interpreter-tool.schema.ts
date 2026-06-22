@@ -13,4 +13,14 @@ export const CodeInterpreterInputZodSchema = z.object({
     )
     .optional()
     .describe('Files to make available in the execution environment'),
+  loadingMessage: z
+    .string()
+    .describe(
+      "A brief, present-tense status message shown to the user while the code runs (e.g., 'Analyzing sales data').",
+    ),
+  completedMessage: z
+    .string()
+    .describe(
+      "A brief, past-tense status message shown to the user after the code finishes (e.g., 'Analyzed sales data'). No exclamation marks. Don't be optimistic, stay neutral on completion state. Falls back to the loading message when omitted.",
+    ),
 });

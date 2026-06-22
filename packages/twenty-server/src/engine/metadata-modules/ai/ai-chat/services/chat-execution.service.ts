@@ -13,6 +13,7 @@ import {
   type UIMessage,
   type UITools,
 } from 'ai';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
@@ -125,6 +126,8 @@ export class ChatExecutionService {
         workspace.id,
       );
 
+    const locale = userContext.locale as keyof typeof APP_LOCALES;
+
     const toolContext = {
       workspaceId: workspace.id,
       roleId,
@@ -132,13 +135,14 @@ export class ChatExecutionService {
       userId,
       userWorkspaceId,
       threadId,
+      locale,
       onCodeExecutionUpdate,
     };
 
     const toolCatalog = await this.toolRegistry.buildToolIndex(
       workspace.id,
       roleId,
-      { userId, userWorkspaceId },
+      { userId, userWorkspaceId, locale },
     );
 
     const skillCatalog = await this.skillService.findAllFlatSkills(
