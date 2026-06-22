@@ -1,5 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
+import { jsonSchemaToInputSchema } from 'src/logic-functions/utils/json-schema-to-input-schema';
 
 import { FIREFLIES_LIST_CALLS_BY_PARTICIPANT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { firefliesListCallsByParticipantHandler } from 'src/logic-functions/handlers/fireflies-list-calls-by-participant-handler';
