@@ -4,16 +4,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildSearchFieldMetadataBackfillOperations } from 'src/database/commands/upgrade-version-command/2-15/utils/build-search-field-metadata-backfill-operations.util';
+import { buildSearchFieldMetadataBackfillOperations } from 'src/database/commands/upgrade-version-command/2-16/utils/build-search-field-metadata-backfill-operations.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.15.0', 1799100000000)
+@RegisteredWorkspaceCommand('2.16.0', 1799100000000)
 @Command({
-  name: 'upgrade:2-15:backfill-search-field-metadata',
+  name: 'upgrade:2-16:backfill-search-field-metadata',
   description:
     'Backfill searchFieldMetadata rows for each searchable object. Standard objects mirror their SEARCH_FIELDS_FOR_* set; custom objects get their label-identifier field. Idempotent: existing rows are skipped.',
 })
