@@ -16,6 +16,64 @@ export const escapeIdentifier = (identifier: string): string => {
   return '"' + identifier.replace(/"/g, '""') + '"';
 };
 
+const FORBIDDEN_TS_VECTOR_EXPRESSION_TOKENS = ['\0', ';', '--', '/*', '*/'];
+
+const hasBalancedParentheses = (expression: string): boolean => {
+  let depth = 0;
+  let isInsideStringLiteral = false;
+
+  for (let index = 0; index < expression.length; index++) {
+    const character = expression[index];
+
+    if (isInsideStringLiteral) {
+      if (character === "'") {
+        if (expression[index + 1] === "'") {
+          index++;
+        } else {
+          isInsideStringLiteral = false;
+        }
+      }
+      continue;
+    }
+
+    if (character === "'") {
+      isInsideStringLiteral = true;
+    } else if (character === '(') {
+      depth++;
+    } else if (character === ')') {
+      depth--;
+
+      if (depth < 0) {
+        return false;
+      }
+    }
+  }
+
+  return depth === 0 && !isInsideStringLiteral;
+};
+
+// Returns true when a tsvector expression is safe to inline into generated-column DDL.
+// Intentionally exposes a boolean only: the specific failure reason is never surfaced, so a
+// caller cannot use the error as an oracle to probe the filter. Callers use this for validation;
+// the DDL sink uses assertSafeTsVectorExpression below as a hard last-resort guard.
+export const isSafeTsVectorExpression = (expression: string): boolean => {
+  const hasForbiddenToken = FORBIDDEN_TS_VECTOR_EXPRESSION_TOKENS.some(
+    (token) => expression.includes(token),
+  );
+
+  if (hasForbiddenToken) {
+    return false;
+  }
+
+  return hasBalancedParentheses(expression);
+};
+
+export const assertSafeTsVectorExpression = (expression: string): void => {
+  if (!isSafeTsVectorExpression(expression)) {
+    throw new Error('Unsafe tsvector expression detected');
+  }
+};
+
 // PostgreSQL standard literal quoting: wraps in single quotes and
 // doubles any internal single-quote characters. Prefixes with E when
 // backslashes are present (standard_conforming_strings safety).

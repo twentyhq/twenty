@@ -1,6 +1,8 @@
 import {
+  assertSafeTsVectorExpression,
   escapeIdentifier,
   escapeLiteral,
+  isSafeTsVectorExpression,
   removeSqlDDLInjection,
 } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -84,5 +86,77 @@ describe('escapeLiteral', () => {
 
   it('should handle double quotes without modification', () => {
     expect(escapeLiteral('test"value')).toBe("'test\"value'");
+  });
+});
+
+describe('assertSafeTsVectorExpression', () => {
+  it('should accept a real server-generated tsvector expression', () => {
+    const generated = `to_tsvector('simple', COALESCE(public.unaccent_immutable("name"), '') || ' ' || COALESCE("emailsPrimaryEmail"::text, ''))`;
+
+    expect(() => assertSafeTsVectorExpression(generated)).not.toThrow();
+  });
+
+  it('should reject expressions containing a statement terminator', () => {
+    expect(() =>
+      assertSafeTsVectorExpression(
+        `to_tsvector('simple', coalesce("name", ''))) STORED; CREATE TABLE core."x" (a text); --`,
+      ),
+    ).toThrow('Unsafe tsvector expression detected');
+  });
+
+  it('should reject expressions containing a line comment', () => {
+    expect(() =>
+      assertSafeTsVectorExpression(`to_tsvector('simple', '') -- comment`),
+    ).toThrow('Unsafe tsvector expression detected');
+  });
+
+  it('should reject expressions containing a block comment', () => {
+    expect(() =>
+      assertSafeTsVectorExpression(`to_tsvector('simple', '') /* comment */`),
+    ).toThrow('Unsafe tsvector expression detected');
+  });
+
+  it('should reject null bytes', () => {
+    expect(() =>
+      assertSafeTsVectorExpression(`to_tsvector('simple', '\0')`),
+    ).toThrow('Unsafe tsvector expression detected');
+  });
+
+  it('should reject a parenthesis-balanced clause-injection that uses no forbidden token', () => {
+    // Closes the wrapping AS( early and injects a sibling ADD COLUMN clause - no ";" or comment.
+    expect(() =>
+      assertSafeTsVectorExpression(
+        `to_tsvector('simple', coalesce("x",''))) STORED, ADD COLUMN "evil" text GENERATED ALWAYS AS (to_tsvector('simple', '')`,
+      ),
+    ).toThrow('Unsafe tsvector expression detected');
+  });
+});
+
+describe('isSafeTsVectorExpression', () => {
+  it('should return true for a safe generated expression', () => {
+    expect(
+      isSafeTsVectorExpression(
+        `to_tsvector('simple', COALESCE(public.unaccent_immutable("name"), ''))`,
+      ),
+    ).toBe(true);
+  });
+
+  it('should accept balanced parentheses that appear inside string literals', () => {
+    expect(
+      isSafeTsVectorExpression(
+        `to_tsvector('simple', regexp_replace("x"::text, '"(a|b)"\\s*:\\s*', '', 'g'))`,
+      ),
+    ).toBe(true);
+    expect(isSafeTsVectorExpression(`COALESCE("x", ')')`)).toBe(true);
+  });
+
+  it('should reject expressions with a forbidden token', () => {
+    expect(isSafeTsVectorExpression(`to_tsvector('simple', '') ; DROP`)).toBe(
+      false,
+    );
+  });
+
+  it('should reject expressions with unbalanced parentheses', () => {
+    expect(isSafeTsVectorExpression(`coalesce("x", '')) STORED`)).toBe(false);
   });
 });
