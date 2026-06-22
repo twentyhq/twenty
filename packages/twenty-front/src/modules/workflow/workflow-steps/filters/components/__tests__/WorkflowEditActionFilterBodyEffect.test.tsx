@@ -52,7 +52,7 @@ const renderBodyEffect = (
 ) => {
   const captured: Captured = {} as Captured;
 
-  const Probe = () => {
+  const ProbeEffect = () => {
     captured.filters = useAtomComponentStateValue(
       currentStepFiltersComponentState,
     );
@@ -77,7 +77,7 @@ const renderBodyEffect = (
     <StepFiltersComponentInstanceContext.Provider value={{ instanceId }}>
       <StepFilterGroupsComponentInstanceContext.Provider value={{ instanceId }}>
         <WorkflowEditActionFilterBodyEffect defaultValue={value} />
-        <Probe />
+        <ProbeEffect />
       </StepFilterGroupsComponentInstanceContext.Provider>
     </StepFiltersComponentInstanceContext.Provider>
   );
