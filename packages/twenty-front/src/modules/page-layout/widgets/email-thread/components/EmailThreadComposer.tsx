@@ -90,7 +90,12 @@ export const EmailThreadComposer = ({
         disabled: !composerState.canSend,
       },
     ];
-  }, [isComposerOpen, composerState, setIsComposerOpen]);
+  }, [
+    isComposerOpen,
+    composerState.handleSend,
+    composerState.canSend,
+    setIsComposerOpen,
+  ]);
 
   useEffect(() => {
     if (!isInSidePanel) {
