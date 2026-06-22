@@ -66,7 +66,14 @@ export const computeSearchFieldMetadataCreationForFields = ({
       universalIdentifier: objectMetadataUniversalIdentifier,
     });
 
-    if (!isDefined(flatObjectMetadata) || !flatObjectMetadata.isSearchable) {
+    if (!isDefined(flatObjectMetadata)) {
+      throw new ObjectMetadataException(
+        `Object metadata not found for universal identifier ${objectMetadataUniversalIdentifier}`,
+        ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
+    if (!flatObjectMetadata.isSearchable) {
       continue;
     }
 
