@@ -1985,6 +1985,7 @@ export interface WorkspaceUrlsAndId {
 export interface SignUp {
     loginToken: AuthToken
     workspace: WorkspaceUrlsAndId
+    isEmailVerificationRequired: Scalars['Boolean']
     __typename: 'SignUp'
 }
 
@@ -5084,6 +5085,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
 export interface SignUpGenqlSelection{
     loginToken?: AuthTokenGenqlSelection
     workspace?: WorkspaceUrlsAndIdGenqlSelection
+    isEmailVerificationRequired?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

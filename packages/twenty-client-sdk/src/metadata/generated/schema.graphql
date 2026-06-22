@@ -2332,6 +2332,7 @@ type WorkspaceUrlsAndId {
 type SignUp {
   loginToken: AuthToken!
   workspace: WorkspaceUrlsAndId!
+  isEmailVerificationRequired: Boolean!
 }
 
 type TransientToken {

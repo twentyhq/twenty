@@ -4557,6 +4557,9 @@ export default {
             "workspace": [
                 249
             ],
+            "isEmailVerificationRequired": [
+                6
+            ],
             "__typename": [
                 1
             ]
