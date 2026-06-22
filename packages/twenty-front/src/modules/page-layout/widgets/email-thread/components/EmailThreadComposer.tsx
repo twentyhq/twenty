@@ -56,38 +56,39 @@ export const EmailThreadComposer = ({
 
   const { handleSend, canSend } = composerState;
 
-  const footerCommandMenuItems = useMemo((): SidePanelFooterCommandMenuItem[] => {
-    if (!isComposerOpen) {
+  const footerCommandMenuItems =
+    useMemo((): SidePanelFooterCommandMenuItem[] => {
+      if (!isComposerOpen) {
+        return [
+          {
+            id: 'reply',
+            label: t`Reply`,
+            Icon: IconArrowBackUp,
+            isPrimaryCTA: true,
+            onClick: () => setIsComposerOpen(true),
+          },
+        ];
+      }
+
       return [
         {
-          id: 'reply',
-          label: t`Reply`,
-          Icon: IconArrowBackUp,
+          id: 'cancel-reply',
+          label: t`Cancel reply`,
+          Icon: IconX,
+          isPinned: false,
+          onClick: () => setIsComposerOpen(false),
+        },
+        {
+          id: 'send',
+          label: t`Send`,
+          Icon: IconSend,
           isPrimaryCTA: true,
-          onClick: () => setIsComposerOpen(true),
+          hotkeys: [getOsControlSymbol(), '⏎'],
+          onClick: handleSend,
+          disabled: !canSend,
         },
       ];
-    }
-
-    return [
-      {
-        id: 'cancel-reply',
-        label: t`Cancel reply`,
-        Icon: IconX,
-        isPinned: false,
-        onClick: () => setIsComposerOpen(false),
-      },
-      {
-        id: 'send',
-        label: t`Send`,
-        Icon: IconSend,
-        isPrimaryCTA: true,
-        hotkeys: [getOsControlSymbol(), '⏎'],
-        onClick: handleSend,
-        disabled: !canSend,
-      },
-    ];
-  }, [isComposerOpen, handleSend, canSend, setIsComposerOpen]);
+    }, [isComposerOpen, handleSend, canSend, setIsComposerOpen]);
 
   const handleSendHotkey = useCallback(() => {
     if (isComposerOpen && canSend) {
