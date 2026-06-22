@@ -19,33 +19,117 @@ export const TIMELINE_ACTIVITY_PRESENTERS: Record<
   TimelineActivityPresenter
 > = {
   recordChange: {
-    renderRow: (props) => <EventRowMainObject {...props} />,
+    renderRow: ({
+      labelIdentifierValue,
+      event,
+      mainObjectMetadataItem,
+      linkedObjectMetadataItem,
+      authorFullName,
+      createdAt,
+    }) => (
+      <EventRowMainObject
+        labelIdentifierValue={labelIdentifierValue}
+        event={event}
+        mainObjectMetadataItem={mainObjectMetadataItem}
+        linkedObjectMetadataItem={linkedObjectMetadataItem}
+        authorFullName={authorFullName}
+        createdAt={createdAt}
+      />
+    ),
   },
   linkedMessage: {
-    renderRow: (props) => <EventRowMessage {...props} />,
+    renderRow: ({
+      labelIdentifierValue,
+      event,
+      mainObjectMetadataItem,
+      linkedObjectMetadataItem,
+      authorFullName,
+    }) => (
+      <EventRowMessage
+        labelIdentifierValue={labelIdentifierValue}
+        event={event}
+        mainObjectMetadataItem={mainObjectMetadataItem}
+        linkedObjectMetadataItem={linkedObjectMetadataItem}
+        authorFullName={authorFullName}
+      />
+    ),
   },
   linkedCalendarEvent: {
-    renderRow: (props) => <EventRowCalendarEvent {...props} />,
+    renderRow: ({
+      labelIdentifierValue,
+      event,
+      mainObjectMetadataItem,
+      linkedObjectMetadataItem,
+      authorFullName,
+    }) => (
+      <EventRowCalendarEvent
+        labelIdentifierValue={labelIdentifierValue}
+        event={event}
+        mainObjectMetadataItem={mainObjectMetadataItem}
+        linkedObjectMetadataItem={linkedObjectMetadataItem}
+        authorFullName={authorFullName}
+      />
+    ),
   },
   linkedNote: {
-    renderRow: (props) => (
+    renderRow: ({
+      labelIdentifierValue,
+      event,
+      mainObjectMetadataItem,
+      linkedObjectMetadataItem,
+      authorFullName,
+      createdAt,
+    }) => (
       <EventRowActivity
-        {...props}
+        labelIdentifierValue={labelIdentifierValue}
+        event={event}
+        mainObjectMetadataItem={mainObjectMetadataItem}
+        linkedObjectMetadataItem={linkedObjectMetadataItem}
+        authorFullName={authorFullName}
+        createdAt={createdAt}
         objectNameSingular={CoreObjectNameSingular.Note}
       />
     ),
     needsLinkedRecordTitle: true,
   },
   linkedTask: {
-    renderRow: (props) => (
+    renderRow: ({
+      labelIdentifierValue,
+      event,
+      mainObjectMetadataItem,
+      linkedObjectMetadataItem,
+      authorFullName,
+      createdAt,
+    }) => (
       <EventRowActivity
-        {...props}
+        labelIdentifierValue={labelIdentifierValue}
+        event={event}
+        mainObjectMetadataItem={mainObjectMetadataItem}
+        linkedObjectMetadataItem={linkedObjectMetadataItem}
+        authorFullName={authorFullName}
+        createdAt={createdAt}
         objectNameSingular={CoreObjectNameSingular.Task}
       />
     ),
     needsLinkedRecordTitle: true,
   },
   linkedRecord: {
-    renderRow: (props) => <EventRowGenericLinked {...props} />,
+    renderRow: ({
+      labelIdentifierValue,
+      event,
+      mainObjectMetadataItem,
+      linkedObjectMetadataItem,
+      authorFullName,
+      createdAt,
+    }) => (
+      <EventRowGenericLinked
+        labelIdentifierValue={labelIdentifierValue}
+        event={event}
+        mainObjectMetadataItem={mainObjectMetadataItem}
+        linkedObjectMetadataItem={linkedObjectMetadataItem}
+        authorFullName={authorFullName}
+        createdAt={createdAt}
+      />
+    ),
   },
 };

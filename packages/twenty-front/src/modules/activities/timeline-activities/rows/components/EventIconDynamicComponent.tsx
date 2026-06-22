@@ -13,13 +13,14 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 
-const RECORD_CHANGE_ICONS: Partial<Record<TimelineActivityAction, IconComponent>> =
-  {
-    created: IconCirclePlus,
-    updated: IconEditCircle,
-    deleted: IconTrash,
-    restored: IconRestore,
-  };
+const RECORD_CHANGE_ICONS: Partial<
+  Record<TimelineActivityAction, IconComponent>
+> = {
+  created: IconCirclePlus,
+  updated: IconEditCircle,
+  deleted: IconTrash,
+  restored: IconRestore,
+};
 
 export const EventIconDynamicComponent = ({
   event,

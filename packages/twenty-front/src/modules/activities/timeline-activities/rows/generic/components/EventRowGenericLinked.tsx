@@ -41,12 +41,14 @@ const StyledItemTitleDate = styled.div`
   padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
+type EventRowGenericLinkedProps = EventRowDynamicComponentProps;
+
 export const EventRowGenericLinked = ({
   event,
   authorFullName,
   linkedObjectMetadataItem,
   createdAt,
-}: EventRowDynamicComponentProps) => {
+}: EventRowGenericLinkedProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const objectLabel =
