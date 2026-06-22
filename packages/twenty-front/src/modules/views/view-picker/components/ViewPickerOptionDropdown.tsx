@@ -83,7 +83,7 @@ export const ViewPickerOptionDropdown = ({
     closeDropdown(dropdownId);
   };
 
-  const handleFavorite = () => {
+  const handleToggleFavorite = () => {
     if (!isFavorite) {
       const relevantItems = navigationMenuItems.filter(
         (item) => !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
@@ -133,39 +133,28 @@ export const ViewPickerOptionDropdown = ({
         dropdownContent={
           <DropdownContent>
             <DropdownMenuItemsContainer>
-              {isIndexView ? (
-                <MenuItem
-                  LeftIcon={isFavorite ? IconHeartOff : IconHeart}
-                  text={isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
-                  onClick={handleFavorite}
-                />
-              ) : (
+              <MenuItem
+                LeftIcon={isFavorite ? IconHeartOff : IconHeart}
+                text={isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
+                onClick={handleToggleFavorite}
+              />
+              {!isIndexView && canEditView && (
                 <>
                   <MenuItem
-                    LeftIcon={isFavorite ? IconHeartOff : IconHeart}
-                    text={isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
-                    onClick={handleFavorite}
+                    LeftIcon={IconPencil}
+                    text={t`Edit`}
+                    onClick={(event) => {
+                      onEdit(event, view.id);
+                      closeDropdown(dropdownId);
+                    }}
                   />
-
-                  {canEditView && (
-                    <>
-                      <MenuItem
-                        LeftIcon={IconPencil}
-                        text={t`Edit`}
-                        onClick={(event) => {
-                          onEdit(event, view.id);
-                          closeDropdown(dropdownId);
-                        }}
-                      />
-                      {!isLastView && (
-                        <MenuItem
-                          LeftIcon={IconTrash}
-                          text={t`Delete`}
-                          onClick={handleDelete}
-                          accent="danger"
-                        />
-                      )}
-                    </>
+                  {!isLastView && (
+                    <MenuItem
+                      LeftIcon={IconTrash}
+                      text={t`Delete`}
+                      onClick={handleDelete}
+                      accent="danger"
+                    />
                   )}
                 </>
               )}
