@@ -17,6 +17,7 @@ import {
 } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCalendar } from 'twenty-ui/icon';
@@ -63,7 +64,7 @@ const StyledIconContainer = styled.div`
 `;
 
 const StyledFloatingContainer = styled.div`
-  z-index: 1000;
+  z-index: ${RootStackingContextZIndices.DropdownPortalBelowModal};
 `;
 
 export type SettingsDatePickerInputProps = {
