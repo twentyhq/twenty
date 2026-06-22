@@ -1,5 +1,6 @@
 import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
@@ -306,8 +307,9 @@ describe('companies merge resolvers (integration)', () => {
         ],
       });
 
-      const createPeopleResponse =
-        await makeGraphqlAPIRequest(createPeopleOperation);
+      const createPeopleResponse = await makeGraphqlAPIRequest(
+        createPeopleOperation,
+      );
 
       const relatedPerson = createPeopleResponse.body.data.createPeople[0];
 
@@ -361,6 +363,126 @@ describe('companies merge resolvers (integration)', () => {
 
       // duplicate was deleted in the same transaction as the migration
       expect(findDuplicateResponse.body.data.company).toBeNull();
+    });
+
+    // A merge can collapse more than two records at once. Children of every
+    // duplicate must be re-parented onto the survivor, while children that
+    // already belong to the survivor stay put.
+    it('should re-parent children from every duplicate onto the survivor', async () => {
+      const createCompaniesOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: COMPANY_GQL_FIELDS,
+        data: [
+          { name: 'Survivor Multi' },
+          { name: 'Duplicate One' },
+          { name: 'Duplicate Two' },
+        ],
+      });
+
+      const createCompaniesResponse = await makeGraphqlAPIRequest(
+        createCompaniesOperation,
+      );
+
+      const survivorCompanyId =
+        createCompaniesResponse.body.data.createCompanies[0].id;
+      const duplicateOneId =
+        createCompaniesResponse.body.data.createCompanies[1].id;
+      const duplicateTwoId =
+        createCompaniesResponse.body.data.createCompanies[2].id;
+
+      createdCompanyIds.push(survivorCompanyId, duplicateOneId, duplicateTwoId);
+
+      const createPeopleOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: `
+          id
+          company {
+            id
+          }
+        `,
+        data: [
+          {
+            name: { firstName: 'Already', lastName: 'OnSurvivor' },
+            companyId: survivorCompanyId,
+          },
+          {
+            name: { firstName: 'Child', lastName: 'OfDuplicateOne' },
+            companyId: duplicateOneId,
+          },
+          {
+            name: { firstName: 'Child', lastName: 'OfDuplicateTwo' },
+            companyId: duplicateTwoId,
+          },
+        ],
+      });
+
+      const createPeopleResponse = await makeGraphqlAPIRequest(
+        createPeopleOperation,
+      );
+
+      const createdPeopleIds = createPeopleResponse.body.data.createPeople.map(
+        (person: { id: string }) => person.id,
+      );
+
+      createdPersonIds.push(...createdPeopleIds);
+
+      const mergeOperation = mergeManyOperationFactory({
+        objectMetadataPluralName: 'companies',
+        gqlFields: COMPANY_GQL_FIELDS,
+        ids: [survivorCompanyId, duplicateOneId, duplicateTwoId],
+        conflictPriorityIndex: 0,
+      });
+
+      const mergeResponse = await makeGraphqlAPIRequest(mergeOperation);
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+      expect(mergeResponse.body.data.mergeCompanies.id).toBe(survivorCompanyId);
+
+      const findPeopleOperation = findManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: `
+          id
+          company {
+            id
+          }
+        `,
+        filter: { id: { in: createdPeopleIds } },
+      });
+
+      const findPeopleResponse =
+        await makeGraphqlAPIRequest(findPeopleOperation);
+
+      const peopleAfterMerge = findPeopleResponse.body.data.people.edges;
+
+      expect(peopleAfterMerge).toHaveLength(3);
+      peopleAfterMerge.forEach(
+        (edge: { node: { company: { id: string } } }) => {
+          expect(edge.node.company.id).toBe(survivorCompanyId);
+        },
+      );
+
+      const findCompaniesOperation = findManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: `id`,
+        filter: {
+          id: { in: [survivorCompanyId, duplicateOneId, duplicateTwoId] },
+        },
+      });
+
+      const findCompaniesResponse = await makeGraphqlAPIRequest(
+        findCompaniesOperation,
+      );
+
+      const remainingCompanyIds =
+        findCompaniesResponse.body.data.companies.edges.map(
+          (edge: { node: { id: string } }) => edge.node.id,
+        );
+
+      expect(remainingCompanyIds).toEqual([survivorCompanyId]);
     });
   });
 });
