@@ -61,6 +61,7 @@ export class MessageParticipantListener {
 
           return {
             name: 'message.linked',
+            kind: 'linkedMessage' as const,
             properties: {},
             objectSingularName: 'person',
             recordId: participant.personId,

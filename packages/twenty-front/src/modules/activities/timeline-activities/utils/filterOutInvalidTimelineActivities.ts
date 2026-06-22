@@ -2,6 +2,7 @@ import { type TimelineActivity } from '@/activities/timeline-activities/types/Ti
 import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { resolveTimelineActivityDescriptor } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 
 const keepActivityWithReadableDiff = (
@@ -43,18 +44,25 @@ export const filterOutInvalidTimelineActivities = (
 
   return timelineActivities
     .map((timelineActivity) => {
-      const [objectName, action] = timelineActivity.name.split('.');
+      const linkedObjectMetadataItem = isDefined(
+        timelineActivity.linkedObjectMetadataId,
+      )
+        ? objectMetadataItems.find(
+            (objectMetadataItem) =>
+              objectMetadataItem.id === timelineActivity.linkedObjectMetadataId,
+          )
+        : undefined;
 
-      if (objectName.startsWith('linked-')) {
+      const { kind, action } = resolveTimelineActivityDescriptor({
+        kind: timelineActivity.kind,
+        name: timelineActivity.name,
+        linkedObjectNameSingular: linkedObjectMetadataItem?.nameSingular,
+      });
+
+      if (kind === 'linkedNote' || kind === 'linkedTask') {
         if (!isDefined(timelineActivity.properties?.diff)) {
           return timelineActivity;
         }
-
-        const linkedObjectMetadataItem = objectMetadataItems.find(
-          (objectMetadataItem) =>
-            objectMetadataItem.nameSingular ===
-            objectName.replace('linked-', ''),
-        );
 
         return keepActivityWithReadableDiff(
           timelineActivity,
@@ -62,7 +70,7 @@ export const filterOutInvalidTimelineActivities = (
         );
       }
 
-      if (action === 'updated') {
+      if (kind === 'recordChange' && action === 'updated') {
         return keepActivityWithReadableDiff(
           timelineActivity,
           mainObjectMetadataItem.readableFields,

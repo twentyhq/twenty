@@ -5,6 +5,7 @@ import { type EventRowDynamicComponentProps } from '@/activities/timeline-activi
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { resolveTimelineActivityDescriptor } from 'twenty-shared/timeline';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -62,9 +63,13 @@ export const EventRowActivity = ({
   objectNameSingular,
   createdAt,
 }: EventRowActivityProps & { objectNameSingular: CoreObjectNameSingular }) => {
-  const [eventLinkedObject, eventAction] = event.name.split('.');
+  const { action: eventAction } = resolveTimelineActivityDescriptor({
+    kind: event.kind,
+    name: event.name,
+    linkedObjectNameSingular: objectNameSingular,
+  });
 
-  const eventObject = eventLinkedObject.replace('linked-', '');
+  const eventObject = objectNameSingular;
 
   if (!isTimelineActivityWithLinkedRecord(event)) {
     throw new Error('Could not find linked record id for event');

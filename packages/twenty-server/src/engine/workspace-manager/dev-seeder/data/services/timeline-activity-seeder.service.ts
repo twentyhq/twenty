@@ -36,6 +36,7 @@ type TimelineActivitySeedData = Pick<
   TimelineActivityWorkspaceEntity,
   | 'id'
   | 'name'
+  | 'kind'
   | 'linkedRecordCachedName'
   | 'linkedRecordId'
   | 'linkedObjectMetadataId'
@@ -112,13 +113,15 @@ export class TimelineActivitySeederService {
   constructor(private readonly objectMetadataService: ObjectMetadataService) {}
 
   private getLinkedActivityName(activityType: string): string {
-    // Notes and tasks use the legacy format: linked-{type}.created
     if (activityType === 'note' || activityType === 'task') {
       return `linked-${activityType}.created`;
     }
 
-    // Calendar events and messages use the new format: {type}.linked
     return `${activityType}.linked`;
+  }
+
+  private getLinkedActivityKind(activityType: string): string {
+    return `linked${capitalize(activityType)}`;
   }
 
   async seedTimelineActivities({
@@ -250,6 +253,7 @@ export class TimelineActivitySeederService {
         .into(`${schemaName}.timelineActivity`, [
           'id',
           'name',
+          'kind',
           'properties',
           'linkedRecordCachedName',
           'linkedRecordId',
@@ -285,6 +289,7 @@ export class TimelineActivitySeederService {
     const timelineActivity: TimelineActivitySeedData = {
       id: timelineActivityId,
       name: `${entityType}.created`,
+      kind: 'recordChange',
       properties: JSON.stringify({
         after: this.getEventAfterRecordProperties(entityType, recordSeed),
       }),
@@ -582,6 +587,7 @@ export class TimelineActivitySeederService {
     const linkedActivity: TimelineActivitySeedData = {
       id: linkedActivityId,
       name: this.getLinkedActivityName(activityType),
+      kind: this.getLinkedActivityKind(activityType),
       properties: JSON.stringify({ after: linkedProperties }),
       linkedRecordCachedName,
       linkedRecordId: recordSeed.id,

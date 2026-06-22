@@ -98,7 +98,11 @@ export const useTimelineActivities = (
   });
 
   const activityIds = timelineActivities
-    .filter((timelineActivity) => timelineActivity.name.match(/note|task/i))
+    .filter(
+      (timelineActivity) =>
+        timelineActivity.kind === 'linkedNote' ||
+        timelineActivity.kind === 'linkedTask',
+    )
     .map((timelineActivity) => timelineActivity.linkedRecordId)
     .filter(isDefined);
 

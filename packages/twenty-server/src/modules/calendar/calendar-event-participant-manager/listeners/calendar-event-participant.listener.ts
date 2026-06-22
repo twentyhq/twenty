@@ -61,7 +61,8 @@ export class CalendarEventParticipantListener {
           }
 
           return {
-            name: 'message.linked',
+            name: 'calendarEvent.linked',
+            kind: 'linkedCalendarEvent' as const,
             properties: {},
             objectSingularName: 'person',
             recordId: participant.personId,

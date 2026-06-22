@@ -177,6 +177,7 @@ export class TimelineActivityService {
         ...noteEventsTimelineActivities,
         ...(events.map((event) => ({
           name,
+          kind: 'recordChange' as const,
           objectSingularName,
           recordId: event.recordId,
           workspaceMemberId: event.workspaceMemberId,
@@ -199,6 +200,7 @@ export class TimelineActivityService {
         ...taskEventsTimelineActivities,
         ...(events.map((event) => ({
           name,
+          kind: 'recordChange' as const,
           objectSingularName,
           recordId: event.recordId,
           workspaceMemberId: event.workspaceMemberId,
@@ -222,6 +224,7 @@ export class TimelineActivityService {
 
     return events.map((event) => ({
       name,
+      kind: 'recordChange' as const,
       objectSingularName,
       recordId: event.recordId,
       workspaceMemberId: event.workspaceMemberId,
@@ -307,6 +310,7 @@ export class TimelineActivityService {
 
           return {
             name: `linked-${activityType}.${action}`,
+            kind: activityType === 'note' ? 'linkedNote' : 'linkedTask',
             workspaceMemberId: event.workspaceMemberId,
             recordId: activityTarget[targetColumn.replace(/Id$/, '')],
             linkedRecordCachedName: activityTitle,
@@ -424,6 +428,7 @@ export class TimelineActivityService {
 
         return {
           name: `linked-${activityType}.${action}`,
+          kind: activityType === 'note' ? 'linkedNote' : 'linkedTask',
           objectSingularName,
           recordId,
           linkedRecordCachedName: activity.title,
