@@ -5,16 +5,15 @@ import { RelationType } from '~/generated-metadata/graphql';
 
 const RECORD_ID = '20202020-1111-2222-3333-444444444444';
 
-const buildRelationField = (
-  overrides: Partial<FieldMetadataItem> = {},
-): FieldMetadataItem =>
-  ({
-    id: 'field-id',
-    name: 'company',
-    type: FieldMetadataType.RELATION,
-    label: 'Company',
-    ...overrides,
-  }) as FieldMetadataItem;
+const buildInverseRelationField = (
+  overrides: Partial<
+    Pick<FieldMetadataItem, 'name' | 'type' | 'settings'>
+  > = {},
+): Pick<FieldMetadataItem, 'name' | 'type' | 'settings'> => ({
+  name: 'company',
+  type: FieldMetadataType.RELATION,
+  ...overrides,
+});
 
 describe('getRelationTableFilter', () => {
   it('builds a foreign-key filter for a to-many relation', () => {
@@ -22,9 +21,11 @@ describe('getRelationTableFilter', () => {
       getRelationTableFilter({
         recordId: RECORD_ID,
         relationType: RelationType.ONE_TO_MANY,
-        relationFieldMetadataItem: buildRelationField({ name: 'company' }),
-        targetObjectMetadataNameSingular: 'company',
-        targetObjectMetadataNamePlural: 'companies',
+        inverseRelationFieldMetadataItem: buildInverseRelationField({
+          name: 'company',
+        }),
+        recordObjectMetadataNameSingular: 'company',
+        recordObjectMetadataNamePlural: 'companies',
       }),
     ).toEqual({ companyId: { in: [RECORD_ID] } });
   });
@@ -34,9 +35,9 @@ describe('getRelationTableFilter', () => {
       getRelationTableFilter({
         recordId: RECORD_ID,
         relationType: RelationType.MANY_TO_ONE,
-        relationFieldMetadataItem: buildRelationField(),
-        targetObjectMetadataNameSingular: 'company',
-        targetObjectMetadataNamePlural: 'companies',
+        inverseRelationFieldMetadataItem: buildInverseRelationField(),
+        recordObjectMetadataNameSingular: 'company',
+        recordObjectMetadataNamePlural: 'companies',
       }),
     ).toBeUndefined();
   });
@@ -46,9 +47,9 @@ describe('getRelationTableFilter', () => {
       getRelationTableFilter({
         recordId: RECORD_ID,
         relationType: undefined,
-        relationFieldMetadataItem: buildRelationField(),
-        targetObjectMetadataNameSingular: 'company',
-        targetObjectMetadataNamePlural: 'companies',
+        inverseRelationFieldMetadataItem: buildInverseRelationField(),
+        recordObjectMetadataNameSingular: 'company',
+        recordObjectMetadataNamePlural: 'companies',
       }),
     ).toBeUndefined();
   });
@@ -58,9 +59,9 @@ describe('getRelationTableFilter', () => {
       getRelationTableFilter({
         recordId: RECORD_ID,
         relationType: RelationType.ONE_TO_MANY,
-        relationFieldMetadataItem: undefined,
-        targetObjectMetadataNameSingular: 'company',
-        targetObjectMetadataNamePlural: 'companies',
+        inverseRelationFieldMetadataItem: undefined,
+        recordObjectMetadataNameSingular: 'company',
+        recordObjectMetadataNamePlural: 'companies',
       }),
     ).toBeUndefined();
   });
@@ -70,29 +71,29 @@ describe('getRelationTableFilter', () => {
       getRelationTableFilter({
         recordId: RECORD_ID,
         relationType: RelationType.ONE_TO_MANY,
-        relationFieldMetadataItem: buildRelationField({
+        inverseRelationFieldMetadataItem: buildInverseRelationField({
           name: 'target',
           type: FieldMetadataType.MORPH_RELATION,
           settings: { relationType: RelationType.MANY_TO_ONE },
         }),
-        targetObjectMetadataNameSingular: 'company',
-        targetObjectMetadataNamePlural: 'companies',
+        recordObjectMetadataNameSingular: 'company',
+        recordObjectMetadataNamePlural: 'companies',
       }),
     ).toEqual({ targetCompanyId: { in: [RECORD_ID] } });
   });
 
-  it('returns undefined for a morph relation when target object names are missing', () => {
+  it('returns undefined for a morph relation when host object names are missing', () => {
     expect(
       getRelationTableFilter({
         recordId: RECORD_ID,
         relationType: RelationType.ONE_TO_MANY,
-        relationFieldMetadataItem: buildRelationField({
+        inverseRelationFieldMetadataItem: buildInverseRelationField({
           name: 'target',
           type: FieldMetadataType.MORPH_RELATION,
           settings: { relationType: RelationType.MANY_TO_ONE },
         }),
-        targetObjectMetadataNameSingular: undefined,
-        targetObjectMetadataNamePlural: undefined,
+        recordObjectMetadataNameSingular: undefined,
+        recordObjectMetadataNamePlural: undefined,
       }),
     ).toBeUndefined();
   });

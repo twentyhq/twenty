@@ -62,9 +62,10 @@ export const FieldWidgetRelationTable = ({
       objectMetadataItem.nameSingular === objectMetadataNameSingular,
   );
 
-  const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
-    ({ id }) => id === relationFieldMetadataId,
-  );
+  const inverseRelationFieldMetadataItem =
+    relationObjectMetadataItem.fields.find(
+      ({ id }) => id === relationFieldMetadataId,
+    );
 
   // Scope the table to the current record's related records, even when the
   // widget's viewId provides the columns. Without this, the viewId is rendered
@@ -72,9 +73,9 @@ export const FieldWidgetRelationTable = ({
   const relationTableFilter = getRelationTableFilter({
     recordId,
     relationType,
-    relationFieldMetadataItem,
-    targetObjectMetadataNameSingular: recordObjectMetadataItem?.nameSingular,
-    targetObjectMetadataNamePlural: recordObjectMetadataItem?.namePlural,
+    inverseRelationFieldMetadataItem,
+    recordObjectMetadataNameSingular: recordObjectMetadataItem?.nameSingular,
+    recordObjectMetadataNamePlural: recordObjectMetadataItem?.namePlural,
   });
 
   if (!isDefined(viewId) || !isDefined(relationObjectMetadataId)) {

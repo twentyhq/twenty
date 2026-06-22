@@ -13,28 +13,35 @@ type GetRelationTableFilterArgs = {
   recordId: string;
   relationType: RelationType | undefined;
   // The inverse relation field (on the related object) pointing back to the
-  // record's object — its name + "Id" is the foreign key to filter on.
-  relationFieldMetadataItem: FieldMetadataItem | undefined;
-  // The record's own object names, needed only to resolve the gql field name of
-  // a morph relation.
-  targetObjectMetadataNameSingular: string | undefined;
-  targetObjectMetadataNamePlural: string | undefined;
+  // record's object: its name + "Id" is the foreign key to filter on.
+  inverseRelationFieldMetadataItem:
+    | Pick<FieldMetadataItem, 'name' | 'type' | 'settings'>
+    | undefined;
+  // The host record's own object names, needed only to resolve the gql field
+  // name of a morph relation.
+  recordObjectMetadataNameSingular: string | undefined;
+  recordObjectMetadataNamePlural: string | undefined;
 };
 
 const resolveInverseRelationGqlFieldName = ({
-  relationFieldMetadataItem,
-  targetObjectMetadataNameSingular,
-  targetObjectMetadataNamePlural,
+  inverseRelationFieldMetadataItem,
+  recordObjectMetadataNameSingular,
+  recordObjectMetadataNamePlural,
 }: {
-  relationFieldMetadataItem: FieldMetadataItem;
-  targetObjectMetadataNameSingular: string | undefined;
-  targetObjectMetadataNamePlural: string | undefined;
+  inverseRelationFieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'name' | 'type' | 'settings'
+  >;
+  recordObjectMetadataNameSingular: string | undefined;
+  recordObjectMetadataNamePlural: string | undefined;
 }): string | undefined => {
-  if (relationFieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION) {
-    return relationFieldMetadataItem.name;
+  if (
+    inverseRelationFieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION
+  ) {
+    return inverseRelationFieldMetadataItem.name;
   }
 
-  const settings = relationFieldMetadataItem.settings;
+  const settings = inverseRelationFieldMetadataItem.settings;
   const morphRelationType =
     isDefined(settings) && 'relationType' in settings
       ? settings.relationType
@@ -42,48 +49,43 @@ const resolveInverseRelationGqlFieldName = ({
 
   if (
     !isDefined(morphRelationType) ||
-    !isDefined(targetObjectMetadataNameSingular) ||
-    !isDefined(targetObjectMetadataNamePlural)
+    !isDefined(recordObjectMetadataNameSingular) ||
+    !isDefined(recordObjectMetadataNamePlural)
   ) {
     return undefined;
   }
 
   return computeMorphRelationGqlFieldName({
-    fieldName: relationFieldMetadataItem.name,
+    fieldName: inverseRelationFieldMetadataItem.name,
     relationType: morphRelationType,
-    targetObjectMetadataNameSingular,
-    targetObjectMetadataNamePlural,
+    targetObjectMetadataNameSingular: recordObjectMetadataNameSingular,
+    targetObjectMetadataNamePlural: recordObjectMetadataNamePlural,
   });
 };
 
-/**
- * Builds the host-relation filter for a relation field rendered as a record
- * table on a record page, so the table stays scoped to the current record's
- * related records even when a view supplies its columns.
- *
- * Mirrors the relation filter used for aggregates in RecordDetailRelationSection:
- *   { `${inverseRelationFieldName}Id`: { in: [recordId] } }
- *
- * Returns undefined for to-one relations (no host foreign key to filter on) or
- * when the inverse relation field name cannot be resolved.
- */
+// Builds the host-relation filter for a relation field rendered as a record
+// table on a record page, so the table stays scoped to the current record's
+// related records even when a view supplies its columns. Mirrors the relation
+// filter used for aggregates in RecordDetailRelationSection.
+// Returns undefined for to-one relations (no host foreign key to filter on) or
+// when the inverse relation field name cannot be resolved.
 export const getRelationTableFilter = ({
   recordId,
   relationType,
-  relationFieldMetadataItem,
-  targetObjectMetadataNameSingular,
-  targetObjectMetadataNamePlural,
+  inverseRelationFieldMetadataItem,
+  recordObjectMetadataNameSingular,
+  recordObjectMetadataNamePlural,
 }: GetRelationTableFilterArgs): RecordGqlOperationFilter | undefined => {
   const isToManyRelation = relationType === RelationType.ONE_TO_MANY;
 
-  if (!isToManyRelation || !isDefined(relationFieldMetadataItem)) {
+  if (!isToManyRelation || !isDefined(inverseRelationFieldMetadataItem)) {
     return undefined;
   }
 
   const gqlFieldName = resolveInverseRelationGqlFieldName({
-    relationFieldMetadataItem,
-    targetObjectMetadataNameSingular,
-    targetObjectMetadataNamePlural,
+    inverseRelationFieldMetadataItem,
+    recordObjectMetadataNameSingular,
+    recordObjectMetadataNamePlural,
   });
 
   if (!isDefined(gqlFieldName)) {
