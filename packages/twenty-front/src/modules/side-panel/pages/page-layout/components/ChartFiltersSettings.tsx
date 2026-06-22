@@ -76,14 +76,16 @@ export const ChartFiltersSettings = ({
     const existingRecordFilters = store.get(currentRecordFilters);
     const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
 
-    const { recordFilters: sanitizedRecordFilters, recordFilterGroups: sanitizedRecordFilterGroups } =
-      dropChartRecordFiltersWithDeletedFields({
-        chartFilters: {
-          recordFilters: existingRecordFilters,
-          recordFilterGroups: existingRecordFilterGroups,
-        },
-        validFieldMetadataIds,
-      });
+    const {
+      recordFilters: sanitizedRecordFilters,
+      recordFilterGroups: sanitizedRecordFilterGroups,
+    } = dropChartRecordFiltersWithDeletedFields({
+      chartFilters: {
+        recordFilters: existingRecordFilters,
+        recordFilterGroups: existingRecordFilterGroups,
+      },
+      validFieldMetadataIds,
+    });
 
     updateCurrentWidgetConfig({
       objectMetadataId: objectMetadataItem.id,

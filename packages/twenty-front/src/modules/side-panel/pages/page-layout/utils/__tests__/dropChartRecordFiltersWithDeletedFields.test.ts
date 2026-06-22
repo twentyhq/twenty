@@ -32,7 +32,11 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
   it('should preserve record filter groups that still contain valid filters', () => {
     const chartFilters: ChartFilters = {
       recordFilters: [
-        { id: 'filter-1', fieldMetadataId: 'valid-field', recordFilterGroupId: 'root' },
+        {
+          id: 'filter-1',
+          fieldMetadataId: 'valid-field',
+          recordFilterGroupId: 'root',
+        },
       ],
       recordFilterGroups: [
         {
@@ -87,7 +91,11 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
   it('should remove orphaned root group when all its filters are dropped', () => {
     const chartFilters: ChartFilters = {
       recordFilters: [
-        { id: 'filter-1', fieldMetadataId: 'deleted-field', recordFilterGroupId: 'root' },
+        {
+          id: 'filter-1',
+          fieldMetadataId: 'deleted-field',
+          recordFilterGroupId: 'root',
+        },
       ],
       recordFilterGroups: [
         {
@@ -110,8 +118,16 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
   it('should remove orphaned child group when its only filter is dropped, but keep root group if it has other valid children', () => {
     const chartFilters: ChartFilters = {
       recordFilters: [
-        { id: 'filter-1', fieldMetadataId: 'valid-field', recordFilterGroupId: 'root' },
-        { id: 'filter-2', fieldMetadataId: 'deleted-field', recordFilterGroupId: 'child' },
+        {
+          id: 'filter-1',
+          fieldMetadataId: 'valid-field',
+          recordFilterGroupId: 'root',
+        },
+        {
+          id: 'filter-2',
+          fieldMetadataId: 'deleted-field',
+          recordFilterGroupId: 'child',
+        },
       ],
       recordFilterGroups: [
         {
@@ -133,7 +149,11 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
     });
 
     expect(result.recordFilters).toEqual([
-      { id: 'filter-1', fieldMetadataId: 'valid-field', recordFilterGroupId: 'root' },
+      {
+        id: 'filter-1',
+        fieldMetadataId: 'valid-field',
+        recordFilterGroupId: 'root',
+      },
     ]);
     expect(result.recordFilterGroups).toEqual([
       {
@@ -147,7 +167,11 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
   it('should remove both child and root group when all filters are dropped', () => {
     const chartFilters: ChartFilters = {
       recordFilters: [
-        { id: 'filter-1', fieldMetadataId: 'deleted-field', recordFilterGroupId: 'child' },
+        {
+          id: 'filter-1',
+          fieldMetadataId: 'deleted-field',
+          recordFilterGroupId: 'child',
+        },
       ],
       recordFilterGroups: [
         {

@@ -2,9 +2,10 @@ import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { sanitizeChartFiltersInPageLayoutDraft } from '@/page-layout/utils/sanitizeChartFiltersInPageLayoutDraft';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
-import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import { RecordFilterGroupLogicalOperator, ViewFilterOperand } from 'twenty-shared/types';
+import { FieldMetadataType, PageLayoutType } from '~/generated-metadata/graphql';
 import {
   TEST_BAR_CHART_CONFIGURATION,
   TEST_FIELDS_CONFIGURATION,
@@ -17,8 +18,22 @@ import {
 const ACTIVE_FIELD_ID = TEST_FIELD_METADATA_ID_1;
 const DELETED_FIELD_ID = TEST_FIELD_METADATA_ID_2;
 
-const buildChartFilters = (recordFilters: ChartFilters['recordFilters']) =>
-  ({ recordFilters, recordFilterGroups: [] }) as ChartFilters;
+const buildRecordFilter = (
+  overrides: Partial<RecordFilter> &
+    Pick<RecordFilter, 'id' | 'fieldMetadataId'>,
+): RecordFilter => ({
+  value: '',
+  displayValue: '',
+  type: FieldMetadataType.NUMBER,
+  operand: ViewFilterOperand.IS,
+  label: 'Filter',
+  ...overrides,
+});
+
+const buildChartFilters = (recordFilters: RecordFilter[]): ChartFilters => ({
+  recordFilters,
+  recordFilterGroups: [],
+});
 
 const buildDraft = (widgets: PageLayoutWidget[]): DraftPageLayout => {
   const tab: PageLayoutTab = {
@@ -45,19 +60,25 @@ const buildDraft = (widgets: PageLayoutWidget[]): DraftPageLayout => {
 };
 
 const buildValidFieldsMap = (fieldIds: string[]) =>
-  new Map<string, Set<string>>([
-    [TEST_OBJECT_METADATA_ID, new Set(fieldIds)],
-  ]);
+  new Map<string, Set<string>>([[TEST_OBJECT_METADATA_ID, new Set(fieldIds)]]);
 
 describe('sanitizeChartFiltersInPageLayoutDraft', () => {
   it('should drop chart filter rules that reference deactivated or deleted fields on save', () => {
+    const validFilter = buildRecordFilter({
+      id: 'filter-1',
+      fieldMetadataId: ACTIVE_FIELD_ID,
+    });
+
     const widget = createTestWidget({
       id: 'chart-widget',
       configuration: {
         ...TEST_BAR_CHART_CONFIGURATION,
         filter: buildChartFilters([
-          { id: 'filter-1', fieldMetadataId: ACTIVE_FIELD_ID },
-          { id: 'filter-2', fieldMetadataId: DELETED_FIELD_ID },
+          validFilter,
+          buildRecordFilter({
+            id: 'filter-2',
+            fieldMetadataId: DELETED_FIELD_ID,
+          }),
         ]),
       },
     });
@@ -69,22 +90,24 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
       ]),
     });
 
-    const sanitizedConfiguration = result.tabs[0].widgets[0]
-      .configuration as { filter: ChartFilters };
+    const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
+      filter: ChartFilters;
+    };
 
-    expect(sanitizedConfiguration.filter.recordFilters).toEqual([
-      { id: 'filter-1', fieldMetadataId: ACTIVE_FIELD_ID },
-    ]);
+    expect(sanitizedConfiguration.filter.recordFilters).toEqual([validFilter]);
   });
 
   it('should keep chart filters untouched when all referenced fields are still active', () => {
+    const validFilter = buildRecordFilter({
+      id: 'filter-1',
+      fieldMetadataId: ACTIVE_FIELD_ID,
+    });
+
     const widget = createTestWidget({
       id: 'chart-widget',
       configuration: {
         ...TEST_BAR_CHART_CONFIGURATION,
-        filter: buildChartFilters([
-          { id: 'filter-1', fieldMetadataId: ACTIVE_FIELD_ID },
-        ]),
+        filter: buildChartFilters([validFilter]),
       },
     });
 
@@ -95,12 +118,11 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
       ]),
     });
 
-    const sanitizedConfiguration = result.tabs[0].widgets[0]
-      .configuration as { filter: ChartFilters };
+    const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
+      filter: ChartFilters;
+    };
 
-    expect(sanitizedConfiguration.filter.recordFilters).toEqual([
-      { id: 'filter-1', fieldMetadataId: ACTIVE_FIELD_ID },
-    ]);
+    expect(sanitizedConfiguration.filter.recordFilters).toEqual([validFilter]);
   });
 
   it('should drop orphaned filter groups left behind once invalid filters are removed', () => {
@@ -110,11 +132,11 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
         ...TEST_BAR_CHART_CONFIGURATION,
         filter: {
           recordFilters: [
-            {
+            buildRecordFilter({
               id: 'filter-1',
               fieldMetadataId: DELETED_FIELD_ID,
               recordFilterGroupId: 'root',
-            },
+            }),
           ],
           recordFilterGroups: [
             {
@@ -123,7 +145,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
               logicalOperator: RecordFilterGroupLogicalOperator.AND,
             },
           ],
-        } as ChartFilters,
+        } satisfies ChartFilters,
       },
     });
 
@@ -134,8 +156,9 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
       ]),
     });
 
-    const sanitizedConfiguration = result.tabs[0].widgets[0]
-      .configuration as { filter: ChartFilters };
+    const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
+      filter: ChartFilters;
+    };
 
     expect(sanitizedConfiguration.filter.recordFilters).toEqual([]);
     expect(sanitizedConfiguration.filter.recordFilterGroups).toEqual([]);
@@ -160,13 +183,16 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
   });
 
   it('should leave chart filters untouched when the object metadata cannot be resolved', () => {
+    const invalidFilter = buildRecordFilter({
+      id: 'filter-1',
+      fieldMetadataId: DELETED_FIELD_ID,
+    });
+
     const widget = createTestWidget({
       id: 'chart-widget',
       configuration: {
         ...TEST_BAR_CHART_CONFIGURATION,
-        filter: buildChartFilters([
-          { id: 'filter-1', fieldMetadataId: DELETED_FIELD_ID },
-        ]),
+        filter: buildChartFilters([invalidFilter]),
       },
     });
 
@@ -175,11 +201,10 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
       validFieldMetadataIdsByObjectMetadataId: new Map(),
     });
 
-    const sanitizedConfiguration = result.tabs[0].widgets[0]
-      .configuration as { filter: ChartFilters };
+    const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
+      filter: ChartFilters;
+    };
 
-    expect(sanitizedConfiguration.filter.recordFilters).toEqual([
-      { id: 'filter-1', fieldMetadataId: DELETED_FIELD_ID },
-    ]);
+    expect(sanitizedConfiguration.filter.recordFilters).toEqual([invalidFilter]);
   });
 });
