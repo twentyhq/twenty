@@ -1,6 +1,7 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { type ViewGroup } from '@/views/types/ViewGroup';
+import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type ViewGroup } from '@/views/types/ViewGroup';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -26,26 +27,33 @@ const useViewsSideEffectsOnViewGroups = () => {
       throw new Error('Object metadata item not found');
     }
 
+    const mainGroupByField = objectMetadataItem.fields?.find(
+      (field) => field.id === mainGroupByFieldMetadataId,
+    );
+
+    // Relation grouping generates its columns dynamically from the workspace
+    // member list, so no view groups are persisted.
+    if (
+      isDefined(mainGroupByField) &&
+      isManyToOneRelationToWorkspaceMember(mainGroupByField)
+    ) {
+      return { viewGroupsToCreate: [] };
+    }
+
     let viewGroupsToCreate: ViewGroup[] = [];
 
     viewGroupsToCreate =
-      objectMetadataItem.fields
-        ?.find((field) => field.id === mainGroupByFieldMetadataId)
-        ?.options?.map(
-          (option, index) =>
-            ({
-              id: v4(),
-              fieldValue: option.value,
-              isVisible: true,
-              position: index,
-            }) satisfies ViewGroup,
-        ) ?? [];
+      mainGroupByField?.options?.map(
+        (option, index) =>
+          ({
+            id: v4(),
+            fieldValue: option.value,
+            isVisible: true,
+            position: index,
+          }) satisfies ViewGroup,
+      ) ?? [];
 
-    if (
-      objectMetadataItem.fields.find(
-        (field) => field.id === mainGroupByFieldMetadataId,
-      )?.isNullable === true
-    ) {
+    if (mainGroupByField?.isNullable === true) {
       viewGroupsToCreate.push({
         id: v4(),
         fieldValue: '',
