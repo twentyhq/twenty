@@ -57,12 +57,10 @@ describe('ServerLogicFunctionExecutorService', () => {
       findOne: jest.fn().mockResolvedValue({ id: 'lf-1' }),
     };
     logicFunctionExecutorService = {
-      execute: jest
-        .fn()
-        .mockResolvedValue({
-          data: { workspaceIds: ['w1'] },
-          error: undefined,
-        }),
+      execute: jest.fn().mockResolvedValue({
+        data: { workspaceIds: ['w1'] },
+        error: undefined,
+      }),
     };
     throttlerService = {
       tokenBucketThrottleOrThrow: jest.fn().mockResolvedValue(1),
