@@ -16,18 +16,22 @@
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
+    "typecheck": "tsgo --noEmit -p tsconfig.spec.json",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:unit": "vitest run --config vitest.unit.config.ts"
   },
   "dependencies": {
-    "exa-js": "^2.12.1",
-    "twenty-client-sdk": "2.13.0",
-    "twenty-sdk": "2.13.0"
+    "exa-js": "^2.12.1"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
+    "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "oxlint": "^0.16.0",
+    "twenty-client-sdk": "^2.14.0",
+    "twenty-sdk": "^2.14.0",
     "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.0.0"
   }
 }

@@ -1,5 +1,5 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
+import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -49,8 +49,8 @@ export const WidgetActionFieldEdit = () => {
   );
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const getIsMetadataItemFromStandardApplication =
+    useGetIsMetadataItemFromStandardApplication();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -116,7 +116,8 @@ export const WidgetActionFieldEdit = () => {
         objectPermissionsByObjectMetadataId,
         objectMetadataId: objectMetadataItem.id,
       }),
-      isFieldCustom: getIsMetadataItemCustom(fieldMetadataItem),
+      isFieldFromStandardApplication:
+        getIsMetadataItemFromStandardApplication(fieldMetadataItem),
       fieldMetadataItem: {
         id: fieldMetadataItem.id,
         isUIEditable: fieldMetadataItem.isUIEditable ?? true,

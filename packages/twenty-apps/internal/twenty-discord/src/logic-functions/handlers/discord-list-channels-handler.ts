@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'src/utils/is-defined';
 
 import { type DiscordListChannelsInput } from 'src/logic-functions/types/discord-list-channels-input.type';
 import {
