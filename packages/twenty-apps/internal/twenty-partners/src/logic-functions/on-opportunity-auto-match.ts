@@ -1,4 +1,4 @@
-import { DatabaseEventPayload, defineLogicFunction } from 'twenty-sdk/define';
+import { type DatabaseEventPayload, defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { ON_OPP_AUTO_MATCH_FN_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
