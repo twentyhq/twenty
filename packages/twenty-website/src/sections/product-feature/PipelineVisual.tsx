@@ -103,24 +103,9 @@ const CARDS: Record<PipelineCardId, DealData> = {
     recordId: 'OPP-8',
     title: 'Travel Partnership',
   },
-  notion: {
-    amount: '$2,650',
-    company: { domain: 'notion.com', name: 'Notion' },
-    contact: { avatarUrl: PEOPLE.ivanZhao, name: 'Ivan Zhao' },
-    date: 'Jun 28, 2023',
-    id: 'notion',
-    owner: { avatarUrl: PEOPLE.sundarPichai, name: 'Sundar Pichai' },
-    rating: 2,
-    recordId: 'OPP-6',
-    title: 'Workspace Rollout',
-  },
 };
 
-const INITIAL_LANES: PipelineLanes = [
-  ['github', 'figma'],
-  ['airbnb'],
-  ['notion'],
-];
+const INITIAL_LANES: PipelineLanes = [['github'], ['airbnb'], ['figma']];
 
 const LANES_META: { color: CellSelectColor; label: string }[] = [
   { color: 'pink', label: 'Identified' },
@@ -708,7 +693,7 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
       <BoardHeader>
         <IconLayoutKanban size={14} stroke={1.6} />
         <BoardTitle>All Opportunities</BoardTitle>
-        <BoardCount>· 4</BoardCount>
+        <BoardCount>· 3</BoardCount>
       </BoardHeader>
 
       <ColumnsHeaderGrid>

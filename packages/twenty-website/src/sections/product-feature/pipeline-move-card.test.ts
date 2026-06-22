@@ -1,13 +1,13 @@
 import { movePipelineCard, type PipelineLanes } from './pipeline-move-card';
 
-const LANES: PipelineLanes = [['github', 'figma'], ['airbnb'], ['notion']];
+const LANES: PipelineLanes = [['github', 'figma'], ['airbnb'], []];
 
 describe('movePipelineCard', () => {
   it('should reorder within a lane when the target is the same lane', () => {
     expect(movePipelineCard(LANES, 'github', 0, 1)).toEqual([
       ['figma', 'github'],
       ['airbnb'],
-      ['notion'],
+      [],
     ]);
   });
 
@@ -15,7 +15,7 @@ describe('movePipelineCard', () => {
     expect(movePipelineCard(LANES, 'figma', 1, 1)).toEqual([
       ['github'],
       ['airbnb', 'figma'],
-      ['notion'],
+      [],
     ]);
   });
 
@@ -23,14 +23,14 @@ describe('movePipelineCard', () => {
     expect(movePipelineCard(LANES, 'github', 1, 99)).toEqual([
       ['figma'],
       ['airbnb', 'github'],
-      ['notion'],
+      [],
     ]);
   });
 
   it('should clamp a negative index to the lane start', () => {
-    expect(movePipelineCard(LANES, 'notion', 0, -1)).toEqual([
-      ['notion', 'github', 'figma'],
-      ['airbnb'],
+    expect(movePipelineCard(LANES, 'airbnb', 0, -1)).toEqual([
+      ['airbnb', 'github', 'figma'],
+      [],
       [],
     ]);
   });
@@ -41,6 +41,6 @@ describe('movePipelineCard', () => {
 
   it('should not mutate the input lanes', () => {
     movePipelineCard(LANES, 'github', 1, 0);
-    expect(LANES).toEqual([['github', 'figma'], ['airbnb'], ['notion']]);
+    expect(LANES).toEqual([['github', 'figma'], ['airbnb'], []]);
   });
 });
