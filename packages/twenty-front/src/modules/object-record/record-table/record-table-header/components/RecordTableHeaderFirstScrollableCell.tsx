@@ -8,7 +8,7 @@ import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/rec
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { RecordTableHeaderSortableHandleRefContext } from '@/object-record/record-table/record-table-header/dnd/context/RecordTableHeaderSortableHandleRefContext';
+import { RecordTableHeaderSortableHandle } from '@/object-record/record-table/record-table-header/dnd/components/RecordTableHeaderSortableHandle';
 import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
 import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -21,16 +21,8 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDisableDragSelectOnPointerDown } from '@/object-record/record-table/record-table-header/hooks/useDisableDragSelectOnPointerDown';
-
-const StyledSortableHandle = styled.div`
-  height: 100%;
-  min-width: 0;
-  outline: none;
-`;
 
 type RecordTableHeaderFirstScrollableCellProps = {
   firstScrollableRecordField: RecordField;
@@ -46,9 +38,6 @@ export const RecordTableHeaderFirstScrollableCell = ({
     onPointerDown: handlePointerDown,
     onPointerUp: handlePointerUp,
   } = useDisableDragSelectOnPointerDown();
-  const sortableHandleRef = useContext(
-    RecordTableHeaderSortableHandleRefContext,
-  );
 
   const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
     isRecordTableColumnHeadersReadOnlyComponentState,
@@ -110,7 +99,7 @@ export const RecordTableHeaderFirstScrollableCell = ({
       {isRecordTableColumnResizable && (
         <RecordTableHeaderResizeHandler recordFieldIndex={1} position="left" />
       )}
-      <StyledSortableHandle ref={sortableHandleRef}>
+      <RecordTableHeaderSortableHandle>
         {isRecordTableColumnHeadersReadOnly ? (
           <RecordTableColumnHead recordField={firstScrollableRecordField} />
         ) : (
@@ -119,7 +108,7 @@ export const RecordTableHeaderFirstScrollableCell = ({
             objectMetadataId={objectMetadataItem.id}
           />
         )}
-      </StyledSortableHandle>
+      </RecordTableHeaderSortableHandle>
       {isRecordTableColumnResizable && (
         <RecordTableHeaderResizeHandler recordFieldIndex={1} position="right" />
       )}

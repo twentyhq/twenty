@@ -1,23 +1,10 @@
-import { PointerActivationConstraints } from '@dnd-kit/dom';
-import {
-  DragDropProvider,
-  KeyboardSensor,
-  PointerSensor,
-} from '@dnd-kit/react';
+import { DragDropProvider } from '@dnd-kit/react';
 import type { ReactNode } from 'react';
 
 import { type RecordTableHeaderDndData } from '@/object-record/record-table/record-table-header/dnd/types/RecordTableHeaderDndData';
 import { RecordTableHeaderDndContext } from '@/object-record/record-table/record-table-header/dnd/context/RecordTableHeaderDndContext';
 import { useRecordTableHeaderDndKit } from '@/object-record/record-table/record-table-header/dnd/hooks/useRecordTableHeaderDndKit';
-
-const RECORD_TABLE_HEADER_DND_SENSORS = [
-  PointerSensor.configure({
-    activationConstraints: [
-      new PointerActivationConstraints.Distance({ value: 8 }),
-    ],
-  }),
-  KeyboardSensor,
-];
+import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 
 type RecordTableHeaderDndKitProviderProps = {
   children: ReactNode;
@@ -31,7 +18,7 @@ export const RecordTableHeaderDndKitProvider = ({
   return (
     <RecordTableHeaderDndContext.Provider value={contextValues}>
       <DragDropProvider<RecordTableHeaderDndData>
-        sensors={RECORD_TABLE_HEADER_DND_SENSORS}
+        sensors={DND_KIT_SENSORS}
         onDragStart={handlers.onDragStart}
         onDragMove={handlers.onDragMove}
         onDragEnd={handlers.onDragEnd}

@@ -6,8 +6,10 @@ import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
+import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
 import { resolveRecordTableHeaderDrop } from '@/object-record/record-table/record-table-header/dnd/utils/resolveRecordTableHeaderDrop';
-import { useReorderColumns } from '@/object-record/record-table/record-table-header/hooks/useReorderColumns';
+import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
+import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { isRecordTableHeaderDropProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderDropProcessingComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
@@ -54,9 +56,11 @@ export const useRecordTableHeaderDndKit = (): {
 } => {
   const store = useStore();
 
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
-  const { reorderColumns } = useReorderColumns();
+  const { reorderVisibleRecordFields } =
+    useReorderVisibleRecordFields(recordTableId);
+  const { saveViewFields } = useSaveCurrentViewFields();
   const { setDragSelectionStartEnabled } = useDragSelect();
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
@@ -166,11 +170,16 @@ export const useRecordTableHeaderDndKit = (): {
     });
 
     if (!isDefined(resolvedDrop)) return;
+    if (resolvedDrop.sourceIndex === resolvedDrop.destinationIndex) return;
 
-    reorderColumns({
-      sourceIndex: resolvedDrop.sourceIndex,
-      destinationIndex: resolvedDrop.destinationIndex,
+    // Sortable indices exclude the pinned label-identifier column at visibleRecordFields[0],
+    // so shift by one to address the full visible field list.
+    const updatedRecordField = reorderVisibleRecordFields({
+      fromIndex: resolvedDrop.sourceIndex + 1,
+      toIndex: resolvedDrop.destinationIndex + 1,
     });
+
+    saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);
   };
 
   const contextValues: RecordTableHeaderDndKitContextValues = {
