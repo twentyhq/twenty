@@ -21,6 +21,16 @@ describe('getImageAbsoluteURI', () => {
     expect(result).toBe(imageUrl);
   });
 
+  it('should treat schemes case-insensitively and return them unchanged', () => {
+    const baseUrl = 'http://localhost:3000';
+    expect(getImageAbsoluteURI({ imageUrl: 'HTTPS://XXX', baseUrl })).toBe(
+      'HTTPS://XXX',
+    );
+    expect(
+      getImageAbsoluteURI({ imageUrl: 'Data:image/png;base64,AAAA', baseUrl }),
+    ).toBe('Data:image/png;base64,AAAA');
+  });
+
   it('should return data URIs unchanged', () => {
     const imageUrl = 'data:image/png;base64,iVBORw0KGgo=';
     const baseUrl = 'http://localhost:3000';
