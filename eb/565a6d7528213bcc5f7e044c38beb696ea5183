@@ -1,0 +1,23 @@
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+  s_f011b1af81af5a::t_b00b3642787023 57
+  s_f011b1af81af5a::t_acab919ebb3476 86-87,90,93-94,96
+  s_f011b1af81af5a::t_9f2663c3ea8dcc 2,7,59,105-123
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadComposerFooterEffect.tsx
+  s_f011b1af81af5a::t_905ce3c25a37ac 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "eb565a6d7528213bcc5f7e044c38beb696ea5183",
+  "prompts": {},
+  "sessions": {
+    "s_f011b1af81af5a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "34e01591-d566-45d2-99ea-0d6bf8506ec0",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
