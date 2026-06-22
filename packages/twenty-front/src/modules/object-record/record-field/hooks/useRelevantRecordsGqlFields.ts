@@ -74,15 +74,21 @@ export const useRelevantRecordsGqlFields = ({
     ? fieldMetadataItemByFieldMetadataItemId[additionalFieldMetadataId]
     : undefined;
 
+  const additionalFieldGqlFields = isDefined(additionalFieldMetadataItem)
+    ? generateDepthRecordGqlFieldsFromFields({
+        objectMetadataItems,
+        fields: [additionalFieldMetadataItem],
+        depth: 1,
+      })
+    : {};
+
   const isObjectAnActivity =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Note ||
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Task;
 
   return {
     id: true,
-    ...(isDefined(additionalFieldMetadataItem)
-      ? { [additionalFieldMetadataItem.name]: true }
-      : {}),
+    ...additionalFieldGqlFields,
     ...(isDefined(labelIdentifierFieldMetadataItem)
       ? { [labelIdentifierFieldMetadataItem.name]: true }
       : {}),
