@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { TimelineFeedModule } from 'src/engine/core-modules/timeline-feed/timeline-feed.module';
 
 @Module({
-  imports: [WorkspaceCacheModule],
+  imports: [TimelineFeedModule],
   providers: [RelatedPersonIdsService],
   exports: [RelatedPersonIdsService],
 })
