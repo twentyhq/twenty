@@ -259,6 +259,7 @@ export type ObjectRecordFilterInput = {
 
 export type Query = {
   __typename?: 'Query';
+  getTimelineActivityProjections: Array<TimelineActivityProjection>;
   /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromObjectRecord: TimelineCalendarEventsWithTotal;
@@ -276,6 +277,12 @@ export type Query = {
   isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
   search: SearchResultConnection;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
+};
+
+
+export type QueryGetTimelineActivityProjectionsArgs = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
 };
 
 
@@ -430,6 +437,13 @@ export type TestHttpRequestInput = {
   method: Scalars['String']['input'];
   /** URL to make the request to */
   url: Scalars['String']['input'];
+};
+
+export type TimelineActivityProjection = {
+  __typename?: 'TimelineActivityProjection';
+  linkedObjectMetadataIds: Array<Scalars['UUID']['output']>;
+  recordIds: Array<Scalars['UUID']['output']>;
+  targetColumnName: Scalars['String']['output'];
 };
 
 export type TimelineCalendarEvent = {
