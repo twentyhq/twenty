@@ -1,0 +1,47 @@
+packages/twenty-server/src/modules/connected-account/channel-sync/services/channel-sync.service.ts
+  s_b41d36b575c763::t_cd3e5341e3c516 140-150
+  s_b41d36b575c763::t_d57ff7023d7ec8 1
+  s_b41d36b575c763::t_0c5a46aa571ae7 38-39
+  s_b41d36b575c763::t_70dbc506273dd8 92-102
+packages/twenty-server/src/modules/connected-account-sync-webhooks/handlers/microsoft-calendar-notification.handler.ts
+  s_b41d36b575c763::t_df773d0d978afb 59-62
+packages/twenty-server/src/modules/connected-account-sync-webhooks/handlers/google-calendar-notification.handler.ts
+  s_b41d36b575c763::t_10c94ccf542fdb 43
+  s_b41d36b575c763::t_833ace6eaaf672 10
+packages/twenty-server/src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.controller.ts
+  s_b41d36b575c763::t_608edb3347965f 75,91,98-104
+  s_b41d36b575c763::t_6179cfe37deeb5 5-6
+  s_b41d36b575c763::t_31e28533826b11 17
+  s_b41d36b575c763::t_135eb57362947e 105
+  s_b41d36b575c763::t_745c1818647270 106
+  s_b41d36b575c763::t_f03d0a2e460cb5 42,54,68,84
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service.ts
+  s_b41d36b575c763::t_24181eef5cf689 15-18,22-28,31,35-41,43-44
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job.ts
+  s_b41d36b575c763::t_9d42179ebf5eb3 70-79,83-92
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service.ts
+  s_b41d36b575c763::t_fc53b5964015db 107-126
+  s_b41d36b575c763::t_69dafacf10470d 61-80
+packages/twenty-server/src/engine/metadata-modules/connected-account-webhook-subscription/entities/connected-account-webhook-subscription.entity.ts
+  s_b41d36b575c763::t_272b24a5f4f35b 40-47
+packages/twenty-oxlint-rules/rules/prefer-workspace-scoped-repository.ts
+  s_b41d36b575c763::t_4048aa4abdb94b 46
+packages/twenty-server/src/modules/connected-account-sync-webhooks/handlers/microsoft-messaging-notification.handler.ts
+  s_b41d36b575c763::t_5722d8412a2363 59-62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "8bae56ed2898a05a34a47a1a12a0a94aa93342a2",
+  "prompts": {},
+  "sessions": {
+    "s_b41d36b575c763": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b6d71fb-0935-4998-b4e1-1c5dff06f390",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
