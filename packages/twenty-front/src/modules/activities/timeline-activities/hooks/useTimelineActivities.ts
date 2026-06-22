@@ -18,10 +18,8 @@ import {
 } from 'twenty-shared/types';
 import { capitalize, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-// A record inherits the timeline activities of related records (e.g. a company
-// shows its people's notes & tasks). The server resolves which target columns +
-// record ids to inherit; we OR those clauses into the base query so projected
-// rows flow through the same live-updating, cached find-many as direct ones.
+// Inherited activities (e.g. a company showing its people's notes & tasks): the
+// server returns which target column + record ids to OR into the base query.
 type TimelineActivityProjection = {
   targetColumnName: string;
   recordIds: string[];

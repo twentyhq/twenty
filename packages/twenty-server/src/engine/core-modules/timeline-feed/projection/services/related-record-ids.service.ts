@@ -14,10 +14,8 @@ import {
 
 type WalkRecord = { id: string } & Record<string, unknown>;
 
-// Generalizes RelatedPersonIdsService to any target object: given an anchor
-// record, return the ids of records of `toObjectNameSingular` reachable along
-// relation paths. This is the delivery side of projection — "which child
-// records' activities reach this inbox".
+// Given an anchor record, returns the ids of records of `toObjectNameSingular`
+// reachable along relation paths — the delivery side of timeline projection.
 @Injectable()
 export class RelatedRecordIdsService {
   constructor(
