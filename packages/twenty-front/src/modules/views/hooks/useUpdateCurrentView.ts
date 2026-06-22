@@ -1,8 +1,9 @@
-import { useStore } from 'jotai';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useStore } from 'jotai';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -13,10 +14,10 @@ import { type View } from '@/views/types/View';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewType } from '@/views/types/ViewType';
 import { convertUpdateViewInputToGql } from '@/views/utils/convertUpdateViewInputToGql';
+import { useMutation } from '@apollo/client/react';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { useMutation } from '@apollo/client/react';
 import { UpdateViewDocument } from '~/generated-metadata/graphql';
 
 export const useUpdateCurrentView = () => {
@@ -51,28 +52,31 @@ export const useUpdateCurrentView = () => {
         existingView.mainGroupByFieldMetadataId
       ) {
         if (newMainGroupByFieldMetadataId !== null) {
-          viewGroupsToCreate =
-            objectMetadataItem.fields
-              ?.find(
-                (field: { id: string }) =>
-                  field.id === newMainGroupByFieldMetadataId,
-              )
-              ?.options?.map(
-                (option: { value: string }, index: number) =>
-                  ({
-                    id: v4(),
-                    fieldValue: option.value,
-                    isVisible: true,
-                    position: index,
-                  }) satisfies ViewGroup,
-              ) ?? [];
+          const newMainGroupByField = objectMetadataItem.fields?.find(
+            (field) => field.id === newMainGroupByFieldMetadataId,
+          );
 
+          // Relation grouping builds its columns dynamically from the workspace
+          // member list, so no view groups are persisted.
           if (
-            objectMetadataItem.fields.find(
-              (field: { id: string }) =>
-                field.id === newMainGroupByFieldMetadataId,
-            )?.isNullable === true
+            isDefined(newMainGroupByField) &&
+            isManyToOneRelationToWorkspaceMember(newMainGroupByField)
           ) {
+            return { viewGroupsToCreate: [] };
+          }
+
+          viewGroupsToCreate =
+            newMainGroupByField?.options?.map(
+              (option, index) =>
+                ({
+                  id: v4(),
+                  fieldValue: option.value,
+                  isVisible: true,
+                  position: index,
+                }) satisfies ViewGroup,
+            ) ?? [];
+
+          if (newMainGroupByField?.isNullable === true) {
             viewGroupsToCreate.push({
               id: v4(),
               fieldValue: '',
