@@ -5,7 +5,7 @@ import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
 import { FileFolder } from 'twenty-shared/types';
-import { Like, Repository, type QueryRunner } from 'typeorm';
+import { EntityNotFoundError, Like, Repository, type QueryRunner } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
@@ -186,12 +186,34 @@ export class FileStorageService {
       ['path', 'workspaceId', 'applicationId'],
     );
 
-    return fileRepository.findOneOrFail(workspaceId, {
-      where: {
-        path: filePath,
-        applicationId: application.id,
-      },
-    });
+    // Retry up to 3 times with a 200 ms delay to tolerate read-replica lag:
+    // the upsert above targets the primary, but an immediate findOneOrFail may
+    // hit a replica that has not yet replicated the row.
+    let lastError: unknown;
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt > 0) {
+        await new Promise<void>((resolve) => setTimeout(resolve, 200));
+      }
+
+      try {
+        return await fileRepository.findOneOrFail(workspaceId, {
+          where: {
+            path: filePath,
+            applicationId: application.id,
+          },
+        });
+      } catch (error) {
+        if (error instanceof EntityNotFoundError) {
+          lastError = error;
+          continue;
+        }
+
+        throw error;
+      }
+    }
+
+    throw lastError;
   }
 
   async getPresignedUrl(

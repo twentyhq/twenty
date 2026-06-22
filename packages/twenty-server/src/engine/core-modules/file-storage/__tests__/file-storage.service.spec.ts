@@ -6,6 +6,7 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
+import { EntityNotFoundError } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
@@ -403,6 +404,80 @@ describe('FileStorageService', () => {
             filePath: expectedValidPath,
           }),
         );
+      });
+
+      describe('replica-lag retry', () => {
+        it('should retry on EntityNotFoundError and succeed on second attempt', async () => {
+          jest.useFakeTimers();
+
+          try {
+            const savedFile = {
+              id: 'file-id',
+              path: 'built-front-component/file.mjs',
+              mimeType: 'application/javascript',
+            };
+
+            mockFileRepository.findOneOrFail
+              .mockRejectedValueOnce(
+                new EntityNotFoundError(FileEntity, {}),
+              )
+              .mockResolvedValueOnce(savedFile);
+
+            const writePromise = service.writeFile({
+              ...validResourceIdentifier,
+              sourceFile: Buffer.from('valid content'),
+              settings: { isTemporaryFile: false, toDelete: false },
+            });
+
+            await jest.runAllTimersAsync();
+
+            const result = await writePromise;
+
+            expect(result).toBe(savedFile);
+            expect(mockFileRepository.findOneOrFail).toHaveBeenCalledTimes(2);
+          } finally {
+            jest.useRealTimers();
+          }
+        });
+
+        it('should propagate EntityNotFoundError after 3 failed attempts', async () => {
+          jest.useFakeTimers();
+
+          try {
+            const notFoundError = new EntityNotFoundError(FileEntity, {});
+
+            mockFileRepository.findOneOrFail.mockRejectedValue(notFoundError);
+
+            const writePromise = service.writeFile({
+              ...validResourceIdentifier,
+              sourceFile: Buffer.from('valid content'),
+              settings: { isTemporaryFile: false, toDelete: false },
+            });
+
+            await jest.runAllTimersAsync();
+
+            await expect(writePromise).rejects.toBe(notFoundError);
+            expect(mockFileRepository.findOneOrFail).toHaveBeenCalledTimes(3);
+          } finally {
+            jest.useRealTimers();
+          }
+        });
+
+        it('should not retry on other errors', async () => {
+          const unexpectedError = new Error('database connection lost');
+
+          mockFileRepository.findOneOrFail.mockRejectedValue(unexpectedError);
+
+          await expect(
+            service.writeFile({
+              ...validResourceIdentifier,
+              sourceFile: Buffer.from('valid content'),
+              settings: { isTemporaryFile: false, toDelete: false },
+            }),
+          ).rejects.toBe(unexpectedError);
+
+          expect(mockFileRepository.findOneOrFail).toHaveBeenCalledTimes(1);
+        });
       });
 
       describe('magic-byte backstop', () => {
