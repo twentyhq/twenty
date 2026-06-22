@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { plainToClass } from 'class-transformer';
 import {
   IsDefined,
@@ -34,7 +35,7 @@ import { CastToPositiveNumber } from 'src/engine/core-modules/twenty-config/deco
 import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-typeorm-log-level-array.decorator';
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
-import { IsRegion } from 'src/engine/core-modules/twenty-config/decorators/is-region.decorator';
+import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/twenty-config/decorators/is-duration.decorator';
 import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/decorators/is-optional-or-empty-string.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
@@ -472,8 +473,12 @@ export class ConfigVariables {
     description: 'AWS region of the S3 bucket (e.g. eu-west-3). Required.',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
-  @IsRegion('STORAGE_S3_ENDPOINT')
+  @ValidateIf(
+    (env) =>
+      env.STORAGE_TYPE === StorageDriverType.S_3 &&
+      !isNonEmptyString(env.STORAGE_S3_ENDPOINT),
+  )
+  @IsAWSRegion()
   STORAGE_S3_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
@@ -595,7 +600,7 @@ export class ConfigVariables {
   @ValidateIf(
     (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
-  @IsRegion()
+  @IsAWSRegion()
   LOGIC_FUNCTION_LAMBDA_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
@@ -664,7 +669,7 @@ export class ConfigVariables {
     (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   @IsOptional()
-  @IsRegion()
+  @IsAWSRegion()
   LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION?: AwsRegion;
 
   @ConfigVariablesMetadata({
@@ -1746,7 +1751,7 @@ export class ConfigVariables {
     description: 'AWS region',
     type: ConfigVariableType.STRING,
   })
-  @IsRegion()
+  @IsAWSRegion()
   @IsOptional()
   AWS_SES_REGION: AwsRegion;
 
