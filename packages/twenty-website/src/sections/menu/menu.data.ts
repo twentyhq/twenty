@@ -2,6 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
   IconBook,
+  IconBulb,
   IconBrandLinkedin,
   IconBrandX,
   IconCode,
@@ -51,7 +52,7 @@ export const MENU: {
 } = {
   appUrl: SITE_URLS.appWelcome,
   navItems: [
-    { href: '/why-twenty', label: msg`Why` },
+    { href: '/product', label: msg`Product` },
     {
       label: msg`Resources`,
       children: [
@@ -94,6 +95,19 @@ export const MENU: {
             imagePosition: 'center',
             title: msg`Team up with a Twenty expert`,
             description: msg`Meet the certified agencies and consultants implementing Twenty for teams worldwide.`,
+          },
+        },
+        {
+          label: msg`Why`,
+          description: msg`The story behind Twenty`,
+          href: '/why-twenty',
+          icon: IconBulb,
+          preview: {
+            image: '/images/menu/why.webp',
+            imageAlt: msg`Why Twenty illustration`,
+            imagePosition: 'center',
+            title: msg`Why teams choose Twenty`,
+            description: msg`The principles and product philosophy behind the open source CRM.`,
           },
         },
         {
