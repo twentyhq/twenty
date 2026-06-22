@@ -93,4 +93,7 @@ export enum SettingsPath {
   RoleDetail = 'members/roles/:roleId',
   RoleObjectLevel = 'members/roles/:roleId/object/:objectMetadataId',
   RoleAddObjectLevel = 'members/roles/:roleId/add-object-permission',
+
+  Timeline = 'timeline',
+  NewTimelineProjectionRule = 'timeline/new-rule',
 }

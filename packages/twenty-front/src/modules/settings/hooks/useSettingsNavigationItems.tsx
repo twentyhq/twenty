@@ -32,6 +32,7 @@ import {
   IconServer,
   IconSettings,
   IconSparkles,
+  IconTimelineEvent,
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
@@ -126,6 +127,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Data model`,
           path: SettingsPath.Objects,
           Icon: IconHierarchy2,
+          isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
+        },
+        {
+          label: t`Timeline`,
+          path: SettingsPath.Timeline,
+          Icon: IconTimelineEvent,
           isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
         },
         {

@@ -84,6 +84,20 @@ const SettingsObjectOverview = lazy(() =>
   ),
 );
 
+const SettingsTimeline = lazy(() =>
+  import('~/pages/settings/timeline/SettingsTimeline').then((module) => ({
+    default: module.SettingsTimeline,
+  })),
+);
+
+const SettingsTimelineNewRule = lazy(() =>
+  import('~/pages/settings/timeline/SettingsTimelineNewRule').then(
+    (module) => ({
+      default: module.SettingsTimelineNewRule,
+    }),
+  ),
+);
+
 const SettingsDevelopersApiKeyDetail = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail').then(
     (module) => ({
@@ -782,6 +796,11 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ObjectFieldEdit}
           element={<SettingsObjectFieldEdit />}
+        />
+        <Route path={SettingsPath.Timeline} element={<SettingsTimeline />} />
+        <Route
+          path={SettingsPath.NewTimelineProjectionRule}
+          element={<SettingsTimelineNewRule />}
         />
       </Route>
       <Route
