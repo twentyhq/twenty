@@ -21,6 +21,7 @@
     "dashboard:apply": "cd ../../../.. && yarn tsx packages/twenty-apps/internal/xopure-crm/src/dashboards/cli/apply-dashboard-blueprint.ts",
     "dashboard:apply:db": "cd ../../../.. && ./node_modules/.bin/tsx packages/twenty-apps/internal/xopure-crm/src/dashboards/cli/apply-dashboard-blueprint-db.ts",
     "sync:backfill": "cd ../../../.. && ./node_modules/.bin/tsx packages/twenty-apps/internal/xopure-crm/src/supabase-sync/cli/run-xopure-backfill.ts",
+    "sync:raw-mirror": "cd ../../../.. && ./node_modules/.bin/tsx packages/twenty-apps/internal/xopure-crm/src/supabase-sync/cli/run-xopure-raw-mirror.ts",
     "sync:partner-enrich": "cd ../../../.. && ./node_modules/.bin/tsx packages/twenty-apps/internal/xopure-crm/src/partner-api/cli/run-partner-enrichment.ts",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
