@@ -8,7 +8,9 @@ export const getImageAbsoluteURI = ({
   baseUrl,
 }: getImageAbsoluteURIProps): string => {
   const isAlreadyAbsoluteUri =
-    /^[a-z][a-z\d+.-]*:/i.test(imageUrl) || imageUrl.startsWith('//');
+    ['http:', 'https:', 'data:', 'blob:'].some((scheme) =>
+      imageUrl.startsWith(scheme),
+    ) || imageUrl.startsWith('//');
 
   if (isAlreadyAbsoluteUri) {
     return imageUrl;
