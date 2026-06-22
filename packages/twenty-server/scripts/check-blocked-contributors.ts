@@ -1,6 +1,6 @@
 // Fails a PR when any commit is attributed to a known bot (author, committer,
 // or Co-Authored-By trailer). Patterns match bot identities, not human names.
-// Usage: GITHUB_TOKEN=xxx GITHUB_REPOSITORY=owner/repo PR_NUMBER=123 npx ts-node packages/twenty-utils/check-blocked-contributors.ts
+// Usage: GITHUB_TOKEN=xxx GITHUB_REPOSITORY=owner/repo PR_NUMBER=123 npx nx run twenty-server:ts-node-no-deps-transpile-only -- ./scripts/check-blocked-contributors.ts
 
 const BLOCKED_PATTERNS = [
   /noreply@anthropic\.com/i,

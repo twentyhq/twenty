@@ -20,7 +20,7 @@ jobs:
         uses: ./.github/actions/yarn-install
 
       - name: Check PR commits for blocked contributors
-        run: npx ts-node packages/twenty-utils/check-blocked-contributors.ts
+        run: npx nx run twenty-server:ts-node-no-deps-transpile-only -- ./scripts/check-blocked-contributors.ts
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
