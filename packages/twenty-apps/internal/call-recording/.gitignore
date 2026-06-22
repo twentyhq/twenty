@@ -15,8 +15,7 @@ generated
 # dev
 /dist/
 
-.twenty/*
-!.twenty/output/
+.twenty
 
 # production
 /build
@@ -36,7 +35,4 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-
-
-# Remove once prod ready
-.twenty
+*.d.ts

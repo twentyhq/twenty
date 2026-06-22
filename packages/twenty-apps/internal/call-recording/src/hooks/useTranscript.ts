@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'src/utils/is-defined';
 
 export type TranscriptTimestamp = {
   relative: number;

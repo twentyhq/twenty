@@ -4,7 +4,7 @@ import {
   type TranscriptEntry,
   type TranscriptWord,
 } from 'src/hooks/useTranscript';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'src/utils/is-defined';
 
 type TranscriptViewerProps = {
   entries: TranscriptEntry[];

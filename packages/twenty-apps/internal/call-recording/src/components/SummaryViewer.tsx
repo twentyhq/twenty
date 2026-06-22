@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import Markdown from 'react-markdown';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'src/utils/is-defined';
 
 type SummaryViewerProps = {
   markdown: string | null | undefined;

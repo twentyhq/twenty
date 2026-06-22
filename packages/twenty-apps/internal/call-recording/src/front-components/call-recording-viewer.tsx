@@ -9,7 +9,7 @@ import { CALL_RECORDING_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/
 import { useCallRecording } from 'src/hooks/useCallRecording';
 import { useTranscript } from 'src/hooks/useTranscript';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'src/utils/is-defined';
 
 const StyledContainer = styled.div`
   display: flex;
