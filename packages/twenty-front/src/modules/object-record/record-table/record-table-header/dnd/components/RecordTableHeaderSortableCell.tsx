@@ -1,3 +1,4 @@
+import { RestrictToHorizontalAxis } from '@dnd-kit/abstract/modifiers';
 import { SortableKeyboardPlugin } from '@dnd-kit/dom/sortable';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
@@ -8,6 +9,9 @@ import { RecordTableHeaderSortableHandleRefContext } from '@/object-record/recor
 const SORTABLE_COLLISION_PRIORITY = 3;
 
 const PLUGINS_WITHOUT_OPTIMISTIC = [SortableKeyboardPlugin];
+
+// Columns can only be reordered horizontally, so keep the drag preview locked to the header row.
+const RECORD_TABLE_HEADER_SORTABLE_MODIFIERS = [RestrictToHorizontalAxis];
 
 const RECORD_TABLE_HEADER_SORTABLE_TRANSITION = {
   duration: 180,
@@ -49,6 +53,7 @@ export const RecordTableHeaderSortableCell = ({
     disabled,
     transition: RECORD_TABLE_HEADER_SORTABLE_TRANSITION,
     plugins: PLUGINS_WITHOUT_OPTIMISTIC,
+    modifiers: RECORD_TABLE_HEADER_SORTABLE_MODIFIERS,
     feedback: 'clone',
   });
 
