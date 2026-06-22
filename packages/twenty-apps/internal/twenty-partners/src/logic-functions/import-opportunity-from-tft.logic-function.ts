@@ -6,17 +6,7 @@ function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
-// Manual one-way copy of a single Opportunity from the twentyfortwenty (TFT)
-// workspace into partners. Triggered by a manual Workflow in TFT (button on the
-// record) -> HTTP Request action -> POST here. No automatic/echo sync.
-//
-// TFT workflow setup (built once in the TFT UI):
-//   trigger: Manual trigger on the Opportunity object
-//   action:  HTTP Request, POST <PARTNER_APPLICATION_WEBHOOK_URL base>/opportunities
-//   headers: x-application-secret: <PARTNER_APPLICATION_SECRET>, Content-Type: application/json
-//   body:    { tftOpportunityId, name, amountMicros, currencyCode, closeDate, stage,
-//              company: { name, domain }, pointOfContact: { email, firstName, lastName } }
-
+// Manual one-way copy of one Opportunity from the TFT workspace into partners.
 export const IMPORT_OPPORTUNITY_FROM_TFT_LOGIC_FUNCTION_ID =
   '4c220eaf-a23f-4af2-8d69-38a6c460019f';
 
@@ -57,8 +47,6 @@ export type ImportOpportunityFromTftResult =
   | { ok: true; created: boolean; id: string }
   | { ok: false; reason: string };
 
-// ponytail: exact-name match — Company.name is not unique, so a second company
-// sharing a name links to the first. Switch to domain-keyed lookup if that bites.
 async function findOrCreateCompanyId(
   client: CoreApiClient,
   company: ImportOpportunityFromTftInput['company'],
@@ -89,9 +77,6 @@ async function findOrCreateCompanyId(
   return id;
 }
 
-// Dedup only by email. A name-only contact can't be matched reliably, so it is
-// created fresh; the opportunity-level idempotency guard keeps that from
-// happening on a re-press of the same TFT opportunity.
 async function findOrCreatePersonId(
   client: CoreApiClient,
   pointOfContact: ImportOpportunityFromTftInput['pointOfContact'],
@@ -146,8 +131,7 @@ export const handler = async (
     ? (event as ImportOpportunityFromTftEvent).body
     : event;
 
-  // Shared-secret guard — the SDK's isAuthRequired flag only accepts user-session
-  // JWTs, not workspace API keys, so authenticate via the forwarded header.
+  // isAuthRequired only accepts user JWTs, not API keys; guard with the shared secret.
   const expectedSecret = process.env.PARTNER_APPLICATION_SECRET;
   if (!isNonEmptyString(expectedSecret)) return { ok: false, reason: 'unauthorized' };
   if (headers[APPLICATION_SECRET_HEADER] !== expectedSecret) {
@@ -165,7 +149,6 @@ export const handler = async (
       ? input.tftOpportunityId.trim()
       : undefined;
 
-    // Idempotency: prefer the source id (stable), fall back to name for manual calls.
     const dedupeFilter: CoreSchema.OpportunityFilterInput =
       tftOpportunityId !== undefined
         ? { tftOpportunityId: { eq: tftOpportunityId } }
