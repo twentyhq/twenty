@@ -2,6 +2,7 @@ import { useStore } from 'jotai';
 
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
+import { getRecordGroupByFieldColumnName } from '@/object-metadata/utils/getRecordGroupByFieldColumnName';
 import { useGetRecordBoardEffectsForUpdateInputs } from '@/object-record/record-board/hooks/useGetRecordBoardEffectsForUpdateInputs';
 import { useRemoveRecordsFromBoard } from '@/object-record/record-board/hooks/useRemoveRecordsFromBoard';
 import { useRepositionRecordsOnBoard } from '@/object-record/record-board/hooks/useRepositionRecordsOnBoard';
@@ -102,7 +103,9 @@ export const RecordBoardDataChangedEffect = () => {
 
             const recordGroupValue =
               objectRecordOperation.createdRecord[
-                currentRecordIndexGroupFieldMetadataItem.name
+                getRecordGroupByFieldColumnName(
+                  currentRecordIndexGroupFieldMetadataItem,
+                )
               ];
 
             const recordGroupDefinitionFromGroupValue = store.get(
