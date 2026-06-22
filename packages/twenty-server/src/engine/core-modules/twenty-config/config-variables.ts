@@ -3,7 +3,9 @@ import { Logger } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import {
   IsDefined,
+  IsNotEmpty,
   IsOptional,
+  IsString,
   IsUrl,
   ValidateIf,
   type ValidationError,
@@ -469,11 +471,13 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
-    description: 'AWS region of the S3 bucket (e.g. eu-west-3). Required.',
+    description:
+      'Region of the S3 bucket (e.g. "eu-west-3" for AWS, or a provider-specific slug like "fr-par" for Scaleway). Required.',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
-  @IsAWSRegion()
+  @IsString()
+  @IsNotEmpty()
   STORAGE_S3_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
