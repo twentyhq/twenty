@@ -24,6 +24,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationRegistrationLogicFunctionSyncService } from 'src/engine/core-modules/application/application-registration-logic-function/application-registration-logic-function-sync.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { MARKETPLACE_CURATED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-curated-applications.constant';
 
@@ -39,6 +40,7 @@ export class ApplicationRegistrationService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly applicationRegistrationLogicFunctionSyncService: ApplicationRegistrationLogicFunctionSyncService,
   ) {}
 
   async findMany(
@@ -230,6 +232,11 @@ export class ApplicationRegistrationService {
       manifest,
       ...(sourceType !== undefined && { sourceType }),
     });
+
+    await this.applicationRegistrationLogicFunctionSyncService.syncFromManifest({
+      applicationRegistrationId,
+      manifest,
+    });
   }
 
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
@@ -318,15 +325,24 @@ export class ApplicationRegistrationService {
       await this.applicationRegistrationRepository.save(registration);
     }
 
-    if (!isDefined(params.manifest?.application?.serverVariables)) {
-      return;
-    }
-
     const registration = await this.findOneByUniversalIdentifier(
       params.universalIdentifier,
     );
 
     if (!isDefined(registration)) {
+      return;
+    }
+
+    if (isDefined(params.manifest)) {
+      await this.applicationRegistrationLogicFunctionSyncService.syncFromManifest(
+        {
+          applicationRegistrationId: registration.id,
+          manifest: params.manifest,
+        },
+      );
+    }
+
+    if (!isDefined(params.manifest?.application?.serverVariables)) {
       return;
     }
 
