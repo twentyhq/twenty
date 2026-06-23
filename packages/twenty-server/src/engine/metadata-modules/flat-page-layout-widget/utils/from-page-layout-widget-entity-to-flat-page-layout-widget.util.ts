@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { fromPageLayoutWidgetOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-overrides-to-universal-overrides.util';
@@ -27,12 +27,10 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
     viewUniversalIdentifierById,
   } = args;
 
-  const pageLayoutWidgetEntityWithoutRelations = pickScalarPropertiesFromEntity(
-    {
-      metadataName: 'pageLayoutWidget',
-      entity: pageLayoutWidgetEntity,
-    },
-  );
+  const pageLayoutWidgetEntityWithoutRelations = fromEntityToScalarEntity({
+    metadataName: 'pageLayoutWidget',
+    entity: pageLayoutWidgetEntity,
+  });
 
   const relationUniversalIdentifiers =
     resolveManyToOneRelationIdsToUniversalIdentifiers({
@@ -63,11 +61,6 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
 
   return {
     ...pageLayoutWidgetEntityWithoutRelations,
-    createdAt: pageLayoutWidgetEntity.createdAt.toISOString(),
-    updatedAt: pageLayoutWidgetEntity.updatedAt.toISOString(),
-    deletedAt: pageLayoutWidgetEntity.deletedAt?.toISOString() ?? null,
-    universalIdentifier:
-      pageLayoutWidgetEntityWithoutRelations.universalIdentifier,
     ...relationUniversalIdentifiers,
     universalConfiguration: configurationWithUniversalIdentifiers,
     universalOverrides,

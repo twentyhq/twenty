@@ -1,5 +1,5 @@
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
-import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
 import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
@@ -22,7 +22,7 @@ export const fromRoleEntityToFlatRole = (
 ): FlatRole => {
   const { entity: roleEntity } = args;
 
-  const roleEntityWithoutRelations = pickScalarPropertiesFromEntity({
+  const roleEntityWithoutRelations = fromEntityToScalarEntity({
     metadataName: 'role',
     entity: roleEntity,
   });
@@ -35,9 +35,6 @@ export const fromRoleEntityToFlatRole = (
 
   return {
     ...roleEntityWithoutRelations,
-    createdAt: roleEntity.createdAt.toISOString(),
-    updatedAt: roleEntity.updatedAt.toISOString(),
-    universalIdentifier: roleEntityWithoutRelations.universalIdentifier,
     ...relationUniversalIdentifiers,
     roleTargetIds: roleEntity.roleTargets.map(({ id }) => id),
     objectPermissionIds: roleEntity.objectPermissions.map(({ id }) => id),

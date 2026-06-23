@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { fromCommandMenuItemOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-overrides-to-universal-overrides.util';
-import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
@@ -15,7 +15,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
     pageLayoutIdToUniversalIdentifierMap,
   } = args;
 
-  const commandMenuItemEntityWithoutRelations = pickScalarPropertiesFromEntity({
+  const commandMenuItemEntityWithoutRelations = fromEntityToScalarEntity({
     metadataName: 'commandMenuItem',
     entity: commandMenuItemEntity,
   });
@@ -41,10 +41,6 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
 
   return {
     ...commandMenuItemEntityWithoutRelations,
-    createdAt: commandMenuItemEntity.createdAt.toISOString(),
-    updatedAt: commandMenuItemEntity.updatedAt.toISOString(),
-    universalIdentifier:
-      commandMenuItemEntityWithoutRelations.universalIdentifier,
     ...relationUniversalIdentifiers,
     universalOverrides,
   };

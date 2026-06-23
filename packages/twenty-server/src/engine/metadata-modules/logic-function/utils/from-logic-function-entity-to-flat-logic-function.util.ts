@@ -1,4 +1,4 @@
-import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
@@ -8,7 +8,7 @@ export const fromLogicFunctionEntityToFlatLogicFunction = (
 ): FlatLogicFunction => {
   const { entity: logicFunctionEntity } = args;
 
-  const logicFunctionWithoutRelations = pickScalarPropertiesFromEntity({
+  const logicFunctionWithoutRelations = fromEntityToScalarEntity({
     metadataName: 'logicFunction',
     entity: logicFunctionEntity,
   });
@@ -21,9 +21,6 @@ export const fromLogicFunctionEntityToFlatLogicFunction = (
 
   return {
     ...logicFunctionWithoutRelations,
-    createdAt: logicFunctionEntity.createdAt.toISOString(),
-    updatedAt: logicFunctionEntity.updatedAt.toISOString(),
-    deletedAt: logicFunctionEntity.deletedAt?.toISOString() ?? null,
     ...relationUniversalIdentifiers,
   };
 };

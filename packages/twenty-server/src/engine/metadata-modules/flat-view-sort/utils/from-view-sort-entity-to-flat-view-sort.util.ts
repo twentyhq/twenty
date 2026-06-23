@@ -1,4 +1,4 @@
-import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
@@ -8,7 +8,7 @@ export const fromViewSortEntityToFlatViewSort = (
 ): FlatViewSort => {
   const { entity: viewSortEntity } = args;
 
-  const viewSortEntityWithoutRelations = pickScalarPropertiesFromEntity({
+  const viewSortEntityWithoutRelations = fromEntityToScalarEntity({
     metadataName: 'viewSort',
     entity: viewSortEntity,
   });
@@ -21,10 +21,6 @@ export const fromViewSortEntityToFlatViewSort = (
 
   return {
     ...viewSortEntityWithoutRelations,
-    createdAt: viewSortEntity.createdAt.toISOString(),
-    updatedAt: viewSortEntity.updatedAt.toISOString(),
-    deletedAt: viewSortEntity.deletedAt?.toISOString() ?? null,
-    universalIdentifier: viewSortEntityWithoutRelations.universalIdentifier,
     ...relationUniversalIdentifiers,
   };
 };

@@ -4,7 +4,7 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
@@ -22,7 +22,7 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = (
     fieldMetadataIdToUniversalIdentifierMap,
   } = args;
 
-  const indexMetadataEntityWithoutRelations = pickScalarPropertiesFromEntity({
+  const indexMetadataEntityWithoutRelations = fromEntityToScalarEntity({
     metadataName: 'index',
     entity: indexMetadataEntity,
   });
@@ -35,10 +35,6 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = (
 
   return {
     ...indexMetadataEntityWithoutRelations,
-    createdAt: indexMetadataEntity.createdAt.toISOString(),
-    updatedAt: indexMetadataEntity.updatedAt.toISOString(),
-    universalIdentifier:
-      indexMetadataEntityWithoutRelations.universalIdentifier,
     ...relationUniversalIdentifiers,
     flatIndexFieldMetadatas: indexMetadataEntity.indexFieldMetadatas.map(
       (indexFieldMetadata) => ({

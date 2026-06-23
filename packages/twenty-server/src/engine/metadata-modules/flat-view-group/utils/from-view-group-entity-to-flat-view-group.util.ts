@@ -1,4 +1,4 @@
-import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
@@ -8,7 +8,7 @@ export const fromViewGroupEntityToFlatViewGroup = (
 ): FlatViewGroup => {
   const { entity: viewGroupEntity } = args;
 
-  const viewGroupEntityWithoutRelations = pickScalarPropertiesFromEntity({
+  const viewGroupEntityWithoutRelations = fromEntityToScalarEntity({
     metadataName: 'viewGroup',
     entity: viewGroupEntity,
   });
@@ -21,10 +21,6 @@ export const fromViewGroupEntityToFlatViewGroup = (
 
   return {
     ...viewGroupEntityWithoutRelations,
-    createdAt: viewGroupEntity.createdAt.toISOString(),
-    updatedAt: viewGroupEntity.updatedAt.toISOString(),
-    deletedAt: viewGroupEntity.deletedAt?.toISOString() ?? null,
-    universalIdentifier: viewGroupEntityWithoutRelations.universalIdentifier,
     ...relationUniversalIdentifiers,
   };
 };

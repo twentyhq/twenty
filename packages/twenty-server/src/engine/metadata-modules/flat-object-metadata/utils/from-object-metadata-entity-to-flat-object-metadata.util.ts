@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
@@ -18,7 +18,7 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
     fieldMetadataIdToUniversalIdentifierMap,
   } = args;
 
-  const objectMetadataEntityWithoutRelations = pickScalarPropertiesFromEntity({
+  const objectMetadataEntityWithoutRelations = fromEntityToScalarEntity({
     metadataName: 'objectMetadata',
     entity: objectMetadataEntity,
   });
@@ -67,10 +67,6 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
 
   return {
     ...objectMetadataEntityWithoutRelations,
-    universalIdentifier:
-      objectMetadataEntityWithoutRelations.universalIdentifier,
-    createdAt: objectMetadataEntity.createdAt.toISOString(),
-    updatedAt: objectMetadataEntity.updatedAt.toISOString(),
     ...relationUniversalIdentifiers,
     labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier,

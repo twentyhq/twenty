@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { fromViewOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view/utils/from-view-overrides-to-universal-overrides.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
@@ -11,7 +11,7 @@ export const fromViewEntityToFlatView = (
 ): FlatView => {
   const { entity: viewEntity, fieldMetadataIdToUniversalIdentifierMap } = args;
 
-  const viewEntityWithoutRelations = pickScalarPropertiesFromEntity({
+  const viewEntityWithoutRelations = fromEntityToScalarEntity({
     metadataName: 'view',
     entity: viewEntity,
   });
@@ -34,10 +34,6 @@ export const fromViewEntityToFlatView = (
 
   return {
     ...viewEntityWithoutRelations,
-    createdAt: viewEntity.createdAt.toISOString(),
-    updatedAt: viewEntity.updatedAt.toISOString(),
-    deletedAt: viewEntity.deletedAt?.toISOString() ?? null,
-    universalIdentifier: viewEntityWithoutRelations.universalIdentifier,
     ...relationUniversalIdentifiers,
     universalOverrides,
     viewFieldIds: viewEntity.viewFields.map(({ id }) => id),
