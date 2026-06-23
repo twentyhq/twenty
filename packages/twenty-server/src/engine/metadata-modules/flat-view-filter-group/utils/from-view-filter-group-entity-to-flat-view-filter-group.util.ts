@@ -1,6 +1,4 @@
-import { removePropertiesFromRecord } from 'twenty-shared/utils';
-
-import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
+import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
@@ -10,10 +8,10 @@ export const fromViewFilterGroupEntityToFlatViewFilterGroup = (
 ): FlatViewFilterGroup => {
   const { entity: viewFilterGroupEntity } = args;
 
-  const viewFilterGroupEntityWithoutRelations = removePropertiesFromRecord(
-    viewFilterGroupEntity,
-    getMetadataEntityRelationProperties('viewFilterGroup'),
-  );
+  const viewFilterGroupEntityWithoutRelations = pickScalarPropertiesFromEntity({
+    metadataName: 'viewFilterGroup',
+    entity: viewFilterGroupEntity,
+  });
 
   const relationUniversalIdentifiers =
     resolveManyToOneRelationIdsToUniversalIdentifiers({

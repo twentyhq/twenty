@@ -1,6 +1,6 @@
-import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
+import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
@@ -18,10 +18,10 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
     fieldMetadataIdToUniversalIdentifierMap,
   } = args;
 
-  const objectMetadataEntityWithoutRelations = removePropertiesFromRecord(
-    objectMetadataEntity,
-    getMetadataEntityRelationProperties('objectMetadata'),
-  );
+  const objectMetadataEntityWithoutRelations = pickScalarPropertiesFromEntity({
+    metadataName: 'objectMetadata',
+    entity: objectMetadataEntity,
+  });
 
   const relationUniversalIdentifiers =
     resolveManyToOneRelationIdsToUniversalIdentifiers({

@@ -1,6 +1,6 @@
-import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
+import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { fromViewOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view/utils/from-view-overrides-to-universal-overrides.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
@@ -11,10 +11,10 @@ export const fromViewEntityToFlatView = (
 ): FlatView => {
   const { entity: viewEntity, fieldMetadataIdToUniversalIdentifierMap } = args;
 
-  const viewEntityWithoutRelations = removePropertiesFromRecord(
-    viewEntity,
-    getMetadataEntityRelationProperties('view'),
-  );
+  const viewEntityWithoutRelations = pickScalarPropertiesFromEntity({
+    metadataName: 'view',
+    entity: viewEntity,
+  });
 
   const relationUniversalIdentifiers =
     resolveManyToOneRelationIdsToUniversalIdentifiers({

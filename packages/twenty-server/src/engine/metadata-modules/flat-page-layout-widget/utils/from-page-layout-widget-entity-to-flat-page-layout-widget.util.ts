@@ -1,6 +1,6 @@
-import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
+import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { fromPageLayoutWidgetOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-overrides-to-universal-overrides.util';
@@ -27,9 +27,11 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
     viewUniversalIdentifierById,
   } = args;
 
-  const pageLayoutWidgetEntityWithoutRelations = removePropertiesFromRecord(
-    pageLayoutWidgetEntity,
-    getMetadataEntityRelationProperties('pageLayoutWidget'),
+  const pageLayoutWidgetEntityWithoutRelations = pickScalarPropertiesFromEntity(
+    {
+      metadataName: 'pageLayoutWidget',
+      entity: pageLayoutWidgetEntity,
+    },
   );
 
   const relationUniversalIdentifiers =

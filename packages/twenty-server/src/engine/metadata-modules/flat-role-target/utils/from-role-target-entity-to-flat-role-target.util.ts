@@ -1,6 +1,4 @@
-import { removePropertiesFromRecord } from 'twenty-shared/utils';
-
-import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
+import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
@@ -10,10 +8,10 @@ export const fromRoleTargetEntityToFlatRoleTarget = (
 ): FlatRoleTarget => {
   const { entity: roleTargetEntity } = args;
 
-  const roleTargetEntityWithoutRelations = removePropertiesFromRecord(
-    roleTargetEntity,
-    getMetadataEntityRelationProperties('roleTarget'),
-  );
+  const roleTargetEntityWithoutRelations = pickScalarPropertiesFromEntity({
+    metadataName: 'roleTarget',
+    entity: roleTargetEntity,
+  });
 
   const relationUniversalIdentifiers =
     resolveManyToOneRelationIdsToUniversalIdentifiers({

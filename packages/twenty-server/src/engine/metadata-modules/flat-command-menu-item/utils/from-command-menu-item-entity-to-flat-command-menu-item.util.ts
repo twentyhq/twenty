@@ -1,8 +1,8 @@
-import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { fromCommandMenuItemOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-overrides-to-universal-overrides.util';
-import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
+import { pickScalarPropertiesFromEntity } from 'src/engine/metadata-modules/flat-entity/utils/pick-scalar-properties-from-entity.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
@@ -15,10 +15,10 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
     pageLayoutIdToUniversalIdentifierMap,
   } = args;
 
-  const commandMenuItemEntityWithoutRelations = removePropertiesFromRecord(
-    commandMenuItemEntity,
-    getMetadataEntityRelationProperties('commandMenuItem'),
-  );
+  const commandMenuItemEntityWithoutRelations = pickScalarPropertiesFromEntity({
+    metadataName: 'commandMenuItem',
+    entity: commandMenuItemEntity,
+  });
 
   const relationUniversalIdentifiers =
     resolveManyToOneRelationIdsToUniversalIdentifiers({
