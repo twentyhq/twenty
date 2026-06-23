@@ -101,8 +101,8 @@ const buildSearchFieldMetadata = ({
   fieldMetadataUniversalIdentifier,
   applicationUniversalIdentifier,
   position = 0,
-  tsVectorFieldMetadataId = null,
-  tsVectorFieldMetadataUniversalIdentifier = null,
+  tsVectorFieldMetadataId = 'ts-vector-field-metadata-id',
+  tsVectorFieldMetadataUniversalIdentifier = 'ts-vector-field-metadata-universal-identifier',
 }: {
   id: string;
   universalIdentifier: string;
@@ -112,8 +112,8 @@ const buildSearchFieldMetadata = ({
   fieldMetadataUniversalIdentifier: string;
   applicationUniversalIdentifier: string;
   position?: number;
-  tsVectorFieldMetadataId?: string | null;
-  tsVectorFieldMetadataUniversalIdentifier?: string | null;
+  tsVectorFieldMetadataId?: string;
+  tsVectorFieldMetadataUniversalIdentifier?: string;
 }): FlatSearchFieldMetadata => {
   const createdAt = '2024-01-01T00:00:00.000Z';
 

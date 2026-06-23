@@ -55,20 +55,18 @@ export const fromSearchFieldMetadataEntityToFlatSearchFieldMetadata = ({
     );
   }
 
-  let tsVectorFieldMetadataUniversalIdentifier: string | null = null;
+  // Non-null by contract; the cache layer backfills a fallback for legacy rows
+  // still NULL before the 2.16 slow command enforces NOT NULL.
+  const tsVectorFieldMetadataUniversalIdentifier =
+    fieldMetadataIdToUniversalIdentifierMap.get(
+      searchFieldMetadataEntity.tsVectorFieldMetadataId,
+    );
 
-  if (isDefined(searchFieldMetadataEntity.tsVectorFieldMetadataId)) {
-    tsVectorFieldMetadataUniversalIdentifier =
-      fieldMetadataIdToUniversalIdentifierMap.get(
-        searchFieldMetadataEntity.tsVectorFieldMetadataId,
-      ) ?? null;
-
-    if (!isDefined(tsVectorFieldMetadataUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `TS_VECTOR field metadata with id ${searchFieldMetadataEntity.tsVectorFieldMetadataId} not found for searchFieldMetadata ${searchFieldMetadataEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
+  if (!isDefined(tsVectorFieldMetadataUniversalIdentifier)) {
+    throw new FlatEntityMapsException(
+      `TS_VECTOR field metadata with id ${searchFieldMetadataEntity.tsVectorFieldMetadataId} not found for searchFieldMetadata ${searchFieldMetadataEntity.id}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
   }
 
   return {

@@ -71,43 +71,36 @@ export class FlatSearchFieldMetadataValidatorService {
       });
     }
 
-    // The FK is nullable until the 2.16 backfill enforces it, so only validate when provided.
-    if (
-      isDefined(
+    const flatTsVectorFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
         flatSearchFieldMetadataToValidate.tsVectorFieldMetadataUniversalIdentifier,
-      )
-    ) {
-      const flatTsVectorFieldMetadata = findFlatEntityByUniversalIdentifier({
-        universalIdentifier:
-          flatSearchFieldMetadataToValidate.tsVectorFieldMetadataUniversalIdentifier,
-        flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(flatTsVectorFieldMetadata)) {
+      validationResult.errors.push({
+        code: SearchFieldMetadataExceptionCode.TS_VECTOR_FIELD_METADATA_NOT_FOUND,
+        message: t`TS_VECTOR field metadata not found`,
+        userFriendlyMessage: msg`Search vector field not found`,
       });
-
-      if (!isDefined(flatTsVectorFieldMetadata)) {
+    } else {
+      if (flatTsVectorFieldMetadata.type !== FieldMetadataType.TS_VECTOR) {
         validationResult.errors.push({
-          code: SearchFieldMetadataExceptionCode.TS_VECTOR_FIELD_METADATA_NOT_FOUND,
-          message: t`TS_VECTOR field metadata not found`,
-          userFriendlyMessage: msg`Search vector field not found`,
+          code: SearchFieldMetadataExceptionCode.INVALID_TS_VECTOR_FIELD_METADATA,
+          message: t`TS_VECTOR field metadata must be of type TS_VECTOR`,
+          userFriendlyMessage: msg`Search vector field must be a search vector`,
         });
-      } else {
-        if (flatTsVectorFieldMetadata.type !== FieldMetadataType.TS_VECTOR) {
-          validationResult.errors.push({
-            code: SearchFieldMetadataExceptionCode.INVALID_TS_VECTOR_FIELD_METADATA,
-            message: t`TS_VECTOR field metadata must be of type TS_VECTOR`,
-            userFriendlyMessage: msg`Search vector field must be a search vector`,
-          });
-        }
+      }
 
-        if (
-          flatTsVectorFieldMetadata.objectMetadataUniversalIdentifier !==
-          flatSearchFieldMetadataToValidate.objectMetadataUniversalIdentifier
-        ) {
-          validationResult.errors.push({
-            code: SearchFieldMetadataExceptionCode.INVALID_TS_VECTOR_FIELD_METADATA,
-            message: t`TS_VECTOR field metadata must belong to the same object`,
-            userFriendlyMessage: msg`Search vector field must belong to the same object`,
-          });
-        }
+      if (
+        flatTsVectorFieldMetadata.objectMetadataUniversalIdentifier !==
+        flatSearchFieldMetadataToValidate.objectMetadataUniversalIdentifier
+      ) {
+        validationResult.errors.push({
+          code: SearchFieldMetadataExceptionCode.INVALID_TS_VECTOR_FIELD_METADATA,
+          message: t`TS_VECTOR field metadata must belong to the same object`,
+          userFriendlyMessage: msg`Search vector field must belong to the same object`,
+        });
       }
     }
 
