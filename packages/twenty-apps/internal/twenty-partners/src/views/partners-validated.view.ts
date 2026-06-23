@@ -9,8 +9,10 @@ const PARTNER_REGION_FIELD_ID = '560503de-6330-4c1d-af97-a8dee125f2ad';
 const PARTNER_VALIDATION_STAGE_FIELD_ID =
   '2ca9856f-f54a-4326-9ff3-668fd7da0b50';
 
+// Reuses the retired all-partners view id so the 0.5.x→1.0.0 sync updates the Partner
+// object's existing view in place instead of deleting it (Twenty blocks deleting an object's only view).
 export const PARTNERS_VALIDATED_VIEW_UNIVERSAL_IDENTIFIER =
-  '7b1a201d-eaf4-4239-9c56-4f988ae1181a';
+  '379b11d5-44d5-476b-ba7d-31d5f515c9b4';
 
 export default defineView({
   universalIdentifier: PARTNERS_VALIDATED_VIEW_UNIVERSAL_IDENTIFIER,
@@ -21,7 +23,8 @@ export default defineView({
   position: 3,
   fields: [
     {
-      universalIdentifier: 'dfc446e3-aab2-45e7-8e14-5bf3d9c22b92',
+      // Reuses all-partners' label-identifier viewField id (update in place; its deletion is blocked).
+      universalIdentifier: '21afcc69-09c5-42eb-a609-26c062de3bd3',
       fieldMetadataUniversalIdentifier: 'a0000001-0000-4000-8000-000000000001',
       position: 0,
       isVisible: true,
