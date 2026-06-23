@@ -2,7 +2,7 @@ import { type TimelineActivity } from '@/activities/timeline-activities/types/Ti
 import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { parseTimelineActivityVerb } from 'twenty-shared/timeline';
+import { parseTimelineActivityAction } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 
 const keepActivityWithReadableDiff = (
@@ -28,31 +28,24 @@ const keepActivityWithReadableDiff = (
   };
 };
 
-// Linked activities created before the linkedObjectMetadataId column was
-// populated encode the linked object in their name, e.g. "linked-note.updated".
-const findLinkedObjectMetadataItem = (
+// Activities created before the linkedObjectMetadataId column was populated
+// encode the linked object in their name, e.g. "linked-note.updated".
+const findLegacyObjectMetadataItemFromName = (
   timelineActivity: TimelineActivity,
   objectMetadataItems: EnrichedObjectMetadataItem[],
 ): EnrichedObjectMetadataItem | undefined => {
-  if (isDefined(timelineActivity.linkedObjectMetadataId)) {
-    return objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.id === timelineActivity.linkedObjectMetadataId,
-    );
+  if (!timelineActivity.name.startsWith('linked-')) {
+    return undefined;
   }
 
-  if (timelineActivity.name.startsWith('linked-')) {
-    const linkedObjectNameSingular = timelineActivity.name
-      .split('.')[0]
-      .replace('linked-', '');
+  const linkedObjectNameSingular = timelineActivity.name
+    .split('.')[0]
+    .replace('linked-', '');
 
-    return objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.nameSingular === linkedObjectNameSingular,
-    );
-  }
-
-  return undefined;
+  return objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === linkedObjectNameSingular,
+  );
 };
 
 export const filterOutInvalidTimelineActivities = (
@@ -71,12 +64,19 @@ export const filterOutInvalidTimelineActivities = (
 
   return timelineActivities
     .map((timelineActivity) => {
-      const linkedObjectMetadataItem = findLinkedObjectMetadataItem(
-        timelineActivity,
-        objectMetadataItems,
-      );
+      const linkedObjectMetadataItem = isDefined(
+        timelineActivity.linkedObjectMetadataId,
+      )
+        ? objectMetadataItems.find(
+            (objectMetadataItem) =>
+              objectMetadataItem.id === timelineActivity.linkedObjectMetadataId,
+          )
+        : findLegacyObjectMetadataItemFromName(
+            timelineActivity,
+            objectMetadataItems,
+          );
 
-      const verb = parseTimelineActivityVerb(timelineActivity.name);
+      const action = parseTimelineActivityAction(timelineActivity.name);
 
       if (isDefined(linkedObjectMetadataItem)) {
         if (!isDefined(timelineActivity.properties?.diff)) {
@@ -89,7 +89,7 @@ export const filterOutInvalidTimelineActivities = (
         );
       }
 
-      if (verb === 'updated') {
+      if (action === 'updated') {
         return keepActivityWithReadableDiff(
           timelineActivity,
           mainObjectMetadataItem.readableFields,

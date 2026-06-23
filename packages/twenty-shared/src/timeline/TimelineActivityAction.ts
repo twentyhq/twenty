@@ -1,4 +1,4 @@
-export type TimelineActivityVerb =
+export type TimelineActivityAction =
   | 'created'
   | 'updated'
   | 'deleted'

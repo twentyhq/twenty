@@ -1,6 +1,6 @@
-import { parseTimelineActivityVerb } from '@/timeline/parseTimelineActivityVerb';
+import { parseTimelineActivityAction } from '@/timeline/parseTimelineActivityAction';
 
-describe('parseTimelineActivityVerb', () => {
+describe('parseTimelineActivityAction', () => {
   it.each([
     ['company.created', 'created'],
     ['company.updated', 'updated'],
@@ -10,12 +10,12 @@ describe('parseTimelineActivityVerb', () => {
     ['linked-task.updated', 'updated'],
     ['message.linked', 'linked'],
     ['calendarEvent.linked', 'linked'],
-  ])('parses the verb from "%s" as "%s"', (name, expected) => {
-    expect(parseTimelineActivityVerb(name)).toBe(expected);
+  ])('parses the action from "%s" as "%s"', (name, expected) => {
+    expect(parseTimelineActivityAction(name)).toBe(expected);
   });
 
   it('falls back to "linked" for null or unrecognized names', () => {
-    expect(parseTimelineActivityVerb(null)).toBe('linked');
-    expect(parseTimelineActivityVerb('deal.went_cold')).toBe('linked');
+    expect(parseTimelineActivityAction(null)).toBe('linked');
+    expect(parseTimelineActivityAction('deal.went_cold')).toBe('linked');
   });
 });

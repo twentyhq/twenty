@@ -110,23 +110,24 @@ export const useTimelineActivities = (
     objectMetadataItemId: timelineActivityMetadata.id,
   });
 
-  const linkedRecordTitleObjectMetadataIds = [
+  const noteAndTaskObjectMetadataIds = [
     noteObjectMetadataItem?.id,
     taskObjectMetadataItem?.id,
   ].filter(isDefined);
 
-  const activityIds = timelineActivities
+  // Notes and tasks expose a title that we resolve to label their timeline rows.
+  const noteAndTaskLinkedRecordIds = timelineActivities
     .filter(
       (timelineActivity) =>
         isDefined(timelineActivity.linkedObjectMetadataId) &&
-        linkedRecordTitleObjectMetadataIds.includes(
+        noteAndTaskObjectMetadataIds.includes(
           timelineActivity.linkedObjectMetadataId,
         ),
     )
     .map((timelineActivity) => timelineActivity.linkedRecordId)
     .filter(isDefined);
 
-  useLinkedObjectsTitle(activityIds);
+  useLinkedObjectsTitle(noteAndTaskLinkedRecordIds);
 
   const firstQueryLoading =
     loadingTimelineActivities && timelineActivities.length === 0;

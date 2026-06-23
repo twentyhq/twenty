@@ -11,7 +11,7 @@ import {
 } from '@/activities/timeline-activities/rows/components/EventRowStyles';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { parseTimelineActivityVerb } from 'twenty-shared/timeline';
+import { parseTimelineActivityAction } from 'twenty-shared/timeline';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -37,7 +37,7 @@ export const EventRowActivity = ({
   objectNameSingular,
   createdAt,
 }: EventRowActivityProps & { objectNameSingular: CoreObjectNameSingular }) => {
-  const eventAction = parseTimelineActivityVerb(event.name);
+  const eventAction = parseTimelineActivityAction(event.name);
 
   const eventObject = objectNameSingular;
 
