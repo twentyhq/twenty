@@ -3,7 +3,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { useIcons } from 'twenty-ui-deprecated/display';
+import { useIcons } from 'twenty-ui/icon';
 
 type SoftDeleteFilterChipProps = {
   recordFilter: RecordFilter;

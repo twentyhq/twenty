@@ -23,11 +23,11 @@ import {
   IconPlayerPlay,
   IconPlus,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
-import { Button, LightIconButton } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { Button, LightIconButton } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { MenuItem } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
 

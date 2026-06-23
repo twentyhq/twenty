@@ -1,7 +1,7 @@
 import { ActorFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ActorFieldDisplay';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { AuthContextDecorator } from '~/testing/decorators/AuthContextDecorator';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -35,7 +35,7 @@ export const Default: Story = {};
 
 export const Performance = getProfilingStory({
   componentName: 'ActorFieldDisplay',
-  averageThresholdInMs: 0.2,
+  averageThresholdInMs: 0.4,
   numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });

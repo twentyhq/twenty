@@ -25,7 +25,9 @@ import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/l
 import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-executor-manager.service';
 import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
+import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
 import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
+import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -94,6 +96,19 @@ export class LambdaDriver implements LogicFunctionDriver {
     await this.executorManager.delete(flatLogicFunction);
   }
 
+  async deleteApplicationResources({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    await this.layerManager.deleteSdkLayer({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+  }
+
   async installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void> {
@@ -143,6 +158,13 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       currentPhase = LambdaExecutionPhase.FETCH_CODE;
       const invokeFlowStart = Date.now();
+
+      if (!HANDLER_NAME_REGEX.test(flatLogicFunction.handlerName)) {
+        throw new LogicFunctionException(
+          `Invalid handlerName "${flatLogicFunction.handlerName}": must be a valid JavaScript identifier or dotted path`,
+          LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        );
+      }
 
       const executorPayload: LambdaDriverExecutorPayload = {
         params: payload,
@@ -217,6 +239,18 @@ export class LambdaDriver implements LogicFunctionDriver {
     } catch (error) {
       const phaseTiming = `phase=${currentPhase} buildMs=${buildExecutorMs} fetchCodeMs=${getBuiltCodeMs}`;
 
+      const isTimeoutError =
+        error instanceof Error && error.name === 'TimeoutError';
+
+      if (isTimeoutError && currentPhase === LambdaExecutionPhase.INVOKE) {
+        // User-level outcome (function ran too long), not a platform error: return, don't throw.
+        this.logger.warn(
+          `Logic function '${flatLogicFunction.id}' timed out during invoke [${phaseTiming}]`,
+        );
+
+        return buildLogicFunctionTimeoutResult(timeoutMs);
+      }
+
       this.logger.error(
         `Lambda invocation failed for function ${flatLogicFunction.id} [${phaseTiming}]: ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
@@ -229,7 +263,8 @@ export class LambdaDriver implements LogicFunctionDriver {
         );
       }
 
-      if (error instanceof Error && error.name === 'TimeoutError') {
+      if (isTimeoutError) {
+        // Build/fetch-phase timeouts are platform-side — keep throwing so they reach Sentry.
         const executor = await this.executorManager
           .getLambdaExecutor(flatLogicFunction)
           .catch(() => undefined);
@@ -247,7 +282,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       throw new LogicFunctionException(
         `Lambda invocation failed for function '${flatLogicFunction.id}' during ${currentPhase}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR,
       );
     }
   }

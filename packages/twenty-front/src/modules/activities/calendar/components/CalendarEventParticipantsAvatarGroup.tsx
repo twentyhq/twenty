@@ -1,8 +1,9 @@
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { isTimelineCalendarEventParticipant } from '@/activities/calendar/types/guards/IsTimelineCalendarEventParticipant';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, AvatarGroup } from 'twenty-ui-deprecated/display';
+import { Avatar, AvatarGroup } from 'twenty-ui/data-display';
 import { type TimelineCalendarEventParticipant } from '~/generated/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type CalendarEventParticipantsAvatarGroupProps = {
   participants: CalendarEventParticipant[] | TimelineCalendarEventParticipant[];
@@ -51,7 +52,7 @@ export const CalendarEventParticipantsAvatarGroup = ({
           key={[participant.workspaceMemberId, participant.displayName]
             .filter(isDefined)
             .join('-')}
-          avatarUrl={participant.avatarUrl}
+          avatarUrl={getAbsoluteImageUrl(participant.avatarUrl)}
           placeholder={
             participant.firstName && participant.lastName
               ? `${participant.firstName} ${participant.lastName}`

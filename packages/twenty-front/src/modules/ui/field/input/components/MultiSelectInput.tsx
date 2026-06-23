@@ -17,11 +17,8 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
-import {
-  MenuItem,
-  MenuItemMultiSelectTag,
-} from 'twenty-ui-deprecated/navigation';
+import { type SelectOption } from 'twenty-ui/input';
+import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 

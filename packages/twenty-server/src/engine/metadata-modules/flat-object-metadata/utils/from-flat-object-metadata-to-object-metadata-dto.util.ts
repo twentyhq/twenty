@@ -1,6 +1,5 @@
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 
 export const fromFlatObjectMetadataToObjectMetadataDto = (
   flatObjectMetadata: FlatObjectMetadata,
@@ -21,7 +20,8 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     isRemote,
     isSearchable,
     isSystem,
-    isUIReadOnly,
+    isUIEditable,
+    isUICreatable,
     labelPlural,
     labelSingular,
     namePlural,
@@ -36,12 +36,13 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     id,
     universalIdentifier,
     isActive,
-    isCustom: !belongsToTwentyStandardApp(flatObjectMetadata),
     isLabelSyncedWithName,
     isRemote,
     isSearchable,
     isSystem,
-    isUIReadOnly,
+    isUIEditable,
+    isUICreatable,
+    isUIReadOnly: !isUIEditable,
     labelPlural,
     labelSingular,
     namePlural,

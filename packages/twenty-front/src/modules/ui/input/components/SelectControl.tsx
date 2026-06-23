@@ -2,16 +2,11 @@ import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronDown,
-  OverflowingTextWithTooltip,
-  TintedIconTile,
-} from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { TintedIconTile } from 'twenty-ui/data-display';
+import { IconChevronDown } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { type SelectOption } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 

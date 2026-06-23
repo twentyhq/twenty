@@ -1,3 +1,4 @@
+import { type JSX } from 'react';
 import { I18nProvider } from '@lingui/react';
 import { Container, Html } from '@react-email/components';
 

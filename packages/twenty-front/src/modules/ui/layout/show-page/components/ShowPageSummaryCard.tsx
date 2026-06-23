@@ -4,23 +4,18 @@ import { Trans } from '@lingui/react/macro';
 import { type ChangeEvent, type ReactNode, useContext, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  Avatar,
-  type AvatarType,
-  type IconComponent,
-} from 'twenty-ui-deprecated/display';
+import { Avatar, type AvatarType } from 'twenty-ui/data-display';
+import { type IconComponent } from 'twenty-ui/icon';
+import { AppTooltip } from 'twenty-ui/surfaces';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidV4 } from 'uuid';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;
@@ -154,7 +149,7 @@ export const ShowPageSummaryCard = ({
         hasIcon={isDefined(icon)}
       >
         <Avatar
-          avatarUrl={logoOrAvatar}
+          avatarUrl={getAbsoluteImageUrl(logoOrAvatar)}
           onClick={onUploadPicture ? handleAvatarClick : undefined}
           size="xl"
           placeholderColorSeed={id}

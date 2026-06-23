@@ -5,6 +5,8 @@ export enum BillingWebhookEvent {
   CUSTOMER_SUBSCRIPTION_UPDATED = 'customer.subscription.updated',
   CUSTOMER_SUBSCRIPTION_DELETED = 'customer.subscription.deleted',
   CUSTOMER_CREATED = 'customer.created',
+  PAYMENT_METHOD_ATTACHED = 'payment_method.attached',
+  PAYMENT_METHOD_DETACHED = 'payment_method.detached',
   SETUP_INTENT_SUCCEEDED = 'setup_intent.succeeded',
   CUSTOMER_ACTIVE_ENTITLEMENT_SUMMARY_UPDATED = 'entitlements.active_entitlement_summary.updated',
   PRODUCT_CREATED = 'product.created',

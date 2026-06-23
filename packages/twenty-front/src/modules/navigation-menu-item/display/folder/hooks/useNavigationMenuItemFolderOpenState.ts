@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
@@ -16,6 +16,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 
 type UseNavigationMenuItemFolderOpenStateParams = {
   folderId: string;
@@ -30,6 +31,9 @@ export const useNavigationMenuItemFolderOpenState = ({
   const isMobile = useIsMobile();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
+  const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
+    lastVisitedViewPerObjectMetadataItemState,
+  );
 
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
     useAtomState(openNavigationMenuItemFolderIdsState);
@@ -74,20 +78,22 @@ export const useNavigationMenuItemFolderOpenState = ({
           if (item.type === NavigationMenuItemType.LINK) {
             return false;
           }
-          const computedLink = getNavigationMenuItemComputedLink(
+          const computedLink = getNavigationMenuItemComputedLink({
             item,
             objectMetadataItems,
             views,
-          );
+            lastVisitedViewPerObjectMetadataItem,
+          });
           return isNonEmptyString(computedLink);
         },
       );
       if (isDefined(firstNonLinkItem)) {
-        const link = getNavigationMenuItemComputedLink(
-          firstNonLinkItem,
+        const link = getNavigationMenuItemComputedLink({
+          item: firstNonLinkItem,
           objectMetadataItems,
           views,
-        );
+          lastVisitedViewPerObjectMetadataItem,
+        });
         if (isNonEmptyString(link)) {
           setLastClickedNavigationMenuItemId(firstNonLinkItem.id);
           navigate(link);

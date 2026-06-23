@@ -3,10 +3,10 @@ import { useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { isDefined } from 'twenty-shared/utils';
+import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
 import {
-  Avatar,
-  getIconTileColorShades,
   IconCode,
   IconEdit,
   IconPlus,
@@ -14,11 +14,8 @@ import {
   IconTrash,
   useIcons,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ApplicationInfo = {
   name: string;
@@ -102,7 +99,7 @@ export const SettingsToolIcon = ({
   if (isDefined(application) && isDefined(marketplaceApp?.logo)) {
     return (
       <Avatar
-        avatarUrl={marketplaceApp?.logo ?? null}
+        avatarUrl={getAbsoluteImageUrl(marketplaceApp?.logo ?? null)}
         placeholder={application.name}
         placeholderColorSeed={application.name}
         type="squared"
@@ -151,7 +148,7 @@ export const SettingsToolIcon = ({
           <OperationIcon
             size="12px"
             stroke={theme.icon.stroke.md}
-            color={themeCssVariables.grayScale.gray10}
+            color={theme.font.color.tertiary}
           />
         </StyledOperationOverlay>
       </StyledCompositeContainer>
@@ -175,5 +172,11 @@ export const SettingsToolIcon = ({
     );
   }
 
-  return <MainIcon size={16} />;
+  return (
+    <MainIcon
+      size={16}
+      stroke={theme.icon.stroke.md}
+      color={theme.font.color.tertiary}
+    />
+  );
 };

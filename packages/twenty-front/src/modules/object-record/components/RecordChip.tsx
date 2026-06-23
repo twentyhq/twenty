@@ -7,6 +7,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,8 +17,8 @@ import {
   type ChipSize,
   ChipVariant,
   LinkChip,
-} from 'twenty-ui-deprecated/components';
-import { type TriggerEventType } from 'twenty-ui-deprecated/utilities';
+} from 'twenty-ui/data-display';
+import { type TriggerEventType } from 'twenty-ui/utilities';
 
 export type RecordChipProps = {
   objectNameSingular: string;
@@ -98,7 +99,7 @@ export const RecordChip = ({
               placeholder={recordChipData.name}
               placeholderColorSeed={record.id}
               avatarType={recordChipData.avatarType}
-              avatarUrl={recordChipData.avatarUrl ?? ''}
+              avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
             />
           )
         }
@@ -120,7 +121,7 @@ export const RecordChip = ({
             placeholder={recordChipData.name}
             placeholderColorSeed={record.id}
             avatarType={recordChipData.avatarType}
-            avatarUrl={recordChipData.avatarUrl ?? ''}
+            avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
           />
         )
       }

@@ -1,5 +1,5 @@
 import type { Resend } from 'resend';
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from '@utils/is-defined';
 
 import { withRateLimitRetry } from '@modules/resend/shared/utils/with-rate-limit-retry';

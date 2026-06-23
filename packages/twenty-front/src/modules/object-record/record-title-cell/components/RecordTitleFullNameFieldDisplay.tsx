@@ -8,8 +8,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDiv = styled.div`
   align-items: center;

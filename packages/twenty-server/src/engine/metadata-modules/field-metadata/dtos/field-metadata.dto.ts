@@ -100,15 +100,6 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
 
   @IsBoolean()
   @IsOptional()
-  @Field({
-    nullable: true,
-    deprecationReason:
-      'isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application.',
-  })
-  isCustom?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
   @FilterableField({ nullable: true })
   isActive?: boolean;
 
@@ -120,6 +111,17 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsBoolean()
   @IsOptional()
   @FilterableField({ nullable: true })
+  isUIEditable?: boolean;
+
+  // Deprecated alias kept for one release: stays filterable so the GraphQL
+  // input types (CreateFieldInput, UpdateFieldInput, FieldFilter) keep their
+  // isUIReadOnly member and external API consumers are not broken.
+  @IsBoolean()
+  @IsOptional()
+  @FilterableField({
+    nullable: true,
+    deprecationReason: 'Use isUIEditable',
+  })
   isUIReadOnly?: boolean;
 
   @IsBoolean()

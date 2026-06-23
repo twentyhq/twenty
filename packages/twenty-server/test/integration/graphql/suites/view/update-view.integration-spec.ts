@@ -1,3 +1,4 @@
+import { VIEW_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneSelectFieldMetadataForIntegrationTests } from 'test/integration/metadata/suites/field-metadata/utils/create-one-select-field-metadata-for-integration-tests.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -92,11 +93,14 @@ describe('Update core view', () => {
       type: ViewType.KANBAN,
       mainGroupByFieldMetadataId: testSelectFieldMetadataId,
       isCompact: true,
+      kanbanColumnWidth: 250,
     };
 
     const { data, errors } = await updateOneView({
       viewId: view.id,
       input: updateInput,
+      gqlFields: `${VIEW_GQL_FIELDS}
+    kanbanColumnWidth`,
       expectToFail: false,
     });
 
@@ -106,6 +110,7 @@ describe('Update core view', () => {
       name: 'Updated View',
       type: ViewType.KANBAN,
       isCompact: true,
+      kanbanColumnWidth: 250,
     });
   });
 

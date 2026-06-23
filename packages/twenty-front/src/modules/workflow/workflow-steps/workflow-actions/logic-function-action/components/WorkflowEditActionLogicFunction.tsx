@@ -1,3 +1,4 @@
+import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
@@ -8,6 +9,7 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type WorkflowLogicFunctionAction } from '@/workflow/types/Workflow';
+import { WorkflowExpectedOutputBodyInput } from '@/workflow/workflow-steps/components/WorkflowExpectedOutputBodyInput';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -23,12 +25,9 @@ import { useMemo } from 'react';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
-import {
-  Callout,
-  IconPlayerPlay,
-  IconSettingsAutomation,
-} from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Callout } from 'twenty-ui/feedback';
+import { IconPlayerPlay, IconSettingsAutomation } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
 const INPUT_TAB_ID = 'input';
@@ -74,6 +73,10 @@ export const WorkflowEditActionLogicFunction = ({
   const { logicFunction, loading } = useGetOneLogicFunction({
     id: logicFunctionId,
   });
+
+  const isThirdPartyApp = useIsThirdPartyApplication(
+    logicFunction?.applicationId,
+  );
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -169,6 +172,21 @@ export const WorkflowEditActionLogicFunction = ({
     updateLogicFunctionInput(updatedTestFunctionInput);
   };
 
+  const handleExpectedOutputBodyChange = (
+    parsedValue: Record<string, unknown>,
+  ) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
+    updateAction({
+      settings: {
+        ...action.settings,
+        expectedOutputSchema: parsedValue,
+      },
+    });
+  };
+
   const handleTestFunction = async () => {
     if (actionOptions.readonly === true) {
       return;
@@ -182,6 +200,8 @@ export const WorkflowEditActionLogicFunction = ({
   }
 
   const hasInputFields = Object.keys(functionInput).length > 0;
+
+  const isTestTabActive = !isThirdPartyApp && activeTabId === TEST_TAB_ID;
 
   const tabs = [
     {
@@ -199,17 +219,19 @@ export const WorkflowEditActionLogicFunction = ({
   return (
     <>
       <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
-      <StyledTabListContainer>
-        <TabList
-          tabs={tabs}
-          behaveAsLinks={false}
-          componentInstanceId={
-            WORKFLOW_LOGIC_FUNCTION_ACTION_TAB_LIST_COMPONENT_ID
-          }
-        />
-      </StyledTabListContainer>
+      {!isThirdPartyApp && (
+        <StyledTabListContainer>
+          <TabList
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId={
+              WORKFLOW_LOGIC_FUNCTION_ACTION_TAB_LIST_COMPONENT_ID
+            }
+          />
+        </StyledTabListContainer>
+      )}
       <WorkflowStepBody>
-        {activeTabId === TEST_TAB_ID ? (
+        {isTestTabActive ? (
           <>
             <WorkflowEditActionCodeFields
               functionInput={testInput}
@@ -255,6 +277,11 @@ export const WorkflowEditActionLogicFunction = ({
                 description={t`You can see the function logic in your application settings.`}
               />
             )}
+            <WorkflowExpectedOutputBodyInput
+              defaultValue={action.settings.expectedOutputSchema}
+              onChange={handleExpectedOutputBodyChange}
+              readonly={actionOptions.readonly}
+            />
           </StyledContainer>
         )}
       </WorkflowStepBody>
@@ -262,7 +289,7 @@ export const WorkflowEditActionLogicFunction = ({
         <WorkflowStepFooter
           stepId={action.id}
           additionalActions={
-            activeTabId === TEST_TAB_ID
+            isTestTabActive
               ? [
                   <WorkflowStepCmdEnterButton
                     title={t`Test`}

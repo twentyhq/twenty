@@ -1,7 +1,9 @@
 import { styled } from '@linaria/react';
 import { Droppable } from '@hello-pangea/dnd';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
+import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-board/constants/RecordBoardColumnWidthCssVariableName';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
@@ -16,8 +18,14 @@ const StyledColumn = styled.div`
   background-color: ${themeCssVariables.background.primary};
   display: flex;
   flex-direction: column;
-  max-width: 200px;
-  min-width: 200px;
+  max-width: var(
+    ${RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME},
+    ${RECORD_BOARD_COLUMN_WIDTH}px
+  );
+  min-width: var(
+    ${RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME},
+    ${RECORD_BOARD_COLUMN_WIDTH}px
+  );
   padding: ${themeCssVariables.spacing[2]};
   padding-top: 0px;
   position: relative;

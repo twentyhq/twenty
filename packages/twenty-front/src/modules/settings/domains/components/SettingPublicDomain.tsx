@@ -1,5 +1,6 @@
-import { Section } from 'twenty-ui-deprecated/layout';
-import { H2Title, IconReload, IconTrash } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui/layout';
+import { IconReload, IconTrash } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
@@ -8,11 +9,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import {
-  Button,
-  ButtonGroup,
-  type SelectOption,
-} from 'twenty-ui-deprecated/input';
+import { Button, ButtonGroup, type SelectOption } from 'twenty-ui/input';
 import { styled } from '@linaria/react';
 import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
 import { useCheckPublicDomainValidRecords } from '@/settings/domains/hooks/useCheckPublicDomainValidRecords';
@@ -31,7 +28,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useState } from 'react';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonGroupContainer = styled.div`
   > * > :not(:first-of-type) > button {

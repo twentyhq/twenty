@@ -1,5 +1,4 @@
-import type { RoutePayload } from 'twenty-sdk/define';
-import { defineLogicFunction } from 'twenty-sdk/define';
+import { defineLogicFunction, type  RoutePayload } from 'twenty-sdk/define';
 
 import { SLACK_LIST_CHANNELS_ROUTE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { slackListChannelsHandler } from 'src/logic-functions/handlers/slack-list-channels-handler';

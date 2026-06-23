@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/client/react';
 import { loadDevMessages } from '@apollo/client/dev';
 import { type Decorator } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
-import { HelmetProvider } from 'react-helmet-async';
+import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import {
   createMemoryRouter,
   createRoutesFromElements,
@@ -18,7 +18,7 @@ import { MinimalMetadataGater } from '@/metadata-store/components/MinimalMetadat
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
 import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useState } from 'react';
+import { type JSX, useState } from 'react';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
@@ -30,7 +30,7 @@ import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProvide
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { IconsProvider } from 'twenty-ui-deprecated/display';
+import { IconsProvider } from 'twenty-ui/icon';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 

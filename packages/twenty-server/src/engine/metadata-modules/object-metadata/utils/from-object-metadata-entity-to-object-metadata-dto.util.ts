@@ -3,7 +3,6 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 
 export const fromObjectMetadataEntityToObjectMetadataDto = (
   entity: ObjectMetadataEntity,
-  standardApplicationId: string,
 ): ObjectMetadataDTO => ({
   id: entity.id,
   universalIdentifier: entity.universalIdentifier,
@@ -17,11 +16,12 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
   color: entity.color ?? undefined,
   shortcut: entity.shortcut ?? undefined,
   standardOverrides: entity.standardOverrides ?? undefined,
-  isCustom: entity.applicationId !== standardApplicationId,
   isRemote: entity.isRemote,
   isActive: entity.isActive,
   isSystem: entity.isSystem,
-  isUIReadOnly: entity.isUIReadOnly,
+  isUIEditable: entity.isUIEditable,
+  isUICreatable: entity.isUICreatable,
+  isUIReadOnly: !entity.isUIEditable,
   isSearchable: entity.isSearchable,
   isLabelSyncedWithName: entity.isLabelSyncedWithName,
   workspaceId: entity.workspaceId,

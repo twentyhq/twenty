@@ -443,6 +443,7 @@ export class UserResolver {
     return this.userService.deleteUserWorkspaceAndPotentiallyDeleteUser({
       userId: workspaceMemberToDelete.userId,
       workspaceId: workspace.id,
+      actingUserWorkspaceId: userWorkspaceId,
     });
   }
 
@@ -576,7 +577,13 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
   ) {
-    return workspace;
+    if (!isDefined(workspace)) {
+      return null;
+    }
+
+    return this.userService.refreshWorkspaceIfPendingOrOngoingCreation(
+      workspace,
+    );
   }
 
   @ResolveField(() => [UserWorkspaceEntity], {

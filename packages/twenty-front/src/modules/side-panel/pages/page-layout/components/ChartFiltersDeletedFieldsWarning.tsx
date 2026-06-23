@@ -1,7 +1,7 @@
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { SidePanelInformationBanner } from 'twenty-ui-deprecated/display';
+import { SidePanelInformationBanner } from 'twenty-ui/feedback';
 type ChartFiltersDeletedFieldsWarningProps = {
   validFieldMetadataIds: Set<string>;
 };
@@ -24,7 +24,7 @@ export const ChartFiltersDeletedFieldsWarning = ({
   return (
     <SidePanelInformationBanner
       variant="warning"
-      message={t`This rule filters on one or more deleted fields that should be removed.`}
+      message={t`One or more filters reference deactivated or deleted fields and will be automatically removed on save.`}
     />
   );
 };

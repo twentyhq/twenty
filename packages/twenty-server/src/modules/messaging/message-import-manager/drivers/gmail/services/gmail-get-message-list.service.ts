@@ -28,7 +28,7 @@ export class GmailGetMessageListService {
     private readonly gmailMessageListFetchErrorHandler: GmailMessageListFetchErrorHandler,
   ) {}
 
-  private async getMessageListWithoutCursor(
+  async getMessageListWithoutCursor(
     connectedAccount: Pick<
       ConnectedAccountEntity,
       'provider' | 'id' | 'handle'

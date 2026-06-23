@@ -1,26 +1,24 @@
 import { styled } from '@linaria/react';
 import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  H1Title,
-  H1TitleFontColor,
   type IconComponent,
   IconDatabase,
   IconUserCircle,
-} from 'twenty-ui-deprecated/display';
-import { ModalContent } from 'twenty-ui-deprecated/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
+import { ModalContent } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AuthorizeAppDocument,
   FindApplicationRegistrationByClientIdDocument,
@@ -214,6 +212,33 @@ export const Authorize = () => {
       });
     }
   };
+
+  useGlobalHotkeys({
+    keys: [Key.Enter],
+    callback: (keyboardEvent) => {
+      if (
+        keyboardEvent.target instanceof HTMLButtonElement ||
+        loading ||
+        isAuthorizing ||
+        !isDefined(applicationRegistration)
+      ) {
+        return;
+      }
+
+      handleAuthorize();
+    },
+    containsModifier: false,
+    dependencies: [
+      loading,
+      isAuthorizing,
+      applicationRegistration,
+      clientId,
+      redirectUrl,
+    ],
+    options: {
+      preventDefault: false,
+    },
+  });
 
   if (isDefined(queryError)) {
     return (

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TrialCardProps = {
   duration: number;
@@ -31,7 +31,7 @@ export const TrialCard = ({ duration, withCreditCard }: TrialCardProps) => {
     <StyledTrialCardContainer>
       <StyledTrialDurationContainer>{t`${duration} days trial`}</StyledTrialDurationContainer>
       <StyledCreditCardRequirementContainer>
-        {withCreditCard ? t`With Credit Card` : t`Without Credit Card`}
+        {withCreditCard ? t`With Credit Card` : t`No Credit Card`}
       </StyledCreditCardRequirementContainer>
     </StyledTrialCardContainer>
   );

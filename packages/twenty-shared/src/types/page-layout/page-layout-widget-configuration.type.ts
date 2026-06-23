@@ -19,7 +19,7 @@ type BaseChartConfiguration = {
 export type AggregateChartConfiguration = BaseChartConfiguration & {
   configurationType: 'AGGREGATE_CHART';
   label?: string;
-  format?: string;
+  numberFormat?: string;
   prefix?: string;
   suffix?: string;
   ratioAggregateConfig?: RatioAggregateConfig;
@@ -90,6 +90,7 @@ export type ViewConfiguration = {
 export type RecordTableConfiguration = {
   configurationType: 'RECORD_TABLE';
   viewId?: string;
+  recordLimit?: number;
 };
 
 export type FieldConfiguration = {

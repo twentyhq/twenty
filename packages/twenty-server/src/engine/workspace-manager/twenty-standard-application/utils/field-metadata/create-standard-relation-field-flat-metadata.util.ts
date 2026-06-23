@@ -35,11 +35,12 @@ export type CreateStandardMorphOrRelationFieldContext<
   targetObjectName: T;
   targetFieldName: AllStandardObjectFieldName<T>;
   isNullable?: boolean;
-  isUIReadOnly?: boolean;
+  isUIEditable?: boolean;
   defaultValue?: FieldMetadataDefaultValueForAnyType;
   settings: FieldMetadataSettings<F>;
   options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
   morphId: F extends FieldMetadataType.MORPH_RELATION ? string : null;
+  junctionTargetFieldUniversalIdentifier?: string;
 };
 
 export type CreateStandardRelationFieldArgs<
@@ -64,12 +65,13 @@ export const createStandardRelationFieldFlatMetadata = <
     targetObjectName,
     targetFieldName,
     isNullable = true,
-    isUIReadOnly = false,
+    isUIEditable = true,
     defaultValue = null,
     settings,
     options: fieldOptions = null,
     morphId,
     type,
+    junctionTargetFieldUniversalIdentifier,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -99,9 +101,10 @@ export const createStandardRelationFieldFlatMetadata = <
     icon,
     isActive: true,
     isSystem: false,
+    isSystemSideEffect: false,
     isNullable,
     isUnique: false,
-    isUIReadOnly,
+    isUIEditable,
     isLabelSyncedWithName: false,
     standardOverrides: null,
     defaultValue,
@@ -135,6 +138,11 @@ export const createStandardRelationFieldFlatMetadata = <
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortIds: [],
     viewSortUniversalIdentifiers: [],
-    universalSettings: settings,
+    universalSettings: {
+      ...settings,
+      ...(junctionTargetFieldUniversalIdentifier && {
+        junctionTargetFieldUniversalIdentifier,
+      }),
+    },
   };
 };

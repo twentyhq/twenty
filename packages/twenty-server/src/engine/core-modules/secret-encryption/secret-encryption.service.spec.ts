@@ -239,4 +239,49 @@ describe('SecretEncryptionService', () => {
       ).toBeUndefined();
     });
   });
+
+  describe('decryptVersionedOrThrow', () => {
+    it('round-trips a v2 envelope', () => {
+      const secret = 'sk-strict-secret-value';
+      const encrypted = service.encryptVersioned(secret as PlaintextString);
+
+      expect(service.decryptVersionedOrThrow(encrypted)).toBe(secret);
+    });
+
+    it('throws on a legacy non-v2 value instead of falling back to CTR', () => {
+      const legacyCiphertext = service.encrypt(testValue) as EncryptedString;
+
+      expect(() => service.decryptVersionedOrThrow(legacyCiphertext)).toThrow();
+    });
+
+    it('returns null/undefined values as-is', () => {
+      expect(
+        service.decryptVersionedOrThrow(null as unknown as EncryptedString),
+      ).toBeNull();
+      expect(
+        service.decryptVersionedOrThrow(
+          undefined as unknown as EncryptedString,
+        ),
+      ).toBeUndefined();
+    });
+  });
+
+  describe('legacyDecryptVersionedWithFallback', () => {
+    it('round-trips a v2 envelope', () => {
+      const secret = 'sk-legacy-secret-value';
+      const encrypted = service.encryptVersioned(secret as PlaintextString);
+
+      expect(service.legacyDecryptVersionedWithFallback(encrypted)).toBe(
+        secret,
+      );
+    });
+
+    it('falls back to legacy CTR decryption for non-v2 values', () => {
+      const legacyCiphertext = service.encrypt(testValue) as EncryptedString;
+
+      expect(service.legacyDecryptVersionedWithFallback(legacyCiphertext)).toBe(
+        testValue,
+      );
+    });
+  });
 });

@@ -6,12 +6,14 @@ import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
 } from 'twenty-front-component-renderer';
-import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
+import { AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -19,8 +21,9 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { useStore } from 'jotai';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui-deprecated/display';
+import { useIcons } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -32,16 +35,19 @@ export const useFrontComponentExecutionContext = ({
   frontComponentId,
   commandMenuItemId,
   selectedRecordIds,
+  colorScheme,
 }: {
   frontComponentId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
 } => {
   const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
+  const store = useStore();
   const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
     frontComponentId,
   });
@@ -72,6 +78,27 @@ export const useFrontComponentExecutionContext = ({
     queryParams,
     options,
   ) => {
+    if (to === AppPath.RecordShowPage) {
+      const targetObjectNameSingular = (
+        params as { objectNameSingular?: string | null } | undefined
+      )?.objectNameSingular;
+
+      const parentViewAtom =
+        contextStoreRecordShowParentViewComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        });
+
+      const parentView = store.get(parentViewAtom);
+
+      if (
+        isDefined(parentView) &&
+        isDefined(targetObjectNameSingular) &&
+        parentView.parentViewObjectNameSingular !== targetObjectNameSingular
+      ) {
+        store.set(parentViewAtom, undefined);
+      }
+    }
+
     navigateApp(
       to as AppPath,
       params as Parameters<typeof navigateApp>[1],
@@ -141,6 +168,7 @@ export const useFrontComponentExecutionContext = ({
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
+    colorScheme,
   };
 
   const unmountFrontComponent: FrontComponentHostCommunicationApi['unmountFrontComponent'] =

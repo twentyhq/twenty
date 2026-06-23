@@ -13,7 +13,7 @@ import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCu
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ModalContent } from 'twenty-ui-deprecated/layout';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,12 +29,9 @@ import { useParams } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
-import { MainButton } from 'twenty-ui-deprecated/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui-deprecated/utilities';
+import { MainButton } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { AnimatedEaseIn } from 'twenty-ui/layout';
 import { z } from 'zod';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {

@@ -121,6 +121,14 @@ export class FileApi {
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
+        if (error.response.status === 401) {
+          return {
+            success: false,
+            error: error.response.data?.errors?.[0]?.message || error.message,
+            isAuthError: true,
+          };
+        }
+
         return {
           success: false,
           error: error.response.data?.errors?.[0]?.message || error.message,

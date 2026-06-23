@@ -2,13 +2,11 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
-  IconLink,
-  IconWorld,
   StyledTintedIconTileContainer,
   getIconTileColorShades,
-  useIcons,
-} from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/data-display';
+import { IconLink, IconWorld, useIcons } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
@@ -22,6 +20,7 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const NavigationMenuItemIcon = ({
   navigationMenuItem,
@@ -98,11 +97,11 @@ export const NavigationMenuItemIcon = ({
   }
 
   if (navigationMenuItem.type === NavigationMenuItemType.LINK) {
-    const computedLink = getNavigationMenuItemComputedLink(
-      navigationMenuItem,
+    const computedLink = getNavigationMenuItemComputedLink({
+      item: navigationMenuItem,
       objectMetadataItems,
       views,
-    );
+    });
     return (
       <LinkIconWithLinkOverlay
         link={computedLink}
@@ -157,7 +156,7 @@ export const NavigationMenuItemIcon = ({
       type={recordIdentifier?.avatarType ?? 'icon'}
       Icon={iconToUse}
       iconColor={iconColorToUse}
-      avatarUrl={recordIdentifier?.avatarUrl ?? ''}
+      avatarUrl={getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? '')}
       placeholder={labelIdentifier}
       placeholderColorSeed={navigationMenuItem.targetRecordId ?? undefined}
     />

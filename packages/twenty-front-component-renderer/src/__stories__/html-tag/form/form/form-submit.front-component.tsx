@@ -24,11 +24,7 @@ const FormSubmitFrontComponent = () => {
 
   return (
     <FrontComponentCard title="form:submit">
-      <form
-        data-testid="subject"
-        action="javascript:void(0);"
-        onSubmit={handleSubmit}
-      >
+      <form data-testid="subject" onSubmit={handleSubmit}>
         <input
           data-testid="form-field"
           type="text"

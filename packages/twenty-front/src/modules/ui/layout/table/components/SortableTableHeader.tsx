@@ -4,11 +4,7 @@ import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFi
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import {
-  IconArrowDown,
-  IconArrowUp,
-  type IconComponent,
-} from 'twenty-ui-deprecated/display';
+import { IconArrowDown, IconArrowUp, type IconComponent } from 'twenty-ui/icon';
 
 export const SortableTableHeader = ({
   tableId,

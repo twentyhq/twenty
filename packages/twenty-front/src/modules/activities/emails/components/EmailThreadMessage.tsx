@@ -10,7 +10,7 @@ import { type EmailThreadMessageParticipant } from '@/activities/emails/types/Em
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
 const StyledThreadMessage = styled.div<{ hideBottomBorder?: boolean }>`

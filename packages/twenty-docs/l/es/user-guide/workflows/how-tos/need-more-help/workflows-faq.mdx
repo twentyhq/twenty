@@ -4,10 +4,11 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
 ---
 
 <AccordionGroup>
+
   <Accordion title="¿Por qué no puedo activar un flujo de trabajo?">
     Probablemente se deba a un problema de permisos. Necesitas acceso a los flujos de trabajo para crearlos y activarlos.
 
-    **Solución**: Ponte en contacto con el administrador de tu espacio de trabajo para que te conceda acceso a flujos de trabajo en **Configuración → Roles**.
+    **Solución**: Ponte en contacto con el administrador de tu espacio de trabajo para que te conceda acceso a flujos de trabajo en **Configuración → Miembros → Roles**.
 
     Si no ves la sección de Flujos de trabajo en la barra lateral, esto confirma que es un problema de permisos.
   </Accordion>
@@ -27,7 +28,6 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
   <Accordion title="¿Cuál es la diferencia entre los disparadores manuales Single, Global y Bulk?">
     | Tipo | Registros necesarios | Ejecuciones de flujos de trabajo |
     | ---- | -------------------- | -------------------------------- |
-
     \| **Global** | Ninguno | Una vez, sin entrada de registros |
     \| **Single** | Uno o más seleccionados | Una vez por cada registro seleccionado |
     \| **Bulk** | Uno o más seleccionados | Una vez, con todos los registros como matriz |
@@ -61,7 +61,6 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     **Sí**, las ramas se ejecutan en paralelo de forma predeterminada.
 
     Si quieres que solo se ejecute una rama:
-
     * Añade una acción **Filter** al inicio de cada rama
     * Establece condiciones opuestas (p. ej., Rama A: status = "Open", Rama B: status ≠ "Open")
 
@@ -72,7 +71,6 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     **Sí**. Una vez que tus ramas en paralelo hayan terminado, puedes añadir un paso al que se conecten ambas ramas.
 
     En el editor de flujos de trabajo:
-
     1. Completa tus acciones en las ramas
     2. Añade un nuevo paso después de las ramas
     3. Arrastra conexiones desde el final de cada rama a este nuevo paso
@@ -84,7 +82,6 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     **Search Records devuelve un máximo de 200 registros.**
 
     Si necesitas procesar más:
-
     * Añade filtros más específicos para reducir los resultados
     * Usa flujos de trabajo programados para procesar por lotes
     * Considera usar la API para operaciones masivas
@@ -102,12 +99,10 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     Cada acción produce datos de salida que pueden utilizarse en pasos posteriores.
 
     **Para hacer referencia a los datos de un paso anterior**:
-
     * Usa el selector de variables al configurar un campo
     * O escribe `{{stepName.fieldName}}` directamente
 
     **Ejemplos**:
-
     * Datos del disparador: `{{trigger.object.email}}`
     * Resultados de búsqueda: `{{searchRecords[0].name}}`
     * Resultado de código: `{{code.calculatedValue}}`
@@ -123,7 +118,6 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     3. **Variable incorrecta seleccionada**: Asegúrate de seleccionar la propia matriz, no un solo registro
 
     **Configuración correcta**:
-
     1. Search Records (devuelve una matriz)
     2. Filter: length > 0
     3. Iterator: selecciona `{{searchRecords}}`
@@ -138,7 +132,6 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     Si tu código excede este límite, la acción fallará con un error por tiempo de espera.
 
     **Consejos para evitar tiempos de espera**:
-
     * Divide las operaciones grandes en partes más pequeñas usando Iterator
     * Evita cálculos pesados; usa servicios externos mediante HTTP Request para el procesamiento intensivo
     * Optimiza tu código para reducir el tiempo de ejecución
@@ -149,12 +142,10 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     Las ejecuciones de flujos de trabajo muestran el historial de ejecución y te ayudan a depurar problemas.
 
     **Acceder a las ejecuciones**:
-
     * En el editor de flujos de trabajo → panel **Runs** a la derecha
     * O ve a **Workflow Runs** en la barra lateral
 
     **Cómo entender una ejecución**:
-
     * **Estado**: En ejecución, Completada, Fallida, En espera
     * **Pasos**: Ve qué pasos se ejecutaron y su salida
     * **Errores**: Haz clic en los pasos fallidos para ver los mensajes de error
@@ -171,13 +162,11 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     Si superas este límite, los flujos de trabajo se marcan inmediatamente como fallidos y no aparecerán en tu lista de ejecuciones como cabría esperar.
 
     **Escenarios comunes que alcanzan este límite**:
-
     * Seleccionar más de 5,000 registros con un disparador manual Single
     * Múltiples flujos de trabajo ejecutándose simultáneamente en tu espacio de trabajo
     * Disparadores automáticos de alta frecuencia (p. ej., Record Updated en un objeto con mucha actividad)
 
     **Soluciones**:
-
     * Usa disparadores **Bulk** en lugar de Single para procesar muchos registros en una sola ejecución
     * Espacia las operaciones por lotes grandes
     * Usa filtros para reducir la frecuencia de los disparadores
@@ -189,7 +178,6 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
 
     | Límite | Valor | Comportamiento |
     | ------ | ----- | -------------- |
-
     \| **Límite suave** | 100 ejecuciones/minuto | Las ejecuciones se encolan con estado "Not Started", se procesan gradualmente |
     \| **Límite estricto** | 5,000 ejecuciones/hora | Las ejecuciones fallan de inmediato |
 
@@ -198,7 +186,6 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     **Límite estricto (5,000/h)**: Esto se aplica a todo tu espacio de trabajo. Si todos tus flujos de trabajo combinados superan 5,000 ejecuciones en una hora, las ejecuciones adicionales fallarán de inmediato.
 
     **Consejos para mantenerse dentro de los límites**:
-
     * Usa disparadores Bulk con Iterator en lugar de disparadores Single para lotes grandes
     * Combina automatizaciones relacionadas en menos flujos de trabajo
     * Usa flujos de trabajo programados para distribuir la carga en el tiempo
@@ -208,13 +195,11 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     **No, en este momento no hay funcionalidad de reintento automático.**
 
     Si una ejecución de flujo de trabajo falla, tendrás que:
-
     1. Revisa el error en **Configuración → Flujos de trabajo → [Tu flujo de trabajo] → Ejecuciones**
     2. Soluciona el problema (datos, configuración o servicio externo)
     3. Activa manualmente el flujo de trabajo de nuevo en los registros afectados
 
     **Consejos para reducir fallos**:
-
     * Añade nodos **Filter** para validar datos antes de las acciones
     * Usa **Search Records** para comprobar si existen registros relacionados
     * Prueba exhaustivamente con unos pocos registros antes de operaciones masivas
@@ -226,14 +211,12 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     **Sí, si tus flujos de trabajo se activan por la creación o actualización de registros.**
 
     Cuando importas datos mediante CSV, cada registro creado o actualizado puede activar flujos de trabajo. Una importación grande (miles de registros) podría:
-
     * Alcanzar el límite de 5,000 ejecuciones/hora
     * Consumir una cantidad significativa de créditos de flujos de trabajo
     * Enviar correos electrónicos o notificaciones inesperados
     * Crear tareas o registros duplicados
 
     **Antes de una importación masiva**:
-
     1. Ve a **Configuración → Flujos de trabajo**
     2. Identifica los flujos de trabajo activados por el objeto que estás importando
     3. **Desactívalos** temporalmente
@@ -251,4 +234,5 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
 
     Esto reorganizará automáticamente todos los nodos en un diseño limpio y organizado.
   </Accordion>
+
 </AccordionGroup>

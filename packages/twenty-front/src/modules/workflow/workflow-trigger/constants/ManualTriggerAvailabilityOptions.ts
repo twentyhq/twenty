@@ -1,9 +1,5 @@
 import { type WorkflowManualTriggerAvailability } from '@/workflow/types/Workflow';
-import {
-  IconCheckbox,
-  type IconComponent,
-  IconSquare,
-} from 'twenty-ui-deprecated/display';
+import { IconCheckbox, type IconComponent, IconSquare } from 'twenty-ui/icon';
 
 export const MANUAL_TRIGGER_AVAILABILITY_OPTIONS: Array<{
   label: string;

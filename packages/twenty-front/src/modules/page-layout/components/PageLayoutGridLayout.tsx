@@ -40,7 +40,7 @@ import {
   WidthProvider,
 } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const disabledTransitionsClass = css`
   .react-grid-layout {

@@ -8,7 +8,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui-deprecated/display';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 
 const StyledContainer = styled.div`
   display: flex;

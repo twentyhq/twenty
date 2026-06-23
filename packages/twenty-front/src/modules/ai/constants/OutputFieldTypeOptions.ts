@@ -4,7 +4,7 @@ import {
   IllustrationIconNumbers,
   IllustrationIconText,
   IllustrationIconToggle,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 
 export interface OutputSchemaField {
   id: string;

@@ -191,7 +191,9 @@ export class JwtKeyManagerService {
       );
     }
 
-    return this.secretEncryptionService.decryptVersioned(encryptedPrivateKey);
+    return this.secretEncryptionService.decryptVersionedOrThrow(
+      encryptedPrivateKey,
+    );
   }
 
   private async generateAndPersistCurrent(): Promise<CurrentSigningKey> {

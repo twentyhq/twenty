@@ -40,6 +40,7 @@ type Assertions = [
       | 'options'
       | 'isUnique'
       | 'isLabelSyncedWithName'
+      | 'isUIEditable'
       | 'universalSettings'
     >
   >,
@@ -61,6 +62,7 @@ type Assertions = [
       | 'calendarFieldMetadataUniversalIdentifier'
       | 'mainGroupByFieldMetadataUniversalIdentifier'
       | 'shouldHideEmptyGroups'
+      | 'kanbanColumnWidth'
       | 'anyFieldFilterValue'
       | 'visibility'
       | 'createdByUserWorkspaceId'

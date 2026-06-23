@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type StyledCardContentProps = {
   disabled?: boolean;
@@ -41,7 +41,7 @@ export const StyledSettingsCardTextContainer = styled.div`
 export const StyledSettingsCardDescription = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
-  line-height: 1.5;
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   overflow: hidden;
 
   a {

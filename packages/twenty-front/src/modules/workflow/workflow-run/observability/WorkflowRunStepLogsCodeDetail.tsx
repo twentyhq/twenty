@@ -7,8 +7,8 @@ import {
   IconCheck,
   IconClock,
   IconTerminal,
-} from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
 import { formatDuration } from '@/workflow/workflow-run/observability/workflowRunStepLogsFormatters';

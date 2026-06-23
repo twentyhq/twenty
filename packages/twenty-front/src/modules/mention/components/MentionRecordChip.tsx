@@ -1,4 +1,5 @@
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -6,7 +7,7 @@ import {
   Chip,
   ChipVariant,
   LinkChip,
-} from 'twenty-ui-deprecated/components';
+} from 'twenty-ui/data-display';
 
 type MentionRecordChipProps = {
   recordId: string;
@@ -59,7 +60,7 @@ export const MentionRecordChip = ({
           placeholder={label}
           placeholderColorSeed={recordId}
           avatarType="rounded"
-          avatarUrl={imageUrl}
+          avatarUrl={getAbsoluteImageUrl(imageUrl)}
         />
       }
     />

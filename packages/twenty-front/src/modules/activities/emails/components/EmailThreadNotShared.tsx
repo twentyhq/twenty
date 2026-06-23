@@ -1,15 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import {
-  AppTooltip,
-  IconLock,
-  TooltipDelay,
-} from 'twenty-ui-deprecated/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconLock } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
 const StyledContainer = styled.div<{ isCompact?: boolean }>`

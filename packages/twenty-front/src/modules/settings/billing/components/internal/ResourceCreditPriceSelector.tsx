@@ -13,9 +13,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
+import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   SetResourceCreditSubscriptionPriceDocument,
   SubscriptionInterval,

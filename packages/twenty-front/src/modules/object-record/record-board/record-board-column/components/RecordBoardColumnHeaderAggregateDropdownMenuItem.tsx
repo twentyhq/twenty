@@ -1,5 +1,5 @@
-import { type IconComponent } from 'twenty-ui-deprecated/display';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { type IconComponent } from 'twenty-ui/icon';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const RecordBoardColumnHeaderAggregateDropdownMenuItem = ({
   onContentChange,

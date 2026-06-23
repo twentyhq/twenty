@@ -1,6 +1,9 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
-import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import {
+  type WorkflowActionType,
+  type WorkflowTriggerType,
+} from '@/workflow/types/Workflow';
 import { CustomError } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -22,6 +25,7 @@ const SUPPORTED_FORM_FIELD_TYPES = [
   FieldMetadataType.UUID,
   FieldMetadataType.ARRAY,
   FieldMetadataType.RELATION,
+  FieldMetadataType.MORPH_RELATION,
   FieldMetadataType.RICH_TEXT,
 ];
 
@@ -30,15 +34,17 @@ export const shouldDisplayFormField = ({
   actionType,
 }: {
   fieldMetadataItem: FieldMetadataItem;
-  actionType: WorkflowActionType;
+  actionType: WorkflowActionType | WorkflowTriggerType;
 }) => {
   if (!SUPPORTED_FORM_FIELD_TYPES.includes(fieldMetadataItem.type)) {
     return false;
   }
 
   const isIdField = fieldMetadataItem.name === 'id';
+
   const isNotSupportedRelation =
-    fieldMetadataItem.type === FieldMetadataType.RELATION &&
+    (fieldMetadataItem.type === FieldMetadataType.RELATION ||
+      fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION) &&
     fieldMetadataItem.settings?.['relationType'] !== 'MANY_TO_ONE';
 
   switch (actionType) {
@@ -46,14 +52,14 @@ export const shouldDisplayFormField = ({
     case 'UPDATE_RECORD':
       return (
         !isNotSupportedRelation &&
-        !fieldMetadataItem.isUIReadOnly &&
+        (fieldMetadataItem.isUIEditable ?? true) &&
         !isHiddenSystemField(fieldMetadataItem) &&
         fieldMetadataItem.isActive
       );
     case 'UPSERT_RECORD':
       return (
         (!isNotSupportedRelation &&
-          !fieldMetadataItem.isUIReadOnly &&
+          (fieldMetadataItem.isUIEditable ?? true) &&
           !isHiddenSystemField(fieldMetadataItem) &&
           fieldMetadataItem.isActive) ||
         isIdField
@@ -62,6 +68,12 @@ export const shouldDisplayFormField = ({
       return (
         !isNotSupportedRelation &&
         (!isHiddenSystemField(fieldMetadataItem) || isIdField) &&
+        fieldMetadataItem.isActive
+      );
+    case 'DATABASE_EVENT':
+      return (
+        !isNotSupportedRelation &&
+        !isHiddenSystemField(fieldMetadataItem) &&
         fieldMetadataItem.isActive
       );
     default:

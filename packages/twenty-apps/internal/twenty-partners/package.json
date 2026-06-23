@@ -1,6 +1,6 @@
 {
   "name": "twenty-partners",
-  "version": "0.5.1",
+  "version": "1.0.0",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -20,18 +20,12 @@
     "seed:prod": "ENV_FILE=.env.prod tsx src/scripts/seed.ts",
     "purge": "tsx src/scripts/purge-soft-deleted.ts",
     "purge:prod": "ENV_FILE=.env.prod tsx src/scripts/purge-soft-deleted.ts",
-    "import:dryrun": "tsx src/scripts/import-from-tft.ts",
-    "import:dryrun:prod": "ENV_FILE=.env.prod tsx src/scripts/import-from-tft.ts",
-    "import:apply": "IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts",
-    "import:apply:prod": "ENV_FILE=.env.prod IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts",
-    "migrate:partner-scope": "tsx src/scripts/migrate-partner-scope.ts",
-    "migrate:partner-scope:prod": "ENV_FILE=.env.prod tsx src/scripts/migrate-partner-scope.ts",
     "rls:configure": "tsx src/scripts/configure-partner-rls.ts",
     "rls:configure:prod": "ENV_FILE=.env.prod tsx src/scripts/configure-partner-rls.ts"
   },
   "dependencies": {
-    "twenty-client-sdk": "2.10.1",
-    "twenty-sdk": "2.10.1",
+    "twenty-client-sdk": "2.13.0",
+    "twenty-sdk": "2.13.0",
     "zod": "^4.1.11"
   },
   "devDependencies": {
@@ -44,6 +38,6 @@
     "tsx": "^4.0.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^3.2.6"
+    "vitest": "^4.0.0"
   }
 }
