@@ -9,13 +9,10 @@ import {
   CalendarEventImportException,
   CalendarEventImportExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 export type GetCalendarEventsResponse = {
-  fullEvents: boolean;
-  calendarEvents?: FetchedCalendarEvent[];
-  calendarEventIds?: string[];
+  calendarEventIds: string[];
   nextSyncCursor: string;
 };
 

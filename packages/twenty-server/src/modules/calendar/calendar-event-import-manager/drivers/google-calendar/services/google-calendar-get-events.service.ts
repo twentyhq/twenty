@@ -2,9 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
 import { type GaxiosError } from 'gaxios';
-import { google, type calendar_v3 as calendarV3 } from 'googleapis';
+import { google } from 'googleapis';
 
-import { formatGoogleCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/format-google-calendar-event.util';
 import { parseGaxiosError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/parse-gaxios-error.util';
 import { parseGoogleCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/parse-google-calendar-error.util';
 import { type GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
@@ -34,7 +33,7 @@ export class GoogleCalendarGetEventsService {
 
     let nextSyncToken: string | null | undefined;
     let nextPageToken: string | undefined;
-    const events: calendarV3.Schema$Event[] = [];
+    const calendarEventIds: string[] = [];
 
     let hasMoreEvents = true;
 
@@ -69,7 +68,7 @@ export class GoogleCalendarGetEventsService {
         break;
       }
 
-      events.push(...items);
+      calendarEventIds.push(...items.map((item) => item.id).filter(isString));
 
       if (!nextPageToken) {
         hasMoreEvents = false;
@@ -77,8 +76,7 @@ export class GoogleCalendarGetEventsService {
     }
 
     return {
-      fullEvents: true,
-      calendarEvents: formatGoogleCalendarEvents(events),
+      calendarEventIds,
       nextSyncCursor: nextSyncToken || '',
     };
   }

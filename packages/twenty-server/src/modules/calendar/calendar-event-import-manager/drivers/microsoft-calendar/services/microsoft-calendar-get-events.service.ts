@@ -46,7 +46,6 @@ export class MicrosoftCalendarGetEventsService {
       await pageIterator.iterate();
 
       return {
-        fullEvents: false,
         calendarEventIds: eventIds,
         nextSyncCursor: pageIterator.getDeltaLink() || '',
       };

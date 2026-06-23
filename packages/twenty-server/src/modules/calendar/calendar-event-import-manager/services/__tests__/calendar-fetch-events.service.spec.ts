@@ -16,10 +16,6 @@ const mockCalendarChannelRepository = {
   update: jest.fn(),
 };
 
-const mockCalendarEventsImportService = {
-  processCalendarEventsImport: jest.fn(),
-};
-
 const mockCalendarEventImportErrorHandlerService = {
   handleDriverException: jest.fn(),
 };
@@ -60,8 +56,7 @@ describe('CalendarFetchEventsService', () => {
     jest.clearAllMocks();
 
     mockGetCalendarEventsService.getCalendarEvents.mockResolvedValue({
-      fullEvents: true,
-      calendarEvents: [{ id: 'event-1' }],
+      calendarEventIds: ['event-1'],
       nextSyncCursor: 'new-cursor-abc',
     });
 
@@ -72,7 +67,6 @@ describe('CalendarFetchEventsService', () => {
       mockCalendarChannelSyncStatusService as any,
       mockGetCalendarEventsService as any,
       mockCalendarEventImportErrorHandlerService as any,
-      mockCalendarEventsImportService as any,
     );
   });
 
@@ -157,8 +151,7 @@ describe('CalendarFetchEventsService', () => {
 
       jest.clearAllMocks();
       mockGetCalendarEventsService.getCalendarEvents.mockResolvedValue({
-        fullEvents: true,
-        calendarEvents: [{ id: 'event-2' }],
+        calendarEventIds: ['event-2'],
         nextSyncCursor: 'new-cursor-def',
       });
 
@@ -194,8 +187,7 @@ describe('CalendarFetchEventsService', () => {
 
       jest.clearAllMocks();
       mockGetCalendarEventsService.getCalendarEvents.mockResolvedValue({
-        fullEvents: true,
-        calendarEvents: [{ id: 'event-3' }],
+        calendarEventIds: ['event-3'],
         nextSyncCursor: 'newer-cursor',
       });
 
