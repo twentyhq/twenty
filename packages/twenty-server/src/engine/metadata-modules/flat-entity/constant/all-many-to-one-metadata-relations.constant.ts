@@ -552,7 +552,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       metadataName: 'fieldMetadata',
       foreignKey: 'tsVectorFieldMetadataId',
       inverseOneToManyProperty: null,
-      isNullable: true,
+      isNullable: false,
       universalForeignKey: 'tsVectorFieldMetadataUniversalIdentifier',
     },
   },

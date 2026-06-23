@@ -37,6 +37,7 @@ import { AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstance
 import { AddServerTriggerSettingsToLogicFunctionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782211913427-add-server-trigger-settings-to-logic-function';
 import { AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782225430654-add-ts-vector-field-metadata-id-to-search-field-metadata';
 import { AddPrimaryPublicDomainToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782281874768-add-primary-public-domain-to-application';
+import { BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-slow-1782225430655-backfill-ts-vector-field-metadata-id-on-search-field-metadata';
 import { MakePublicDomainApplicationIdNotNullSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-slow-1782281874769-make-public-domain-application-id-not-null';
 import { CreateDpaAgreementCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000020000-create-dpa-agreement-core-table';
 import { CreateApplicationTranslationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000100000-create-application-translation-core-table';
@@ -168,4 +169,5 @@ export const INSTANCE_COMMANDS = [
   CreateDpaAgreementCoreTableFastInstanceCommand,
   CreateApplicationTranslationCoreTableFastInstanceCommand,
   AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand,
+  BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand,
 ];

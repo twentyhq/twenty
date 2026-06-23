@@ -27,7 +27,8 @@ export const buildDefaultSearchFieldMetadatasForCustomObject = ({
   const nameSearchFieldMetadata = buildFlatSearchFieldMetadataForField({
     flatObjectMetadata,
     flatFieldMetadata: nameField,
-    tsVectorFlatFieldMetadata: defaultFlatFieldForCustomObjectMaps.fields.searchVector,
+    tsVectorFlatFieldMetadata:
+      defaultFlatFieldForCustomObjectMaps.fields.searchVector,
     position: 0,
   });
 
