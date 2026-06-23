@@ -18,8 +18,12 @@ export const useCheckCustomDomainValidRecords = () => {
     customDomainRecordsState,
   );
 
-  const checkCustomDomainRecords = () => {
-    if (isLoading || !currentWorkspace?.customDomain) {
+  // Accept the domain explicitly so callers can pass a freshly-saved value
+  // instead of relying on the closed-over (and potentially stale) workspace
+  const checkCustomDomainRecords = (
+    customDomain: string | null | undefined = currentWorkspace?.customDomain,
+  ) => {
+    if (isLoading || !customDomain) {
       return;
     }
     setCustomDomainRecords((currentState) => ({
