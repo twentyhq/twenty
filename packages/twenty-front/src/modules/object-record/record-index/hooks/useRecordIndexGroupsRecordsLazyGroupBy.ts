@@ -1,7 +1,7 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { generateGroupsRecordsGroupByQuery } from '@/object-record/record-aggregate/utils/generateGroupsRecordsGroupByQuery';
@@ -9,7 +9,10 @@ import { generateGroupsRecordsGroupByQuery } from '@/object-record/record-aggreg
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useCallback, useMemo } from 'react';
-import { type Nullable } from 'twenty-shared/types';
+import {
+  type Nullable,
+  type RecordGqlOperationGqlRecordFields,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageInfo } from '~/generated-metadata/graphql';
 
@@ -25,15 +28,23 @@ export type GroupsRecordsGroupByLazyResult = {
 export const useRecordIndexGroupsRecordsLazyGroupBy = ({
   objectMetadataItem,
   groupByFieldMetadataItem,
+  recordGqlFieldsOverride,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
   groupByFieldMetadataItem: Nullable<FieldMetadataItem>;
+  recordGqlFieldsOverride?: RecordGqlOperationGqlRecordFields;
 }) => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const apolloCoreClient = useApolloCoreClient();
 
-  const { combinedFilters, orderBy, recordGqlFields, recordGroupsLimit } =
-    useRecordIndexGroupCommonQueryVariables();
+  const {
+    combinedFilters,
+    orderBy,
+    recordGqlFields: commonRecordGqlFields,
+    recordGroupsLimit,
+  } = useRecordIndexGroupCommonQueryVariables();
+
+  const recordGqlFields = recordGqlFieldsOverride ?? commonRecordGqlFields;
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 

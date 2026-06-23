@@ -1,10 +1,12 @@
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import {
@@ -48,10 +50,31 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
       recordTableRelationGroupsDiscoveredFieldIdComponentState,
     );
 
+  const discoveryRecordGqlFields = useMemo<
+    RecordGqlOperationGqlRecordFields | undefined
+  >(() => {
+    if (
+      !isDefined(recordIndexGroupFieldMetadataItem) ||
+      !isManyToOneRelationField(recordIndexGroupFieldMetadataItem)
+    ) {
+      return undefined;
+    }
+
+    return {
+      id: true,
+      ...generateDepthRecordGqlFieldsFromFields({
+        objectMetadataItems,
+        fields: [recordIndexGroupFieldMetadataItem],
+        depth: 1,
+      }),
+    };
+  }, [objectMetadataItems, recordIndexGroupFieldMetadataItem]);
+
   const { executeRecordIndexGroupsRecordsLazyGroupBy } =
     useRecordIndexGroupsRecordsLazyGroupBy({
       groupByFieldMetadataItem: recordIndexGroupFieldMetadataItem,
       objectMetadataItem,
+      recordGqlFieldsOverride: discoveryRecordGqlFields,
     });
 
   const triggerRecordTableRelationGroupsDiscovery = useCallback(async () => {
