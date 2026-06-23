@@ -2,6 +2,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { getRecordGroupByFieldColumnName } from '@/object-metadata/utils/getRecordGroupByFieldColumnName';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
@@ -128,7 +129,9 @@ export const useCreateNewIndexRecord = ({
         const recordGroup = recordGroupDefinitions.find(
           findByProperty(
             'value',
-            createdRecord[recordIndexGroupFieldMetadataItem.name],
+            createdRecord[
+              getRecordGroupByFieldColumnName(recordIndexGroupFieldMetadataItem)
+            ],
           ),
         );
 
