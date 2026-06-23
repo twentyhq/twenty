@@ -4,6 +4,8 @@ services:
     image: twentycrm/twenty-app-dev:latest
     ports:
       - "2020:2020"
+    environment:
+      SERVER_URL: https://twenty.dev.shipyardtestorg.qa.shipyard.pizza
     labels:
       shipyard.route: '/'
       shipyard.primary-route: 'true'
