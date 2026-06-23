@@ -4,19 +4,21 @@ type GetCreatableActivityObjectNameSingularFromFieldParams = {
   fieldName: string;
   fieldType: FieldMetadataType;
   objectNameSingular: string;
+  isRecordFieldReadOnly: boolean;
 };
 
-// noteTargets/taskTargets are read-only relation fields, but on a non-activity
-// object (e.g. Person) their cell button creates a note/task pre-linked to the row
+// Only a read-only noteTargets/taskTargets relation on a non-activity object (e.g. Person)
+// gets a create-activity button; editable ones keep the standard relation editor
 export const getCreatableActivityObjectNameSingularFromField = ({
   fieldName,
   fieldType,
   objectNameSingular,
+  isRecordFieldReadOnly,
 }: GetCreatableActivityObjectNameSingularFromFieldParams):
   | CoreObjectNameSingular.Note
   | CoreObjectNameSingular.Task
   | undefined => {
-  if (fieldType !== FieldMetadataType.RELATION) {
+  if (!isRecordFieldReadOnly || fieldType !== FieldMetadataType.RELATION) {
     return undefined;
   }
 

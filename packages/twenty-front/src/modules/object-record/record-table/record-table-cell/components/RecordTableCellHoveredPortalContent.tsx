@@ -66,12 +66,13 @@ export const RecordTableCellHoveredPortalContent = () => {
 
   const isFieldInputOnly = useIsFieldInputOnly() && !isReadOnly;
 
-  // noteTargets/taskTargets are read-only, but their cell button creates a pre-linked activity
+  // read-only noteTargets/taskTargets cell button creates a pre-linked activity
   const isCreatableActivityTargetField = isDefined(
     getCreatableActivityObjectNameSingularFromField({
       fieldName: fieldDefinition.metadata.fieldName,
       fieldType: fieldDefinition.type,
       objectNameSingular,
+      isRecordFieldReadOnly: isReadOnly,
     }),
   );
 

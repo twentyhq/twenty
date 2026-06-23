@@ -21,7 +21,8 @@ import {
 
 export const RecordTableCellEditButton = () => {
   const { cellPosition } = useContext(RecordTableCellContext);
-  const { fieldDefinition, recordId } = useContext(FieldContext);
+  const { fieldDefinition, recordId, isRecordFieldReadOnly } =
+    useContext(FieldContext);
   const { objectNameSingular } = useRecordTableRowContextOrThrow();
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -35,6 +36,7 @@ export const RecordTableCellEditButton = () => {
       fieldName: fieldDefinition.metadata.fieldName,
       fieldType: fieldDefinition.type,
       objectNameSingular,
+      isRecordFieldReadOnly,
     });
 
   const openCreateActivityDrawer = useOpenCreateActivityDrawer({
