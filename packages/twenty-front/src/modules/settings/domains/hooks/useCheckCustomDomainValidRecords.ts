@@ -19,8 +19,6 @@ export const useCheckCustomDomainValidRecords = () => {
     customDomainRecordsState,
   );
 
-  // Accept the domain explicitly so callers can pass a freshly-saved value
-  // instead of relying on the closed-over (and potentially stale) workspace
   const checkCustomDomainRecords = (
     customDomain: string | null | undefined = currentWorkspace?.customDomain,
   ) => {
@@ -43,7 +41,6 @@ export const useCheckCustomDomainValidRecords = () => {
             : {}),
         }));
 
-        // Keep the workspace activation badge in sync without a page reload
         const nextIsCustomDomainEnabled = validRecords?.isCustomDomainEnabled;
 
         if (isDefined(nextIsCustomDomainEnabled)) {
