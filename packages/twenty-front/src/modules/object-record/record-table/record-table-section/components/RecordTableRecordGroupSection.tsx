@@ -2,6 +2,8 @@ import { styled } from '@linaria/react';
 import { useCallback, useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
@@ -9,6 +11,7 @@ import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/use
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -127,6 +130,10 @@ export const RecordTableRecordGroupSection = () => {
     currentRecordGroupId,
   );
 
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
+    recordIndexGroupFieldMetadataItemComponentState,
+  );
+
   const recordIndexAggregateDisplayValueForGroupValue =
     useAtomComponentFamilyStateValue(
       recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
@@ -190,6 +197,20 @@ export const RecordTableRecordGroupSection = () => {
     return null;
   }
 
+  const isValueGroup =
+    recordGroupDefinition.type === RecordGroupDefinitionType.Value;
+
+  const relationRecord = recordGroupDefinition.relationRecord;
+
+  const relationTargetObjectNameSingular =
+    recordIndexGroupFieldMetadataItem?.relation?.targetObjectMetadata
+      .nameSingular;
+
+  const isGroupedByRelationValue =
+    isDefined(recordIndexGroupFieldMetadataItem) &&
+    isManyToOneRelationField(recordIndexGroupFieldMetadataItem) &&
+    isValueGroup;
+
   return (
     <StyledTrContainer onClick={handleDropdownToggle}>
       <StyledRecordTableDragAndDropPlaceholderCell />
@@ -209,20 +230,30 @@ export const RecordTableRecordGroupSection = () => {
         width={widthOfLabelIdentifierRecordField}
       >
         <StyledTagContainer>
-          <Tag
-            variant={
-              recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-                ? 'solid'
-                : 'outline'
-            }
-            color={
-              recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-                ? recordGroupDefinition.color
-                : 'transparent'
-            }
-            text={recordGroupDefinition.title}
-            weight="medium"
-          />
+          {isGroupedByRelationValue &&
+          isDefined(relationRecord) &&
+          isDefined(relationTargetObjectNameSingular) ? (
+            <RecordChip
+              objectNameSingular={relationTargetObjectNameSingular}
+              record={relationRecord}
+              forceDisableClick
+            />
+          ) : (
+            <Tag
+              variant={
+                recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
+                  ? 'solid'
+                  : 'outline'
+              }
+              color={
+                recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
+                  ? recordGroupDefinition.color
+                  : 'transparent'
+              }
+              text={recordGroupDefinition.title}
+              weight="medium"
+            />
+          )}
         </StyledTagContainer>
         <RecordBoardColumnHeaderAggregateDropdown
           aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
