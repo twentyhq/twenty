@@ -20,10 +20,6 @@ const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const compilePattern = (pattern: string): RegExp => {
-  if (!isNonEmptyString(pattern)) {
-    throw new Error('Search pattern must be a non-empty string.');
-  }
-
   try {
     return new RE2(pattern, 'g');
   } catch {
