@@ -53,10 +53,12 @@ export class BullMQDriver
   >;
   private queueEventsMap: Partial<Record<MessageQueue, QueueEvents>> = {};
 
+  // Intentionally excludes 'delayed': repeatable cron jobs sit there permanently,
+  // so counting them would mean the queue is never idle. We only wait for jobs
+  // that are running or ready to run.
   private readonly PENDING_JOB_STATUSES = [
     'wait',
     'active',
-    'delayed',
     'prioritized',
     'waiting-children',
   ] as const satisfies JobType[];
