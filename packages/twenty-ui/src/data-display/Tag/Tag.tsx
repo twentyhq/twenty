@@ -1,9 +1,8 @@
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@ui/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { type ThemeColor } from '@ui/theme';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { themeCssVariables, useTheme } from '@ui/theme-constants';
 import { clsx } from 'clsx';
-import { useContext } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Tag.module.scss';
@@ -35,7 +34,7 @@ export const Tag = ({
   preventShrink,
   preventPadding,
 }: TagProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const tagBackground =
     color === 'transparent'

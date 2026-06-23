@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
-import { useContext } from 'react';
 import { type AnimationDuration } from '@ui/theme';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 type AnimatedEaseInProps = Omit<
   React.ComponentProps<typeof motion.div>,
@@ -14,7 +13,7 @@ export const AnimatedEaseIn = ({
   children,
   duration = 'normal',
 }: AnimatedEaseInProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const initial = { opacity: 0 };
   const animate = { opacity: 1 };

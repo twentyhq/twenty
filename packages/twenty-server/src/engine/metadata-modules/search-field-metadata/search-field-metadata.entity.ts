@@ -13,23 +13,27 @@ import {
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
-@Entity('searchFieldMetadata')
+@Entity({ name: 'searchFieldMetadata', schema: 'core' })
 @Unique('IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE', [
   'objectMetadataId',
   'fieldMetadataId',
 ])
 @Index('IDX_SEARCH_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_SEARCH_FIELD_METADATA_OBJECT_METADATA_ID', ['objectMetadataId'])
-export class SearchFieldMetadataEntity extends WorkspaceRelatedEntity {
+export class SearchFieldMetadataEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: false, type: 'uuid' })
   objectMetadataId: string;
 
-  @ManyToOne(() => ObjectMetadataEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(
+    () => ObjectMetadataEntity,
+    (objectMetadata) => objectMetadata.searchFieldMetadatas,
+    { onDelete: 'CASCADE' },
+  )
   @JoinColumn({ name: 'objectMetadataId' })
   objectMetadata: Relation<ObjectMetadataEntity>;
 
@@ -39,6 +43,9 @@ export class SearchFieldMetadataEntity extends WorkspaceRelatedEntity {
   @ManyToOne(() => FieldMetadataEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'fieldMetadataId' })
   fieldMetadata: Relation<FieldMetadataEntity>;
+
+  @Column({ nullable: false, type: 'float' })
+  position: number;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

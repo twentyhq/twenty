@@ -95,4 +95,28 @@ describe('import-opportunity-from-tft handler', () => {
       pointOfContactId: 'person-1',
     });
   });
+
+  it('drops null amountMicros/closeDate instead of failing validation', async () => {
+    queryMock
+      .mockResolvedValueOnce({ opportunities: { edges: [] } })
+      .mockResolvedValueOnce({ companies: { edges: [] } })
+      .mockResolvedValueOnce({ people: { edges: [] } });
+    mutationMock
+      .mockResolvedValueOnce({ createCompany: { id: 'company-1' } })
+      .mockResolvedValueOnce({ createPerson: { id: 'person-1' } })
+      .mockResolvedValueOnce({ createOpportunity: { id: 'opp-1' } });
+
+    const body = { ...baseInput(), amountMicros: null, closeDate: null };
+    const result = await handler({
+      body,
+      headers: { 'x-application-secret': SECRET },
+    });
+
+    expect(result).toEqual({ ok: true, created: true, id: 'opp-1' });
+    const data = mutationMock.mock.calls.find(
+      ([arg]) => 'createOpportunity' in arg,
+    )?.[0].createOpportunity.__args.data;
+    expect(data).not.toHaveProperty('amount');
+    expect(data).not.toHaveProperty('closeDate');
+  });
 });

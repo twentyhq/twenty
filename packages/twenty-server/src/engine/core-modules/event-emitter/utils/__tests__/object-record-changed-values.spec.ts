@@ -25,6 +25,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   isAuditLogged: true,
   isSearchable: true,
   indexMetadataIds: [],
+  searchFieldMetadataIds: [],
   objectPermissionIds: [],
   fieldPermissionIds: [],
   fieldIds: [],
@@ -47,6 +48,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   fieldPermissionUniversalIdentifiers: [],
   viewUniversalIdentifiers: [],
   indexMetadataUniversalIdentifiers: [],
+  searchFieldMetadataUniversalIdentifiers: [],
   labelIdentifierFieldMetadataUniversalIdentifier: null,
   imageIdentifierFieldMetadataUniversalIdentifier: null,
 };

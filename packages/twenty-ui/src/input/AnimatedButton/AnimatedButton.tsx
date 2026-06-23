@@ -1,10 +1,10 @@
 import { clsx } from 'clsx';
 import { type MotionProps, motion } from 'framer-motion';
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/data-display/Pill/Pill';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { themeCssVariables, useTheme } from '@ui/theme-constants';
 import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
@@ -335,7 +335,7 @@ export const AnimatedButton = ({
   dataGloballyPreventClickOutside,
   soonLabel = 'Soon',
 }: AnimatedButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const isMobile = useIsMobile();
   const isDisabled = soon || disabled;
 

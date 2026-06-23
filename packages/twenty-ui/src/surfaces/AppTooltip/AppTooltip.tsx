@@ -2,6 +2,7 @@ import { Tooltip } from '@base-ui/react/tooltip';
 import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
+import { useThemeContainer } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './AppTooltip.module.scss';
@@ -87,6 +88,8 @@ export const AppTooltip = ({
         return 1000;
     }
   };
+
+  const themeContainer = useThemeContainer();
 
   const [show, setShow] = useState(false);
   const [anchorElements, setAnchorElements] = useState<Element[]>([]);
@@ -283,7 +286,7 @@ export const AppTooltip = ({
         }
       }}
     >
-      <Tooltip.Portal>
+      <Tooltip.Portal container={themeContainer ?? undefined}>
         <Tooltip.Positioner
           anchor={activeAnchor}
           side={side}

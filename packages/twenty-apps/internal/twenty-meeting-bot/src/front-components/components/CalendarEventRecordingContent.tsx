@@ -1,36 +1,54 @@
 import styled from '@emotion/styled';
-import { isUndefined } from '@sniptt/guards';
 import { useCallback, useState } from 'react';
 
-import { RecordingTranscript } from 'src/front-components/components/RecordingTranscript';
-import { RecordingVideoPlayer } from 'src/front-components/components/RecordingVideoPlayer';
-import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
+import { CalendarEventRecordingBody } from 'src/front-components/components/CalendarEventRecordingBody';
 import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
+import { useCalendarEventParticipants } from 'src/front-components/hooks/use-calendar-event-participants';
 import { useCalendarEventRecording } from 'src/front-components/hooks/use-calendar-event-recording';
 
 const TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS = 0.25;
 
-const StyledStateContainer = styled.div`
+const StyledRecordingShell = styled.div`
+  background: ${recordingThemeCssVariables.background.primary};
+  border: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  border-radius: ${recordingThemeCssVariables.border.radiusMd};
   box-sizing: border-box;
   font-family: ${recordingThemeCssVariables.font.family};
-  height: 100%;
   padding: ${recordingThemeCssVariables.spacing[4]};
+  position: relative;
+  width: 100%;
 `;
 
-const StyledCenteredState = styled(StyledStateContainer)`
+const StyledRecordingHeader = styled.div`
   align-items: center;
-  color: ${recordingThemeCssVariables.font.colorTertiary};
+  box-sizing: border-box;
   display: flex;
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
-  justify-content: center;
+  height: ${recordingThemeCssVariables.spacing[6]};
 `;
 
-const StyledRecordingContainer = styled(StyledStateContainer)`
-  display: flex;
-  flex-direction: column;
-  gap: ${recordingThemeCssVariables.spacing[2]};
+const StyledRecordingTitle = styled.h2`
+  color: ${recordingThemeCssVariables.font.colorPrimary};
+  flex: 1;
+  font-size: ${recordingThemeCssVariables.font.sizeMd};
+  font-weight: ${recordingThemeCssVariables.font.weightMedium};
+  margin: 0;
   overflow: hidden;
-  padding: 0;
+  padding-inline: ${recordingThemeCssVariables.spacing[1]};
+  user-select: none;
+`;
+
+const StyledRecordingBody = styled.div`
+  box-sizing: border-box;
+  margin-top: ${recordingThemeCssVariables.spacing[2]};
+`;
+
+const StyledRecordingContentFrame = styled.div`
+  background-color: ${recordingThemeCssVariables.background.secondary};
+  border: 1px solid ${recordingThemeCssVariables.border.colorMedium};
+  border-radius: ${recordingThemeCssVariables.border.radiusMd};
+  box-sizing: border-box;
+  padding: ${recordingThemeCssVariables.spacing[2]};
 `;
 
 type CalendarEventRecordingContentProps = {
@@ -63,50 +81,31 @@ export const CalendarEventRecordingContent = ({
     isCalendarEventRecordingQueryLoading,
     errorMessage,
   } = useCalendarEventRecording(calendarEventId);
-
-  if (!isUndefined(errorMessage)) {
-    return (
-      <TranscriptErrorBox
-        title="Failed to load the recording"
-        description={errorMessage}
-      />
-    );
-  }
+  const { calendarEventParticipants } =
+    useCalendarEventParticipants(calendarEventId);
 
   const videoFileUrl = videoFile?.url ?? undefined;
-  const hasVideo = !isUndefined(videoFileUrl);
-
-  if (isCalendarEventRecordingQueryLoading) {
-    return (
-      <StyledRecordingContainer>
-        <RecordingVideoPlayer
-          src={undefined}
-          onTimeUpdate={updateCurrentTimeSeconds}
-        />
-      </StyledRecordingContainer>
-    );
-  }
-
-  if (isUndefined(transcript) && isUndefined(videoFile)) {
-    return (
-      <StyledCenteredState>
-        No recording for this calendar event yet.
-      </StyledCenteredState>
-    );
-  }
 
   return (
-    <StyledRecordingContainer>
-      {hasVideo && (
-        <RecordingVideoPlayer
-          src={videoFileUrl}
-          onTimeUpdate={updateCurrentTimeSeconds}
-        />
-      )}
-      <RecordingTranscript
-        transcript={transcript}
-        currentTimeSeconds={currentTimeSeconds}
-      />
-    </StyledRecordingContainer>
+    <StyledRecordingShell>
+      <StyledRecordingHeader>
+        <StyledRecordingTitle>Recording and Transcript</StyledRecordingTitle>
+      </StyledRecordingHeader>
+      <StyledRecordingBody>
+        <StyledRecordingContentFrame>
+          <CalendarEventRecordingBody
+            transcript={transcript}
+            videoFileUrl={videoFileUrl}
+            isCalendarEventRecordingQueryLoading={
+              isCalendarEventRecordingQueryLoading
+            }
+            errorMessage={errorMessage}
+            currentTimeSeconds={currentTimeSeconds}
+            calendarEventParticipants={calendarEventParticipants}
+            onVideoTimeUpdate={updateCurrentTimeSeconds}
+          />
+        </StyledRecordingContentFrame>
+      </StyledRecordingBody>
+    </StyledRecordingShell>
   );
 };
