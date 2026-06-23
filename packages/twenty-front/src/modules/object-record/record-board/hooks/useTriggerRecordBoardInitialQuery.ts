@@ -1,5 +1,5 @@
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/constants/RecordBoardQueryPageSize';
 import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
@@ -41,9 +41,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
-  );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const { setRecordGroups } = useSetRecordGroups();
 
@@ -129,15 +127,19 @@ export const useTriggerRecordBoardInitialQuery = () => {
 
       if (
         isDefined(recordIndexGroupFieldMetadataItem) &&
-        isManyToOneRelationToWorkspaceMember(recordIndexGroupFieldMetadataItem)
+        isManyToOneRelationField(recordIndexGroupFieldMetadataItem)
       ) {
+        const targetObjectMetadataItem = objectMetadataItems.find(
+          (item) =>
+            item.id ===
+            recordIndexGroupFieldMetadataItem.relation?.targetObjectMetadata.id,
+        );
+
         recordGroupDefinitionsToFill = buildRelationRecordGroupDefinitions({
-          groupValues: groups.map(
-            (recordGroup: any) =>
-              (recordGroup.groupByDimensionValues[0] as string | null) ?? null,
-          ),
+          groups,
+          relationFieldName: recordIndexGroupFieldMetadataItem.name,
           mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
-          workspaceMembers: currentWorkspaceMembers,
+          targetObjectMetadataItem,
         });
 
         setRecordGroups({
@@ -215,7 +217,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
       scrollWrapperHTMLElement,
       recordGroupDefinitions,
       recordIndexGroupFieldMetadataItem,
-      currentWorkspaceMembers,
+      objectMetadataItems,
       setRecordGroups,
       recordIndexId,
       upsertRecordsInStore,
