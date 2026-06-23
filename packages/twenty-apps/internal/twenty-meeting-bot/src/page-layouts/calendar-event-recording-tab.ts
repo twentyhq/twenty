@@ -8,11 +8,10 @@ import { CALENDAR_EVENT_RECORDING_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 's
 import { CALENDAR_EVENT_RECORDING_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER } from 'src/constants/calendar-event-recording-page-layout-tab-universal-identifier';
 import { CALENDAR_EVENT_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER } from 'src/constants/calendar-event-recording-page-layout-widget-universal-identifier';
 
-// Position 25 slots the tab after the standard Timeline (20) tab.
 export default definePageLayoutTab({
   universalIdentifier:
     CALENDAR_EVENT_RECORDING_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
-  title: 'Twenty Meeting Bot',
+  title: 'Call Recording',
   position: 25,
   icon: 'IconVideo',
   layoutMode: PageLayoutTabLayoutMode.CANVAS,
@@ -22,7 +21,7 @@ export default definePageLayoutTab({
     {
       universalIdentifier:
         CALENDAR_EVENT_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
-      title: 'Recording and Transcript',
+      title: 'Transcript',
       type: 'FRONT_COMPONENT',
       configuration: {
         configurationType: 'FRONT_COMPONENT',
