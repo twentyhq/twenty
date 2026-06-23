@@ -4,6 +4,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
   mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
     createOneObject(input: $input) {
       id
+      universalIdentifier
       nameSingular
       namePlural
       labelSingular
@@ -11,8 +12,14 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       description
       icon
       color
+      isRemote
       isActive
+      isSystem
+      isUIEditable
+      isUICreatable
       isSearchable
+      shortcut
+      duplicateCriteria
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
