@@ -1,5 +1,4 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import RE2 from 're2';
 
 import { SEARCH_OUTPUT_MAX_MATCH_LENGTH } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/search-output-max-match-length.constant';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,9 +20,9 @@ const escapeRegExp = (value: string): string =>
 
 const compilePattern = (pattern: string): RegExp => {
   try {
-    return new RE2(pattern, 'g');
+    return new RegExp(pattern, 'g');
   } catch {
-    return new RE2(escapeRegExp(pattern), 'g');
+    return new RegExp(escapeRegExp(pattern), 'g');
   }
 };
 
@@ -70,6 +69,10 @@ export const searchOutput = ({
   offset: number;
   contextChars: number;
 }): SearchOutputResult => {
+  if (!isNonEmptyString(pattern)) {
+    throw new Error('Search pattern must be a non-empty string.');
+  }
+
   const regex = compilePattern(pattern);
 
   const matches: SearchMatch[] = [];

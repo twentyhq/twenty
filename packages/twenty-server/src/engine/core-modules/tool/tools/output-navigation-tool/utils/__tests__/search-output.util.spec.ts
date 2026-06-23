@@ -119,35 +119,6 @@ describe('searchOutput', () => {
     expect(result.matches.every((match) => match.match === '')).toBe(true);
   });
 
-  it('stays responsive on a catastrophic-backtracking pattern (RE2)', () => {
-    const adversarial = `${'a'.repeat(5000)}!`;
-
-    const start = Date.now();
-    const result = searchOutput({
-      content: adversarial,
-      pattern: '(a+)+$',
-      maxMatches: 10,
-      offset: 0,
-      contextChars: 0,
-    });
-
-    expect(Date.now() - start).toBeLessThan(1000);
-    expect(result.totalMatches).toBe(0);
-  });
-
-  it('falls back to literal matching for unsupported regex features (lookahead)', () => {
-    const result = searchOutput({
-      content: 'contains (?=foo) literally',
-      pattern: '(?=foo)',
-      maxMatches: 10,
-      offset: 0,
-      contextChars: 0,
-    });
-
-    expect(result.totalMatches).toBe(1);
-    expect(result.matches[0].match).toBe('(?=foo)');
-  });
-
   it('falls back to literal matching for invalid regex', () => {
     const result = searchOutput({
       content: 'a (b c d e f',

@@ -36932,16 +36932,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"install-artifact-from-github@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "install-artifact-from-github@npm:1.6.0"
-  bin:
-    install-from-cache: bin/install-from-cache.js
-    save-to-github-cache: bin/save-to-github-cache.js
-  checksum: 10c0/e480c994a6230ba9c24b76e29908dcfb29977d3ee5b4a193b5c793139065aa0deb9bc5f475d11fd347c516b88ddb1a0f02935aa11fd1d3585761a4a4ccc1885c
-  languageName: node
-  linkType: hard
-
 "internal-slot@npm:^1.1.0":
   version: 1.1.0
   resolution: "internal-slot@npm:1.1.0"
@@ -42791,15 +42781,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.27.0":
-  version: 2.27.0
-  resolution: "nan@npm:2.27.0"
-  dependencies:
-    node-gyp: "npm:latest"
-  checksum: 10c0/38eb00b06e40f0c65b6a98d75795f17d651a8b7b52f03873dff6902d0053f12e7638d7f64fc52bda6c8f8ec454d69636e3988c8a9eb2bc749c2d5c255ba55f4c
-  languageName: node
-  linkType: hard
-
 "nan@npm:^2.4.0":
   version: 2.26.2
   resolution: "nan@npm:2.26.2"
@@ -43330,7 +43311,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp@npm:^13.0.0, node-gyp@npm:latest":
+"node-gyp@npm:latest":
   version: 13.0.0
   resolution: "node-gyp@npm:13.0.0"
   dependencies:
@@ -47008,17 +46989,6 @@ __metadata:
   bin:
     rc: ./cli.js
   checksum: 10c0/24a07653150f0d9ac7168e52943cc3cb4b7a22c0e43c7dff3219977c2fdca5a2760a304a029c20811a0e79d351f57d46c9bde216193a0f73978496afc2b85b15
-  languageName: node
-  linkType: hard
-
-"re2@npm:^1.25.0":
-  version: 1.25.0
-  resolution: "re2@npm:1.25.0"
-  dependencies:
-    install-artifact-from-github: "npm:^1.6.0"
-    nan: "npm:^2.27.0"
-    node-gyp: "npm:^13.0.0"
-  checksum: 10c0/a1b89e4d6c594d3fe675fc18f5ee3ce06ea83d66ebc5b3b2d66abf8c93c57757478969d1c934db4379ffba0575154c149d4168a567d192a936fced369d7c3ecf
   languageName: node
   linkType: hard
 
@@ -53535,7 +53505,6 @@ __metadata:
     postal-mime: "npm:^2.6.1"
     prettier: "npm:^3.1.1"
     psl: "npm:^1.9.0"
-    re2: "npm:^1.25.0"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
     redis: "npm:^4.7.0"
