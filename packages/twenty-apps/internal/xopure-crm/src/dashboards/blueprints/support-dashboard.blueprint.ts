@@ -66,7 +66,7 @@ export const supportDashboardBlueprint: DashboardBlueprint = {
           },
         },
         {
-          title: 'Recent Tickets',
+          title: 'Tickets',
           type: 'RECORD_TABLE',
           objectNameSingular: 'xopureSupportTicket',
           gridPosition: { row: 6, column: 0, rowSpan: 6, columnSpan: 12 },

@@ -96,12 +96,12 @@ export const paymentsDashboardBlueprint: DashboardBlueprint = {
           },
         },
         {
-          title: 'Payment Exceptions',
+          title: 'Payment Records',
           type: 'RECORD_TABLE',
           objectNameSingular: 'xopurePayment',
           gridPosition: { row: 6, column: 0, rowSpan: 6, columnSpan: 12 },
           view: {
-            name: 'Payment Exceptions',
+            name: 'Payment Records',
             icon: 'IconAlertTriangle',
             fields: [
               { fieldName: 'name', position: 0, size: 180 },

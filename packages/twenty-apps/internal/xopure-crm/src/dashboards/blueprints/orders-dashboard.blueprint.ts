@@ -67,7 +67,7 @@ export const ordersDashboardBlueprint: DashboardBlueprint = {
           },
         },
         {
-          title: 'Recent / Refunded / Cancelled / Manual Review Orders',
+          title: 'Orders Review',
           type: 'RECORD_TABLE',
           objectNameSingular: 'xopureOrder',
           gridPosition: { row: 6, column: 0, rowSpan: 6, columnSpan: 12 },

@@ -9,12 +9,12 @@ export const riskExceptionsDashboardBlueprint: DashboardBlueprint = {
       position: 0,
       widgets: [
         {
-          title: 'Sync Map Exceptions',
+          title: 'Sync Map Records',
           type: 'RECORD_TABLE',
           objectNameSingular: 'xopureSyncMap',
           gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 12 },
           view: {
-            name: 'Sync Map Exceptions',
+            name: 'Sync Map Records',
             icon: 'IconAlertTriangle',
             fields: [
               { fieldName: 'syncKey', position: 0, size: 220 },
@@ -44,12 +44,12 @@ export const riskExceptionsDashboardBlueprint: DashboardBlueprint = {
           },
         },
         {
-          title: 'Order Review Exceptions',
+          title: 'Order Review',
           type: 'RECORD_TABLE',
           objectNameSingular: 'xopureOrder',
           gridPosition: { row: 11, column: 0, rowSpan: 6, columnSpan: 12 },
           view: {
-            name: 'Order Review Exceptions',
+            name: 'Order Review',
             icon: 'IconAlertCircle',
             fields: [
               { fieldName: 'orderNumber', position: 0, size: 150 },
@@ -64,12 +64,12 @@ export const riskExceptionsDashboardBlueprint: DashboardBlueprint = {
           },
         },
         {
-          title: 'Held / Pending Commissions',
+          title: 'Commission Records',
           type: 'RECORD_TABLE',
           objectNameSingular: 'xopureCommission',
           gridPosition: { row: 17, column: 0, rowSpan: 6, columnSpan: 12 },
           view: {
-            name: 'Held / Pending Commissions',
+            name: 'Commission Records',
             icon: 'IconReceiptDollar',
             fields: [
               { fieldName: 'name', position: 0, size: 180 },

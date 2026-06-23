@@ -265,9 +265,9 @@ const getObjectMetadataMap = async (
        LEFT JOIN core."fieldMetadata" fm
          ON fm."objectMetadataId" = om.id
         AND fm."workspaceId" = $1
-        AND fm."deletedAt" IS NULL
+        AND fm."isActive" IS NOT FALSE
       WHERE om."workspaceId" = $1
-        AND om."deletedAt" IS NULL`,
+        AND om."isActive" IS NOT FALSE`,
     [workspaceId],
   );
 
@@ -400,18 +400,42 @@ const createDashboardRecord = async (
        title,
        "pageLayoutId",
        position,
-       "createdBy",
-       "updatedBy"
+       "createdBySource",
+       "createdByWorkspaceMemberId",
+       "createdByName",
+       "createdByContext",
+       "updatedBySource",
+       "updatedByWorkspaceMemberId",
+       "updatedByName",
+       "updatedByContext"
      ) VALUES (
        $1,
        $2,
        $3,
        0,
-       $4::jsonb,
-       $4::jsonb
+       $4,
+       $5,
+       $6,
+       $7,
+       $8,
+       $9,
+       $10,
+       $11
      )
      RETURNING id, title, "pageLayoutId"`,
-    [dashboardId, title, pageLayoutId, SYSTEM_ACTOR],
+    [
+      dashboardId,
+      title,
+      pageLayoutId,
+      SYSTEM_ACTOR.source,
+      SYSTEM_ACTOR.workspaceMemberId,
+      SYSTEM_ACTOR.name,
+      SYSTEM_ACTOR.context,
+      SYSTEM_ACTOR.source,
+      SYSTEM_ACTOR.workspaceMemberId,
+      SYSTEM_ACTOR.name,
+      SYSTEM_ACTOR.context,
+    ],
   );
 
   return getFirstRowOrThrow(

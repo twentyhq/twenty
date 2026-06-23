@@ -16,16 +16,14 @@ const fieldsForView = (viewName: string): string[] => {
 
 describe('riskExceptionsDashboardBlueprint', () => {
   it('uses currency fields as primary money fields', () => {
-    expect(fieldsForView('Order Review Exceptions')).toEqual(
+    expect(fieldsForView('Order Review')).toEqual(
       expect.arrayContaining(['refundAmount', 'orderTotal']),
     );
-    expect(fieldsForView('Order Review Exceptions')).not.toEqual(
+    expect(fieldsForView('Order Review')).not.toEqual(
       expect.arrayContaining(['refundCents', 'totalCents']),
     );
 
-    expect(fieldsForView('Held / Pending Commissions')).toContain('amount');
-    expect(fieldsForView('Held / Pending Commissions')).not.toContain(
-      'amountCents',
-    );
+    expect(fieldsForView('Commission Records')).toContain('amount');
+    expect(fieldsForView('Commission Records')).not.toContain('amountCents');
   });
 });

@@ -104,7 +104,7 @@ export const opsCommandCenterBlueprint: DashboardBlueprint = {
           },
         },
         {
-          title: 'Recent Orders',
+          title: 'Orders',
           type: 'RECORD_TABLE',
           objectNameSingular: 'xopureOrder',
           gridPosition: { row: 4, column: 0, rowSpan: 6, columnSpan: 12 },
@@ -297,7 +297,7 @@ export const opsCommandCenterBlueprint: DashboardBlueprint = {
           },
         },
         {
-          title: 'Recent Commissions',
+          title: 'Commissions',
           type: 'RECORD_TABLE',
           objectNameSingular: 'xopureCommission',
           gridPosition: { row: 6, column: 0, rowSpan: 6, columnSpan: 12 },
@@ -321,12 +321,12 @@ export const opsCommandCenterBlueprint: DashboardBlueprint = {
       position: 5,
       widgets: [
         {
-          title: 'Exception Commissions',
+          title: 'Commission Records',
           type: 'RECORD_TABLE',
           objectNameSingular: 'xopureCommission',
           gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 12 },
           view: {
-            name: 'Exception Commissions',
+            name: 'Commission Records',
             icon: 'IconAlertTriangle',
             fields: [
               { fieldName: 'name', position: 0, size: 180 },
