@@ -1,7 +1,7 @@
 import { Chip } from '@/app-preview/primitives/Chip';
 import { FaviconLogo } from '@/app-preview/primitives/FaviconLogo';
 
-import { type DealCompany } from '../deal-types';
+import { type DealCompany } from '../types/deal-company';
 
 export function CompanyChip({ company }: { company: DealCompany }) {
   return (

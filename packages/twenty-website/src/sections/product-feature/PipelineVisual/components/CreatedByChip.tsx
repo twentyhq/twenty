@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { Chip } from '@/app-preview/primitives/Chip';
 import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
 
-import { type DealActor } from '../deal-types';
+import { type DealActor } from '../types/deal-actor';
 
 function renderCreatedByLeftComponent(actor: DealActor): ReactNode {
   if (actor.source === 'member') {

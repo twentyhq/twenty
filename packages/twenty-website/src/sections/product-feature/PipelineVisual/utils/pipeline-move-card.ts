@@ -1,23 +1,8 @@
 import { clampToRange } from '@/platform/motion';
 
-export type PipelineCardId =
-  | 'airbnb'
-  | 'figma'
-  | 'github'
-  | 'notion'
-  | 'stripe';
-export type PipelineLaneIndex = 0 | 1 | 2;
-export type PipelineLanes = [
-  PipelineCardId[],
-  PipelineCardId[],
-  PipelineCardId[],
-];
-
-export type PipelineCardElements = Partial<
-  Record<PipelineCardId, HTMLDivElement | null>
->;
-export type PipelineCardRects = Partial<Record<PipelineCardId, DOMRect>>;
-export type PipelineCardAnimations = Partial<Record<PipelineCardId, Animation>>;
+import { type PipelineCardId } from '../types/pipeline-card-id';
+import { type PipelineLaneIndex } from '../types/pipeline-lane-index';
+import { type PipelineLanes } from '../types/pipeline-lanes';
 
 export function movePipelineCard(
   lanes: PipelineLanes,

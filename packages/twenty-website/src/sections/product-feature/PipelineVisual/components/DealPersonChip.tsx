@@ -1,7 +1,7 @@
 import { Chip } from '@/app-preview/primitives/Chip';
 import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
 
-import { type DealPerson } from '../deal-types';
+import { type DealPerson } from '../types/deal-person';
 
 export function DealPersonChip({ person }: { person: DealPerson }) {
   return (

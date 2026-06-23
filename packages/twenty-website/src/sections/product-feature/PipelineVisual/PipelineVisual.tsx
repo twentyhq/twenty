@@ -14,102 +14,25 @@ import {
 } from 'react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
-import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 import { PreviewTag } from '@/app-preview/primitives/PreviewTag';
-import { type CellSelectColor } from '@/app-preview/types';
 import { clampToRange } from '@/platform/motion';
 
 import { OpportunityCard } from './components/OpportunityCard';
-import { type DealData } from './deal-types';
+import { CARDS } from './data/cards';
+import { INITIAL_LANES } from './data/initial-lanes';
+import { LANES_META } from './data/lanes-meta';
 import { CardFlipAnimationEffect } from './effect-components/CardFlipAnimationEffect';
 import { PointerCaptureCleanupEffect } from './effect-components/PointerCaptureCleanupEffect';
+import { type PipelineCardAnimations } from './types/pipeline-card-animations';
+import { type PipelineCardElements } from './types/pipeline-card-elements';
+import { type PipelineCardId } from './types/pipeline-card-id';
+import { type PipelineCardRects } from './types/pipeline-card-rects';
+import { type PipelineLanes } from './types/pipeline-lanes';
 import { getDropTarget } from './utils/get-drop-target';
-import {
-  movePipelineCard,
-  type PipelineCardAnimations,
-  type PipelineCardElements,
-  type PipelineCardId,
-  type PipelineCardRects,
-  type PipelineLanes,
-} from './utils/pipeline-move-card';
-
-const PEOPLE = sharedAssetUrls.peopleAvatars;
-
-const CARDS: Record<PipelineCardId, DealData> = {
-  github: {
-    amount: '$75k',
-    avatarTone: 'blue',
-    company: { domain: 'github.com', name: 'Github' },
-    contact: { avatarUrl: PEOPLE.chrisWanstrath, name: 'Chris Wanstrath' },
-    createdBy: { name: 'System', source: 'system' },
-    date: 'Jan 25, 2026 9:26 PM',
-    id: 'github',
-    title: 'API Integration Deal',
-  },
-  figma: {
-    amount: '$30k',
-    avatarTone: 'orange',
-    company: { domain: 'figma.com', name: 'Figma' },
-    contact: { avatarUrl: PEOPLE.dylanField, name: 'Dylan Field' },
-    createdBy: { name: 'System', source: 'system' },
-    date: 'Jan 15, 2026 9:27 PM',
-    id: 'figma',
-    title: 'Design Partnership',
-  },
-  airbnb: {
-    amount: '$50k',
-    avatarTone: 'green',
-    company: { domain: 'airbnb.com', name: 'Airbnb' },
-    contact: { avatarUrl: PEOPLE.brianChesky, name: 'Brian Chesky' },
-    createdBy: {
-      avatarUrl: PEOPLE.eddyCue,
-      name: 'Eddy Cue',
-      source: 'member',
-    },
-    date: 'Mar 10, 2026 9:26 PM',
-    id: 'airbnb',
-    title: 'Enterprise Plan Upgrade',
-  },
-  notion: {
-    amount: '$45k',
-    avatarTone: 'purple',
-    company: { domain: 'notion.com', name: 'Notion' },
-    contact: { avatarUrl: PEOPLE.ivanZhao, name: 'Ivan Zhao' },
-    createdBy: {
-      avatarUrl: PEOPLE.anonymousFelix,
-      name: 'Félix Malfait',
-      source: 'member',
-    },
-    date: 'Feb 18, 2026 3:14 PM',
-    id: 'notion',
-    title: 'Workspace Rollout',
-  },
-  stripe: {
-    amount: '$60k',
-    avatarTone: 'pink',
-    company: { domain: 'stripe.com', name: 'Stripe' },
-    contact: { avatarUrl: PEOPLE.patrickCollison, name: 'Patrick Collison' },
-    createdBy: { name: 'System', source: 'system' },
-    date: 'Feb 2, 2026 11:02 AM',
-    id: 'stripe',
-    title: 'Billing Expansion',
-  },
-};
+import { movePipelineCard } from './utils/pipeline-move-card';
 
 const TOTAL_CARD_COUNT = Object.keys(CARDS).length;
-
-const INITIAL_LANES: PipelineLanes = [
-  ['github', 'notion'],
-  ['airbnb'],
-  ['figma', 'stripe'],
-];
-
-const LANES_META: { color: CellSelectColor; label: string }[] = [
-  { color: 'pink', label: 'New' },
-  { color: 'purple', label: 'Meeting' },
-  { color: 'blue', label: 'Customer' },
-];
 
 const Root = styled.div`
   background: ${THEME_LIGHT.background.primary};

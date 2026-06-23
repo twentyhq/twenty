@@ -1,9 +1,7 @@
-import {
-  type PipelineCardElements,
-  type PipelineCardId,
-  type PipelineLaneIndex,
-  type PipelineLanes,
-} from './pipeline-move-card';
+import { type PipelineCardElements } from '../types/pipeline-card-elements';
+import { type PipelineCardId } from '../types/pipeline-card-id';
+import { type PipelineLaneIndex } from '../types/pipeline-lane-index';
+import { type PipelineLanes } from '../types/pipeline-lanes';
 
 export function getDropTarget(
   clientX: number,

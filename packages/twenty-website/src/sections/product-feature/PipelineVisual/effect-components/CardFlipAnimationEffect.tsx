@@ -4,13 +4,11 @@ import { type RefObject, useLayoutEffect } from 'react';
 
 import { EASING } from '@/tokens';
 
-import {
-  type PipelineCardAnimations,
-  type PipelineCardElements,
-  type PipelineCardId,
-  type PipelineCardRects,
-  type PipelineLanes,
-} from '../utils/pipeline-move-card';
+import { type PipelineCardAnimations } from '../types/pipeline-card-animations';
+import { type PipelineCardElements } from '../types/pipeline-card-elements';
+import { type PipelineCardId } from '../types/pipeline-card-id';
+import { type PipelineCardRects } from '../types/pipeline-card-rects';
+import { type PipelineLanes } from '../types/pipeline-lanes';
 
 const CARD_DROP_MS = 300;
 

@@ -1,4 +1,5 @@
-import { movePipelineCard, type PipelineLanes } from './pipeline-move-card';
+import { type PipelineLanes } from '../types/pipeline-lanes';
+import { movePipelineCard } from './pipeline-move-card';
 
 const LANES: PipelineLanes = [['github', 'figma'], ['airbnb'], []];
 

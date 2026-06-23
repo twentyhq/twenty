@@ -11,7 +11,7 @@ import { THEME_LIGHT } from 'twenty-ui/theme';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 import { PreviewAvatar } from '@/app-preview/primitives/PreviewAvatar';
 
-import { type DealData } from '../deal-types';
+import { type DealData } from '../types/deal-data';
 import { CompanyChip } from './CompanyChip';
 import { CreatedByChip } from './CreatedByChip';
 import { DealPersonChip } from './DealPersonChip';
