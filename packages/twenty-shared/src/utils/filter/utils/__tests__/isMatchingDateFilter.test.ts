@@ -84,10 +84,6 @@ describe('isMatchingDateFilter', () => {
   });
 
   describe('null or undefined value', () => {
-    // A record can have an empty date field (e.g. an opportunity with no
-    // closeDate). The group-by optimistic effect matches such records against
-    // the view filters, and parseISO(null) used to throw
-    // "Cannot read properties of null (reading 'split')".
     it.each([null, undefined])(
       'does not throw and returns false for comparison operators (value: %s)',
       (value) => {

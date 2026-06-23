@@ -9,9 +9,6 @@ export const isMatchingDateFilter = ({
   dateFilter: DateFilter;
   value: string | null | undefined;
 }) => {
-  // A record with no date value can only match an "is: NULL" check.
-  // Every other operator parses the value through parseISO, which throws
-  // "Cannot read properties of null (reading 'split')" on a null/undefined value.
   if (!isDefined(value)) {
     return dateFilter.is === 'NULL';
   }
