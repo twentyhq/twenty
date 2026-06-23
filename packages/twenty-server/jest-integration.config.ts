@@ -81,9 +81,6 @@ const jestConfig: JestConfigWithTsJest = {
     }),
     '^test/(.*)$': '<rootDir>/test/$1',
   },
-  fakeTimers: {
-    enableGlobally: true,
-  },
   globals: {
     APP_PORT: 4000,
     NODE_ENV: NodeEnvironment.TEST,

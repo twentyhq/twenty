@@ -35,6 +35,19 @@ export class MessageQueueService {
     return this.driver.add(this.queueName, jobName, data, options);
   }
 
+  addAndWaitForCompletion<T extends MessageQueueJobData>(
+    jobName: string,
+    data: T,
+    options?: QueueJobOptions,
+  ): Promise<void> {
+    return this.driver.addAndWaitForCompletion(
+      this.queueName,
+      jobName,
+      data,
+      options,
+    );
+  }
+
   addCron<T extends MessageQueueJobData | undefined>({
     jobName,
     data,

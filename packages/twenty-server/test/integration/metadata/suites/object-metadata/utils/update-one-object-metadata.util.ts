@@ -8,6 +8,8 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
+import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import { QUEUE_DRIVER } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
 export const updateOneObjectMetadata = async ({
@@ -21,6 +23,10 @@ export const updateOneObjectMetadata = async ({
     input,
     gqlFields,
   });
+
+  // Updating object metadata can drop indexes under a lock_timeout; let in-flight
+  // jobs settle first so they don't hold the table lock the migration needs.
+  await global.app.get<MessageQueueDriver>(QUEUE_DRIVER).waitForIdle();
 
   const response = await makeMetadataAPIRequest(graphqlOperation);
 

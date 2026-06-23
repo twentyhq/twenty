@@ -117,23 +117,35 @@ export const destroyWorkflowRun = async (
     });
 };
 
-export const waitForWorkflowCompletion = async (
-  workflowRunId: string,
-  maxAttempts = 30,
-  intervalMs = 500,
-): Promise<WorkflowRunResponse | null> => {
-  let workflowRun = await getWorkflowRun(workflowRunId);
-  let attempts = 0;
+const TERMINAL_WORKFLOW_RUN_STATUSES = new Set<WorkflowRunStatusType>([
+  'COMPLETED',
+  'FAILED',
+  'STOPPED',
+]);
 
-  while (
-    workflowRun?.status === 'RUNNING' &&
-    attempts < maxAttempts &&
-    workflowRun !== null
-  ) {
+// The real BullMQ driver runs workflow steps asynchronously, so tests wait for
+// the run to reach the state they assert on instead of reading it immediately.
+export const waitForWorkflowRun = async (
+  workflowRunId: string,
+  predicate: (workflowRun: WorkflowRunResponse) => boolean,
+  { maxAttempts = 60, intervalMs = 250 } = {},
+): Promise<WorkflowRunResponse | null> => {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const workflowRun = await getWorkflowRun(workflowRunId);
+
+    if (workflowRun && predicate(workflowRun)) {
+      return workflowRun;
+    }
+
     await new Promise((resolve) => setTimeout(resolve, intervalMs));
-    workflowRun = await getWorkflowRun(workflowRunId);
-    attempts++;
   }
 
-  return workflowRun;
+  return getWorkflowRun(workflowRunId);
 };
+
+export const waitForWorkflowCompletion = (
+  workflowRunId: string,
+): Promise<WorkflowRunResponse | null> =>
+  waitForWorkflowRun(workflowRunId, (workflowRun) =>
+    TERMINAL_WORKFLOW_RUN_STATUSES.has(workflowRun.status),
+  );

@@ -14,7 +14,6 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 
 const SIGNING_KEY_ROTATION_DAYS_KEY = 'SIGNING_KEY_ROTATION_DAYS';
-const ROTATE_SIGNING_KEYS_CRON_PATTERN = '15 3 * * *';
 
 describe('RotateSigningKeysCronJob (integration)', () => {
   const seededApiKeyId = API_KEY_DATA_SEED_IDS.ID_1;
@@ -62,11 +61,7 @@ describe('RotateSigningKeysCronJob (integration)', () => {
       input: { key: SIGNING_KEY_ROTATION_DAYS_KEY, value: 0 },
     });
 
-    await cronQueue.addCron({
-      jobName: RotateSigningKeysCronJob.name,
-      data: undefined,
-      options: { repeat: { pattern: ROTATE_SIGNING_KEYS_CRON_PATTERN } },
-    });
+    await cronQueue.addAndWaitForCompletion(RotateSigningKeysCronJob.name, {});
 
     const rotatedTokenResponse = await generateApiKeyToken({
       apiKeyId: seededApiKeyId,

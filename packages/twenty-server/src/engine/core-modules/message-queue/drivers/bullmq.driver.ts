@@ -6,12 +6,16 @@ import {
 
 import * as Sentry from '@sentry/node';
 import {
+  type Job,
   type JobsOptions,
+  type JobType,
   MetricsTime,
   Queue,
+  QueueEvents,
   type QueueOptions,
   Worker,
 } from 'bullmq';
+import IORedis from 'ioredis';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -47,6 +51,15 @@ export class BullMQDriver
     MessageQueue,
     Worker
   >;
+  private queueEventsMap: Partial<Record<MessageQueue, QueueEvents>> = {};
+
+  private readonly PENDING_JOB_STATUSES = [
+    'wait',
+    'active',
+    'delayed',
+    'prioritized',
+    'waiting-children',
+  ] as const satisfies JobType[];
 
   constructor(
     private options: BullMQDriverOptions,
@@ -91,11 +104,31 @@ export class BullMQDriver
   async onModuleDestroy() {
     const workers = Object.values(this.workerMap);
     const queues = Object.values(this.queueMap);
+    const queueEvents = Object.values(this.queueEventsMap).filter(isDefined);
 
     await Promise.all([
       ...queues.map((q) => q.close()),
       ...workers.map((w) => w.close()),
+      ...queueEvents.map((events) => events.close()),
     ]);
+  }
+
+  // QueueEvents drives waitUntilFinished and needs its own blocking connection,
+  // so it is created lazily (only for callers that await a job) by duplicating
+  // the shared client.
+  private getQueueEvents(queueName: MessageQueue): QueueEvents {
+    const existingQueueEvents = this.queueEventsMap[queueName];
+
+    if (isDefined(existingQueueEvents)) {
+      return existingQueueEvents;
+    }
+
+    const connection = (this.options.connection as IORedis).duplicate();
+    const queueEvents = new QueueEvents(queueName, { connection });
+
+    this.queueEventsMap[queueName] = queueEvents;
+
+    return queueEvents;
   }
 
   work<T>(
@@ -238,6 +271,80 @@ export class BullMQDriver
     data: T,
     options?: QueueJobOptions,
   ): Promise<void> {
+    await this.enqueueJob(queueName, jobName, data, options);
+  }
+
+  // Enqueues a job and resolves once the worker finishes it, using BullMQ's
+  // native job event stream (QueueEvents). Rejects if the job fails.
+  async addAndWaitForCompletion<T>(
+    queueName: MessageQueue,
+    jobName: string,
+    data: T,
+    options?: QueueJobOptions,
+  ): Promise<void> {
+    const job = await this.enqueueJob(queueName, jobName, data, options);
+
+    if (!isDefined(job)) {
+      return;
+    }
+
+    await job.waitUntilFinished(this.getQueueEvents(queueName));
+  }
+
+  // Resolves once every queue has no pending work, debounced by idleMs to bridge
+  // the gap between a job finishing and its continuation being enqueued.
+  async waitForIdle({
+    timeoutMs = 30_000,
+    idleMs = 250,
+    pollMs = 25,
+  }: {
+    timeoutMs?: number;
+    idleMs?: number;
+    pollMs?: number;
+  } = {}): Promise<void> {
+    const queues = Object.values(this.queueMap);
+    const deadline = Date.now() + timeoutMs;
+    let idleSince: number | null = null;
+
+    for (;;) {
+      const pendingCounts = await Promise.all(
+        queues.map(async (queue) => {
+          const counts = await queue.getJobCounts(...this.PENDING_JOB_STATUSES);
+
+          return this.PENDING_JOB_STATUSES.reduce(
+            (sum, status) => sum + (counts[status] ?? 0),
+            0,
+          );
+        }),
+      );
+      const totalPending = pendingCounts.reduce((sum, count) => sum + count, 0);
+
+      if (totalPending === 0) {
+        idleSince ??= Date.now();
+
+        if (Date.now() - idleSince >= idleMs) {
+          return;
+        }
+      } else {
+        idleSince = null;
+
+        if (Date.now() >= deadline) {
+          throw new Error(
+            `Queues did not become idle within ${timeoutMs}ms (pending: ${totalPending})`,
+          );
+        }
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, pollMs));
+    }
+  }
+
+  private async enqueueJob<T>(
+    queueName: MessageQueue,
+    jobName: string,
+    data: T,
+    options?: QueueJobOptions,
+  ): Promise<Job | undefined> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
@@ -253,7 +360,7 @@ export class BullMQDriver
       );
 
       if (isJobAlreadyWaiting) {
-        return;
+        return undefined;
       }
     }
 
@@ -272,6 +379,6 @@ export class BullMQDriver
       delay: options?.delay,
     };
 
-    await this.queueMap[queueName].add(jobName, data, queueOptions);
+    return this.queueMap[queueName].add(jobName, data, queueOptions);
   }
 }
