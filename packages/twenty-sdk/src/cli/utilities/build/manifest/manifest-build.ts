@@ -564,7 +564,7 @@ export const buildManifest = async (
           ...applicationConfig,
           defaultRoleUniversalIdentifier:
             resolvedDefaultRoleUniversalIdentifier,
-          aboutDescription: applicationConfig.aboutDescription ?? readmeContent,
+          aboutDescription: readmeContent,
           yarnLockChecksum: null,
           packageJsonChecksum: null,
           ...(postInstallLogicFunctions.length >= 1
