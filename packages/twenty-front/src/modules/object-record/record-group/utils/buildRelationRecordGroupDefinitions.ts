@@ -1,80 +1,94 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import {
   type RecordGroupDefinition,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
 const NO_VALUE_RECORD_GROUP_ID_SUFFIX = 'no-value';
 
-const getWorkspaceMemberName = (
-  firstName: string | null | undefined,
-  lastName: string | null | undefined,
-): string => `${firstName ?? ''} ${lastName ?? ''}`.trim();
+type GroupByResultGroup = RecordGqlConnectionEdgesRequired & {
+  groupByDimensionValues: (string | null)[];
+};
 
 export const buildRelationRecordGroupDefinitions = ({
-  groupValues,
+  groups,
+  relationFieldName,
   mainGroupByFieldMetadataId,
-  workspaceMembers,
+  targetObjectMetadataItem,
 }: {
-  groupValues: (string | null)[];
+  groups: GroupByResultGroup[];
+  relationFieldName: string;
   mainGroupByFieldMetadataId: string;
-  workspaceMembers: PartialWorkspaceMember[];
+  targetObjectMetadataItem: EnrichedObjectMetadataItem | undefined;
 }): RecordGroupDefinition[] => {
-  const presentAssigneeIds: string[] = [];
-  let hasNoAssigneeGroup = false;
+  let hasNoValueGroup = false;
+  const seenValues = new Set<string>();
+  const valueGroupDefinitions: RecordGroupDefinition[] = [];
 
-  for (const groupValue of groupValues) {
-    if (isDefined(groupValue)) {
-      if (!presentAssigneeIds.includes(groupValue)) {
-        presentAssigneeIds.push(groupValue);
-      }
-    } else {
-      hasNoAssigneeGroup = true;
+  for (const group of groups) {
+    const groupValue = group.groupByDimensionValues?.[0] ?? null;
+
+    if (!isDefined(groupValue)) {
+      hasNoValueGroup = true;
+      continue;
     }
+
+    if (seenValues.has(groupValue)) {
+      continue;
+    }
+    seenValues.add(groupValue);
+
+    const records = getRecordsFromRecordConnection({ recordConnection: group });
+    const relationRecord = records[0]?.[relationFieldName] as
+      | ObjectRecord
+      | undefined;
+
+    const title =
+      isDefined(relationRecord) && isDefined(targetObjectMetadataItem)
+        ? getObjectRecordIdentifier({
+            objectMetadataItem: targetObjectMetadataItem,
+            record: relationRecord,
+            allowRequestsToTwentyIcons: false,
+          }).name
+        : groupValue;
+
+    valueGroupDefinitions.push({
+      id: groupValue,
+      type: RecordGroupDefinitionType.Value,
+      title,
+      value: groupValue,
+      color: 'transparent',
+      position: 0,
+      isVisible: true,
+      relationRecord,
+    });
   }
 
-  const memberGroupDefinitions: RecordGroupDefinition[] = presentAssigneeIds
-    .map((assigneeId) => {
-      const workspaceMember = workspaceMembers.find(
-        (member) => member.id === assigneeId,
-      );
-
-      const title = isDefined(workspaceMember)
-        ? getWorkspaceMemberName(
-            workspaceMember.name.firstName,
-            workspaceMember.name.lastName,
-          )
-        : '';
-
-      return {
-        id: assigneeId,
-        type: RecordGroupDefinitionType.Value,
-        title: title.length > 0 ? title : assigneeId,
-        value: assigneeId,
-        color: 'transparent' as const,
-        isVisible: true,
-      };
-    })
+  const sortedValueGroupDefinitions = valueGroupDefinitions
     .sort((a, b) => a.title.localeCompare(b.title))
     .map((groupDefinition, index) => ({
       ...groupDefinition,
       position: index,
     }));
 
-  if (!hasNoAssigneeGroup) {
-    return memberGroupDefinitions;
+  if (!hasNoValueGroup) {
+    return sortedValueGroupDefinitions;
   }
 
   return [
-    ...memberGroupDefinitions,
+    ...sortedValueGroupDefinitions,
     {
       id: `${mainGroupByFieldMetadataId}-${NO_VALUE_RECORD_GROUP_ID_SUFFIX}`,
       type: RecordGroupDefinitionType.NoValue,
-      title: 'No assignee',
+      title: 'No Value',
       value: null,
       color: 'transparent',
-      position: memberGroupDefinitions.length,
+      position: sortedValueGroupDefinitions.length,
       isVisible: true,
     },
   ];
