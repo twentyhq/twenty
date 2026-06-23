@@ -3,10 +3,12 @@ import { IconArrowUpRight } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { isNavigationMenuItemSearch } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSearch';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
 import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemLabel';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
+import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -22,30 +24,37 @@ export const NavigationMenuItemLinkDisplay = ({
     isLayoutCustomizationModeEnabledState,
   );
   const { theme } = useContext(ThemeContext);
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
 
   const label = getLinkNavigationMenuItemLabel(item);
   const computedLink = getLinkNavigationMenuItemComputedLink(item);
+  const isSearchNavigationMenuItem = isNavigationMenuItemSearch(item);
 
-  const defaultRightOptions = !isLayoutCustomizationModeEnabled && (
-    <IconArrowUpRight
-      size={theme.icon.size.sm}
-      stroke={theme.icon.stroke.md}
-      color={themeCssVariables.font.color.light}
-    />
-  );
+  const defaultRightOptions = !isLayoutCustomizationModeEnabled &&
+    !isSearchNavigationMenuItem && (
+      <IconArrowUpRight
+        size={theme.icon.size.sm}
+        stroke={theme.icon.stroke.md}
+        color={themeCssVariables.font.color.light}
+      />
+    );
 
   return (
     <NavigationDrawerItem
       label={label}
       to={
-        isLayoutCustomizationModeEnabled || isDragging
+        isLayoutCustomizationModeEnabled ||
+        isDragging ||
+        isSearchNavigationMenuItem
           ? undefined
           : computedLink
       }
       onClick={
         isLayoutCustomizationModeEnabled
           ? editModeProps?.onEditModeClick
-          : undefined
+          : isSearchNavigationMenuItem
+            ? openRecordsSearchPage
+            : undefined
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
       active={false}

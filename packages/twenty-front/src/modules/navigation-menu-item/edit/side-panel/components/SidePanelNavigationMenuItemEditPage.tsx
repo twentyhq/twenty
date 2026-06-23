@@ -15,6 +15,7 @@ import { SidePanelEditOrganizeActions } from '@/navigation-menu-item/edit/side-p
 import { SidePanelEditOwnerSection } from '@/navigation-menu-item/edit/side-panel/components/SidePanelEditOwnerSection';
 import { useNavigationMenuItemEditOrganizeActions } from '@/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions';
 import { getOrganizeActionsSelectableItemIds } from '@/navigation-menu-item/edit/side-panel/utils/getOrganizeActionsSelectableItemIds';
+import { isNavigationMenuItemSearch } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSearch';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
@@ -138,6 +139,22 @@ export const SidePanelNavigationMenuItemEditPage = () => {
         isDefined(selectedItem) &&
         selectedItem.type === NavigationMenuItemType.LINK
       ) {
+        if (isNavigationMenuItemSearch(selectedItem)) {
+          return (
+            <SidePanelEditObjectViewBase
+              onOpenFolderPicker={openFolderPicker}
+              showMoveToFolder={canMoveToOtherFolder}
+              canMoveUp={canMoveUp}
+              canMoveDown={canMoveDown}
+              onMoveUp={onMoveUp}
+              onMoveDown={onMoveDown}
+              onRemove={onRemove}
+              onAddBefore={onAddBefore}
+              onAddAfter={onAddAfter}
+            />
+          );
+        }
+
         return (
           <SidePanelEditLinkItemView
             key={selectedItem.id}

@@ -7,6 +7,7 @@ import { ensureAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
+import { isNavigationMenuItemSearch } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSearch';
 import { isNavigationMenuItemObject } from '@/navigation-menu-item/common/utils/isNavigationMenuItemObject';
 
 export const buildCreateNavigationMenuItemInput = (
@@ -25,7 +26,11 @@ export const buildCreateNavigationMenuItemInput = (
   } else if (isNavigationMenuItemLink(draftItem)) {
     input.name = draftItem.name ?? 'Link';
     const linkUrl = (draftItem.link ?? '').trim();
-    input.link = linkUrl ? ensureAbsoluteUrl(linkUrl) : undefined;
+    input.link = isNavigationMenuItemSearch(draftItem)
+      ? linkUrl
+      : linkUrl
+        ? ensureAbsoluteUrl(linkUrl)
+        : undefined;
   } else if (isNavigationMenuItemObject(draftItem)) {
     input.targetObjectMetadataId =
       draftItem.targetObjectMetadataId ?? undefined;

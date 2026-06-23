@@ -6,14 +6,18 @@ import {
   IconBuildingSkyscraper,
   IconFolder,
   IconLink,
+  IconSearch,
   IconTable,
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { NAVIGATION_MENU_ITEM_SEARCH_ID } from '@/navigation-menu-item/common/constants/NavigationMenuItemSearchId';
+import { NAVIGATION_MENU_ITEM_SEARCH_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemSearchLink';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { useAddFolderToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu';
 import { useAddLinkToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu';
+import { useAddSearchToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddSearchToNavigationMenu';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
@@ -31,6 +35,7 @@ const MAIN_MENU_ITEM_TYPES = [
   NavigationMenuItemType.OBJECT,
   NavigationMenuItemType.VIEW,
   NavigationMenuItemType.RECORD,
+  NAVIGATION_MENU_ITEM_SEARCH_ID,
   NavigationMenuItemType.FOLDER,
   NavigationMenuItemType.LINK,
 ] as const;
@@ -46,6 +51,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
   );
   const { handleAddFolder } = useAddFolderToNavigationMenu();
   const { handleAddLink } = useAddLinkToNavigationMenu();
+  const { handleAddSearch } = useAddSearchToNavigationMenu();
 
   const isAddingToFolder = isDefined(
     pendingInsertionNavigationMenuItem?.folderId,
@@ -113,6 +119,24 @@ export const SidePanelNewSidebarItemMainMenu = ({
             </SidePanelGroup>
             <SidePanelGroup heading={t`Other`}>
               <SelectableListItem
+                itemId={NAVIGATION_MENU_ITEM_SEARCH_ID}
+                onEnter={handleAddSearch}
+              >
+                <SidePanelItemWithAddToNavigationDrag
+                  icon={IconSearch}
+                  label={t`Search`}
+                  id={NAVIGATION_MENU_ITEM_SEARCH_ID}
+                  onClick={handleAddSearch}
+                  dragIndex={3}
+                  payload={{
+                    type: NavigationMenuItemType.LINK,
+                    linkId: NAVIGATION_MENU_ITEM_SEARCH_ID,
+                    name: t`Search`,
+                    link: NAVIGATION_MENU_ITEM_SEARCH_LINK,
+                  }}
+                />
+              </SelectableListItem>
+              <SelectableListItem
                 itemId={NavigationMenuItemType.FOLDER}
                 onEnter={isAddingToFolder ? undefined : handleAddFolder}
               >
@@ -121,7 +145,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                   label={t`Folder`}
                   id={NavigationMenuItemType.FOLDER}
                   onClick={handleAddFolder}
-                  dragIndex={3}
+                  dragIndex={4}
                   payload={{
                     type: NavigationMenuItemType.FOLDER,
                     folderId: 'new',
@@ -139,7 +163,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                   label={t`Link`}
                   id={NavigationMenuItemType.LINK}
                   onClick={handleAddLink}
-                  dragIndex={4}
+                  dragIndex={5}
                   payload={{
                     type: NavigationMenuItemType.LINK,
                     linkId: 'new',

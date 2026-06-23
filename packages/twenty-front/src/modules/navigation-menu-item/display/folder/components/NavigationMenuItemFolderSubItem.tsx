@@ -6,6 +6,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
+import { isNavigationMenuItemSearch } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSearch';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
@@ -22,6 +23,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
+import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 
 type NavigationMenuItemFolderSubItemProps = {
   navigationMenuItem: NavigationMenuItem;
@@ -58,11 +60,14 @@ export const NavigationMenuItemFolderSubItem = ({
   const setLastClickedNavigationMenuItemId = useSetAtomState(
     lastClickedNavigationMenuItemIdState,
   );
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
 
   const { activeNavigationMenuItemIds } =
     useIdentifyActiveNavigationMenuItems();
 
   const isActive = activeNavigationMenuItemIds.includes(navigationMenuItem.id);
+  const isSearchNavigationMenuItem =
+    isNavigationMenuItemSearch(navigationMenuItem);
 
   const label = getNavigationMenuItemLabel(
     navigationMenuItem,
@@ -105,10 +110,12 @@ export const NavigationMenuItemFolderSubItem = ({
             item: navigationMenuItem,
             objectMetadataItem: objectMetadataItem ?? undefined,
           })
-      : () => {
-          setLastClickedNavigationMenuItemId(navigationMenuItem.id);
-          navigate(computedLink);
-        });
+      : isSearchNavigationMenuItem
+        ? openRecordsSearchPage
+        : () => {
+            setLastClickedNavigationMenuItemId(navigationMenuItem.id);
+            navigate(computedLink);
+          });
 
   return (
     <NavigationDrawerSubItem
@@ -128,7 +135,11 @@ export const NavigationMenuItemFolderSubItem = ({
         navigationMenuItem,
         objectMetadataItem ?? undefined,
       )}
-      to={isDragging || isEditable ? undefined : computedLink}
+      to={
+        isDragging || isEditable || isSearchNavigationMenuItem
+          ? undefined
+          : computedLink
+      }
       onClick={handleClick}
       active={isActive}
       isSelectedInEditMode={isEditHighlightedInNavigationMenu}

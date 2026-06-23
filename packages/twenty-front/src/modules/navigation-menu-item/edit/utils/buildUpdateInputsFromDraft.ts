@@ -6,6 +6,7 @@ import {
 
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
+import { isNavigationMenuItemSearch } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSearch';
 
 export const buildUpdateInputsFromDraft = ({
   draft,
@@ -76,7 +77,11 @@ export const buildUpdateInputsFromDraft = ({
     }
     if (linkChanged && isNavigationMenuItemLink(draftItem)) {
       const linkUrl = (draftItem.link ?? '').trim();
-      updatePayload.link = linkUrl ? ensureAbsoluteUrl(linkUrl) : null;
+      updatePayload.link = isNavigationMenuItemSearch(draftItem)
+        ? linkUrl
+        : linkUrl
+          ? ensureAbsoluteUrl(linkUrl)
+          : null;
     }
     if (iconChanged && isNavigationMenuItemFolder(draftItem)) {
       updatePayload.icon = draftItem.icon ?? null;

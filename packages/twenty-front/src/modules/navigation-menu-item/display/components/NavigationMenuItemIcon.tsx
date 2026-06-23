@@ -5,11 +5,12 @@ import {
   StyledTintedIconTileContainer,
   getIconTileColorShades,
 } from 'twenty-ui/data-display';
-import { IconLink, IconWorld, useIcons } from 'twenty-ui/icon';
+import { IconLink, IconSearch, IconWorld, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
+import { isNavigationMenuItemSearch } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSearch';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
@@ -70,6 +71,27 @@ export const NavigationMenuItemIcon = ({
           objectMetadataItem,
         )}
       />
+    );
+  }
+
+  if (isNavigationMenuItemSearch(navigationMenuItem)) {
+    const searchIconStyle = getIconTileColorShades(
+      getNavigationMenuItemColor(navigationMenuItem),
+    );
+
+    return (
+      <StyledTintedIconTileContainer
+        $backgroundColor={searchIconStyle.backgroundColor}
+        $borderColor={searchIconStyle.borderColor}
+      >
+        <Avatar
+          size="sm"
+          type="icon"
+          Icon={IconSearch}
+          iconColor={searchIconStyle.iconColor}
+          placeholder={navigationMenuItem.name ?? ''}
+        />
+      </StyledTintedIconTileContainer>
     );
   }
 

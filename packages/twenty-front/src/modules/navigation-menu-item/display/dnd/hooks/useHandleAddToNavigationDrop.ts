@@ -3,18 +3,20 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined, normalizeUrl } from 'twenty-shared/utils';
-import { IconFolder, IconLink, useIcons } from 'twenty-ui/icon';
+import { IconFolder, IconLink, IconSearch, useIcons } from 'twenty-ui/icon';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/constants/AddToNavSourceDroppableId';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
+import { NAVIGATION_MENU_ITEM_SEARCH_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemSearchLink';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
 import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/common/utils/getObjectMetadataIdsInDraft';
+import { isNavigationMenuItemSearch } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSearch';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/common/utils/validateAndExtractWorkspaceFolderId';
 import {
   type NewNavigationMenuItemInput,
@@ -125,17 +127,24 @@ export const useHandleAddToNavigationDrop = () => {
           return;
         }
         case NavigationMenuItemType.LINK: {
+          const isSearchNavigationMenuItem =
+            isNavigationMenuItemSearch(payload);
+
           addToWorkspaceAndOpenEdit(
             {
               type: NavigationMenuItemType.LINK,
               name: payload.name || t`Link label`,
-              link: normalizeUrl(payload.link),
+              link: isSearchNavigationMenuItem
+                ? NAVIGATION_MENU_ITEM_SEARCH_LINK
+                : normalizeUrl(payload.link),
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
             },
             { targetFolderId: folderId, targetIndex: index },
             {
-              pageTitle: t`Edit link`,
-              pageIcon: IconLink,
+              pageTitle: isSearchNavigationMenuItem
+                ? t`Edit search`
+                : t`Edit link`,
+              pageIcon: isSearchNavigationMenuItem ? IconSearch : IconLink,
               focusTitleInput: true,
             },
           );

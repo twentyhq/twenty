@@ -6,6 +6,7 @@ import {
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
+import { NAVIGATION_MENU_ITEM_SEARCH_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemSearchLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 
 type ObjectMetadata = Pick<
@@ -144,6 +145,19 @@ describe('getNavigationMenuItemLabel', () => {
 
       expect(getNavigationMenuItemLabel(item, objectMetadataItems, views)).toBe(
         'Link',
+      );
+    });
+
+    it('should return "Search" for the search navigation action link', () => {
+      const item = {
+        ...baseItem,
+        type: NavigationMenuItemType.LINK,
+        name: null,
+        link: NAVIGATION_MENU_ITEM_SEARCH_LINK,
+      };
+
+      expect(getNavigationMenuItemLabel(item, objectMetadataItems, views)).toBe(
+        'Search',
       );
     });
   });
