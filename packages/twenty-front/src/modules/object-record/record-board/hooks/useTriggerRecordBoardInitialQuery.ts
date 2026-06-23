@@ -1,3 +1,4 @@
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -9,7 +10,10 @@ import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { buildRelationRecordGroupDefinitions } from '@/object-record/record-group/utils/buildRelationRecordGroupDefinitions';
+import {
+  buildRelationRecordGroupDefinitions,
+  type RelationRecordGroupOrder,
+} from '@/object-record/record-group/utils/buildRelationRecordGroupDefinitions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { useRecordIndexGroupsRecordsLazyGroupBy } from '@/object-record/record-index/hooks/useRecordIndexGroupsRecordsLazyGroupBy';
@@ -25,6 +29,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -64,6 +69,12 @@ export const useTriggerRecordBoardInitialQuery = () => {
   const setRecordBoardCurrentGroupByQueryOffset = useSetAtomComponentState(
     recordBoardCurrentGroupByQueryOffsetComponentState,
   );
+
+  const currentViewIdCallbackState = useAtomComponentStateCallbackState(
+    contextStoreCurrentViewIdComponentState,
+  );
+
+  const { getViewFromState } = useGetViewFromState();
 
   const { combinedFilters, orderBy } =
     useRecordIndexGroupCommonQueryVariables();
@@ -135,12 +146,48 @@ export const useTriggerRecordBoardInitialQuery = () => {
             recordIndexGroupFieldMetadataItem.relation?.targetObjectMetadata.id,
         );
 
+        const currentViewId = store.get(currentViewIdCallbackState);
+        const persistedViewGroups = isDefined(currentViewId)
+          ? (getViewFromState(currentViewId)?.viewGroups ?? [])
+          : [];
+
+        const priorOrder: RelationRecordGroupOrder[] = isNonEmptyArray(
+          recordGroupDefinitions,
+        )
+          ? recordGroupDefinitions.map((recordGroupDefinition) => ({
+              value: recordGroupDefinition.value,
+              viewGroupId: recordGroupDefinition.viewGroupId,
+              isVisible: recordGroupDefinition.isVisible,
+              position: recordGroupDefinition.position,
+            }))
+          : persistedViewGroups.map((viewGroup) => ({
+              value: viewGroup.fieldValue === '' ? null : viewGroup.fieldValue,
+              viewGroupId: viewGroup.id,
+              isVisible: viewGroup.isVisible,
+              position: viewGroup.position,
+            }));
+
         recordGroupDefinitionsToFill = buildRelationRecordGroupDefinitions({
           groups,
           relationFieldName: recordIndexGroupFieldMetadataItem.name,
           mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
           targetObjectMetadataItem,
+          priorOrder,
         });
+
+        const builtRecordGroupValues = new Set(
+          recordGroupDefinitionsToFill.map((definition) => definition.value),
+        );
+        const preservedHiddenRecordGroups = recordGroupDefinitions.filter(
+          (definition) =>
+            !definition.isVisible &&
+            !builtRecordGroupValues.has(definition.value),
+        );
+
+        recordGroupDefinitionsToFill = [
+          ...recordGroupDefinitionsToFill,
+          ...preservedHiddenRecordGroups,
+        ];
 
         setRecordGroups({
           mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
@@ -218,6 +265,8 @@ export const useTriggerRecordBoardInitialQuery = () => {
       recordGroupDefinitions,
       recordIndexGroupFieldMetadataItem,
       objectMetadataItems,
+      currentViewIdCallbackState,
+      getViewFromState,
       setRecordGroups,
       recordIndexId,
       upsertRecordsInStore,
