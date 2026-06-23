@@ -36,10 +36,9 @@ export const buildRelationRecordGroupDefinitions = ({
   targetObjectMetadataItem: EnrichedObjectMetadataItem | undefined;
   priorOrder: RelationRecordGroupOrder[];
 }): RecordGroupDefinition[] => {
-  const priorOrderByKey = new Map<string, RelationRecordGroupOrder>();
-  for (const order of priorOrder) {
-    priorOrderByKey.set(order.value ?? NO_VALUE_ORDER_KEY, order);
-  }
+  const priorOrderByKey = new Map(
+    priorOrder.map((order) => [order.value ?? NO_VALUE_ORDER_KEY, order]),
+  );
 
   type DraftGroup = { definition: RecordGroupDefinition; orderRank: number };
   const draftGroups: DraftGroup[] = [];
@@ -60,9 +59,8 @@ export const buildRelationRecordGroupDefinitions = ({
     seenValues.add(groupValue);
 
     const records = getRecordsFromRecordConnection({ recordConnection: group });
-    const relationRecord = records[0]?.[relationFieldName] as
-      | ObjectRecord
-      | undefined;
+    const relationRecord: ObjectRecord | undefined =
+      records[0]?.[relationFieldName];
 
     const title =
       isDefined(relationRecord) && isDefined(targetObjectMetadataItem)
