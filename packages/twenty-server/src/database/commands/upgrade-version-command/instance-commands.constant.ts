@@ -77,7 +77,6 @@ import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/data
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action';
 import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781900000000-add-view-kanban-column-width';
-import { AddChannelWebhookSubscriptionFieldsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782152096938-add-channel-webhook-subscription-fields';
 import { AddServerTriggerSettingsToLogicFunctionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782211913427-add-server-trigger-settings-to-logic-function';
 
 export const INSTANCE_COMMANDS = [
