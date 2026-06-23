@@ -21,11 +21,10 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
     (field) => field.id === mainGroupByFieldMetadataId,
   );
 
-  if (!isDefined(groupByFieldMetadataItem)) {
-    return [];
-  }
-
-  if (isManyToOneRelationField(groupByFieldMetadataItem)) {
+  if (
+    !isDefined(groupByFieldMetadataItem) ||
+    isManyToOneRelationField(groupByFieldMetadataItem)
+  ) {
     return [];
   }
 
