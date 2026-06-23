@@ -116,6 +116,11 @@ describe('get_workflow_current_version tool', () => {
     const result = await tool.execute({ workflowId: WORKFLOW_ID });
 
     expect(result.success).toBe(true);
+
+    if (!('workflowVersion' in result) || result.workflowVersion === undefined) {
+      throw new Error('Expected workflowVersion to be present in the result');
+    }
+
     expect(result.workflowVersion.id).toBe('v-draft');
   });
 

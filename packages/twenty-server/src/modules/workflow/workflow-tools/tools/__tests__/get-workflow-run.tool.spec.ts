@@ -63,7 +63,7 @@ describe('get_workflow_run tool', () => {
           ],
         },
         stepInfos: {
-          'step-1': { status: StepStatus.COMPLETED },
+          'step-1': { status: StepStatus.SUCCESS },
           'step-2': { status: StepStatus.FAILED, error: 'Email failed' },
         },
       },
@@ -86,6 +86,11 @@ describe('get_workflow_run tool', () => {
     const result = await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
 
     expect(result.success).toBe(true);
+
+    if (!('workflowRun' in result) || result.workflowRun === undefined) {
+      throw new Error('Expected workflowRun to be present in the result');
+    }
+
     expect(result.workflowRun.id).toBe(WORKFLOW_RUN_ID);
     expect(result.workflowRun.error).toBe('Something went wrong');
     expect(result.workflowRun.steps).toHaveLength(2);
