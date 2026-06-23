@@ -152,7 +152,7 @@ export class ChatExecutionService {
     const preloadedTools = await this.toolRegistry.getToolsByName(
       AI_CHAT_TOOL_NAMES_TO_PRELOAD,
       toolContext,
-      { compactOutput: true },
+      { compactOutput: true, spillLargeOutput: true },
     );
 
     const resolvedModelId = modelId ?? workspace.smartModel;
@@ -204,7 +204,7 @@ export class ChatExecutionService {
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
         toolContext,
-        { compactOutput: true },
+        { compactOutput: true, spillLargeOutput: true },
       ),
       [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(
         (skillNames) =>
