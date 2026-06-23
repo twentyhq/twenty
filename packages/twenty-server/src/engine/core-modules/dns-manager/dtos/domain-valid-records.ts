@@ -30,4 +30,9 @@ export class DomainValidRecords {
 
   @Field(() => [DomainRecord])
   records: Array<DomainRecord>;
+
+  // Only populated by the custom domain check; reflects whether the domain is
+  // currently active so clients can update their workspace state without a reload
+  @Field(() => Boolean, { nullable: true })
+  isCustomDomainEnabled?: boolean;
 }
