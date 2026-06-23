@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
-import { useCallback, useState } from 'react';
+import { type ReactNode, useCallback, useState } from 'react';
 
 import { RecordingTranscript } from 'src/front-components/components/RecordingTranscript';
 import { RecordingVideoPlayer } from 'src/front-components/components/RecordingVideoPlayer';
@@ -11,22 +11,62 @@ import { useCalendarEventRecording } from 'src/front-components/hooks/use-calend
 
 const TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS = 0.25;
 
-const StyledStateContainer = styled.div`
+const StyledRecordingShell = styled.div`
+  background: ${recordingThemeCssVariables.background.primary};
+  border: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  border-radius: ${recordingThemeCssVariables.border.radiusMd};
   box-sizing: border-box;
   font-family: ${recordingThemeCssVariables.font.family};
-  height: 100%;
+  padding: ${recordingThemeCssVariables.spacing[4]};
+  position: relative;
+  width: 100%;
+`;
+
+const StyledRecordingHeader = styled.div`
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  height: ${recordingThemeCssVariables.spacing[6]};
+`;
+
+const StyledRecordingTitle = styled.h2`
+  color: ${recordingThemeCssVariables.font.colorPrimary};
+  flex: 1;
+  font-size: ${recordingThemeCssVariables.font.sizeMd};
+  font-weight: ${recordingThemeCssVariables.font.weightMedium};
+  margin: 0;
+  overflow: hidden;
+  padding-inline: ${recordingThemeCssVariables.spacing[1]};
+  user-select: none;
+`;
+
+const StyledRecordingBody = styled.div`
+  box-sizing: border-box;
+  margin-top: ${recordingThemeCssVariables.spacing[2]};
+`;
+
+const StyledRecordingContentFrame = styled.div`
+  background-color: ${recordingThemeCssVariables.background.secondary};
+  border: 1px solid ${recordingThemeCssVariables.border.colorMedium};
+  border-radius: ${recordingThemeCssVariables.border.radiusMd};
+  box-sizing: border-box;
+  padding: ${recordingThemeCssVariables.spacing[2]};
+`;
+
+const StyledCenteredState = styled.div`
+  align-items: center;
+  box-sizing: border-box;
+  color: ${recordingThemeCssVariables.font.colorTertiary};
+  display: flex;
+  font-family: ${recordingThemeCssVariables.font.family};
+  font-size: ${recordingThemeCssVariables.font.sizeSm};
+  justify-content: center;
+  min-height: 240px;
   padding: ${recordingThemeCssVariables.spacing[4]};
 `;
 
-const StyledCenteredState = styled(StyledStateContainer)`
-  align-items: center;
-  color: ${recordingThemeCssVariables.font.colorTertiary};
-  display: flex;
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
-  justify-content: center;
-`;
-
-const StyledRecordingContainer = styled(StyledStateContainer)<{
+const StyledRecordingContainer = styled.div<{
   $hasVideo?: boolean;
 }>`
   display: grid;
@@ -34,8 +74,6 @@ const StyledRecordingContainer = styled(StyledStateContainer)<{
     $hasVideo ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)'};
   gap: ${recordingThemeCssVariables.spacing[2]};
   min-height: 0;
-  overflow: hidden;
-  padding: 0;
 `;
 
 type CalendarEventRecordingContentProps = {
@@ -71,50 +109,60 @@ export const CalendarEventRecordingContent = ({
   const { calendarEventParticipants } =
     useCalendarEventParticipants(calendarEventId);
 
+  const videoFileUrl = videoFile?.url ?? undefined;
+  const hasVideo = !isUndefined(videoFileUrl);
+  let recordingBodyContent: ReactNode;
+
   if (!isUndefined(errorMessage)) {
-    return (
+    recordingBodyContent = (
       <TranscriptErrorBox
         title="Failed to load the recording"
         description={errorMessage}
       />
     );
-  }
-
-  const videoFileUrl = videoFile?.url ?? undefined;
-  const hasVideo = !isUndefined(videoFileUrl);
-
-  if (isCalendarEventRecordingQueryLoading) {
-    return (
-      <StyledRecordingContainer>
+  } else if (isCalendarEventRecordingQueryLoading) {
+    recordingBodyContent = (
+      <StyledRecordingContainer $hasVideo={false}>
         <RecordingVideoPlayer
           src={undefined}
           onTimeUpdate={updateCurrentTimeSeconds}
         />
       </StyledRecordingContainer>
     );
-  }
-
-  if (isUndefined(transcript) && isUndefined(videoFile)) {
-    return (
+  } else if (isUndefined(transcript) && isUndefined(videoFile)) {
+    recordingBodyContent = (
       <StyledCenteredState>
         No recording for this calendar event yet.
       </StyledCenteredState>
     );
+  } else {
+    recordingBodyContent = (
+      <StyledRecordingContainer $hasVideo={hasVideo}>
+        {hasVideo && (
+          <RecordingVideoPlayer
+            src={videoFileUrl}
+            onTimeUpdate={updateCurrentTimeSeconds}
+          />
+        )}
+        <RecordingTranscript
+          transcript={transcript}
+          currentTimeSeconds={currentTimeSeconds}
+          calendarEventParticipants={calendarEventParticipants}
+        />
+      </StyledRecordingContainer>
+    );
   }
 
   return (
-    <StyledRecordingContainer $hasVideo={hasVideo}>
-      {hasVideo && (
-        <RecordingVideoPlayer
-          src={videoFileUrl}
-          onTimeUpdate={updateCurrentTimeSeconds}
-        />
-      )}
-      <RecordingTranscript
-        transcript={transcript}
-        currentTimeSeconds={currentTimeSeconds}
-        calendarEventParticipants={calendarEventParticipants}
-      />
-    </StyledRecordingContainer>
+    <StyledRecordingShell>
+      <StyledRecordingHeader>
+        <StyledRecordingTitle>Recording and Transcript</StyledRecordingTitle>
+      </StyledRecordingHeader>
+      <StyledRecordingBody>
+        <StyledRecordingContentFrame>
+          {recordingBodyContent}
+        </StyledRecordingContentFrame>
+      </StyledRecordingBody>
+    </StyledRecordingShell>
   );
 };

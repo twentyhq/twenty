@@ -15,7 +15,7 @@ export default definePageLayoutTab({
   title: 'Twenty Meeting Bot',
   position: 25,
   icon: 'IconVideo',
-  layoutMode: PageLayoutTabLayoutMode.GRID,
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
   pageLayoutUniversalIdentifier:
     CALENDAR_EVENT_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
   widgets: [
@@ -24,7 +24,6 @@ export default definePageLayoutTab({
         CALENDAR_EVENT_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Recording and Transcript',
       type: 'FRONT_COMPONENT',
-      gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
       configuration: {
         configurationType: 'FRONT_COMPONENT',
         frontComponentUniversalIdentifier:
