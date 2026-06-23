@@ -1,5 +1,5 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,11 +31,9 @@ const useViewsSideEffectsOnViewGroups = () => {
       (field) => field.id === mainGroupByFieldMetadataId,
     );
 
-    // Relation grouping generates its columns dynamically from the workspace
-    // member list, so no view groups are persisted.
     if (
       isDefined(mainGroupByField) &&
-      isManyToOneRelationToWorkspaceMember(mainGroupByField)
+      isManyToOneRelationField(mainGroupByField)
     ) {
       return { viewGroupsToCreate: [] };
     }

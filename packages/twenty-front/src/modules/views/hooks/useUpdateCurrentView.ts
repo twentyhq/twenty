@@ -3,7 +3,7 @@ import { useStore } from 'jotai';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -56,11 +56,9 @@ export const useUpdateCurrentView = () => {
             (field) => field.id === newMainGroupByFieldMetadataId,
           );
 
-          // Relation grouping builds its columns dynamically from the workspace
-          // member list, so no view groups are persisted.
           if (
             isDefined(newMainGroupByField) &&
-            isManyToOneRelationToWorkspaceMember(newMainGroupByField)
+            isManyToOneRelationField(newMainGroupByField)
           ) {
             return { viewGroupsToCreate: [] };
           }

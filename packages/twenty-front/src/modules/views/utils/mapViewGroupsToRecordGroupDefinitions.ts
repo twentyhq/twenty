@@ -1,5 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import {
   type RecordGroupDefinition,
   RecordGroupDefinitionType,
@@ -25,7 +25,7 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
     return [];
   }
 
-  if (isManyToOneRelationToWorkspaceMember(groupByFieldMetadataItem)) {
+  if (isManyToOneRelationField(groupByFieldMetadataItem)) {
     return [];
   }
 

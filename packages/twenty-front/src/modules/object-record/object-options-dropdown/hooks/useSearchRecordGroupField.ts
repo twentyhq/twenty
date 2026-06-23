@@ -1,4 +1,4 @@
-import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { objectOptionsDropdownSearchInputComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownSearchInputComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -21,7 +21,7 @@ export const useSearchRecordGroupField = () => {
       (field) =>
         field.isActive &&
         (field.type === FieldMetadataType.SELECT ||
-          isManyToOneRelationToWorkspaceMember(field)) &&
+          isManyToOneRelationField(field)) &&
         field.label.toLocaleLowerCase().includes(searchInputLowerCase),
     );
   }, [objectMetadataItem.readableFields, objectOptionsDropdownSearchInput]);

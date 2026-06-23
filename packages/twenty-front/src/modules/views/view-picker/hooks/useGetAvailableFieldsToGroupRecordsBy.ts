@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -32,7 +32,7 @@ export const useGetAvailableFieldsToGroupRecordsBy = () => {
       (field) =>
         field.isActive === true &&
         (field.type === FieldMetadataType.SELECT ||
-          isManyToOneRelationToWorkspaceMember(field)),
+          isManyToOneRelationField(field)),
     ) ?? [];
 
   const navigate = useNavigateSettings();

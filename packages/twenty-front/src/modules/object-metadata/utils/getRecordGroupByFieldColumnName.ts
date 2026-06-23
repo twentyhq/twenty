@@ -1,11 +1,11 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 
 export const getRecordGroupByFieldColumnName = (
   field: Pick<FieldMetadataItem, 'type' | 'relation' | 'name' | 'settings'>,
 ): string => {
-  if (!isManyToOneRelationToWorkspaceMember(field)) {
+  if (!isManyToOneRelationField(field)) {
     return field.name;
   }
 
