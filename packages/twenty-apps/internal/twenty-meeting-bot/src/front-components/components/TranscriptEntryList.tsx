@@ -17,7 +17,6 @@ const StyledTranscriptContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${recordingThemeCssVariables.spacing[2]};
   min-height: 0;
   overflow-y: auto;
 `;
@@ -27,26 +26,36 @@ const StyledEntry = styled.div<{ $isActive: boolean }>`
     $isActive
       ? recordingThemeCssVariables.background.transparentBlue
       : 'transparent'};
+  align-items: flex-start;
   border-radius: ${recordingThemeCssVariables.border.radiusMd};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${recordingThemeCssVariables.spacing[2]};
+  justify-content: center;
   padding: ${recordingThemeCssVariables.spacing[2]};
+  width: 100%;
 `;
 
 const StyledEntryHeader = styled.div`
   align-items: center;
+  align-self: stretch;
   display: flex;
   gap: ${recordingThemeCssVariables.spacing[2]};
+  min-height: ${recordingThemeCssVariables.spacing[6]};
   min-width: 0;
 `;
 
 const StyledTimestamp = styled.span`
   color: ${recordingThemeCssVariables.font.colorTertiary};
   font-size: ${recordingThemeCssVariables.font.sizeXs};
+  line-height: 1.4;
 `;
 
 const StyledEntryText = styled.p`
+  align-self: stretch;
+  color: ${recordingThemeCssVariables.font.colorSecondary};
+  font-size: ${recordingThemeCssVariables.font.sizeSm};
   line-height: 1.4;
   margin: 0;
 `;
@@ -55,8 +64,7 @@ const StyledWord = styled.span<{ $isSpoken: boolean }>`
   color: ${({ $isSpoken }) =>
     $isSpoken
       ? recordingThemeCssVariables.font.colorPrimary
-      : recordingThemeCssVariables.font.colorTertiary};
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
+      : recordingThemeCssVariables.font.colorSecondary};
   line-height: 1.4;
   transition: color 0.15s ease;
 `;

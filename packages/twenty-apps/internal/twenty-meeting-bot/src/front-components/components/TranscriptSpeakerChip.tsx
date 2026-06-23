@@ -8,21 +8,21 @@ import { recordingThemeCssVariables } from 'src/front-components/constants/recor
 const StyledSpeakerChip = styled.span`
   align-items: center;
   border-radius: ${recordingThemeCssVariables.border.radiusSm};
-  box-sizing: border-box;
   color: ${recordingThemeCssVariables.font.colorPrimary};
   display: inline-flex;
   font-size: ${recordingThemeCssVariables.font.sizeSm};
   font-weight: ${recordingThemeCssVariables.font.weightMedium};
-  gap: ${recordingThemeCssVariables.spacing[1]};
-  height: 20px;
+  gap: ${recordingThemeCssVariables.spacing[2]};
+  line-height: 1.4;
   max-width: 100%;
   min-width: 0;
-  padding: ${recordingThemeCssVariables.spacing[1]};
   text-decoration: none;
   white-space: nowrap;
 `;
 
 const StyledSpeakerName = styled.span`
+  flex-shrink: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
