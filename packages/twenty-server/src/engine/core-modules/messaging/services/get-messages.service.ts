@@ -34,6 +34,7 @@ export class GetMessagesService {
       return {
         totalNumberOfThreads: 0,
         timelineThreads: [],
+        relatedPersonIds: personIds,
       };
     }
 
@@ -61,6 +62,7 @@ export class GetMessagesService {
         threadParticipantsByThreadId,
         threadVisibilityByThreadId,
       ),
+      relatedPersonIds: personIds,
     };
   }
 
@@ -82,6 +84,7 @@ export class GetMessagesService {
       return {
         totalNumberOfThreads: 0,
         timelineThreads: [],
+        relatedPersonIds: [],
       };
     }
 

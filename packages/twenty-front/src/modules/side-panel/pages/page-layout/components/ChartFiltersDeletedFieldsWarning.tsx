@@ -24,7 +24,7 @@ export const ChartFiltersDeletedFieldsWarning = ({
   return (
     <SidePanelInformationBanner
       variant="warning"
-      message={t`This rule filters on one or more deleted fields that should be removed.`}
+      message={t`One or more filters reference deactivated or deleted fields and will be automatically removed on save.`}
     />
   );
 };
