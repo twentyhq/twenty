@@ -28,6 +28,33 @@ const keepActivityWithReadableDiff = (
   };
 };
 
+// Linked activities created before the linkedObjectMetadataId column was
+// populated encode the linked object in their name, e.g. "linked-note.updated".
+const findLinkedObjectMetadataItem = (
+  timelineActivity: TimelineActivity,
+  objectMetadataItems: EnrichedObjectMetadataItem[],
+): EnrichedObjectMetadataItem | undefined => {
+  if (isDefined(timelineActivity.linkedObjectMetadataId)) {
+    return objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.id === timelineActivity.linkedObjectMetadataId,
+    );
+  }
+
+  if (timelineActivity.name.startsWith('linked-')) {
+    const linkedObjectNameSingular = timelineActivity.name
+      .split('.')[0]
+      .replace('linked-', '');
+
+    return objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.nameSingular === linkedObjectNameSingular,
+    );
+  }
+
+  return undefined;
+};
+
 export const filterOutInvalidTimelineActivities = (
   timelineActivities: TimelineActivity[],
   mainObjectSingularName: string,
@@ -44,14 +71,10 @@ export const filterOutInvalidTimelineActivities = (
 
   return timelineActivities
     .map((timelineActivity) => {
-      const linkedObjectMetadataItem = isDefined(
-        timelineActivity.linkedObjectMetadataId,
-      )
-        ? objectMetadataItems.find(
-            (objectMetadataItem) =>
-              objectMetadataItem.id === timelineActivity.linkedObjectMetadataId,
-          )
-        : undefined;
+      const linkedObjectMetadataItem = findLinkedObjectMetadataItem(
+        timelineActivity,
+        objectMetadataItems,
+      );
 
       const verb = parseTimelineActivityVerb(timelineActivity.name);
 

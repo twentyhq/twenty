@@ -167,4 +167,27 @@ describe('filterOutInvalidTimelineActivities', () => {
 
     expect(filter(events)).toEqual([]);
   });
+
+  it('resolves the linked object from the name for legacy rows without linkedObjectMetadataId', () => {
+    const events = [
+      {
+        id: '1',
+        name: 'linked-note.updated',
+        properties: {
+          diff: {
+            title: { before: 'a', after: 'b' },
+            field1: { before: 'c', after: 'd' },
+          },
+        },
+      },
+    ] as TimelineActivity[];
+
+    expect(filter(events)).toEqual([
+      {
+        id: '1',
+        name: 'linked-note.updated',
+        properties: { diff: { title: { before: 'a', after: 'b' } } },
+      },
+    ]);
+  });
 });

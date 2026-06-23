@@ -12,9 +12,9 @@ export type TimelineActivityLinkedPresenter = {
 };
 
 export const TIMELINE_ACTIVITY_LINKED_PRESENTERS: Partial<
-  Record<string, TimelineActivityLinkedPresenter>
+  Record<CoreObjectNameSingular, TimelineActivityLinkedPresenter>
 > = {
-  message: {
+  [CoreObjectNameSingular.Message]: {
     renderRow: ({
       labelIdentifierValue,
       event,
@@ -31,7 +31,7 @@ export const TIMELINE_ACTIVITY_LINKED_PRESENTERS: Partial<
       />
     ),
   },
-  calendarEvent: {
+  [CoreObjectNameSingular.CalendarEvent]: {
     renderRow: ({
       labelIdentifierValue,
       event,
@@ -48,7 +48,7 @@ export const TIMELINE_ACTIVITY_LINKED_PRESENTERS: Partial<
       />
     ),
   },
-  note: {
+  [CoreObjectNameSingular.Note]: {
     renderRow: ({
       labelIdentifierValue,
       event,
@@ -68,7 +68,7 @@ export const TIMELINE_ACTIVITY_LINKED_PRESENTERS: Partial<
       />
     ),
   },
-  task: {
+  [CoreObjectNameSingular.Task]: {
     renderRow: ({
       labelIdentifierValue,
       event,
@@ -113,5 +113,6 @@ export const GENERIC_LINKED_PRESENTER: TimelineActivityLinkedPresenter = {
 export const getTimelineActivityLinkedPresenter = (
   linkedObjectNameSingular: string,
 ): TimelineActivityLinkedPresenter =>
-  TIMELINE_ACTIVITY_LINKED_PRESENTERS[linkedObjectNameSingular] ??
-  GENERIC_LINKED_PRESENTER;
+  TIMELINE_ACTIVITY_LINKED_PRESENTERS[
+    linkedObjectNameSingular as CoreObjectNameSingular
+  ] ?? GENERIC_LINKED_PRESENTER;
