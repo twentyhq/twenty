@@ -218,35 +218,6 @@ describe('DatabaseToolProvider', () => {
     expect(labelByName.get('delete_many_companies')).toBe('Delete companies');
   });
 
-  it('generates in-progress and completed labels with a lowercase object label', async () => {
-    const descriptors = await generateDescriptors([
-      createFlatObject({
-        nameSingular: 'company',
-        namePlural: 'companies',
-        labelSingular: 'Company',
-        labelPlural: 'Companies',
-      }),
-    ]);
-
-    const descriptorByName = new Map(descriptors.map((d) => [d.name, d]));
-
-    expect(descriptorByName.get('create_one_company')?.inProgressLabel).toBe(
-      'Creating company',
-    );
-    expect(descriptorByName.get('create_one_company')?.completedLabel).toBe(
-      'Created company',
-    );
-    expect(descriptorByName.get('find_many_companies')?.inProgressLabel).toBe(
-      'Searching companies',
-    );
-    expect(descriptorByName.get('find_many_companies')?.completedLabel).toBe(
-      'Searched companies',
-    );
-    expect(descriptorByName.get('find_one_company')?.completedLabel).toBe(
-      'Found company',
-    );
-  });
-
   it('uses the object labelSingular/labelPlural from metadata, not the programmatic name', async () => {
     const descriptors = await generateDescriptors([
       createFlatObject({

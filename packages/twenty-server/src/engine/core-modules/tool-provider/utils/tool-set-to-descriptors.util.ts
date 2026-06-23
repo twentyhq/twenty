@@ -9,7 +9,6 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 export type ToolSetToDescriptorsOptions = {
   includeSchemas?: boolean;
   icon?: string;
-  labels?: Record<string, string>;
 };
 
 export const humanizeToolName = (name: string): string =>
@@ -29,7 +28,7 @@ export const toolSetToDescriptors = (
   return Object.entries(toolSet).map(([name, tool]) => {
     const base: ToolIndexEntry = {
       name,
-      label: options?.labels?.[name] ?? humanizeToolName(name),
+      label: humanizeToolName(name),
       description: tool.description ?? '',
       category,
       executionRef: { kind: 'static' as const, toolId: name },

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
-import { ACTION_TOOL_LABELS } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.const';
+import { ACTION_TOOL_LABELS } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -181,20 +181,6 @@ export class ActionToolProvider implements ToolProvider {
       label: labels
         ? translateToolLabel(labels.label, this.i18nService, locale)
         : humanizeToolName(toolId),
-      ...(labels?.inProgressLabel && {
-        inProgressLabel: translateToolLabel(
-          labels.inProgressLabel,
-          this.i18nService,
-          locale,
-        ),
-      }),
-      ...(labels?.completedLabel && {
-        completedLabel: translateToolLabel(
-          labels.completedLabel,
-          this.i18nService,
-          locale,
-        ),
-      }),
       description: tool.description,
       category: ToolCategory.ACTION,
       icon: 'IconPlayerPlay',

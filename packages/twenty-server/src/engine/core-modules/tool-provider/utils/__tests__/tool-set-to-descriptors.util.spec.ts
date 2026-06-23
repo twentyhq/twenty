@@ -40,27 +40,6 @@ describe('toolSetToDescriptors', () => {
     expect(labelByName.get('get_object_metadata')).toBe('Get Object Metadata');
   });
 
-  it('uses labels from the provided map when available', () => {
-    const toolSet = createMockToolSet({
-      create_complete_workflow: { description: 'Create a workflow' },
-      activate_workflow_version: { description: 'Activate a workflow version' },
-    });
-
-    const descriptors = toolSetToDescriptors(toolSet, ToolCategory.WORKFLOW, {
-      includeSchemas: false,
-      labels: {
-        create_complete_workflow: 'Create Workflow',
-      },
-    });
-
-    const labelByName = new Map(descriptors.map((d) => [d.name, d.label]));
-
-    expect(labelByName.get('create_complete_workflow')).toBe('Create Workflow');
-    expect(labelByName.get('activate_workflow_version')).toBe(
-      'Activate Workflow Version',
-    );
-  });
-
   it('includes label on every descriptor', () => {
     const toolSet = createMockToolSet({
       tool_a: { description: 'A' },

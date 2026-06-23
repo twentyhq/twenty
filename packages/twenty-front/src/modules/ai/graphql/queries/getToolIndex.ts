@@ -5,8 +5,6 @@ export const GET_TOOL_INDEX = gql`
     getToolIndex {
       name
       label
-      inProgressLabel
-      completedLabel
       description
       category
       objectName

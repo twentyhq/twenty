@@ -8,11 +8,9 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import { useToolLabelMap } from '@/ai/hooks/useToolLabel';
-import {
-  resolveToolDisplayMessage,
-  resolveToolInput,
-} from '@/ai/utils/getToolDisplayMessage';
+import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
+import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
+import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { useLingui } from '@lingui/react/macro';
 import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
@@ -144,10 +142,12 @@ export const ToolStepRenderer = ({
   const { input, output, errorText } = toolPart;
   const rawToolName = getToolName(toolPart);
 
-  const { resolvedInput: toolInput, resolvedToolName: toolName } =
-    resolveToolInput(input, rawToolName);
+  const { toolInput, toolName } = unwrapToolInput({
+    input,
+    toolName: rawToolName,
+  });
 
-  const labelMap = useToolLabelMap();
+  const displayContext = useToolDisplayContext();
   const hasError = isDefined(errorText);
   const isCodeInterpreter = toolName === 'code_interpreter';
   const isExpandable = isDefined(output) || hasError || isCodeInterpreter;
@@ -180,11 +180,11 @@ export const ToolStepRenderer = ({
     : null;
 
   if (!output && !hasError) {
-    const displayText = resolveToolDisplayMessage({
+    const displayText = getToolDisplayMessage({
       input,
       toolName: rawToolName,
       isFinished: !isStreaming,
-      labelMap,
+      displayContext,
       output,
     });
 
@@ -240,19 +240,19 @@ export const ToolStepRenderer = ({
     : rawToolName === 'learn_tools' ||
         rawToolName === 'execute_tool' ||
         rawToolName === 'load_skills'
-      ? resolveToolDisplayMessage({
+      ? getToolDisplayMessage({
           input,
           toolName: rawToolName,
           isFinished: true,
-          labelMap,
+          displayContext,
           output,
         })
       : (toolMessage ??
-        resolveToolDisplayMessage({
+        getToolDisplayMessage({
           input,
           toolName: rawToolName,
           isFinished: true,
-          labelMap,
+          displayContext,
           output,
         }));
 

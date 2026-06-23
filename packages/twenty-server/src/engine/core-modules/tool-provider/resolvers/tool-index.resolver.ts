@@ -24,12 +24,6 @@ export class ToolIndexEntryDTO {
   @Field()
   label: string;
 
-  @Field({ nullable: true })
-  inProgressLabel?: string;
-
-  @Field({ nullable: true })
-  completedLabel?: string;
-
   @Field()
   description: string;
 

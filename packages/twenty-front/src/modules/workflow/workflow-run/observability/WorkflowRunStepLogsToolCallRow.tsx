@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { type AiToolCallLog } from 'twenty-shared/workflow';
 
-import { useToolLabelMap } from '@/ai/hooks/useToolLabel';
-import { resolveToolDisplayMessage } from '@/ai/utils/getToolDisplayMessage';
+import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
+import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { useLingui } from '@lingui/react/macro';
 import { type JsonValue } from 'type-fest';
@@ -161,12 +161,12 @@ export const WorkflowRunStepLogsToolCallRow = ({
     ? themeCssVariables.color.red
     : themeCssVariables.color.green;
 
-  const labelMap = useToolLabelMap();
-  const displayMessage = resolveToolDisplayMessage({
+  const displayContext = useToolDisplayContext();
+  const displayMessage = getToolDisplayMessage({
     input: toolCall.input ?? {},
     toolName: toolCall.toolName,
     isFinished: true,
-    labelMap,
+    displayContext,
     output: toolCall.output,
   });
 
