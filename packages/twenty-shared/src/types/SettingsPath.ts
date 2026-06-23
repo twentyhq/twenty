@@ -19,6 +19,8 @@ export enum SettingsPath {
   ObjectNewFieldSelect = 'objects/:objectNamePlural/new-field/select',
   ObjectNewFieldConfigure = 'objects/:objectNamePlural/new-field/configure',
   ObjectNewIndex = 'objects/:objectNamePlural/new-index',
+  ObjectNewTimelineRule = 'objects/:objectNamePlural/timeline/new-rule',
+  ObjectTimelineRuleDetail = 'objects/:objectNamePlural/timeline/rules/:timelineProjectionRuleId',
   ObjectFieldEdit = 'objects/:objectNamePlural/:fieldName',
   NewObject = 'objects/new',
   Layout = 'layout',
@@ -93,7 +95,4 @@ export enum SettingsPath {
   RoleDetail = 'members/roles/:roleId',
   RoleObjectLevel = 'members/roles/:roleId/object/:objectMetadataId',
   RoleAddObjectLevel = 'members/roles/:roleId/add-object-permission',
-
-  Timeline = 'timeline',
-  NewTimelineProjectionRule = 'timeline/new-rule',
 }

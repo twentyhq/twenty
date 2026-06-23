@@ -10,6 +10,7 @@ import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/ob
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
+import { SettingsObjectTimelineSection } from '@/settings/timeline/components/SettingsObjectTimelineSection';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -137,6 +138,13 @@ export const ObjectSettings = ({
               isReadOnly={isReadOnly}
             />
           </Section>
+        </StyledFormSectionContainer>
+      </AdvancedSettingsWrapper>
+      <AdvancedSettingsWrapper>
+        <StyledFormSectionContainer>
+          <SettingsObjectTimelineSection
+            objectMetadataItem={objectMetadataItem}
+          />
         </StyledFormSectionContainer>
       </AdvancedSettingsWrapper>
       <AdvancedSettingsWrapper>

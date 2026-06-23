@@ -4,18 +4,16 @@ import { useTimelineProjectionRuleForm } from '@/settings/timeline/hooks/useTime
 
 const NOTE_ID = 'note-id';
 const TASK_ID = 'task-id';
-const COMPANY_ID = 'company-id';
 const PERSON_ID = 'person-id';
 
 describe('useTimelineProjectionRuleForm', () => {
-  it('cannot be saved until an anchor, a source and at least one activity type are set', () => {
+  it('cannot be saved until a source and at least one activity type are set', () => {
     const { result } = renderHook(() =>
-      useTimelineProjectionRuleForm([NOTE_ID, TASK_ID]),
+      useTimelineProjectionRuleForm({
+        initialLinkedObjectMetadataIds: [NOTE_ID, TASK_ID],
+      }),
     );
 
-    expect(result.current.canSave).toBe(false);
-
-    act(() => result.current.setAnchorObjectMetadataId(COMPANY_ID));
     expect(result.current.canSave).toBe(false);
 
     act(() => result.current.setSourceObjectMetadataId(PERSON_ID));
@@ -24,13 +22,12 @@ describe('useTimelineProjectionRuleForm', () => {
 
   it('cannot be saved when every activity type is toggled off', () => {
     const { result } = renderHook(() =>
-      useTimelineProjectionRuleForm([NOTE_ID, TASK_ID]),
+      useTimelineProjectionRuleForm({
+        initialSourceObjectMetadataId: PERSON_ID,
+        initialLinkedObjectMetadataIds: [NOTE_ID, TASK_ID],
+      }),
     );
 
-    act(() => {
-      result.current.setAnchorObjectMetadataId(COMPANY_ID);
-      result.current.setSourceObjectMetadataId(PERSON_ID);
-    });
     expect(result.current.canSave).toBe(true);
 
     act(() => result.current.toggleActivityType(NOTE_ID, false));
@@ -47,7 +44,9 @@ describe('useTimelineProjectionRuleForm', () => {
   });
 
   it('does not duplicate an activity type toggled on twice', () => {
-    const { result } = renderHook(() => useTimelineProjectionRuleForm([]));
+    const { result } = renderHook(() =>
+      useTimelineProjectionRuleForm({ initialLinkedObjectMetadataIds: [] }),
+    );
 
     act(() => result.current.toggleActivityType(NOTE_ID, true));
     act(() => result.current.toggleActivityType(NOTE_ID, true));
@@ -57,13 +56,12 @@ describe('useTimelineProjectionRuleForm', () => {
 
   it('cannot be saved while a submission is in flight', () => {
     const { result } = renderHook(() =>
-      useTimelineProjectionRuleForm([NOTE_ID]),
+      useTimelineProjectionRuleForm({
+        initialSourceObjectMetadataId: PERSON_ID,
+        initialLinkedObjectMetadataIds: [NOTE_ID],
+      }),
     );
 
-    act(() => {
-      result.current.setAnchorObjectMetadataId(COMPANY_ID);
-      result.current.setSourceObjectMetadataId(PERSON_ID);
-    });
     expect(result.current.canSave).toBe(true);
 
     act(() => result.current.setIsSubmitting(true));

@@ -84,16 +84,18 @@ const SettingsObjectOverview = lazy(() =>
   ),
 );
 
-const SettingsTimeline = lazy(() =>
-  import('~/pages/settings/timeline/SettingsTimeline').then((module) => ({
-    default: module.SettingsTimeline,
-  })),
+const SettingsObjectNewTimelineRule = lazy(() =>
+  import('~/pages/settings/data-model/SettingsObjectNewTimelineRule').then(
+    (module) => ({
+      default: module.SettingsObjectNewTimelineRule,
+    }),
+  ),
 );
 
-const SettingsTimelineNewRule = lazy(() =>
-  import('~/pages/settings/timeline/SettingsTimelineNewRule').then(
+const SettingsObjectTimelineRuleDetail = lazy(() =>
+  import('~/pages/settings/data-model/SettingsObjectTimelineRuleDetail').then(
     (module) => ({
-      default: module.SettingsTimelineNewRule,
+      default: module.SettingsObjectTimelineRuleDetail,
     }),
   ),
 );
@@ -794,13 +796,16 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsObjectNewIndex />}
         />
         <Route
+          path={SettingsPath.ObjectNewTimelineRule}
+          element={<SettingsObjectNewTimelineRule />}
+        />
+        <Route
+          path={SettingsPath.ObjectTimelineRuleDetail}
+          element={<SettingsObjectTimelineRuleDetail />}
+        />
+        <Route
           path={SettingsPath.ObjectFieldEdit}
           element={<SettingsObjectFieldEdit />}
-        />
-        <Route path={SettingsPath.Timeline} element={<SettingsTimeline />} />
-        <Route
-          path={SettingsPath.NewTimelineProjectionRule}
-          element={<SettingsTimelineNewRule />}
         />
       </Route>
       <Route

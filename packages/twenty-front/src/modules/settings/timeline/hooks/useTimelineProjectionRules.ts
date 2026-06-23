@@ -3,10 +3,11 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { createTimelineProjectionRule } from '@/settings/timeline/graphql/mutations/createTimelineProjectionRule';
 import { deleteTimelineProjectionRule } from '@/settings/timeline/graphql/mutations/deleteTimelineProjectionRule';
+import { updateTimelineProjectionRule } from '@/settings/timeline/graphql/mutations/updateTimelineProjectionRule';
 import { getTimelineProjectionRules } from '@/settings/timeline/graphql/queries/getTimelineProjectionRules';
 import { type TimelineProjectionRule } from '@/settings/timeline/types/TimelineProjectionRule';
 
-type CreateTimelineProjectionRuleInput = {
+type TimelineProjectionRuleInput = {
   anchorObjectMetadataId: string;
   sourceObjectMetadataId: string;
   linkedObjectMetadataIds: string[];
@@ -23,12 +24,21 @@ export const useTimelineProjectionRules = () => {
     client: apolloCoreClient,
   });
 
+  const [updateRuleMutation] = useMutation(updateTimelineProjectionRule, {
+    client: apolloCoreClient,
+  });
+
   const [deleteRuleMutation] = useMutation(deleteTimelineProjectionRule, {
     client: apolloCoreClient,
   });
 
-  const createRule = async (input: CreateTimelineProjectionRuleInput) => {
+  const createRule = async (input: TimelineProjectionRuleInput) => {
     await createRuleMutation({ variables: { input } });
+    await refetch();
+  };
+
+  const updateRule = async (id: string, input: TimelineProjectionRuleInput) => {
+    await updateRuleMutation({ variables: { input: { id, ...input } } });
     await refetch();
   };
 
@@ -41,6 +51,7 @@ export const useTimelineProjectionRules = () => {
     rules: data?.getTimelineProjectionRules ?? [],
     loading,
     createRule,
+    updateRule,
     deleteRule,
   };
 };
