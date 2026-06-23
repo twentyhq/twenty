@@ -25,10 +25,14 @@ const StyledCenteredState = styled(StyledStateContainer)`
   justify-content: center;
 `;
 
-const StyledRecordingContainer = styled(StyledStateContainer)`
-  display: flex;
-  flex-direction: column;
+const StyledRecordingContainer = styled(StyledStateContainer)<{
+  $hasVideo?: boolean;
+}>`
+  display: grid;
+  grid-template-rows: ${({ $hasVideo }) =>
+    $hasVideo ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)'};
   gap: ${recordingThemeCssVariables.spacing[2]};
+  min-height: 0;
   overflow: hidden;
   padding: 0;
 `;
@@ -96,7 +100,7 @@ export const CalendarEventRecordingContent = ({
   }
 
   return (
-    <StyledRecordingContainer>
+    <StyledRecordingContainer $hasVideo={hasVideo}>
       {hasVideo && (
         <RecordingVideoPlayer
           src={videoFileUrl}

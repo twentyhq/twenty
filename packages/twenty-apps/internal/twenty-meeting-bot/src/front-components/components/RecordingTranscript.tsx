@@ -16,7 +16,6 @@ const StyledTranscriptCenteredState = styled.div`
   flex: 1;
   font-size: ${recordingThemeCssVariables.font.sizeSm};
   justify-content: center;
-  padding: ${recordingThemeCssVariables.spacing[4]};
 `;
 
 type RecordingTranscriptProps = {

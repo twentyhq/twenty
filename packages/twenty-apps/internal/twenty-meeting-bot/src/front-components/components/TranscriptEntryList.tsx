@@ -27,7 +27,7 @@ const StyledEntry = styled.div<{ $isActive: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${recordingThemeCssVariables.spacing[1]};
-  padding: ${recordingThemeCssVariables.spacing[3]};
+  padding: ${recordingThemeCssVariables.spacing[1]};
 `;
 
 const StyledEntryHeader = styled.div`

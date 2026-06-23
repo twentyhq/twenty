@@ -5,17 +5,6 @@ import { recordingThemeCssVariables } from 'src/front-components/constants/recor
 
 const DEFAULT_VIDEO_ASPECT_RATIO = '16 / 9';
 
-const StyledVideoWrapper = styled.div`
-  background: ${recordingThemeCssVariables.background.primary};
-  border-radius: ${recordingThemeCssVariables.border.radiusMd};
-  box-sizing: border-box;
-  flex-shrink: 0;
-  margin-inline: auto;
-  overflow: hidden;
-  padding: ${recordingThemeCssVariables.spacing[2]};
-  width: 100%;
-`;
-
 const StyledVideoViewport = styled.div`
   aspect-ratio: ${DEFAULT_VIDEO_ASPECT_RATIO};
   background: ${recordingThemeCssVariables.background.primary};
@@ -48,17 +37,15 @@ const RecordingVideoPlayerComponent = ({
   };
 
   return (
-    <StyledVideoWrapper>
-      <StyledVideoViewport>
-        <StyledVideo
-          controls
-          playsInline
-          preload="metadata"
-          src={src}
-          onTimeUpdate={handleTimeUpdate}
-        />
-      </StyledVideoViewport>
-    </StyledVideoWrapper>
+    <StyledVideoViewport>
+      <StyledVideo
+        controls
+        playsInline
+        preload="metadata"
+        src={src}
+        onTimeUpdate={handleTimeUpdate}
+      />
+    </StyledVideoViewport>
   );
 };
 
