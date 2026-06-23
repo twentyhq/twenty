@@ -16,7 +16,6 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/feedback';
 
 export const DashboardWidgetPlaceholder = () => {
@@ -66,10 +65,7 @@ export const DashboardWidgetPlaceholder = () => {
         title={t`Add Widget`}
         isEmpty
       />
-      <AnimatedPlaceholderEmptyContainer
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-      >
+      <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noWidgets" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>

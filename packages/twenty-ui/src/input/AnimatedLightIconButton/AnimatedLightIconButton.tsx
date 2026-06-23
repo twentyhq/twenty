@@ -1,5 +1,4 @@
 import { clsx } from 'clsx';
-import { motion, type MotionProps } from 'framer-motion';
 import { type ComponentProps, type MouseEvent } from 'react';
 
 import { type IconComponent } from '@ui/icon';
@@ -21,22 +20,21 @@ export type AnimatedLightIconButtonProps = {
   active?: boolean;
   disabled?: boolean;
   focus?: boolean;
+  rotate?: number;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-} & Pick<ComponentProps<'button'>, 'aria-label' | 'title'> &
-  Pick<MotionProps, 'animate' | 'transition'>;
+} & Pick<ComponentProps<'button'>, 'aria-label' | 'title'>;
 
 export const AnimatedLightIconButton = ({
   'aria-label': ariaLabel,
   className,
   testId,
-  animate,
-  transition,
   Icon,
   active = false,
   size = 'small',
   accent = 'secondary',
   disabled = false,
   focus = false,
+  rotate,
   onClick,
   title,
 }: AnimatedLightIconButtonProps) => {
@@ -55,10 +53,13 @@ export const AnimatedLightIconButton = ({
       className={clsx(styles.button, styles[size], className)}
       title={title}
     >
-      <motion.div
+      <div
         className={styles.iconContainer}
-        animate={animate}
-        transition={transition}
+        style={
+          rotate !== undefined
+            ? { transform: `rotate(${rotate}deg)` }
+            : undefined
+        }
       >
         {Icon && (
           <Icon
@@ -66,7 +67,7 @@ export const AnimatedLightIconButton = ({
             aria-hidden={!!ariaLabel}
           />
         )}
-      </motion.div>
+      </div>
     </button>
   );
 };

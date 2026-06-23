@@ -1,3 +1,4 @@
+import { Progress } from '@base-ui/react/progress';
 import { clsx } from 'clsx';
 
 import styles from './ProgressBar.module.scss';
@@ -9,15 +10,10 @@ export type ProgressBarProps = {
   backgroundColor?: string;
   withBorderRadius?: boolean;
   ariaLabel?: string;
+  countdownDurationInMs?: number;
+  isCountdownPaused?: boolean;
+  onCountdownComplete?: () => void;
 };
-
-export type StyledBarProps = {
-  className?: string;
-  backgroundColor?: string;
-  withBorderRadius?: boolean;
-};
-
-const MIN_BAR_WIDTH_PX = 12;
 
 export const ProgressBar = ({
   value,
@@ -26,36 +22,39 @@ export const ProgressBar = ({
   backgroundColor = 'none',
   withBorderRadius = false,
   ariaLabel,
-}: ProgressBarProps) => (
-  <div
-    className={clsx(styles.bar, className)}
-    data-with-border-radius={withBorderRadius || undefined}
-    role="progressbar"
-    aria-label={ariaLabel}
-    aria-valuenow={Math.ceil(value)}
-    style={
-      {
-        '--progress-bar-background-color': backgroundColor,
-      } as React.CSSProperties
-    }
-  >
-    <div
-      style={{
-        height: '100%',
-        minWidth: value > 0 ? MIN_BAR_WIDTH_PX : 0,
-        width: `${Math.ceil(value)}%`,
-        transition: 'width 0.3s linear',
-      }}
+  countdownDurationInMs,
+  isCountdownPaused = false,
+  onCountdownComplete,
+}: ProgressBarProps) => {
+  const isCountdown = countdownDurationInMs !== undefined;
+
+  return (
+    <Progress.Root
+      className={clsx(styles.bar, className)}
+      data-with-border-radius={withBorderRadius || undefined}
+      aria-label={ariaLabel}
+      value={value}
+      style={
+        {
+          '--progress-bar-background-color': backgroundColor,
+          ...(barColor ? { '--progress-bar-color': barColor } : {}),
+          ...(isCountdown
+            ? {
+                '--progress-bar-countdown-duration': `${countdownDurationInMs}ms`,
+              }
+            : {}),
+        } as React.CSSProperties
+      }
     >
-      <div
-        className={styles.barFilling}
-        data-with-border-radius={withBorderRadius || undefined}
-        style={
-          barColor
-            ? ({ '--progress-bar-color': barColor } as React.CSSProperties)
-            : undefined
-        }
-      />
-    </div>
-  </div>
-);
+      <Progress.Track className={styles.track}>
+        <Progress.Indicator
+          className={clsx(styles.indicator, isCountdown && styles.countdown)}
+          data-with-border-radius={withBorderRadius || undefined}
+          data-nonzero={(value > 0 && !isCountdown) || undefined}
+          data-paused={(isCountdown && isCountdownPaused) || undefined}
+          onAnimationEnd={isCountdown ? onCountdownComplete : undefined}
+        />
+      </Progress.Track>
+    </Progress.Root>
+  );
+};
