@@ -6,7 +6,7 @@ import { THEME_LIGHT } from 'twenty-ui/theme';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 import { EASING } from '@/tokens';
 
-import { type DashboardStage } from './dashboard-visual-data';
+import { type DashboardStage } from '../types/dashboard-stage';
 
 const SIZE = 96;
 const STROKE = 16;
@@ -128,10 +128,6 @@ const LegendValue = styled.span`
   font-variant-numeric: tabular-nums;
 `;
 
-// Multi-colour donut (twenty-front pie-chart scheme: blue → purple → turquoise
-// → orange). The ring fades + scales in when the tile becomes active; each
-// slice is rotated to its cumulative start angle and draws its arc clockwise.
-// The legend doubles as the colour key for the stacked bars beside it.
 export function DonutChart({
   active,
   stages,

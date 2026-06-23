@@ -1,26 +1,6 @@
-// The dashboard widgets' mock series (product-screenshot fiction). One stage
-// list drives both charts, so a colour means the same thing everywhere: blue =
-// New, purple = Qualified, turquoise = Proposal, orange = Won. The donut is the
-// current pipeline snapshot; the stacked bars are the same stages over time.
-export type DashboardStageTone = 'blue' | 'orange' | 'purple' | 'turquoise';
-
-export type DashboardStage = {
-  label: string;
-  tone: DashboardStageTone;
-};
-
-export type DashboardKpi = {
-  label: string;
-  trendDirection: 'down' | 'up';
-  trendPercent: number;
-  value: string;
-};
-
-export type DashboardMonth = {
-  label: string;
-  // deal counts per stage, index-aligned to DASHBOARD_VISUAL_DATA.stages
-  values: number[];
-};
+import { type DashboardKpi } from '../types/dashboard-kpi';
+import { type DashboardMonth } from '../types/dashboard-month';
+import { type DashboardStage } from '../types/dashboard-stage';
 
 export const DASHBOARD_VISUAL_DATA: {
   byMonth: DashboardMonth[];
@@ -34,9 +14,7 @@ export const DASHBOARD_VISUAL_DATA: {
     { label: 'Proposal', tone: 'turquoise' },
     { label: 'Won', tone: 'orange' },
   ],
-  // current pipeline snapshot (the donut), index-aligned to stages
   stageTotals: [47, 34, 27, 20],
-  // deals worked each month, split by stage (the stacked bars)
   byMonth: [
     { label: 'Jan', values: [7, 5, 4, 2] },
     { label: 'Feb', values: [9, 6, 5, 3] },

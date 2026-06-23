@@ -6,10 +6,8 @@ import { THEME_LIGHT } from 'twenty-ui/theme';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 import { EASING } from '@/tokens';
 
-import {
-  type DashboardMonth,
-  type DashboardStage,
-} from './dashboard-visual-data';
+import { type DashboardMonth } from '../types/dashboard-month';
+import { type DashboardStage } from '../types/dashboard-stage';
 
 const Y_TICK_COUNT = 5;
 const X_LABEL_ROW_HEIGHT = 18;
@@ -66,8 +64,6 @@ const BarColumn = styled.div`
   justify-content: center;
 `;
 
-// New at the bottom, Won at the top (column-reverse keeps the data order while
-// stacking upward). Grows from the baseline when the tile becomes active.
 const Stack = styled.div`
   border-radius: 3px 3px 0 0;
   display: flex;
@@ -117,9 +113,6 @@ const XLabel = styled.span`
   text-align: center;
 `;
 
-// Deals by stage, stacked per month, in the same colours as the donut (blue =
-// New … orange = Won). Bars are scaled to the top tick so they read against the
-// axis; stacks grow in staggered (50ms per column) when the tile is active.
 export function BarChart({
   active,
   months,

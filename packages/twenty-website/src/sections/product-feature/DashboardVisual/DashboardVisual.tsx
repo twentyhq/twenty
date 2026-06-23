@@ -1,19 +1,15 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import {
-  IconDotsVertical,
-  IconLayoutDashboard,
-  IconTrendingDown,
-  IconTrendingUp,
-} from '@tabler/icons-react';
+import { IconDotsVertical, IconLayoutDashboard } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { previewFontSize } from '@/app-preview/preview-font-size';
 
-import { BarChart } from './BarChart';
-import { DASHBOARD_VISUAL_DATA } from './dashboard-visual-data';
-import { DonutChart } from './DonutChart';
+import { BarChart } from './components/BarChart';
+import { DonutChart } from './components/DonutChart';
+import { KpiCard } from './components/KpiCard';
+import { DASHBOARD_VISUAL_DATA } from './data/dashboard-visual-data';
 
 const Window = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
@@ -125,49 +121,6 @@ const WidgetHeader = styled.span`
   height: 24px;
 `;
 
-const KpiBody = styled.div`
-  align-items: flex-start;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 4px;
-  justify-content: center;
-`;
-
-const KpiValue = styled.span`
-  color: ${THEME_LIGHT.font.color.primary};
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.xxl)};
-  font-variant-numeric: tabular-nums;
-  font-weight: ${THEME_LIGHT.font.weight.semiBold};
-  line-height: 1.1;
-`;
-
-const KpiTrend = styled.span`
-  align-items: center;
-  display: inline-flex;
-  gap: 2px;
-`;
-
-const TrendIcon = styled.span`
-  align-items: center;
-  display: inline-flex;
-
-  &[data-direction='up'] {
-    color: ${THEME_LIGHT.color.turquoise8};
-  }
-  &[data-direction='down'] {
-    color: ${THEME_LIGHT.color.red8};
-  }
-`;
-
-const TrendPercent = styled.span`
-  color: ${THEME_LIGHT.font.color.secondary};
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.xs)};
-`;
-
-// The spotlight visual: a page-layout dashboard on twenty-front's WidgetCard
-// chrome (secondary card floating on the tertiary canvas). KPI cards plus a
-// bar widget and a donut widget; the charts animate in when the tile is active.
 export function DashboardVisual({ active }: { active: boolean }) {
   return (
     <Window>
@@ -190,19 +143,7 @@ export function DashboardVisual({ active }: { active: boolean }) {
         {DASHBOARD_VISUAL_DATA.kpis.map((kpi) => (
           <WidgetCard key={kpi.label}>
             <WidgetHeader>{kpi.label}</WidgetHeader>
-            <KpiBody>
-              <KpiValue>{kpi.value}</KpiValue>
-              <KpiTrend>
-                <TrendIcon data-direction={kpi.trendDirection}>
-                  {kpi.trendDirection === 'up' ? (
-                    <IconTrendingUp size={14} stroke={2} />
-                  ) : (
-                    <IconTrendingDown size={14} stroke={2} />
-                  )}
-                </TrendIcon>
-                <TrendPercent>{kpi.trendPercent}%</TrendPercent>
-              </KpiTrend>
-            </KpiBody>
+            <KpiCard kpi={kpi} />
           </WidgetCard>
         ))}
         <WidgetCard data-cell="bar">
