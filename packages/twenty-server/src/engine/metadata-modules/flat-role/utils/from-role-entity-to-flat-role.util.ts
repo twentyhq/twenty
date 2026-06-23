@@ -22,7 +22,7 @@ export const fromRoleEntityToFlatRole = (
 ): FlatRole => {
   const { entity: roleEntity } = args;
 
-  const roleEntityWithoutRelations = fromEntityToScalarEntity({
+  const roleScalarEntity = fromEntityToScalarEntity({
     metadataName: 'role',
     entity: roleEntity,
   });
@@ -34,7 +34,7 @@ export const fromRoleEntityToFlatRole = (
     });
 
   return {
-    ...roleEntityWithoutRelations,
+    ...roleScalarEntity,
     ...relationUniversalIdentifiers,
     roleTargetIds: roleEntity.roleTargets.map(({ id }) => id),
     objectPermissionIds: roleEntity.objectPermissions.map(({ id }) => id),

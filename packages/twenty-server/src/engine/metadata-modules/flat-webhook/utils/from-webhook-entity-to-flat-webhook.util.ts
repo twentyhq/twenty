@@ -8,7 +8,7 @@ export const fromWebhookEntityToFlatWebhook = (
 ): FlatWebhook => {
   const { entity: webhookEntity } = args;
 
-  const webhookEntityWithoutRelations = fromEntityToScalarEntity({
+  const webhookScalarEntity = fromEntityToScalarEntity({
     metadataName: 'webhook',
     entity: webhookEntity,
   });
@@ -20,7 +20,7 @@ export const fromWebhookEntityToFlatWebhook = (
     });
 
   return {
-    ...webhookEntityWithoutRelations,
+    ...webhookScalarEntity,
     ...relationUniversalIdentifiers,
   };
 };

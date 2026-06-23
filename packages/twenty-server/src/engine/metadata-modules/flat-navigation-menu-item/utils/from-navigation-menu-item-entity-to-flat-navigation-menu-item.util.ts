@@ -8,7 +8,7 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = (
 ): FlatNavigationMenuItem => {
   const { entity: navigationMenuItemEntity } = args;
 
-  const navigationMenuItemEntityWithoutRelations = fromEntityToScalarEntity({
+  const navigationMenuItemScalarEntity = fromEntityToScalarEntity({
     metadataName: 'navigationMenuItem',
     entity: navigationMenuItemEntity,
   });
@@ -20,7 +20,7 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = (
     });
 
   return {
-    ...navigationMenuItemEntityWithoutRelations,
+    ...navigationMenuItemScalarEntity,
     ...relationUniversalIdentifiers,
   };
 };

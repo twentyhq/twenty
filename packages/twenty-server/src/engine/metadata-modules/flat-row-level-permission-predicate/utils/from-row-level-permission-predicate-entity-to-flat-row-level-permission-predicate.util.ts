@@ -11,11 +11,10 @@ export const fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredic
   ): FlatRowLevelPermissionPredicate => {
     const { entity: rowLevelPermissionPredicateEntity } = args;
 
-    const rowLevelPermissionPredicateEntityWithoutRelations =
-      fromEntityToScalarEntity({
-        metadataName: 'rowLevelPermissionPredicate',
-        entity: rowLevelPermissionPredicateEntity,
-      });
+    const rowLevelPermissionPredicateScalarEntity = fromEntityToScalarEntity({
+      metadataName: 'rowLevelPermissionPredicate',
+      entity: rowLevelPermissionPredicateEntity,
+    });
 
     const relationUniversalIdentifiers =
       resolveManyToOneRelationIdsToUniversalIdentifiers({
@@ -24,7 +23,7 @@ export const fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredic
       });
 
     return {
-      ...rowLevelPermissionPredicateEntityWithoutRelations,
+      ...rowLevelPermissionPredicateScalarEntity,
       ...relationUniversalIdentifiers,
     };
   };

@@ -8,7 +8,7 @@ export const fromLogicFunctionEntityToFlatLogicFunction = (
 ): FlatLogicFunction => {
   const { entity: logicFunctionEntity } = args;
 
-  const logicFunctionWithoutRelations = fromEntityToScalarEntity({
+  const logicFunctionScalarEntity = fromEntityToScalarEntity({
     metadataName: 'logicFunction',
     entity: logicFunctionEntity,
   });
@@ -20,7 +20,7 @@ export const fromLogicFunctionEntityToFlatLogicFunction = (
     });
 
   return {
-    ...logicFunctionWithoutRelations,
+    ...logicFunctionScalarEntity,
     ...relationUniversalIdentifiers,
   };
 };

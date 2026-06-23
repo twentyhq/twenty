@@ -8,7 +8,7 @@ export const fromViewFilterEntityToFlatViewFilter = (
 ): FlatViewFilter => {
   const { entity: viewFilterEntity } = args;
 
-  const viewFilterEntityWithoutRelations = fromEntityToScalarEntity({
+  const viewFilterScalarEntity = fromEntityToScalarEntity({
     metadataName: 'viewFilter',
     entity: viewFilterEntity,
   });
@@ -20,7 +20,7 @@ export const fromViewFilterEntityToFlatViewFilter = (
     });
 
   return {
-    ...viewFilterEntityWithoutRelations,
+    ...viewFilterScalarEntity,
     ...relationUniversalIdentifiers,
   };
 };

@@ -8,7 +8,7 @@ export const fromRoleTargetEntityToFlatRoleTarget = (
 ): FlatRoleTarget => {
   const { entity: roleTargetEntity } = args;
 
-  const roleTargetEntityWithoutRelations = fromEntityToScalarEntity({
+  const roleTargetScalarEntity = fromEntityToScalarEntity({
     metadataName: 'roleTarget',
     entity: roleTargetEntity,
   });
@@ -20,7 +20,7 @@ export const fromRoleTargetEntityToFlatRoleTarget = (
     });
 
   return {
-    ...roleTargetEntityWithoutRelations,
+    ...roleTargetScalarEntity,
     ...relationUniversalIdentifiers,
   };
 };

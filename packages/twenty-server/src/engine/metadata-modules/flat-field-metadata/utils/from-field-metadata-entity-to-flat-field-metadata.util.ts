@@ -15,7 +15,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
     fieldMetadataIdToUniversalIdentifierMap,
   } = args;
 
-  const fieldMetadataWithoutRelations = fromEntityToScalarEntity({
+  const fieldMetadataScalarEntity = fromEntityToScalarEntity({
     metadataName: 'fieldMetadata',
     entity: fieldMetadataEntity,
   });
@@ -44,7 +44,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
     : settings;
 
   return {
-    ...fieldMetadataWithoutRelations,
+    ...fieldMetadataScalarEntity,
     ...relationUniversalIdentifiers,
     kanbanAggregateOperationViewIds:
       fieldMetadataEntity.kanbanAggregateOperationViews.map(({ id }) => id),

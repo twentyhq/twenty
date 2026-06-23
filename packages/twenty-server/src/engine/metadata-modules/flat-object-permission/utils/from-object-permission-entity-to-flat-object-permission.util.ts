@@ -8,7 +8,7 @@ export const fromObjectPermissionEntityToFlatObjectPermission = (
 ): FlatObjectPermission => {
   const { entity: objectPermissionEntity } = args;
 
-  const objectPermissionEntityWithoutRelations = fromEntityToScalarEntity({
+  const objectPermissionScalarEntity = fromEntityToScalarEntity({
     metadataName: 'objectPermission',
     entity: objectPermissionEntity,
   });
@@ -20,7 +20,7 @@ export const fromObjectPermissionEntityToFlatObjectPermission = (
     });
 
   return {
-    ...objectPermissionEntityWithoutRelations,
+    ...objectPermissionScalarEntity,
     ...relationUniversalIdentifiers,
   };
 };

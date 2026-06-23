@@ -8,7 +8,7 @@ export const fromViewFieldGroupEntityToFlatViewFieldGroup = (
 ): FlatViewFieldGroup => {
   const { entity: viewFieldGroupEntity } = args;
 
-  const viewFieldGroupEntityWithoutRelations = fromEntityToScalarEntity({
+  const viewFieldGroupScalarEntity = fromEntityToScalarEntity({
     metadataName: 'viewFieldGroup',
     entity: viewFieldGroupEntity,
   });
@@ -20,7 +20,7 @@ export const fromViewFieldGroupEntityToFlatViewFieldGroup = (
     });
 
   return {
-    ...viewFieldGroupEntityWithoutRelations,
+    ...viewFieldGroupScalarEntity,
     ...relationUniversalIdentifiers,
     viewFieldIds:
       viewFieldGroupEntity.viewFields?.map((viewField) => viewField.id) ?? [],

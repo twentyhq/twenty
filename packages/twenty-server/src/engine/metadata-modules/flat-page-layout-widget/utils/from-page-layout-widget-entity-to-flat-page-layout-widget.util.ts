@@ -27,7 +27,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
     viewUniversalIdentifierById,
   } = args;
 
-  const pageLayoutWidgetEntityWithoutRelations = fromEntityToScalarEntity({
+  const pageLayoutWidgetScalarEntity = fromEntityToScalarEntity({
     metadataName: 'pageLayoutWidget',
     entity: pageLayoutWidgetEntity,
   });
@@ -40,7 +40,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
 
   const configurationWithUniversalIdentifiers =
     fromPageLayoutWidgetConfigurationToUniversalConfiguration({
-      configuration: pageLayoutWidgetEntityWithoutRelations.configuration,
+      configuration: pageLayoutWidgetScalarEntity.configuration,
       fieldMetadataUniversalIdentifierById,
       frontComponentUniversalIdentifierById,
       viewFieldGroupUniversalIdentifierById,
@@ -60,7 +60,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
     : null;
 
   return {
-    ...pageLayoutWidgetEntityWithoutRelations,
+    ...pageLayoutWidgetScalarEntity,
     ...relationUniversalIdentifiers,
     universalConfiguration: configurationWithUniversalIdentifiers,
     universalOverrides,

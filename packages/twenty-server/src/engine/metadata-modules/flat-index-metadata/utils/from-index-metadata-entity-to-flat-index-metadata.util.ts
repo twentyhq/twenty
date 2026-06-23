@@ -22,7 +22,7 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = (
     fieldMetadataIdToUniversalIdentifierMap,
   } = args;
 
-  const indexMetadataEntityWithoutRelations = fromEntityToScalarEntity({
+  const indexMetadataScalarEntity = fromEntityToScalarEntity({
     metadataName: 'index',
     entity: indexMetadataEntity,
   });
@@ -34,7 +34,7 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = (
     });
 
   return {
-    ...indexMetadataEntityWithoutRelations,
+    ...indexMetadataScalarEntity,
     ...relationUniversalIdentifiers,
     flatIndexFieldMetadatas: indexMetadataEntity.indexFieldMetadatas.map(
       (indexFieldMetadata) => ({

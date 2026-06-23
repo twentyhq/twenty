@@ -12,7 +12,7 @@ export const fromViewFieldEntityToFlatViewField = (
   const { entity: viewFieldEntity, viewFieldGroupIdToUniversalIdentifierMap } =
     args;
 
-  const viewFieldEntityWithoutRelations = fromEntityToScalarEntity({
+  const viewFieldScalarEntity = fromEntityToScalarEntity({
     metadataName: 'viewField',
     entity: viewFieldEntity,
   });
@@ -36,7 +36,7 @@ export const fromViewFieldEntityToFlatViewField = (
     : null;
 
   return {
-    ...viewFieldEntityWithoutRelations,
+    ...viewFieldScalarEntity,
     ...relationUniversalIdentifiers,
     universalOverrides,
   };

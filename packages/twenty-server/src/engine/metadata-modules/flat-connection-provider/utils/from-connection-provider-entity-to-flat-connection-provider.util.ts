@@ -8,7 +8,7 @@ export const fromConnectionProviderEntityToFlatConnectionProvider = (
 ): FlatConnectionProvider => {
   const { entity: connectionProviderEntity } = args;
 
-  const connectionProviderEntityWithoutRelations = fromEntityToScalarEntity({
+  const connectionProviderScalarEntity = fromEntityToScalarEntity({
     metadataName: 'connectionProvider',
     entity: connectionProviderEntity,
   });
@@ -20,7 +20,7 @@ export const fromConnectionProviderEntityToFlatConnectionProvider = (
     });
 
   return {
-    ...connectionProviderEntityWithoutRelations,
+    ...connectionProviderScalarEntity,
     ...relationUniversalIdentifiers,
   };
 };

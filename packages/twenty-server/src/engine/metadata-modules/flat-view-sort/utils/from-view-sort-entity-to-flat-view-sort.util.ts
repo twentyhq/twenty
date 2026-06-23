@@ -8,7 +8,7 @@ export const fromViewSortEntityToFlatViewSort = (
 ): FlatViewSort => {
   const { entity: viewSortEntity } = args;
 
-  const viewSortEntityWithoutRelations = fromEntityToScalarEntity({
+  const viewSortScalarEntity = fromEntityToScalarEntity({
     metadataName: 'viewSort',
     entity: viewSortEntity,
   });
@@ -20,7 +20,7 @@ export const fromViewSortEntityToFlatViewSort = (
     });
 
   return {
-    ...viewSortEntityWithoutRelations,
+    ...viewSortScalarEntity,
     ...relationUniversalIdentifiers,
   };
 };

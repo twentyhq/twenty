@@ -18,7 +18,7 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
     fieldMetadataIdToUniversalIdentifierMap,
   } = args;
 
-  const objectMetadataEntityWithoutRelations = fromEntityToScalarEntity({
+  const objectMetadataScalarEntity = fromEntityToScalarEntity({
     metadataName: 'objectMetadata',
     entity: objectMetadataEntity,
   });
@@ -66,7 +66,7 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
   }
 
   return {
-    ...objectMetadataEntityWithoutRelations,
+    ...objectMetadataScalarEntity,
     ...relationUniversalIdentifiers,
     labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier,

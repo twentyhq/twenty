@@ -11,7 +11,7 @@ export const fromViewEntityToFlatView = (
 ): FlatView => {
   const { entity: viewEntity, fieldMetadataIdToUniversalIdentifierMap } = args;
 
-  const viewEntityWithoutRelations = fromEntityToScalarEntity({
+  const viewScalarEntity = fromEntityToScalarEntity({
     metadataName: 'view',
     entity: viewEntity,
   });
@@ -33,7 +33,7 @@ export const fromViewEntityToFlatView = (
     : null;
 
   return {
-    ...viewEntityWithoutRelations,
+    ...viewScalarEntity,
     ...relationUniversalIdentifiers,
     universalOverrides,
     viewFieldIds: viewEntity.viewFields.map(({ id }) => id),

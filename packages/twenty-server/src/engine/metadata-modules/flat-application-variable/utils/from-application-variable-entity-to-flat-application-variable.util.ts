@@ -8,7 +8,7 @@ export const fromApplicationVariableEntityToFlatApplicationVariable = (
 ): FlatApplicationVariable => {
   const { entity: applicationVariableEntity } = args;
 
-  const applicationVariableEntityWithoutRelations = fromEntityToScalarEntity({
+  const applicationVariableScalarEntity = fromEntityToScalarEntity({
     metadataName: 'applicationVariable',
     entity: applicationVariableEntity,
   });
@@ -20,7 +20,7 @@ export const fromApplicationVariableEntityToFlatApplicationVariable = (
     });
 
   return {
-    ...applicationVariableEntityWithoutRelations,
+    ...applicationVariableScalarEntity,
     ...relationUniversalIdentifiers,
   };
 };

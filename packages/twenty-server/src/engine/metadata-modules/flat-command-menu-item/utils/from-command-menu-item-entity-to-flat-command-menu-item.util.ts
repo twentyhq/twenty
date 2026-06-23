@@ -15,7 +15,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
     pageLayoutIdToUniversalIdentifierMap,
   } = args;
 
-  const commandMenuItemEntityWithoutRelations = fromEntityToScalarEntity({
+  const commandMenuItemScalarEntity = fromEntityToScalarEntity({
     metadataName: 'commandMenuItem',
     entity: commandMenuItemEntity,
   });
@@ -40,7 +40,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
     : null;
 
   return {
-    ...commandMenuItemEntityWithoutRelations,
+    ...commandMenuItemScalarEntity,
     ...relationUniversalIdentifiers,
     universalOverrides,
   };

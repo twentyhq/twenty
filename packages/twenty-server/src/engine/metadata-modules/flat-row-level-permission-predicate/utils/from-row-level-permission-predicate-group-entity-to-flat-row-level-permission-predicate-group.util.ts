@@ -11,7 +11,7 @@ export const fromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionP
   ): FlatRowLevelPermissionPredicateGroup => {
     const { entity: rowLevelPermissionPredicateGroupEntity } = args;
 
-    const rowLevelPermissionPredicateGroupEntityWithoutRelations =
+    const rowLevelPermissionPredicateGroupScalarEntity =
       fromEntityToScalarEntity({
         metadataName: 'rowLevelPermissionPredicateGroup',
         entity: rowLevelPermissionPredicateGroupEntity,
@@ -24,7 +24,7 @@ export const fromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionP
       });
 
     return {
-      ...rowLevelPermissionPredicateGroupEntityWithoutRelations,
+      ...rowLevelPermissionPredicateGroupScalarEntity,
       ...relationUniversalIdentifiers,
       childRowLevelPermissionPredicateGroupIds: (
         rowLevelPermissionPredicateGroupEntity.childRowLevelPermissionPredicateGroups ??

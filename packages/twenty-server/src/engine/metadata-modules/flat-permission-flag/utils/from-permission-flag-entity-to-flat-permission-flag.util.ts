@@ -8,7 +8,7 @@ export const fromPermissionFlagEntityToFlatPermissionFlag = (
 ): FlatPermissionFlag => {
   const { entity: permissionFlagEntity } = args;
 
-  const entityWithoutRelations = fromEntityToScalarEntity({
+  const permissionFlagScalarEntity = fromEntityToScalarEntity({
     metadataName: 'permissionFlag',
     entity: permissionFlagEntity,
   });
@@ -20,7 +20,7 @@ export const fromPermissionFlagEntityToFlatPermissionFlag = (
     });
 
   return {
-    ...entityWithoutRelations,
+    ...permissionFlagScalarEntity,
     ...relationUniversalIdentifiers,
     rolePermissionFlagIds: permissionFlagEntity.rolePermissionFlags.map(
       ({ id }) => id,

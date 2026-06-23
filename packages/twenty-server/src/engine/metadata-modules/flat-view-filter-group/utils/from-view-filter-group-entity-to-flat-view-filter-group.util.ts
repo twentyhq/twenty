@@ -8,7 +8,7 @@ export const fromViewFilterGroupEntityToFlatViewFilterGroup = (
 ): FlatViewFilterGroup => {
   const { entity: viewFilterGroupEntity } = args;
 
-  const viewFilterGroupEntityWithoutRelations = fromEntityToScalarEntity({
+  const viewFilterGroupScalarEntity = fromEntityToScalarEntity({
     metadataName: 'viewFilterGroup',
     entity: viewFilterGroupEntity,
   });
@@ -20,7 +20,7 @@ export const fromViewFilterGroupEntityToFlatViewFilterGroup = (
     });
 
   return {
-    ...viewFilterGroupEntityWithoutRelations,
+    ...viewFilterGroupScalarEntity,
     ...relationUniversalIdentifiers,
     viewFilterIds: viewFilterGroupEntity.viewFilters?.map(({ id }) => id) ?? [],
     childViewFilterGroupIds:

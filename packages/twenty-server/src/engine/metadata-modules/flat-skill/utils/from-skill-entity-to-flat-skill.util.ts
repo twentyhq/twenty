@@ -8,7 +8,7 @@ export const fromSkillEntityToFlatSkill = (
 ): FlatSkill => {
   const { entity: skillEntity } = args;
 
-  const skillEntityWithoutRelations = fromEntityToScalarEntity({
+  const skillScalarEntity = fromEntityToScalarEntity({
     metadataName: 'skill',
     entity: skillEntity,
   });
@@ -20,7 +20,7 @@ export const fromSkillEntityToFlatSkill = (
     });
 
   return {
-    ...skillEntityWithoutRelations,
+    ...skillScalarEntity,
     ...relationUniversalIdentifiers,
   };
 };

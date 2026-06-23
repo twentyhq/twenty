@@ -8,7 +8,7 @@ export const fromFrontComponentEntityToFlatFrontComponent = (
 ): FlatFrontComponent => {
   const { entity: frontComponentEntity } = args;
 
-  const frontComponentEntityWithoutRelations = fromEntityToScalarEntity({
+  const frontComponentScalarEntity = fromEntityToScalarEntity({
     metadataName: 'frontComponent',
     entity: frontComponentEntity,
   });
@@ -20,7 +20,7 @@ export const fromFrontComponentEntityToFlatFrontComponent = (
     });
 
   return {
-    ...frontComponentEntityWithoutRelations,
+    ...frontComponentScalarEntity,
     ...relationUniversalIdentifiers,
   };
 };
