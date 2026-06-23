@@ -59,6 +59,9 @@ import {
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
+const UPDATE_FUNCTION_CONFIGURATION_MAX_RETRIES = 5;
+const UPDATE_FUNCTION_CONFIGURATION_RETRY_BASE_DELAY_MS = 200;
+const UPDATE_FUNCTION_CONFIGURATION_RETRY_MAX_DELAY_MS = 3_000;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
 const YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS = 300;
 const YARN_INSTALL_LAMBDA_MEMORY_MB = 1024;
@@ -901,6 +904,32 @@ export class LambdaDriver implements LogicFunctionDriver {
     );
   }
 
+  private async sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private isRetryableLayerConfigurationError(error: unknown): boolean {
+    if (!(error instanceof Error)) {
+      return false;
+    }
+
+    const awsError = error as Error & {
+      $metadata?: {
+        httpStatusCode?: number;
+      };
+    };
+
+    const httpStatusCode = awsError.$metadata?.httpStatusCode;
+
+    return (
+      (error.name === 'InvalidParameterValueException' ||
+        error.name === 'ResourceNotFoundException') &&
+      (httpStatusCode === 400 ||
+        httpStatusCode === 404 ||
+        !isDefined(httpStatusCode))
+    );
+  }
+
   private async updateLambdaExecutorConfiguration({
     flatLogicFunction,
     depsLayerArn,
@@ -912,15 +941,52 @@ export class LambdaDriver implements LogicFunctionDriver {
   }) {
     const lambdaClient = await this.getLambdaClient();
 
-    await lambdaClient.send(
-      new UpdateFunctionConfigurationCommand({
-        FunctionName: flatLogicFunction.id,
-        Layers: [depsLayerArn, sdkLayerArn],
-        Runtime: flatLogicFunction.runtime,
-        Timeout: 900,
-        MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
-      }),
-    );
+    for (
+      let attemptNumber = 1;
+      attemptNumber <= UPDATE_FUNCTION_CONFIGURATION_MAX_RETRIES;
+      attemptNumber++
+    ) {
+      try {
+        await lambdaClient.send(
+          new UpdateFunctionConfigurationCommand({
+            FunctionName: flatLogicFunction.id,
+            Layers: [depsLayerArn, sdkLayerArn],
+            Runtime: flatLogicFunction.runtime,
+            Timeout: 900,
+            MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
+          }),
+        );
+
+        if (attemptNumber > 1) {
+          this.logger.log(
+            `[lambda-build] function configuration update succeeded after retry fnId=${flatLogicFunction.id} attempt=${attemptNumber} depsLayerArn=${depsLayerArn} sdkLayerArn=${sdkLayerArn}`,
+          );
+        }
+
+        return;
+      } catch (error) {
+        const isRetryableError =
+          this.isRetryableLayerConfigurationError(error);
+        const hasRemainingAttempts =
+          attemptNumber < UPDATE_FUNCTION_CONFIGURATION_MAX_RETRIES;
+
+        if (!isRetryableError || !hasRemainingAttempts) {
+          throw error;
+        }
+
+        const retryDelayMs = Math.min(
+          UPDATE_FUNCTION_CONFIGURATION_RETRY_BASE_DELAY_MS *
+            2 ** (attemptNumber - 1),
+          UPDATE_FUNCTION_CONFIGURATION_RETRY_MAX_DELAY_MS,
+        );
+
+        this.logger.warn(
+          `[lambda-build] transient function configuration update failure fnId=${flatLogicFunction.id} attempt=${attemptNumber}/${UPDATE_FUNCTION_CONFIGURATION_MAX_RETRIES} retryInMs=${retryDelayMs} errorName=${error instanceof Error ? error.name : 'UnknownError'} depsLayerArn=${depsLayerArn} sdkLayerArn=${sdkLayerArn}`,
+        );
+
+        await this.sleep(retryDelayMs);
+      }
+    }
   }
 
   private async buildLambdaExecutor({
