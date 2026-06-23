@@ -12,7 +12,7 @@ const StyledSpeakerChip = styled.span`
   display: inline-flex;
   font-size: ${recordingThemeCssVariables.font.sizeSm};
   font-weight: ${recordingThemeCssVariables.font.weightMedium};
-  gap: ${recordingThemeCssVariables.spacing[2]};
+  gap: ${recordingThemeCssVariables.spacing[1]};
   line-height: 1.4;
   max-width: 100%;
   min-width: 0;
