@@ -109,6 +109,7 @@ describe('WorkspaceEntityManager', () => {
       targetTableName: 'test_entity',
       fieldIds: ['field-id'],
       indexMetadataIds: [],
+      searchFieldMetadataIds: [],
       objectPermissionIds: [],
       fieldPermissionIds: [],
       viewIds: [],
@@ -131,6 +132,7 @@ describe('WorkspaceEntityManager', () => {
       fieldPermissionUniversalIdentifiers: [],
       viewUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
+      searchFieldMetadataUniversalIdentifiers: [],
       labelIdentifierFieldMetadataUniversalIdentifier: null,
       imageIdentifierFieldMetadataUniversalIdentifier: null,
     };
