@@ -66,7 +66,7 @@ export class ToolOutputSpillService {
     }
 
     try {
-      const preview = jsonPreview(output.result);
+      const preview = jsonPreview(output);
       const fileId = v4();
       const filename = `tool-output-${options.toolName}-${fileId}.json`;
 

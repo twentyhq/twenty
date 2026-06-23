@@ -21,7 +21,6 @@ const boundScalar = (value: unknown): unknown => {
   return value;
 };
 
-
 const shapeSignature = (value: unknown): string => {
   if (Array.isArray(value)) {
     return 'array';
@@ -59,7 +58,9 @@ const buildPreview = (
       .map((item) => buildPreview(item, maxDepth, depth + 1));
 
     if (value.length > PREVIEW_MAX_ARRAY_ITEMS) {
-      limited.push(`... (${value.length - PREVIEW_MAX_ARRAY_ITEMS} more items)`);
+      limited.push(
+        `... (${value.length - PREVIEW_MAX_ARRAY_ITEMS} more items)`,
+      );
     }
 
     return limited;
@@ -92,7 +93,6 @@ const buildPreview = (
 
   return output;
 };
-
 
 export const jsonPreview = (value: unknown): unknown => {
   let maxDepth = PREVIEW_MAX_DEPTH;

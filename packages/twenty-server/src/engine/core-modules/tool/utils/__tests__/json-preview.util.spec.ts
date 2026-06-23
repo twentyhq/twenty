@@ -18,15 +18,7 @@ describe('jsonPreview', () => {
       g: 7,
     }) as Record<string, unknown>;
 
-    expect(Object.keys(result)).toEqual([
-      'a',
-      'b',
-      'c',
-      'd',
-      'e',
-      'f',
-      'g',
-    ]);
+    expect(Object.keys(result)).toEqual(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
   });
 
   it('limits arrays to the first items and notes the remaining count', () => {

@@ -44,9 +44,8 @@ describe('ToolOutputSpillService', () => {
     // Echo a persisted id that differs from the generated fileId so the test
     // catches the envelope exposing the wrong id (the nav tools retrieve by
     // savedFile.id, not by the generated uuid).
-    writeFile.mockImplementation(
-      ({ fileId }: { fileId: string }) =>
-        Promise.resolve({ id: `persisted-${fileId}` }),
+    writeFile.mockImplementation(({ fileId }: { fileId: string }) =>
+      Promise.resolve({ id: `persisted-${fileId}` }),
     );
   });
 
