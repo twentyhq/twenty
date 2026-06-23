@@ -4344,6 +4344,9 @@ export default {
             "records": [
                 232
             ],
+            "isCustomDomainEnabled": [
+                6
+            ],
             "__typename": [
                 1
             ]

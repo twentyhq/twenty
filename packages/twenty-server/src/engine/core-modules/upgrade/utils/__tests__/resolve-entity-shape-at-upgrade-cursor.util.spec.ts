@@ -169,6 +169,58 @@ describe('resolveEntityShapeAtUpgradeCursor', () => {
     });
   });
 
+  describe('class-level properties form (inherited columns)', () => {
+    @WasIntroducedInUpgrade({
+      upgradeCommandName: PROP_INTRODUCE_CMD,
+      properties: ['inheritedColumn', 'localColumn'],
+    })
+    class EntityWithInheritedColumns {}
+
+    const currentColumns = [
+      { propertyName: 'inheritedColumn', databaseName: 'inheritedColumn' },
+      { propertyName: 'localColumn', databaseName: 'localColumn' },
+      { propertyName: 'baselineColumn', databaseName: 'baselineColumn' },
+    ];
+
+    it('hides the listed inherited columns before introduction applied', () => {
+      const result = resolveEntityShapeAtUpgradeCursor({
+        entityClass: EntityWithInheritedColumns,
+        currentTableName: 'entityWithInheritedColumns',
+        currentColumns,
+        isStepApplied: buildPredicate([]),
+      });
+
+      expect(result.isAvailable).toBe(true);
+      expect(result.hiddenPropertyNames).toEqual(
+        new Set(['inheritedColumn', 'localColumn']),
+      );
+    });
+
+    it('exposes the listed columns once introduction applied', () => {
+      const result = resolveEntityShapeAtUpgradeCursor({
+        entityClass: EntityWithInheritedColumns,
+        currentTableName: 'entityWithInheritedColumns',
+        currentColumns,
+        isStepApplied: buildPredicate([PROP_INTRODUCE_CMD]),
+      });
+
+      expect(result.hiddenPropertyNames.size).toBe(0);
+    });
+
+    it('never hides undecorated baseline columns', () => {
+      for (const applied of [[], [PROP_INTRODUCE_CMD]] as string[][]) {
+        const result = resolveEntityShapeAtUpgradeCursor({
+          entityClass: EntityWithInheritedColumns,
+          currentTableName: 'entityWithInheritedColumns',
+          currentColumns,
+          isStepApplied: buildPredicate(applied),
+        });
+
+        expect(result.hiddenPropertyNames.has('baselineColumn')).toBe(false);
+      }
+    });
+  });
+
   describe('property-level @WasRemovedInUpgrade', () => {
     class EntityWithRemovedColumn {
       @WasRemovedInUpgrade({ upgradeCommandName: PROP_REMOVE_CMD })
