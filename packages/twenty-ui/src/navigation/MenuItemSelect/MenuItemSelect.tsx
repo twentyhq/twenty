@@ -2,12 +2,11 @@ import { isString } from '@sniptt/guards';
 import { IconCheck, IconChevronRight, type IconComponent } from '@ui/icon';
 import { OverflowingTextWithTooltip } from '@ui/surfaces';
 import { type ThemeColor } from '@ui/theme';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 import { clsx } from 'clsx';
 import {
   type ComponentPropsWithoutRef,
   forwardRef,
-  useContext,
   type ReactNode,
 } from 'react';
 import { MenuItemLeftContent } from '@ui/navigation/MenuItem/parts/MenuItemLeftContent';
@@ -77,7 +76,7 @@ export const MenuItemSelect = ({
   contextualText,
   contextualTextPosition = 'left',
 }: MenuItemSelectProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledMenuItemSelect

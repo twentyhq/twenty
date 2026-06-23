@@ -1,7 +1,5 @@
-import { useContext } from 'react';
-
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { themeCssVariables, useTheme } from '@ui/theme-constants';
 
 import styles from './NavigationBarItem.module.scss';
 
@@ -18,7 +16,7 @@ export const NavigationBarItem = ({
   onClick,
   ariaLabel,
 }: NavigationBarItemProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <button

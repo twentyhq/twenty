@@ -570,7 +570,7 @@ msgid "Agency"
 msgstr "Agencia"
 
 #. js-lingui-id: vZKKhf
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Aggregate, bar, line, and pie widgets"
 msgstr "Widgets de agregación, de barras, de líneas y de pastel"
 
@@ -813,7 +813,7 @@ msgid "Assemble, iterate and adapt a robust CRM, *that's quick to flex*"
 msgstr "Ensamblar, iterar y adaptar un CRM robusto, *que se ajusta rápidamente*"
 
 #. js-lingui-id: v7zTZl
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Assign owners and due dates"
 msgstr "Asigna responsables y fechas de vencimiento"
 
@@ -823,7 +823,7 @@ msgid "Attachment Visualizer"
 msgstr "Visualizador de archivos adjuntos"
 
 #. js-lingui-id: fxL/Km
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Attachments without the chaos."
 msgstr "Archivos adjuntos sin caos."
 
@@ -1062,7 +1062,7 @@ msgid "Build an app"
 msgstr "Crear una app"
 
 #. js-lingui-id: Utc5RF
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Build custom dashboards from live CRM data. Aggregate anything — deals, accounts, activity — into charts your team actually reads."
 msgstr "Crea paneles personalizados a partir de datos de CRM en tiempo real. Agrupa cualquier cosa — acuerdos, cuentas, actividad — en gráficos que tu equipo realmente consulte."
 
@@ -1308,7 +1308,7 @@ msgid "Colombia 🇨🇴"
 msgstr "Colombia 🇨🇴"
 
 #. js-lingui-id: b5bnuN
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Column-to-field mapping (including relations)"
 msgstr "Asignación de columna a campo (incluyendo relaciones)"
 
@@ -1370,12 +1370,12 @@ msgid "Connect"
 msgstr "Conectar"
 
 #. js-lingui-id: 90KBr0
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Connect Google or Microsoft accounts"
 msgstr "Conecta cuentas de Google o Microsoft"
 
 #. js-lingui-id: xgrBCK
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Connect Google or Microsoft accounts and see emails and events linked to CRM records automatically."
 msgstr "Conecta cuentas de Google o Microsoft y ve automáticamente los correos y eventos vinculados a los registros de CRM."
 
@@ -1400,12 +1400,12 @@ msgid "Contact {partnerName}"
 msgstr "Contactar a {partnerName}"
 
 #. js-lingui-id: Oii3vg
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Contacts & Companies"
 msgstr "Contactos y Empresas"
 
 #. js-lingui-id: 24qVhV
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Context lives with the record."
 msgstr "El contexto vive con el registro."
 
@@ -1537,12 +1537,12 @@ msgid "Create more flexible relationships between objects, including more advanc
 msgstr "Crea relaciones más flexibles entre objetos, incluyendo configuraciones avanzadas de muchos a muchos."
 
 #. js-lingui-id: oS1RiS
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Create tasks from records"
 msgstr "Crea tareas desde los registros"
 
 #. js-lingui-id: D3S5+x
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Create tasks, assign owners, and attach rich notes directly from any record. No tab-switching, no lost context."
 msgstr "Crea tareas, asigna responsables y adjunta notas detalladas directamente desde cualquier registro. Sin cambiar de pestaña, sin perder el contexto."
 
@@ -1593,7 +1593,7 @@ msgid "Croatia 🇭🇷"
 msgstr "Croacia 🇭🇷"
 
 #. js-lingui-id: I6FFSA
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "CSV export anytime"
 msgstr "Exportación CSV en cualquier momento"
 
@@ -1603,7 +1603,7 @@ msgid "CSV import & export"
 msgstr "Importación y exportación CSV"
 
 #. js-lingui-id: s+QiQi
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "CSV import flow"
 msgstr "Flujo de importación CSV"
 
@@ -1644,12 +1644,12 @@ msgid "Custom date formats"
 msgstr "Formatos de fecha personalizados"
 
 #. js-lingui-id: yBSEtR
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Custom deal stages for your process"
 msgstr "Etapas de negociación personalizadas para tu proceso"
 
 #. js-lingui-id: L+b7SB
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Custom deal stages, drag-and-drop boards, and real-time tracking so your pipeline reflects reality."
 msgstr "Etapas de acuerdos personalizadas, tableros de arrastrar y soltar y seguimiento en tiempo real para que tu pipeline refleje la realidad."
 
@@ -1675,12 +1675,12 @@ msgid "Custom fields"
 msgstr "Campos personalizados"
 
 #. js-lingui-id: U1RB/7
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Custom fields and relationships"
 msgstr "Campos y relaciones personalizados"
 
 #. js-lingui-id: WGKb6T
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Custom fields, relationships, and a unified timeline for every contact and company in your workspace."
 msgstr "Campos personalizados, relaciones y una cronología unificada para cada contacto y empresa en tu espacio de trabajo."
 
@@ -1788,7 +1788,7 @@ msgid "Dashboards in Labs (Beta)"
 msgstr "Cuadros de mando en Labs (Beta)"
 
 #. js-lingui-id: V0kvgB
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Data import"
 msgstr "Importación de datos"
 
@@ -1813,7 +1813,7 @@ msgid "Datetime Field"
 msgstr "Campo de fecha y hora"
 
 #. js-lingui-id: /TlpVf
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Deals that move themselves."
 msgstr "Acuerdos que se mueven solos."
 
@@ -1931,7 +1931,7 @@ msgid "Drag and drop widgets to build record pages, dashboards, and layout pages
 msgstr "Arrastra y suelta widgets para crear páginas de registros, cuadros de mando y páginas de diseño que se adapten a la forma real de trabajar de tu equipo."
 
 #. js-lingui-id: fPma12
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Drag-and-drop deals between stages"
 msgstr "Arrastra y suelta acuerdos entre etapas"
 
@@ -2002,7 +2002,7 @@ msgid "Elevate's CEO was so impressed with Twenty he started recommending it to 
 msgstr "El CEO de Elevate quedó tan impresionado con Twenty que empezó a recomendarlo a los clientes antes de que la configuración interna estuviera completa. El equipo está explorando llevar Twenty a proyectos de clientes como parte de su práctica de consultoría, incluso como backend para productos hechos a medida según necesidades operativas específicas."
 
 #. js-lingui-id: FNyrb0
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Email & Calendar"
 msgstr "Correo y Calendario"
 
@@ -2032,7 +2032,7 @@ msgid "Email thread widgets and an inline reply composer make it easier to work 
 msgstr "Los widgets de hilos de correo electrónico y un redactor de respuestas en línea facilitan trabajar directamente desde los registros de mensajería."
 
 #. js-lingui-id: hfqiVr
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Email/calendar activity on each record"
 msgstr "Actividad de correo/calendario en cada registro"
 
@@ -2042,7 +2042,7 @@ msgid "Emails & Calendar"
 msgstr "Correos y Calendario"
 
 #. js-lingui-id: o4/9l1
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Emails and events linked to CRM records"
 msgstr "Correos y eventos vinculados a registros del CRM"
 
@@ -2178,7 +2178,7 @@ msgid "Every new release of Twenty, the #1 Open Source CRM, with changelogs, dem
 msgstr "Cada nuevo lanzamiento de Twenty, el CRM de código abierto n.º 1, con registros de cambios, demos y los aspectos destacados que más importan a los equipos."
 
 #. js-lingui-id: rkZTD7
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Every thread, on the right record."
 msgstr "Cada conversación, en el registro correcto."
 
@@ -2299,7 +2299,7 @@ msgid "Fiji 🇫🇯"
 msgstr "Fiyi 🇫🇯"
 
 #. js-lingui-id: sER+bs
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Files"
 msgstr "Archivos"
 
@@ -2324,7 +2324,7 @@ msgid "Filter the content a webhook is returning so it only pings your URL when 
 msgstr "Filtra el contenido que devuelve un webhook para que solo llame a tu URL cuando se produce una acción específica, como la creación de una empresa."
 
 #. js-lingui-id: iabLgo
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Filtered metrics from any object"
 msgstr "Métricas filtradas de cualquier objeto"
 
@@ -2464,7 +2464,7 @@ msgid "from {minBudget}"
 msgstr "desde {minBudget}"
 
 #. js-lingui-id: Iuxc00
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "From CSV to CRM in minutes."
 msgstr "De CSV a CRM en minutos."
 
@@ -2508,7 +2508,7 @@ msgid "From simple to advanced"
 msgstr "De simple a avanzado"
 
 #. js-lingui-id: m1I5TY
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Full communication history in one place"
 msgstr "Historial de comunicación completo en un solo lugar"
 
@@ -2855,7 +2855,7 @@ msgid "Import V2"
 msgstr "Importación V2"
 
 #. js-lingui-id: ZAKTS6
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Import your data with field mapping, including relations. Export anytime — your data is always yours."
 msgstr "Importa tus datos con asignación de campos, incluidas las relaciones. Exporta en cualquier momento: tus datos siempre son tuyos."
 
@@ -2880,7 +2880,7 @@ msgid "In production."
 msgstr "En producción."
 
 #. js-lingui-id: Sqb+jp
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "In-app preview for supported file types (when enabled)"
 msgstr "Vista previa en la app para los tipos de archivo compatibles (cuando está habilitada)"
 
@@ -3458,7 +3458,7 @@ msgid "Merge Records"
 msgstr "Fusionar registros"
 
 #. js-lingui-id: briyJf
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Metrics you can actually trust."
 msgstr "Métricas en las que realmente puedes confiar."
 
@@ -3563,7 +3563,7 @@ msgid "Mozambique 🇲🇿"
 msgstr "Mozambique 🇲🇿"
 
 #. js-lingui-id: dlKkNL
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Multi-file upload on records"
 msgstr "Carga de múltiples archivos en los registros"
 
@@ -4027,7 +4027,7 @@ msgid "Pick your model, build agents that write emails or enrich records inside 
 msgstr "Elige tu modelo, crea agentes que redacten correos o enriquezcan registros dentro de los flujos de trabajo y expone tu espacio de trabajo a cualquier cliente compatible con MCP."
 
 #. js-lingui-id: FFkjaT
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Pipeline Management"
 msgstr "Gestión de pipeline"
 
@@ -4241,7 +4241,7 @@ msgstr "¿Cambios en tiempo real? Será una sorpresa premium."
 
 #. js-lingui-id: 4hc7hc
 #: src/sections/three-cards/product-three-cards-data.ts
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Real-time data"
 msgstr "Datos en tiempo real"
 
@@ -4304,7 +4304,7 @@ msgid "Remove {skill}"
 msgstr "Eliminar {skill}"
 
 #. js-lingui-id: a/aGHe
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Rename, download, and delete attachments"
 msgstr "Renombrar, descargar y eliminar archivos adjuntos"
 
@@ -4314,7 +4314,7 @@ msgid "Reports"
 msgstr "Informes"
 
 #. js-lingui-id: SY/an2
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Reports & Dashboards"
 msgstr "Informes y Paneles"
 
@@ -4374,7 +4374,7 @@ msgid "Revamped Side Panel"
 msgstr "Panel lateral renovado"
 
 #. js-lingui-id: frqduN
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Rich notes attached to records"
 msgstr "Notas enriquecidas adjuntas a los registros"
 
@@ -4574,7 +4574,7 @@ msgstr "Mira lo que se lanzó en {0}"
 
 #. js-lingui-id: 02ePaq
 #. placeholder {0}: company.name
-#: src/sections/product-feature/ContactsVisual.tsx
+#: src/sections/product-feature/ContactsVisual/ContactsVisual.tsx
 msgid "Select {0}"
 msgstr "Seleccionar {0}"
 
@@ -5041,7 +5041,7 @@ msgid "Tanzania 🇹🇿"
 msgstr "Tanzania 🇹🇿"
 
 #. js-lingui-id: GWMpL3
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Tasks & Activities"
 msgstr "Tareas y Actividades"
 
@@ -5371,7 +5371,7 @@ msgid "total per month with fixed cost"
 msgstr "total por mes con costo fijo"
 
 #. js-lingui-id: hmu++i
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Track amount and close date"
 msgstr "Sigue el importe y la fecha de cierre"
 
@@ -5649,7 +5649,7 @@ msgid "Unavailable"
 msgstr "No disponible"
 
 #. js-lingui-id: Hix/m6
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Unified timeline (emails, events, tasks, notes, files)"
 msgstr "Cronología unificada (correos electrónicos, eventos, tareas, notas, archivos)"
 
@@ -5708,7 +5708,7 @@ msgid "Upgraded Search"
 msgstr "Búsqueda mejorada"
 
 #. js-lingui-id: 2vanwz
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Upload, rename, preview, and manage files directly on records. Everything stays where it belongs."
 msgstr "Sube, renombra, previsualiza y gestiona archivos directamente en los registros. Todo se mantiene donde corresponde."
 
@@ -6381,7 +6381,7 @@ msgid "Your name *"
 msgstr "Tu nombre *"
 
 #. js-lingui-id: fQATWn
-#: src/sections/product-feature/feature-tiles.ts
+#: src/sections/product-feature/data/feature-tiles.ts
 msgid "Your network, fully mapped."
 msgstr "Tu red, completamente mapeada."
 

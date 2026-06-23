@@ -1,7 +1,7 @@
 import { type HTMLMotionProps, motion } from 'framer-motion';
 import { type AnimationDuration } from '@ui/theme';
-import { ThemeContext } from '@ui/theme-constants';
-import { type JSX, useContext } from 'react';
+import { useTheme } from '@ui/theme-constants';
+import { type JSX } from 'react';
 
 import styles from './AnimatedRotate.module.scss';
 
@@ -18,7 +18,7 @@ export const AnimatedRotate = ({
   duration = 'fast',
   animateOnHover,
 }: AnimatedRotateProps): JSX.Element => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const initial = { opacity: 0, rotate: -90 };
   const animate = { opacity: 1, rotate: 0 };

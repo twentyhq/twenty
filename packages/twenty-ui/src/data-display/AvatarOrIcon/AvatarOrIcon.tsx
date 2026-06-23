@@ -4,9 +4,8 @@ import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleCli
 import { Avatar } from '@ui/data-display/Avatar/Avatar';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 import { type Nullable } from '@ui/utilities';
-import { useContext } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './AvatarOrIcon.module.scss';
@@ -34,7 +33,7 @@ export const AvatarOrIcon = ({
   IconBackgroundColor,
   onClick,
 }: AvatarOrIconProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   if (!isDefined(Icon)) {
     return (
