@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useTimelineProjectionRuleForm } from '@/settings/timeline/hooks/useTimelineProjectionRuleForm';
 import { useTimelineProjectionRules } from '@/settings/timeline/hooks/useTimelineProjectionRules';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
@@ -37,16 +38,19 @@ export const SettingsTimelineNewRule = () => {
     [objectMetadataItems],
   );
 
-  const [anchorObjectMetadataId, setAnchorObjectMetadataId] = useState<
-    string | undefined
-  >(undefined);
-  const [sourceObjectMetadataId, setSourceObjectMetadataId] = useState<
-    string | undefined
-  >(undefined);
-  const [linkedObjectMetadataIds, setLinkedObjectMetadataIds] = useState<
-    string[]
-  >(() => activityTypeObjectMetadataItems.map((item) => item.id));
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    anchorObjectMetadataId,
+    setAnchorObjectMetadataId,
+    sourceObjectMetadataId,
+    setSourceObjectMetadataId,
+    linkedObjectMetadataIds,
+    toggleActivityType,
+    isSubmitting,
+    setIsSubmitting,
+    canSave,
+  } = useTimelineProjectionRuleForm(
+    activityTypeObjectMetadataItems.map((item) => item.id),
+  );
 
   const anchorOptions = activeNonSystemObjectMetadataItems.map((item) => ({
     label: item.labelSingular,
@@ -61,20 +65,6 @@ export const SettingsTimelineNewRule = () => {
       PROJECTABLE_SOURCE_OBJECT_NAME_SINGULARS.includes(item.nameSingular),
     )
     .map((item) => ({ label: item.labelSingular, value: item.id }));
-
-  const toggleActivityType = (id: string, checked: boolean) => {
-    setLinkedObjectMetadataIds((previous) =>
-      checked
-        ? [...new Set([...previous, id])]
-        : previous.filter((linkedId) => linkedId !== id),
-    );
-  };
-
-  const canSave =
-    isDefined(anchorObjectMetadataId) &&
-    isDefined(sourceObjectMetadataId) &&
-    linkedObjectMetadataIds.length > 0 &&
-    !isSubmitting;
 
   const handleSave = async () => {
     if (

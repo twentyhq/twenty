@@ -14,8 +14,6 @@ import {
 
 type WalkRecord = { id: string } & Record<string, unknown>;
 
-// Given an anchor record, returns the ids of records of `toObjectNameSingular`
-// reachable along relation paths — the delivery side of timeline projection.
 @Injectable()
 export class RelatedRecordIdsService {
   constructor(
