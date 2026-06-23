@@ -199,10 +199,29 @@ export class ConnectedAccountRefreshTokensService {
           );
       }
     } catch (error) {
-      this.logger.log(
-        `Error while refreshing tokens on connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+      if (error instanceof ConnectedAccountRefreshAccessTokenException) {
+        this.logger.warn(
+          `Token refresh failed for provider ${connectedAccount.provider} on connected account ${connectedAccount.id} in workspace ${workspaceId} with code ${error.code}`,
+        );
+
+        if (
+          connectedAccount.provider === ConnectedAccountProvider.MICROSOFT &&
+          error.code ===
+            ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN
+        ) {
+          this.logger.warn(
+            `Microsoft token refresh failed with INVALID_REFRESH_TOKEN for connected account ${connectedAccount.id} in workspace ${workspaceId}. Verify OAuth app credentials are configured in this runtime.`,
+          );
+        }
+
+        throw error;
+      }
+
+      this.logger.error(
+        `Unexpected token refresh error for provider ${connectedAccount.provider} on connected account ${connectedAccount.id} in workspace ${workspaceId}`,
         error,
       );
+
       throw error;
     }
   }

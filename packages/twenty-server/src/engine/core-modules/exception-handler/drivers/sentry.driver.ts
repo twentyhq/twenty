@@ -9,6 +9,10 @@ import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-
 
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
+import {
+  ConnectedAccountRefreshAccessTokenException,
+  ConnectedAccountRefreshAccessTokenExceptionCode,
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -100,6 +104,21 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
         if (exception instanceof MessageImportDriverException) {
           scope.setTag('messageImportDriverCode', exception.code);
           scope.setFingerprint([exception.code]);
+        }
+
+        if (exception instanceof ConnectedAccountRefreshAccessTokenException) {
+          scope.setTag('connectedAccountRefreshTokenCode', exception.code);
+
+          if (
+            exception.code ===
+            ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN
+          ) {
+            scope.addBreadcrumb({
+              category: 'connected-account.refresh-token',
+              level: 'warning',
+              message: 'Refresh token rejected during connected account refresh',
+            });
+          }
         }
 
         const eventId = Sentry.captureException(exception, {

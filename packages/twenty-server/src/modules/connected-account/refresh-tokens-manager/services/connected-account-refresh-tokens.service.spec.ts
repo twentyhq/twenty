@@ -352,6 +352,13 @@ describe('ConnectedAccountRefreshTokensService', () => {
         ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
       );
 
+      const loggerWarnSpy = jest
+        .spyOn(
+          (service as { logger: { warn: (message: string) => void } }).logger,
+          'warn',
+        )
+        .mockImplementation();
+
       jest
         .spyOn(microsoftAPIRefreshAccessTokenService, 'refreshTokens')
         .mockRejectedValue(invalidGrantError);
@@ -364,6 +371,8 @@ describe('ConnectedAccountRefreshTokensService', () => {
         ),
         code: ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
       });
+
+      expect(loggerWarnSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should throw TEMPORARY_NETWORK_ERROR when refresh fails with network error', async () => {
@@ -380,6 +389,13 @@ describe('ConnectedAccountRefreshTokensService', () => {
         ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
       );
 
+      const loggerWarnSpy = jest
+        .spyOn(
+          (service as { logger: { warn: (message: string) => void } }).logger,
+          'warn',
+        )
+        .mockImplementation();
+
       jest
         .spyOn(googleAPIRefreshAccessTokenService, 'refreshTokens')
         .mockRejectedValue(networkError);
@@ -389,6 +405,39 @@ describe('ConnectedAccountRefreshTokensService', () => {
       ).rejects.toMatchObject({
         code: ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
       });
+
+      expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should log unexpected refresh errors at error level', async () => {
+      const connectedAccount = {
+        id: mockConnectedAccountId,
+        provider: ConnectedAccountProvider.MICROSOFT,
+        accessToken: mockEncryptedAccessToken,
+        refreshToken: mockEncryptedRefreshToken,
+        lastCredentialsRefreshedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      } as ConnectedAccountEntity;
+
+      const unknownError = new Error('Unexpected error');
+
+      const loggerErrorSpy = jest
+        .spyOn(
+          (service as {
+            logger: { error: (message: string, error: Error) => void };
+          }).logger,
+          'error',
+        )
+        .mockImplementation();
+
+      jest
+        .spyOn(microsoftAPIRefreshAccessTokenService, 'refreshTokens')
+        .mockRejectedValue(unknownError);
+
+      await expect(
+        service.resolveTokens(connectedAccount, mockWorkspaceId),
+      ).rejects.toThrow(unknownError);
+
+      expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
