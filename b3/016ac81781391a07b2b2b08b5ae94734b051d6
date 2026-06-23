@@ -1,0 +1,37 @@
+packages/twenty-server/test/integration/utils/get-message-queues.ts
+  s_8a5a157e980979::t_de1d6628882f05 11,18-24
+packages/twenty-server/test/integration/utils/wait-for-queue-idle.ts
+  s_8a5a157e980979::t_c8b90d11c3a982 4,38-43,48-49,51,88
+  s_8a5a157e980979::t_e0e9a79bac9457 71-75,77-80
+packages/twenty-server/test/integration/graphql/suites/workflow/quick-lead-workflow.integration-spec.ts
+  s_8a5a157e980979::t_4c38fd397a5add 6
+  s_8a5a157e980979::t_f4e36228a428ca 247-252
+  s_8a5a157e980979::t_c62aadfd4883ba 290-293
+  s_8a5a157e980979::t_8b9b344033f9fb 129-134
+packages/twenty-server/test/integration/utils/wait-for-job.ts
+  s_8a5a157e980979::t_3854aa876646a8 1-47
+packages/twenty-server/test/integration/utils/with-real-timers.ts
+  s_8a5a157e980979::t_e82fa11015f35c 1-40
+packages/twenty-server/test/integration/graphql/suites/auth/jwt-key-rotation/rotate-signing-keys-cron-job.integration-spec.ts
+  s_8a5a157e980979::t_535aa202b48593 56-59
+  s_8a5a157e980979::t_f10e9d51369265 9
+packages/twenty-server/test/integration/graphql/suites/workflow/utils/workflow-run-test.util.ts
+  s_8a5a157e980979::t_b3d7ef33c55e43 3
+  s_8a5a157e980979::t_d44a05832e1602 121-131,133-137,139-163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "b3016ac81781391a07b2b2b08b5ae94734b051d6",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
