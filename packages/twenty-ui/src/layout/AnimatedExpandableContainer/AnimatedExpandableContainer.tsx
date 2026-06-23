@@ -4,9 +4,9 @@ import { type AnimationDurations } from '@ui/layout/AnimatedExpandableContainer/
 import { type AnimationMode } from '@ui/layout/AnimatedExpandableContainer/types/AnimationMode';
 import { type AnimationSize } from '@ui/layout/AnimatedExpandableContainer/types/AnimationSize';
 import { getExpandableAnimationConfig } from '@ui/layout/AnimatedExpandableContainer/utils/getExpandableAnimationConfig';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 import { AnimatePresence, motion } from 'framer-motion';
-import { type ReactNode, useContext, useRef, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 type AnimatedExpandableContainerProps = {
@@ -28,7 +28,7 @@ export const AnimatedExpandableContainer = ({
   containAnimation = true,
   initial = true,
 }: AnimatedExpandableContainerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const contentRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<AnimationSize>(0);
 
