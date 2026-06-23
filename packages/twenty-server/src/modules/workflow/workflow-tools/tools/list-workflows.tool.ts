@@ -14,24 +14,9 @@ const listWorkflowsSchema = z.object({
   status: z
     .nativeEnum(WorkflowStatus)
     .optional()
-    .describe(
-      'Optional filter by workflow status: DRAFT, ACTIVE, or DEACTIVATED',
-    ),
-  limit: z
-    .number()
-    .int()
-    .min(1)
-    .max(100)
-    .optional()
-    .default(50)
-    .describe('Maximum number of workflows to return (1-100, default 50)'),
-  offset: z
-    .number()
-    .int()
-    .min(0)
-    .optional()
-    .default(0)
-    .describe('Number of workflows to skip for pagination (default 0)'),
+    .describe('Filter by status (DRAFT, ACTIVE, DEACTIVATED)'),
+  limit: z.number().int().min(1).max(100).optional().default(50),
+  offset: z.number().int().min(0).optional().default(0),
 });
 
 type ListWorkflowsInput = z.infer<typeof listWorkflowsSchema>;
@@ -42,7 +27,7 @@ export const createListWorkflowsTool = (
 ) => ({
   name: 'list_workflows' as const,
   description:
-    'List workflows in the workspace with optional filtering by status and pagination.',
+    'List all workflows in the workspace. Supports filtering by status and pagination.',
   inputSchema: listWorkflowsSchema,
   execute: async (parameters: ListWorkflowsInput) => {
     try {
@@ -57,20 +42,21 @@ export const createListWorkflowsTool = (
               { shouldBypassPermissionChecks: true },
             );
 
-          const where: Record<string, unknown> = {};
+          const queryBuilder =
+            workflowRepository.createQueryBuilder('workflow');
 
           if (parameters.status) {
-            where.statuses = parameters.status;
+            queryBuilder.where(':status = ANY(workflow.statuses)', {
+              status: parameters.status,
+            });
           }
 
-          const [workflows, totalCount] = await workflowRepository.findAndCount(
-            {
-              where,
-              take: parameters.limit,
-              skip: parameters.offset,
-              order: { createdAt: 'DESC' },
-            },
-          );
+          queryBuilder
+            .orderBy('workflow.createdAt', 'DESC')
+            .take(parameters.limit)
+            .skip(parameters.offset);
+
+          const [workflows, totalCount] = await queryBuilder.getManyAndCount();
 
           return {
             success: true,
@@ -83,8 +69,6 @@ export const createListWorkflowsTool = (
               updatedAt: workflow.updatedAt,
             })),
             totalCount,
-            limit: parameters.limit,
-            offset: parameters.offset,
           };
         },
         authContext,
