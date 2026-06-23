@@ -1,0 +1,53 @@
+packages/twenty-server/src/engine/core-modules/message-queue/drivers/bullmq.driver.ts
+  s_8a5a157e980979::t_a5fc542c4b0b03 132,294-341
+  s_8a5a157e980979::t_29430671dc791d 274-293,342-347,363,382
+  s_8a5a157e980979::t_e7efb84c17b419 9
+  s_8a5a157e980979::t_7ecb5c7b5cfd78 11
+  s_8a5a157e980979::t_9b94d41d8f7398 14,18
+  s_8a5a157e980979::t_e587c3ee6264f0 107,112,116-131
+  s_8a5a157e980979::t_2a9fe0edc30efa 54
+  s_8a5a157e980979::t_7b4473d309b9e4 56-62
+packages/twenty-server/src/engine/core-modules/message-queue/drivers/sync.driver.ts
+  s_8a5a157e980979::t_0640408b6f9398 28-36
+  s_8a5a157e980979::t_a7d0b36d1c297b 37-40
+packages/twenty-server/test/integration/graphql/suites/auth/jwt-key-rotation/rotate-signing-keys-cron-job.integration-spec.ts
+  s_8a5a157e980979::t_99ea71c115ce03 64
+packages/twenty-server/test/integration/graphql/suites/workflow/utils/workflow-run-test.util.ts
+  s_8a5a157e980979::t_d109d62561c71e 120-128,130-131,133-139,143,145-151
+packages/twenty-server/src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface.ts
+  s_8a5a157e980979::t_1324cc09a2950a 17-22
+  s_8a5a157e980979::t_2fe519ea295890 23-27
+packages/twenty-server/test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util.ts
+  s_8a5a157e980979::t_e69eb8508ef9bd 10-12,23-25
+packages/twenty-server/test/integration/utils/create-app.ts
+  s_8a5a157e980979::t_cf40cf6ee9ee26 21
+  s_8a5a157e980979::t_1017578ac642fe 75-81
+  s_8a5a157e980979::t_d63afab0bce68a 41-45
+packages/twenty-server/test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util.ts
+  s_8a5a157e980979::t_35fc7ec7e5df7b 11-12,27-29
+packages/twenty-server/src/engine/core-modules/message-queue/services/message-queue.service.ts
+  s_8a5a157e980979::t_c0ebaea175bbe2 38-50
+packages/twenty-server/test/integration/graphql/suites/workflow/quick-lead-workflow.integration-spec.ts
+  s_8a5a157e980979::t_0380fae71920a1 6
+  s_8a5a157e980979::t_2b9e8b42ee0b59 129-134
+  s_8a5a157e980979::t_bbe7c6dc258e1e 247-252
+  s_8a5a157e980979::t_e964d5bedc1abe 290-293
+packages/twenty-server/.env.test
+  s_8a5a157e980979::t_9adc7d6559c968 2-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "75cd6fdc60baf95e8ca51e184fb631d76195c4ab",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
