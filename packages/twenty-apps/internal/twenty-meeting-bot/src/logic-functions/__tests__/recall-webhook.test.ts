@@ -2,7 +2,8 @@ import { createHmac } from 'crypto';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import recallWebhookLogicFunction, {
+import {
+  recallWebhookLogicFunction,
   recallWebhookRouteHandler,
 } from 'src/logic-functions/recall-webhook';
 
