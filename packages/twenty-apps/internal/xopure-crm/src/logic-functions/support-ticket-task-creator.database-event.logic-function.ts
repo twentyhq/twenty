@@ -15,7 +15,7 @@ type Output = {
   processedAt: string;
 };
 
-const handler = async (input: Input): Promise<Output> => {
+export const handler = async (input: Input): Promise<Output> => {
   const client = new CoreApiClient();
   const supportTicketId = input.record?.id;
   const subject = input.record?.subject ?? 'New ticket';
@@ -41,7 +41,7 @@ const handler = async (input: Input): Promise<Output> => {
         __args: {
           data: {
             taskId,
-            xopureSupportTicketId: supportTicketId,
+            targetXopureSupportTicketId: supportTicketId,
           },
         },
         id: true,
