@@ -7,9 +7,9 @@ const PARTNER_COUNTRY_FIELD_ID = 'a77d7fa6-c398-47db-af0f-036a5c719f20';
 const PARTNER_SCOPE_FIELD_ID = '500021ad-ca42-4fd3-8727-392dd26b722a';
 const PARTNER_TIER_FIELD_ID = 'd4fa6461-37b6-49ee-9181-dd482e74a70b';
 
-// Prod view id — update in place (was KANBAN grouped by validationStage).
+// Prod view id — recreated as TABLE on 1.1.5 install (KANBAN→TABLE cannot update in place).
 export const PARTNERS_PER_STAGE_VIEW_UNIVERSAL_IDENTIFIER =
-  '46a4ccfc-6828-40cb-bbbc-6632b69bb461';
+  '8f48bcad-6f09-4fb8-a96c-ad9ee0403eab';
 
 export default defineView({
   universalIdentifier: PARTNERS_PER_STAGE_VIEW_UNIVERSAL_IDENTIFIER,
@@ -20,27 +20,27 @@ export default defineView({
   position: 0,
   fields: [
     {
-      universalIdentifier: 'b5bf1bfe-593a-4dce-ac2f-9f490ed293c0',
+      universalIdentifier: '5b81149d-af9a-4941-a65e-04b771ccc974',
       fieldMetadataUniversalIdentifier: PARTNER_NAME_FIELD_ID,
       position: 0,
       isVisible: true,
       size: 200,
     },
     {
-      universalIdentifier: 'b728ddb6-abb8-479b-90e6-6036aae15cbb',
+      universalIdentifier: '883aaea7-f8fc-49c3-b61e-98082ee57dd4',
       fieldMetadataUniversalIdentifier: PARTNER_COUNTRY_FIELD_ID,
       position: 1,
       isVisible: true,
     },
     {
-      universalIdentifier: '92117793-ca2a-45b6-9969-aaf8e2dbacea',
+      universalIdentifier: '6ab29216-deb0-49d0-96db-683123278948',
       fieldMetadataUniversalIdentifier: PARTNER_SCOPE_FIELD_ID,
       position: 2,
       isVisible: true,
       size: 200,
     },
     {
-      universalIdentifier: 'af53167e-9f2a-416e-8c66-65d842e7ebbe',
+      universalIdentifier: '7ec2f4e7-2c43-42a2-bd04-b20dfe913491',
       fieldMetadataUniversalIdentifier: PARTNER_TIER_FIELD_ID,
       position: 3,
       isVisible: true,
