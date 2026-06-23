@@ -25,7 +25,7 @@ const FieldValueSlot = styled.div`
 
 const FieldValue = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   line-height: 1.4;
   min-width: 0;
@@ -38,7 +38,7 @@ const FieldValuePerson = styled.span`
   align-items: center;
   color: ${THEME_LIGHT.font.color.primary};
   display: flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   gap: 4px;
   line-height: 1.4;

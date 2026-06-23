@@ -11,6 +11,7 @@ import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retriev
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 
 const getRecallApiConfigMock = vi.hoisted(() => vi.fn());
+const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 
 vi.mock('src/logic-functions/recall-api/get-recall-api-config.util', () => ({
   getRecallApiConfig: getRecallApiConfigMock,
@@ -43,6 +44,7 @@ describe('recall bot api', () => {
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-id',
         twentyCalendarEventId: 'calendar-event-id',
         twentyRealMeetingKey: 'meeting-key',
@@ -69,6 +71,7 @@ describe('recall bot api', () => {
         audio_mixed_mp3: {},
       },
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-id',
         twentyCalendarEventId: 'calendar-event-id',
         twentyRealMeetingKey: 'meeting-key',
@@ -87,6 +90,7 @@ describe('recall bot api', () => {
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-id',
         twentyCalendarEventId: 'calendar-event-id',
         twentyRealMeetingKey: 'meeting-key',
@@ -113,6 +117,7 @@ describe('recall bot api', () => {
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-id',
         twentyCalendarEventId: 'calendar-event-id',
         twentyRealMeetingKey: 'meeting-key',
@@ -141,6 +146,7 @@ describe('recall bot api', () => {
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-id',
         twentyCalendarEventId: 'calendar-event-id',
         twentyRealMeetingKey: 'meeting-key',

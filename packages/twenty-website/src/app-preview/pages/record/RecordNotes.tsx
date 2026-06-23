@@ -17,14 +17,14 @@ const NotesHeader = styled.div`
 
 const NotesCount = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 600;
 `;
 
 const AddNoteButton = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   line-height: 1.4;
 `;
@@ -99,7 +99,7 @@ const NoteContent = styled.div`
 
 const NoteTitle = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.35;
@@ -107,7 +107,7 @@ const NoteTitle = styled.div`
 
 const NoteBody = styled.div`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   line-height: 1.5;
   overflow: hidden;
@@ -133,14 +133,14 @@ const NoteRelationArrow = styled.svg`
 
 const NoteRelationLabel = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   line-height: 1.4;
 `;
 
 const NoteRelationName = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   line-height: 1.4;
 `;

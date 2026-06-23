@@ -40,7 +40,7 @@ const DayBadge = styled.div`
 
 const WeekDay = styled.div`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -49,7 +49,7 @@ const WeekDay = styled.div`
 
 const MonthDay = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 14px;
   font-weight: 500;
 `;
@@ -91,14 +91,14 @@ const CalTime = styled.div`
   color: ${THEME_LIGHT.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   gap: 4px;
 `;
 
 const CalTitle = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 500;
   overflow: hidden;

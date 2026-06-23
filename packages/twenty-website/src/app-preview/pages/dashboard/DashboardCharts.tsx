@@ -25,7 +25,7 @@ const ChartFrame = styled.div`
 
 const AxisLabel = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 10px;
   line-height: 1;
   overflow: hidden;
@@ -299,7 +299,7 @@ const DonutCenter = styled.div`
 
 const DonutValue = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 22px;
   font-weight: ${THEME_LIGHT.font.weight.semiBold};
   line-height: 1;
@@ -307,7 +307,7 @@ const DonutValue = styled.span`
 
 const DonutLabel = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 11px;
   line-height: 1.4;
 `;
@@ -337,7 +337,7 @@ const LegendDot = styled.span<{ $color: string }>`
 
 const LegendLabel = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
