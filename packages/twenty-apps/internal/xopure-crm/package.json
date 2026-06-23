@@ -23,6 +23,7 @@
     "sync:backfill": "cd ../../../.. && ./node_modules/.bin/tsx packages/twenty-apps/internal/xopure-crm/src/supabase-sync/cli/run-xopure-backfill.ts",
     "sync:raw-mirror": "cd ../../../.. && ./node_modules/.bin/tsx packages/twenty-apps/internal/xopure-crm/src/supabase-sync/cli/run-xopure-raw-mirror.ts",
     "sync:partner-enrich": "cd ../../../.. && ./node_modules/.bin/tsx packages/twenty-apps/internal/xopure-crm/src/partner-api/cli/run-partner-enrichment.ts",
+    "support-ticket:trigger:install": "cd ../../../.. && ./node_modules/.bin/tsx packages/twenty-apps/internal/xopure-crm/src/support-ticket/cli/install-support-ticket-task-trigger-db.ts",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "test": "vitest run -c vitest.unit.config.ts",
