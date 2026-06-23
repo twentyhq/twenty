@@ -435,9 +435,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           fields: {
             universalIdentifier: 'fea5c1c2-0c1d-4d2e-a14c-a10108b0db0f',
           },
-          participants: {
-            universalIdentifier: '6faea537-02fa-4993-957c-f2e1654986bd',
-          },
           callRecordings: {
             universalIdentifier: 'f473b435-e2d4-4928-8d90-1db0094389f7',
           },

@@ -574,6 +574,18 @@ export const STANDARD_OBJECTS = {
           conferenceSolution: {
             universalIdentifier: '795905b6-c6f8-42cf-b8ea-3e5b6d32145f',
           },
+          createdAt: {
+            universalIdentifier: '0d875e4e-ad0e-49d6-9646-baf1b3e664f5',
+          },
+          createdBy: {
+            universalIdentifier: '4d9bdb2b-c5e1-4e21-9444-c9a5aaadd508',
+          },
+          updatedAt: {
+            universalIdentifier: 'e71c7f12-c715-4109-a5c7-db389af3ce71',
+          },
+          updatedBy: {
+            universalIdentifier: '3afee826-632d-4a47-b210-7dea75ebb12d',
+          },
         },
       },
     },

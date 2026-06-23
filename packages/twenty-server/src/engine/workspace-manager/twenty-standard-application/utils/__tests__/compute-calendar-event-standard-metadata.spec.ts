@@ -43,7 +43,7 @@ describe('CalendarEvent standard metadata build', () => {
       (viewField) => viewField.fieldMetadataUniversalIdentifier,
     );
 
-    expect(viewFieldFieldUniversalIdentifiers).toHaveLength(12);
+    expect(viewFieldFieldUniversalIdentifiers).toHaveLength(16);
     expect(viewFieldFieldUniversalIdentifiers).toEqual(
       expect.arrayContaining([
         STANDARD_OBJECTS.calendarEvent.fields.title.universalIdentifier,
@@ -62,10 +62,11 @@ describe('CalendarEvent standard metadata build', () => {
         STANDARD_OBJECTS.calendarEvent.fields.iCalUid.universalIdentifier,
         STANDARD_OBJECTS.calendarEvent.fields.conferenceSolution
           .universalIdentifier,
+        STANDARD_OBJECTS.calendarEvent.fields.createdAt.universalIdentifier,
+        STANDARD_OBJECTS.calendarEvent.fields.createdBy.universalIdentifier,
+        STANDARD_OBJECTS.calendarEvent.fields.updatedAt.universalIdentifier,
+        STANDARD_OBJECTS.calendarEvent.fields.updatedBy.universalIdentifier,
       ]),
-    );
-    expect(viewFieldFieldUniversalIdentifiers).not.toContain(
-      STANDARD_OBJECTS.calendarEvent.fields.createdAt.universalIdentifier,
     );
     expect(viewFieldFieldUniversalIdentifiers).not.toContain(
       STANDARD_OBJECTS.calendarEvent.fields.calendarEventParticipants
@@ -103,6 +104,10 @@ describe('CalendarEvent standard metadata build', () => {
         STANDARD_OBJECTS.calendarEvent.fields.iCalUid.universalIdentifier,
         STANDARD_OBJECTS.calendarEvent.fields.conferenceSolution
           .universalIdentifier,
+        STANDARD_OBJECTS.calendarEvent.fields.createdAt.universalIdentifier,
+        STANDARD_OBJECTS.calendarEvent.fields.createdBy.universalIdentifier,
+        STANDARD_OBJECTS.calendarEvent.fields.updatedAt.universalIdentifier,
+        STANDARD_OBJECTS.calendarEvent.fields.updatedBy.universalIdentifier,
       ]),
     );
   });
@@ -134,21 +139,6 @@ describe('CalendarEvent standard metadata build', () => {
       configurationType: WidgetConfigurationType.FIELDS,
       viewUniversalIdentifier:
         STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields
-          .universalIdentifier,
-    });
-  });
-
-  it('configures participants as a standard relation field widget', () => {
-    const participantsWidget =
-      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
-        STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-          .home.widgets.participants.universalIdentifier
-      ];
-
-    expect(participantsWidget?.universalConfiguration).toMatchObject({
-      configurationType: WidgetConfigurationType.FIELD,
-      fieldMetadataId:
-        STANDARD_OBJECTS.calendarEvent.fields.calendarEventParticipants
           .universalIdentifier,
     });
   });

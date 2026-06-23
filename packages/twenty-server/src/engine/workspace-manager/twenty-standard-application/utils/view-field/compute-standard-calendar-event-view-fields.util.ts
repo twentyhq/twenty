@@ -269,5 +269,57 @@ export const computeStandardCalendarEventViewFields = (
           viewFieldGroupName: 'system',
         },
       }),
+    calendarEventRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'calendarEvent',
+      context: {
+        viewName: 'calendarEventRecordPageFields',
+        viewFieldName: 'createdAt',
+        fieldName: 'createdAt',
+        position: 4,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'system',
+      },
+    }),
+    calendarEventRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'calendarEvent',
+      context: {
+        viewName: 'calendarEventRecordPageFields',
+        viewFieldName: 'createdBy',
+        fieldName: 'createdBy',
+        position: 5,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'system',
+      },
+    }),
+    calendarEventRecordPageFieldsUpdatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'calendarEvent',
+      context: {
+        viewName: 'calendarEventRecordPageFields',
+        viewFieldName: 'updatedAt',
+        fieldName: 'updatedAt',
+        position: 6,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'system',
+      },
+    }),
+    calendarEventRecordPageFieldsUpdatedBy: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'calendarEvent',
+      context: {
+        viewName: 'calendarEventRecordPageFields',
+        viewFieldName: 'updatedBy',
+        fieldName: 'updatedBy',
+        position: 7,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'system',
+      },
+    }),
   };
 };
