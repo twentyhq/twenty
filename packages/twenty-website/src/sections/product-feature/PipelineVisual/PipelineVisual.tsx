@@ -2,19 +2,11 @@
 
 import { styled } from '@linaria/react';
 import {
-  IconBuildingSkyscraper,
-  IconCalendarEvent,
   IconChevronDown,
-  IconCreativeCommonsSa,
-  IconCurrencyDollar,
   IconLayoutKanban,
   IconPlus,
-  IconRobot,
-  IconUser,
 } from '@tabler/icons-react';
 import {
-  type ComponentType,
-  type ReactNode,
   type PointerEvent as ReactPointerEvent,
   useCallback,
   useRef,
@@ -24,14 +16,12 @@ import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
 import { previewFontSize } from '@/app-preview/preview-font-size';
-import { Chip } from '@/app-preview/primitives/Chip';
-import { FaviconLogo } from '@/app-preview/primitives/FaviconLogo';
-import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
-import { PreviewAvatar } from '@/app-preview/primitives/PreviewAvatar';
 import { PreviewTag } from '@/app-preview/primitives/PreviewTag';
 import { type CellSelectColor } from '@/app-preview/types';
 import { clampToRange } from '@/platform/motion';
 
+import { OpportunityCard } from './components/OpportunityCard';
+import { type DealData } from './deal-types';
 import { CardFlipAnimationEffect } from './effect-components/CardFlipAnimationEffect';
 import { PointerCaptureCleanupEffect } from './effect-components/PointerCaptureCleanupEffect';
 import { getDropTarget } from './utils/get-drop-target';
@@ -43,33 +33,6 @@ import {
   type PipelineCardRects,
   type PipelineLanes,
 } from './utils/pipeline-move-card';
-
-type DealPerson = {
-  avatarUrl: string;
-  name: string;
-};
-
-type DealCompany = {
-  domain: string;
-  name: string;
-};
-
-type DealActor = {
-  avatarUrl?: string;
-  name: string;
-  source: 'member' | 'system';
-};
-
-type DealData = {
-  amount: string;
-  avatarTone: string;
-  company: DealCompany;
-  contact: DealPerson;
-  createdBy: DealActor;
-  date: string;
-  id: PipelineCardId;
-  title: string;
-};
 
 const PEOPLE = sharedAssetUrls.peopleAvatars;
 
@@ -254,125 +217,6 @@ const DealCard = styled.div`
   }
 `;
 
-const CardHeader = styled.div`
-  align-items: center;
-  display: flex;
-  padding: 8px 8px 4px;
-`;
-
-const CardIdentifier = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1 1 auto;
-  gap: 6px;
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const CardTitle = styled.span`
-  color: ${THEME_LIGHT.font.color.primary};
-  flex: 1 1 auto;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
-  font-weight: ${THEME_LIGHT.font.weight.medium};
-  line-height: 1.4;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const CardCheckbox = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  justify-content: center;
-  margin-left: auto;
-  max-width: 0;
-  opacity: 0;
-  overflow: hidden;
-  padding: 5px;
-  pointer-events: none;
-  transition: all ease-in-out 160ms;
-`;
-
-const CheckboxBox = styled.div`
-  border: 1px solid ${THEME_LIGHT.border.color.secondaryInverted};
-  border-radius: ${THEME_LIGHT.border.radius.sm};
-  flex-shrink: 0;
-  height: 14px;
-  width: 14px;
-`;
-
-const CardFields = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 0 8px 4px 10px;
-`;
-
-const FieldRowShell = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 4px;
-  min-height: 24px;
-  width: 100%;
-`;
-
-const FieldIconBox = styled.div`
-  align-items: center;
-  color: ${THEME_LIGHT.font.color.tertiary};
-  display: flex;
-  flex: 0 0 16px;
-  height: 16px;
-  justify-content: center;
-  width: 16px;
-`;
-
-const FieldValueWrap = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const FieldText = styled.span`
-  color: ${THEME_LIGHT.font.color.primary};
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
-  font-weight: ${THEME_LIGHT.font.weight.regular};
-  line-height: 1.4;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const HoverableValue = styled.div`
-  align-items: center;
-  border-radius: ${THEME_LIGHT.border.radius.sm};
-  cursor: pointer;
-  display: inline-flex;
-  max-width: 100%;
-  min-width: 0;
-  outline: 1px solid transparent;
-  outline-offset: -1px;
-  overflow: hidden;
-  padding: 2px 4px;
-
-  &:hover {
-    background-color: ${THEME_LIGHT.background.transparent.light};
-  }
-
-  &[data-readonly] {
-    cursor: default;
-  }
-
-  &[data-readonly]:hover {
-    background-color: transparent;
-    outline-color: ${THEME_LIGHT.border.color.medium};
-  }
-`;
-
 const AddCardRow = styled.div`
   align-items: center;
   color: ${THEME_LIGHT.font.color.tertiary};
@@ -398,126 +242,6 @@ const FloatingCardShell = styled.div`
   width: calc(100% / 3 - 16px);
   z-index: 100;
 `;
-
-type FieldIconComponent = ComponentType<{
-  'aria-hidden'?: boolean;
-  size?: number;
-  stroke?: number;
-}>;
-
-function FieldRow({
-  children,
-  icon: Icon,
-}: {
-  children: ReactNode;
-  icon: FieldIconComponent;
-}) {
-  return (
-    <FieldRowShell>
-      <FieldIconBox>
-        <Icon aria-hidden size={16} stroke={1.6} />
-      </FieldIconBox>
-      <FieldValueWrap>{children}</FieldValueWrap>
-    </FieldRowShell>
-  );
-}
-
-function CompanyChip({ company }: { company: DealCompany }) {
-  return (
-    <Chip
-      clickable={false}
-      label={company.name}
-      leftComponent={
-        <FaviconLogo domain={company.domain} label={company.name} />
-      }
-      maxWidth={152}
-      variant="highlighted"
-    />
-  );
-}
-
-function DealPersonChip({ person }: { person: DealPerson }) {
-  return (
-    <Chip
-      clickable={false}
-      label={person.name}
-      leftComponent={
-        <PersonAvatar
-          person={{ avatarUrl: person.avatarUrl, name: person.name }}
-        />
-      }
-      maxWidth={152}
-      variant="highlighted"
-    />
-  );
-}
-
-function renderCreatedByLeftComponent(actor: DealActor): ReactNode {
-  if (actor.source === 'member') {
-    return (
-      <PersonAvatar
-        person={{
-          avatarUrl: actor.avatarUrl,
-          kind: 'person',
-          name: actor.name,
-        }}
-      />
-    );
-  }
-  return <IconRobot size={16} stroke={1.6} />;
-}
-
-function CreatedByChip({ actor }: { actor: DealActor }) {
-  return (
-    <Chip
-      clickable={false}
-      label={actor.name}
-      leftComponent={renderCreatedByLeftComponent(actor)}
-      variant="transparent"
-    />
-  );
-}
-
-function OpportunityCard({ data }: { data: DealData }) {
-  return (
-    <>
-      <CardHeader>
-        <CardIdentifier>
-          <PreviewAvatar size={16} tone={data.avatarTone}>
-            {data.title.charAt(0)}
-          </PreviewAvatar>
-          <CardTitle>{data.title}</CardTitle>
-        </CardIdentifier>
-        <CardCheckbox className="deal-card-checkbox">
-          <CheckboxBox />
-        </CardCheckbox>
-      </CardHeader>
-      <CardFields>
-        <FieldRow icon={IconCurrencyDollar}>
-          <HoverableValue>
-            <FieldText>{data.amount}</FieldText>
-          </HoverableValue>
-        </FieldRow>
-        <FieldRow icon={IconCreativeCommonsSa}>
-          <HoverableValue data-readonly="">
-            <CreatedByChip actor={data.createdBy} />
-          </HoverableValue>
-        </FieldRow>
-        <FieldRow icon={IconCalendarEvent}>
-          <HoverableValue>
-            <FieldText>{data.date}</FieldText>
-          </HoverableValue>
-        </FieldRow>
-        <FieldRow icon={IconBuildingSkyscraper}>
-          <CompanyChip company={data.company} />
-        </FieldRow>
-        <FieldRow icon={IconUser}>
-          <DealPersonChip person={data.contact} />
-        </FieldRow>
-      </CardFields>
-    </>
-  );
-}
 
 type DragState = {
   cardId: PipelineCardId;
