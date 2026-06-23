@@ -54,7 +54,13 @@ const StyledSeparator = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
-export const FooterNote = () => {
+type FooterNoteProps = {
+  secondaryAgreement?: 'privacyPolicy' | 'dataProcessingAgreement';
+};
+
+export const FooterNote = ({
+  secondaryAgreement = 'privacyPolicy',
+}: FooterNoteProps) => {
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
   const { shouldOfferBypass, shouldUseBypass, enableBypass } =
@@ -72,13 +78,23 @@ export const FooterNote = () => {
           <Trans>Terms of Service</Trans>
         </a>{' '}
         <Trans>and</Trans>{' '}
-        <a
-          href="https://twenty.com/legal/privacy"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Trans>Privacy Policy</Trans>
-        </a>
+        {secondaryAgreement === 'dataProcessingAgreement' ? (
+          <a
+            href="https://twenty.com/legal/dpa"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Trans>Data Processing Agreement</Trans>
+          </a>
+        ) : (
+          <a
+            href="https://twenty.com/legal/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Trans>Privacy Policy</Trans>
+          </a>
+        )}
         .
       </StyledCopyContainer>
     );

@@ -13,8 +13,8 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
+import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
-import { SignInUpV2FooterNote } from '@/auth/sign-in-up/components/SignInUpV2FooterNote';
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { WorkspaceSelectionFooter } from '@/auth/sign-in-up/components/WorkspaceSelectionFooter';
 import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
@@ -84,7 +84,9 @@ const StandardContent = ({
         SignInUpStep.TwoFactorAuthenticationVerification,
         SignInUpStep.WorkspaceSelection,
         SignInUpStep.WorkspaceCreation,
-      ].includes(signInUpStep) && <SignInUpV2FooterNote />}
+      ].includes(signInUpStep) && (
+        <FooterNote secondaryAgreement="dataProcessingAgreement" />
+      )}
     </ModalContent>
   );
 };
