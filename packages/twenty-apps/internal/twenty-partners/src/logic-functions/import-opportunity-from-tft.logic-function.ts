@@ -12,6 +12,7 @@ export const IMPORT_OPPORTUNITY_FROM_TFT_LOGIC_FUNCTION_ID =
 
 const APPLICATION_SECRET_HEADER = 'x-application-secret';
 
+// Request contract — the JSON the TFT workflow POSTs.
 export const importOpportunityFromTftSchema = z.object({
   tftOpportunityId: z.string().optional(),
   name: z.string().trim().min(1),
@@ -47,6 +48,7 @@ export type ImportOpportunityFromTftResult =
   | { ok: true; created: boolean; id: string }
   | { ok: false; reason: string };
 
+// Find by exact name, else create.
 async function findOrCreateCompanyId(
   client: CoreApiClient,
   company: ImportOpportunityFromTftInput['company'],
@@ -77,6 +79,7 @@ async function findOrCreateCompanyId(
   return id;
 }
 
+// Find by primary email, else create — name-only contacts can't be deduped.
 async function findOrCreatePersonId(
   client: CoreApiClient,
   pointOfContact: ImportOpportunityFromTftInput['pointOfContact'],
@@ -119,6 +122,7 @@ async function findOrCreatePersonId(
 export const handler = async (
   event: ImportOpportunityFromTftEvent | ImportOpportunityFromTftInput,
 ): Promise<ImportOpportunityFromTftResult> => {
+  // HTTP event ({ body, headers }) or a flat input for direct calls.
   const looksLikeEvent =
     typeof event === 'object' &&
     event !== null &&
@@ -149,6 +153,7 @@ export const handler = async (
       ? input.tftOpportunityId.trim()
       : undefined;
 
+    // Idempotency: stable source id first, name as a fallback for manual calls.
     const dedupeFilter: CoreSchema.OpportunityFilterInput =
       tftOpportunityId !== undefined
         ? { tftOpportunityId: { eq: tftOpportunityId } }
