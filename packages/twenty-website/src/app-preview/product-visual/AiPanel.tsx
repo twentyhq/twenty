@@ -59,7 +59,7 @@ const HeaderButton = styled.span`
 const PanelTitle = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
   flex: 1;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 600;
   text-align: left;
@@ -79,7 +79,7 @@ const UserMessage = styled.div`
   background: ${inks.userMessageBackground};
   border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 500;
   line-height: 1.5;
@@ -89,7 +89,7 @@ const UserMessage = styled.div`
 
 const AnswerText = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.5;
@@ -141,7 +141,7 @@ const EntityChipIcon = styled.img`
 
 const EntityChipName = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.4;
@@ -154,7 +154,7 @@ const EntityOverflowChip = styled.div`
   border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 500;
   line-height: 1.4;
@@ -163,7 +163,7 @@ const EntityOverflowChip = styled.div`
 
 const ThinkingText = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   font-weight: 500;
 `;
@@ -190,7 +190,7 @@ const InputBox = styled.div`
 
 const InputPlaceholder = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 400;
   padding: 4px 0;
@@ -221,7 +221,7 @@ const ModelChip = styled.span`
   border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.primary};
   display: flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   gap: 4px;
   padding: 4px 8px;

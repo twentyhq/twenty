@@ -13,7 +13,7 @@ const AvatarFrame = styled.div<{ $size: number }>`
   color: ${THEME_LIGHT.color.gray12};
   display: flex;
   flex: 0 0 auto;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${({ $size }) =>
     $size <= 12 ? '8px' : $size <= 14 ? '10px' : '12px'};
   font-weight: ${THEME_LIGHT.font.weight.medium};
