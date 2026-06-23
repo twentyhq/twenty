@@ -24,12 +24,12 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_PLAN_NOT_SWITCHABLE:
     case BillingExceptionCode.BILLING_MISSING_REQUEST_BODY:
+    case BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID:
       return 400;
     case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
       return 402;
     case BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND:
     case BillingExceptionCode.BILLING_PRICE_NOT_FOUND:
-    case BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND:
     case BillingExceptionCode.BILLING_UNHANDLED_ERROR:
     case BillingExceptionCode.BILLING_STRIPE_ERROR:

@@ -7,9 +7,8 @@ import {
   assertIsDefinedOrThrow,
   findOrThrow,
   isDefined,
-  isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
@@ -101,9 +100,27 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
+    const existingActiveWorkspaceSubscription =
+      await this.billingSubscriptionRepository.findOne({
+        where: {
+          workspaceId: workspace.id,
+          status: In([
+            SubscriptionStatus.Trialing,
+            SubscriptionStatus.Active,
+            SubscriptionStatus.PastDue,
+          ]),
+        },
+      });
+
+    if (isDefined(existingActiveWorkspaceSubscription)) {
+      throw new BillingException(
+        `Workspace ${workspace.id} already has an active billing subscription`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+      );
+    }
+
     if (
-      isNonEmptyArray(customer?.billingSubscriptions) &&
-      customer.billingSubscriptions.some(
+      customer?.billingSubscriptions.some(
         (subscription) => subscription.status !== SubscriptionStatus.Canceled,
       )
     ) {
