@@ -1,0 +1,23 @@
+packages/twenty-server/test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util.ts
+  s_8a5a157e980979::t_e44fbf312ed054 10-12
+  s_8a5a157e980979::t_09b833de439474 26-28
+packages/twenty-server/test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util.ts
+  s_8a5a157e980979::t_579410f299384d 11-13
+  s_8a5a157e980979::t_862e3cce53afc8 30-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "2f8d2fd1b0adc2c794bedb4dbd18189dee61ab23",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
