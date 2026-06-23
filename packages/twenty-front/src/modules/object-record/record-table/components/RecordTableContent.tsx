@@ -9,6 +9,7 @@ import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/rec
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
 import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBody';
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
@@ -38,6 +39,7 @@ export interface RecordTableContentProps {
   handleDragSelectionStart: () => void;
   handleDragSelectionEnd: () => void;
   hasRecordGroups: boolean;
+  isRelationGroupsLoading: boolean;
   recordTableId: string;
 }
 
@@ -46,6 +48,7 @@ export const RecordTableContent = ({
   handleDragSelectionStart,
   handleDragSelectionEnd,
   hasRecordGroups,
+  isRelationGroupsLoading,
   recordTableId,
 }: RecordTableContentProps) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -167,6 +170,8 @@ export const RecordTableContent = ({
         <RecordTableHeader />
         {hasRecordGroups ? (
           <RecordTableRecordGroupsBody />
+        ) : isRelationGroupsLoading ? (
+          <RecordTableBodyLoading />
         ) : (
           <RecordTableNoRecordGroupBody />
         )}

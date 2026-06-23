@@ -1,8 +1,11 @@
+import { RecordBoardLoadingSkeletonColumnHeaders } from '@/object-record/record-board/components/RecordBoardLoadingSkeletonColumnHeaders';
 import { RecordBoardColumnHeaderWrapper } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderWrapper';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
+import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewType } from '@/views/types/ViewType';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -32,20 +35,34 @@ export const RecordBoardHeader = () => {
     ViewType.KANBAN,
   );
 
+  const recordIndexRecordGroupsAreInInitialLoading = useAtomComponentStateValue(
+    recordIndexRecordGroupsAreInInitialLoadingComponentState,
+  );
+
+  const shouldShowSkeletonColumnHeaders =
+    recordIndexRecordGroupsAreInInitialLoading &&
+    visibleRecordGroupIds.length === 0;
+
   return (
     <StyledHeaderContainer id="record-board-header">
-      {visibleRecordGroupIds.map((recordGroupId, index) => (
-        <RecordGroupContext.Provider
-          key={recordGroupId}
-          value={{ recordGroupId }}
-        >
-          <RecordBoardColumnHeaderWrapper
-            columnId={recordGroupId}
-            columnIndex={index}
-          />
-        </RecordGroupContext.Provider>
-      ))}
-      <RecordIndexGroupAggregatesDataLoader />
+      {shouldShowSkeletonColumnHeaders ? (
+        <RecordBoardLoadingSkeletonColumnHeaders />
+      ) : (
+        <>
+          {visibleRecordGroupIds.map((recordGroupId, index) => (
+            <RecordGroupContext.Provider
+              key={recordGroupId}
+              value={{ recordGroupId }}
+            >
+              <RecordBoardColumnHeaderWrapper
+                columnId={recordGroupId}
+                columnIndex={index}
+              />
+            </RecordGroupContext.Provider>
+          ))}
+          <RecordIndexGroupAggregatesDataLoader />
+        </>
+      )}
     </StyledHeaderContainer>
   );
 };

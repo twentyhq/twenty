@@ -4,7 +4,9 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useRecordBoardRelationGroupsTotalCount } from '@/object-record/record-board/hooks/useRecordBoardRelationGroupsTotalCount';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
+import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledContainer = styled.div`
   padding-inline: ${themeCssVariables.spacing[2]};
@@ -23,17 +25,26 @@ const StyledPill = styled.div`
 `;
 
 export const RecordBoardHiddenRelationGroupsPlaceholder = () => {
-  const { isRelationGrouping, totalRelationGroupsCount } =
+  const { isRelationGrouping, totalRelationGroupsCount, loading } =
     useRecordBoardRelationGroupsTotalCount();
 
   const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
   );
 
+  const recordIndexRecordGroupsAreInInitialLoading = useAtomComponentStateValue(
+    recordIndexRecordGroupsAreInInitialLoadingComponentState,
+  );
+
   const hiddenGroupsCount =
     totalRelationGroupsCount - recordGroupDefinitions.length;
 
-  if (!isRelationGrouping || hiddenGroupsCount <= 0) {
+  if (
+    !isRelationGrouping ||
+    loading ||
+    recordIndexRecordGroupsAreInInitialLoading ||
+    hiddenGroupsCount <= 0
+  ) {
     return null;
   }
 

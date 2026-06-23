@@ -11,11 +11,13 @@ import { RecordTableVirtualizedInitialDataLoadEffect } from '@/object-record/rec
 
 export interface RecordTableBodyEffectsWrapperProps {
   hasRecordGroups: boolean;
+  isRelationGroupsLoading: boolean;
   tableBodyRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export const RecordTableBodyEffectsWrapper = ({
   hasRecordGroups,
+  isRelationGroupsLoading,
   tableBodyRef,
 }: RecordTableBodyEffectsWrapperProps) => {
   return (
@@ -23,7 +25,7 @@ export const RecordTableBodyEffectsWrapper = ({
       <RecordTableRelationGroupsDiscoveryEffect />
       {hasRecordGroups ? (
         <RecordTableRecordGroupBodyEffects />
-      ) : (
+      ) : isRelationGroupsLoading ? null : (
         <>
           <RecordTableEmptyHasNewRecordEffect />
           <RecordTableNoRecordGroupScrollToPreviousRecordEffect />

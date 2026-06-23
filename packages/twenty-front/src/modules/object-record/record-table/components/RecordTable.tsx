@@ -11,6 +11,7 @@ import { RecordTableScrollToFocusedCellEffect } from '@/object-record/record-tab
 import { RecordTableScrollToFocusedRowEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedRowEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useIsRecordTableRelationGroupsLoading } from '@/object-record/record-table/hooks/useIsRecordTableRelationGroupsLoading';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { isRecordTableEmptyStateHiddenComponentState } from '@/object-record/record-table/states/isRecordTableEmptyStateHiddenComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
@@ -57,6 +58,9 @@ export const RecordTable = () => {
     recordTableId,
   );
 
+  const isRecordTableRelationGroupsLoading =
+    useIsRecordTableRelationGroupsLoading();
+
   const { resetTableRowSelection } = useResetTableRowSelection(recordTableId);
 
   const recordTableIsEmpty =
@@ -81,6 +85,7 @@ export const RecordTable = () => {
         <>
           <RecordTableBodyEffectsWrapper
             hasRecordGroups={hasRecordGroups}
+            isRelationGroupsLoading={isRecordTableRelationGroupsLoading}
             tableBodyRef={tableBodyRef}
           />
           <RecordTableScrollToFocusedCellEffect />
@@ -90,6 +95,7 @@ export const RecordTable = () => {
       {isRecordTableInitialLoading &&
       isEmpty(visibleRecordFields) ? null : recordTableIsEmpty &&
         !hasRecordGroups &&
+        !isRecordTableRelationGroupsLoading &&
         !isRecordTableEmptyStateHidden ? (
         <RecordTableEmpty tableBodyRef={tableBodyRef} />
       ) : (
@@ -98,6 +104,7 @@ export const RecordTable = () => {
           handleDragSelectionStart={handleDragSelectionStart}
           handleDragSelectionEnd={handleDragSelectionEnd}
           hasRecordGroups={hasRecordGroups}
+          isRelationGroupsLoading={isRecordTableRelationGroupsLoading}
           recordTableId={recordTableId}
         />
       )}

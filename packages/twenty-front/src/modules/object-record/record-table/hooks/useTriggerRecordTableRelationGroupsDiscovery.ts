@@ -14,10 +14,12 @@ import {
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupsRecordsLazyGroupBy } from '@/object-record/record-index/hooks/useRecordIndexGroupsRecordsLazyGroupBy';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { recordTableRelationGroupsDiscoveredFieldIdComponentState } from '@/object-record/record-table/states/recordTableRelationGroupsDiscoveredFieldIdComponentState';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 
 export const useTriggerRecordTableRelationGroupsDiscovery = () => {
@@ -40,6 +42,11 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
   const { getViewFromState } = useGetViewFromState();
 
   const { setRecordGroups } = useSetRecordGroups();
+
+  const setRecordTableRelationGroupsDiscoveredFieldId =
+    useSetAtomComponentState(
+      recordTableRelationGroupsDiscoveredFieldIdComponentState,
+    );
 
   const { executeRecordIndexGroupsRecordsLazyGroupBy } =
     useRecordIndexGroupsRecordsLazyGroupBy({
@@ -119,6 +126,10 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
       recordIndexId,
       objectMetadataItemId: objectMetadataItem.id,
     });
+
+    setRecordTableRelationGroupsDiscoveredFieldId(
+      recordIndexGroupFieldMetadataItem.id,
+    );
   }, [
     contextStoreCurrentViewId,
     executeRecordIndexGroupsRecordsLazyGroupBy,
@@ -129,6 +140,7 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
     recordIndexGroupFieldMetadataItem,
     recordIndexId,
     setRecordGroups,
+    setRecordTableRelationGroupsDiscoveredFieldId,
   ]);
 
   return { triggerRecordTableRelationGroupsDiscovery };
