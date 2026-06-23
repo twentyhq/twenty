@@ -16,16 +16,15 @@ export type FieldMetadataUpdateSearchVectorSideEffect = {
 type RecomputeSearchVectorOnFieldRenameArgs = {
   flatObjectMetadata: FlatObjectMetadata;
 } & FromTo<FlatFieldMetadata, 'flatFieldMetadata'> &
-  Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps' | 'flatSearchFieldMetadataMaps'>;
+  Pick<
+    AllFlatEntityMaps,
+    'flatFieldMetadataMaps' | 'flatSearchFieldMetadataMaps'
+  >;
 
 const EMPTY_SIDE_EFFECT: FieldMetadataUpdateSearchVectorSideEffect = {
   flatSearchVectorFieldToUpdate: undefined,
 };
 
-// The search surface is provisioned once at object creation (default label identifier for
-// custom objects, SEARCH_FIELDS_FOR_* for standard objects). A field update never adds or
-// removes searchFieldMetadata rows; it only recomputes the searchVector asExpression when an
-// already-indexed field is renamed, since the expression embeds the field's column name.
 export const recomputeSearchVectorOnFieldRename = ({
   fromFlatFieldMetadata,
   toFlatFieldMetadata,

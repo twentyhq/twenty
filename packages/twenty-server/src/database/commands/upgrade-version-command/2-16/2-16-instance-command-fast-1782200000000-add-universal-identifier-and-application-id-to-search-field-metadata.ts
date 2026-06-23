@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.16.0', 1781646759482)
+@RegisteredInstanceCommand('2.16.0', 1782200000000)
 export class AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE "core"."searchFieldMetadata" ADD "universalIdentifier" uuid NOT NULL');
