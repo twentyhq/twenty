@@ -1,6 +1,6 @@
 {
   "name": "twenty-meeting-bot",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
