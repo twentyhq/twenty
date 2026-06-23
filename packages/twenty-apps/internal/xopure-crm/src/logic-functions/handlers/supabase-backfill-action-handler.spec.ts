@@ -28,6 +28,9 @@ const buildReadSourceBatch = () =>
     if (sourceTable === 'commission_ledger') {
       return [{ id: 'comm-1', amount: 25 }];
     }
+    if (sourceTable === 'support_tickets') {
+      return [{ id: 'ticket-1', ticket_number: 'XO-1' }];
+    }
     return [];
   });
 
@@ -53,12 +56,12 @@ describe('handleSupabaseBackfillAction', () => {
       scanned: expect.any(Number),
       mapped: expect.any(Number),
       failed: expect.any(Number),
-      tableCount: 8,
+      tableCount: 9,
       durationMs: expect.any(Number),
       completedAt: expect.any(String),
     });
 
-    expect(readSourceBatch).toHaveBeenCalledTimes(8);
+    expect(readSourceBatch).toHaveBeenCalledTimes(9);
     expect(readSourceBatch).toHaveBeenCalledWith('profiles');
     expect(readSourceBatch).toHaveBeenCalledWith('customer_expertise');
     expect(readSourceBatch).toHaveBeenCalledWith('affiliates');
@@ -67,6 +70,7 @@ describe('handleSupabaseBackfillAction', () => {
     expect(readSourceBatch).toHaveBeenCalledWith('payments');
     expect(readSourceBatch).toHaveBeenCalledWith('order_items');
     expect(readSourceBatch).toHaveBeenCalledWith('commission_ledger');
+    expect(readSourceBatch).toHaveBeenCalledWith('support_tickets');
 
     expect(result.durationMs).toBeGreaterThanOrEqual(0);
     expect(() => new Date(result.completedAt as string)).not.toThrow();

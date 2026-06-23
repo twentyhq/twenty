@@ -15,6 +15,7 @@ export const BACKFILL_SOURCE_ORDER: SupportedSourceTable[] = [
   'payments',
   'order_items',
   'commission_ledger',
+  'support_tickets',
 ];
 
 export type BackfillReader = (

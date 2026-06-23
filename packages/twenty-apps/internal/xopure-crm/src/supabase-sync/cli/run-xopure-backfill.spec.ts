@@ -123,6 +123,20 @@ describe('executeXopureBackfillCli', () => {
     });
   });
 
+  it('accepts support_tickets as a single source table', async () => {
+    await executeXopureBackfillCli(['--source-table=support_tickets'], {
+      env: baseEnv,
+      write: () => undefined,
+    });
+
+    expect(runXopureBackfill).toHaveBeenCalledWith({
+      readSourceBatch: reader,
+      client,
+      dryRun: true,
+      sourceTables: ['support_tickets'],
+    });
+  });
+
   it('fails before constructing clients when Twenty credentials are missing', async () => {
     await expect(
       executeXopureBackfillCli([], {
