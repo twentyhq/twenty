@@ -21,6 +21,7 @@ import { type MessageQueueService } from 'src/engine/core-modules/message-queue/
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { QUEUE_WORKER_OPTIONS } from 'src/engine/core-modules/message-queue/message-queue-worker-options.constant';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { isQueryReadTimeoutError } from 'src/engine/twenty-orm/error-handling/is-query-read-timeout-error.util';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 interface ProcessorGroup {
@@ -210,7 +211,14 @@ export class MessageQueueExplorer implements OnModuleInit {
         // @ts-expect-error legacy noImplicitAny
         await instance[processMethodName].call(instance, job.data);
       } catch (err) {
-        if (shouldCaptureException(err)) {
+        // Transient query read timeouts are caused by database/worker load, not a code
+        // defect. They are retried by BullMQ and recovered by the sync crons, so we let
+        // them fail without paging Sentry to avoid drowning real errors in noise.
+        if (isQueryReadTimeoutError(err)) {
+          this.logger.warn(
+            `Skipping Sentry capture for transient query read timeout in job ${job.name}: ${err.message}`,
+          );
+        } else if (shouldCaptureException(err)) {
           this.exceptionHandlerService.captureExceptions([err]);
         }
         throw err;

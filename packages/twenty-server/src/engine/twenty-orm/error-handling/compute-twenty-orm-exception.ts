@@ -8,6 +8,7 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { handleDuplicateKeyError } from 'src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
+import { QUERY_READ_TIMEOUT_ERROR_MESSAGE } from 'src/engine/twenty-orm/error-handling/is-query-read-timeout-error.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import {
@@ -32,9 +33,9 @@ export const computeTwentyORMException = async (
   internalContext?: WorkspaceInternalContext,
 ): Promise<Error | TwentyORMException> => {
   if (error instanceof QueryFailedError) {
-    if (error.message.includes('Query read timeout')) {
+    if (error.message.includes(QUERY_READ_TIMEOUT_ERROR_MESSAGE)) {
       return new TwentyORMException(
-        'Query read timeout',
+        QUERY_READ_TIMEOUT_ERROR_MESSAGE,
         TwentyORMExceptionCode.QUERY_READ_TIMEOUT,
         {
           userFriendlyMessage: msg`We are experiencing a temporary issue with our database. Please try again later.`,
