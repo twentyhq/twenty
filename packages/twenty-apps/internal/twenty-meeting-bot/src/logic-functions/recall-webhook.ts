@@ -64,7 +64,7 @@ export const recallWebhookRouteHandler = async (
   });
 };
 
-export const recallWebhookLogicFunction = defineLogicFunction({
+export default defineLogicFunction({
   universalIdentifier: RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'recall-webhook',
   description:
