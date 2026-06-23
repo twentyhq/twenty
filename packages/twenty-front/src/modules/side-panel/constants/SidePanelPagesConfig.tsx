@@ -4,6 +4,7 @@ import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit
 import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
 import { SidePanelAiChatThreadsPage } from '@/side-panel/pages/ai-chat-threads/components/SidePanelAiChatThreadsPage';
 import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAiPage';
+import { SidePanelCalendarEventPage } from '@/side-panel/pages/calendar-event/components/SidePanelCalendarEventPage';
 import { SidePanelCampaignComposerPage } from '@/side-panel/pages/compose-campaign/components/SidePanelCampaignComposerPage';
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
@@ -37,6 +38,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
     [SidePanelPages.ViewRecord, <SidePanelRecordPage />],
     [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],
     [SidePanelPages.UpdateRecords, <SidePanelUpdateMultipleRecords />],
+    [SidePanelPages.ViewCalendarEvent, <SidePanelCalendarEventPage />],
     [SidePanelPages.EditRichText, <SidePanelEditRichTextPage />],
     [
       SidePanelPages.WorkflowTriggerSelectType,

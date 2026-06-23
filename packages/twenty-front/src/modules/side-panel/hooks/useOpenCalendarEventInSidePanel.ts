@@ -1,18 +1,60 @@
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
+import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
+import { IconCalendarEvent } from 'twenty-ui/icon';
+import { v4 } from 'uuid';
+import { useStore } from 'jotai';
 
 export const useOpenCalendarEventInSidePanel = () => {
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const store = useStore();
+  const { navigateSidePanel } = useNavigateSidePanel();
 
   const openCalendarEventInSidePanel = useCallback(
     (calendarEventId: string) => {
-      openRecordInSidePanel({
-        recordId: calendarEventId,
-        objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+      const pageComponentInstanceId = v4();
+
+      store.set(
+        viewableRecordIdComponentState.atomFamily({
+          instanceId: pageComponentInstanceId,
+        }),
+        calendarEventId,
+      );
+
+      // TODO: Uncomment this once we need to calendar event title in the navigation
+      // const objectMetadataItem = snapshot
+      //   .getLoadable(objectMetadataItemsSelector)
+      //   .getValue()
+      //   .find(
+      //     ({ nameSingular }) =>
+      //       nameSingular === CoreObjectNameSingular.CalendarEvent,
+      //   );
+
+      // set(
+      //   commandMenuNavigationMorphItemsState,
+      //   new Map([
+      //     ...snapshot
+      //       .getLoadable(commandMenuNavigationMorphItemsState)
+      //       .getValue(),
+      //     [
+      //       pageComponentInstanceId,
+      //       {
+      //         objectMetadataId: objectMetadataItem?.id,
+      //         recordId: calendarEventId,
+      //       },
+      //     ],
+      //   ]),
+      // );
+
+      navigateSidePanel({
+        page: SidePanelPages.ViewCalendarEvent,
+        pageTitle: t`Calendar Event`,
+        pageIcon: IconCalendarEvent,
+        pageId: pageComponentInstanceId,
       });
     },
-    [openRecordInSidePanel],
+    [navigateSidePanel, store],
   );
 
   return {
