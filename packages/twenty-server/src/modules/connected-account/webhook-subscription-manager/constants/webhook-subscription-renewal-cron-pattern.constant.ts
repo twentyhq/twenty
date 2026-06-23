@@ -1,0 +1,1 @@
+export const WEBHOOK_SUBSCRIPTION_RENEWAL_CRON_PATTERN = '0 * * * *';
