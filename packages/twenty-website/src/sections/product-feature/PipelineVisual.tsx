@@ -53,8 +53,6 @@ type DealCompany = {
   name: string;
 };
 
-// The record's creator, mirroring twenty's createdBy actor: a teammate shows a
-// rounded avatar, while non-human sources (API, system) show their source icon.
 type DealActor = {
   avatarUrl?: string;
   name: string;
@@ -177,8 +175,6 @@ const BoardTitle = styled.span`
   font-weight: ${THEME_LIGHT.font.weight.regular};
 `;
 
-// Mirrors twenty-front's StyledDropdownLabelAdornments: the record count and
-// the dropdown chevron both read gray8, distinct from the secondary view name.
 const BoardAdornments = styled.span`
   align-items: center;
   color: ${THEME_LIGHT.color.gray8};
@@ -263,9 +259,6 @@ const CardHeader = styled.div`
   padding: 8px 8px 4px;
 `;
 
-// The record identifier (avatar + name), mirroring twenty-front's
-// StyledRecordChipContainer: flexes to fill so the name ellipsizes and the
-// selection checkbox sits at the right edge.
 const CardIdentifier = styled.div`
   align-items: center;
   display: flex;
@@ -287,9 +280,6 @@ const CardTitle = styled.span`
   white-space: nowrap;
 `;
 
-// twenty-front's checkbox-container: hidden until the card is hovered, then
-// the DealCard :hover rule eases it open (max-width 0 → 24px). The 5px padding
-// matches the hoverable checkbox's tap target.
 const CardCheckbox = styled.div`
   align-items: center;
   display: flex;
@@ -304,7 +294,6 @@ const CardCheckbox = styled.div`
   transition: all ease-in-out 160ms;
 `;
 
-// The Secondary checkbox, unchecked: a square outlined in secondaryInverted.
 const CheckboxBox = styled.div`
   border: 1px solid ${THEME_LIGHT.border.color.secondaryInverted};
   border-radius: ${THEME_LIGHT.border.radius.sm};
@@ -357,10 +346,6 @@ const FieldText = styled.span`
   white-space: nowrap;
 `;
 
-// twenty-front's inline-cell hover (StyledRecordInlineCellNormalModeOuterContainer):
-// editable values fill with a transparent.light background and a pointer cursor;
-// readonly fields (data-readonly, e.g. Created by) instead show a medium outline
-// with the default cursor. Hugs its content so the highlight wraps the value.
 const HoverableValue = styled.div`
   align-items: center;
   border-radius: ${THEME_LIGHT.border.radius.sm};
@@ -369,8 +354,6 @@ const HoverableValue = styled.div`
   max-width: 100%;
   min-width: 0;
   outline: 1px solid transparent;
-  /* The value sits inside overflow:hidden wrappers, so an outset outline would
-     clip; inset it by 1px so the readonly border renders in full. */
   outline-offset: -1px;
   overflow: hidden;
   padding: 2px 4px;
