@@ -15,7 +15,6 @@ import {
   CatalogDecorator,
   type CatalogStory,
   ComponentWithRouterDecorator,
-  JotaiRootDecorator,
 } from '@ui/testing';
 import { type ReactNode } from 'react';
 
@@ -28,7 +27,7 @@ const TabContainer = ({ children }: { children?: ReactNode }) => {
 const meta: Meta<typeof TabButton> = {
   title: 'UI/Input/Button/TabButton',
   component: TabButton,
-  decorators: [ComponentWithRouterDecorator, JotaiRootDecorator],
+  decorators: [ComponentWithRouterDecorator],
   args: {
     id: 'tab-button',
     title: 'Tab Title',

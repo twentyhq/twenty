@@ -14,8 +14,8 @@ import { Menu } from '@/sections/menu';
 
 type PartnerProfileParams = { locale: string; slug: string };
 
-// The parent [locale] segment sets dynamicParams=false, so each partner slug
-// must be enumerated here too or it 404s.
+export const dynamicParams = true;
+
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   const partners = await fetchLiveMarketplacePartners();
   return partners.map((partner) => ({ slug: partner.slug }));

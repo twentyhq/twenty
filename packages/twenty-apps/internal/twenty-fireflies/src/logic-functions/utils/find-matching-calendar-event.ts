@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-shared/utils';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'src/utils/is-defined';
 
 import { type FirefliesTranscript } from 'src/logic-functions/types/fireflies-transcript.type';
 

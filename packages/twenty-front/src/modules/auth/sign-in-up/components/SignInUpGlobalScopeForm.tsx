@@ -34,6 +34,7 @@ import {
   GetWorkspaceCreationDefaultsDocument,
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledWorkspaceContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -172,9 +173,9 @@ export const SignInUpGlobalScopeForm = () => {
                   <StyledWorkspaceContent>
                     <Avatar
                       placeholder={availableWorkspace.displayName || ''}
-                      avatarUrl={
-                        availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO
-                      }
+                      avatarUrl={getAbsoluteImageUrl(
+                        availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                      )}
                       size="lg"
                     />
                     <StyledWorkspaceTextContainer>

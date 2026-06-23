@@ -33,6 +33,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledSourceRow = styled.div`
   align-items: center;
@@ -119,7 +120,9 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
             leftComponent={
               <AvatarOrIcon
                 avatarType="rounded"
-                avatarUrl={ownerWorkspace?.logo ?? undefined}
+                avatarUrl={getAbsoluteImageUrl(
+                  ownerWorkspace?.logo ?? undefined,
+                )}
               />
             }
             label={ownerWorkspace.displayName}

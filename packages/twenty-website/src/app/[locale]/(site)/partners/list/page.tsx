@@ -18,6 +18,8 @@ import { Menu } from '@/sections/menu';
 
 export const generateMetadata = buildRouteMetadata('partnersList');
 
+export const dynamic = 'force-dynamic';
+
 export default async function PartnersMarketplacePage({
   params,
 }: {

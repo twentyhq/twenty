@@ -1,4 +1,4 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { resetAllSyncCursors } from '@modules/resend/sync/cursor/utils/reset-all-sync-cursors';

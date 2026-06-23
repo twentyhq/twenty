@@ -22,6 +22,7 @@ export type TextAreaProps = {
   placeholder?: string;
   value?: string;
   className?: string;
+  onFocus?: () => void;
   onBlur?: () => void;
   readOnly?: boolean;
   variant?: TextAreaVariant;
@@ -102,6 +103,7 @@ export const TextArea = ({
   value = '',
   className,
   onChange,
+  onFocus,
   onBlur,
   readOnly = false,
   variant = 'default',
@@ -127,6 +129,8 @@ export const TextArea = ({
         enableGlobalHotkeysConflictingWithKeyboard: false,
       },
     });
+
+    onFocus?.();
   };
 
   const handleBlur: FocusEventHandler<HTMLTextAreaElement> = () => {
