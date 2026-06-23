@@ -1,10 +1,6 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import {
-  defineLogicFunction,
-  type LogicFunctionConfig,
-  type RoutePayload,
-} from 'twenty-sdk/define';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
 
 import { RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/recall-webhook-logic-function-universal-identifier';
@@ -14,18 +10,6 @@ import { type RecallWebhookBody } from 'src/logic-functions/recall-api/parse-rec
 import { verifyRecallWebhookSignature } from 'src/logic-functions/recall-api/verify-recall-webhook-signature.util';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
-
-type ServerWebhookTriggerSettings = {
-  workspaceIdResolver: {
-    source: 'body' | 'query' | 'header';
-    path: string;
-  };
-  forwardedRequestHeaders?: string[];
-};
-
-type RecallWebhookLogicFunctionConfig = LogicFunctionConfig & {
-  serverWebhookTriggerSettings: ServerWebhookTriggerSettings;
-};
 
 // Non-2xx makes Svix retry; a returned plain object would 200-ack permanently.
 const rejectWebhook = (status: number, error: string): Response => {
@@ -80,7 +64,7 @@ export const recallWebhookRouteHandler = async (
   });
 };
 
-const recallWebhookLogicFunctionConfig = {
+export default defineLogicFunction({
   universalIdentifier: RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'recall-webhook',
   description:
@@ -101,12 +85,4 @@ const recallWebhookLogicFunctionConfig = {
       'svix-signature',
     ],
   },
-} satisfies RecallWebhookLogicFunctionConfig;
-
-const recallWebhookLogicFunction = defineLogicFunction(
-  recallWebhookLogicFunctionConfig,
-) as ReturnType<typeof defineLogicFunction> & {
-  config: RecallWebhookLogicFunctionConfig;
-};
-
-export default recallWebhookLogicFunction;
+});

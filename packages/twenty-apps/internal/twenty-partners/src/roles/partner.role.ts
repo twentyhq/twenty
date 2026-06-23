@@ -275,8 +275,10 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
     {
+      // Validation Stage — read-locked too: admin-only on the record page, hidden from partners.
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: '2ca9856f-f54a-4326-9ff3-668fd7da0b50',
+      canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
     {
@@ -290,8 +292,10 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
     {
+      // Partner Tier — read-locked too: admin-only on the record page, hidden from partners.
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: 'd4fa6461-37b6-49ee-9181-dd482e74a70b',
+      canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
     {

@@ -34,6 +34,7 @@ import { CalendarEventImportErrorHandlerService } from 'src/modules/calendar/cal
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import { CalendarImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-import-events.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
@@ -73,6 +74,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     CalendarFetchEventsService,
     CalendarEventImportErrorHandlerService,
     CalendarGetCalendarEventsService,
+    CalendarImportEventsService,
     CalendarSaveEventsService,
     CalendarEventListFetchCronJob,
     CalendarEventListFetchCronCommand,
