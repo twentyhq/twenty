@@ -14,6 +14,7 @@ export const recordingThemeCssVariables = {
     colorLight: 'var(--t-border-color-light)',
     colorMedium: 'var(--t-border-color-medium)',
     radiusMd: 'var(--t-border-radius-md)',
+    radiusSm: 'var(--t-border-radius-sm)',
   },
   boxShadow: {
     light: 'var(--t-box-shadow-light)',
@@ -24,6 +25,7 @@ export const recordingThemeCssVariables = {
     colorSecondary: 'var(--t-font-color-secondary)',
     colorTertiary: 'var(--t-font-color-tertiary)',
     family: 'var(--t-font-family)',
+    sizeMd: 'var(--t-font-size-md)',
     sizeSm: 'var(--t-font-size-sm)',
     sizeXs: 'var(--t-font-size-xs)',
     weightMedium: 'var(--t-font-weight-medium)',
@@ -33,5 +35,6 @@ export const recordingThemeCssVariables = {
     2: 'var(--t-spacing-2)',
     3: 'var(--t-spacing-3)',
     4: 'var(--t-spacing-4)',
+    6: 'var(--t-spacing-6)',
   },
 } as const;

@@ -12,6 +12,9 @@ export const checkUrlType = (url: string) => {
   if (/^(https?:\/\/)?(www\.)?facebook\.com\/.+$/.test(url)) {
     return LinkType.Facebook;
   }
+  if (/^(https?:\/\/)?(www\.)?instagram\.com\/.+$/.test(url)) {
+    return LinkType.Instagram;
+  }
 
   return LinkType.Url;
 };

@@ -106,6 +106,7 @@ export const createStandardObjectFlatMetadata = <
     targetTableName: 'DEPRECATED',
     fieldIds: [],
     indexMetadataIds: [],
+    searchFieldMetadataIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
     viewIds: [],
@@ -119,6 +120,7 @@ export const createStandardObjectFlatMetadata = <
     fieldPermissionUniversalIdentifiers: [],
     viewUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
+    searchFieldMetadataUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier,
   };

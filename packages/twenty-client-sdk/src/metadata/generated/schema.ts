@@ -1871,6 +1871,7 @@ export interface DomainValidRecords {
     id: Scalars['UUID']
     domain: Scalars['String']
     records: DomainRecord[]
+    isCustomDomainEnabled?: Scalars['Boolean']
     __typename: 'DomainValidRecords'
 }
 
@@ -2612,7 +2613,7 @@ export interface CollectionHash {
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -4956,6 +4957,7 @@ export interface DomainValidRecordsGenqlSelection{
     id?: boolean | number
     domain?: boolean | number
     records?: DomainRecordGenqlSelection
+    isCustomDomainEnabled?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9259,7 +9261,8 @@ export const enumAllMetadataName = {
    frontComponent: 'frontComponent' as const,
    webhook: 'webhook' as const,
    applicationVariable: 'applicationVariable' as const,
-   connectionProvider: 'connectionProvider' as const
+   connectionProvider: 'connectionProvider' as const,
+   searchFieldMetadata: 'searchFieldMetadata' as const
 }
 
 export const enumEventLogTable = {

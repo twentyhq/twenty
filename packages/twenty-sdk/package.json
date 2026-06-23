@@ -86,6 +86,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "semver": "7.6.3",
+    "sharp": "^0.34.5",
     "tinyglobby": "^0.2.15",
     "twenty-client-sdk": "workspace:*",
     "typescript": "^5.9.3",
