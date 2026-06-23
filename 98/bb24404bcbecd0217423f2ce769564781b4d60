@@ -1,0 +1,56 @@
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/caldav/caldav-driver.module.ts
+  s_59807c8ea7e034::t_5e7246615640e6 12,26,33
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/google-calendar-driver.module.ts
+  s_59807c8ea7e034::t_2713737575e61e 5,10-14
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service.ts
+  s_59807c8ea7e034::t_5d3c076b3e757c 28-30,34,38
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service.spec.ts
+  s_59807c8ea7e034::t_9f09c814998f92 5-7,11,18,33,53-54,66,69,72-75,78,92-95,98,103,123-126,131,134,146-147,150,154,165,168,170-172,176-177,181,184,186-187,189,192,195-196,199-200,204-213,217,221,223
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/__tests__/calendar-fetch-events.service.spec.ts
+  s_59807c8ea7e034::t_4f9e14320254d2 190
+  s_59807c8ea7e034::t_e3981a926bec21 154
+  s_59807c8ea7e034::t_efaac035717f34 59
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service.ts
+  s_59807c8ea7e034::t_5c4432646e5b57 48
+  s_59807c8ea7e034::t_6e3a24c0bc7be1 69-72,74-75,79-80
+  s_59807c8ea7e034::t_6d54f7975917b1 83-87
+  s_59807c8ea7e034::t_9cb65c7ff0cc6f 172-182
+  s_59807c8ea7e034::t_26d062bb290a8f 28
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-get-events.service.ts
+  s_59807c8ea7e034::t_3810c5a2bd359e 5
+  s_59807c8ea7e034::t_d11259e95c1db0 36,79
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module.ts
+  s_59807c8ea7e034::t_2666353d7ceccd 37
+  s_59807c8ea7e034::t_0d6ab28fc71e5f 77
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service.ts
+  s_59807c8ea7e034::t_f96a98ae777101 53,66-67,71-72,74-83
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-import-events.service.ts
+  s_59807c8ea7e034::t_96832573be2bdd 1-42
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service.ts
+  s_59807c8ea7e034::t_d6725574131bc6 15
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service.ts
+  s_59807c8ea7e034::t_3778f75aab05b0 77-80,85,87,93-94,112,115-116,120,126-134
+  s_59807c8ea7e034::t_b6bf1cc73854f2 81-84,86,88-92,95-111,113-114,124-125
+  s_59807c8ea7e034::t_7818537130e78c 23,33-35,44,46-47,51-53,57,62-76,117-119,121-123,139,146-147,153-156,161,164,166,174-178,188,225,228,230,234,239,256
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/calendar-import-events.service.ts
+  s_59807c8ea7e034::t_6e0719d3f1bb14 1-50
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-import-events.service.ts
+  s_59807c8ea7e034::t_e511b0ff428b79 5-6,36-41,43-47,50
+  s_59807c8ea7e034::t_77dea102a7ee18 1-4,7-35,48-49,51-79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "98bb24404bcbecd0217423f2ce769564781b4d60",
+  "prompts": {},
+  "sessions": {
+    "s_59807c8ea7e034": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "57361999-bf1a-49bf-9ea2-41a2ee642bae",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
