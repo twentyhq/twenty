@@ -40,7 +40,7 @@ const ViewSwitcher = styled.div<{ $tableAligned?: boolean }>`
 
 const ViewName = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
@@ -49,7 +49,7 @@ const ViewName = styled.span`
 
 const ViewCount = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
@@ -82,7 +82,7 @@ const ViewAction = styled.span`
   border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.regular};
   height: 24px;

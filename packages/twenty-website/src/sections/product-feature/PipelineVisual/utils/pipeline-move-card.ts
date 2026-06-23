@@ -1,15 +1,9 @@
 import { clampToRange } from '@/platform/motion';
 
-export type PipelineCardId = 'airbnb' | 'figma' | 'github' | 'notion';
-export type PipelineLaneIndex = 0 | 1 | 2;
-export type PipelineLanes = [
-  PipelineCardId[],
-  PipelineCardId[],
-  PipelineCardId[],
-];
+import { type PipelineCardId } from '../types/pipeline-card-id';
+import { type PipelineLaneIndex } from '../types/pipeline-lane-index';
+import { type PipelineLanes } from '../types/pipeline-lanes';
 
-// Pulls a card out of whichever lane holds it and splices it into the
-// target lane at a bounded index.
 export function movePipelineCard(
   lanes: PipelineLanes,
   cardId: PipelineCardId,
