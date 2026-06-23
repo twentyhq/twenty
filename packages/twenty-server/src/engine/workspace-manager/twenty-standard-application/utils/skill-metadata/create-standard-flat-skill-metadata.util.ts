@@ -68,6 +68,10 @@ LOGIC_FUNCTION steps execute logic functions provided by installed applications.
    { "stepType": "LOGIC_FUNCTION", "workflowVersionId": "<version-id>", "defaultSettings": { "input": { "logicFunctionId": "<logic-function-id>" } } }
 3. Or when using \`create_complete_workflow\`, include a step with type "LOGIC_FUNCTION" and settings.input.logicFunctionId.
 
+## Listing Workflows
+
+To discover existing workflows in the workspace, use \`list_workflows\` (optional \`status\` filter: DRAFT, ACTIVE, or DEACTIVATED; optional \`limit\` and \`offset\` for pagination). Returns each workflow's \`id\`, \`name\`, \`statuses\`, and \`lastPublishedVersionId\`. Use this before modifying a workflow when the user refers to it by name rather than id — resolve the \`id\` here first, then call \`get_workflow_current_version\` with it.
+
 ## Troubleshooting Workflow Runs
 
 When a user reports a failing or misbehaving workflow, diagnose it with two read-only tools:

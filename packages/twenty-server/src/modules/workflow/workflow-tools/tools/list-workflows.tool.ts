@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowStatus,
@@ -9,6 +10,10 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+
+type ListWorkflowsToolContext = WorkflowToolContext & {
+  rolePermissionConfig: RolePermissionConfig;
+};
 
 const listWorkflowsSchema = z.object({
   status: z
@@ -23,7 +28,7 @@ type ListWorkflowsInput = z.infer<typeof listWorkflowsSchema>;
 
 export const createListWorkflowsTool = (
   deps: Pick<WorkflowToolDependencies, 'globalWorkspaceOrmManager'>,
-  context: WorkflowToolContext,
+  context: ListWorkflowsToolContext,
 ) => ({
   name: 'list_workflows' as const,
   description:
@@ -39,7 +44,7 @@ export const createListWorkflowsTool = (
             await deps.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
               context.workspaceId,
               'workflow',
-              { shouldBypassPermissionChecks: true },
+              context.rolePermissionConfig,
             );
 
           const queryBuilder =
