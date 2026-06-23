@@ -1,0 +1,55 @@
+packages/twenty-server/test/integration/graphql/suites/auth/jwt-key-rotation/rotate-signing-keys-cron-job.integration-spec.ts
+  s_8a5a157e980979::t_535aa202b48593 56-59
+  s_8a5a157e980979::t_f10e9d51369265 9
+packages/twenty-server/test/integration/utils/get-message-queues.ts
+  s_8a5a157e980979::t_de1d6628882f05 11,18-24
+packages/twenty-server/test/integration/graphql/suites/workflow/utils/workflow-run-test.util.ts
+  s_8a5a157e980979::t_d44a05832e1602 121-131,133-137,139-163
+  s_8a5a157e980979::t_b3d7ef33c55e43 3
+packages/twenty-server/test/integration/BULLMQ_DETERMINISTIC_AWAIT_PLAN.md
+  s_2e0eea4cdd37b8::t_e79e5d4a0d0950 174-177,180-191
+  s_2e0eea4cdd37b8::t_9a5f2df202fa34 1-46,48,56,62-64,69,80,83,104,109-148,155-158,165-173,178-179,192-194,231-233,240,253
+  s_2e0eea4cdd37b8::t_492d80add75c98 149-154
+  s_2e0eea4cdd37b8::t_d96fdbe2f19762 195-215,230
+  s_2e0eea4cdd37b8::t_543ef826d57261 159-164
+  s_2e0eea4cdd37b8::t_73a322551663f1 47,49-55,57-61,65-68,70-79,81-82,84-103,105-108
+  s_2e0eea4cdd37b8::t_aa5f7fcb4be77d 216-229
+  s_2e0eea4cdd37b8::t_cb7dfbb1c81f5e 234-239,241
+  s_2e0eea4cdd37b8::t_70bbd597c365b3 242-252
+packages/twenty-server/test/integration/utils/wait-for-queue-idle.ts
+  s_8a5a157e980979::t_c8b90d11c3a982 4,38-43,48-49,51,88
+  s_8a5a157e980979::t_e0e9a79bac9457 71-75,77-80
+packages/twenty-server/test/integration/graphql/suites/workflow/quick-lead-workflow.integration-spec.ts
+  s_8a5a157e980979::t_4c38fd397a5add 6
+  s_8a5a157e980979::t_8b9b344033f9fb 129-134
+  s_8a5a157e980979::t_f4e36228a428ca 247-252
+  s_8a5a157e980979::t_c62aadfd4883ba 290-293
+packages/twenty-server/test/integration/utils/wait-for-job.ts
+  s_8a5a157e980979::t_3854aa876646a8 1-47
+packages/twenty-server/test/integration/utils/with-real-timers.ts
+  s_8a5a157e980979::t_e82fa11015f35c 1-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "9d18742903e118a993c7e741204e6a176eb14d83",
+  "prompts": {},
+  "sessions": {
+    "s_2e0eea4cdd37b8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1be8eb11-81a0-4eff-8a0b-7d3249f774b2",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
