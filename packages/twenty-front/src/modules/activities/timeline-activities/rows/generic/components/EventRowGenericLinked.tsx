@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { type KeyboardEvent } from 'react';
 
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
@@ -62,6 +63,24 @@ export const EventRowGenericLinked = ({
     isDefined(event.linkedRecordId) &&
     isDefined(linkedObjectMetadataItem?.nameSingular);
 
+  const handleOpen = () => {
+    if (!canOpen) {
+      return;
+    }
+
+    openRecordInSidePanel({
+      recordId: event.linkedRecordId as string,
+      objectNameSingular: linkedObjectMetadataItem?.nameSingular as string,
+    });
+  };
+
+  const handleKeyDown = (keyboardEvent: KeyboardEvent<HTMLSpanElement>) => {
+    if (keyboardEvent.key === 'Enter' || keyboardEvent.key === ' ') {
+      keyboardEvent.preventDefault();
+      handleOpen();
+    }
+  };
+
   return (
     <StyledRowContainer>
       <StyledRow>
@@ -70,17 +89,10 @@ export const EventRowGenericLinked = ({
           {t`linked a ${objectLabel}`}
         </EventRowItem>
         <StyledLinkedRecord
-          onClick={() => {
-            if (!canOpen) {
-              return;
-            }
-
-            openRecordInSidePanel({
-              recordId: event.linkedRecordId as string,
-              objectNameSingular:
-                linkedObjectMetadataItem?.nameSingular as string,
-            });
-          }}
+          role={canOpen ? 'button' : undefined}
+          tabIndex={canOpen ? 0 : undefined}
+          onClick={handleOpen}
+          onKeyDown={handleKeyDown}
         >
           <OverflowingTextWithTooltip text={linkedRecordName} />
         </StyledLinkedRecord>

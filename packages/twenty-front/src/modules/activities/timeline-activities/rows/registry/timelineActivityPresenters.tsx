@@ -9,7 +9,6 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 export type TimelineActivityLinkedPresenter = {
   renderRow: (props: EventRowDynamicComponentProps) => ReactNode;
-  needsLinkedRecordTitle?: boolean;
 };
 
 export const TIMELINE_ACTIVITY_LINKED_PRESENTERS: Partial<
@@ -68,7 +67,6 @@ export const TIMELINE_ACTIVITY_LINKED_PRESENTERS: Partial<
         objectNameSingular={CoreObjectNameSingular.Note}
       />
     ),
-    needsLinkedRecordTitle: true,
   },
   task: {
     renderRow: ({
@@ -89,7 +87,6 @@ export const TIMELINE_ACTIVITY_LINKED_PRESENTERS: Partial<
         objectNameSingular={CoreObjectNameSingular.Task}
       />
     ),
-    needsLinkedRecordTitle: true,
   },
 };
 
