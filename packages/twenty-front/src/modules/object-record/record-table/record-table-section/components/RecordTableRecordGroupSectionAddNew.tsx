@@ -1,3 +1,4 @@
+import { getRecordGroupByFieldColumnName } from '@/object-metadata/utils/getRecordGroupByFieldColumnName';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -57,7 +58,8 @@ export const RecordTableRecordGroupSectionAddNew = () => {
 
         createNewIndexRecord({
           position: 'last',
-          [fieldMetadataItem.name]: recordGroupDefinition?.value,
+          [getRecordGroupByFieldColumnName(fieldMetadataItem)]:
+            recordGroupDefinition?.value,
         });
       }}
     />
