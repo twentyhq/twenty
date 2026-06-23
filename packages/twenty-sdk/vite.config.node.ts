@@ -1,9 +1,24 @@
+import fs from 'fs';
 import path from 'path';
 import { type PackageJson } from 'type-fest';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 import packageJson from './package.json';
+
+const copyCoverAssetsPlugin = () => ({
+  name: 'copy-cover-assets',
+  closeBundle() {
+    const source = path.resolve(
+      __dirname,
+      'src/cli/utilities/build/cover/assets/halftone-backdrop.png',
+    );
+    const destinationDir = path.resolve(__dirname, 'dist/assets');
+
+    fs.mkdirSync(destinationDir, { recursive: true });
+    fs.copyFileSync(source, path.join(destinationDir, 'halftone-backdrop.png'));
+  },
+});
 
 export default defineConfig(() => {
   return {
@@ -18,6 +33,7 @@ export default defineConfig(() => {
       tsconfigPaths({
         root: __dirname,
       }),
+      copyCoverAssetsPlugin(),
     ],
     build: {
       emptyOutDir: false,

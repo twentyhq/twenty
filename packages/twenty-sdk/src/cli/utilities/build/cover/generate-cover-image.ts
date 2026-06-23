@@ -1,7 +1,16 @@
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import sharp from 'sharp';
 
-import { HALFTONE_BACKDROP_BASE64 } from '@/cli/utilities/build/cover/assets/halftone-backdrop-base64';
 import { TWENTY_LOGO_MARK_PATH } from '@/cli/utilities/build/cover/assets/twenty-logo-mark-path';
+
+const readHalftoneBackdropDataUri = async (): Promise<string> => {
+  const backdropBuffer = await readFile(
+    join(__dirname, 'assets', 'halftone-backdrop.png'),
+  );
+
+  return `data:image/png;base64,${backdropBuffer.toString('base64')}`;
+};
 
 const CANVAS_WIDTH = 1388;
 const CANVAS_HEIGHT = 858;
@@ -31,9 +40,11 @@ export const generateCoverImage = async ({
     .toBuffer();
   const logoDataUri = `data:image/png;base64,${logoPngBuffer.toString('base64')}`;
 
+  const backdropDataUri = await readHalftoneBackdropDataUri();
+
   const svg = [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${CANVAS_WIDTH}" height="${CANVAS_HEIGHT}" viewBox="0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}">`,
-    `<image href="data:image/png;base64,${HALFTONE_BACKDROP_BASE64}" x="0" y="0" width="${CANVAS_WIDTH}" height="${CANVAS_HEIGHT}" preserveAspectRatio="none" />`,
+    `<image href="${backdropDataUri}" x="0" y="0" width="${CANVAS_WIDTH}" height="${CANVAS_HEIGHT}" preserveAspectRatio="none" />`,
     '<defs>',
     '<filter id="tileShadow" x="-40%" y="-40%" width="180%" height="180%">',
     '<feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0b0b0f" flood-opacity="0.14" />',
