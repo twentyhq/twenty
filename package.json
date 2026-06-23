@@ -26,6 +26,7 @@
   "name": "twenty",
   "packageManager": "yarn@4.13.0",
   "resolutions": {
+    "@module-federation/dts-plugin/undici": "^7.28.0",
     "@nestjs/platform-express/multer": "2.2.0",
     "@nestjs/graphql/ws": "8.21.0",
     "@remote-dom/react/@types/react": "^19.2.0",
