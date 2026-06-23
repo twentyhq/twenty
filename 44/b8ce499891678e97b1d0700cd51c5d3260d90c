@@ -1,0 +1,21 @@
+packages/twenty-server/src/engine/core-modules/message-queue/drivers/bullmq.driver.ts
+  s_8a5a157e980979::t_e7a2ac56cebfd2 42-43
+  s_8a5a157e980979::t_3c445814892c02 261-263,276-281,283-286
+  s_8a5a157e980979::t_903699042421b0 282
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "44b8ce499891678e97b1d0700cd51c5d3260d90c",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
