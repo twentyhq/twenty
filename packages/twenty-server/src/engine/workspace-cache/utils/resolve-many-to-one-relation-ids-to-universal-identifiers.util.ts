@@ -93,9 +93,21 @@ export const resolveManyToOneRelationIdsToUniversalIdentifiers = <
       continue;
     }
 
+    const mapKey = `${targetMetadataName}IdToUniversalIdentifierMap`;
+    // Generic indexed access can't be resolved to a Map by the compiler, so the
+    // value is cast as possibly-undefined and validated below instead of being
+    // blindly cast to a non-nullable Map.
     const targetIdToUniversalIdentifierMap = idToUniversalIdentifierMaps[
-      `${targetMetadataName}IdToUniversalIdentifierMap` as keyof typeof idToUniversalIdentifierMaps
-    ] as Map<string, string>;
+      mapKey as keyof typeof idToUniversalIdentifierMaps
+    ] as unknown as Map<string, string> | undefined;
+
+    if (!isDefined(targetIdToUniversalIdentifierMap)) {
+      throw new FlatEntityMapsException(
+        `Missing ${mapKey} when resolving ${metadataName} ${entityId}`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
     const universalIdentifier = isDefined(foreignKeyId)
       ? targetIdToUniversalIdentifierMap.get(foreignKeyId)
       : undefined;
