@@ -61,8 +61,6 @@ export const SettingsObjectTimelineRuleForm = ({
       activityTypeObjectMetadataItems.map((item) => item.id),
   });
 
-  // Only objects with a dedicated target column on timelineActivity can be
-  // inherited from; custom objects share a single morph column, so are excluded.
   const sourceOptions = activeNonSystemObjectMetadataItems
     .filter(
       (item) =>
