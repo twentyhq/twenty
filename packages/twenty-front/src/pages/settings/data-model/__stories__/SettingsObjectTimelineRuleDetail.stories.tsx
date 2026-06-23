@@ -8,11 +8,12 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
-const COMPANY_OBJECT_METADATA_ID = '4cafe09c-e246-4de8-a4f3-8c60e1186395';
-const PERSON_OBJECT_METADATA_ID = '2e21f68d-8657-40a7-9050-02c5609f03a0';
-const NOTE_OBJECT_METADATA_ID = '12cfa04b-8aa5-442e-8148-757f7f90f578';
-const TASK_OBJECT_METADATA_ID = 'cccd1738-3b69-4297-bfd2-741438ccc9ef';
+const metadata = getTestEnrichedObjectMetadataItemsMock();
+
+const objectMetadataId = (nameSingular: string) =>
+  metadata.find((item) => item.nameSingular === nameSingular)?.id ?? '';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsObjectTimelineRuleDetail',
@@ -36,11 +37,11 @@ const meta: Meta<PageDecoratorArgs> = {
               getTimelineProjectionRules: [
                 {
                   id: 'rule-1',
-                  anchorObjectMetadataId: COMPANY_OBJECT_METADATA_ID,
-                  sourceObjectMetadataId: PERSON_OBJECT_METADATA_ID,
+                  anchorObjectMetadataId: objectMetadataId('company'),
+                  sourceObjectMetadataId: objectMetadataId('person'),
                   linkedObjectMetadataIds: [
-                    NOTE_OBJECT_METADATA_ID,
-                    TASK_OBJECT_METADATA_ID,
+                    objectMetadataId('note'),
+                    objectMetadataId('task'),
                   ],
                 },
               ],
