@@ -120,7 +120,7 @@ describe('RouteTriggerService.handle', () => {
     expect(run).not.toHaveBeenCalled();
   });
 
-  it('exempts authenticated routes from the cutoff on /s/', async () => {
+  it('returns 410 on /s/ for an authenticated route created after the cutoff', async () => {
     resolveWorkspaceAndPublicDomain.mockResolvedValue({
       workspace: { id: 'workspace-1', subdomain: 'acme' },
       publicDomain: null,
@@ -128,19 +128,16 @@ describe('RouteTriggerService.handle', () => {
     });
     find.mockResolvedValue([buildLogicFunction(AFTER_CUTOFF, true)]);
     getConfig.mockReturnValue(CUTOFF_ISO);
-    validateTokenByRequest.mockResolvedValue({
-      workspace: { id: 'workspace-1' },
-      userWorkspaceId: 'uw-1',
-      user: { id: 'u-1' },
-    });
 
-    const result = await buildService().handle({
-      request: buildRequest(),
-      httpMethod: HTTPMethod.POST,
+    await expect(
+      buildService().handle({
+        request: buildRequest(),
+        httpMethod: HTTPMethod.POST,
+      }),
+    ).rejects.toMatchObject({
+      code: RouteTriggerExceptionCode.LEGACY_ROUTE_DEPRECATED,
     });
-
-    expect(result.isIsolatedOrigin).toBe(false);
-    expect(run).toHaveBeenCalled();
+    expect(run).not.toHaveBeenCalled();
   });
 
   it('still serves on /s/ a function created before the cutoff', async () => {

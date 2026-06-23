@@ -136,15 +136,6 @@ export class RouteTriggerService {
       return;
     }
 
-    // Authenticated routes (e.g. front components calling via RestApiClient with
-    // the app access token, or authenticated integrations) are not the
-    // same-site untrusted-content risk the isolated domain addresses — and the
-    // strict /s/ response-header allow-list still applies to them — so they keep
-    // working on /s/. Only public (unauthenticated) routes are migrated.
-    if (logicFunction.httpRouteTriggerSettings?.isAuthRequired === true) {
-      return;
-    }
-
     const cutoffIso = this.twentyConfigService.get(
       'LOGIC_FUNCTION_LEGACY_ROUTE_CUTOFF',
     );
