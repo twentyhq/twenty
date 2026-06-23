@@ -10,7 +10,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
-import { buildCancelledCalDavEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/build-cancelled-event.util';
 import { extractICalData } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-ical-data.util';
 import { isEventInTimeRange } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-in-time-range.util';
 import { isInvalidSyncTokenResponse } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-invalid-sync-token-response.util';
@@ -20,7 +19,8 @@ import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fet
 
 type CalendarSyncResult = {
   calendarUrl: string;
-  eventHrefs: string[];
+  changedHrefs: string[];
+  cancelledHrefs: string[];
   newSyncToken?: string;
   newCtag?: string;
   newEtags?: Record<string, string>;
@@ -44,7 +44,11 @@ export class CalDavFetchEventsService {
   async fetchChangedEventHrefs(
     client: DAVClient,
     syncCursor?: CalDavSyncCursor,
-  ): Promise<{ eventHrefs: string[]; syncCursor: CalDavSyncCursor }> {
+  ): Promise<{
+    changedHrefs: string[];
+    cancelledHrefs: string[];
+    syncCursor: CalDavSyncCursor;
+  }> {
     const calendars = await this.listEventCalendars(client);
 
     const results = await Promise.all(
@@ -54,7 +58,8 @@ export class CalDavFetchEventsService {
     );
 
     return {
-      eventHrefs: results.flatMap((result) => result.eventHrefs),
+      changedHrefs: results.flatMap((result) => result.changedHrefs),
+      cancelledHrefs: results.flatMap((result) => result.cancelledHrefs),
       syncCursor: this.mergeSyncCursor(results),
     };
   }
@@ -99,7 +104,7 @@ export class CalDavFetchEventsService {
       )
     ).flat();
 
-    const fetchedEvents = calendarObjects.flatMap((calendarObject) => {
+    return calendarObjects.flatMap((calendarObject) => {
       const iCalData = extractICalData(calendarObject.props?.calendarData);
 
       if (!isNonEmptyString(calendarObject.href) || !iCalData) return [];
@@ -108,29 +113,12 @@ export class CalDavFetchEventsService {
         isEventInTimeRange(event, startDate, endDate),
       );
     });
-
-    const fetchedPaths = new Set(
-      calendarObjects
-        .map((calendarObject) => calendarObject.href)
-        .filter(isNonEmptyString)
-        .map((href) => this.resolvePath(client, href)),
-    );
-
-    const cancelledEvents = eventHrefs
-      .filter((href) => !fetchedPaths.has(this.resolvePath(client, href)))
-      .map(buildCancelledCalDavEvent);
-
-    return [...fetchedEvents, ...cancelledEvents];
   }
 
   private resolveCollectionUrl(client: DAVClient, href: string): string {
     const collectionPath = href.slice(0, href.lastIndexOf('/') + 1);
 
     return new URL(collectionPath, client.serverUrl).href;
-  }
-
-  private resolvePath(client: DAVClient, href: string): string {
-    return new URL(href, client.serverUrl).pathname;
   }
 
   private async syncCalendar(
@@ -150,7 +138,8 @@ export class CalDavFetchEventsService {
 
       return {
         calendarUrl: calendar.url,
-        eventHrefs: [],
+        changedHrefs: [],
+        cancelledHrefs: [],
         newSyncToken: syncCursor?.syncTokens[calendar.url],
         newCtag: syncCursor?.ctags?.[calendar.url],
         newEtags: syncCursor?.etags?.[calendar.url],
@@ -171,11 +160,16 @@ export class CalDavFetchEventsService {
       previousSyncToken,
     );
 
-    const eventHrefs = syncResult
-      .filter(
-        (entry): entry is DAVResponse & { href: string } =>
-          isNonEmptyString(entry.href) && isValidCalDavHref(entry.href),
-      )
+    const memberResponses = syncResult.filter(
+      (entry): entry is DAVResponse & { href: string } =>
+        isNonEmptyString(entry.href) && isValidCalDavHref(entry.href),
+    );
+
+    const changedHrefs = memberResponses
+      .filter((entry) => entry.status !== 404)
+      .map((entry) => entry.href);
+    const cancelledHrefs = memberResponses
+      .filter((entry) => entry.status === 404)
       .map((entry) => entry.href);
 
     const rawSyncToken = syncResult[0]?.raw?.multistatus?.syncToken;
@@ -185,7 +179,8 @@ export class CalDavFetchEventsService {
 
     return {
       calendarUrl: calendar.url,
-      eventHrefs,
+      changedHrefs,
+      cancelledHrefs,
       newSyncToken,
     };
   }
@@ -236,7 +231,8 @@ export class CalDavFetchEventsService {
     if (isDefined(newCtag) && isDefined(storedCtag) && newCtag === storedCtag) {
       return {
         calendarUrl: calendar.url,
-        eventHrefs: [],
+        changedHrefs: [],
+        cancelledHrefs: [],
         newCtag,
         newEtags: storedEtags,
       };
@@ -253,7 +249,8 @@ export class CalDavFetchEventsService {
 
     return {
       calendarUrl: calendar.url,
-      eventHrefs: [...changedHrefs, ...cancelledHrefs],
+      changedHrefs,
+      cancelledHrefs,
       newCtag,
       newEtags: currentEtags,
     };

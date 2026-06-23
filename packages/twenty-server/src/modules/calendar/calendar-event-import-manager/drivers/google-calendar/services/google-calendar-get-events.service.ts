@@ -77,6 +77,7 @@ export class GoogleCalendarGetEventsService {
 
     return {
       calendarEventIds,
+      calendarEventIdsToDelete: [],
       nextSyncCursor: nextSyncToken || '',
     };
   }

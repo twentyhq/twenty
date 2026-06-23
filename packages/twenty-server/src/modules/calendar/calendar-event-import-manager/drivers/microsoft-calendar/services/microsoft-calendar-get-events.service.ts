@@ -47,6 +47,7 @@ export class MicrosoftCalendarGetEventsService {
 
       return {
         calendarEventIds: eventIds,
+        calendarEventIdsToDelete: [],
         nextSyncCursor: pageIterator.getDeltaLink() || '',
       };
     } catch (error) {

@@ -31,11 +31,12 @@ export class CalDavGetEventsService {
       );
 
       this.logger.debug(
-        `Found ${result.eventHrefs.length} changed calendar events for ${connectedAccountId}`,
+        `Found ${result.changedHrefs.length} changed and ${result.cancelledHrefs.length} cancelled calendar events for ${connectedAccountId}`,
       );
 
       return {
-        calendarEventIds: result.eventHrefs,
+        calendarEventIds: result.changedHrefs,
+        calendarEventIdsToDelete: result.cancelledHrefs,
         nextSyncCursor: JSON.stringify(result.syncCursor),
       };
     } catch (error) {

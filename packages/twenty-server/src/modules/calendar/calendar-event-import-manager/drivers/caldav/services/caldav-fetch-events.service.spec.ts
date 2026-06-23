@@ -71,8 +71,32 @@ describe('CalDavFetchEventsService', () => {
 
       const result = await service.fetchChangedEventHrefs(c.client);
 
-      expect(result.eventHrefs.sort()).toEqual([HREF_A, HREF_B].sort());
+      expect(result.changedHrefs.sort()).toEqual([HREF_A, HREF_B].sort());
+      expect(result.cancelledHrefs).toEqual([]);
       expect(c.calendarMultiGet).not.toHaveBeenCalled();
+    });
+
+    it('separates cancelled (404) hrefs from changed ones in a sync-collection delta', async () => {
+      const c = buildClient();
+
+      c.fetchCalendars.mockResolvedValue([
+        {
+          url: PRIMARY_URL,
+          components: ['VEVENT'],
+          reports: ['syncCollection'],
+        },
+      ]);
+      c.syncCollection.mockResolvedValue([
+        { href: HREF_A, status: 207, ok: true, props: {} },
+        { href: HREF_B, status: 404, ok: false, props: {} },
+      ]);
+
+      const result = await service.fetchChangedEventHrefs(c.client, {
+        syncTokens: { [PRIMARY_URL]: 'token-prior' },
+      });
+
+      expect(result.changedHrefs).toEqual([HREF_A]);
+      expect(result.cancelledHrefs).toEqual([HREF_B]);
     });
 
     it('skips network when the server CTag matches the stored CTag', async () => {
@@ -95,12 +119,12 @@ describe('CalDavFetchEventsService', () => {
         etags: { [PRIMARY_URL]: storedEtags },
       });
 
-      expect(result.eventHrefs).toEqual([]);
+      expect(result.changedHrefs).toEqual([]);
       expect(c.propfind).not.toHaveBeenCalled();
       expect(result.syncCursor.etags).toEqual({ [PRIMARY_URL]: storedEtags });
     });
 
-    it('returns both changed and vanished hrefs from an etag diff', async () => {
+    it('separates changed from vanished hrefs in an etag diff', async () => {
       const c = buildClient();
 
       c.fetchCalendars.mockResolvedValue([
@@ -128,7 +152,8 @@ describe('CalDavFetchEventsService', () => {
         },
       });
 
-      expect(result.eventHrefs.sort()).toEqual([HREF_A, HREF_B].sort());
+      expect(result.changedHrefs).toEqual([HREF_A]);
+      expect(result.cancelledHrefs).toEqual([HREF_B]);
     });
 
     it('preserves the prior cursor entry for a calendar whose sync fails', async () => {
@@ -147,7 +172,8 @@ describe('CalDavFetchEventsService', () => {
         syncTokens: { [PRIMARY_URL]: 'token-prior' },
       });
 
-      expect(result.eventHrefs).toEqual([]);
+      expect(result.changedHrefs).toEqual([]);
+      expect(result.cancelledHrefs).toEqual([]);
       expect(result.syncCursor.syncTokens[PRIMARY_URL]).toBe('token-prior');
     });
 
@@ -187,25 +213,6 @@ describe('CalDavFetchEventsService', () => {
         expect.objectContaining({ url: PRIMARY_URL, objectUrls: [HREF_A] }),
       );
       expect(events.map((event) => event.iCalUid)).toEqual(['uid-a']);
-    });
-
-    it('emits a cancelled event for an href the server no longer returns', async () => {
-      const c = buildClient();
-
-      c.calendarMultiGet.mockResolvedValue([
-        { href: HREF_A, props: { calendarData: buildICal('uid-a') } },
-      ]);
-
-      const events = await service.fetchEventsByHrefs(c.client, [
-        HREF_A,
-        HREF_B,
-      ]);
-
-      const live = events.filter((event) => !event.isCanceled);
-      const cancelled = events.filter((event) => event.isCanceled);
-
-      expect(live.map((event) => event.iCalUid)).toEqual(['uid-a']);
-      expect(cancelled.map((event) => event.id)).toEqual([HREF_B]);
     });
 
     it('drops events that fall outside the import time window', async () => {

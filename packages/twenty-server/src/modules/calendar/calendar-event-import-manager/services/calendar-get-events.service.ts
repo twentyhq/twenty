@@ -13,6 +13,7 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 
 export type GetCalendarEventsResponse = {
   calendarEventIds: string[];
+  calendarEventIdsToDelete: string[];
   nextSyncCursor: string;
 };
 

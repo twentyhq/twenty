@@ -57,6 +57,7 @@ describe('CalendarFetchEventsService', () => {
 
     mockGetCalendarEventsService.getCalendarEvents.mockResolvedValue({
       calendarEventIds: ['event-1'],
+      calendarEventIdsToDelete: [],
       nextSyncCursor: 'new-cursor-abc',
     });
 
@@ -152,6 +153,7 @@ describe('CalendarFetchEventsService', () => {
       jest.clearAllMocks();
       mockGetCalendarEventsService.getCalendarEvents.mockResolvedValue({
         calendarEventIds: ['event-2'],
+        calendarEventIdsToDelete: [],
         nextSyncCursor: 'new-cursor-def',
       });
 
@@ -188,6 +190,7 @@ describe('CalendarFetchEventsService', () => {
       jest.clearAllMocks();
       mockGetCalendarEventsService.getCalendarEvents.mockResolvedValue({
         calendarEventIds: ['event-3'],
+        calendarEventIdsToDelete: [],
         nextSyncCursor: 'newer-cursor',
       });
 

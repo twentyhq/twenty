@@ -1,6 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { isString } from '@sniptt/guards';
 import { type GaxiosError } from 'gaxios';
 import { google } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,8 +13,6 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 
 @Injectable()
 export class GoogleCalendarImportEventsService {
-  private readonly logger = new Logger(GoogleCalendarImportEventsService.name);
-
   constructor(
     private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
   ) {}
@@ -38,42 +35,22 @@ export class GoogleCalendarImportEventsService {
         googleCalendarClient.events
           .get({ calendarId: 'primary', eventId: eventExternalId })
           .then((response) => response.data)
-          .catch((error: GaxiosError) =>
-            this.handleDeletedOrFailedEvent(error),
-          ),
+          .catch((error: GaxiosError) => {
+            const status = error.response?.status;
+
+            if (!isDefined(status)) {
+              throw parseGaxiosError(error);
+            }
+
+            throw parseGoogleCalendarError({
+              code: status,
+              reason: error.response?.data?.error?.errors?.[0].reason || '',
+              message: error.response?.data?.error?.errors?.[0].message || '',
+            });
+          }),
       ),
     );
 
     return formatGoogleCalendarEvents(fetchedEvents.filter(isDefined));
-  }
-
-  private handleDeletedOrFailedEvent(error: GaxiosError): null {
-    if (error.response?.status === 404 || error.response?.status === 410) {
-      return null;
-    }
-
-    if (
-      isString(error.code) &&
-      [
-        'ECONNRESET',
-        'ENOTFOUND',
-        'ECONNABORTED',
-        'ETIMEDOUT',
-        'ERR_NETWORK',
-      ].includes(error.code)
-    ) {
-      throw parseGaxiosError(error);
-    }
-
-    this.logger.error(
-      `Calendar event import error for Google Calendar. status: ${error.response?.status}`,
-      error,
-    );
-
-    throw parseGoogleCalendarError({
-      code: error.response?.status,
-      reason: error.response?.data?.error?.errors?.[0].reason || '',
-      message: error.response?.data?.error?.errors?.[0].message || '',
-    });
   }
 }
