@@ -1,4 +1,4 @@
-name: CI New UI
+name: CI UI
 
 on:
   pull_request:
@@ -22,7 +22,7 @@ jobs:
         yarn.lock
         packages/twenty-ui/**
         packages/twenty-shared/**
-  new-ui-task:
+  ui-task:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
@@ -39,7 +39,7 @@ jobs:
         uses: ./.github/actions/yarn-install
       - name: Run ${{ matrix.task }}
         run: npx nx ${{ matrix.task }} twenty-ui
-  new-ui-sb-build:
+  ui-sb-build:
     needs: changed-files-check
     if: >-
       always() &&
@@ -62,11 +62,11 @@ jobs:
           name: storybook-twenty-ui
           path: packages/twenty-ui/storybook-static
           retention-days: 1
-  new-ui-sb-test:
+  ui-sb-test:
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    needs: new-ui-sb-build
-    if: always() && needs.new-ui-sb-build.result == 'success'
+    needs: ui-sb-build
+    if: always() && needs.ui-sb-build.result == 'success'
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -94,11 +94,11 @@ jobs:
           name: argos-screenshots-twenty-ui
           path: packages/twenty-ui/screenshots
           retention-days: 1
-  ci-new-ui-status-check:
+  ci-ui-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [changed-files-check, new-ui-task, new-ui-sb-build, new-ui-sb-test]
+    needs: [changed-files-check, ui-task, ui-sb-build, ui-sb-test]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
