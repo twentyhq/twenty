@@ -18,7 +18,7 @@ const StyledTranscriptContainer = styled.div`
   flex: 1;
   flex-direction: column;
   min-height: 0;
-  overflow-y: auto;
+  gap: ${recordingThemeCssVariables.spacing[2]};
 `;
 
 const StyledEntry = styled.div<{ $isActive: boolean }>`
@@ -85,8 +85,7 @@ export const TranscriptEntryList = ({
     currentTimeSeconds,
   );
   const calendarEventParticipantBySpeakerName = useMemo(
-    () =>
-      buildCalendarEventParticipantBySpeakerName(calendarEventParticipants),
+    () => buildCalendarEventParticipantBySpeakerName(calendarEventParticipants),
     [calendarEventParticipants],
   );
 
@@ -177,7 +176,9 @@ const buildCalendarEventParticipantBySpeakerName = (
           continue;
         }
 
-        if (matchingCalendarEventParticipant.id !== calendarEventParticipant.id) {
+        if (
+          matchingCalendarEventParticipant.id !== calendarEventParticipant.id
+        ) {
           calendarEventParticipantBySpeakerName.delete(speakerNameMatchKey);
           ambiguousSpeakerNameMatchKeys.add(speakerNameMatchKey);
         }
