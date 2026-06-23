@@ -1,9 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import {
-  Brackets,
-  type ObjectLiteral,
-  type WhereExpressionBuilder,
-} from 'typeorm';
+import { Brackets, type WhereExpressionBuilder } from 'typeorm';
 import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -23,9 +19,9 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
+import { type FilterWhereQueryBuilder } from './filter-where-condition-recorder';
 
 const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 
@@ -57,7 +53,7 @@ export class GraphqlQueryFilterFieldParser {
 
   public parse(
     queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+    outerQueryBuilder: FilterWhereQueryBuilder,
     objectNameSingular: string,
     key: string,
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -133,7 +129,7 @@ export class GraphqlQueryFilterFieldParser {
 
   private parseRelationSubFilter(
     queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+    outerQueryBuilder: FilterWhereQueryBuilder,
     parentAlias: string,
     fieldMetadata: FlatFieldMetadata,
     filterValue: Partial<ObjectRecordFilter>,

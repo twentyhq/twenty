@@ -1,18 +1,15 @@
-import {
-  Brackets,
-  NotBrackets,
-  type ObjectLiteral,
-  type WhereExpressionBuilder,
-} from 'typeorm';
+import { Brackets, NotBrackets, type WhereExpressionBuilder } from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
-import { FilterWhereConditionRecorder } from './filter-where-condition-recorder';
+import {
+  FilterWhereConditionRecorder,
+  type FilterWhereQueryBuilder,
+} from './filter-where-condition-recorder';
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
 
 export class GraphqlQueryFilterConditionParser {
@@ -34,16 +31,16 @@ export class GraphqlQueryFilterConditionParser {
     );
   }
 
-  public parse(
-    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+  public parse<QueryBuilder extends FilterWhereQueryBuilder>(
+    queryBuilder: QueryBuilder,
     objectNameSingular: string,
     filter: Partial<ObjectRecordFilter>,
-  ): WorkspaceSelectQueryBuilder<ObjectLiteral> {
+  ): QueryBuilder {
     if (!filter || Object.keys(filter).length === 0) {
       return queryBuilder;
     }
 
-    return queryBuilder.where(
+    queryBuilder.where(
       new Brackets((qb) => {
         this.applyFilterEntriesToWhereBrackets(
           qb,
@@ -53,26 +50,29 @@ export class GraphqlQueryFilterConditionParser {
         );
       }),
     );
+
+    return queryBuilder;
   }
 
+  // Reuses the exact same traversal as `parse` against a recorder rather than
+  // a SQL-emitting builder. NOTE: this is also a validation pass — invalid
+  // filter inputs (e.g. an empty `in: []`) make the field parser throw, so
+  // callers must treat a thrown exception as "invalid filter", not just a
+  // `false` return.
   public producesWhereCondition(
     objectNameSingular: string,
     filter: Partial<ObjectRecordFilter>,
   ): boolean {
     const recorder = new FilterWhereConditionRecorder();
 
-    this.parse(
-      recorder as unknown as WorkspaceSelectQueryBuilder<ObjectLiteral>,
-      objectNameSingular,
-      filter,
-    );
+    this.parse(recorder, objectNameSingular, filter);
 
     return recorder.hasWhereCondition;
   }
 
   public applyFilterEntriesToWhereBrackets(
     innerQueryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+    outerQueryBuilder: FilterWhereQueryBuilder,
     objectNameSingular: string,
     filter: Partial<ObjectRecordFilter>,
   ): void {
@@ -90,7 +90,7 @@ export class GraphqlQueryFilterConditionParser {
 
   private parseKeyFilter(
     queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+    outerQueryBuilder: FilterWhereQueryBuilder,
     objectNameSingular: string,
     key: string,
     // oxlint-disable-next-line typescript/no-explicit-any

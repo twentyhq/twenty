@@ -626,6 +626,12 @@ export class WorkspaceUpdateQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
+    // Hard invariant: RLS predicates must never be the sole scope of a
+    // mutation. Re-asserting here (not only at execute() entry) guarantees a
+    // structurally-absent WHERE cannot be masked by RLS-added predicates,
+    // regardless of how execute() is ordered or refactored later.
+    assertMutationIsScoped({ expressionMap: this.expressionMap });
+
     if (this.shouldBypassPermissionChecks) {
       return;
     }

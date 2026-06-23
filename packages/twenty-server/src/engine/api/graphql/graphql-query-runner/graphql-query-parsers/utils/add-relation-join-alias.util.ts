@@ -1,9 +1,7 @@
-import { type ObjectLiteral } from 'typeorm';
-
-import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
+import { type FilterWhereQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/filter-where-condition-recorder';
 
 type AddRelationJoinAliasToQueryBuilderArgs = {
-  queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
+  queryBuilder: FilterWhereQueryBuilder;
   parentAlias: string;
   relationName: string;
 };

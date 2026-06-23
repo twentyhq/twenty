@@ -74,6 +74,10 @@ export class GraphqlQueryParser {
     );
   }
 
+  // Returns true when the filter parses into at least one real WHERE
+  // predicate. NOTE: this runs the full filter parser, so it also validates —
+  // a malformed filter (e.g. `in: []`) throws instead of returning a boolean.
+  // Callers must treat a thrown exception as "invalid filter".
   public filterProducesWhereCondition(
     objectNameSingular: string,
     recordFilter: Partial<ObjectRecordFilter>,

@@ -7,6 +7,12 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+// Intentionally shallow structural guard: detects a missing filter, `{}`, and
+// empty / all-empty `and` / `or` wrappers. It deliberately does NOT inspect
+// `not`, composite (`{ name: {} }`) or relation (`{ company: {} }`) emptiness —
+// those "defined but non-constraining" cases are caught later by
+// `filterProducesWhereCondition` (which reuses the real SQL filter parser).
+// Keep this cheap and do not duplicate the parser's traversal here.
 export const isEmptyRecordFilter = (
   filter: Partial<ObjectRecordFilter> | undefined | null,
 ): boolean => {

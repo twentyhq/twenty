@@ -33,6 +33,8 @@ export const buildMutationQueryBuilder = ({
   // composite `{ name: {} }` or an empty relation `{ company: {} }`) survives
   // the empty-filter guard yet parses into empty SQL brackets that add no
   // predicate — executing the mutation would touch every row.
+  // `filterProducesWhereCondition` runs the full parser, so a malformed filter
+  // throws here (surfaced as an invalid-query error) rather than returning false.
   if (!commonQueryParser.filterProducesWhereCondition(alias, filter)) {
     throw new CommonQueryRunnerException(
       'A non-empty filter is required',
