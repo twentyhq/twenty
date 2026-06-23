@@ -20,7 +20,6 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -97,10 +96,7 @@ export const CalendarEventsCard = () => {
   if (!firstQueryLoading && !timelineCalendarEvents?.length) {
     // TODO: change animated placeholder
     return (
-      <AnimatedPlaceholderEmptyContainer
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-      >
+      <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noMatchRecord" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>

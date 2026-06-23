@@ -7,6 +7,17 @@
   gap: var(--t-spacing-6);
   justify-content: center;
   text-align: center;
+  animation: emptyPlaceholderFadeIn duration(fast) ease;
+}
+
+@keyframes emptyPlaceholderFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .emptyTextContainer {

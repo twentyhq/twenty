@@ -1,5 +1,7 @@
 declare const classNames: {
   readonly bar: 'bar';
-  readonly barFilling: 'barFilling';
+  readonly track: 'track';
+  readonly indicator: 'indicator';
+  readonly countdown: 'countdown';
 };
 export default classNames;
