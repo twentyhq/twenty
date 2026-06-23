@@ -14,4 +14,5 @@ export type RecordGroupDefinition = {
   position: number;
   isVisible: boolean;
   relationRecord?: ObjectRecord;
+  viewGroupId?: string;
 };
