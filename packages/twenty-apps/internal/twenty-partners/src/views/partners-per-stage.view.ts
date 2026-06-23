@@ -1,4 +1,4 @@
-import { ViewType, defineView } from 'twenty-sdk/define';
+import { AggregateOperations, ViewType, defineView } from 'twenty-sdk/define';
 
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
@@ -6,6 +6,8 @@ const PARTNER_NAME_FIELD_ID = 'a0000001-0000-4000-8000-000000000001';
 const PARTNER_COUNTRY_FIELD_ID = 'a77d7fa6-c398-47db-af0f-036a5c719f20';
 const PARTNER_SCOPE_FIELD_ID = '500021ad-ca42-4fd3-8727-392dd26b722a';
 const PARTNER_TIER_FIELD_ID = 'd4fa6461-37b6-49ee-9181-dd482e74a70b';
+const PARTNER_VALIDATION_STAGE_FIELD_ID =
+  '2ca9856f-f54a-4326-9ff3-668fd7da0b50';
 
 // Prod view id — recreated as TABLE on 1.1.5 install (KANBAN→TABLE cannot update in place).
 export const PARTNERS_PER_STAGE_VIEW_UNIVERSAL_IDENTIFIER =
@@ -18,6 +20,41 @@ export default defineView({
   objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   type: ViewType.TABLE,
   position: 0,
+  mainGroupByFieldMetadataUniversalIdentifier: PARTNER_VALIDATION_STAGE_FIELD_ID,
+  kanbanAggregateOperation: AggregateOperations.COUNT,
+  kanbanAggregateOperationFieldMetadataUniversalIdentifier: PARTNER_NAME_FIELD_ID,
+  groups: [
+    {
+      universalIdentifier: '24298244-4ce6-435d-91a4-d32d3f2fa6ef',
+      fieldValue: 'APPLICATION',
+      position: 0,
+      isVisible: true,
+    },
+    {
+      universalIdentifier: 'ab1dad6a-d540-4717-8817-9929cce5c4d7',
+      fieldValue: 'POTENTIAL',
+      position: 1,
+      isVisible: true,
+    },
+    {
+      universalIdentifier: 'df9c9696-fd2a-4d58-a335-10b7596e12ba',
+      fieldValue: 'VALIDATED',
+      position: 2,
+      isVisible: true,
+    },
+    {
+      universalIdentifier: '3a23f780-08d9-4930-87a0-a01eefe4f85f',
+      fieldValue: 'FORMER',
+      position: 3,
+      isVisible: true,
+    },
+    {
+      universalIdentifier: '50d725e5-56ce-4769-8487-05fedd9bf8bb',
+      fieldValue: 'REJECTED',
+      position: 4,
+      isVisible: true,
+    },
+  ],
   fields: [
     {
       universalIdentifier: '5b81149d-af9a-4941-a65e-04b771ccc974',
