@@ -23,5 +23,8 @@
 .cardInner {
   display: flex;
   padding: var(--t-spacing-4) var(--t-spacing-3);
+  // Reserve room on the right so content never overlaps the absolutely
+  // positioned radio (right offset + 16px radio width + gap).
+  padding-right: calc(var(--t-spacing-2) + 16px + var(--t-spacing-2));
   width: 100%;
 }
