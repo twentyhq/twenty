@@ -2304,8 +2304,6 @@ export interface Webhook {
 export interface ToolIndexEntry {
     name: Scalars['String']
     label: Scalars['String']
-    inProgressLabel?: Scalars['String']
-    completedLabel?: Scalars['String']
     description: Scalars['String']
     category: Scalars['String']
     objectName?: Scalars['String']
@@ -5426,8 +5424,6 @@ export interface WebhookGenqlSelection{
 export interface ToolIndexEntryGenqlSelection{
     name?: boolean | number
     label?: boolean | number
-    inProgressLabel?: boolean | number
-    completedLabel?: boolean | number
     description?: boolean | number
     category?: boolean | number
     objectName?: boolean | number
