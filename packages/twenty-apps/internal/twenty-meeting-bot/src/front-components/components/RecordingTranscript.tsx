@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { TranscriptEntryList } from 'src/front-components/components/TranscriptEntryList';
 import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
 import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
+import { type CalendarEventRecordingParticipant } from 'src/front-components/types/calendar-event-recording-participant.type';
 import { parseTranscriptEntries } from 'src/front-components/utils/parse-transcript-entries.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
@@ -16,17 +17,18 @@ const StyledTranscriptCenteredState = styled.div`
   flex: 1;
   font-size: ${recordingThemeCssVariables.font.sizeSm};
   justify-content: center;
-  padding: ${recordingThemeCssVariables.spacing[4]};
 `;
 
 type RecordingTranscriptProps = {
   transcript: unknown;
   currentTimeSeconds: number;
+  calendarEventParticipants: CalendarEventRecordingParticipant[];
 };
 
 export const RecordingTranscript = ({
   transcript,
   currentTimeSeconds,
+  calendarEventParticipants,
 }: RecordingTranscriptProps) => {
   const marker = useMemo(() => parseTranscriptMarker(transcript), [transcript]);
   const entries = useMemo(
@@ -84,6 +86,7 @@ export const RecordingTranscript = ({
     <TranscriptEntryList
       entries={entries}
       currentTimeSeconds={currentTimeSeconds}
+      calendarEventParticipants={calendarEventParticipants}
     />
   );
 };
