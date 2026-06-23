@@ -11,11 +11,7 @@ import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/uti
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
-import {
-  type ApplicationConfig,
-  type LogicFunctionConfig,
-  type ServerLogicFunctionConfig,
-} from '@/sdk/define';
+import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
@@ -49,7 +45,6 @@ import {
   type PostInstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
   type RoleManifest,
-  type ServerLogicFunctionManifest,
   type SkillManifest,
   type StandaloneViewFieldManifest,
   type ViewManifest,
@@ -99,7 +94,6 @@ export const buildManifest = async (
   const agents: AgentManifest[] = [];
   const connectionProviders: ConnectionProviderManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
-  const serverLogicFunctions: ServerLogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
   const views: ViewManifest[] = [];
@@ -123,7 +117,6 @@ export const buildManifest = async (
   const agentsFilePaths: string[] = [];
   const connectionProvidersFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
-  const serverLogicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
   const viewsFilePaths: string[] = [];
@@ -359,31 +352,6 @@ export const buildManifest = async (
 
         break;
       }
-      case ManifestEntityKey.ServerLogicFunctions: {
-        const extract =
-          await extractManifestFromFile<ServerLogicFunctionConfig>({
-            appPath,
-            filePath,
-          });
-
-        errors.push(...extract.errors);
-        warnings.push(...(extract.warnings ?? []));
-
-        const { handler: _handler, ...rest } = extract.config;
-
-        const config: ServerLogicFunctionManifest = {
-          ...rest,
-          handlerName: 'default.config.handler',
-          sourceHandlerPath: relativePath,
-          builtHandlerPath: relativePath.replace(/\.tsx?$/, '.mjs'),
-          builtHandlerChecksum: '[default-checksum]',
-        };
-
-        serverLogicFunctions.push(config);
-        serverLogicFunctionsFilePaths.push(relativePath);
-
-        break;
-      }
       case ManifestEntityKey.FrontComponents: {
         const extract = await extractManifestFromFile<FrontComponentConfig>({
           appPath,
@@ -615,7 +583,6 @@ export const buildManifest = async (
         agents: agents.sort(byId),
         connectionProviders: connectionProviders.sort(byId),
         logicFunctions: logicFunctions.sort(byId),
-        serverLogicFunctions: serverLogicFunctions.sort(byId),
         frontComponents: frontComponents.sort(byId),
         publicAssets: publicAssets.sort(byPath),
         views: views.sort(byId),
@@ -637,7 +604,6 @@ export const buildManifest = async (
     agents: agentsFilePaths,
     connectionProviders: connectionProvidersFilePaths,
     logicFunctions: logicFunctionsFilePaths,
-    serverLogicFunctions: serverLogicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,
     views: viewsFilePaths,

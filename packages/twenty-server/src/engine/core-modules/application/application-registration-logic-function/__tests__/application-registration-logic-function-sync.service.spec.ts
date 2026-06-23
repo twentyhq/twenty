@@ -7,8 +7,8 @@ import { ApplicationRegistrationLogicFunctionSyncService } from 'src/engine/core
 const APP_REGISTRATION_ID = '11111111-1111-1111-1111-111111111111';
 
 const manifestWith = (
-  serverLogicFunctions: NonNullable<Manifest['serverLogicFunctions']>,
-): Manifest => ({ serverLogicFunctions }) as Manifest;
+  logicFunctions: NonNullable<Manifest['logicFunctions']>,
+): Manifest => ({ logicFunctions }) as Manifest;
 
 describe('ApplicationRegistrationLogicFunctionSyncService', () => {
   let service: ApplicationRegistrationLogicFunctionSyncService;
@@ -30,7 +30,7 @@ describe('ApplicationRegistrationLogicFunctionSyncService', () => {
     );
   });
 
-  it('upserts manifest server logic functions', async () => {
+  it('upserts only logic functions that carry server-trigger settings', async () => {
     await service.syncFromManifest({
       applicationRegistrationId: APP_REGISTRATION_ID,
       manifest: manifestWith([
@@ -38,6 +38,14 @@ describe('ApplicationRegistrationLogicFunctionSyncService', () => {
           universalIdentifier: 'a',
           name: 'srv',
           serverWebhookTriggerSettings: {},
+          sourceHandlerPath: '',
+          builtHandlerPath: '',
+          builtHandlerChecksum: '',
+          handlerName: 'handler',
+        },
+        {
+          universalIdentifier: 'b',
+          name: 'workspace-only',
           sourceHandlerPath: '',
           builtHandlerPath: '',
           builtHandlerChecksum: '',

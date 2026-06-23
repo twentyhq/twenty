@@ -82,7 +82,6 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "definePostInstallLogicFunction",
     "definePreInstallLogicFunction",
     "defineRole",
-    "defineServerLogicFunction",
     "defineSkill",
     "defineView",
     "defineViewField",

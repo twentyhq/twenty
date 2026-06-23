@@ -245,10 +245,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    for (const logicFunctionManifest of [
-      ...manifest.logicFunctions,
-      ...(manifest.serverLogicFunctions ?? []),
-    ]) {
+    for (const logicFunctionManifest of manifest.logicFunctions) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromLogicFunctionManifestToUniversalFlatLogicFunction({

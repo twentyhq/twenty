@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Manifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationRegistrationLogicFunctionEntity } from 'src/engine/core-modules/application/application-registration-logic-function/application-registration-logic-function.entity';
@@ -20,7 +21,13 @@ export class ApplicationRegistrationLogicFunctionSyncService {
     applicationRegistrationId: string;
     manifest: Manifest;
   }): Promise<void> {
-    const serverFunctions = manifest.serverLogicFunctions ?? [];
+    // A logic function is server-exposed iff it carries server-only trigger
+    // settings — no separate manifest array is needed.
+    const serverFunctions = (manifest.logicFunctions ?? []).filter(
+      (logicFunction) =>
+        isDefined(logicFunction.serverWebhookTriggerSettings) ||
+        isDefined(logicFunction.serverCronTriggerSettings),
+    );
 
     // Clear `deletedAt` on upsert so re-adding a previously soft-deleted
     // function reactivates the existing row instead of leaving it deleted.
