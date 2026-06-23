@@ -534,7 +534,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     const flatDefaultRecordPageLayoutsToCreate =
-      this.computeFlatDefaultRecordPageLayoutToCreate({
+      computeFlatDefaultRecordPageLayoutToCreate({
         objectMetadata: flatObjectMetadataToCreate,
         flatApplication: resolvedOwnerFlatApplication,
         objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
@@ -701,12 +701,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       viewSortUniversalIdentifiers: [],
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     };
-  }
-
-  private computeFlatDefaultRecordPageLayoutToCreate(
-    args: Parameters<typeof computeFlatDefaultRecordPageLayoutToCreate>[0],
-  ): ReturnType<typeof computeFlatDefaultRecordPageLayoutToCreate> {
-    return computeFlatDefaultRecordPageLayoutToCreate(args);
   }
 
   private async computeFlatNavigationMenuItemToCreate({
