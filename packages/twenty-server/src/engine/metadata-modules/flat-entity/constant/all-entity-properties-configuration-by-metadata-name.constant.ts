@@ -675,6 +675,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
+    serverWebhookTriggerSettings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    serverCronTriggerSettings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     toolTriggerSettings: {
       toCompare: true,
       toStringify: true,

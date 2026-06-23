@@ -50,6 +50,8 @@ export const buildUniversalFlatLogicFunctionToCreate = (
     cronTriggerSettings: input.cronTriggerSettings ?? null,
     databaseEventTriggerSettings: input.databaseEventTriggerSettings ?? null,
     httpRouteTriggerSettings: input.httpRouteTriggerSettings ?? null,
+    serverWebhookTriggerSettings: input.serverWebhookTriggerSettings ?? null,
+    serverCronTriggerSettings: input.serverCronTriggerSettings ?? null,
     toolTriggerSettings: input.toolTriggerSettings ?? null,
     workflowActionTriggerSettings: input.workflowActionTriggerSettings ?? null,
     createdAt: now,

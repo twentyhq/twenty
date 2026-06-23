@@ -10,11 +10,11 @@ import {
 
 import { Request, Response } from 'express';
 
+import { sendRouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import { ServerWebhookTriggerRestApiExceptionFilter } from 'src/engine/core-modules/server-webhook-trigger/exceptions/server-webhook-trigger-rest-api-exception-filter';
 import { ServerWebhookTriggerService } from 'src/engine/core-modules/server-webhook-trigger/server-webhook-trigger.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { sendRouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 
 @Controller('webhooks/server')
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -24,12 +24,8 @@ export class ServerWebhookTriggerController {
     private readonly serverWebhookTriggerService: ServerWebhookTriggerService,
   ) {}
 
-  @Post(
-    ':applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier',
-  )
+  @Post(':logicFunctionUniversalIdentifier')
   async post(
-    @Param('applicationRegistrationUniversalIdentifier')
-    applicationRegistrationUniversalIdentifier: string,
     @Param('logicFunctionUniversalIdentifier')
     logicFunctionUniversalIdentifier: string,
     @Req() request: Request,
@@ -39,7 +35,6 @@ export class ServerWebhookTriggerController {
       response,
       await this.serverWebhookTriggerService.handle({
         request,
-        applicationRegistrationUniversalIdentifier,
         logicFunctionUniversalIdentifier,
       }),
     );
