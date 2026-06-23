@@ -198,4 +198,29 @@ describe('defineLogicFunction', () => {
       'Database event trigger must have an eventName',
     );
   });
+
+  it('accepts a serverWebhookTriggerSettings resolver returning { workspaceId }', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Resolve workspace from request',
+      serverWebhookTriggerSettings: { forwardedRequestHeaders: ['x-tenant'] },
+      handler: async () => ({ workspaceId: 'ws-1' }),
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.config.serverWebhookTriggerSettings).toBeDefined();
+  });
+
+  it('compile-time rejects a serverWebhookTriggerSettings resolver returning the wrong shape', () => {
+    // @ts-expect-error — handler must return { workspaceId: string } when
+    // `serverWebhookTriggerSettings` is set.
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Bad resolver',
+      serverWebhookTriggerSettings: { forwardedRequestHeaders: [] },
+      handler: async () => ({ notAWorkspaceId: 'oops' }),
+    });
+
+    expect(result.success).toBe(true);
+  });
 });

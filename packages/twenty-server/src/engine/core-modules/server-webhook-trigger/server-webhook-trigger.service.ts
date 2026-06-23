@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isString } from '@sniptt/guards';
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
@@ -169,10 +170,8 @@ export class ServerWebhookTriggerService {
     }
 
     const data = result.data as { workspaceId?: unknown; payload?: unknown };
-    const workspaceId =
-      typeof data?.workspaceId === 'string' ? data.workspaceId : undefined;
 
-    if (!isDefined(workspaceId)) {
+    if (!isString(data?.workspaceId)) {
       throw new ServerWebhookTriggerException(
         'Resolver logic function must return { workspaceId: string; payload?: object }',
         ServerWebhookTriggerExceptionCode.RESOLVER_INVALID_RESULT,
@@ -180,7 +179,7 @@ export class ServerWebhookTriggerService {
     }
 
     return {
-      workspaceId,
+      workspaceId: data.workspaceId,
       payload:
         typeof data.payload === 'object' && data.payload !== null
           ? (data.payload as object)
