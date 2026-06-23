@@ -13,8 +13,12 @@ export type PipelineLanes = [
   PipelineCardId[],
 ];
 
-// Pulls a card out of whichever lane holds it and splices it into the
-// target lane at a bounded index.
+export type PipelineCardElements = Partial<
+  Record<PipelineCardId, HTMLDivElement | null>
+>;
+export type PipelineCardRects = Partial<Record<PipelineCardId, DOMRect>>;
+export type PipelineCardAnimations = Partial<Record<PipelineCardId, Animation>>;
+
 export function movePipelineCard(
   lanes: PipelineLanes,
   cardId: PipelineCardId,

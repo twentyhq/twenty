@@ -16,8 +16,7 @@ import {
   type ComponentType,
   type ReactNode,
   type PointerEvent as ReactPointerEvent,
-  useEffect,
-  useLayoutEffect,
+  useCallback,
   useRef,
   useState,
 } from 'react';
@@ -32,16 +31,18 @@ import { PreviewAvatar } from '@/app-preview/primitives/PreviewAvatar';
 import { PreviewTag } from '@/app-preview/primitives/PreviewTag';
 import { type CellSelectColor } from '@/app-preview/types';
 import { clampToRange } from '@/platform/motion';
-import { EASING } from '@/tokens';
 
+import { CardFlipAnimationEffect } from './effect-components/CardFlipAnimationEffect';
+import { PointerCaptureCleanupEffect } from './effect-components/PointerCaptureCleanupEffect';
+import { getDropTarget } from './utils/get-drop-target';
 import {
   movePipelineCard,
+  type PipelineCardAnimations,
+  type PipelineCardElements,
   type PipelineCardId,
-  type PipelineLaneIndex,
+  type PipelineCardRects,
   type PipelineLanes,
-} from './pipeline-move-card';
-
-const CARD_DROP_MS = 300;
+} from './utils/pipeline-move-card';
 
 type DealPerson = {
   avatarUrl: string;
@@ -539,51 +540,16 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
   const interactionRef = useRef<HTMLDivElement>(null);
   const ghostRef = useRef<HTMLDivElement>(null);
   const laneBodyRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const cardRefs = useRef<
-    Partial<Record<PipelineCardId, HTMLDivElement | null>>
-  >({});
-  const pendingRectsRef = useRef<Partial<Record<PipelineCardId, DOMRect>>>({});
-  const animationsRef = useRef<Partial<Record<PipelineCardId, Animation>>>({});
+  const cardRefs = useRef<PipelineCardElements>({});
+  const pendingRectsRef = useRef<PipelineCardRects>({});
+  const animationsRef = useRef<PipelineCardAnimations>({});
   const activePointerRef = useRef<number | null>(null);
   const dragStateRef = useRef<DragState | null>(null);
 
-  useLayoutEffect(() => {
-    const previousRects = pendingRectsRef.current;
-    const cardIds = Object.keys(previousRects) as PipelineCardId[];
-
-    if (cardIds.length === 0) {
-      return;
-    }
-    pendingRectsRef.current = {};
-
-    for (const cardId of cardIds) {
-      const previousRect = previousRects[cardId];
-      const element = cardRefs.current[cardId];
-      const nextRect = element?.getBoundingClientRect();
-
-      if (!previousRect || !element || !nextRect) {
-        continue;
-      }
-      const deltaX = previousRect.left - nextRect.left;
-      const deltaY = previousRect.top - nextRect.top;
-
-      if (Math.abs(deltaX) < 0.5 && Math.abs(deltaY) < 0.5) {
-        continue;
-      }
-
-      animationsRef.current[cardId]?.cancel();
-      animationsRef.current[cardId] = element.animate(
-        [
-          { transform: `translate3d(${deltaX}px, ${deltaY}px, 0)` },
-          { transform: 'translate3d(0, 0, 0)' },
-        ],
-        { duration: CARD_DROP_MS, easing: EASING.standard },
-      );
-    }
-  }, [lanes]);
+  const getActivePointerId = useCallback(() => activePointerRef.current, []);
 
   const captureRects = () => {
-    const rects: Partial<Record<PipelineCardId, DOMRect>> = {};
+    const rects: PipelineCardRects = {};
 
     for (const lane of lanes) {
       for (const cardId of lane) {
@@ -595,43 +561,6 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
       }
     }
     pendingRectsRef.current = rects;
-  };
-
-  const getDropTarget = (
-    clientX: number,
-    clientY: number,
-    cardId: PipelineCardId,
-  ): { cardIndex: number; laneIndex: PipelineLaneIndex } | null => {
-    const matchedLane = laneBodyRefs.current.findIndex((element) => {
-      const rect = element?.getBoundingClientRect();
-      return (
-        rect &&
-        clientX >= rect.left &&
-        clientX <= rect.right &&
-        clientY >= rect.top &&
-        clientY <= rect.bottom
-      );
-    });
-
-    if (matchedLane < 0 || matchedLane > 2) {
-      return null;
-    }
-    const laneIndex = matchedLane as PipelineLaneIndex;
-    const laneCardIds = lanes[laneIndex].filter(
-      (laneCardId) => laneCardId !== cardId,
-    );
-    let cardIndex = laneCardIds.length;
-
-    for (const [index, laneCardId] of laneCardIds.entries()) {
-      const rect = cardRefs.current[laneCardId]?.getBoundingClientRect();
-
-      if (rect && clientY < rect.top + rect.height / 2) {
-        cardIndex = index;
-        break;
-      }
-    }
-
-    return { cardIndex, laneIndex };
   };
 
   const moveGhost = (x: number, y: number) => {
@@ -675,7 +604,14 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
     if (!state) {
       return;
     }
-    const dropTarget = getDropTarget(clientX, clientY, state.cardId);
+    const dropTarget = getDropTarget(
+      clientX,
+      clientY,
+      state.cardId,
+      laneBodyRefs.current,
+      cardRefs.current,
+      lanes,
+    );
 
     if (dropTarget) {
       captureRects();
@@ -752,19 +688,6 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
     activePointerRef.current = null;
   };
 
-  useEffect(() => {
-    const layer = interactionRef.current;
-    return () => {
-      if (activePointerRef.current !== null && layer) {
-        try {
-          layer.releasePointerCapture(activePointerRef.current);
-        } catch {
-          // The pointer was already released by the browser.
-        }
-      }
-    };
-  }, []);
-
   const laneHeaders = LANES_META.map((meta, laneNumber) => ({
     laneNumber,
     meta,
@@ -777,6 +700,16 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
 
   return (
     <Root>
+      <CardFlipAnimationEffect
+        animationsRef={animationsRef}
+        cardRefs={cardRefs}
+        lanes={lanes}
+        pendingRectsRef={pendingRectsRef}
+      />
+      <PointerCaptureCleanupEffect
+        getActivePointerId={getActivePointerId}
+        interactionRef={interactionRef}
+      />
       <BoardHeader>
         <IconLayoutKanban size={14} stroke={1.6} />
         <BoardTitle>By Stage</BoardTitle>
