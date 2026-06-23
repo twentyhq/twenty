@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import {
+  LogicFunctionExecutionException,
+  LogicFunctionExecutionExceptionCode,
+} from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import {
@@ -16,6 +20,8 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 
 @Injectable()
 export class ServerWebhookTriggerService {
+  private readonly logger = new Logger(ServerWebhookTriggerService.name);
+
   constructor(
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
@@ -66,16 +72,32 @@ export class ServerWebhookTriggerService {
       );
     }
 
-    const outcome = await this.logicFunctionTriggerService.run({
-      logicFunction: ownerLogicFunction,
-      request,
-      pathParameters: {},
-      forwardedRequestHeaders:
-        ownerLogicFunction.serverWebhookTriggerSettings
-          ?.forwardedRequestHeaders ?? [],
-      userId: null,
-      userWorkspaceId: null,
-    });
+    let outcome;
+
+    try {
+      outcome = await this.logicFunctionTriggerService.run({
+        logicFunction: ownerLogicFunction,
+        request,
+        pathParameters: {},
+        forwardedRequestHeaders:
+          ownerLogicFunction.serverWebhookTriggerSettings
+            ?.forwardedRequestHeaders ?? [],
+        userId: null,
+        userWorkspaceId: null,
+      });
+    } catch (error) {
+      // Translate typed executor errors so the REST exception filter returns
+      // the right HTTP status (e.g. 404 for LOGIC_FUNCTION_NOT_FOUND) instead
+      // of bubbling them up as generic 500s.
+      this.logger.error(
+        `Server webhook trigger execution failed for function ${ownerLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw new ServerWebhookTriggerException(
+        error instanceof Error ? error.message : String(error),
+        this.mapExecutorErrorToWebhookCode(error),
+      );
+    }
 
     if (outcome.kind === 'userError') {
       throw new ServerWebhookTriggerException(
@@ -85,5 +107,18 @@ export class ServerWebhookTriggerService {
     }
 
     return outcome.response;
+  }
+
+  private mapExecutorErrorToWebhookCode(
+    error: unknown,
+  ): ServerWebhookTriggerExceptionCode {
+    if (
+      error instanceof LogicFunctionExecutionException &&
+      error.code === LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+    ) {
+      return ServerWebhookTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
+    }
+
+    return ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_PLATFORM_ERROR;
   }
 }

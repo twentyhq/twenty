@@ -1,6 +1,10 @@
 import { type Request } from 'express';
 import { type Repository } from 'typeorm';
 
+import {
+  LogicFunctionExecutionException,
+  LogicFunctionExecutionExceptionCode,
+} from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { type LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { ServerWebhookTriggerExceptionCode } from 'src/engine/core-modules/server-webhook-trigger/exceptions/server-webhook-trigger.exception';
 import { ServerWebhookTriggerService } from 'src/engine/core-modules/server-webhook-trigger/server-webhook-trigger.service';
@@ -115,6 +119,27 @@ describe('ServerWebhookTriggerService', () => {
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_USER_UNCAUGHT_ERROR,
+    });
+  });
+
+  it('maps a LogicFunctionExecutionException(LOGIC_FUNCTION_NOT_FOUND) to the webhook not-found code', async () => {
+    logicFunctionTriggerService.run.mockRejectedValue(
+      new LogicFunctionExecutionException(
+        'not found',
+        LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      ),
+    );
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerWebhookTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+    });
+  });
+
+  it('falls back to PLATFORM_ERROR for any other thrown executor error', async () => {
+    logicFunctionTriggerService.run.mockRejectedValue(new Error('boom'));
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_PLATFORM_ERROR,
     });
   });
 

@@ -2,6 +2,12 @@ import { LogicFunctionTriggerJob } from 'src/engine/core-modules/logic-function/
 import { ServerCronTriggerCronJob } from 'src/engine/core-modules/server-cron-trigger/server-cron-trigger.cron.job';
 
 describe('ServerCronTriggerCronJob', () => {
+  // Always restore real timers so a failing assertion in the fake-clock
+  // case doesn't leak mocked time into later specs.
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   const buildJob = ({
     rows,
     featureEnabled = true,
@@ -90,7 +96,6 @@ describe('ServerCronTriggerCronJob', () => {
     await job.handle();
 
     expect(messageQueueService.add).not.toHaveBeenCalled();
-    jest.useRealTimers();
   });
 
   it('filters by server-cron + owner-workspace + alive predicates at the SQL layer', async () => {
