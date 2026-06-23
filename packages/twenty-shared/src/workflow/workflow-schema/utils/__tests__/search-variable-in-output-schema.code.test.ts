@@ -225,6 +225,55 @@ describe('searchVariableInOutputSchema - code output schema', () => {
     });
   });
 
+  describe('Flattened top-level array tests', () => {
+    const mockFlattenedArraySchema: BaseOutputSchemaV2 = {
+      '0': {
+        isLeaf: false,
+        type: 'object',
+        label: '0',
+        value: {
+          hello: { isLeaf: true, type: 'string', label: 'hello', value: '1' },
+        },
+      },
+      '1': {
+        isLeaf: false,
+        type: 'object',
+        label: '1',
+        value: {
+          hello: { isLeaf: true, type: 'string', label: 'hello', value: '2' },
+        },
+      },
+    };
+
+    it('should label the whole output ({{stepId}}) as an array', () => {
+      const result = searchVariableThroughCodeOutputSchema({
+        stepName: 'Code Action',
+        codeOutputSchema: mockFlattenedArraySchema,
+        rawVariableName: '{{step1}}',
+      });
+
+      expect(result).toEqual({
+        variableLabel: 'Code Action',
+        variablePathLabel: 'Code Action',
+        variableType: 'ARRAY',
+      });
+    });
+
+    it('should still resolve an indexed element of the array', () => {
+      const result = searchVariableThroughCodeOutputSchema({
+        stepName: 'Code Action',
+        codeOutputSchema: mockFlattenedArraySchema,
+        rawVariableName: '{{step1.0.hello}}',
+      });
+
+      expect(result).toEqual({
+        variableLabel: 'hello',
+        variablePathLabel: 'Code Action > 0 > hello',
+        variableType: 'string',
+      });
+    });
+  });
+
   describe('Edge cases', () => {
     const mockBaseSchema: BaseOutputSchemaV2 = {
       simpleField: {

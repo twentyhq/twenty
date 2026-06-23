@@ -7,6 +7,7 @@ import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-typ
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { WorkflowEditActionCodeFieldArrayInput } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFieldArrayInput';
 import { getWorkflowCodeFieldsEnumSelectOptions } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsEnumSelectOptions';
 import { getWorkflowCodeFieldsLeafKind } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsLeafKind';
 import { t } from '@lingui/core/macro';
@@ -87,6 +88,18 @@ export const WorkflowEditActionCodeFieldLeaf = ({
         />
       );
     }
+  }
+
+  if (leafKind === 'array') {
+    return (
+      <WorkflowEditActionCodeFieldArrayInput
+        label={label}
+        defaultValue={inputValue}
+        readonly={readonly}
+        onChange={onChange}
+        VariablePicker={VariablePicker}
+      />
+    );
   }
 
   if (leafKind === 'boolean') {

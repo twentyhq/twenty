@@ -11,6 +11,7 @@ import {
   buildManualTriggerMetadataNode,
   BulkRecordsAvailability,
   extractRawVariableNamePart,
+  getCurrentItemSchemaFromFlattenedArrayOutputSchema,
   GlobalAvailability,
   isBaseOutputSchemaV2,
   navigateOutputSchemaProperty,
@@ -653,8 +654,21 @@ export class WorkflowSchemaWorkspaceService {
       case WorkflowActionType.HTTP_REQUEST:
       case WorkflowActionType.LOGIC_FUNCTION: {
         const propertyPath = extractPropertyPathFromVariable(items);
+        const outputSchema = this.getOutputSchemaWithExpectedFallback(
+          step.settings,
+        );
+
+        const variableTargetsWholeStepOutput = propertyPath.length === 0;
+
+        if (variableTargetsWholeStepOutput) {
+          const wholeStepOutputItemSchema =
+            getCurrentItemSchemaFromFlattenedArrayOutputSchema(outputSchema);
+
+          return wholeStepOutputItemSchema ?? DEFAULT_ITERATOR_CURRENT_ITEM;
+        }
+
         const schemaNode = navigateOutputSchemaProperty({
-          schema: this.getOutputSchemaWithExpectedFallback(step.settings),
+          schema: outputSchema,
           propertyPath,
         });
 

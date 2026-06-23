@@ -9,6 +9,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
+import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
 import { isIteratorOutputSchema } from '@/workflow/workflow-variables/types/guards/isIteratorOutputSchema';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
@@ -18,9 +19,10 @@ import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItem
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { isFlattenedArrayOutputSchema } from 'twenty-shared/workflow';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 
 type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;
@@ -114,6 +116,28 @@ export const WorkflowVariablesDropdownStepItems = ({
     );
   };
 
+  const isStepOutputFlattenedArray =
+    isBaseOutputSchemaV2(step.outputSchema) &&
+    isFlattenedArrayOutputSchema(step.outputSchema);
+
+  const isWholeListFoundThroughSearch = isDefined(searchInputValue)
+    ? t`Whole list`.toLowerCase().includes(searchInputValue.toLowerCase())
+    : true;
+
+  const shouldDisplayWholeList =
+    isStepOutputFlattenedArray &&
+    currentPath.length === 0 &&
+    isWholeListFoundThroughSearch;
+
+  const handleSelectWholeList = () => {
+    onSelect(
+      getVariableTemplateFromPath({
+        stepId: step.id,
+        path: [],
+      }),
+    );
+  };
+
   const displayedSubStepObject = getDisplayedSubStepObject();
 
   const displayedSubStepObjectMetadata = isDefined(displayedSubStepObject)
@@ -181,6 +205,17 @@ export const WorkflowVariablesDropdownStepItems = ({
             contextualText={t`Use the whole item`}
           />
         )}
+        {shouldDisplayWholeList && (
+          <MenuItemSelect
+            selected={false}
+            focused={false}
+            onClick={handleSelectWholeList}
+            text={t`Whole list`}
+            hasSubMenu={false}
+            LeftIcon={getIcon('IconListDetails')}
+            contextualText={t`Use the whole list`}
+          />
+        )}
         {shouldDisplaySubStepObject && (
           <MenuItemSelect
             selected={false}
@@ -194,9 +229,9 @@ export const WorkflowVariablesDropdownStepItems = ({
           />
         )}
         {filteredOptions.length > 0 &&
-          (shouldDisplaySubStepObject || shouldDisplayWholeIteratorItem) && (
-            <DropdownMenuSeparator />
-          )}
+          (shouldDisplaySubStepObject ||
+            shouldDisplayWholeIteratorItem ||
+            shouldDisplayWholeList) && <DropdownMenuSeparator />}
         {filteredOptions.map(([key, subStep]) => {
           if (!isDefined(subStep)) {
             return null;
