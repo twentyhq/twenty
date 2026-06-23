@@ -26,6 +26,7 @@ vi.mock('twenty-client-sdk/core', () => ({
 
 const SECRET_BYTES = Buffer.from('entry-test-secret');
 const SECRET = `whsec_${SECRET_BYTES.toString('base64')}`;
+const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 
 type RecallWebhookRoutePayload = Parameters<
   typeof recallWebhookRouteHandler
@@ -52,6 +53,21 @@ const buildSignedHeaders = (rawBody: string): Record<string, string> => {
     'webhook-signature': `v1,${signature}`,
   };
 };
+
+const buildRecordingDoneWebhookBody = () => ({
+  event: 'recording.done',
+  data: {
+    bot: {
+      id: 'recall-bot-1',
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+      },
+    },
+    recording: {
+      id: 'recall-recording-1',
+    },
+  },
+});
 
 describe('recallWebhookRouteHandler', () => {
   beforeEach(() => {
@@ -158,19 +174,20 @@ describe('recallWebhookRouteHandler', () => {
   });
 
   it('dispatches a correctly signed payload to the handler', async () => {
-    const rawBody = JSON.stringify({ event: 'recording.done' });
+    const body = buildRecordingDoneWebhookBody();
+    const rawBody = JSON.stringify(body);
 
     const result = await recallWebhookRouteHandler(
       buildRoutePayload({
         rawBody,
-        body: { event: 'recording.done' },
+        body,
         headers: buildSignedHeaders(rawBody),
       }),
     );
 
     expect(handleRecallWebhookMock).toHaveBeenCalledTimes(1);
     expect(handleRecallWebhookMock).toHaveBeenCalledWith(
-      expect.objectContaining({ body: { event: 'recording.done' } }),
+      expect.objectContaining({ body }),
     );
     expect(result).toEqual({ status: 'updated' });
   });

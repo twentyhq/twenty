@@ -1,12 +1,16 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { APPLICATION_ID_ENV_VAR_NAME } from 'src/logic-functions/constants/application-id-env-var-name';
 import { reapOrphanedMeetingBots } from 'src/logic-functions/flows/reap-orphaned-meeting-bots.util';
 
 const listScheduledRecallBotsMock = vi.hoisted(() => vi.fn());
 const cancelRecallBotMock = vi.hoisted(() => vi.fn());
 const ejectRecallBotMock = vi.hoisted(() => vi.fn());
+const fetchCurrentWorkspaceIdMock = vi.hoisted(() => vi.fn());
+
+vi.mock('src/logic-functions/data/fetch-current-workspace-id.util', () => ({
+  fetchCurrentWorkspaceId: fetchCurrentWorkspaceIdMock,
+}));
 
 vi.mock(
   'src/logic-functions/recall-api/list-scheduled-recall-bots.util',
@@ -25,8 +29,8 @@ vi.mock('src/logic-functions/recall-api/eject-recall-bot.util', () => ({
 
 const JOIN_AT_AFTER = '2026-01-01T08:00:00.000Z';
 const JOIN_AT_BEFORE = '2026-01-02T12:00:00.000Z';
-const CURRENT_APPLICATION_ID = 'current-application-id';
-const ORIGINAL_APPLICATION_ID = process.env[APPLICATION_ID_ENV_VAR_NAME];
+const CURRENT_WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
+const OTHER_WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174999';
 
 type CallRecordingNode = {
   id: string;
@@ -56,33 +60,23 @@ class FakeCoreApiClient {
 const buildClient = (callRecordings: CallRecordingNode[]): CoreApiClient =>
   new FakeCoreApiClient(callRecordings) as unknown as CoreApiClient;
 
-const restoreOriginalApplicationId = () => {
-  if (ORIGINAL_APPLICATION_ID === undefined) {
-    delete process.env[APPLICATION_ID_ENV_VAR_NAME];
-
-    return;
-  }
-
-  process.env[APPLICATION_ID_ENV_VAR_NAME] = ORIGINAL_APPLICATION_ID;
-};
-
 const buildBot = ({
   id,
   twentyCallRecordingId,
-  twentyApplicationId,
+  twentyWorkspaceId,
 }: {
   id: string;
   twentyCallRecordingId?: string;
-  twentyApplicationId?: string;
+  twentyWorkspaceId?: string;
 }) => ({
   id,
   metadata: {
     ...(twentyCallRecordingId === undefined ? {} : { twentyCallRecordingId }),
-    ...(twentyApplicationId === undefined ? {} : { twentyApplicationId }),
+    ...(twentyWorkspaceId === undefined ? {} : { twentyWorkspaceId }),
   },
 });
 
-const buildCurrentApplicationBot = ({
+const buildCurrentWorkspaceBot = ({
   id,
   twentyCallRecordingId,
 }: {
@@ -92,14 +86,14 @@ const buildCurrentApplicationBot = ({
   buildBot({
     id,
     twentyCallRecordingId,
-    twentyApplicationId: CURRENT_APPLICATION_ID,
+    twentyWorkspaceId: CURRENT_WORKSPACE_ID,
   });
 
 describe('reapOrphanedMeetingBots', () => {
   beforeEach(() => {
-    restoreOriginalApplicationId();
-    process.env[APPLICATION_ID_ENV_VAR_NAME] = CURRENT_APPLICATION_ID;
     vi.spyOn(console, 'warn').mockImplementation(() => {});
+    fetchCurrentWorkspaceIdMock.mockReset();
+    fetchCurrentWorkspaceIdMock.mockResolvedValue(CURRENT_WORKSPACE_ID);
     listScheduledRecallBotsMock.mockReset();
     cancelRecallBotMock.mockReset();
     cancelRecallBotMock.mockResolvedValue({ ok: true });
@@ -107,15 +101,11 @@ describe('reapOrphanedMeetingBots', () => {
     ejectRecallBotMock.mockResolvedValue({ ok: true });
   });
 
-  afterEach(() => {
-    restoreOriginalApplicationId();
-  });
-
   it('keeps bots that their call recording still references', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
       bots: [
-        buildCurrentApplicationBot({
+        buildCurrentWorkspaceBot({
           id: 'claimed-bot',
           twentyCallRecordingId: 'call-recording-1',
         }),
@@ -145,7 +135,7 @@ describe('reapOrphanedMeetingBots', () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
       bots: [
-        buildCurrentApplicationBot({
+        buildCurrentWorkspaceBot({
           id: 'stale-cancel-bot',
           twentyCallRecordingId: 'call-recording-1',
         }),
@@ -177,11 +167,11 @@ describe('reapOrphanedMeetingBots', () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
       bots: [
-        buildCurrentApplicationBot({
+        buildCurrentWorkspaceBot({
           id: 'superseded-bot',
           twentyCallRecordingId: 'call-recording-1',
         }),
-        buildCurrentApplicationBot({
+        buildCurrentWorkspaceBot({
           id: 'claimed-bot',
           twentyCallRecordingId: 'call-recording-1',
         }),
@@ -214,7 +204,7 @@ describe('reapOrphanedMeetingBots', () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
       bots: [
-        buildCurrentApplicationBot({
+        buildCurrentWorkspaceBot({
           id: 'orphan-bot',
           twentyCallRecordingId: 'call-recording-gone',
         }),
@@ -237,7 +227,7 @@ describe('reapOrphanedMeetingBots', () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
       bots: [
-        buildCurrentApplicationBot({
+        buildCurrentWorkspaceBot({
           id: 'pending-bot',
           twentyCallRecordingId: 'call-recording-1',
         }),
@@ -306,14 +296,14 @@ describe('reapOrphanedMeetingBots', () => {
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
 
-  it('ignores bots claimed by another application registration', async () => {
+  it('ignores bots claimed by another workspace', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
       bots: [
         buildBot({
-          id: 'other-app-bot',
+          id: 'other-workspace-bot',
           twentyCallRecordingId: 'call-recording-gone',
-          twentyApplicationId: 'other-application-id',
+          twentyWorkspaceId: OTHER_WORKSPACE_ID,
         }),
       ],
     });
@@ -331,12 +321,12 @@ describe('reapOrphanedMeetingBots', () => {
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
 
-  it('cancels orphaned bots claimed by this application registration', async () => {
+  it('cancels orphaned bots claimed by this workspace', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
       bots: [
-        buildCurrentApplicationBot({
-          id: 'same-app-bot',
+        buildCurrentWorkspaceBot({
+          id: 'same-workspace-bot',
           twentyCallRecordingId: 'call-recording-gone',
         }),
       ],
@@ -350,10 +340,10 @@ describe('reapOrphanedMeetingBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 1,
-      canceledExternalBotIds: ['same-app-bot'],
+      canceledExternalBotIds: ['same-workspace-bot'],
     });
     expect(cancelRecallBotMock).toHaveBeenCalledWith({
-      externalBotId: 'same-app-bot',
+      externalBotId: 'same-workspace-bot',
     });
   });
 
@@ -361,7 +351,7 @@ describe('reapOrphanedMeetingBots', () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
       bots: [
-        buildCurrentApplicationBot({
+        buildCurrentWorkspaceBot({
           id: 'in-call-orphan',
           twentyCallRecordingId: 'call-recording-gone',
         }),
@@ -403,6 +393,31 @@ describe('reapOrphanedMeetingBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 0,
+      canceledExternalBotIds: [],
+    });
+    expect(cancelRecallBotMock).not.toHaveBeenCalled();
+  });
+
+  it('skips reaping when the current workspace cannot be resolved', async () => {
+    fetchCurrentWorkspaceIdMock.mockResolvedValue(undefined);
+    listScheduledRecallBotsMock.mockResolvedValue({
+      ok: true,
+      bots: [
+        buildCurrentWorkspaceBot({
+          id: 'same-workspace-bot',
+          twentyCallRecordingId: 'call-recording-gone',
+        }),
+      ],
+    });
+
+    const result = await reapOrphanedMeetingBots({
+      client: buildClient([]),
+      joinAtAfter: JOIN_AT_AFTER,
+      joinAtBefore: JOIN_AT_BEFORE,
+    });
+
+    expect(result).toEqual({
+      scannedBotCount: 1,
       canceledExternalBotIds: [],
     });
     expect(cancelRecallBotMock).not.toHaveBeenCalled();

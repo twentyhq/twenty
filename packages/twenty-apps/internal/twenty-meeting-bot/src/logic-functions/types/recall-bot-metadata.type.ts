@@ -3,5 +3,4 @@ export type RecallBotMetadata = {
   twentyCallRecordingId: string;
   twentyCalendarEventId: string;
   twentyRealMeetingKey: string;
-  twentyApplicationId?: string;
 };
