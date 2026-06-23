@@ -17,7 +17,7 @@ This guide is written to be followed click-by-click. You need **two accounts**:
 **1) Cloudflare R2 → 2) Railway → 3) Cloudflare Pages → 4) connect the two URLs → 5) sign in.**
 
 Everything in code is already done and pushed to GitHub (`zzeenniitthh/orbitor`, branch
-`feat/supabase-local-compat`). You only click in dashboards and copy values.
+`deploy/railway-cloudflare`). You only click in dashboards and copy values.
 
 > 💡 Keep a scratch note open. You'll collect **6 values** as you go:
 > `APP_SECRET`, `R2 Access Key ID`, `R2 Secret Access Key`, `Railway server URL`,
@@ -64,7 +64,7 @@ That's all from Cloudflare for now. (Your S3 endpoint is already known — see t
 
 ### 2b. Point the server at the right Dockerfile + branch
 In the service → **Settings**:
-- **Source / Branch:** set to `feat/supabase-local-compat`.
+- **Source / Branch:** set to `deploy/railway-cloudflare`.
 - **Build → Builder:** `Dockerfile`.
 - **Build → Dockerfile Path:** paste exactly:
   ```
@@ -109,7 +109,7 @@ Click **Save**. (We fix the two `PLACEHOLDER` URLs in steps 2f and Part 4.)
 The worker runs background jobs. It's the same image with a different start command.
 1. Project canvas → **Create / + New** → **GitHub Repo** → pick `zzeenniitthh/orbitor` again.
 2. Open the new service → **Settings**:
-   - Branch: `feat/supabase-local-compat`
+   - Branch: `deploy/railway-cloudflare`
    - Build → Builder: `Dockerfile`
    - Build → Dockerfile Path: `packages/twenty-docker/server/Dockerfile`
    - **Deploy → Custom Start Command:**
@@ -145,7 +145,7 @@ build itself can take ~10–15 min the first time.
 
 1. **dash.cloudflare.com** → **Workers & Pages** → **Create** → **Pages** tab →
    **Connect to Git** → pick `zzeenniitthh/orbitor`.
-2. **Production branch:** `feat/supabase-local-compat`.
+2. **Production branch:** `deploy/railway-cloudflare`.
 3. **Build settings:**
    - **Framework preset:** `None`
    - **Build command:** paste exactly:
