@@ -1,0 +1,19 @@
+packages/twenty-server/test/integration/utils/wait-for-queue-idle.ts
+  s_8a5a157e980979::t_b92d7fbaa4d4ce 71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "3a56382167f410d9fbd2049d7fe1152c32249c54",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
