@@ -7,8 +7,22 @@ import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace
 
 // TypeORM date columns come back as Date instances, but the flat representation
 // stores them as ISO strings (see CastRecordTypeOrmDatePropertiesToString).
-const serializeScalarValue = (value: unknown): unknown =>
-  value instanceof Date ? value.toISOString() : value;
+// Absent columns (value `undefined`) are normalized to `null` so the flat entity
+// always carries a stable key shape and never an `undefined` value.
+const serializeScalarValue = (value: unknown): unknown => {
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  return value ?? null;
+};
+
+const BASE_SCALAR_PROPERTY_NAMES = [
+  'id',
+  'workspaceId',
+  'applicationId',
+  'universalIdentifier',
+] as const;
 
 // Allow-list counterpart to removePropertiesFromRecord: rather than forwarding
 // every entity property except the known relations (deny-list), this forwards only
@@ -16,7 +30,8 @@ const serializeScalarValue = (value: unknown): unknown =>
 // ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME plus the always-present base
 // columns, serialized into their flat (ScalarFlatEntity) shape. Anything unexpected
 // on the entity instance is dropped, so a flat entity can never silently leak an
-// unregistered property.
+// unregistered property. Absent values are normalized to `null` so the output always
+// has a stable key shape and never an `undefined` value.
 export const fromEntityToScalarEntity = <T extends AllMetadataName>({
   metadataName,
   entity,
@@ -28,14 +43,12 @@ export const fromEntityToScalarEntity = <T extends AllMetadataName>({
     ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME[metadataName];
   const entityRecord = entity as Record<string, unknown>;
 
-  const scalarProperties: Record<string, unknown> = {
-    id: entityRecord.id,
-    workspaceId: entityRecord.workspaceId,
-    applicationId: entityRecord.applicationId,
-    universalIdentifier: entityRecord.universalIdentifier,
-  };
+  const scalarProperties: Record<string, unknown> = {};
 
-  for (const propertyName of Object.keys(propertiesConfiguration)) {
+  for (const propertyName of [
+    ...BASE_SCALAR_PROPERTY_NAMES,
+    ...Object.keys(propertiesConfiguration),
+  ]) {
     scalarProperties[propertyName] = serializeScalarValue(
       entityRecord[propertyName],
     );

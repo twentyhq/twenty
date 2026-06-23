@@ -139,7 +139,7 @@ describe('fromEntityToScalarEntity', () => {
     expect(result.deletedAt).toBeNull();
   });
 
-  it('should always include the base columns even when the entity omits them', () => {
+  it('should normalize absent properties to null instead of undefined', () => {
     const result = fromEntityToScalarEntity(
       buildArgs('permissionFlag', {
         id: 'permission-flag-id-1',
@@ -153,16 +153,31 @@ describe('fromEntityToScalarEntity', () => {
       }),
     );
 
-    expect(Object.keys(result)).toEqual(
-      expect.arrayContaining([
-        'id',
-        'workspaceId',
-        'applicationId',
-        'universalIdentifier',
-      ]),
+    expect(result).toHaveProperty('workspaceId', null);
+    expect(result).toHaveProperty('applicationId', null);
+    expect(result).toHaveProperty('universalIdentifier', null);
+    expect(Object.values(result)).not.toContain(undefined);
+  });
+
+  it('should keep explicit null values and normalize undefined ones to null', () => {
+    const result = fromEntityToScalarEntity(
+      buildArgs('viewSort', {
+        id: 'view-sort-id-1',
+        workspaceId: 'workspace-id-1',
+        applicationId: null,
+        universalIdentifier: 'view-sort-ui-1',
+        direction: 'ASC',
+        subFieldName: null,
+        fieldMetadataId: 'field-id-1',
+        viewId: 'view-id-1',
+        createdAt: new Date('2024-01-01T00:00:00.000Z'),
+        updatedAt: new Date('2024-01-02T00:00:00.000Z'),
+        deletedAt: undefined,
+      }),
     );
-    expect(result.workspaceId).toBeUndefined();
-    expect(result.applicationId).toBeUndefined();
-    expect(result.universalIdentifier).toBeUndefined();
+
+    expect(result).toHaveProperty('applicationId', null);
+    expect(result).toHaveProperty('subFieldName', null);
+    expect(result).toHaveProperty('deletedAt', null);
   });
 });
