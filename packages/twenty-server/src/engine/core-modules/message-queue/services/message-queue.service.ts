@@ -48,6 +48,14 @@ export class MessageQueueService {
     );
   }
 
+  waitForIdle(options?: {
+    timeoutMs?: number;
+    idleMs?: number;
+    pollMs?: number;
+  }): Promise<void> {
+    return this.driver.waitForIdle(options);
+  }
+
   addCron<T extends MessageQueueJobData | undefined>({
     jobName,
     data,
