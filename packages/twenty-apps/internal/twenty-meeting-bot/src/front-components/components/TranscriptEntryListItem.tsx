@@ -16,7 +16,7 @@ const StyledEntry = styled.div<{ $isActive: boolean }>`
     $isActive
       ? recordingThemeCssVariables.background.transparentBlue
       : 'transparent'};
-  border-radius: ${recordingThemeCssVariables.border.radiusMd};
+  border-radius: ${recordingThemeCssVariables.border.radiusSm};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

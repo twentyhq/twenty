@@ -8,7 +8,7 @@ const DEFAULT_VIDEO_ASPECT_RATIO = '16 / 9';
 const StyledVideoViewport = styled.div`
   aspect-ratio: ${DEFAULT_VIDEO_ASPECT_RATIO};
   background: ${recordingThemeCssVariables.background.primary};
-  border-radius: ${recordingThemeCssVariables.border.radiusMd};
+  border-radius: ${recordingThemeCssVariables.border.radiusSm};
   overflow: hidden;
   width: 100%;
 `;
