@@ -12,8 +12,20 @@ export const IMPORT_OPPORTUNITY_FROM_TFT_LOGIC_FUNCTION_ID =
 
 const APPLICATION_SECRET_HEADER = 'x-application-secret';
 
+// TFT POSTs `null` for empty fields; treat null as "field absent".
+const dropNulls = (value: unknown): unknown =>
+  value === null
+    ? undefined
+    : Array.isArray(value)
+      ? value.map(dropNulls)
+      : typeof value === 'object'
+        ? Object.fromEntries(
+            Object.entries(value).map(([key, val]) => [key, dropNulls(val)]),
+          )
+        : value;
+
 // Request contract — the JSON the TFT workflow POSTs.
-export const importOpportunityFromTftSchema = z.object({
+export const importOpportunityFromTftSchema = z.preprocess(dropNulls, z.object({
   tftOpportunityId: z.string().optional(),
   name: z.string().trim().min(1),
   amountMicros: z.number().optional(),
@@ -33,7 +45,7 @@ export const importOpportunityFromTftSchema = z.object({
       lastName: z.string().optional(),
     })
     .optional(),
-});
+}));
 
 export type ImportOpportunityFromTftInput = z.infer<
   typeof importOpportunityFromTftSchema
