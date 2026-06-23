@@ -6,6 +6,7 @@ import { RecordingTranscript } from 'src/front-components/components/RecordingTr
 import { RecordingVideoPlayer } from 'src/front-components/components/RecordingVideoPlayer';
 import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
 import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
+import { useCalendarEventParticipants } from 'src/front-components/hooks/use-calendar-event-participants';
 import { useCalendarEventRecording } from 'src/front-components/hooks/use-calendar-event-recording';
 
 const TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS = 0.25;
@@ -67,6 +68,8 @@ export const CalendarEventRecordingContent = ({
     isCalendarEventRecordingQueryLoading,
     errorMessage,
   } = useCalendarEventRecording(calendarEventId);
+  const { calendarEventParticipants } =
+    useCalendarEventParticipants(calendarEventId);
 
   if (!isUndefined(errorMessage)) {
     return (
@@ -110,6 +113,7 @@ export const CalendarEventRecordingContent = ({
       <RecordingTranscript
         transcript={transcript}
         currentTimeSeconds={currentTimeSeconds}
+        calendarEventParticipants={calendarEventParticipants}
       />
     </StyledRecordingContainer>
   );

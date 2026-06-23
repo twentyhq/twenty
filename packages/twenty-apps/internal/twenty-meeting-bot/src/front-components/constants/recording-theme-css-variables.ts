@@ -14,6 +14,7 @@ export const recordingThemeCssVariables = {
     colorLight: 'var(--t-border-color-light)',
     colorMedium: 'var(--t-border-color-medium)',
     radiusMd: 'var(--t-border-radius-md)',
+    radiusSm: 'var(--t-border-radius-sm)',
   },
   boxShadow: {
     light: 'var(--t-box-shadow-light)',

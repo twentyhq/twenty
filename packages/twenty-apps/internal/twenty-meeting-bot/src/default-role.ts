@@ -31,9 +31,35 @@ export default defineApplicationRole({
     },
     {
       objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant
+          .universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording.universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
+          .universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
