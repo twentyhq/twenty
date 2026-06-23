@@ -61,8 +61,6 @@ const Body = styled.div`
   min-height: 0;
 `;
 
-// The feature visuals' shared dark mini-window (its own authored stage —
-// not the product mockup's chrome).
 export function WindowChrome({
   breadcrumb,
   breadcrumbBold,

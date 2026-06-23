@@ -1,8 +1,6 @@
-import { FEATURE_TILES, type FeatureVisualKey } from './feature-tiles';
+import { type FeatureVisualKey } from '../types/feature-visual-key';
+import { FEATURE_TILES } from './feature-tiles';
 
-// The visual registry in tile-visual.tsx is a total Record over
-// FeatureVisualKey, so the compiler guarantees every key renders; this
-// pins the converse — every key is used by exactly one tile.
 const ALL_VISUAL_KEYS: FeatureVisualKey[] = [
   'contacts',
   'dashboard',

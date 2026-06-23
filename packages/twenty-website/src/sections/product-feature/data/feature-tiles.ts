@@ -1,41 +1,7 @@
-import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-export type FeatureBulletIcon =
-  | 'book'
-  | 'check'
-  | 'code'
-  | 'edit'
-  | 'eye'
-  | 'search'
-  | 'tag'
-  | 'users';
+import { type FeatureTile } from '../types/feature-tile';
 
-// Keys bind tiles to their visuals in tile-visual.tsx, keeping this
-// module pure data.
-export type FeatureVisualKey =
-  | 'contacts'
-  | 'dashboard'
-  | 'emails'
-  | 'files'
-  | 'import'
-  | 'pipeline'
-  | 'tasks';
-
-export type FeatureBullet = {
-  icon: FeatureBulletIcon;
-  text: MessageDescriptor;
-};
-
-export type FeatureTile = {
-  bullets: FeatureBullet[];
-  category: MessageDescriptor;
-  description: MessageDescriptor;
-  heading: MessageDescriptor;
-  visual: FeatureVisualKey;
-};
-
-// Tile 0 is the spotlight (spans the grid).
 export const FEATURE_TILES: FeatureTile[] = [
   {
     category: msg`Reports & Dashboards`,

@@ -1,37 +1,12 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import {
-  IconCalendarEvent,
-  IconCheckbox,
-  IconMail,
-  IconNotes,
-  IconPaperclip,
-  IconTimelineEvent,
-} from '@tabler/icons-react';
-import { type ComponentType } from 'react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { previewFontSize } from '@/app-preview/preview-font-size';
 
-export type RecordTabLabel =
-  | 'Calendar'
-  | 'Emails'
-  | 'Files'
-  | 'Notes'
-  | 'Tasks'
-  | 'Timeline';
-
-type TabGlyph = ComponentType<{ size?: number; stroke?: number }>;
-
-const RECORD_TABS: { icon: TabGlyph; label: RecordTabLabel }[] = [
-  { icon: IconTimelineEvent, label: 'Timeline' },
-  { icon: IconCheckbox, label: 'Tasks' },
-  { icon: IconNotes, label: 'Notes' },
-  { icon: IconPaperclip, label: 'Files' },
-  { icon: IconMail, label: 'Emails' },
-  { icon: IconCalendarEvent, label: 'Calendar' },
-];
+import { RECORD_TABS } from '../data/record-tabs';
+import { type RecordTabLabel } from '../types/record-tab-label';
 
 const Bar = styled.div`
   align-items: stretch;

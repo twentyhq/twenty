@@ -13,7 +13,7 @@ import {
 } from '@/tokens';
 import { Body, Heading } from '@/ui';
 
-import { type FeatureTile } from './feature-tiles';
+import { type FeatureTile } from '../types/feature-tile';
 
 const BULLET_ICON_STROKE_WIDTH = 1.5;
 
@@ -118,7 +118,6 @@ export function TileContent({
   tile: FeatureTile;
 }) {
   const i18n = getServerI18n();
-  // Bullets are an authored fixed list: position is identity.
   const bullets = tile.bullets.map((bullet, bulletNumber) => ({
     bullet,
     bulletNumber,

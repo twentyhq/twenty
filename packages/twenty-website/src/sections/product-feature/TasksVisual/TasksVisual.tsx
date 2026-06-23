@@ -5,7 +5,7 @@ import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { previewFontSize } from '@/app-preview/preview-font-size';
 
-import { RecordTabHeader } from '../RecordTabHeader';
+import { RecordTabHeader } from '../components/RecordTabHeader';
 import { TaskRow } from './components/TaskRow';
 import { TASK_GROUPS } from './data/task-groups';
 

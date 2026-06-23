@@ -6,7 +6,7 @@ import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { previewFontSize } from '@/app-preview/preview-font-size';
 
-import { RecordTabHeader } from '../RecordTabHeader';
+import { RecordTabHeader } from '../components/RecordTabHeader';
 import { ThreadRow } from './components/ThreadRow';
 import { THREADS } from './data/threads';
 

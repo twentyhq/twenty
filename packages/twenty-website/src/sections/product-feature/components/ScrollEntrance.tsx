@@ -7,12 +7,8 @@ import { getReducedMotionSnapshot } from '@/platform/motion';
 import { observeElementVisibility } from '@/platform/visuals/engine/observe-element-visibility';
 import { REDUCED_MOTION } from '@/tokens';
 
-// 10% of the tile in view fades it in; leaving fades it back out.
 const VIEWPORT_THRESHOLD = 0.1;
 
-// The old site's entrance carried dead stagger machinery (0ms delays) and
-// three directionally-named hidden classes that were all `opacity: 0` —
-// the real behavior is just this reversible fade.
 const Entrance = styled.div`
   height: 100%;
   opacity: 0;
