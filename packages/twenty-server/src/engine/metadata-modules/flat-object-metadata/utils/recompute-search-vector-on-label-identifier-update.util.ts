@@ -9,6 +9,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { recomputeSearchVectorFieldFromSearchFieldMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/recompute-search-vector-field-from-search-field-metadatas.util';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
+import { findTsVectorFlatFieldMetadataForObject } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/find-ts-vector-flat-field-metadata-for-object.util';
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 
 export type LabelIdentifierUpdateSearchVectorSideEffect = {
@@ -79,6 +80,15 @@ export const recomputeSearchVectorOnLabelIdentifierUpdate = ({
     return EMPTY_SIDE_EFFECT;
   }
 
+  const tsVectorFlatFieldMetadata = findTsVectorFlatFieldMetadataForObject({
+    fieldUniversalIdentifiers: fromFlatObjectMetadata.fieldUniversalIdentifiers,
+    flatFieldMetadataMaps,
+  });
+
+  if (!isDefined(tsVectorFlatFieldMetadata)) {
+    return EMPTY_SIDE_EFFECT;
+  }
+
   const newLabelIdentifierPosition =
     existingSearchFieldMetadatas.reduce(
       (maxPosition, searchFieldMetadata) =>
@@ -89,6 +99,7 @@ export const recomputeSearchVectorOnLabelIdentifierUpdate = ({
   const newSearchFieldMetadata = buildFlatSearchFieldMetadataForField({
     flatObjectMetadata: fromFlatObjectMetadata,
     flatFieldMetadata: newLabelIdentifierField,
+    tsVectorFlatFieldMetadata,
     position: newLabelIdentifierPosition,
   });
 
