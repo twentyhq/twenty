@@ -66,6 +66,9 @@ export const createStandardSearchFieldFlatMetadata = <
     objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
     fieldMetadataId,
     fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+    // Populated in the 2.16 backfill milestone; nullable until then.
+    tsVectorFieldMetadataId: null,
+    tsVectorFieldMetadataUniversalIdentifier: null,
     position,
     workspaceId,
     createdAt: now,

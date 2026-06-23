@@ -25,7 +25,7 @@ export class CreateSearchFieldMetadataActionHandlerService extends WorkspaceMigr
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateSearchFieldMetadataAction>): Promise<FlatCreateSearchFieldMetadataAction> {
-    const { objectMetadataId, fieldMetadataId } =
+    const { objectMetadataId, fieldMetadataId, tsVectorFieldMetadataId } =
       resolveUniversalRelationIdentifiersToIds({
         flatEntityMaps: allFlatEntityMaps,
         metadataName: action.metadataName,
@@ -38,6 +38,7 @@ export class CreateSearchFieldMetadataActionHandlerService extends WorkspaceMigr
         ...action.flatEntity,
         objectMetadataId,
         fieldMetadataId,
+        tsVectorFieldMetadataId,
         id: action.id ?? v4(),
         applicationId: flatApplication.id,
         workspaceId,
