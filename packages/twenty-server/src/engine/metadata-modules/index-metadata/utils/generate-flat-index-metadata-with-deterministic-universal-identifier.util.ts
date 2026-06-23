@@ -7,7 +7,11 @@ import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/w
 
 type FlatIndexWithoutDeterministicIdentifiers = Omit<
   UniversalFlatIndexMetadata,
-  'name' | 'universalIdentifier' | 'universalFlatIndexFieldMetadatas'
+  | 'name'
+  | 'universalIdentifier'
+  | 'objectMetadataUniversalIdentifier'
+  | 'applicationUniversalIdentifier'
+  | 'universalFlatIndexFieldMetadatas'
 > & {
   universalFlatIndexFieldMetadatas: Array<
     Omit<
@@ -47,6 +51,9 @@ export const generateFlatIndexMetadataWithDeterministicUniversalIdentifierOrThro
       ...flatIndex,
       name,
       universalIdentifier,
+      objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+      applicationUniversalIdentifier:
+        flatObjectMetadata.applicationUniversalIdentifier,
       universalFlatIndexFieldMetadatas:
         flatIndex.universalFlatIndexFieldMetadatas.map((indexField) => ({
           ...indexField,

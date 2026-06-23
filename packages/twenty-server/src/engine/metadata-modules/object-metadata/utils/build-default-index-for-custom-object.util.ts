@@ -39,10 +39,6 @@ export const buildDefaultIndexesForCustomObject = ({
         isCustom: false,
         isUnique: false,
         isSystemSideEffect: true,
-        objectMetadataUniversalIdentifier:
-          flatObjectMetadata.universalIdentifier,
-        applicationUniversalIdentifier:
-          flatObjectMetadata.applicationUniversalIdentifier,
       },
     });
 
