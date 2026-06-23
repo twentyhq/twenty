@@ -352,6 +352,56 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       );
     });
 
+    it('should trigger workflow only once when duplicate automated trigger rows exist for the same workflow', async () => {
+      mockRepository.find.mockResolvedValue([
+        mockEventListeners[0],
+        { ...mockEventListeners[0] },
+        { ...mockEventListeners[0] },
+      ]);
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        {
+          workspaceId,
+          workflowId,
+          payload: mockPayload.events[0],
+        },
+        { retryLimit: 3 },
+      );
+    });
+
+    it('should trigger each distinct workflow once when duplicates exist for several workflows', async () => {
+      const otherWorkflowId = 'test-workflow-2';
+
+      mockRepository.find.mockResolvedValue([
+        mockEventListeners[0],
+        { ...mockEventListeners[0] },
+        { ...mockEventListeners[0], workflowId: otherWorkflowId },
+        { ...mockEventListeners[0], workflowId: otherWorkflowId },
+      ]);
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(2);
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        { workspaceId, workflowId, payload: mockPayload.events[0] },
+        { retryLimit: 3 },
+      );
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        {
+          workspaceId,
+          workflowId: otherWorkflowId,
+          payload: mockPayload.events[0],
+        },
+        { retryLimit: 3 },
+      );
+    });
+
     it('should trigger workflow for position-only updates when no fields are specified', async () => {
       const positionOnlyPayload: WorkspaceEventBatch<any> = {
         ...mockPayload,

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import uniqBy from 'lodash.uniqby';
 import {
   ObjectRecordEvent,
   type ObjectRecordCreateEvent,
@@ -366,7 +367,13 @@ export class WorkflowDatabaseEventTriggerListener {
         },
       });
 
-      for (const eventListener of eventListeners) {
+      // A workflow has a single trigger, so it must run at most once per event.
+      // Duplicate automated trigger rows can exist for the same workflowId
+      // (e.g. trash/restore cycles re-create a row alongside a restored one),
+      // which would otherwise enqueue the same workflow several times.
+      const uniqueEventListeners = uniqBy(eventListeners, 'workflowId');
+
+      for (const eventListener of uniqueEventListeners) {
         for (const eventPayload of payload.events) {
           const shouldTriggerJob = this.shouldTriggerJob({
             eventPayload,
