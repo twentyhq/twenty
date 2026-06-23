@@ -3,6 +3,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getRecordGroupByFieldColumnName } from '@/object-metadata/utils/getRecordGroupByFieldColumnName';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
@@ -106,7 +107,8 @@ export const useProcessTableWithGroupRecordDrop = () => {
             idToUpdate: recordId,
             updateOneRecordInput: {
               position,
-              [fieldMetadata.name]: destinationRecordGroup.value,
+              [getRecordGroupByFieldColumnName(fieldMetadata)]:
+                destinationRecordGroup.value,
             },
           });
         },
