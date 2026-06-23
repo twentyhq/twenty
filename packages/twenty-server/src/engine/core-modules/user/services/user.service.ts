@@ -413,6 +413,11 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       });
     }
 
+    // Membership lives in two places: the workspaceMember record (shown in the
+    // members list) and the core userWorkspace row (checked by the invitation
+    // guard). They must always be removed together and in this order: leaving an
+    // orphaned userWorkspace makes the member vanish from the list while
+    // re-invites are rejected as "already in the workspace".
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
