@@ -8,6 +8,7 @@ export const SearchOutputInputZodSchema = z.object({
     ),
   pattern: z
     .string()
+    .min(1)
     .describe(
       'Text or regular expression to search for. Matched line by line against the indented JSON representation of the file.',
     ),

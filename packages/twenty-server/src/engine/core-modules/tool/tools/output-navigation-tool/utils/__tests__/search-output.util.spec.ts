@@ -81,6 +81,35 @@ describe('searchOutput', () => {
     expect(result.totalMatches).toBe(3);
   });
 
+  it('keeps the matched text visible when it sits past the truncation cutoff', () => {
+    const longLine = `${'a'.repeat(800)}NEEDLE${'b'.repeat(800)}`;
+
+    const result = searchOutput({
+      content: longLine,
+      pattern: 'NEEDLE',
+      maxMatches: 10,
+      offset: 0,
+      contextLines: 0,
+    });
+
+    expect(result.totalMatches).toBe(1);
+    expect(result.matches[0].match).toContain('NEEDLE');
+    expect(result.matches[0].match.startsWith('…')).toBe(true);
+    expect(result.matches[0].match.endsWith('…')).toBe(true);
+  });
+
+  it('throws for an empty pattern instead of matching everything', () => {
+    expect(() =>
+      searchOutput({
+        content,
+        pattern: '',
+        maxMatches: 10,
+        offset: 0,
+        contextLines: 0,
+      }),
+    ).toThrow('Search pattern must be a non-empty string.');
+  });
+
   it('falls back to literal matching for invalid regex', () => {
     const result = searchOutput({
       content: 'a (b c\nd e f',

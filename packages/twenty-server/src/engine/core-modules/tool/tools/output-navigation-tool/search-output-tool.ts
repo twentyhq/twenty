@@ -13,14 +13,6 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { isDefined } from 'twenty-shared/utils';
 
-type SearchOutputInput = {
-  fileId: string;
-  pattern: string;
-  maxMatches?: number;
-  offset?: number;
-  contextLines?: number;
-};
-
 @Injectable()
 export class SearchOutputTool implements Tool {
   private readonly logger = new Logger(SearchOutputTool.name);
@@ -37,8 +29,21 @@ export class SearchOutputTool implements Tool {
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
     const { workspaceId } = context;
+
+    const parseResult = SearchOutputInputZodSchema.safeParse(parameters);
+
+    if (!parseResult.success) {
+      return {
+        success: false,
+        message: 'Invalid input for search output',
+        error: parseResult.error.issues
+          .map((issue) => `${issue.path.join('.') || '(root)'}: ${issue.message}`)
+          .join('; '),
+      };
+    }
+
     const { fileId, pattern, maxMatches, offset, contextLines } =
-      parameters as SearchOutputInput;
+      parseResult.data;
 
     let fileContent: { buffer: Buffer; mimeType: string } | null;
 
