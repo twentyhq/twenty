@@ -52,6 +52,39 @@ describe('RestApiClient', () => {
     expect(requestInit.method).toBe('GET');
   });
 
+  it('routes logic-function calls to the isolated functions domain when configured, stripping /s', async () => {
+    (
+      (globalThis as Record<string, unknown>).process as {
+        env: Record<string, string>;
+      }
+    ).env.TWENTY_FUNCTIONS_URL = 'https://acme.withtwenty.com';
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(buildResponse(JSON.stringify({ id: '42' })));
+
+    const client = new RestApiClient({ fetch: fetchMock });
+
+    await client.get('/s/my-app/my-route');
+
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toBe('https://acme.withtwenty.com/my-app/my-route');
+  });
+
+  it('prefers an explicit functionsBaseUrl option for logic-function calls', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
+
+    const client = new RestApiClient({
+      fetch: fetchMock,
+      functionsBaseUrl: 'https://acme.withtwenty.com/',
+    });
+
+    await client.post('/s/my-app/my-route', { name: 'Twenty' });
+
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toBe('https://acme.withtwenty.com/my-app/my-route');
+  });
+
   it('should serialize a JSON body and set the content type on post', async () => {
     const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
 

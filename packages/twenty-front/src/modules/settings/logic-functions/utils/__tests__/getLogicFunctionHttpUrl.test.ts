@@ -1,4 +1,36 @@
-import { getLogicFunctionHttpUrl } from '@/settings/logic-functions/utils/getLogicFunctionHttpUrl';
+import {
+  getFunctionsBaseUrl,
+  getLogicFunctionHttpUrl,
+} from '@/settings/logic-functions/utils/getLogicFunctionHttpUrl';
+
+describe('getFunctionsBaseUrl', () => {
+  it('builds the isolated base from subdomain + public domain', () => {
+    expect(
+      getFunctionsBaseUrl({
+        publicFunctionDomain: 'withtwenty.com',
+        workspaceSubdomain: 'acme',
+      }),
+    ).toBe('https://acme.withtwenty.com');
+  });
+
+  it('returns undefined when the public domain is missing', () => {
+    expect(
+      getFunctionsBaseUrl({
+        publicFunctionDomain: null,
+        workspaceSubdomain: 'acme',
+      }),
+    ).toBeUndefined();
+  });
+
+  it('returns undefined when the subdomain is missing', () => {
+    expect(
+      getFunctionsBaseUrl({
+        publicFunctionDomain: 'withtwenty.com',
+        workspaceSubdomain: undefined,
+      }),
+    ).toBeUndefined();
+  });
+});
 
 describe('getLogicFunctionHttpUrl', () => {
   it('builds the isolated public-domain URL when configured', () => {

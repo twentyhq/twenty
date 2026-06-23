@@ -4,6 +4,10 @@ import { useFrontComponentExecutionContext } from '@/front-components/hooks/useF
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { getFunctionsBaseUrl } from '@/settings/logic-functions/utils/getLogicFunctionHttpUrl';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
@@ -28,6 +32,13 @@ export const FrontComponentRenderer = ({
 }: FrontComponentRendererProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
+
+  const { publicFunctionDomain } = useAtomStateValue(domainConfigurationState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const functionsBaseUrl = getFunctionsBaseUrl({
+    publicFunctionDomain,
+    workspaceSubdomain: currentWorkspace?.subdomain,
+  });
 
   const setFrontComponentApplicationTokenPair = useSetAtomComponentState(
     frontComponentApplicationTokenPairComponentState,
@@ -112,6 +123,7 @@ export const FrontComponentRenderer = ({
           componentUrl={componentUrl}
           applicationAccessToken={accessToken}
           applicationId={data.frontComponent.applicationId}
+          functionsBaseUrl={functionsBaseUrl}
           executionContext={executionContext}
           frontComponentHostCommunicationApi={
             frontComponentHostCommunicationApi
@@ -130,6 +142,7 @@ export const FrontComponentRenderer = ({
         componentUrl={componentUrl}
         applicationAccessToken={accessToken}
         apiUrl={REACT_APP_SERVER_BASE_URL}
+        functionsBaseUrl={functionsBaseUrl}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         applicationVariables={applicationVariables}

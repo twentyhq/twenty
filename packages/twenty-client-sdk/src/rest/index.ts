@@ -2,6 +2,7 @@ import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
+  DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
 
 const isDefined = <T>(value: T): value is NonNullable<T> =>
@@ -9,10 +10,17 @@ const isDefined = <T>(value: T): value is NonNullable<T> =>
 
 export type RestApiClientOptions = {
   baseUrl?: string;
+  functionsBaseUrl?: string;
   token?: string;
   fetch?: typeof globalThis.fetch;
   defaultHeaders?: HeadersInit;
 };
+
+const LEGACY_LOGIC_FUNCTION_ROUTE_PREFIX = '/s';
+
+const isLegacyLogicFunctionRoute = (path: string): boolean =>
+  path === LEGACY_LOGIC_FUNCTION_ROUTE_PREFIX ||
+  path.startsWith(`${LEGACY_LOGIC_FUNCTION_ROUTE_PREFIX}/`);
 
 export type RestApiRequestOptions = {
   headers?: HeadersInit;
@@ -85,6 +93,7 @@ const buildRequestUrl = (
 
 export class RestApiClient {
   private baseUrl: string | undefined;
+  private functionsBaseUrl: string | undefined;
   private token: string | undefined;
   private defaultHeaders: HeadersInit | undefined;
   private fetchImplementation: typeof globalThis.fetch | null;
@@ -93,6 +102,7 @@ export class RestApiClient {
 
   constructor(options?: RestApiClientOptions) {
     this.baseUrl = options?.baseUrl;
+    this.functionsBaseUrl = options?.functionsBaseUrl;
     this.token = options?.token;
     this.defaultHeaders = options?.defaultHeaders;
     this.fetchImplementation = options?.fetch ?? globalThis.fetch ?? null;
@@ -298,17 +308,47 @@ export class RestApiClient {
     return parsedBody as TResponse;
   }
 
+  private resolveFunctionsBaseUrl(): string | undefined {
+    const functionsBaseUrl =
+      this.functionsBaseUrl ??
+      getProcessEnvironment()[DEFAULT_FUNCTIONS_URL_NAME];
+
+    if (!isDefined(functionsBaseUrl) || functionsBaseUrl.trim().length === 0) {
+      return undefined;
+    }
+
+    return functionsBaseUrl.replace(/\/+$/, '');
+  }
+
+  // Logic-function routes (paths prefixed with /s) are served from the isolated
+  // public domain when one is configured (Twenty Cloud) — the function is
+  // exposed at the root path there, so the /s prefix is stripped. Everything
+  // else, and the self-hosted fallback, keeps using {apiUrl}/s...
+  private resolveRequestBaseUrlAndPath(path: string): {
+    baseUrl: string;
+    path: string;
+  } {
+    const functionsBaseUrl = this.resolveFunctionsBaseUrl();
+
+    if (isDefined(functionsBaseUrl) && isLegacyLogicFunctionRoute(path)) {
+      const functionPath =
+        path.slice(LEGACY_LOGIC_FUNCTION_ROUTE_PREFIX.length) || '/';
+
+      return { baseUrl: functionsBaseUrl, path: functionPath };
+    }
+
+    return { baseUrl: this.resolveBaseUrl(), path };
+  }
+
   private async execute<TResponse>(
     method: string,
     path: string,
     body: unknown,
     requestOptions?: RestApiRequestOptions,
   ): Promise<TResponse> {
-    const url = buildRequestUrl(
-      this.resolveBaseUrl(),
-      path,
-      requestOptions?.query,
-    );
+    const { baseUrl, path: targetPath } =
+      this.resolveRequestBaseUrlAndPath(path);
+    const url = buildRequestUrl(baseUrl, targetPath, requestOptions?.query);
     const token = this.resolveToken();
 
     let response = await this.sendRequest(
