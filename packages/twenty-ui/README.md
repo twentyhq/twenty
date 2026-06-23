@@ -122,6 +122,30 @@ diff cleanly against their sources).
 - Tokens live in `src/theme/` (`THEME_LIGHT` / `THEME_DARK`); the `--t-*` CSS variables and the `themeCssVariables` accessor are static files mirrored token-for-token from `twenty-ui-deprecated` (matching its own static-CSS approach).
 - A theme parity test asserts the theme CSS and `themeCssVariables` stay identical to `twenty-ui-deprecated`'s `--t-*` values.
 
+### Consuming the theme
+
+- Wrap the app once in `ThemeProvider` and import `twenty-ui/theme-light.css` and `twenty-ui/theme-dark.css`.
+- Read theme values with the public hooks, not the raw context:
+  - `useTheme()` returns the resolved `ThemeType` (numeric tokens such as `theme.icon.size.sm`). Outside a provider it yields the default light theme.
+  - `useThemeColorScheme()` returns the active `'light' | 'dark'`.
+- Colors are consumed as `var(--t-*)` strings via `themeCssVariables` (the browser resolves them against the in-scope `--t-*`), so overriding the variables re-themes color automatically.
+
+### Customizing the theme (`--t-*` override contract)
+
+The supported way to re-theme is to override the `--t-*` CSS variables. Their names are exactly the keys declared in `theme-light.css` / `theme-dark.css`. Two mechanisms:
+
+1. **Globally** — ship a stylesheet that redefines `--t-*` under `.light` / `.dark`. This covers the whole document, including overlays portaled to `document.body`.
+2. **Per `ThemeProvider`** — pass `overrides` (a `ThemeOverrides` map of `--t-*` name to value). The variables are applied to the provider's subtree.
+
+`ThemeProvider` props:
+
+- `colorScheme: 'light' | 'dark'` — required.
+- `applyToRoot?: boolean` (default `true`) — toggles the `.light` / `.dark` class on `document.documentElement`. Keep it `true` so the whole document, including portaled overlays (tooltips, dropdowns, modals) rendered to `document.body`, stays themed. Set it `false` when the host manages its own color-scheme class or when mounting more than one provider, so the providers don't clobber the root.
+- `overrides?: ThemeOverrides` — `--t-*` variable overrides scoped to this provider's subtree.
+- `className?: string` — extra class on the scoped wrapper.
+
+**Scoped theming and portals.** When `applyToRoot` is `false` or `overrides` is set, the provider scopes the variables to a wrapper element. Overlays portal to `document.body` (outside that wrapper), so for them to inherit the scoped variables the provider also exposes a themed portal container via `ThemeScopeContext`; read it with `useThemeContainer()` and pass it as the overlay's portal container. The library's `AppTooltip` and `Modal` already do this, falling back to `document.body` when no scoped provider is present (the default global path is unchanged).
+
 ## Component migration map
 
 Components split into two buckets. *(The migration is complete; see

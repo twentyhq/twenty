@@ -1,8 +1,8 @@
 import { clsx } from 'clsx';
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { type IconComponent } from '@ui/icon';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './RoundedIconButton.module.scss';
 
@@ -21,7 +21,7 @@ export const RoundedIconButton = ({
   size = 'small',
   'aria-label': ariaLabel,
 }: RoundedIconButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <button
