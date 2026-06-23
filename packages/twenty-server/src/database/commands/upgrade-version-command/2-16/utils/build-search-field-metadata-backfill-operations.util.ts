@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
@@ -16,9 +17,8 @@ type SearchFieldMetadataBackfillOperationsArgs = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatSearchFieldMetadataMaps: FlatEntityMaps<FlatSearchFieldMetadata>;
-  // Deterministic standard-object search set (SEARCH_FIELDS_FOR_*), avoiding any
-  // searchVector expression parsing.
   standardFlatSearchFieldMetadataMaps: FlatEntityMaps<FlatSearchFieldMetadata>;
+  customApplicationId: string;
 };
 
 type BuildSearchFieldMetadataBackfillOperationsReturnType = {
@@ -35,6 +35,7 @@ export const buildSearchFieldMetadataBackfillOperations = ({
   flatFieldMetadataMaps,
   flatSearchFieldMetadataMaps,
   standardFlatSearchFieldMetadataMaps,
+  customApplicationId,
 }: SearchFieldMetadataBackfillOperationsArgs): BuildSearchFieldMetadataBackfillOperationsReturnType => {
   const existingSearchFieldMetadataKeys = new Set(
     Object.values(flatSearchFieldMetadataMaps.byUniversalIdentifier)
@@ -107,30 +108,16 @@ export const buildSearchFieldMetadataBackfillOperations = ({
     });
   }
 
-  const standardObjectUniversalIdentifiers = new Set(
-    Object.values(standardFlatSearchFieldMetadataMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .map(
-        (standardSearchFieldMetadata) =>
-          standardSearchFieldMetadata.objectMetadataUniversalIdentifier,
-      ),
-  );
+  const customApplicationFlatObjectMetadatas = findFlatEntitiesByApplicationId({
+    flatEntityMaps: flatObjectMetadataMaps,
+    applicationId: customApplicationId,
+  });
 
   // Custom objects index only the field named 'name' (SEARCH_FIELDS_FOR_CUSTOM_OBJECT).
   // Resolve it by exact name, not the label identifier: junction objects (skipNameField)
   // have no name field and must stay unsearchable — their label identifier is the UUID id.
-  for (const flatObjectMetadata of Object.values(
-    flatObjectMetadataMaps.byUniversalIdentifier,
-  ).filter(isDefined)) {
+  for (const flatObjectMetadata of customApplicationFlatObjectMetadatas) {
     if (!flatObjectMetadata.isSearchable) {
-      continue;
-    }
-
-    if (
-      standardObjectUniversalIdentifiers.has(
-        flatObjectMetadata.universalIdentifier,
-      )
-    ) {
       continue;
     }
 

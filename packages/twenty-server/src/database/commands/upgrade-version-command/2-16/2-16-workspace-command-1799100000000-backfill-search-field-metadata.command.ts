@@ -43,7 +43,7 @@ export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspa
       'flatSearchFieldMetadataMaps',
     ]);
 
-    const { twentyStandardFlatApplication } =
+    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
@@ -66,6 +66,7 @@ export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspa
       flatSearchFieldMetadataMaps,
       standardFlatSearchFieldMetadataMaps:
         standardAllFlatEntityMaps.flatSearchFieldMetadataMaps,
+      customApplicationId: workspaceCustomFlatApplication.id,
     });
 
     const applicationUniversalIdentifiers = Object.keys(
