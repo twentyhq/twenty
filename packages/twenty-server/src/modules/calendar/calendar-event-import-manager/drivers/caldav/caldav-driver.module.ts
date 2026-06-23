@@ -9,6 +9,7 @@ import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
+import { CalDavImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-import-events.service';
 
 @Module({
   imports: [
@@ -22,12 +23,14 @@ import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-impo
     CalDavClientService,
     CalDavFetchEventsService,
     CalDavGetEventsService,
+    CalDavImportEventsService,
   ],
   exports: [
     CalDavClientProvider,
     CalDavClientService,
     CalDavFetchEventsService,
     CalDavGetEventsService,
+    CalDavImportEventsService,
   ],
 })
 export class CalDavDriverModule {}
