@@ -76,13 +76,18 @@ export const SettingsTimelineNewRule = () => {
 
     setIsSubmitting(true);
 
-    await createRule({
-      anchorObjectMetadataId,
-      sourceObjectMetadataId,
-      linkedObjectMetadataIds,
-    });
+    try {
+      await createRule({
+        anchorObjectMetadataId,
+        sourceObjectMetadataId,
+        linkedObjectMetadataIds,
+      });
 
-    navigate(SettingsPath.Timeline);
+      navigate(SettingsPath.Timeline);
+    } catch {
+      // Let the user retry; the mutation error is surfaced by the Apollo link.
+      setIsSubmitting(false);
+    }
   };
 
   return (
