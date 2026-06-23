@@ -1,13 +1,15 @@
 import { useStore } from 'jotai';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { usePersistRelationRecordGroups } from '@/object-record/record-group/hooks/usePersistRelationRecordGroups';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { type ViewType } from '@/views/types/ViewType';
 import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
@@ -41,6 +43,8 @@ export const useReorderRecordGroups = ({
     );
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
+
+  const { persistRelationRecordGroups } = usePersistRelationRecordGroups();
 
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
@@ -96,13 +100,22 @@ export const useReorderRecordGroups = ({
         recordIndexId,
         objectMetadataItemId: objectMetadataItem.id,
       });
-      saveViewGroups(
-        mapRecordGroupDefinitionsToViewGroups(updatedRecordGroups),
-      );
+
+      if (
+        isDefined(recordIndexGroupFieldMetadataItem) &&
+        isManyToOneRelationField(recordIndexGroupFieldMetadataItem)
+      ) {
+        persistRelationRecordGroups(updatedRecordGroups);
+      } else {
+        saveViewGroups(
+          mapRecordGroupDefinitionsToViewGroups(updatedRecordGroups),
+        );
+      }
     },
     [
       objectMetadataItem.id,
-      recordIndexGroupFieldMetadataItem?.id,
+      persistRelationRecordGroups,
+      recordIndexGroupFieldMetadataItem,
       recordIndexId,
       saveViewGroups,
       setRecordGroups,
