@@ -28,6 +28,8 @@ A server admin configures Recall credentials through server variables on the app
 | `MEETING_BOT_RECORDING_RETENTION_HOURS` | No | How many hours Recall.ai retains recording media after processing. Defaults to `166` hours (6 days and 22 hours) to stay below Recall.ai's 7-day free storage window. Values above `168` hours may incur Recall.ai storage charges. |
 | `RECALL_WEBHOOK_SECRET` | Yes | Svix signing secret (`whsec_…`) used to verify incoming Recall webhooks. |
 
+Recall.ai retention only controls Recall.ai's copy of the recording media. Twenty stores ingested transcript and video artifacts in its own storage, so deleting Recall.ai media after the retention window does not remove the artifacts already stored in Twenty.
+
 A workspace admin can adjust bot behavior through application variables:
 
 | Application variable | Default | Purpose |
