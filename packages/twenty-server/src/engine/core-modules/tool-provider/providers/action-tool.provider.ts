@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
@@ -184,9 +183,6 @@ export class ActionToolProvider implements ToolProvider {
       icon: 'IconPlayerPlay',
       ...(includeSchemas && {
         inputSchema: toToolJsonSchema(tool.inputSchema as z.ZodType),
-      }),
-      ...(isDefined(tool.largeOutputHint) && {
-        largeOutputHint: tool.largeOutputHint,
       }),
       executionRef: { kind: 'static', toolId },
     };

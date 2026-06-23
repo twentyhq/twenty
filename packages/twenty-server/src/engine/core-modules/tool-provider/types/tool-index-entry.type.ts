@@ -10,5 +10,4 @@ export type ToolIndexEntry = {
   objectName?: string;
   operation?: string;
   icon?: string;
-  largeOutputHint?: string;
 };

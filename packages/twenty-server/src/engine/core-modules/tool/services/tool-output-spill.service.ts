@@ -7,12 +7,11 @@ import { v4 } from 'uuid';
 import { isObject } from 'class-validator';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import {
-  MAX_INLINE_TOOL_OUTPUT_BYTES,
-  OUTPUT_NAVIGATION_TOOL_NAMES,
-} from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation.const';
+import { MAX_INLINE_TOOL_OUTPUT_BYTES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/max-inline-tool-output-bytes.constant';
+import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { jsonShapeSkeleton } from 'src/engine/core-modules/tool/utils/json-shape-skeleton.util';
+import { formatBytes } from 'src/engine/core-modules/tool/utils/format-bytes.util';
+import { jsonPreview } from 'src/engine/core-modules/tool/utils/json-preview.util';
 
 type SpillContext = {
   workspaceId: string;
@@ -20,11 +19,7 @@ type SpillContext = {
 
 type SpillOptions = {
   toolName: string;
-  largeOutputHint?: string;
 };
-
-const formatBytes = (bytes: number): string =>
-  bytes >= 1024 ? `${(bytes / 1024).toFixed(1)} kB` : `${bytes} B`;
 
 const OUTPUT_NAVIGATION_TOOL_NAME_SET = new Set<string>(
   OUTPUT_NAVIGATION_TOOL_NAMES,
@@ -71,7 +66,7 @@ export class ToolOutputSpillService {
     }
 
     try {
-      const shape = jsonShapeSkeleton(output);
+      const preview = jsonPreview(output.result);
       const fileId = v4();
       const filename = `tool-output-${options.toolName}-${fileId}.json`;
 
@@ -94,9 +89,7 @@ export class ToolOutputSpillService {
         },
       });
 
-      const hint =
-        options.largeOutputHint ??
-        `Output too large to inline (${formatBytes(sizeBytes)}). Use extract_json_paths (for json objects) or search_output (for text) with this fileId to read specific parts, or code_interpreter for analysis.`;
+      const hint = `Output too large to inline (${formatBytes(sizeBytes)}). "preview" is a truncated sample (first items, all keys); use extract_json_paths (for json objects) or search_output (for text) with this fileId to read the full data, or code_interpreter for analysis.`;
 
       return {
         success: output.success,
@@ -107,7 +100,7 @@ export class ToolOutputSpillService {
             fileId: savedFile.id,
             filename,
           },
-          shape,
+          preview,
           hint,
         },
       };

@@ -10,5 +10,4 @@ export type Tool = {
   inputSchema: FlexibleSchema<unknown>;
   execute(input: ToolInput, context: ToolExecutionContext): Promise<ToolOutput>;
   flag?: PermissionFlagType;
-  largeOutputHint?: string;
 };

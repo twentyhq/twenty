@@ -3,10 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FileFolder } from 'twenty-shared/types';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import {
-  DEFAULT_SEARCH_CONTEXT_LINES,
-  DEFAULT_SEARCH_MAX_MATCHES,
-} from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation.const';
+import { DEFAULT_SEARCH_OUTPUT_CONTEXT_LINES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/default-search-output-context-lines.constant';
+import { DEFAULT_SEARCH_OUTPUT_MAX_MATCHES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/default-search-output-max-matches.constant';
 import { SearchOutputInputZodSchema } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool.schema';
 import { searchOutput } from 'src/engine/core-modules/tool/tools/output-navigation-tool/utils/search-output.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
@@ -81,9 +79,9 @@ export class SearchOutputTool implements Tool {
     const result = searchOutput({
       content,
       pattern,
-      maxMatches: maxMatches ?? DEFAULT_SEARCH_MAX_MATCHES,
+      maxMatches: maxMatches ?? DEFAULT_SEARCH_OUTPUT_MAX_MATCHES,
       offset: offset ?? 0,
-      contextLines: contextLines ?? DEFAULT_SEARCH_CONTEXT_LINES,
+      contextLines: contextLines ?? DEFAULT_SEARCH_OUTPUT_CONTEXT_LINES,
     });
 
     return {

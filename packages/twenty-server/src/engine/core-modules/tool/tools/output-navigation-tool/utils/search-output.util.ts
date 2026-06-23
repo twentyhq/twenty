@@ -1,4 +1,4 @@
-import { MAX_SEARCH_LINE_LENGTH } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation.const';
+import { SEARCH_OUTPUT_MAX_LINE_LENGTH } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/search-output-max-line-length.constant';
 
 export type SearchMatch = {
   lineNumber: number;
@@ -24,8 +24,8 @@ const compilePattern = (pattern: string): RegExp => {
 };
 
 const truncateLine = (line: string): string =>
-  line.length > MAX_SEARCH_LINE_LENGTH
-    ? `${line.slice(0, MAX_SEARCH_LINE_LENGTH)}…`
+  line.length > SEARCH_OUTPUT_MAX_LINE_LENGTH
+    ? `${line.slice(0, SEARCH_OUTPUT_MAX_LINE_LENGTH)}…`
     : line;
 
 export const searchOutput = ({

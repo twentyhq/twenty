@@ -147,10 +147,7 @@ export class ToolRegistryService {
           ? this.toolOutputSpillService.spillIfTooLarge(
               compacted,
               { workspaceId: context.workspaceId },
-              {
-                toolName: descriptor.name,
-                largeOutputHint: descriptor.largeOutputHint,
-              },
+              { toolName: descriptor.name },
             )
           : compacted;
       };
@@ -327,7 +324,7 @@ export class ToolRegistryService {
         ? this.toolOutputSpillService.spillIfTooLarge(
             compacted,
             { workspaceId: fullContext.workspaceId },
-            { toolName, largeOutputHint: entry.largeOutputHint },
+            { toolName },
           )
         : compacted;
     } catch (error) {

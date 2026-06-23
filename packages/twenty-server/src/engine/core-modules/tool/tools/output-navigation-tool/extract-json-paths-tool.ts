@@ -3,10 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FileFolder } from 'twenty-shared/types';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import {
-  DEFAULT_EXTRACT_MAX_DEPTH,
-  DEFAULT_EXTRACT_MAX_ITEMS,
-} from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation.const';
+import { DEFAULT_EXTRACT_JSON_PATHS_MAX_DEPTH } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/default-extract-json-paths-max-depth.constant';
+import { DEFAULT_EXTRACT_JSON_PATHS_MAX_ITEMS } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/default-extract-json-paths-max-items.constant';
 import { ExtractJsonPathsInputZodSchema } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool.schema';
 import {
   extractJsonPath,
@@ -47,8 +45,8 @@ export class ExtractJsonPathsTool implements Tool {
     const { fileId, paths, maxItems, maxDepth } =
       parameters as ExtractJsonPathsInput;
 
-    const effectiveMaxItems = maxItems ?? DEFAULT_EXTRACT_MAX_ITEMS;
-    const effectiveMaxDepth = maxDepth ?? DEFAULT_EXTRACT_MAX_DEPTH;
+    const effectiveMaxItems = maxItems ?? DEFAULT_EXTRACT_JSON_PATHS_MAX_ITEMS;
+    const effectiveMaxDepth = maxDepth ?? DEFAULT_EXTRACT_JSON_PATHS_MAX_DEPTH;
 
     let fileContent: { buffer: Buffer; mimeType: string } | null;
 

@@ -1,5 +1,5 @@
 import { isNull, isObject, isString } from '@sniptt/guards';
-import { MAX_LEAF_STRING_LENGTH } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation.const';
+import { EXTRACT_JSON_PATHS_MAX_LEAF_STRING_LENGTH } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/extract-json-paths-max-leaf-string-length.constant';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export class JsonPathError extends Error {}
@@ -138,8 +138,11 @@ const resolveAccessors = (value: unknown, accessors: Accessor[]): unknown => {
 };
 
 const boundScalar = (value: unknown): unknown => {
-  if (isString(value) && value.length > MAX_LEAF_STRING_LENGTH) {
-    return `${value.slice(0, MAX_LEAF_STRING_LENGTH)}… (truncated, ${value.length} chars total)`;
+  if (
+    isString(value) &&
+    value.length > EXTRACT_JSON_PATHS_MAX_LEAF_STRING_LENGTH
+  ) {
+    return `${value.slice(0, EXTRACT_JSON_PATHS_MAX_LEAF_STRING_LENGTH)}… (truncated, ${value.length} chars total)`;
   }
 
   return value;

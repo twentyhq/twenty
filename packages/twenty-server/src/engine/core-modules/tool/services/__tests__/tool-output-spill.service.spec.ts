@@ -41,7 +41,13 @@ describe('ToolOutputSpillService', () => {
     findApplication.mockResolvedValue({
       workspaceCustomFlatApplication: { universalIdentifier: 'app-uid' },
     });
-    writeFile.mockResolvedValue({ id: 'file-123' });
+    // Echo a persisted id that differs from the generated fileId so the test
+    // catches the envelope exposing the wrong id (the nav tools retrieve by
+    // savedFile.id, not by the generated uuid).
+    writeFile.mockImplementation(
+      ({ fileId }: { fileId: string }) =>
+        Promise.resolve({ id: `persisted-${fileId}` }),
+    );
   });
 
   it('returns the output unchanged when under the byte budget', async () => {
@@ -77,15 +83,25 @@ describe('ToolOutputSpillService', () => {
       }),
     );
 
+    const writeFileArgs = writeFile.mock.calls[0][0] as {
+      fileId: string;
+      resourcePath: string;
+    };
+
     const envelope = result.result as Record<string, unknown>;
     const outputRef = envelope.outputRef as Record<string, unknown>;
 
     expect(envelope.spilled).toBe(true);
-    expect(outputRef.fileId).toBe('file-123');
+    // The envelope must expose the persisted id (what the nav tools retrieve
+    // by), not the generated fileId used to build the storage resourcePath.
+    expect(outputRef.fileId).toBe(`persisted-${writeFileArgs.fileId}`);
+    expect(writeFileArgs.resourcePath).toBe(
+      `tool-output-spill/${writeFileArgs.fileId}.json`,
+    );
     expect(outputRef.filename).toMatch(
       /^tool-output-find_many_companies-.+\.json$/,
     );
-    expect(envelope.shape).toBeDefined();
+    expect(envelope.preview).toBeDefined();
     expect(envelope.hint).toContain('extract_json_paths');
   });
 
@@ -104,21 +120,6 @@ describe('ToolOutputSpillService', () => {
       expect(writeFile).not.toHaveBeenCalled();
     },
   );
-
-  it('uses the per-tool largeOutputHint when provided', async () => {
-    const result = await service.spillIfTooLarge(
-      buildLargeOutput(),
-      { workspaceId: WORKSPACE_ID },
-      {
-        toolName: 'get_workflow_run',
-        largeOutputHint: 'Errors live under failedStepLogs[*].error.',
-      },
-    );
-
-    const envelope = result.result as Record<string, unknown>;
-
-    expect(envelope.hint).toBe('Errors live under failedStepLogs[*].error.');
-  });
 
   it('falls back to the inline output with a warning when the spill write fails', async () => {
     writeFile.mockRejectedValue(new Error('storage down'));
