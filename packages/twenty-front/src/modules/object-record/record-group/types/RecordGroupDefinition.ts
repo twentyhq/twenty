@@ -1,3 +1,4 @@
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ThemeColor } from 'twenty-ui/theme';
 export const enum RecordGroupDefinitionType {
   Value = 'value',
@@ -12,4 +13,5 @@ export type RecordGroupDefinition = {
   color: ThemeColor | 'transparent';
   position: number;
   isVisible: boolean;
+  relationRecord?: ObjectRecord;
 };
