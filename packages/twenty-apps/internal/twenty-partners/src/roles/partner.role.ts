@@ -2,15 +2,26 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, defineRole } from 'twenty-sdk/de
 
 import {
   INTRO_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
-  MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import {
+  APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
+  APPLICATION_NAME_FIELD_ID,
+  APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+  APPLICATION_PARTNER_FIELD_ID,
+  APPLICATION_PARTNER_USER_FIELD_ID,
+  APPLICATION_STATE_FIELD_ID,
+  APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
+} from 'src/objects/application.object';
 import { OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID } from 'src/fields/opportunity-design-doc-status.field';
 import { OPPORTUNITY_DESIGN_DOC_URL_FIELD_ID } from 'src/fields/opportunity-design-doc-url.field';
 import { OPPORTUNITY_HOSTING_TYPE_FIELD_ID } from 'src/fields/opportunity-hosting-type.field';
+import { OPPORTUNITY_IS_LISTED_FIELD_ID } from 'src/fields/opportunity-is-listed.field';
 import { OPPORTUNITY_LOST_REASON_FIELD_ID } from 'src/fields/opportunity-lost-reason.field';
+import { OPPORTUNITY_NEED_FIELD_ID } from 'src/fields/opportunity-need.field';
 import { OPPORTUNITY_NUMBER_OF_SEATS_FIELD_ID } from 'src/fields/opportunity-number-of-seats.field';
+import { OPPORTUNITY_REQUIREMENTS_FIELD_ID } from 'src/fields/opportunity-requirements.field';
 import { OPPORTUNITY_SUBSCRIPTION_FREQUENCY_FIELD_ID } from 'src/fields/opportunity-subscription-frequency.field';
 import { OPPORTUNITY_SUBSCRIPTION_TYPE_FIELD_ID } from 'src/fields/opportunity-subscription-type.field';
 import { OPPORTUNITY_TFT_ID_FIELD_ID } from 'src/fields/opportunity-tft-id.field';
@@ -24,8 +35,10 @@ import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-par
 export const PARTNER_ROLE_LABEL = 'Partner';
 
 // External partner self-service role: a partner sees only its own records, can edit its
-// own Partner profile and an Opportunity's stage + amount; Company/Person are read-only.
-// Row-level predicates can't ship in the manifest, so run `yarn rls:configure` after install.
+// own Partner profile and an Application's pitch (and set opportunity on apply/create); Company/
+// Person are read-only. Opportunity stage/amount are admin-only (read-only for partners).
+// Application rows are scoped to own partnerUser (RLS). Row-level predicates can't ship in
+// the manifest, so run `yarn rls:configure` after install.
 //
 // `updatedBy` and `position` must stay editable even though they're not partner-facing: the
 // server injects `updatedBy` into every update (ActorFromAuthContextService) and co-writes
@@ -37,7 +50,7 @@ export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: PARTNER_ROLE_LABEL,
   description:
-    'External partner self-service role. Sees only its own Partner/Person/Company/Opportunity records (row-level). Can edit its own Partner profile and an Opportunity’s stage + amount; Company and Person are read-only. Configure predicates with `yarn rls:configure` after install.',
+    'External partner self-service role. Sees only its own Partner/Person/Company/Opportunity/Application records (row-level). Can edit its own Partner profile and an Application’s pitch; Opportunity stage/amount are read-only. Configure predicates with `yarn rls:configure` after install.',
   icon: 'IconBuildingStore',
   canBeAssignedToUsers: true,
   canUpdateAllSettings: false,
@@ -45,8 +58,13 @@ export default defineRole({
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
-  // Lock every Opportunity field except stage/amount (editable) and the system/
-  // server-managed fields left out here (id, timestamps, updatedBy, position — see header).
+  // No permission flags: partners apply by CREATING an Application directly (a normal record
+  // write, governed by the Application object permission), which fires on-application-created.
+  // They never run a manual workflow, so the WORKFLOWS flag is unnecessary — and it can't be
+  // granted on an app-owned role anyway (the manifest sync drops role→permissionFlag links).
+  permissionFlagUniversalIdentifiers: [],
+  // Lock every Opportunity field except the system/server-managed fields left out here
+  // (id, timestamps, updatedBy, position — see header). Stage + amount are locked too.
   fieldPermissions: [
     {
       objectUniversalIdentifier:
@@ -61,6 +79,22 @@ export default defineRole({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
       fieldUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.closeDate
+          .universalIdentifier,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.stage
+          .universalIdentifier,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.amount
           .universalIdentifier,
       canUpdateFieldValue: false,
     },
@@ -152,12 +186,6 @@ export default defineRole({
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
-      canUpdateFieldValue: false,
-    },
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
       fieldUniversalIdentifier: INTRO_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
       canUpdateFieldValue: false,
     },
@@ -215,6 +243,31 @@ export default defineRole({
       fieldUniversalIdentifier: OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID,
       canUpdateFieldValue: false,
     },
+  // Marketplace brief fields — read-only for partners (listed briefs visible via RLS OR predicate).
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY_IS_LISTED_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY_REQUIREMENTS_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY_NEED_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
     // Partner object — lock admin-managed fields so partners can't self-promote or alter ops data.
     {
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -265,6 +318,35 @@ export default defineRole({
       fieldUniversalIdentifier: PARTNER_COMPANY_FIELD_ID,
       canUpdateFieldValue: false,
     },
+    // Application — lock every field except pitch and opportunity (partner sets opportunity
+    // on apply/create; state/partnerUser are populated by on-application-created as the app).
+    // System/server-managed fields (id, timestamps, updatedBy, position, searchVector) stay
+    // out — locking updatedBy/position breaks every update (same trap as Opportunity above).
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: APPLICATION_NAME_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: APPLICATION_PARTNER_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: APPLICATION_PARTNER_USER_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: APPLICATION_STATE_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
   ],
   objectPermissions: [
     {
@@ -295,6 +377,13 @@ export default defineRole({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },

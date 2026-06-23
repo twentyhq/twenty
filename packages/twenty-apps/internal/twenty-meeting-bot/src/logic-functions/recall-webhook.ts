@@ -1,15 +1,31 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import {
+  defineLogicFunction,
+  type LogicFunctionConfig,
+  type RoutePayload,
+} from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
 
 import { RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/recall-webhook-logic-function-universal-identifier';
 import { RECALL_WEBHOOK_SECRET_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-webhook-secret-env-var-name';
-import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { handleRecallWebhook } from 'src/logic-functions/flows/handle-recall-webhook.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { type RecallWebhookBody } from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
 import { verifyRecallWebhookSignature } from 'src/logic-functions/recall-api/verify-recall-webhook-signature.util';
+import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+
+type ServerWebhookTriggerSettings = {
+  workspaceIdResolver: {
+    source: 'body' | 'query' | 'header';
+    path: string;
+  };
+  forwardedRequestHeaders?: string[];
+};
+
+type RecallWebhookLogicFunctionConfig = LogicFunctionConfig & {
+  serverWebhookTriggerSettings: ServerWebhookTriggerSettings;
+};
 
 // Non-2xx makes Svix retry; a returned plain object would 200-ack permanently.
 const rejectWebhook = (status: number, error: string): Response => {
@@ -64,17 +80,18 @@ export const recallWebhookRouteHandler = async (
   });
 };
 
-export default defineLogicFunction({
+const recallWebhookLogicFunctionConfig = {
   universalIdentifier: RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'recall-webhook',
   description:
     'Receives Recall.ai webhook events and updates the matching CallRecording lifecycle status.',
   timeoutSeconds: 30,
   handler: recallWebhookRouteHandler,
-  httpRouteTriggerSettings: {
-    path: '/webhook/recall',
-    httpMethod: 'POST',
-    isAuthRequired: false,
+  serverWebhookTriggerSettings: {
+    workspaceIdResolver: {
+      source: 'body',
+      path: 'data.bot.metadata.twentyWorkspaceId',
+    },
     forwardedRequestHeaders: [
       'webhook-id',
       'webhook-timestamp',
@@ -84,4 +101,12 @@ export default defineLogicFunction({
       'svix-signature',
     ],
   },
-});
+} satisfies RecallWebhookLogicFunctionConfig;
+
+const recallWebhookLogicFunction = defineLogicFunction(
+  recallWebhookLogicFunctionConfig,
+) as ReturnType<typeof defineLogicFunction> & {
+  config: RecallWebhookLogicFunctionConfig;
+};
+
+export default recallWebhookLogicFunction;

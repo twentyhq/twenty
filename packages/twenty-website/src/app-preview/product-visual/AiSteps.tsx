@@ -69,7 +69,7 @@ const SummaryButton = styled.button`
   color: ${THEME_LIGHT.font.color.tertiary};
   cursor: pointer;
   display: flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   gap: 8px;
   min-height: 18px;
   padding: 0;
@@ -122,7 +122,7 @@ const StepLoaderIcon = styled.span`
 
 const StepLabel = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   font-weight: 400;
   line-height: 18px;

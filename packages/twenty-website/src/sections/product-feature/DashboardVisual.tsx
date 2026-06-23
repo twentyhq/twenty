@@ -19,7 +19,7 @@ const Window = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
   display: flex;
   flex-direction: column;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   height: 100%;
   overflow: hidden;
   width: 100%;

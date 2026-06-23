@@ -16,7 +16,7 @@ const EmailHeading = styled.div`
 
 const SenderNames = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   margin: 0 6px;
   overflow: hidden;
@@ -26,7 +26,7 @@ const SenderNames = styled.span`
 
 const ThreadCount = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
 `;
 
@@ -40,7 +40,7 @@ const SubjectBody = styled.div`
 
 const EmailSubject = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -50,7 +50,7 @@ const EmailSubject = styled.span`
 const EmailBody = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
   flex: 1;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -60,7 +60,7 @@ const EmailBody = styled.span`
 const ReceivedAt = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
   flex-shrink: 0;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   padding: 0 4px;
   white-space: nowrap;

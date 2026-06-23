@@ -47,7 +47,7 @@ const MAPPINGS: {
 const Root = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
   display: flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   height: 100%;
   justify-content: center;
   overflow: hidden;
