@@ -8,9 +8,7 @@ const ROLE_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
 
 const buildDeps = (findResult: unknown[]) => ({
   globalWorkspaceOrmManager: {
-    executeInWorkspaceContext: jest
-      .fn()
-      .mockImplementation(async (fn) => fn()),
+    executeInWorkspaceContext: jest.fn().mockImplementation(async (fn) => fn()),
     getRepository: jest.fn().mockResolvedValue({
       find: jest.fn().mockResolvedValue(findResult),
     }),

@@ -45,7 +45,11 @@ describe('get_workflow_current_version tool', () => {
     const deps = buildDeps({
       workflow: { id: WORKFLOW_ID },
       versions: [
-        { id: 'v1', status: WorkflowVersionStatus.DRAFT, workflowId: WORKFLOW_ID },
+        {
+          id: 'v1',
+          status: WorkflowVersionStatus.DRAFT,
+          workflowId: WORKFLOW_ID,
+        },
       ],
     });
 
