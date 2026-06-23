@@ -224,7 +224,6 @@ export const executeXopureRawMirrorCli = async (
           const pool = new Pool({
             connectionString: source.dsn,
             max: 5,
-            options: '-c default_transaction_read_only=on',
           });
 
           return {

@@ -191,17 +191,26 @@ describe('raw mirror records', () => {
     expect(first.contentHash).toBe(second.contentHash);
   });
 
-  it('rejects rows without a stable raw source id', () => {
-    expect(() =>
-      buildRawMirrorRecord(
-        {
-          sourceSchema: 'public',
-          sourceTable: 'anonymous_events',
-          targetTableName: '_xopureRaw_anonymous_events',
-        },
-        { event_name: 'viewed' },
-      ),
-    ).toThrow('stable source id');
+  it('derives a stable content-key source id for rows without an id column', () => {
+    const first = buildRawMirrorRecord(
+      {
+        sourceSchema: 'public',
+        sourceTable: 'site_settings',
+        targetTableName: '_xopureRaw_site_settings',
+      },
+      { value: 'enabled', key: 'support_console' },
+    );
+    const second = buildRawMirrorRecord(
+      {
+        sourceSchema: 'public',
+        sourceTable: 'site_settings',
+        targetTableName: '_xopureRaw_site_settings',
+      },
+      { key: 'support_console', value: 'enabled' },
+    );
+
+    expect(first.sourceRecordId).toMatch(/^content:/);
+    expect(first.sourceRecordId).toBe(second.sourceRecordId);
   });
 
   it('derives raw table names deterministically', () => {
@@ -313,7 +322,7 @@ describe('raw mirror live persistence', () => {
     expect(query).not.toHaveBeenCalled();
   });
 
-  it('persists hashable rows and reports unhashable raw rows as failures', async () => {
+  it('persists rows without conventional ids using content-key source ids', async () => {
     const query = vi.fn().mockResolvedValue({ rows: [], rowCount: 1 });
 
     const result = await runXopureRawMirrorLive({
@@ -339,11 +348,11 @@ describe('raw mirror live persistence', () => {
       dryRun: false,
       tableCount: 1,
       scanned: 2,
-      hashed: 1,
-      upserted: 1,
-      failed: 1,
+      hashed: 2,
+      upserted: 2,
+      failed: 0,
     });
-    expect(result.errors[0]?.error).toContain('stable source id');
+    expect(result.errors).toEqual([]);
   });
 });
 
@@ -388,6 +397,13 @@ describe('raw mirror parity verification', () => {
           sourceRecordId: 'payment-deleted',
           targetTableName: '_xopureRaw_payments',
           contentHash: 'old-hash',
+        },
+        {
+          sourceSchema: 'public',
+          sourceTable: 'affiliates',
+          sourceRecordId: 'affiliate-1',
+          targetTableName: '_xopureRaw_affiliates',
+          contentHash: 'other-table-hash',
         },
       ],
     });

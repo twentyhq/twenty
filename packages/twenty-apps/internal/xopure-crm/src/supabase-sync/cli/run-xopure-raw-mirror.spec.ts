@@ -189,6 +189,18 @@ describe('executeXopureRawMirrorCli', () => {
     expect(discoverRawMirrorRestTables).not.toHaveBeenCalled();
   });
 
+  it('does not pass startup options to the Supabase source pool', async () => {
+    await executeXopureRawMirrorCli([], {
+      env: baseEnv,
+      write: () => undefined,
+    });
+
+    expect(Pool).toHaveBeenCalledWith({
+      connectionString: baseEnv.XOPURE_SUPABASE_READONLY_DSN,
+      max: 5,
+    });
+  });
+
   it('runs live mode with a Twenty target DB client', async () => {
     const sourcePool = { query: vi.fn() };
     const targetClient = { query: vi.fn(), release: vi.fn() };

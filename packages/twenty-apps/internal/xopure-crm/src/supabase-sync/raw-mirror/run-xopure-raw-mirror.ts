@@ -158,7 +158,7 @@ const rawSourceRecordId = (row: Record<string, unknown>): string | null => {
 
   return typeof numericId === 'number' && Number.isFinite(numericId)
     ? String(numericId)
-    : null;
+    : `content:${computeContentHash(row)}`;
 };
 
 export const getRawMirrorTargetTableName = (sourceTable: string): string => {
@@ -708,6 +708,15 @@ export const verifyRawMirrorParity = async (
 ): Promise<RawMirrorParityResult> => {
   const sourceResult = await runXopureRawMirrorDryRun(input);
   const storedRecords = await readPersistedRawMirrorHashes(input.target);
+  const verifiedTargetTables = new Set(
+    sourceResult.records.map((record) => record.targetTableName),
+  );
+  const relevantStoredRecords =
+    verifiedTargetTables.size > 0
+      ? storedRecords.filter((record) =>
+          verifiedTargetTables.has(record.targetTableName),
+        )
+      : storedRecords;
   const sourceByKey = new Map<string, RawMirrorRecord>();
   const storedByKey = new Map<
     string,
@@ -721,7 +730,7 @@ export const verifyRawMirrorParity = async (
     );
   }
 
-  for (const record of storedRecords) {
+  for (const record of relevantStoredRecords) {
     storedByKey.set(
       recordKey(record.sourceSchema, record.sourceTable, record.sourceRecordId),
       record,
@@ -785,7 +794,7 @@ export const verifyRawMirrorParity = async (
     tableCount: sourceResult.tableCount,
     sourceScanned: sourceResult.scanned,
     sourceHashed: sourceResult.hashed,
-    stored: storedRecords.length,
+    stored: relevantStoredRecords.length,
     matching,
     missing: missingRecords.length,
     changed: changedRecords.length,
