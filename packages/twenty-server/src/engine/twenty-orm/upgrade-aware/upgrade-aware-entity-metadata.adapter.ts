@@ -346,13 +346,33 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
   }
 
   private validateDecoratorsAgainstSequence(): void {
-    const entityClasses = this.coreDataSource.entityMetadatas
-      .map((metadata) => metadata.target)
-      .filter((target): target is Function => typeof target === 'function');
+    const entityClasses: Function[] = [];
+    const knownPropertyNamesByEntityClass = new Map<
+      Function,
+      ReadonlySet<string>
+    >();
+
+    for (const metadata of this.coreDataSource.entityMetadatas) {
+      if (typeof metadata.target !== 'function') {
+        continue;
+      }
+
+      entityClasses.push(metadata.target);
+      knownPropertyNamesByEntityClass.set(
+        metadata.target,
+        new Set([
+          ...metadata.columns.map((column) => column.propertyName),
+          ...(metadata.relations ?? []).map(
+            (relation) => relation.propertyName,
+          ),
+        ]),
+      );
+    }
 
     const problems = validateUpgradeAwareEntityDecorators({
       entityClasses,
       stepNameToIndex: this.stepNameToIndex,
+      knownPropertyNamesByEntityClass,
     });
 
     if (problems.length === 0) {

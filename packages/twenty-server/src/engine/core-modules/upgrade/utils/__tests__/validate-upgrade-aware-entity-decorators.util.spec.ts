@@ -115,6 +115,66 @@ describe('validateUpgradeAwareEntityDecorators', () => {
     expect(problems).toEqual([]);
   });
 
+  describe('known property name validation', () => {
+    it('reports an introduced property name that does not exist on the entity', () => {
+      @WasIntroducedInUpgrade({
+        upgradeCommandName: KNOWN_CMD,
+        properties: ['universalIdentifier', 'typoColumn'],
+      })
+      class EntityWithTypo {}
+
+      const problems = validateUpgradeAwareEntityDecorators({
+        entityClasses: [EntityWithTypo],
+        stepNameToIndex: buildStepNameToIndex([KNOWN_CMD]),
+        knownPropertyNamesByEntityClass: new Map([
+          [EntityWithTypo, new Set(['universalIdentifier', 'position'])],
+        ]),
+      });
+
+      expect(problems).toEqual([
+        {
+          kind: 'unknown-property-name',
+          entityName: 'EntityWithTypo',
+          decorator: '@WasIntroducedInUpgrade',
+          propertyName: 'typoColumn',
+        },
+      ]);
+    });
+
+    it('reports no problem when all introduced property names exist', () => {
+      @WasIntroducedInUpgrade({
+        upgradeCommandName: KNOWN_CMD,
+        properties: ['universalIdentifier', 'position'],
+      })
+      class ValidEntity {}
+
+      const problems = validateUpgradeAwareEntityDecorators({
+        entityClasses: [ValidEntity],
+        stepNameToIndex: buildStepNameToIndex([KNOWN_CMD]),
+        knownPropertyNamesByEntityClass: new Map([
+          [ValidEntity, new Set(['universalIdentifier', 'position'])],
+        ]),
+      });
+
+      expect(problems).toEqual([]);
+    });
+
+    it('skips property name validation when no known property names are provided', () => {
+      @WasIntroducedInUpgrade({
+        upgradeCommandName: KNOWN_CMD,
+        properties: ['anythingGoes'],
+      })
+      class UnvalidatedEntity {}
+
+      const problems = validateUpgradeAwareEntityDecorators({
+        entityClasses: [UnvalidatedEntity],
+        stepNameToIndex: buildStepNameToIndex([KNOWN_CMD]),
+      });
+
+      expect(problems).toEqual([]);
+    });
+  });
+
   it('should report a rename history that is out of order versus the sequence', () => {
     @WasRenamedInUpgrade([
       { previousName: 'first', upgradeCommandName: KNOWN_LATER_RENAME_CMD },

@@ -51,6 +51,7 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
       givenTableName: 'newEntity',
       schema: 'core',
       columns: [],
+      relations: [],
     } as unknown as EntityMetadata;
 
     const dataSource = {
@@ -101,6 +102,7 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
       givenTableName: 'entityWithHideableColumns',
       schema: 'core',
       columns: [introducedColumn, removedColumn, visibleColumn],
+      relations: [],
     } as unknown as EntityMetadata;
 
     const dataSource = {
