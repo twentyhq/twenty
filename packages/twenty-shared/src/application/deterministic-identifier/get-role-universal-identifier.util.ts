@@ -1,5 +1,4 @@
-import { computeOwnerScopedUniversalIdentifier } from '@/application/deterministic-identifier/compute-owner-scoped-universal-identifier.util';
-import { ENTITY_TYPE_NAMESPACE_BY_TYPE } from '@/application/deterministic-identifier/entity-type-namespace.constant';
+import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
 // A role is identified by its label within its application.
 export const getRoleUniversalIdentifier = ({
@@ -9,8 +8,8 @@ export const getRoleUniversalIdentifier = ({
   ownerApplicationUniversalIdentifier: string;
   label: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.role,
+  computeDeterministicUuid({
+    entityNamespace: 'role',
     value: label,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });

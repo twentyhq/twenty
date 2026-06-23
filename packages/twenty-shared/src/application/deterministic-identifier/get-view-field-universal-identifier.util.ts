@@ -1,5 +1,4 @@
-import { computeOwnerScopedUniversalIdentifier } from '@/application/deterministic-identifier/compute-owner-scoped-universal-identifier.util';
-import { ENTITY_TYPE_NAMESPACE_BY_TYPE } from '@/application/deterministic-identifier/entity-type-namespace.constant';
+import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
 // A view field is identified by the field it displays, within its view.
 export const getViewFieldUniversalIdentifier = ({
@@ -11,8 +10,8 @@ export const getViewFieldUniversalIdentifier = ({
   viewUniversalIdentifier: string;
   fieldMetadataUniversalIdentifier: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.viewField,
+  computeDeterministicUuid({
+    entityNamespace: 'viewField',
     value: `${viewUniversalIdentifier}:${fieldMetadataUniversalIdentifier}`,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });

@@ -1,5 +1,4 @@
-import { computeOwnerScopedUniversalIdentifier } from '@/application/deterministic-identifier/compute-owner-scoped-universal-identifier.util';
-import { ENTITY_TYPE_NAMESPACE_BY_TYPE } from '@/application/deterministic-identifier/entity-type-namespace.constant';
+import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
 // A field permission is identified by its field (which implies its object), within its role.
 export const getFieldPermissionUniversalIdentifier = ({
@@ -11,8 +10,8 @@ export const getFieldPermissionUniversalIdentifier = ({
   roleUniversalIdentifier: string;
   fieldUniversalIdentifier: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.fieldPermission,
+  computeDeterministicUuid({
+    entityNamespace: 'fieldPermission',
     value: `${roleUniversalIdentifier}:${fieldUniversalIdentifier}`,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });

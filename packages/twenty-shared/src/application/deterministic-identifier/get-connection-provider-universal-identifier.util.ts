@@ -1,5 +1,4 @@
-import { computeOwnerScopedUniversalIdentifier } from '@/application/deterministic-identifier/compute-owner-scoped-universal-identifier.util';
-import { ENTITY_TYPE_NAMESPACE_BY_TYPE } from '@/application/deterministic-identifier/entity-type-namespace.constant';
+import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
 // A connection provider is identified by its name within its application.
 export const getConnectionProviderUniversalIdentifier = ({
@@ -9,8 +8,8 @@ export const getConnectionProviderUniversalIdentifier = ({
   ownerApplicationUniversalIdentifier: string;
   name: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.connectionProvider,
+  computeDeterministicUuid({
+    entityNamespace: 'connectionProvider',
     value: name,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });

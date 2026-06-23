@@ -1,5 +1,4 @@
-import { computeOwnerScopedUniversalIdentifier } from '@/application/deterministic-identifier/compute-owner-scoped-universal-identifier.util';
-import { ENTITY_TYPE_NAMESPACE_BY_TYPE } from '@/application/deterministic-identifier/entity-type-namespace.constant';
+import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
 // A view sort is identified by the field it sorts, within its view.
 export const getViewSortUniversalIdentifier = ({
@@ -11,8 +10,8 @@ export const getViewSortUniversalIdentifier = ({
   viewUniversalIdentifier: string;
   fieldMetadataUniversalIdentifier: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.viewSort,
+  computeDeterministicUuid({
+    entityNamespace: 'viewSort',
     value: `${viewUniversalIdentifier}:${fieldMetadataUniversalIdentifier}`,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });

@@ -1,5 +1,4 @@
-import { computeOwnerScopedUniversalIdentifier } from '@/application/deterministic-identifier/compute-owner-scoped-universal-identifier.util';
-import { ENTITY_TYPE_NAMESPACE_BY_TYPE } from '@/application/deterministic-identifier/entity-type-namespace.constant';
+import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
 // An application variable is identified by its key within its application.
 export const getApplicationVariableUniversalIdentifier = ({
@@ -9,8 +8,8 @@ export const getApplicationVariableUniversalIdentifier = ({
   ownerApplicationUniversalIdentifier: string;
   key: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.applicationVariable,
+  computeDeterministicUuid({
+    entityNamespace: 'applicationVariable',
     value: key,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });

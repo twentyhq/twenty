@@ -1,5 +1,4 @@
-import { computeOwnerScopedUniversalIdentifier } from '@/application/deterministic-identifier/compute-owner-scoped-universal-identifier.util';
-import { ENTITY_TYPE_NAMESPACE_BY_TYPE } from '@/application/deterministic-identifier/entity-type-namespace.constant';
+import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
 // A tab is identified by its title within its page layout.
 export const getPageLayoutTabUniversalIdentifier = ({
@@ -11,8 +10,8 @@ export const getPageLayoutTabUniversalIdentifier = ({
   pageLayoutUniversalIdentifier: string;
   title: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.pageLayoutTab,
+  computeDeterministicUuid({
+    entityNamespace: 'pageLayoutTab',
     value: `${pageLayoutUniversalIdentifier}:${title}`,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });

@@ -27,9 +27,7 @@ export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
-export { computeOwnerScopedUniversalIdentifier } from './deterministic-identifier/compute-owner-scoped-universal-identifier.util';
-export type { DeterministicEntityType } from './deterministic-identifier/entity-type-namespace.constant';
-export { ENTITY_TYPE_NAMESPACE_BY_TYPE } from './deterministic-identifier/entity-type-namespace.constant';
+export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
 export { getApplicationVariableUniversalIdentifier } from './deterministic-identifier/get-application-variable-universal-identifier.util';
 export {

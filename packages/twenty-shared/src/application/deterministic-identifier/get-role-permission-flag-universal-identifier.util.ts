@@ -1,5 +1,4 @@
-import { computeOwnerScopedUniversalIdentifier } from '@/application/deterministic-identifier/compute-owner-scoped-universal-identifier.util';
-import { ENTITY_TYPE_NAMESPACE_BY_TYPE } from '@/application/deterministic-identifier/entity-type-namespace.constant';
+import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
 // A role permission flag is identified by its permission flag, within its role.
 export const getRolePermissionFlagUniversalIdentifier = ({
@@ -11,8 +10,8 @@ export const getRolePermissionFlagUniversalIdentifier = ({
   roleUniversalIdentifier: string;
   permissionFlagUniversalIdentifier: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.rolePermissionFlag,
+  computeDeterministicUuid({
+    entityNamespace: 'rolePermissionFlag',
     value: `${roleUniversalIdentifier}:${permissionFlagUniversalIdentifier}`,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });

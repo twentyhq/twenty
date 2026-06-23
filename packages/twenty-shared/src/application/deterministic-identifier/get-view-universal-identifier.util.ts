@@ -1,5 +1,4 @@
-import { computeOwnerScopedUniversalIdentifier } from '@/application/deterministic-identifier/compute-owner-scoped-universal-identifier.util';
-import { ENTITY_TYPE_NAMESPACE_BY_TYPE } from '@/application/deterministic-identifier/entity-type-namespace.constant';
+import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 import { ViewKey } from '@/types/ViewKey';
 
 // A view is identified by its name within its object.
@@ -12,10 +11,10 @@ export const getViewUniversalIdentifier = ({
   objectUniversalIdentifier: string;
   name: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.view,
+  computeDeterministicUuid({
+    entityNamespace: 'view',
     value: `${objectUniversalIdentifier}:${name}`,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });
 
 // The INDEX view is an object's singleton main table view; its name is
@@ -27,10 +26,10 @@ export const getIndexViewUniversalIdentifier = ({
   ownerApplicationUniversalIdentifier: string;
   objectUniversalIdentifier: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.view,
+  computeDeterministicUuid({
+    entityNamespace: 'view',
     value: `${objectUniversalIdentifier}:${ViewKey.INDEX}`,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });
 
 // A fields-widget view is 1:1 with its FIELDS page-layout widget, so it is keyed
@@ -42,8 +41,8 @@ export const getFieldsWidgetViewUniversalIdentifier = ({
   ownerApplicationUniversalIdentifier: string;
   pageLayoutWidgetUniversalIdentifier: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.view,
+  computeDeterministicUuid({
+    entityNamespace: 'view',
     value: pageLayoutWidgetUniversalIdentifier,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });

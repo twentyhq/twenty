@@ -1,5 +1,4 @@
-import { computeOwnerScopedUniversalIdentifier } from '@/application/deterministic-identifier/compute-owner-scoped-universal-identifier.util';
-import { ENTITY_TYPE_NAMESPACE_BY_TYPE } from '@/application/deterministic-identifier/entity-type-namespace.constant';
+import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
 const NAVIGATION_COMMAND_DISCRIMINATOR = 'navigation';
 
@@ -12,10 +11,10 @@ export const getCommandMenuItemUniversalIdentifier = ({
   ownerApplicationUniversalIdentifier: string;
   label: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.commandMenuItem,
+  computeDeterministicUuid({
+    entityNamespace: 'commandMenuItem',
     value: label,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });
 
 // An object's singleton navigation command, keyed by the object + the 'navigation' role.
@@ -26,8 +25,8 @@ export const getNavigationCommandUniversalIdentifier = ({
   ownerApplicationUniversalIdentifier: string;
   objectUniversalIdentifier: string;
 }): string =>
-  computeOwnerScopedUniversalIdentifier({
-    ownerApplicationUniversalIdentifier,
-    namespace: ENTITY_TYPE_NAMESPACE_BY_TYPE.commandMenuItem,
+  computeDeterministicUuid({
+    entityNamespace: 'commandMenuItem',
     value: `${objectUniversalIdentifier}:${NAVIGATION_COMMAND_DISCRIMINATOR}`,
+    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
   });
