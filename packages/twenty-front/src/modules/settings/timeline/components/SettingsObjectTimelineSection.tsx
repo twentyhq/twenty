@@ -4,7 +4,10 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { useTimelineProjectionRules } from '@/settings/timeline/hooks/useTimelineProjectionRules';
-import { type TimelineProjectionRule } from '@/settings/timeline/types/TimelineProjectionRule';
+import {
+  buildTimelineProjectionRuleRows,
+  type TimelineProjectionRuleRow,
+} from '@/settings/timeline/utils/buildTimelineProjectionRuleRows';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLingui } from '@lingui/react/macro';
@@ -15,12 +18,6 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsObjectTimelineSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
-};
-
-type SettingsObjectTimelineRuleItem = {
-  id: string;
-  sourceLabel: string;
-  activitiesLabel: string;
 };
 
 const DELETE_TIMELINE_RULE_MODAL_ID = 'delete-timeline-rule-modal';
@@ -35,8 +32,7 @@ export const SettingsObjectTimelineSection = ({
   const { rules, deleteRule } = useTimelineProjectionRules();
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const [ruleToDelete, setRuleToDelete] =
-    useState<TimelineProjectionRule | null>(null);
+  const [ruleIdToDelete, setRuleIdToDelete] = useState<string | null>(null);
 
   const labelByObjectMetadataId = useMemo(
     () =>
@@ -44,47 +40,31 @@ export const SettingsObjectTimelineSection = ({
     [objectMetadataItems],
   );
 
-  const anchorRules = useMemo(
-    () =>
-      rules.filter(
-        (rule) => rule.anchorObjectMetadataId === objectMetadataItem.id,
-      ),
-    [rules, objectMetadataItem.id],
-  );
-
-  const items: SettingsObjectTimelineRuleItem[] = anchorRules.map((rule) => ({
-    id: rule.id,
-    sourceLabel:
-      labelByObjectMetadataId.get(rule.sourceObjectMetadataId) ?? t`Unknown`,
-    activitiesLabel: rule.linkedObjectMetadataIds
-      .map((id) => labelByObjectMetadataId.get(id) ?? t`Unknown`)
-      .join(', '),
-  }));
+  const items = buildTimelineProjectionRuleRows({
+    rules,
+    anchorObjectMetadataId: objectMetadataItem.id,
+    labelByObjectMetadataId,
+    unknownLabel: t`Unknown`,
+  });
 
   const requestDelete = (ruleId: string) => {
-    const rule = anchorRules.find((candidate) => candidate.id === ruleId);
-
-    if (rule === undefined) {
-      return;
-    }
-
-    setRuleToDelete(rule);
+    setRuleIdToDelete(ruleId);
     openModal(DELETE_TIMELINE_RULE_MODAL_ID);
   };
 
   const confirmDelete = async () => {
-    if (ruleToDelete === null) {
+    if (ruleIdToDelete === null) {
       return;
     }
 
-    await deleteRule(ruleToDelete.id);
-    setRuleToDelete(null);
+    await deleteRule(ruleIdToDelete);
+    setRuleIdToDelete(null);
     closeModal(DELETE_TIMELINE_RULE_MODAL_ID);
   };
 
   return (
     <>
-      <SettingsTableListSection<SettingsObjectTimelineRuleItem>
+      <SettingsTableListSection<TimelineProjectionRuleRow>
         title={t`Timeline`}
         description={t`Inherit notes & tasks from records related to this object.`}
         items={items}
@@ -132,7 +112,7 @@ export const SettingsObjectTimelineSection = ({
         subtitle={t`This object's timeline will stop inheriting the related activities. You can recreate it later.`}
         confirmButtonText={t`Delete`}
         onConfirmClick={confirmDelete}
-        onClose={() => setRuleToDelete(null)}
+        onClose={() => setRuleIdToDelete(null)}
       />
     </>
   );
