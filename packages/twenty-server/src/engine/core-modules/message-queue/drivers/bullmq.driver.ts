@@ -39,6 +39,8 @@ export type BullMQDriverOptions = QueueOptions;
 
 const V4_LENGTH = 36;
 
+const ADD_AND_WAIT_FOR_COMPLETION_TIMEOUT_MS = 30_000;
+
 export class BullMQDriver
   implements MessageQueueDriver, OnModuleDestroy, OnModuleInit
 {
@@ -51,7 +53,6 @@ export class BullMQDriver
     MessageQueue,
     Worker
   >;
-  private queueEventsMap: Partial<Record<MessageQueue, QueueEvents>> = {};
 
   // Intentionally excludes 'delayed': repeatable cron jobs sit there permanently,
   // so counting them would mean the queue is never idle. We only wait for jobs
@@ -106,31 +107,11 @@ export class BullMQDriver
   async onModuleDestroy() {
     const workers = Object.values(this.workerMap);
     const queues = Object.values(this.queueMap);
-    const queueEvents = Object.values(this.queueEventsMap).filter(isDefined);
 
     await Promise.all([
       ...queues.map((q) => q.close()),
       ...workers.map((w) => w.close()),
-      ...queueEvents.map((events) => events.close()),
     ]);
-  }
-
-  // QueueEvents drives waitUntilFinished and needs its own blocking connection,
-  // so it is created lazily (only for callers that await a job) by duplicating
-  // the shared client.
-  private getQueueEvents(queueName: MessageQueue): QueueEvents {
-    const existingQueueEvents = this.queueEventsMap[queueName];
-
-    if (isDefined(existingQueueEvents)) {
-      return existingQueueEvents;
-    }
-
-    const connection = (this.options.connection as IORedis).duplicate();
-    const queueEvents = new QueueEvents(queueName, { connection });
-
-    this.queueEventsMap[queueName] = queueEvents;
-
-    return queueEvents;
   }
 
   work<T>(
@@ -277,7 +258,9 @@ export class BullMQDriver
   }
 
   // Enqueues a job and resolves once the worker finishes it, using BullMQ's
-  // native job event stream (QueueEvents). Rejects if the job fails.
+  // native job event stream (QueueEvents). Rejects if the job fails or does not
+  // finish within the ttl. QueueEvents needs its own blocking connection and is
+  // created and closed per call so it never leaks an open handle.
   async addAndWaitForCompletion<T>(
     queueName: MessageQueue,
     jobName: string,
@@ -290,7 +273,20 @@ export class BullMQDriver
       return;
     }
 
-    await job.waitUntilFinished(this.getQueueEvents(queueName));
+    const connection = (this.options.connection as IORedis).duplicate();
+    const queueEvents = new QueueEvents(queueName, { connection });
+
+    try {
+      await queueEvents.waitUntilReady();
+
+      await job.waitUntilFinished(
+        queueEvents,
+        ADD_AND_WAIT_FOR_COMPLETION_TIMEOUT_MS,
+      );
+    } finally {
+      await queueEvents.close();
+      await connection.quit();
+    }
   }
 
   // Resolves once every queue has no pending work, debounced by idleMs to bridge
