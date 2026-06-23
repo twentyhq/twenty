@@ -85,6 +85,20 @@ describe('RestApiClient', () => {
     expect(url).toBe('https://acme.withtwenty.com/my-app/my-route');
   });
 
+  it('trims surrounding whitespace from the functions base url', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
+
+    const client = new RestApiClient({
+      fetch: fetchMock,
+      functionsBaseUrl: '  https://acme.withtwenty.com  ',
+    });
+
+    await client.get('/s/my-app/my-route');
+
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toBe('https://acme.withtwenty.com/my-app/my-route');
+  });
+
   it('should serialize a JSON body and set the content type on post', async () => {
     const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
 

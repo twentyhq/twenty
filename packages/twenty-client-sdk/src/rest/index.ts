@@ -313,11 +313,17 @@ export class RestApiClient {
       this.functionsBaseUrl ??
       getProcessEnvironment()[DEFAULT_FUNCTIONS_URL_NAME];
 
-    if (!isDefined(functionsBaseUrl) || functionsBaseUrl.trim().length === 0) {
+    if (!isDefined(functionsBaseUrl)) {
       return undefined;
     }
 
-    return functionsBaseUrl.replace(/\/+$/, '');
+    const trimmedFunctionsBaseUrl = functionsBaseUrl.trim();
+
+    if (trimmedFunctionsBaseUrl.length === 0) {
+      return undefined;
+    }
+
+    return trimmedFunctionsBaseUrl.replace(/\/+$/, '');
   }
 
   // Logic-function routes (paths prefixed with /s) are served from the isolated
