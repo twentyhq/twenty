@@ -3,33 +3,18 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import {
-  IconApi,
-  IconBuildingFactory2,
-  IconBuildingSkyscraper,
-  IconCheck,
-  IconLink,
-  IconMapPin,
-  IconMoneybag,
-  IconPlus,
-  IconRobot,
-  IconSettingsAutomation,
-  IconTarget,
-  IconUser,
-  IconUserCircle,
-  IconX,
-} from '@tabler/icons-react';
+import { IconCheck, IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
-import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
-import { Chip } from '@/app-preview/primitives/Chip';
-import { FaviconLogo } from '@/app-preview/primitives/FaviconLogo';
-import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
-import { PreviewTag } from '@/app-preview/primitives/PreviewTag';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 import { useHorizontalDragScroll } from '@/platform/motion';
 import { EASING } from '@/tokens';
+
+import { CellValue } from './components/CellValue';
+import { COLUMNS } from './data/columns';
+import { COMPANIES } from './data/companies';
+import { HEADER_ICONS } from './data/header-icons';
 
 const Root = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
@@ -191,29 +176,6 @@ const EdgePlus = styled.span`
   margin-left: auto;
 `;
 
-const CellText = styled.span`
-  color: ${THEME_LIGHT.font.color.primary};
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
-  font-weight: ${THEME_LIGHT.font.weight.regular};
-  max-width: 100%;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const BooleanRow = styled.span`
-  align-items: center;
-  color: ${THEME_LIGHT.font.color.primary};
-  display: inline-flex;
-  gap: 4px;
-`;
-
-const BooleanText = styled.span`
-  color: ${THEME_LIGHT.font.color.primary};
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
-`;
-
 const CheckboxWrap = styled.div`
   align-items: center;
   cursor: pointer;
@@ -246,222 +208,6 @@ const CheckboxBox = styled.div`
   }
 `;
 
-type ContactTone = 'amber' | 'blue' | 'gray' | 'pink' | 'purple' | 'turquoise';
-
-type ActorSource = 'api' | 'system' | 'workflow';
-
-type ContactActor = {
-  avatarUrl?: string;
-  name: string;
-  source?: ActorSource;
-  tone?: ContactTone;
-};
-
-type ContactCompany = {
-  accountOwner: ContactActor;
-  address: string;
-  arr: string;
-  createdBy: ContactActor;
-  domain: string;
-  icp: boolean;
-  industry: string;
-  name: string;
-};
-
-type ContactColumnId =
-  | 'accountOwner'
-  | 'address'
-  | 'arr'
-  | 'company'
-  | 'createdBy'
-  | 'icp'
-  | 'industry'
-  | 'url';
-
-type ContactColumn = {
-  id: ContactColumnId;
-  isFirstColumn?: boolean;
-  label: string;
-  width: number;
-};
-
-const COLUMNS: ContactColumn[] = [
-  { id: 'company', label: 'Companies', width: 180, isFirstColumn: true },
-  { id: 'url', label: 'Url', width: 140 },
-  { id: 'createdBy', label: 'Created By', width: 150 },
-  { id: 'address', label: 'Address', width: 140 },
-  { id: 'accountOwner', label: 'Account Owner', width: 150 },
-  { id: 'icp', label: 'ICP', width: 80 },
-  { id: 'arr', label: 'ARR', width: 120 },
-  { id: 'industry', label: 'Industry', width: 140 },
-];
-
-const PEOPLE = sharedAssetUrls.peopleAvatars;
-
-// Mock fiction company rows (product-screenshot copy, English). createdBy is
-// an Actor: members render their avatar, the API/workflow rows render their
-// source icon, mirroring twenty-front's ActorDisplay.
-const COMPANIES: ContactCompany[] = [
-  {
-    name: 'Anthropic',
-    domain: 'anthropic.com',
-    createdBy: {
-      name: 'Dario Amodei',
-      tone: 'gray',
-      avatarUrl: PEOPLE.darioAmodei,
-    },
-    address: '18 Rue De Navarin',
-    accountOwner: {
-      name: 'Dario Amodei',
-      tone: 'gray',
-      avatarUrl: PEOPLE.darioAmodei,
-    },
-    icp: true,
-    arr: '$500,000',
-    industry: 'AI Research',
-  },
-  {
-    name: 'Linkedin',
-    domain: 'linkedin.com',
-    createdBy: {
-      name: 'Reid Hoffman',
-      tone: 'purple',
-      avatarUrl: PEOPLE.reidHoffman,
-    },
-    address: '1226 Moises Causeway',
-    accountOwner: {
-      name: 'Ryan Roslansky',
-      tone: 'turquoise',
-      avatarUrl: PEOPLE.ryanRoslansky,
-    },
-    icp: false,
-    arr: '$1,000,000',
-    industry: 'Professional Networking',
-  },
-  {
-    name: 'Slack',
-    domain: 'slack.com',
-    createdBy: {
-      name: 'Stewart Butterfield',
-      tone: 'turquoise',
-      avatarUrl: PEOPLE.stewartButterfield,
-    },
-    address: '1316 Dameon Mountain',
-    accountOwner: {
-      name: 'Stewart Butterfield',
-      tone: 'turquoise',
-      avatarUrl: PEOPLE.stewartButterfield,
-    },
-    icp: true,
-    arr: '$2,300,000',
-    industry: 'Collaboration Software',
-  },
-  {
-    name: 'Notion',
-    domain: 'notion.com',
-    createdBy: { name: 'API - Key name', source: 'api' },
-    address: '1162 Sammy Creek',
-    accountOwner: {
-      name: 'Ivan Zhao',
-      tone: 'gray',
-      avatarUrl: PEOPLE.ivanZhao,
-    },
-    icp: false,
-    arr: '$750,000',
-    industry: 'Productivity Software',
-  },
-  {
-    name: 'Figma',
-    domain: 'figma.com',
-    createdBy: { name: 'Workflow name', source: 'workflow' },
-    address: '110 Oswald Junction',
-    accountOwner: {
-      name: 'Dylan Field',
-      tone: 'purple',
-      avatarUrl: PEOPLE.dylanField,
-    },
-    icp: true,
-    arr: '$3,500,000',
-    industry: 'Design Tools',
-  },
-  {
-    name: 'Github',
-    domain: 'github.com',
-    createdBy: {
-      name: 'Chris Wanstrath',
-      tone: 'gray',
-      avatarUrl: PEOPLE.chrisWanstrath,
-    },
-    address: '3891 Ranchview Drive',
-    accountOwner: {
-      name: 'Thomas Dohmke',
-      tone: 'gray',
-      avatarUrl: PEOPLE.thomasDohmke,
-    },
-    icp: true,
-    arr: '$900,000',
-    industry: 'Developer Platform',
-  },
-  {
-    name: 'Airbnb',
-    domain: 'airbnb.com',
-    createdBy: {
-      name: 'Brian Chesky',
-      tone: 'pink',
-      avatarUrl: PEOPLE.brianChesky,
-    },
-    address: '888 Brannan Street',
-    accountOwner: {
-      name: 'Brian Chesky',
-      tone: 'pink',
-      avatarUrl: PEOPLE.brianChesky,
-    },
-    icp: false,
-    arr: '$1,800,000',
-    industry: 'Travel & Hospitality',
-  },
-  {
-    name: 'Stripe',
-    domain: 'stripe.com',
-    createdBy: {
-      name: 'Patrick Collison',
-      tone: 'blue',
-      avatarUrl: PEOPLE.patrickCollison,
-    },
-    address: '354 Oyster Point Blvd',
-    accountOwner: {
-      name: 'Patrick Collison',
-      tone: 'blue',
-      avatarUrl: PEOPLE.patrickCollison,
-    },
-    icp: true,
-    arr: '$4,200,000',
-    industry: 'Fintech',
-  },
-  {
-    name: 'Vercel',
-    domain: 'vercel.com',
-    createdBy: { name: 'Guillermo Rauch', tone: 'amber' },
-    address: '340 S Lemon Ave',
-    accountOwner: { name: 'Guillermo Rauch', tone: 'amber' },
-    icp: true,
-    arr: '$620,000',
-    industry: 'Developer Platform',
-  },
-];
-
-// The product's column-header glyphs, by field type.
-const HEADER_ICONS: Record<ContactColumnId, typeof IconUser> = {
-  company: IconBuildingSkyscraper,
-  url: IconLink,
-  createdBy: IconUserCircle,
-  address: IconMapPin,
-  accountOwner: IconUser,
-  icp: IconTarget,
-  arr: IconMoneybag,
-  industry: IconBuildingFactory2,
-};
-
 const GRIP_CELL_COUNT = 11;
 
 const TOTAL_WIDTH = COLUMNS.reduce((sum, column) => sum + column.width, 0);
@@ -470,84 +216,6 @@ const GRIP_CELLS = Array.from(
   { length: GRIP_CELL_COUNT },
   (_, gripNumber) => gripNumber,
 );
-
-const ACTOR_SOURCE_ICONS = {
-  api: IconApi,
-  system: IconRobot,
-  workflow: IconSettingsAutomation,
-};
-
-// A member shows their rounded avatar; a non-person actor (API/workflow/system)
-// shows its bare source icon, inheriting the chip's text color.
-function ActorAvatar({ actor }: { actor: ContactActor }) {
-  if (actor.source) {
-    const SourceIcon = ACTOR_SOURCE_ICONS[actor.source];
-    return <SourceIcon size={14} stroke={1.6} />;
-  }
-
-  return (
-    <PersonAvatar
-      person={{
-        avatarUrl: actor.avatarUrl,
-        name: actor.name,
-        tone: actor.tone,
-      }}
-    />
-  );
-}
-
-function CellValue({
-  columnId,
-  company,
-}: {
-  columnId: ContactColumnId;
-  company: ContactCompany;
-}) {
-  switch (columnId) {
-    case 'company':
-      return (
-        <Chip
-          isBold
-          label={company.name}
-          leftComponent={
-            <FaviconLogo domain={company.domain} label={company.name} />
-          }
-          variant="highlighted"
-        />
-      );
-    case 'url':
-      return <Chip label={company.domain} variant="static" />;
-    case 'createdBy':
-      return (
-        <Chip
-          label={company.createdBy.name}
-          leftComponent={<ActorAvatar actor={company.createdBy} />}
-          variant="transparent"
-        />
-      );
-    case 'address':
-      return <CellText>{company.address}</CellText>;
-    case 'accountOwner':
-      return (
-        <Chip
-          label={company.accountOwner.name}
-          leftComponent={<ActorAvatar actor={company.accountOwner} />}
-          variant="transparent"
-        />
-      );
-    case 'icp':
-      return (
-        <BooleanRow>
-          {company.icp ? <IconCheck size={14} /> : <IconX size={14} />}
-          <BooleanText>{company.icp ? 'True' : 'False'}</BooleanText>
-        </BooleanRow>
-      );
-    case 'arr':
-      return <CellText>{company.arr}</CellText>;
-    case 'industry':
-      return <PreviewTag color="gray" label={company.industry} />;
-  }
-}
 
 export function ContactsVisual({ active: _active }: { active: boolean }) {
   const { i18n } = useLingui();
