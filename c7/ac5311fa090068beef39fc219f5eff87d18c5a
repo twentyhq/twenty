@@ -1,0 +1,25 @@
+packages/twenty-server/test/integration/graphql/suites/auth/jwt-key-rotation/rotate-signing-keys-cron-job.integration-spec.ts
+  s_8a5a157e980979::t_0834ecf705b270 65-66
+  s_8a5a157e980979::t_27c43a6d40cfc3 9
+packages/twenty-server/test/integration/graphql/suites/workflow/quick-lead-workflow.integration-spec.ts
+  s_8a5a157e980979::t_9e6658b315f4c0 129-130
+  s_8a5a157e980979::t_5a9c287e19f7c2 244-245
+  s_8a5a157e980979::t_feb7d3a8ddc463 284-285
+  s_8a5a157e980979::t_2c06d88093c29d 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "c7ac5311fa090068beef39fc219f5eff87d18c5a",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
