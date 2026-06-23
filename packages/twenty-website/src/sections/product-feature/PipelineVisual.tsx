@@ -135,6 +135,8 @@ const CARDS: Record<PipelineCardId, DealData> = {
   },
 };
 
+const TOTAL_CARD_COUNT = Object.keys(CARDS).length;
+
 const INITIAL_LANES: PipelineLanes = [
   ['github', 'notion'],
   ['airbnb'],
@@ -796,7 +798,7 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
         <IconLayoutKanban size={14} stroke={1.6} />
         <BoardTitle>By Stage</BoardTitle>
         <BoardAdornments>
-          · 5
+          · {TOTAL_CARD_COUNT}
           <IconChevronDown size={14} stroke={1.6} />
         </BoardAdornments>
       </BoardHeader>
