@@ -1,4 +1,5 @@
 import { type DateFilter } from '@/types';
+import { isDefined } from '@/utils';
 import { isAfter, isBefore, isEqual, parseISO } from 'date-fns';
 
 export const isMatchingDateFilter = ({
@@ -6,8 +7,15 @@ export const isMatchingDateFilter = ({
   value,
 }: {
   dateFilter: DateFilter;
-  value: string;
+  value: string | null | undefined;
 }) => {
+  // A record with no date value can only match an "is: NULL" check.
+  // Every other operator parses the value through parseISO, which throws
+  // "Cannot read properties of null (reading 'split')" on a null/undefined value.
+  if (!isDefined(value)) {
+    return dateFilter.is === 'NULL';
+  }
+
   switch (true) {
     case dateFilter.eq !== undefined: {
       return isEqual(parseISO(value), parseISO(dateFilter.eq));
