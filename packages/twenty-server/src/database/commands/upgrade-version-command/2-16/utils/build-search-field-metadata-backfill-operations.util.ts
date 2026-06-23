@@ -21,6 +21,13 @@ type SearchFieldMetadataBackfillOperationsArgs = {
   standardFlatSearchFieldMetadataMaps: FlatEntityMaps<FlatSearchFieldMetadata>;
 };
 
+type BuildSearchFieldMetadataBackfillOperationsReturnType = {
+  flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier: Record<
+    string,
+    UniversalFlatSearchFieldMetadata[]
+  >;
+};
+
 // Groups rows by application so each group runs through the migration runner under
 // the matching application (the runner assigns applicationId from that single app).
 export const buildSearchFieldMetadataBackfillOperations = ({
@@ -28,12 +35,7 @@ export const buildSearchFieldMetadataBackfillOperations = ({
   flatFieldMetadataMaps,
   flatSearchFieldMetadataMaps,
   standardFlatSearchFieldMetadataMaps,
-}: SearchFieldMetadataBackfillOperationsArgs): {
-  flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier: Record<
-    string,
-    UniversalFlatSearchFieldMetadata[]
-  >;
-} => {
+}: SearchFieldMetadataBackfillOperationsArgs): BuildSearchFieldMetadataBackfillOperationsReturnType => {
   const existingSearchFieldMetadataKeys = new Set(
     Object.values(flatSearchFieldMetadataMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -135,9 +137,7 @@ export const buildSearchFieldMetadataBackfillOperations = ({
     const nameFieldMetadata = flatObjectMetadata.fieldUniversalIdentifiers
       .map(
         (fieldUniversalIdentifier) =>
-          flatFieldMetadataMaps.byUniversalIdentifier[
-            fieldUniversalIdentifier
-          ],
+          flatFieldMetadataMaps.byUniversalIdentifier[fieldUniversalIdentifier],
       )
       .find(
         (flatFieldMetadata) =>
@@ -154,8 +154,7 @@ export const buildSearchFieldMetadataBackfillOperations = ({
     }
 
     pushCandidateIfMissing({
-      objectMetadataUniversalIdentifier:
-        flatObjectMetadata.universalIdentifier,
+      objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       fieldMetadataUniversalIdentifier: nameFieldMetadata.universalIdentifier,
       position: 0,
     });

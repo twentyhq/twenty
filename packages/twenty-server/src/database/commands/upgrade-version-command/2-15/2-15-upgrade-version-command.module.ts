@@ -10,8 +10,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 @Module({
   imports: [
     ApplicationModule,
-    WorkspaceCacheModule,
     WorkspaceIteratorModule,
+    WorkspaceCacheModule,
     WorkspaceMigrationModule,
   ],
   providers: [
