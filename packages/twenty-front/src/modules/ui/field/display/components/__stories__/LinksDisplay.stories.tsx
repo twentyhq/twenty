@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, waitFor, within } from 'storybook/test';
 
 import { LinksDisplay } from '@/ui/field/display/components/LinksDisplay';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof LinksDisplay> = {
   title: 'UI/Display/LinksDisplay',

@@ -1,8 +1,8 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 
 import { SLACK_UPDATE_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
+import { jsonSchemaToInputSchema } from 'src/logic-functions/utils/json-schema-to-input-schema';
 import { slackUpdateMessageInputSchema } from './schemas/slack-update-message-input.schema';
 
 export default defineLogicFunction({

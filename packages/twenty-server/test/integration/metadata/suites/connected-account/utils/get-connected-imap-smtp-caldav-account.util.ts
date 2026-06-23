@@ -19,19 +19,19 @@ export const getConnectedImapSmtpCaldavAccount = async ({
               host
               port
               username
-              secure
+              connectionSecurity
             }
             SMTP {
               host
               port
               username
-              secure
+              connectionSecurity
             }
             CALDAV {
               host
               port
               username
-              secure
+              connectionSecurity
             }
           }
         }

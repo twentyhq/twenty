@@ -9,5 +9,6 @@ icon: wrench
 * **Отсутствует Yarn 4** — выполните `corepack enable`.
 * **Зависимости повреждены** — `rm -rf node_modules && yarn install`.
 * **Ошибки `twenty-sdk` после обновления до v2.8.0** — он был перенесен из `dependencies` в `devDependencies` в v2.8.0. См. [Структура проекта → Зависимости](/l/ru/developers/extend/apps/getting-started/project-structure#dependencies).
+* **`twenty build` предупреждает о `twenty-client-sdk` в разделе `dependencies`** — он предоставляется Twenty во время выполнения, поэтому его следует перенести в `devDependencies` рядом с `twenty-sdk`. См. [Структура проекта → Зависимости](/l/ru/developers/extend/apps/getting-started/project-structure#dependencies).
 
 Застряли? Попросите помощи на [Discord-сервере Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

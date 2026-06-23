@@ -438,6 +438,7 @@ export class WorkflowRunWorkspaceService {
         workflowRunToUpdate.id,
         partialUpdate,
         undefined,
+        undefined,
         ['id'],
       );
     }, authContext);

@@ -10,12 +10,10 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
-import { Avatar } from 'twenty-ui-deprecated/display';
-import {
-  MenuItem,
-  MenuItemMultiSelectAvatar,
-} from 'twenty-ui-deprecated/navigation';
+import { Avatar } from 'twenty-ui/data-display';
+import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 export const MultipleSelectDropdown = ({
   selectableListId,
@@ -110,7 +108,7 @@ export const MultipleSelectDropdown = ({
                 text={item.name}
                 avatar={
                   <Avatar
-                    avatarUrl={item.avatarUrl}
+                    avatarUrl={getAbsoluteImageUrl(item.avatarUrl)}
                     placeholderColorSeed={item.id}
                     placeholder={item.name}
                     size="md"

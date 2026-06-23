@@ -1,11 +1,12 @@
 ---
 title: Configuración
+icon: engranaje
 ---
 
 # Gestión de Configuración
 
 <Warning>
-  **¿Instalando por primera vez?** Siga la [guía de instalación de Docker Compose](/l/es/developers/self-host/capabilities/docker-compose) para ejecutar Twenty, luego regrese aquí para la configuración.
+**¿Instalando por primera vez?** Siga la [guía de instalación de Docker Compose](/l/es/developers/self-host/capabilities/docker-compose) para ejecutar Twenty, luego regrese aquí para la configuración.
 </Warning>
 
 Twenty ofrece **dos modos de configuración** para adaptarse a diferentes necesidades de implementación:
@@ -26,7 +27,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 4. Los cambios se aplican inmediatamente (dentro de 15 segundos para implementaciones multicontenedor)
 
 <Warning>
-  **Implementaciones Multicontenedor:** Al usar la configuración de base de datos (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), tanto los contenedores del servidor como los de trabajo leen de la misma base de datos. Los cambios en el panel de administración afectan a ambos automáticamente, eliminando la necesidad de duplicar las variables de entorno entre contenedores (excepto para las variables de infraestructura).
+**Implementaciones Multicontenedor:** Al usar la configuración de base de datos (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), tanto los contenedores del servidor como los de trabajo leen de la misma base de datos. Los cambios en el panel de administración afectan a ambos automáticamente, eliminando la necesidad de duplicar las variables de entorno entre contenedores (excepto para las variables de infraestructura).
 </Warning>
 
 **Qué se puede configurar a través del panel de administración:**
@@ -41,11 +42,26 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 ![Variables de Configuración del Panel de Administración](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <Warning>
-  Cada variable está documentada con descripciones en su panel de administración en **Configuración → Panel de Administración → Variables de Configuración**.
-  Algunas configuraciones de infraestructura como las conexiones de base de datos (`PG_DATABASE_URL`), URLs del servidor (`SERVER_URL`), y secretos de la aplicación (`APP_SECRET`) solo se pueden configurar a través del archivo `.env`.
+Cada variable está documentada con descripciones en su panel de administración en **Configuración → Panel de Administración → Variables de Configuración**.
+Algunas configuraciones de infraestructura como las conexiones de base de datos (`PG_DATABASE_URL`), URLs del servidor (`SERVER_URL`), y secretos (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) solo se pueden configurar a través del archivo `.env`.
 
-  [Referencia técnica completa →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+[Referencia técnica completa →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## Claves de cifrado
+
+Twenty utiliza dos claves de cifrado definidas únicamente mediante variables de entorno:
+
+| Variable                  | Propósito                                                                                                                                                                              | Obligatorio                                                                                                            |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `ENCRYPTION_KEY`          | Clave principal utilizada para cifrar secretos en reposo (tokens OAuth, variables de la aplicación, claves privadas de firma, secretos TOTP, valores de configuración confidenciales). | Sí para nuevas instalaciones (las instalaciones heredadas pueden en su lugar depender de `APP_SECRET` — ver más abajo) |
+| `FALLBACK_ENCRYPTION_KEY` | Clave solo para verificación. Se establece durante una rotación como la *anterior* `ENCRYPTION_KEY` para que las filas existentes sigan siendo descifrables.                           | Solo durante la rotación                                                                                               |
+
+Para mantener la compatibilidad con versiones anteriores, si `ENCRYPTION_KEY` no está definida, Twenty recurre a `APP_SECRET` para el cifrado en reposo, lo que coincide con el comportamiento heredado de implementaciones más antiguas. Las nuevas instalaciones siempre deben establecer una `ENCRYPTION_KEY` dedicada.
+
+Genera valores con `openssl rand -base64 32` y guárdalos en un lugar seguro (un gestor de secretos, configuración sellada, etc.). Perder la `ENCRYPTION_KEY` significa perder el acceso a todos los secretos almacenados en la base de datos.
+
+Para rotar `ENCRYPTION_KEY` sin tiempo de inactividad, consulta la [Guía de rotación de claves](/l/es/developers/self-host/capabilities/key-rotation).
 
 ## 2. Configuración Solo de Entorno
 
@@ -93,7 +109,7 @@ Habilita el modo de múltiples espacios de trabajo para implementaciones tipo Sa
 * Configuraciones específicas del espacio de trabajo, como subdominio y dominio personalizado, están disponibles en la configuración del espacio de trabajo
 
 <Warning>
-  **Configuración solo por entorno:** `IS_MULTIWORKSPACE_ENABLED` solo se puede configurar mediante el archivo `.env` y requiere un reinicio. No se puede cambiar a través del panel de administración.
+**Configuración solo por entorno:** `IS_MULTIWORKSPACE_ENABLED` solo se puede configurar mediante el archivo `.env` y requiere un reinicio. No se puede cambiar a través del panel de administración.
 </Warning>
 
 ### Configuración de DNS para múltiples espacios de trabajo
@@ -149,7 +165,7 @@ Cuando está habilitado, solo los usuarios con `canAccessFullAdminPanel` pueden 
    * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-  **Modo solo de entorno:** Si establece `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, agregue estas variables a su archivo `.env` en su lugar.
+**Modo solo de entorno:** Si establece `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, agregue estas variables a su archivo `.env` en su lugar.
 </Warning>
 
 **Ámbitos requeridos** (configurados automáticamente):
@@ -168,7 +184,7 @@ En [Pantalla de consentimiento OAuth](https://console.cloud.google.com/apis/cred
 ## Integración con Microsoft 365
 
 <Warning>
-  Los usuarios deben tener una [licencia de Microsoft 365](https://admin.microsoft.com/Adminportal/Home) para poder usar la API de Calendar y Messaging. No podrán sincronizar su cuenta en Twenty sin una.
+Los usuarios deben tener una [licencia de Microsoft 365](https://admin.microsoft.com/Adminportal/Home) para poder usar la API de Calendar y Messaging. No podrán sincronizar su cuenta en Twenty sin una.
 </Warning>
 
 ### Cree un proyecto en Microsoft Azure
@@ -211,7 +227,7 @@ Necesita agregar las siguientes URIs de redirección a su proyecto:
    * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-  **Modo solo de entorno:** Si establece `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, agregue estas variables a su archivo `.env` en su lugar.
+**Modo solo de entorno:** Si establece `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, agregue estas variables a su archivo `.env` en su lugar.
 </Warning>
 
 ### Configurar ámbitos
@@ -256,82 +272,111 @@ yarn command:prod cron:workflow:automated-cron-trigger
 3. Configure su configuración SMTP:
 
 <ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
-  <ArticleTab>
-    Necesitará proporcionar una [Contraseña de Aplicación](https://support.google.com/accounts/answer/185833).
 
+  <ArticleTab>
+
+  Necesitará proporcionar una [Contraseña de Aplicación](https://support.google.com/accounts/answer/185833).
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.gmail.com
+  * EMAIL_SMTP_PORT=465
+  * EMAIL_SMTP_USER=gmail_email_address
+  * EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  Tenga en cuenta que si tiene la autenticación de dos factores habilitada, necesitará proporcionar una [Contraseña de Aplicación](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.office365.com
+  * EMAIL_SMTP_PORT=587
+  * EMAIL_SMTP_USER=office365_email_address
+  * EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  **smtp4dev** es un servidor de correo SMTP falso para desarrollo y pruebas.
+  * Ejecute la imagen de smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+  * Acceda a la interfaz de smtp4dev aquí: [http://localhost:8090](http://localhost:8090)
+  * Establezca las siguientes variables:
     * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.gmail.com
-    * EMAIL_SMTP_PORT=465
-    * EMAIL_SMTP_USER=gmail_email_address
-    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+    * EMAIL_SMTP_HOST=localhost
+    * EMAIL_SMTP_PORT=2525
+
   </ArticleTab>
 
-  <ArticleTab>
-    Tenga en cuenta que si tiene la autenticación de dos factores habilitada, necesitará proporcionar una [Contraseña de Aplicación](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
-
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.office365.com
-    * EMAIL_SMTP_PORT=587
-    * EMAIL_SMTP_USER=office365_email_address
-    * EMAIL_SMTP_PASSWORD='office365_password'
-  </ArticleTab>
-
-  <ArticleTab>
-    **smtp4dev** es un servidor de correo SMTP falso para desarrollo y pruebas.
-
-    * Ejecute la imagen de smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-    * Acceda a la interfaz de smtp4dev aquí: [http://localhost:8090](http://localhost:8090)
-    * Establezca las siguientes variables:
-      * EMAIL_DRIVER=smtp
-      * EMAIL_SMTP_HOST=localhost
-      * EMAIL_SMTP_PORT=2525
-  </ArticleTab>
 </ArticleTabs>
 
 <Warning>
-  **Modo solo de entorno:** Si establece `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, agregue estas variables a su archivo `.env` en su lugar.
+**Modo solo de entorno:** Si establece `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, agregue estas variables a su archivo `.env` en su lugar.
 </Warning>
 
-## Funciones de lógica
-
-Twenty admite funciones de lógica para flujos de trabajo y lógica personalizada. El entorno de ejecución se configura mediante la variable de entorno `SERVERLESS_TYPE`.
+## Almacenamiento de S3
 
 <Warning>
-  **Aviso de seguridad:** El controlador local (`SERVERLESS_TYPE=LOCAL`) ejecuta código directamente en el host en un proceso de Node.js sin aislamiento. Solo debe utilizarse para código de confianza en desarrollo. Para implementaciones de producción que manejen código no confiable, recomendamos encarecidamente usar `SERVERLESS_TYPE=LAMBDA` o `SERVERLESS_TYPE=DISABLED`.
+De forma predeterminada, Twenty almacena los archivos cargados en el sistema de archivos local. Para implementaciones en producción, usa S3 o un servicio compatible con S3 (MinIO, DigitalOcean Spaces, etc.). para garantizar que los archivos persistan tras los reinicios de los contenedores y escalen en varias instancias de servidor.
 </Warning>
 
-### Controladores disponibles
+Establece `STORAGE_TYPE=S_3` y configura las variables `STORAGE_S3_*` a través del panel de administración o `.env`. Consulta la [referencia de config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) para ver la lista completa de variables de S3.
 
-| Controlador | Variable de entorno        | Caso de uso                                      | Nivel de seguridad                     |
-| ----------- | -------------------------- | ------------------------------------------------ | -------------------------------------- |
-| Desactivado | `SERVERLESS_TYPE=DISABLED` | Desactivar completamente las funciones de lógica | N/A                                    |
-| Local       | `SERVERLESS_TYPE=LOCAL`    | Entornos de desarrollo y de confianza            | Bajo (sin aislamiento)                 |
-| Lambda      | `SERVERLESS_TYPE=LAMBDA`   | Producción con código no confiable               | Alto (aislamiento a nivel de hardware) |
+Al usar S3 con funciones que dependen de CORS (p. ej., descargas de archivos en el navegador), asegúrate de que tu bucket permita el origen de tu frontend de Twenty en su configuración de CORS.
 
-### Configuración recomendada
+## Funciones de lógica e intérprete de código
+
+Twenty admite funciones de lógica para flujos de trabajo y el intérprete de código para el análisis de datos con IA. Ambos ejecutan código proporcionado por el usuario y requieren una configuración explícita por motivos de seguridad.
+
+### Valores Predeterminados de Seguridad
+
+**En producción (NODE_ENV=production):** Tanto las funciones de lógica como el intérprete de código tienen como valor predeterminado **Desactivado**. Debes habilitarlos explícitamente con `LOGIC_FUNCTION_TYPE` y `CODE_INTERPRETER_TYPE` si necesitas estas funciones.
+
+**En desarrollo (NODE_ENV=development):** Ambos usan **LOCAL** de forma predeterminada para mayor comodidad al ejecutarse localmente.
+
+<Warning>
+**Aviso de seguridad:** El controlador local (`LOGIC_FUNCTION_TYPE=LOCAL` o `CODE_INTERPRETER_TYPE=LOCAL`) ejecuta código directamente en el host en un proceso de Node.js sin aislamiento. Solo debe utilizarse para código de confianza en desarrollo. Para implementaciones de producción que manejen código no confiable, use `LOGIC_FUNCTION_TYPE=LAMBDA` o `CODE_INTERPRETER_TYPE=E2B` (con sandboxing), o manténgalos deshabilitados.
+</Warning>
+
+### Funciones de lógica - Controladores disponibles
+
+| Controlador | Variable de entorno            | Caso de uso                                      | Nivel de seguridad                     |
+| ----------- | ------------------------------ | ------------------------------------------------ | -------------------------------------- |
+| Desactivado | `LOGIC_FUNCTION_TYPE=DISABLED` | Desactivar completamente las funciones de lógica | N/A                                    |
+| Local       | `LOGIC_FUNCTION_TYPE=LOCAL`    | Entornos de desarrollo y de confianza            | Bajo (sin aislamiento)                 |
+| Lambda      | `LOGIC_FUNCTION_TYPE=LAMBDA`   | Producción con código no confiable               | Alto (aislamiento a nivel de hardware) |
+
+### Funciones de lógica - Configuración recomendada
 
 **Para desarrollo:**
 
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **Para producción (AWS):**
 
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **Para desactivar las funciones de lógica:**
 
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### Intérprete de código - Controladores disponibles
+
+| Controlador | Variable de entorno              | Caso de uso                               | Nivel de seguridad     |
+| ----------- | -------------------------------- | ----------------------------------------- | ---------------------- |
+| Desactivado | `CODE_INTERPRETER_TYPE=DISABLED` | Deshabilitar la ejecución de código de IA | N/A                    |
+| Local       | `CODE_INTERPRETER_TYPE=LOCAL`    | Solo para desarrollo                      | Bajo (sin aislamiento) |
+| E2B         | `CODE_INTERPRETER_TYPE=E_2_B`    | Producción con ejecución en sandbox       | Alta (sandbox aislado) |
+
 <Note>
-  Al usar `SERVERLESS_TYPE=DISABLED`, cualquier intento de ejecutar una función de lógica devolverá un error. Esto es útil si desea ejecutar Twenty sin capacidades de funciones de lógica.
+Al usar `LOGIC_FUNCTION_TYPE=DISABLED` o `CODE_INTERPRETER_TYPE=DISABLED`, cualquier intento de ejecución devolverá un error. Esto es útil si desea ejecutar Twenty sin estas capacidades.
 </Note>

@@ -13,11 +13,12 @@ import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { capitalize } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui-deprecated/display';
-import { MenuItemMultiSelectAvatar } from 'twenty-ui-deprecated/navigation';
+import { Avatar } from 'twenty-ui/data-display';
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type SearchRecord } from '~/generated/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type MultipleRecordPickerMenuItemContentProps = {
   searchRecord: SearchRecord;
@@ -83,7 +84,7 @@ export const MultipleRecordPickerMenuItemContent = ({
         selected={isRecordSelectedWithObjectItem}
         avatar={
           <Avatar
-            avatarUrl={searchRecord.imageUrl}
+            avatarUrl={getAbsoluteImageUrl(searchRecord.imageUrl)}
             placeholderColorSeed={searchRecord.recordId}
             placeholder={displayText}
             size="md"

@@ -3,7 +3,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui-deprecated/display';
+import { IconPlus } from 'twenty-ui/icon';
 
 export const RecordTableEmptyStateNoRecordFoundForFilter = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();

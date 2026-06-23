@@ -2,14 +2,14 @@ import { styled } from '@linaria/react';
 import React from 'react';
 
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { Button } from 'twenty-ui-deprecated/input';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import {
   type ModalOverlay,
   type ModalPadding,
   type ModalSize,
-  Section,
-} from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type StyledAppModalBaseProps = React.PropsWithChildren<{
   modalId: string;

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Tag } from 'twenty-ui-deprecated/components';
+import { Tag } from 'twenty-ui/data-display';
 import { t } from '@lingui/core/macro';
 import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type PlansTagsProps = {
   plan: BillingPlanKey;

@@ -1,6 +1,6 @@
 {
   "name": "twenty-client-sdk",
-  "version": "2.13.0",
+  "version": "2.16.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
   "scripts": {
@@ -55,7 +55,7 @@
     "prettier": "^3.8.3"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.15",
+    "@types/lodash": "^4.17.24",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "tsc-alias": "^1.8.16",
     "twenty-shared": "workspace:*",

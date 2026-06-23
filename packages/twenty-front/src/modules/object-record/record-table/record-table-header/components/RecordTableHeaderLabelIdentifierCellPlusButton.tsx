@@ -6,10 +6,10 @@ import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/can
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { IconPlus } from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import { IconPlus } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { LightIconButton } from 'twenty-ui/input';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledHeaderIcon = styled.div`
   margin: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]}

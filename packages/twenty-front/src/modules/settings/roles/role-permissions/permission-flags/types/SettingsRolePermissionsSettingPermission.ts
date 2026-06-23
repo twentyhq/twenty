@@ -1,4 +1,4 @@
-import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type SettingsRolePermissionsSettingPermission = {

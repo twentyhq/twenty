@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useLingui } from '@lingui/react/macro';
 
-import { IconArrowMerge, IconSettings } from 'twenty-ui-deprecated/display';
+import { IconArrowMerge, IconSettings } from 'twenty-ui/icon';
 
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';

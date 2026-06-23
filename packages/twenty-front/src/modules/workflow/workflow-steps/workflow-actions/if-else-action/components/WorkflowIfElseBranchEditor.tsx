@@ -11,7 +11,7 @@ import { i18n, type MessageDescriptor } from '@lingui/core';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledBranchContainer = styled.div`
   display: flex;

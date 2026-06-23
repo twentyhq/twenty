@@ -17,7 +17,7 @@ import {
   PageLayoutType,
   type StandaloneRichTextConfiguration,
 } from '~/generated-metadata/graphql';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
   box-sizing: border-box;

@@ -16,8 +16,8 @@ import { useStore } from 'jotai';
 import { Key } from 'ts-key-enum';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
 import {
   CreateApiKeyDocument,
   GenerateApiKeyTokenDocument,

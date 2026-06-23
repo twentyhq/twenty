@@ -1,11 +1,9 @@
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { styled } from '@linaria/react';
-import {
-  Avatar,
-  type AvatarSize,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { Avatar, type AvatarSize } from 'twenty-ui/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppChipProps = {
   size?: AvatarSize;
@@ -47,7 +45,7 @@ export const AppChip = ({
       <Avatar
         type="app"
         size={size}
-        avatarUrl={applicationChipData.logo}
+        avatarUrl={getAbsoluteImageUrl(applicationChipData.logo)}
         placeholder={applicationChipData.name}
         placeholderColorSeed={applicationChipData.seed}
         color={applicationChipData.colors?.color}

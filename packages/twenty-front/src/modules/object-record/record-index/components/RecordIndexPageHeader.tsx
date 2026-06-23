@@ -3,6 +3,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/components/RecordIndexPageHeaderIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -13,7 +14,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTitleWithSelectedRecords = styled.div`
   display: flex;
@@ -39,6 +40,8 @@ export const RecordIndexPageHeader = () => {
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
+  const { formatNumber } = useNumberFormat();
+
   const { objectNamePlural } = useRecordIndexContextOrThrow();
 
   const objectMetadataItem =
@@ -52,7 +55,7 @@ export const RecordIndexPageHeader = () => {
         <StyledTitle>{label}</StyledTitle>
         <>{'->'}</>
         <StyledSelectedRecordsCount>
-          {t`${contextStoreNumberOfSelectedRecords} selected`}
+          {t`${formatNumber(contextStoreNumberOfSelectedRecords)} selected`}
         </StyledSelectedRecordsCount>
       </StyledTitleWithSelectedRecords>
     ) : (

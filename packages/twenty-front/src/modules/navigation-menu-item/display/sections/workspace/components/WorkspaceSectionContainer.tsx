@@ -1,22 +1,22 @@
 import { styled } from '@linaria/react';
 import React, { lazy, Suspense, useContext } from 'react';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { isNavigationMenuItemReadable } from '@/navigation-menu-item/common/utils/isNavigationMenuItemReadable';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
-import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
+import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 import { WorkspaceSectionListEditModeFallback } from '@/object-metadata/components/WorkspaceSectionListEditModeFallback';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -69,47 +69,45 @@ export const WorkspaceSectionContainer = ({
   const isAddToNavigationDropTargetVisible =
     addToNavigationFallbackDestination?.droppableId ===
     NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;
-  const folderChildrenById = items.reduce<Map<string, NavigationMenuItem[]>>(
+  const isItemReadable = (item: NavigationMenuItem) =>
+    isNavigationMenuItemReadable({
+      item,
+      objectMetadataItems,
+      views,
+      objectPermissionsByObjectMetadataId,
+    });
+
+  const { folderChildrenById, filteredFolderChildrenById } = items.reduce<{
+    folderChildrenById: Map<string, NavigationMenuItem[]>;
+    filteredFolderChildrenById: Map<string, NavigationMenuItem[]>;
+  }>(
     (acc, item) => {
       const folderId = item.folderId;
       if (isDefined(folderId)) {
-        const children = acc.get(folderId) ?? [];
+        const children = acc.folderChildrenById.get(folderId) ?? [];
         children.push(item);
-        acc.set(folderId, children);
+        acc.folderChildrenById.set(folderId, children);
+
+        if (isItemReadable(item)) {
+          const readableChildren =
+            acc.filteredFolderChildrenById.get(folderId) ?? [];
+          readableChildren.push(item);
+          acc.filteredFolderChildrenById.set(folderId, readableChildren);
+        }
       }
       return acc;
     },
-    new Map(),
+    {
+      folderChildrenById: new Map(),
+      filteredFolderChildrenById: new Map(),
+    },
   );
 
   const filteredItems = flatItems.filter((item) => {
-    const itemType = item.type;
-    if (
-      itemType === NavigationMenuItemType.FOLDER ||
-      itemType === NavigationMenuItemType.LINK ||
-      itemType === NavigationMenuItemType.PAGE_LAYOUT
-    ) {
-      return true;
+    if (isNavigationMenuItemFolder(item)) {
+      return (filteredFolderChildrenById.get(item.id) ?? []).length > 0;
     }
-    if (
-      itemType === NavigationMenuItemType.OBJECT ||
-      itemType === NavigationMenuItemType.VIEW ||
-      itemType === NavigationMenuItemType.RECORD
-    ) {
-      const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
-        item,
-        objectMetadataItems,
-        views,
-      );
-      return (
-        isDefined(objectMetadataItem) &&
-        getObjectPermissionsForObject(
-          objectPermissionsByObjectMetadataId,
-          objectMetadataItem.id,
-        ).canReadObjectRecords
-      );
-    }
-    return false;
+    return isItemReadable(item);
   });
 
   const workspaceOrphanItemsForSection = isLayoutCustomizationModeEnabled
@@ -181,7 +179,7 @@ export const WorkspaceSectionContainer = ({
       ) : (
         <WorkspaceSectionListReadOnly
           filteredItems={filteredItems}
-          folderChildrenById={folderChildrenById}
+          folderChildrenById={filteredFolderChildrenById}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
         />
       )}

@@ -10,8 +10,8 @@ import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { type SelectOption } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowFormFieldSettingsRecordPickerProps = {
   field: WorkflowFormActionField;

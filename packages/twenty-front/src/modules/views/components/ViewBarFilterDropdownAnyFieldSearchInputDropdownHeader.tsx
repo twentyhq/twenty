@@ -2,7 +2,7 @@ import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/h
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { useLingui } from '@lingui/react/macro';
-import { IconChevronLeft } from 'twenty-ui-deprecated/display';
+import { IconChevronLeft } from 'twenty-ui/icon';
 
 export const ViewBarFilterDropdownAnyFieldSearchInputDropdownHeader = () => {
   const { t } = useLingui();

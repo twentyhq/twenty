@@ -10,23 +10,16 @@ import React, {
   useState,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  ColorSample,
-  IconApps,
-  type IconComponent,
-  useIcons,
-} from 'twenty-ui-deprecated/display';
+import { ColorSample } from 'twenty-ui/data-display';
+import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
 import {
   IconButton,
   type IconButtonSize,
   type IconButtonVariant,
   LightIconButton,
-} from 'twenty-ui-deprecated/input';
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/input';
+import { type ThemeColor } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';

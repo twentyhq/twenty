@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'src/utils/is-defined';
 
 import { type DiscordPostMessageInput } from 'src/logic-functions/types/discord-post-message-input.type';
 import { type DiscordToolResult } from 'src/logic-functions/types/discord-tool-result.type';

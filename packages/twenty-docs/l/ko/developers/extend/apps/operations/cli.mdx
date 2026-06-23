@@ -1,0 +1,105 @@
+---
+title: CLI
+description: "`yarn twenty`는 함수를 실행하고, 로그를 스트리밍하며, 앱 설치를 관리하고, 리모트를 전환하기 위한 명령들을 제공합니다."
+icon: 터미널
+---
+
+`dev`, `dev:build`, `dev:add`, `dev:typecheck` 외에도, `yarn twenty` CLI는 함수 실행, 로그 보기, 앱 설치 관리용 명령을 제공합니다.
+
+## 함수 실행(`yarn twenty dev:function:exec`)
+
+HTTP, 크론, 데이터베이스 이벤트로 트리거하지 않고 로직 함수를 수동으로 실행하세요:
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty dev:function:exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty dev:function:exec --postInstall
+```
+
+## 함수 로그 보기(`yarn twenty dev:function:logs`)
+
+앱의 로직 함수 실행 로그를 스트리밍합니다:
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty dev:function:logs
+
+# Filter by function name
+yarn twenty dev:function:logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+이는 Docker 컨테이너 로그를 표시하는 `yarn twenty docker:logs`와는 다릅니다. `yarn twenty dev:function:logs`는 Twenty 서버에서 앱의 함수 실행 로그를 표시합니다.
+</Note>
+
+## 타입이 지정된 클라이언트(`yarn twenty dev:generate-client`) 생성하기
+
+앱을 빌드하거나 동기화하지 않고, 활성 원격의 스키마로부터 타입이 지정된 API 클라이언트(`twenty-client-sdk`)를 다시 생성합니다. 이를 사용해 별도 리포지토리에 존재하는 백엔드 서비스처럼, Twenty 인스턴스와 통신하는 어떤 프로젝트에서든 타입이 지정된 클라이언트를 얻을 수 있습니다:
+
+```bash filename="Terminal"
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
+```
+
+그런 다음 코드에서 클라이언트를 임포트하세요:
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+데이터 모델이 변경될 때마다 생성된 타입을 갱신하려면 명령을 다시 실행하세요.
+
+<Note>
+클라이언트는 `node_modules` 내부에서 생성되므로, 코드와 함께 커밋되지 않습니다. 매번 설치 후(`postinstall` 스크립트나 CI 등) `yarn twenty dev:generate-client`를 실행하세요.
+</Note>
+
+## 앱 제거(`yarn twenty app:uninstall`)
+
+활성 워크스페이스에서 앱을 제거하세요:
+
+```bash filename="Terminal"
+yarn twenty app:uninstall
+
+# Skip the confirmation prompt
+yarn twenty app:uninstall --yes
+```
+
+## 리모트 관리
+
+**리모트**는 앱이 연결하는 Twenty 서버를 의미합니다. 설정 과정에서 스캐폴더가 자동으로 하나를 생성합니다. 언제든지 리모트를 추가하거나 전환할 수 있습니다.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote:add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote:add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote:list
+
+# Set the active remote
+yarn twenty remote:use <name>
+```
+
+자격 증명은 `~/.twenty/config.json`에 저장됩니다.

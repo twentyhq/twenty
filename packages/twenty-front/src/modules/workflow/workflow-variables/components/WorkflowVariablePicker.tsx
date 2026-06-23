@@ -4,7 +4,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdown';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSearchVariablesDropdownContainer = styled.div<{
   isReadonly?: boolean;
@@ -63,6 +63,7 @@ export const WorkflowVariablePicker: VariablePickerComponent = ({
   onVariableSelect,
   shouldDisplayRecordObjects = false,
   shouldDisplayRecordFields = true,
+  objectNameSingularsToSelect,
 }) => {
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
   const isDropdownOpen = useAtomComponentStateValue(
@@ -82,6 +83,7 @@ export const WorkflowVariablePicker: VariablePickerComponent = ({
         disabled={disabled}
         shouldDisplayRecordObjects={shouldDisplayRecordObjects}
         shouldDisplayRecordFields={shouldDisplayRecordFields}
+        objectNameSingularsToSelect={objectNameSingularsToSelect}
       />
     </StyledSearchVariablesDropdownContainer>
   );

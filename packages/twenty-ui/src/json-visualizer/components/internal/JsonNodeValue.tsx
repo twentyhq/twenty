@@ -1,6 +1,8 @@
+import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 import { clsx } from 'clsx';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './JsonNodeValue.module.scss';
 
@@ -13,6 +15,8 @@ export const JsonNodeValue = ({
 }) => {
   const { onNodeValueClick } = useJsonTreeContextOrThrow();
 
+  const isInteractive = isDefined(onNodeValueClick);
+
   const handleClick = () => {
     onNodeValueClick?.(valueAsString);
   };
@@ -24,7 +28,10 @@ export const JsonNodeValue = ({
         highlighting === 'blue' && styles.blue,
         highlighting === 'red' && styles.red,
       )}
-      onClick={handleClick}
+      role={isInteractive ? 'button' : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
+      onClick={isInteractive ? handleClick : undefined}
+      onKeyDown={handleClickableElementKeyDown}
     >
       {valueAsString}
     </span>

@@ -4,7 +4,7 @@ import {
   IconLayoutList,
   IconStatusChange,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
@@ -22,7 +22,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type AiChatThreadFilterDropdownRootMenuProps = {
   dropdownId: string;

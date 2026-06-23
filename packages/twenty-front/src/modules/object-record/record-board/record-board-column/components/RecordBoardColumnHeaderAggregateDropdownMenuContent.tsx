@@ -7,7 +7,7 @@ import {
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useLingui } from '@lingui/react/macro';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
   const { t } = useLingui();

@@ -1,5 +1,6 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
 import { computeFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle';
+import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 
 describe('computeFolderIdsForSyncToggle', () => {
   const createFolder = ({
@@ -22,6 +23,7 @@ describe('computeFolderIdsForSyncToggle', () => {
     externalId: externalId || id,
     isSentFolder: false,
     isSynced,
+    pendingSyncAction: MessageFolderPendingSyncAction.NONE,
     messageChannelId: 'channel-1',
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z',

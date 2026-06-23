@@ -21,6 +21,7 @@ import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/applica
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
@@ -114,11 +115,14 @@ export class WorkspaceResolver {
   @Mutation(() => WorkspaceEntity)
   @UseGuards(UserAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
   async activateWorkspace(
-    @Args('data') data: ActivateWorkspaceInput,
+    // Deprecated: the workspace name is set at creation. This argument is kept
+    // for backward compatibility (removing it would be a breaking schema change)
+    // but is ignored.
+    @Args('data') _data: ActivateWorkspaceInput,
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    return await this.workspaceService.activateWorkspace(user, workspace, data);
+    return await this.workspaceService.activateWorkspace(user, workspace);
   }
 
   @Mutation(() => WorkspaceEntity)
@@ -280,6 +284,17 @@ export class WorkspaceResolver {
     return this.billingSubscriptionService.getCurrentBillingSubscription({
       workspaceId: workspace.id,
     });
+  }
+
+  @ResolveField(() => BillingCustomerEntity, { nullable: true })
+  async billingCustomer(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<BillingCustomerEntity | null> {
+    if (!this.twentyConfigService.isBillingEnabled()) {
+      return null;
+    }
+
+    return this.billingSubscriptionService.getBillingCustomer(workspace.id);
   }
 
   @ResolveField(() => Number)

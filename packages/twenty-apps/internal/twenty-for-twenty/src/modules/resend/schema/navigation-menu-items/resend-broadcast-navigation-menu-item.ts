@@ -3,8 +3,7 @@ import {
   RESEND_BROADCAST_VIEW_UNIVERSAL_IDENTIFIER,
   RESEND_FOLDER_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER,
 } from '@modules/resend/constants/universal-identifiers';
-import { defineNavigationMenuItem } from 'twenty-sdk/define';
-import { NavigationMenuItemType } from 'twenty-sdk/define';
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
 
 export default defineNavigationMenuItem({
   universalIdentifier:

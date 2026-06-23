@@ -1,20 +1,34 @@
-import { verifyEnterpriseKey } from '@/lib/enterprise/enterprise-jwt';
-import { getStripeClient } from '@/lib/enterprise/stripe-client';
 import { NextResponse } from 'next/server';
+
+import { getStripeClient, verifyEnterpriseKey } from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  if (
+    !process.env.STRIPE_SECRET_KEY ||
+    !process.env.ENTERPRISE_JWT_PUBLIC_KEY
+  ) {
+    console.error(
+      '[enterprise-portal] 503 — STRIPE_SECRET_KEY and/or ENTERPRISE_JWT_PUBLIC_KEY are not configured',
+    );
+    return NextResponse.json(
+      { error: 'Enterprise billing portal is not configured.' },
+      { status: 503 },
+    );
+  }
+
   try {
-    const body = await request.json();
+    const body = (await request.json()) as {
+      enterpriseKey?: unknown;
+      returnUrl?: unknown;
+    };
     const { enterpriseKey, returnUrl } = body;
 
     if (!enterpriseKey || typeof enterpriseKey !== 'string') {
       return NextResponse.json(
         { error: 'Missing enterpriseKey' },
-        {
-          status: 400,
-        },
+        { status: 400 },
       );
     }
 
@@ -23,9 +37,7 @@ export async function POST(request: Request) {
     if (!payload) {
       return NextResponse.json(
         { error: 'Invalid enterprise key' },
-        {
-          status: 403,
-        },
+        { status: 403 },
       );
     }
 
@@ -46,9 +58,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const fullReturnUrl = returnUrl
-      ? `${frontendUrl}${returnUrl}`
-      : frontendUrl;
+    const fullReturnUrl =
+      typeof returnUrl === 'string'
+        ? `${frontendUrl}${returnUrl}`
+        : frontendUrl;
 
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,

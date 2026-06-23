@@ -15,9 +15,9 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui-deprecated/components';
-import { IconChevronLeft } from 'twenty-ui-deprecated/display';
-import { MenuItemDraggable } from 'twenty-ui-deprecated/navigation';
+import { Tag } from 'twenty-ui/data-display';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { MenuItemDraggable } from 'twenty-ui/navigation';
 import { type WidgetConfiguration } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 

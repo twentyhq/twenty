@@ -31,21 +31,21 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { Avatar } from 'twenty-ui/data-display';
 import {
-  Avatar,
-  H2Title,
   IconCreditCard,
   IconEyeShare,
   IconFlag,
   IconMessage,
-  OverflowingTextWithTooltip,
   IconSettings2,
   IconUsers,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { Toggle } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/typography';
+import { Button, Toggle } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import {
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,
@@ -268,7 +268,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                         overflow="hidden"
                       >
                         <Avatar
-                          avatarUrl={user.avatarUrl}
+                          avatarUrl={getAbsoluteImageUrl(user.avatarUrl)}
                           placeholder={
                             `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
                             user.email

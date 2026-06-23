@@ -114,6 +114,7 @@ export {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS as STANDARD_OBJECT,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from '@/sdk/define/objects/standard-object-ids';
+export type { TwentyRecord } from '@/sdk/define/objects/twenty-record.type';
 
 export { definePageLayout } from '@/sdk/define/page-layouts/define-page-layout';
 export { definePageLayoutTab } from '@/sdk/define/page-layouts/define-page-layout-tab';
@@ -138,6 +139,14 @@ export type {
 
 export { defineApplicationRole } from '@/sdk/define/roles/define-application-role';
 export { defineRole } from '@/sdk/define/roles/define-role';
+export type {
+  RowLevelPermissionPredicateManifest,
+  RowLevelPermissionPredicateGroupManifest,
+} from 'twenty-shared/application';
+export {
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
 export { SystemPermissionFlag } from 'twenty-shared/constants';
 
 export { defineSkill } from '@/sdk/define/skills/define-skill';

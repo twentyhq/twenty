@@ -16,23 +16,27 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewKey } from '@/views/types/ViewKey';
-import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
+import {
+  getViewTypeLabel,
+  ViewType,
+  viewTypeIconMapping,
+} from '@/views/types/ViewType';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useLingui } from '@lingui/react/macro';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
-  AppTooltip,
   IconCalendar,
   IconCalendarWeek,
   IconLayoutList,
   IconListDetails,
   IconShare,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/icon';
+import { AppTooltip } from 'twenty-ui/surfaces';
+import { MenuItem } from 'twenty-ui/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 interface ObjectOptionsDropdownCustomViewProps {
@@ -143,7 +147,7 @@ export const ObjectOptionsDropdownCustomView = ({
                 customViewData?.type ?? ViewType.TABLE,
               )}
               text={t`Layout`}
-              contextualText={`${capitalize(customViewData?.type ?? '')}`}
+              contextualText={t(getViewTypeLabel(customViewData.type))}
               contextualTextPosition="right"
               hasSubMenu
             />
@@ -281,6 +285,7 @@ export const ObjectOptionsDropdownCustomView = ({
                 LeftIcon={IconTrash}
                 text={t`Delete view`}
                 disabled={isDefaultView || isLastView}
+                accent="danger"
               />
             </SelectableListItem>
           </div>

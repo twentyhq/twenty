@@ -5,7 +5,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { TEXT_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
-import { IconTextWrap } from 'twenty-ui-deprecated/display';
+import { IconTextWrap } from 'twenty-ui/icon';
 import { z } from 'zod';
 
 type SettingsDataModelFieldTextFormProps = {

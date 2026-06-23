@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
 
@@ -12,9 +12,8 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui-deprecated/display';
-import { Checkbox, CheckboxVariant } from 'twenty-ui-deprecated/input';
-import { Toggle } from 'twenty-ui/input';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
 import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
 const StyledHeaderContainer = styled.div`
@@ -57,10 +56,12 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledDefaultContainer = styled.div`
+  align-content: center;
   min-height: 100%;
   min-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledSelectReadonlyValueContianer = styled.div`

@@ -296,3 +296,5 @@ export { ViewOpenRecordIn } from './ViewOpenRecordIn';
 export { ViewSortDirection } from './ViewSortDirection';
 export { ViewType } from './ViewType';
 export { ViewVisibility } from './ViewVisibility';
+export { WebhookSubscriptionChannelType } from './WebhookSubscriptionChannelType';
+export { WebhookSubscriptionStatus } from './WebhookSubscriptionStatus';

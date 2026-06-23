@@ -6,8 +6,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
+import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -21,15 +21,14 @@ import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/s
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/data-display';
 import {
-  Avatar,
   IconDotsVertical,
   IconLogout,
   IconMessage,
@@ -37,19 +36,16 @@ import {
   IconSettings,
   IconSwitchHorizontal,
   IconUserPlus,
-} from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/input';
 import {
   MenuItem,
   MenuItemSelectAvatar,
   UndecoratedLink,
-} from 'twenty-ui-deprecated/navigation';
-import { useMutation } from '@apollo/client/react';
-import {
-  type AvailableWorkspace,
-  SignUpInNewWorkspaceDocument,
-} from '~/generated-metadata/graphql';
+} from 'twenty-ui/navigation';
+import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledDescription = styled.div`
   color: ${themeCssVariables.font.color.light};
@@ -64,18 +60,14 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const availableWorkspacesCount =
     countAvailableWorkspaces(availableWorkspaces);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
+  const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const { closeDropdown } = useCloseDropdown();
   const { signOut } = useAuth();
-  const { enqueueErrorSnackBar } = useSnackBar();
   const { colorScheme, colorSchemeList } = useColorScheme();
   const supportChat = useAtomStateValue(supportChatState);
   const isSupportChatConfigured =
     supportChat?.supportDriver === 'FRONT' &&
     isNonEmptyString(supportChat.supportFrontChatId);
-
-  const [signUpInNewWorkspaceMutation] = useMutation(
-    SignUpInNewWorkspaceDocument,
-  );
 
   const setMultiWorkspaceDropdown = useSetAtomState(
     multiWorkspaceDropdownState,
@@ -95,22 +87,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   };
 
   const createWorkspace = () => {
-    signUpInNewWorkspaceMutation({
-      onCompleted: async (data) => {
-        return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
-          AppPath.Verify,
-          {
-            loginToken: data.signUpInNewWorkspace.loginToken.token,
-          },
-          '_blank',
-        );
-      },
-      onError: (error) => {
-        enqueueErrorSnackBar({
-          ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-        });
-      },
+    redirectToDefaultDomain({
+      pathname: AppPath.SignInUp,
+      searchParams: { action: 'create-new-workspace' },
     });
   };
 
@@ -122,7 +101,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             Avatar={
               <Avatar
                 placeholder={currentWorkspace?.displayName || ''}
-                avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
+                avatarUrl={getAbsoluteImageUrl(
+                  currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
+                )}
               />
             }
           />
@@ -183,9 +164,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     avatar={
                       <Avatar
                         placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={
-                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO
-                        }
+                        avatarUrl={getAbsoluteImageUrl(
+                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                        )}
                       />
                     }
                     selected={false}

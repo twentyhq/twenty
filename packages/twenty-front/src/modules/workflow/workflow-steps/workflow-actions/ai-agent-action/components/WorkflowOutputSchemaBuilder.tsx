@@ -7,22 +7,13 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
-import {
-  IconChevronDown,
-  IconPlus,
-  IconVariable,
-  IconX,
-} from 'twenty-ui-deprecated/display';
-import {
-  AnimatedLightIconButton,
-  LightIconButton,
-} from 'twenty-ui-deprecated/input';
-import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
+import { IconChevronDown, IconPlus, IconVariable, IconX } from 'twenty-ui/icon';
+import { AnimatedLightIconButton, LightIconButton } from 'twenty-ui/input';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { MenuItem } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
 type WorkflowOutputSchemaBuilderProps = {
   fields: OutputSchemaField[];
@@ -159,6 +150,17 @@ export const WorkflowOutputSchemaBuilder = ({
     );
   };
 
+  const getVariableNameError = (name: string): string | undefined => {
+    if (
+      !isNonEmptyString(name) ||
+      isValidAgentResponseSchemaPropertyKey(name)
+    ) {
+      return undefined;
+    }
+
+    return t`Use only letters, numbers, underscores, dots or hyphens (max 64 characters).`;
+  };
+
   return (
     <StyledOutputSchemaContainer>
       <InputLabel>{t`Output`}</InputLabel>
@@ -216,6 +218,7 @@ export const WorkflowOutputSchemaBuilder = ({
                         label={t`Variable Name`}
                         placeholder={t`e.g., summary, status, count`}
                         defaultValue={field.name}
+                        error={getVariableNameError(field.name)}
                         onChange={(value) =>
                           updateField(field.id, { name: value.trim() })
                         }

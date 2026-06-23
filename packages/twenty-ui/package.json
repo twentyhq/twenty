@@ -31,7 +31,7 @@
   "devDependencies": {
     "@argos-ci/storybook": "^6.0.6",
     "@prettier/sync": "^0.5.2",
-    "@size-limit/preset-small-lib": "^11.1.6",
+    "@size-limit/preset-small-lib": "^12.1.0",
     "@storybook-community/storybook-addon-cookie": "^5.0.0",
     "@storybook/addon-a11y": "^10.3.3",
     "@storybook/addon-coverage": "^3.0.0",
@@ -49,16 +49,20 @@
     "@vitejs/plugin-react-swc": "^4.3.1",
     "@vitest/browser-playwright": "^4.1.0",
     "esbuild": "^0.28.1",
+    "glob": "^11.1.0",
     "jest": "29.7.0",
     "jest-environment-jsdom": "30.0.0-beta.3",
     "prettier": "^3.1.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "sass": "^1.83.0",
     "sass-embedded": "^1.83.0",
-    "size-limit": "^11.1.6",
+    "size-limit": "^12.1.0",
     "slash": "^5.1.0",
     "storybook-addon-pseudo-states": "^10.3.3",
     "ts-jest": "^29.1.1",
     "tsx": "^4.19.3",
+    "typescript": "^5.9.3",
     "vite-plugin-checker": "^0.10.2",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-sass-dts": "^1.3.31",
@@ -73,18 +77,17 @@
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",
-    "date-fns": "^2.30.0",
+    "date-fns": "^4.4.0",
     "framer-motion": "^11.18.0",
-    "glob": "^11.1.0",
-    "jotai": "^2.17.1",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
     "react-responsive": "^9.0.2",
     "react-router-dom": "^6.4.4",
+    "type-fest": "^4.10.1",
     "zod": "^4.1.11"
   },
   "peerDependencies": {
-    "monaco-editor": ">= 0.25.0 < 1"
+    "monaco-editor": ">= 0.25.0 < 1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "scripts": {
     "build": "npx vite build"
@@ -93,17 +96,19 @@
     "dist",
     "accessibility",
     "assets",
-    "components",
-    "display",
+    "data-display",
     "feedback",
+    "icon",
     "input",
     "json-visualizer",
     "layout",
     "navigation",
     "styles",
+    "surfaces",
     "testing",
     "theme",
     "theme-constants",
+    "typography",
     "utilities"
   ],
   "exports": {
@@ -125,20 +130,20 @@
       "import": "./dist/assets.mjs",
       "require": "./dist/assets.cjs"
     },
-    "./components": {
-      "types": "./dist/components/index.d.ts",
-      "import": "./dist/components.mjs",
-      "require": "./dist/components.cjs"
-    },
-    "./display": {
-      "types": "./dist/display/index.d.ts",
-      "import": "./dist/display.mjs",
-      "require": "./dist/display.cjs"
+    "./data-display": {
+      "types": "./dist/data-display/index.d.ts",
+      "import": "./dist/data-display.mjs",
+      "require": "./dist/data-display.cjs"
     },
     "./feedback": {
       "types": "./dist/feedback/index.d.ts",
       "import": "./dist/feedback.mjs",
       "require": "./dist/feedback.cjs"
+    },
+    "./icon": {
+      "types": "./dist/icon/index.d.ts",
+      "import": "./dist/icon.mjs",
+      "require": "./dist/icon.cjs"
     },
     "./input": {
       "types": "./dist/input/index.d.ts",
@@ -165,6 +170,11 @@
       "import": "./dist/styles.mjs",
       "require": "./dist/styles.cjs"
     },
+    "./surfaces": {
+      "types": "./dist/surfaces/index.d.ts",
+      "import": "./dist/surfaces.mjs",
+      "require": "./dist/surfaces.cjs"
+    },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing.mjs",
@@ -180,6 +190,11 @@
       "import": "./dist/theme-constants.mjs",
       "require": "./dist/theme-constants.cjs"
     },
+    "./typography": {
+      "types": "./dist/typography/index.d.ts",
+      "import": "./dist/typography.mjs",
+      "require": "./dist/typography.cjs"
+    },
     "./utilities": {
       "types": "./dist/utilities/index.d.ts",
       "import": "./dist/utilities.mjs",
@@ -194,14 +209,14 @@
       "assets": [
         "dist/assets/index.d.ts"
       ],
-      "components": [
-        "dist/components/index.d.ts"
-      ],
-      "display": [
-        "dist/display/index.d.ts"
+      "data-display": [
+        "dist/data-display/index.d.ts"
       ],
       "feedback": [
         "dist/feedback/index.d.ts"
+      ],
+      "icon": [
+        "dist/icon/index.d.ts"
       ],
       "input": [
         "dist/input/index.d.ts"
@@ -218,6 +233,9 @@
       "styles": [
         "dist/styles/index.d.ts"
       ],
+      "surfaces": [
+        "dist/surfaces/index.d.ts"
+      ],
       "testing": [
         "dist/testing/index.d.ts"
       ],
@@ -226,6 +244,9 @@
       ],
       "theme-constants": [
         "dist/theme-constants/index.d.ts"
+      ],
+      "typography": [
+        "dist/typography/index.d.ts"
       ],
       "utilities": [
         "dist/utilities/index.d.ts"

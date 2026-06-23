@@ -1,3 +1,4 @@
+import '@/settings/playground/utils/setupGraphiqlMonacoWorkers';
 import {
   isPlaygroundApiKeyFresh,
   playgroundApiKeyState,
@@ -12,10 +13,7 @@ import { GraphiQL } from 'graphiql';
 import 'graphiql/style.css';
 import { useContext } from 'react';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type GraphQLPlaygroundProps = {
   onError(): void;
@@ -57,6 +55,9 @@ export const GraphQLPlayground = ({
 
   const fetcher = createGraphiQLFetcher({
     url: baseUrl,
+    headers: {
+      Authorization: `Bearer ${playgroundApiKey.token}`,
+    },
   });
 
   return (

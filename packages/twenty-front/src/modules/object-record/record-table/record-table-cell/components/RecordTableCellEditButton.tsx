@@ -8,10 +8,7 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { RecordTableCellButtons } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButtons';
 import { useGetSecondaryRecordTableCellButton } from '@/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import {
-  isNoteTargetOnNonActivityObject,
-  isTaskTargetOnNonActivityObject,
-} from '@/object-record/record-table/record-table-cell/utils/isActivityTargetOnNonActivityObject';
+import { getCreatableActivityObjectNameSingularFromField } from '@/object-record/record-table/record-table-cell/utils/getCreatableActivityObjectNameSingularFromField';
 import { useContext } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,7 +17,7 @@ import {
   IconCheckbox,
   IconNotes,
   IconPencil,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 
 export const RecordTableCellEditButton = () => {
   const { cellPosition } = useContext(RecordTableCellContext);
@@ -33,53 +30,34 @@ export const RecordTableCellEditButton = () => {
 
   const secondaryButton = useGetSecondaryRecordTableCellButton();
 
-  const fieldName = fieldDefinition.metadata.fieldName;
-  const fieldType = fieldDefinition.type;
-  const isNoteTargetField = isNoteTargetOnNonActivityObject(
-    fieldName,
-    objectNameSingular,
-    fieldType,
-  );
-  const isTaskTargetField = isTaskTargetOnNonActivityObject(
-    fieldName,
-    objectNameSingular,
-    fieldType,
-  );
-  const isActivityTargetOnNonActivityObject =
-    isNoteTargetField || isTaskTargetField;
+  const creatableActivityObjectNameSingular =
+    getCreatableActivityObjectNameSingularFromField({
+      fieldName: fieldDefinition.metadata.fieldName,
+      fieldType: fieldDefinition.type,
+      objectNameSingular,
+    });
 
-  const getActivityObjectNameSingular = () => {
-    if (isNoteTargetField) {
-      return CoreObjectNameSingular.Note;
-    }
-    return CoreObjectNameSingular.Task;
-  };
-
-  const openCreateActivity = useOpenCreateActivityDrawer({
-    activityObjectNameSingular: getActivityObjectNameSingular(),
+  const openCreateActivityDrawer = useOpenCreateActivityDrawer({
+    activityObjectNameSingular:
+      creatableActivityObjectNameSingular ?? CoreObjectNameSingular.Note,
   });
 
   const getMainButtonIcon = () => {
     if (isFirstColumn) {
       return IconArrowUpRight;
     }
-    if (isNoteTargetField) {
+    if (creatableActivityObjectNameSingular === CoreObjectNameSingular.Note) {
       return IconNotes;
     }
-    if (isTaskTargetField) {
+    if (creatableActivityObjectNameSingular === CoreObjectNameSingular.Task) {
       return IconCheckbox;
     }
-    if (isDefined(customButtonIcon)) {
-      return customButtonIcon;
-    }
-    return IconPencil;
+    return customButtonIcon ?? IconPencil;
   };
 
-  const mainButtonIcon = getMainButtonIcon();
-
   const handleMainButtonClick = () => {
-    if (isActivityTargetOnNonActivityObject) {
-      openCreateActivity({
+    if (isDefined(creatableActivityObjectNameSingular)) {
+      openCreateActivityDrawer({
         targetableObjects: [
           {
             id: recordId,
@@ -102,7 +80,7 @@ export const RecordTableCellEditButton = () => {
         ...secondaryButton,
         {
           onClick: handleMainButtonClick,
-          Icon: mainButtonIcon,
+          Icon: getMainButtonIcon(),
         },
       ]}
     />

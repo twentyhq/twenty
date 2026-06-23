@@ -2,9 +2,9 @@ import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/heal
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { JsonTree } from 'twenty-ui-deprecated/json-visualizer';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { JsonTree } from 'twenty-ui/json-visualizer';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AdminPanelHealthServiceStatus } from '~/generated-admin/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

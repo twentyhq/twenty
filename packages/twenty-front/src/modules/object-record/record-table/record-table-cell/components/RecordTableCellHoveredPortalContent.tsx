@@ -11,16 +11,14 @@ import { RecordTableCellFieldInput } from '@/object-record/record-table/record-t
 
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
+import { getCreatableActivityObjectNameSingularFromField } from '@/object-record/record-table/record-table-cell/utils/getCreatableActivityObjectNameSingularFromField';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import {
-  isNoteTargetOnNonActivityObject,
-  isTaskTargetOnNonActivityObject,
-} from '@/object-record/record-table/record-table-cell/utils/isActivityTargetOnNonActivityObject';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
   showInteractiveStyle: boolean;
@@ -41,15 +39,12 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: ${({ showInteractiveStyle, isRecordTableRowActive }) => {
-    if (isRecordTableRowActive) {
-      return 'none';
-    }
-    if (showInteractiveStyle) {
-      return `1px solid ${themeCssVariables.font.color.extraLight}`;
-    }
-    return `1px solid ${themeCssVariables.border.color.medium}`;
-  }};
+  outline: ${({ showInteractiveStyle, isRecordTableRowActive }) =>
+    isRecordTableRowActive
+      ? 'none'
+      : showInteractiveStyle
+        ? `1px solid ${themeCssVariables.font.color.extraLight}`
+        : `1px solid ${themeCssVariables.border.color.medium}`};
   outline-offset: -1px;
 
   user-select: none;
@@ -67,39 +62,28 @@ export const RecordTableCellHoveredPortalContent = () => {
   const { isRecordFieldReadOnly: isReadOnly, fieldDefinition } =
     useContext(FieldContext);
 
+  const { objectNameSingular, rowIndex } = useRecordTableRowContextOrThrow();
+
   const isFieldInputOnly = useIsFieldInputOnly() && !isReadOnly;
 
-  const fieldName = fieldDefinition.metadata.fieldName;
-  const objectMetadataNameSingular =
-    fieldDefinition.metadata.objectMetadataNameSingular;
-  const fieldType = fieldDefinition.type;
-
-  // Activity target fields (noteTargets/taskTargets) on non-activity objects
-  // should show the edit button even though the field is read-only,
-  // because the button triggers create-note/task instead of inline edit
-  const isActivityTargetOnNonActivityObject =
-    isNoteTargetOnNonActivityObject(
-      fieldName,
-      objectMetadataNameSingular,
-      fieldType,
-    ) ||
-    isTaskTargetOnNonActivityObject(
-      fieldName,
-      objectMetadataNameSingular,
-      fieldType,
-    );
+  // noteTargets/taskTargets are read-only, but their cell button creates a pre-linked activity
+  const isCreatableActivityTargetField = isDefined(
+    getCreatableActivityObjectNameSingularFromField({
+      fieldName: fieldDefinition.metadata.fieldName,
+      fieldType: fieldDefinition.type,
+      objectNameSingular,
+    }),
+  );
 
   const showButton =
     !isFieldInputOnly &&
-    (!isReadOnly || isFirstColumn || isActivityTargetOnNonActivityObject) &&
+    (!isReadOnly || isFirstColumn || isCreatableActivityTargetField) &&
     !(isMobile && isFirstColumn);
 
   const showInteractiveStyle =
     !isReadOnly ||
     (isFirstColumn && showButton) ||
-    isActivityTargetOnNonActivityObject;
-
-  const { rowIndex } = useRecordTableRowContextOrThrow();
+    isCreatableActivityTargetField;
 
   const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,

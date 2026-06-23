@@ -18,7 +18,7 @@ import {
   IconMoodSmile,
   IconPilcrow,
   IconTable,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/icon';
 
 const Icons: Record<string, IconComponent> = {
   'Heading 1': IconH1,

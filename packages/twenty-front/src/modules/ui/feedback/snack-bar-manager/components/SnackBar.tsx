@@ -11,23 +11,20 @@ import {
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  HorizontalSeparator,
   IconAlertTriangle,
   IconInfoCircle,
   IconSquareRoundedCheck,
   IconX,
-} from 'twenty-ui-deprecated/display';
-import {
-  ProgressBar,
-  useProgressAnimation,
-} from 'twenty-ui-deprecated/feedback';
-import { LightButton, LightIconButton } from 'twenty-ui-deprecated/input';
-import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/icon';
+import { HorizontalSeparator } from 'twenty-ui/layout';
+import { ProgressBar, useProgressAnimation } from 'twenty-ui/feedback';
+import { LightButton, LightIconButton } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 export enum SnackBarVariant {
   Default = 'default',

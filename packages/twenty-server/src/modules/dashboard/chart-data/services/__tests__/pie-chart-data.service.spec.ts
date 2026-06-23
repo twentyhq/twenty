@@ -137,11 +137,11 @@ describe('PieChartDataService', () => {
 
       expect(result.data).toHaveLength(2);
       expect(result.data[0]).toEqual({
-        id: 'Active',
+        key: 'Active',
         value: 10,
       });
       expect(result.data[1]).toEqual({
-        id: 'Inactive',
+        key: 'Inactive',
         value: 5,
       });
       expect(result.showLegend).toBe(true);
@@ -162,8 +162,8 @@ describe('PieChartDataService', () => {
       });
 
       expect(result.data).toEqual([
-        { id: 'Not Set', value: 2 },
-        { id: 'Active', value: 5 },
+        { key: 'Not Set', value: 2 },
+        { key: 'Active', value: 5 },
       ]);
       expect(result.formattedToRawLookup?.['Not Set']).toBeUndefined();
       expect(result.formattedToRawLookup?.['Active']).toBe('Active');
@@ -186,7 +186,7 @@ describe('PieChartDataService', () => {
       });
 
       expect(result.data).toHaveLength(1);
-      expect(result.data[0].id).toBe('Active');
+      expect(result.data[0].key).toBe('Active');
     });
 
     it('should flag too many groups and limit slices', async () => {
@@ -313,8 +313,8 @@ describe('PieChartDataService', () => {
         authContext: mockAuthContext,
       });
 
-      expect(result.data[0].id).toBe('Open');
-      expect(result.data[1].id).toBe('Closed');
+      expect(result.data[0].key).toBe('Open');
+      expect(result.data[1].key).toBe('Closed');
     });
   });
 
@@ -461,8 +461,8 @@ describe('PieChartDataService', () => {
         authContext: mockAuthContext,
       });
 
-      expect(result.data[0].id).toBe('Yes');
-      expect(result.data[1].id).toBe('No');
+      expect(result.data[0].key).toBe('Yes');
+      expect(result.data[1].key).toBe('No');
     });
   });
 });

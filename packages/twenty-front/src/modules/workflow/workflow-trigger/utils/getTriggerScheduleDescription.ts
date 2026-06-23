@@ -1,3 +1,5 @@
+import { type Locale } from 'date-fns';
+
 import { type WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { describeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression';
 import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/convertScheduleToCronExpression';

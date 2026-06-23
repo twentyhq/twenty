@@ -5,15 +5,10 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconCheck,
-  IconDownload,
-  IconTrash,
-  IconUpload,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconCheck, IconDownload, IconTrash, IconUpload } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type ContentEntry,
   type DeveloperLinks,

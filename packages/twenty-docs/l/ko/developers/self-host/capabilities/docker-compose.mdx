@@ -1,9 +1,10 @@
 ---
-title: Docker Compose로 1-클릭
+title: Docker Compose
+icon: docker
 ---
 
 <Warning>
-  Docker 컨테이너는 프로덕션 호스팅 또는 셀프 호스팅을 위한 것입니다. 기여를 원하시면 [로컬 설정](/l/ko/developers/contribute/capabilities/local-setup)을 확인하세요.
+Docker 컨테이너는 프로덕션 호스팅 또는 셀프 호스팅용입니다. 기여하려면 [로컬 설정](/l/ko/developers/contribute/capabilities/local-setup)을 확인하세요.
 </Warning>
 
 ## 개요
@@ -12,7 +13,7 @@ title: Docker Compose로 1-클릭
 
 **중요:** 이 가이드에서 명시적으로 언급된 설정만 수정하세요. 다른 구성을 변경하면 문제가 발생할 수 있습니다.
 
-고급 설정을 위해 [환경 변수 설정](/l/ko/developers/self-host/capabilities/setup) 문서를 참조하세요. 모든 환경 변수는 서버 및/또는 작업자 수준에서 docker-compose.yml 파일에 선언되어야 합니다.
+고급 설정을 위해 [환경 변수 설정](/l/ko/developers/self-host/capabilities/setup) 문서를 참조하세요. 모든 환경 변수는 변수에 따라 서버 및/또는 작업자 수준에서 `docker-compose.yml` 파일에 선언되어야 합니다.
 
 ## 시스템 요구 사항
 
@@ -50,7 +51,7 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **비밀 토큰 생성**
+2. **암호화 키 생성하기**
 
    고유한 랜덤 문자열을 생성하기 위해 다음 명령을 실행하세요:
 
@@ -58,15 +59,17 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
    openssl rand -base64 32
    ```
 
-   **중요:** 이 값을 비공개로 유지/공유하지 마십시오.
+   **중요:** 이 값을 비공개로 유지/공유하지 마십시오. `ENCRYPTION_KEY`를 잃어버리면 데이터베이스에 저장된 모든 비밀(예: OAuth 토큰, 애플리케이션 변수, TOTP 비밀 등)에 대한 액세스를 잃게 됩니다.
 
 3. **`.env` 업데이트**
 
    생성된 토큰으로 .env 파일의 플레이스홀더 값을 대체합니다.
 
    ```ini
-   APP_SECRET=first_random_string
+   ENCRYPTION_KEY=random_string
    ```
+
+   중단 없이 키를 회전하는 방법은 [키 회전 가이드](/l/ko/developers/self-host/capabilities/key-rotation)를 참조하세요.
 
 4. **Postgres 비밀번호 설정**
 

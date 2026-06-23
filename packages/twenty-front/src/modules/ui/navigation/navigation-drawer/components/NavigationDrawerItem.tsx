@@ -13,26 +13,24 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type JSX, type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui-deprecated/components';
+import { Pill, TintedIconTile } from 'twenty-ui/data-display';
+import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
 import {
   AppTooltip,
-  type IconComponent,
-  Label,
   OverflowingTextWithTooltip,
-  type TablerIconsProps,
-  TintedIconTile,
   TooltipDelay,
   TooltipPosition,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/surfaces';
+import { Label } from 'twenty-ui/typography';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import {
   type TriggerEventType,
   useMouseDownNavigation,
-} from 'twenty-ui-deprecated/utilities';
+} from 'twenty-ui/utilities';
 const DEFAULT_INDENTATION_LEVEL = 1;
 
 export type NavigationDrawerItemIndentationLevel = 1 | 2;

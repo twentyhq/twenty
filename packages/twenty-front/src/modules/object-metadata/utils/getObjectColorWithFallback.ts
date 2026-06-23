@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui-deprecated/theme';
+import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 const SYSTEM_OBJECT_COLOR: ThemeColor = 'gray';
 

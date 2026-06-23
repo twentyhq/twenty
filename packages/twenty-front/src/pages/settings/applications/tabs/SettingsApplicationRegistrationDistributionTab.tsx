@@ -1,7 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
-import { CommandBlock, H2Title, IconCopy } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { CommandBlock } from 'twenty-ui/data-display';
+import { IconCopy } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';

@@ -1,5 +1,6 @@
 /* oxlint-disable twenty/no-navigate-prefer-link */
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
@@ -9,12 +10,10 @@ import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { H2Title, IconSearch } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+import { IconSearch } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTypeSelectContainer = styled.div`
@@ -57,6 +56,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
 }) => {
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigateSettings();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const [searchParams] = useSearchParams();
   const fromAgentId = searchParams.get('fromAgent');
   const [searchFilter, setSearchFilter] = useState('');
@@ -96,10 +96,10 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
     );
 
   const standardObjects = filteredObjectMetadataItems.filter(
-    (item) => !item.isCustom,
+    (item) => !getIsMetadataItemCustom(item),
   );
-  const customObjects = filteredObjectMetadataItems.filter(
-    (item) => item.isCustom,
+  const customObjects = filteredObjectMetadataItems.filter((item) =>
+    getIsMetadataItemCustom(item),
   );
 
   return (

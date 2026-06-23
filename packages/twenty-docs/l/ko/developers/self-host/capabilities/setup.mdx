@@ -1,11 +1,12 @@
 ---
 title: 설정
+icon: 톱니바퀴
 ---
 
 # 구성 관리
 
 <Warning>
-  **처음 설치하시나요?** [Docker Compose 설치 가이드](/l/ko/developers/self-host/capabilities/docker-compose)를 따라 Twenty를 실행하고, 이곳으로 돌아와 구성을 진행하세요.
+**처음 설치하시나요?** [Docker Compose 설치 가이드](/l/ko/developers/self-host/capabilities/docker-compose)를 따라 Twenty를 실행하고, 이곳으로 돌아와 구성을 진행하세요.
 </Warning>
 
 Twenty는 다른 배포 요구에 맞추기 위해 **두 가지 구성 모드**를 제공합니다:
@@ -26,7 +27,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 4. 변경 사항은 즉시 적용됩니다 (멀티 컨테이너 배포의 경우 15초 이내)
 
 <Warning>
-  **멀티 컨테이너 배포:** 데이터베이스 구성을 사용할 때 (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), 서버와 작업자 컨테이너 모두 동일한 데이터베이스에서 읽습니다. 관리자 패널의 변경은 둘 다 자동으로 영향을 미쳐 환경 변수를 컨테이너 간에 복제할 필요가 없습니다 (인프라 변수 제외).
+**멀티 컨테이너 배포:** 데이터베이스 구성을 사용할 때 (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), 서버와 작업자 컨테이너 모두 동일한 데이터베이스에서 읽습니다. 관리자 패널의 변경은 둘 다 자동으로 영향을 미쳐 환경 변수를 컨테이너 간에 복제할 필요가 없습니다 (인프라 변수 제외).
 </Warning>
 
 **관리자 패널에서 구성할 수 있는 내용:**
@@ -41,11 +42,26 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 ![관리자 패널 구성 변수](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <Warning>
-  각 변수는 **설정 → 관리자 패널 → 구성 변수**의 관리자 패널에 설명과 함께 문서화되어 있습니다.
-  데이터베이스 연결 (`PG_DATABASE_URL`), 서버 URL (`SERVER_URL`), 앱 비밀 (`APP_SECRET`)과 같은 일부 인프라 설정은 `.env` 파일을 통해서만 구성할 수 있습니다.
+각 변수는 **설정 → 관리자 패널 → 구성 변수**의 관리자 패널에 설명과 함께 문서화되어 있습니다.
+데이터베이스 연결(`PG_DATABASE_URL`), 서버 URL(`SERVER_URL`), 비밀 값(`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`)과 같은 일부 인프라 설정은 `.env` 파일을 통해서만 구성할 수 있습니다.
 
-  [완전한 기술적 참조 →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+[완전한 기술적 참조 →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## 암호화 키
+
+Twenty는 환경 변수로만 설정할 수 있는 암호화 키를 두 개 사용합니다:
+
+| 변수                        | 목적                                                                                  | 필수                                                        |
+| ------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `ENCRYPTION_KEY`          | 휴지 상태의 비밀(OAuth 토큰, 애플리케이션 변수, 서명 키 개인 키, TOTP 비밀, 민감한 구성 값)을 암호화하는 데 사용되는 기본 키입니다. | 새로운 설치의 경우 예(레거시 설치는 대신 `APP_SECRET`에 의존할 수 있습니다 — 아래 참조) |
+| `FALLBACK_ENCRYPTION_KEY` | 검증 전용 키입니다. 회전 중 기존 행을 계속 복호화할 수 있도록, *이전* `ENCRYPTION_KEY`로 설정합니다.                 | 회전 중에만                                                    |
+
+하위 호환을 위해 `ENCRYPTION_KEY`가 설정되지 않은 경우, Twenty는 휴지 상태 암호화에 대해 `APP_SECRET`을 대신 사용하여 기존 배포의 레거시 동작과 일치합니다. 새로운 설치에서는 항상 전용 `ENCRYPTION_KEY`를 설정해야 합니다.
+
+`openssl rand -base64 32`로 값을 생성한 뒤 비밀 관리자, 봉인된 구성 등 안전한 위치에 저장하세요. `ENCRYPTION_KEY`를 분실하면 데이터베이스에 저장된 모든 비밀에 대한 접근을 잃게 됩니다.
+
+중단 없이 `ENCRYPTION_KEY`를 회전하는 방법은 [키 회전 가이드](/l/ko/developers/self-host/capabilities/key-rotation)를 참고하세요.
 
 ## 2. 환경 전용 구성
 
@@ -93,7 +109,7 @@ DEFAULT_SUBDOMAIN=app  # default value
 * 서브도메인 및 사용자 지정 도메인과 같은 워크스페이스 전용 설정이 워크스페이스 설정에서 제공됩니다
 
 <Warning>
-  **환경 전용 설정:** `IS_MULTIWORKSPACE_ENABLED`는 `.env` 파일을 통해서만 구성할 수 있으며 재시작이 필요합니다. 관리자 패널을 통해 변경할 수 없습니다.
+**환경 전용 설정:** `IS_MULTIWORKSPACE_ENABLED`는 `.env` 파일을 통해서만 구성할 수 있으며 재시작이 필요합니다. 관리자 패널을 통해 변경할 수 없습니다.
 </Warning>
 
 ### 멀티 워크스페이스를 위한 DNS 구성
@@ -149,7 +165,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
    * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-  **환경 전용 모드:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`로 설정한 경우, `.env` 파일에 이러한 변수를 추가하세요.
+**환경 전용 모드:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`로 설정한 경우, `.env` 파일에 이러한 변수를 추가하세요.
 </Warning>
 
 **필요한 범위** (자동 구성됨):
@@ -168,7 +184,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 ## Microsoft 365 통합
 
 <Warning>
-  사용자는 캘린더 및 메시징 API를 사용하려면 [Microsoft 365 라이선스](https://admin.microsoft.com/Adminportal/Home)를 보유해야 합니다. 없이는 Twenty에서 계정을 동기화할 수 없습니다.
+사용자는 캘린더 및 메시징 API를 사용하려면 [Microsoft 365 라이선스](https://admin.microsoft.com/Adminportal/Home)를 보유해야 합니다. 없이는 Twenty에서 계정을 동기화할 수 없습니다.
 </Warning>
 
 ### Microsoft Azure에 프로젝트 생성
@@ -211,7 +227,7 @@ Microsoft Azure 콘솔에서 "권한"에서 다음 API를 활성화하세요:
    * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-  **환경 전용 모드:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`로 설정한 경우, `.env` 파일에 이러한 변수를 추가하세요.
+**환경 전용 모드:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`로 설정한 경우, `.env` 파일에 이러한 변수를 추가하세요.
 </Warning>
 
 ### 범위 구성
@@ -256,82 +272,111 @@ yarn command:prod cron:workflow:automated-cron-trigger
 3. SMTP 설정을 구성하세요:
 
 <ArticleTabs label1="Gmail" label2="오피스365" label3="Smtp4dev">
-  <ArticleTab>
-    [App Password](https://support.google.com/accounts/answer/185833)를 프로비저닝해야 합니다.
 
+  <ArticleTab>
+
+  [App Password](https://support.google.com/accounts/answer/185833)를 프로비저닝해야 합니다.
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.gmail.com
+  * EMAIL_SMTP_PORT=465
+  * EMAIL_SMTP_USER=gmail_email_address
+  * EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  2단계 인증을 사용 중인 경우, [앱 비밀번호](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)를 발급받아야 합니다.
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.office365.com
+  * EMAIL_SMTP_PORT=587
+  * EMAIL_SMTP_USER=office365_email_address
+  * EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  **smtp4dev**는 개발 및 테스트를 위한 가상의 SMTP 이메일 서버입니다.
+  * smtp4dev 이미지를 실행하세요: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+  * smtp4dev UI에 여기에 접근하세요: [http://localhost:8090](http://localhost:8090)
+  * 다음 변수를 설정하세요:
     * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.gmail.com
-    * EMAIL_SMTP_PORT=465
-    * EMAIL_SMTP_USER=gmail_email_address
-    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+    * EMAIL_SMTP_HOST=localhost
+    * EMAIL_SMTP_PORT=2525
+
   </ArticleTab>
 
-  <ArticleTab>
-    2단계 인증을 사용 중인 경우, [앱 비밀번호](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)를 발급받아야 합니다.
-
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.office365.com
-    * EMAIL_SMTP_PORT=587
-    * EMAIL_SMTP_USER=office365_email_address
-    * EMAIL_SMTP_PASSWORD='office365_password'
-  </ArticleTab>
-
-  <ArticleTab>
-    **smtp4dev**는 개발 및 테스트를 위한 가상의 SMTP 이메일 서버입니다.
-
-    * smtp4dev 이미지를 실행하세요: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-    * smtp4dev UI에 여기에 접근하세요: [http://localhost:8090](http://localhost:8090)
-    * 다음 변수를 설정하세요:
-      * EMAIL_DRIVER=smtp
-      * EMAIL_SMTP_HOST=localhost
-      * EMAIL_SMTP_PORT=2525
-  </ArticleTab>
 </ArticleTabs>
 
 <Warning>
-  **환경 전용 모드:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`로 설정한 경우, `.env` 파일에 이러한 변수를 추가하세요.
+**환경 전용 모드:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`로 설정한 경우, `.env` 파일에 이러한 변수를 추가하세요.
 </Warning>
 
-## 로직 함수
-
-Twenty는 워크플로 및 사용자 지정 로직을 위해 로직 함수를 지원합니다. `SERVERLESS_TYPE` 환경 변수를 통해 실행 환경을 구성합니다.
+## S3 저장소
 
 <Warning>
-  **보안 공지:** 로컬 드라이버 (`SERVERLESS_TYPE=LOCAL`)는 샌드박싱 없이 호스트의 Node.js 프로세스에서 코드를 직접 실행합니다. 개발 환경에서 신뢰할 수 있는 코드에만 사용해야 합니다. 신뢰할 수 없는 코드를 처리하는 프로덕션 배포의 경우 `SERVERLESS_TYPE=LAMBDA` 또는 `SERVERLESS_TYPE=DISABLED` 사용을 강력히 권장합니다.
+기본적으로 Twenty는 업로드된 파일을 로컬 파일 시스템에 저장합니다. 프로덕션 배포에서는 S3 또는 S3 호환 서비스(MinIO, DigitalOcean Spaces 등)를 사용하세요. 컨테이너 재시작 시에도 파일이 유지되고, 여러 서버 인스턴스에 걸쳐 확장될 수 있도록 하기 위함입니다.
 </Warning>
 
-### 사용 가능한 드라이버
+`STORAGE_TYPE=S_3`를 설정하고 관리자 패널 또는 `.env`를 통해 `STORAGE_S3_*` 변수를 구성하세요. 전체 S3 변수 목록은 [config-variables.ts 참조](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)를 확인하세요.
 
-| 드라이버   | 환경 변수                      | 사용 사례                     | 보안 수준           |
-| ------ | -------------------------- | ------------------------- | --------------- |
-| 비활성화   | `SERVERLESS_TYPE=DISABLED` | 로직 함수를 완전히 비활성화           | 해당 없음           |
-| 로컬     | `SERVERLESS_TYPE=LOCAL`    | 개발 및 신뢰할 수 있는 환경          | 낮음 (샌드박싱 없음)    |
-| Lambda | `SERVERLESS_TYPE=LAMBDA`   | 신뢰할 수 없는 코드를 처리하는 프로덕션 환경 | 높음 (하드웨어 수준 격리) |
+CORS에 의존하는 기능(예: 브라우저 내 파일 다운로드)과 함께 S3를 사용할 때에는, 버킷의 CORS 구성에서 Twenty 프런트엔드 오리진을 허용하도록 하세요.
 
-### 권장 구성
+## 로직 함수 및 코드 인터프리터
+
+Twenty는 워크플로를 위한 로직 함수와 AI 데이터 분석을 위한 코드 인터프리터를 지원합니다. 두 기능 모두 사용자 제공 코드를 실행하며, 보안을 위해 명시적인 구성이 필요합니다.
+
+### 보안 기본값
+
+**프로덕션 (NODE_ENV=production):** 로직 함수와 코드 인터프리터는 기본값이 **비활성화됨**입니다. 이러한 기능이 필요하다면 `LOGIC_FUNCTION_TYPE` 및 `CODE_INTERPRETER_TYPE`로 명시적으로 활성화해야 합니다.
+
+**개발 (NODE_ENV=development):** 로컬에서 실행할 때 편의를 위해 둘 다 기본값이 **LOCAL**입니다.
+
+<Warning>
+**보안 공지:** 로컬 드라이버 (`LOGIC_FUNCTION_TYPE=LOCAL` 또는 `CODE_INTERPRETER_TYPE=LOCAL`)는 샌드박싱 없이 호스트의 Node.js 프로세스에서 코드를 직접 실행합니다. 개발 환경에서 신뢰할 수 있는 코드에만 사용해야 합니다. 신뢰할 수 없는 코드를 처리하는 프로덕션 배포에서는 `LOGIC_FUNCTION_TYPE=LAMBDA` 또는 `CODE_INTERPRETER_TYPE=E2B`(샌드박싱 적용)을 사용하거나 비활성화 상태로 유지하세요.
+</Warning>
+
+### 로직 함수 - 사용 가능한 드라이버
+
+| 드라이버   | 환경 변수                          | 사용 사례                     | 보안 수준           |
+| ------ | ------------------------------ | ------------------------- | --------------- |
+| 비활성화   | `LOGIC_FUNCTION_TYPE=DISABLED` | 로직 함수를 완전히 비활성화           | 해당 없음           |
+| 로컬     | `LOGIC_FUNCTION_TYPE=LOCAL`    | 개발 및 신뢰할 수 있는 환경          | 낮음 (샌드박싱 없음)    |
+| Lambda | `LOGIC_FUNCTION_TYPE=LAMBDA`   | 신뢰할 수 없는 코드를 처리하는 프로덕션 환경 | 높음 (하드웨어 수준 격리) |
+
+### 로직 함수 - 권장 구성
 
 **개발:**
 
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **프로덕션(AWS):**
 
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **로직 함수를 비활성화하려면:**
 
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### 코드 인터프리터 - 사용 가능한 드라이버
+
+| 드라이버 | 환경 변수                            | 사용 사례              | 보안 수준         |
+| ---- | -------------------------------- | ------------------ | ------------- |
+| 비활성화 | `CODE_INTERPRETER_TYPE=DISABLED` | AI 코드 실행 비활성화      | 해당 없음         |
+| 로컬   | `CODE_INTERPRETER_TYPE=LOCAL`    | 개발 전용              | 낮음 (샌드박싱 없음)  |
+| E2B  | `CODE_INTERPRETER_TYPE=E_2_B`    | 샌드박스 실행을 사용하는 프로덕션 | 높음 (격리된 샌드박스) |
+
 <Note>
-  `SERVERLESS_TYPE=DISABLED`를 사용하는 경우 로직 함수를 실행하려는 모든 시도는 오류를 반환합니다. 로직 함수 기능 없이 Twenty를 실행하려는 경우 유용합니다.
+`LOGIC_FUNCTION_TYPE=DISABLED` 또는 `CODE_INTERPRETER_TYPE=DISABLED`를 사용하는 경우, 모든 실행 시도는 오류를 반환합니다. 이러한 기능 없이 Twenty를 실행하려는 경우 유용합니다.
 </Note>

@@ -5,7 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { RECORD_BOARD_COLUMN_PADDING_AND_BORDER_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnPaddingAndBorderWidth';
 
-import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
+import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
 import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/constants/RecordBoardQueryPageSize';
 import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreComponentState';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
@@ -69,8 +69,12 @@ export const RecordBoardFetchMoreInViewTriggerComponent = () => {
     ViewType.KANBAN,
   );
 
+  const recordIndexKanbanColumnWidth = useAtomComponentStateValue(
+    recordIndexKanbanColumnWidthComponentState,
+  );
+
   const componentWidth =
-    visibleRecordGroupIds.length * RECORD_BOARD_COLUMN_WIDTH +
+    visibleRecordGroupIds.length * recordIndexKanbanColumnWidth +
     visibleRecordGroupIds.length *
       RECORD_BOARD_COLUMN_PADDING_AND_BORDER_WIDTH -
     1;

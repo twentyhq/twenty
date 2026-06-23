@@ -1,5 +1,6 @@
 ---
 title: 스타일 가이드
+icon: 페인트 브러시
 ---
 
 이 문서에는 코드 작성 시 따라야 할 규칙이 포함되어 있습니다.
@@ -8,7 +9,7 @@ title: 스타일 가이드
 
 이를 위해서는 너무 간결하기보다는 약간 더 장황한 것이 낫습니다.
 
-항상 사람들이 코드를 작성하는 것보다 더 자주 읽는다는 점을 염두에 두십시오. 특히 누구나 기여할 수 있는 오픈 소스 프로젝트에서 그렇습니다.
+항상 사람들이 코드를 작성하는 것보다 더 자주 읽는다는 점을 염두에 두십시오. 특히 누구나 기여할 수 있는 오픈 소스 프로젝트에서는 더욱 그렇습니다.
 
 여기에 정의되지 않은 많은 규칙이 있지만 린터에 의해 자동으로 확인됩니다.
 
@@ -150,7 +151,7 @@ type MyType = {
 
 ### 열거형 대신 문자열 리터럴 사용
 
-[String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types)는 TypeScript에서 열거형과 같은 값을 처리하는 주요 방법입니다. 그들은 Pick와 Omit으로 확장하기 쉬우며, 특히 코드 완성 기능을 사용할 때 더 나은 사용자 경험을 제공합니다.
+[String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types)는 TypeScript에서 열거형과 같은 값을 처리하는 주요 방법입니다. 이들은 Pick과 Omit으로 확장하기 더 쉽고, 특히 코드 자동 완성 기능을 사용할 때 더 나은 개발자 경험을 제공합니다.
 
 타입스크립트가 열거형 사용을 피하도록 권장하는 이유는 [여기](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums)에서 확인할 수 있습니다.
 
@@ -260,7 +261,7 @@ const StyledButton = styled.button`
 
 ## No-Type Import 강제 실행
 
-타입 import를 피하십시오. 이 표준을 강화하기 위해 Oxlint 규칙이 모든 타입 import를 확인하고 보고합니다. 이는 TypeScript 코드의 일관성과 가독성을 유지하는 데 도움이 됩니다.
+타입 import를 피하십시오. 이 표준을 강제하기 위해 Oxlint 규칙이 모든 타입 import를 검사하고 보고합니다. 이는 TypeScript 코드의 일관성과 가독성을 유지하는 데 도움이 됩니다.
 
 ```tsx
 // ❌ Bad
@@ -283,8 +284,8 @@ import { Meta, StoryObj } from '@storybook/react';
 
 ### Oxlint 규칙
 
-Oxlint 규칙인 `typescript/consistent-type-imports`는 타입 없는 import 표준을 강제합니다. 이 규칙은 모든 타입 import 위반에 대해 오류나 경고를 생성합니다.
+Oxlint 규칙인 `typescript/consistent-type-imports`는 타입 import 금지 표준을 강제합니다. 이 규칙은 모든 타입 import 위반에 대해 오류나 경고를 생성합니다.
 
 이 규칙은 의도치 않은 타입 import가 발생하는 드문 경계 사례를 구체적으로 다룹니다. 타입스크립트 자체는 [TypeScript 3.8 릴리스 노트](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)에서 이 관행을 권장하지 않습니다. 대부분의 상황에서 타입 전용 import를 사용할 필요가 없습니다.
 
-이 규칙을 준수하는 코드를 보장하기 위해 Oxlint를 개발 워크플로의 일부로 실행하십시오.
+코드가 이 규칙을 준수하도록 개발 워크플로의 일부로 Oxlint를 실행하십시오.

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { IconLock } from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconLock } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEmailBodyNotSharedContainer = styled.div`
   align-items: center;

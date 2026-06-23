@@ -27,7 +27,7 @@ ruleTester.run(RULE_NAME, rule, {
       filename: '/project/packages/twenty-front/src/utils.ts',
     },
     {
-      code: "import { Button } from 'twenty-ui-deprecated';",
+      code: "import { Button } from 'twenty-ui';",
       options: [{ depConstraints }],
       filename: '/project/packages/twenty-front/src/components.tsx',
     },

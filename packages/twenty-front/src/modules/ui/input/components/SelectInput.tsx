@@ -12,9 +12,9 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { type TagColor } from 'twenty-ui-deprecated/components';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
-import { MenuItemSelectTag } from 'twenty-ui-deprecated/navigation';
+import { type TagColor } from 'twenty-ui/data-display';
+import { type SelectOption } from 'twenty-ui/input';
+import { MenuItemSelectTag } from 'twenty-ui/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 interface SelectInputProps {

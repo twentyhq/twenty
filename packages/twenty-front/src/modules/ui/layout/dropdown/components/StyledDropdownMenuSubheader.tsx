@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { Label } from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Label } from 'twenty-ui/typography';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuSubheaderContainer = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};

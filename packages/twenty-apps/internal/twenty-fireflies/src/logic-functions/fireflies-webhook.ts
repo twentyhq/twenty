@@ -1,5 +1,5 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'src/utils/is-defined';
 
 import { FIREFLIES_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { firefliesWebhookHandler } from 'src/logic-functions/handlers/fireflies-webhook-handler';

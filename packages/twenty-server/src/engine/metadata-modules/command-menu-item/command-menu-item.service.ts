@@ -6,7 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { type ObjectMetadataLoaderPayload } from 'src/engine/dataloaders/dataloader.service';
+import {
+  type ObjectMetadataLoaderPayload,
+  type StandardApplicationIdLoaderPayload,
+} from 'src/engine/dataloaders/dataloader.service';
 import {
   CommandMenuItemException,
   CommandMenuItemExceptionCode,
@@ -15,10 +18,9 @@ import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-men
 import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { interpolateNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/interpolate-navigation-command-menu-item-field.util';
+import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-create-command-menu-item-input-to-flat-command-menu-item-to-create.util';
 import { fromDeleteCommandMenuItemInputToFlatCommandMenuItemOrThrow } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-delete-command-menu-item-input-to-flat-command-menu-item-or-throw.util';
 import { fromFlatCommandMenuItemToCommandMenuItemDto } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-flat-command-menu-item-to-command-menu-item-dto.util';
@@ -26,6 +28,7 @@ import { fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow } fr
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -245,6 +248,90 @@ export class CommandMenuItemService {
     );
   }
 
+  async reset(id: string, workspaceId: string): Promise<CommandMenuItemDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatCommandMenuItemMaps'],
+        },
+      );
+
+    const existingFlatCommandMenuItem = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: existingFlatCommandMenuItemMaps,
+    });
+
+    if (!isDefined(existingFlatCommandMenuItem)) {
+      throw new CommandMenuItemException(
+        'Command menu item not found',
+        CommandMenuItemExceptionCode.COMMAND_MENU_ITEM_NOT_FOUND,
+      );
+    }
+
+    if (
+      existingFlatCommandMenuItem.applicationUniversalIdentifier ===
+      workspaceCustomFlatApplication.universalIdentifier
+    ) {
+      throw new CommandMenuItemException(
+        'Custom command menu item cannot be reset to default',
+        CommandMenuItemExceptionCode.COMMAND_MENU_ITEM_CANNOT_BE_RESET,
+      );
+    }
+
+    const flatCommandMenuItemToUpdate: FlatCommandMenuItem = {
+      ...existingFlatCommandMenuItem,
+      isActive: true,
+      overrides: null,
+      universalOverrides: null,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            commandMenuItem: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatCommandMenuItemToUpdate],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while resetting command menu item to default',
+      );
+    }
+
+    const { flatCommandMenuItemMaps: recomputedFlatCommandMenuItemMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatCommandMenuItemMaps'],
+        },
+      );
+
+    return fromFlatCommandMenuItemToCommandMenuItemDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatCommandMenuItemMaps,
+      }),
+    );
+  }
+
   async delete(id: string, workspaceId: string): Promise<CommandMenuItemDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -272,6 +359,7 @@ export class CommandMenuItemService {
         flatCommandMenuItemToDelete.applicationUniversalIdentifier,
       workspaceCustomApplicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
+      isSystemSideEffect: flatCommandMenuItemToDelete.isSystemSideEffect,
     });
 
     const deactivatedFlatCommandMenuItem = {
@@ -360,6 +448,7 @@ export class CommandMenuItemService {
     commandMenuItem,
     fieldName,
     objectMetadataLoader,
+    standardApplicationIdLoader,
     workspaceId,
     locale,
   }: {
@@ -368,6 +457,10 @@ export class CommandMenuItemService {
     objectMetadataLoader: DataLoader<
       ObjectMetadataLoaderPayload,
       ObjectMetadataDTO | null
+    >;
+    standardApplicationIdLoader: DataLoader<
+      StandardApplicationIdLoaderPayload,
+      string
     >;
     workspaceId: string;
     locale: keyof typeof APP_LOCALES | undefined;
@@ -378,10 +471,19 @@ export class CommandMenuItemService {
       workspaceId,
     });
 
+    const standardApplicationId = await standardApplicationIdLoader.load({
+      workspaceId,
+    });
+
+    const isStandardApp = isDefined(objectMetadata)
+      ? objectMetadata.applicationId === standardApplicationId
+      : false;
+
     return interpolateNavigationCommandMenuItemField({
       commandMenuItem,
       fieldName,
       objectMetadata,
+      isStandardApp,
       locale,
       i18nInstance: this.i18nService.getI18nInstance(locale ?? SOURCE_LOCALE),
     });

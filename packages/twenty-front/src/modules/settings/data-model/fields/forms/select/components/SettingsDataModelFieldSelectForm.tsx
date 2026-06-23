@@ -39,14 +39,11 @@ import {
   IconPlus,
   IconPoint,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
-import { LightButton, LightIconButton } from 'twenty-ui-deprecated/input';
-import { CardContent, CardFooter } from 'twenty-ui-deprecated/layout';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { LightButton, LightIconButton } from 'twenty-ui/input';
+import { CardContent, CardFooter } from 'twenty-ui/surfaces';
+import { MenuItem } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({

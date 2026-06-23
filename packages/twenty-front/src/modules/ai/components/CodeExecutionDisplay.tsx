@@ -12,13 +12,10 @@ import {
   IconPlayerPlay,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
-} from 'twenty-ui-deprecated/display';
-import { CodeEditor, LightIconButton } from 'twenty-ui-deprecated/input';
-import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/icon';
+import { CodeEditor, LightIconButton } from 'twenty-ui/input';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`

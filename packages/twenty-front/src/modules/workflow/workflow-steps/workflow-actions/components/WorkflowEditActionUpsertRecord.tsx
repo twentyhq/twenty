@@ -18,8 +18,8 @@ import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
-import { HorizontalSeparator } from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { HorizontalSeparator } from 'twenty-ui/layout';
+import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -183,6 +183,15 @@ export const WorkflowEditActionUpsertRecord = ({
     saveAction(newFormData);
   };
 
+  const handleFieldClear = (fieldName: keyof UpsertRecordFormData) => {
+    const newFormData: UpsertRecordFormData = { ...formData };
+    delete newFormData[fieldName];
+
+    setFormData(newFormData);
+
+    saveAction(newFormData);
+  };
+
   const saveAction = useDebouncedCallback(
     async (formData: UpsertRecordFormData) => {
       if (actionOptions.readonly === true) {
@@ -269,6 +278,9 @@ export const WorkflowEditActionUpsertRecord = ({
                 onChange={(recordId) => {
                   handleFieldChange('id', recordId);
                 }}
+                onClear={() => {
+                  handleFieldClear('id');
+                }}
                 objectNameSingulars={
                   isDefined(objectNameSingular) ? [objectNameSingular] : []
                 }
@@ -298,6 +310,9 @@ export const WorkflowEditActionUpsertRecord = ({
               field={fieldDefinition}
               onChange={(value) => {
                 handleFieldChange(fieldDefinition.metadata.fieldName, value);
+              }}
+              onClear={() => {
+                handleFieldClear(fieldDefinition.metadata.fieldName);
               }}
               VariablePicker={WorkflowVariablePicker}
               readonly={isFormDisabled}

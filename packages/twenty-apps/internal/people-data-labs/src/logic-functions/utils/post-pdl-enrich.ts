@@ -1,11 +1,10 @@
 import { isNumber, isObject } from '@sniptt/guards';
 
+import { PDL_BASE_URL } from 'src/constants/pdl-base-url';
 import { extractPdlErrorMessage } from 'src/logic-functions/utils/extract-pdl-error-message';
 import { getPdlApiKey } from 'src/logic-functions/utils/get-pdl-api-key';
 import { parsePdlItem } from 'src/logic-functions/utils/parse-pdl-item';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
-
-const PDL_BASE_URL = 'https://api.peopledatalabs.com/v5';
 
 export const postPdlBulkEnrich = async <TData>({
   path,

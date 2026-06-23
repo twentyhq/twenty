@@ -9,10 +9,10 @@ import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Loader } from 'twenty-ui-deprecated/feedback';
-import { CardPicker, MainButton } from 'twenty-ui-deprecated/input';
-import { ModalContent } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Loader } from 'twenty-ui/feedback';
+import { CardPicker, MainButton } from 'twenty-ui/input';
+import { ModalContent } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';
 

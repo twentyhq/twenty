@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';

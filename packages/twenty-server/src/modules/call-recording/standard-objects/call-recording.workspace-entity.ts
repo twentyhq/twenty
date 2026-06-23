@@ -4,10 +4,13 @@ import { type FileOutput } from 'src/engine/api/common/common-args-processors/da
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { type CallRecordingRequestStatus } from 'src/modules/call-recording/common/enums/call-recording-request-status.enum';
+import { type CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 
 export class CallRecordingWorkspaceEntity extends BaseWorkspaceEntity {
   title: string | null;
-  status: string;
+  status: CallRecordingStatus;
+  recordingRequestStatus: CallRecordingRequestStatus;
   applicationId: string | null;
   externalBotId: string | null;
   externalRecordingId: string | null;

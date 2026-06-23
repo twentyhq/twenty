@@ -401,6 +401,12 @@ const recordTableConfigSchema = z.object({
     .describe(
       'UUID of the dedicated view created for this widget. Must be created with create_view before creating the widget. Never reuse a record index view.',
     ),
+  recordLimit: z
+    .number()
+    .int()
+    .min(1)
+    .optional()
+    .describe('Maximum number of records displayed in the table widget.'),
 });
 
 // Iframe configuration

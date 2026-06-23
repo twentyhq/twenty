@@ -3,9 +3,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { IconBell } from 'twenty-ui-deprecated/display';
-import { MenuItemDraggable } from 'twenty-ui-deprecated/navigation';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { IconBell } from 'twenty-ui/icon';
+import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof DraggableItem> = {
   title: 'UI/Layout/DraggableList/DraggableItem',

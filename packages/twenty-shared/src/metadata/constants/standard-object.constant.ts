@@ -480,9 +480,6 @@ export const STANDARD_OBJECTS = {
       calendarEventParticipants: {
         universalIdentifier: '20202020-e07e-4ccb-88f5-6f3d00458eec',
       },
-      recordingPreference: {
-        universalIdentifier: '1d231e7e-9bbe-410b-8007-ea7678a83e58',
-      },
       callRecordings: {
         universalIdentifier: '48d6d151-18e2-4111-b405-d85fb9d860d8',
       },
@@ -530,6 +527,55 @@ export const STANDARD_OBJECTS = {
           },
         },
       },
+      calendarEventRecordPageFields: {
+        universalIdentifier: 'c73668d1-022d-4eaf-b825-4e2548180db6',
+        viewFieldGroups: {
+          general: {
+            universalIdentifier: 'aeadeb9e-3673-4c0c-8845-f59cb1e6ca42',
+          },
+          system: {
+            universalIdentifier: 'eb1aadeb-7feb-44d1-9f9a-e9929e8690fc',
+          },
+        },
+        viewFields: {
+          title: {
+            universalIdentifier: 'd17fc76f-2c3a-4c84-8249-27227bf71638',
+          },
+          startsAt: {
+            universalIdentifier: '7bbd3744-d870-4704-882c-071732ed23d9',
+          },
+          endsAt: {
+            universalIdentifier: 'ed7ca7e9-c8b3-4516-be4c-6491a27af847',
+          },
+          isFullDay: {
+            universalIdentifier: '5d8f89b7-ec9e-41d6-9efe-96f9c32e6c20',
+          },
+          isCanceled: {
+            universalIdentifier: 'a01f490d-cf67-4458-801e-13d81e74b45a',
+          },
+          conferenceLink: {
+            universalIdentifier: '5ad748ae-e1bb-47bb-ac34-d82663c31b6e',
+          },
+          location: {
+            universalIdentifier: '66c73e74-56e6-40c3-b776-0081ee757b8a',
+          },
+          description: {
+            universalIdentifier: 'a09449be-b23f-48d4-b0dc-0bd36813220a',
+          },
+          externalCreatedAt: {
+            universalIdentifier: '689c3eba-bedf-4a52-b9f1-3e34ce718251',
+          },
+          externalUpdatedAt: {
+            universalIdentifier: '7823fa45-8cba-47ba-8dfb-5841bef44fc6',
+          },
+          iCalUid: {
+            universalIdentifier: '8be763dd-6217-47fb-a7d2-ac223af881d2',
+          },
+          conferenceSolution: {
+            universalIdentifier: '795905b6-c6f8-42cf-b8ea-3e5b6d32145f',
+          },
+        },
+      },
     },
   },
   callRecording: {
@@ -552,6 +598,9 @@ export const STANDARD_OBJECTS = {
       },
       status: {
         universalIdentifier: '3e617680-d93e-4309-a54f-90f69528bfd7',
+      },
+      recordingRequestStatus: {
+        universalIdentifier: '7fd681c9-244c-4e98-8939-7b175d472638',
       },
       applicationId: {
         universalIdentifier: '24ec1239-1240-42cb-8a2d-302632378e09',
@@ -608,6 +657,9 @@ export const STANDARD_OBJECTS = {
           status: {
             universalIdentifier: '6c4a81a2-d9c1-4f82-984c-f97e083ca710',
           },
+          recordingRequestStatus: {
+            universalIdentifier: '3bdedacd-0fd5-4175-8d28-2fe41bb5aa77',
+          },
           title: {
             universalIdentifier: 'b1d5051b-071d-4514-93cf-704724cdc8f6',
           },
@@ -629,6 +681,9 @@ export const STANDARD_OBJECTS = {
           },
           status: {
             universalIdentifier: '93483569-fcd2-46cf-b576-9f0318ad2b3b',
+          },
+          recordingRequestStatus: {
+            universalIdentifier: '364a90b1-e9aa-4606-996b-46e579ebeb28',
           },
           startedAt: {
             universalIdentifier: '3fd00fbb-c153-45e3-b6e6-43d18d34052a',

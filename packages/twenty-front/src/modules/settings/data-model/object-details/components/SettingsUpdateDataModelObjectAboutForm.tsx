@@ -1,4 +1,5 @@
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
@@ -15,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { parseThemeColor } from 'twenty-ui-deprecated/utilities';
+import { parseThemeColor } from 'twenty-ui/utilities';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 
@@ -27,6 +28,9 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
   objectMetadataItem,
 }: SettingsUpdateDataModelObjectAboutFormProps) => {
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const isCustomObject = getIsMetadataItemCustom(objectMetadataItem);
 
   const readonly =
     isObjectMetadataReadOnly({
@@ -61,7 +65,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       labelSingular,
       namePlural,
       nameSingular,
-      ...(objectMetadataItem.isCustom
+      ...(isCustomObject
         ? { color: parseThemeColor(objectMetadataItem.color) }
         : {}),
     },
@@ -103,7 +107,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         labelSingular: updatedObject?.data?.updateOneObject.labelSingular,
         namePlural: updatedObject?.data?.updateOneObject.namePlural,
         nameSingular: updatedObject?.data?.updateOneObject.nameSingular,
-        ...(objectMetadataItem.isCustom
+        ...(isCustomObject
           ? {
               color: parseThemeColor(
                 updatedObject?.data?.updateOneObject.color ??
@@ -141,7 +145,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
   ) => {
     const updatePayload = { ...formValues };
 
-    if (!objectMetadataItem.isCustom) {
+    if (!isCustomObject) {
       const {
         nameSingular: _nameSingular,
         namePlural: _namePlural,

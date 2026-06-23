@@ -23,12 +23,19 @@ export const companyEnrichmentAdapter: BatchEnrichmentAdapter<
   getNodeId: (node) => node.id,
   extractParams: extractCompanyMatchParams,
   enrichBatch: enrichCompanies,
-  buildMatchedData: ({ node, outcome, enrichedAt, overrideExistingValues }) =>
+  buildMatchedData: ({
+    node,
+    outcome,
+    enrichedAt,
+    overrideExistingValues,
+    shouldPersist,
+  }) =>
     buildCompanyMatchedData({
       node,
       outcome,
       enrichedAt,
       overrideExistingValues,
+      shouldPersist,
     }),
   updateOne: updateCompanyRecord,
   updateManyStatus: updateCompaniesStatus,
