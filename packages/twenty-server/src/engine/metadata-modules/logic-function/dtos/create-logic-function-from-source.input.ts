@@ -15,7 +15,6 @@ import {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
-  ServerCronTriggerSettings,
   ServerWebhookTriggerSettings,
   ToolTriggerSettings,
   WorkflowActionTriggerSettings,
@@ -78,11 +77,6 @@ export class CreateLogicFunctionFromSourceInput {
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()
   serverWebhookTriggerSettings?: JsonbProperty<ServerWebhookTriggerSettings>;
-
-  @IsObject()
-  @Field(() => graphqlTypeJson, { nullable: true })
-  @IsOptional()
-  serverCronTriggerSettings?: JsonbProperty<ServerCronTriggerSettings>;
 
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })

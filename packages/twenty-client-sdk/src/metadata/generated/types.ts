@@ -10332,9 +10332,6 @@ export default {
             "serverWebhookTriggerSettings": [
                 15
             ],
-            "serverCronTriggerSettings": [
-                15
-            ],
             "toolTriggerSettings": [
                 15
             ],

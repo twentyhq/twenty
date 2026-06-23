@@ -58,8 +58,6 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
         createLogicFunctionFromSourceInput.httpRouteTriggerSettings ?? null,
       serverWebhookTriggerSettings:
         createLogicFunctionFromSourceInput.serverWebhookTriggerSettings ?? null,
-      serverCronTriggerSettings:
-        createLogicFunctionFromSourceInput.serverCronTriggerSettings ?? null,
       toolTriggerSettings:
         createLogicFunctionFromSourceInput.toolTriggerSettings ?? null,
       workflowActionTriggerSettings:

@@ -7,11 +7,9 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class AddServerTriggerSettingsToLogicFunctionFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE "core"."logicFunction" ADD "serverWebhookTriggerSettings" jsonb');
-    await queryRunner.query('ALTER TABLE "core"."logicFunction" ADD "serverCronTriggerSettings" jsonb');
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('ALTER TABLE "core"."logicFunction" DROP COLUMN "serverCronTriggerSettings"');
     await queryRunner.query('ALTER TABLE "core"."logicFunction" DROP COLUMN "serverWebhookTriggerSettings"');
   }
 }

@@ -41,7 +41,6 @@ export type { IndexManifest } from './indexManifestType';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
-  ServerCronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';

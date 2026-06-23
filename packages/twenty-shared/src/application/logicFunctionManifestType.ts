@@ -12,7 +12,6 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
   httpRouteTriggerSettings?: HttpRouteTriggerSettings;
   serverWebhookTriggerSettings?: ServerWebhookTriggerSettings;
-  serverCronTriggerSettings?: ServerCronTriggerSettings;
   toolTriggerSettings?: ToolTriggerSettings;
   workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
   sourceHandlerPath: string;
@@ -23,11 +22,6 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
 
 export type CronTriggerSettings = {
   pattern: string;
-};
-
-export type ServerCronTriggerSettings = {
-  pattern: string;
-  targetLogicFunctionUniversalIdentifier: string;
 };
 
 export type DatabaseEventTriggerSettings = {
