@@ -7,8 +7,9 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
-import { QUEUE_DRIVER } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 
 export const deleteOneObjectMetadata = async ({
   input,
@@ -22,7 +23,9 @@ export const deleteOneObjectMetadata = async ({
 
   // Deleting object metadata drops indexes under a lock_timeout; let in-flight
   // jobs settle first so they don't hold the table lock the migration needs.
-  await global.app.get<MessageQueueDriver>(QUEUE_DRIVER).waitForIdle();
+  await global.app
+    .get<MessageQueueService>(getQueueToken(MessageQueue.cronQueue))
+    .waitForIdle();
 
   const response = await makeMetadataAPIRequest(graphqlOperation);
 
