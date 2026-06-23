@@ -53,10 +53,6 @@ export const validateUpgradeAwareEntityDecorators = ({
 }: {
   entityClasses: Function[];
   stepNameToIndex: ReadonlyMap<string, number>;
-  // When provided, introduced property names are validated against the real
-  // entity properties. This catches typos in the class-level
-  // @WasIntroducedInUpgrade({ properties: [...] }) form, where the property
-  // name is a free string with no compiler check.
   knownPropertyNamesByEntityClass?: ReadonlyMap<Function, ReadonlySet<string>>;
 }): UpgradeAwareDecoratorReferenceProblem[] => {
   const problems: UpgradeAwareDecoratorReferenceProblem[] = [];
@@ -130,7 +126,10 @@ export const validateUpgradeAwareEntityDecorators = ({
         });
       }
 
-      if (isDefined(knownPropertyNames) && !knownPropertyNames.has(propertyName)) {
+      if (
+        isDefined(knownPropertyNames) &&
+        !knownPropertyNames.has(propertyName)
+      ) {
         problems.push({
           kind: 'unknown-property-name',
           entityName,

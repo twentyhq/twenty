@@ -8,8 +8,7 @@ export type WasIntroducedInUpgradeOptions = {
   upgradeCommandName: string;
   // Class-level escape hatch for columns inherited from a base entity (e.g.
   // SyncableEntity.universalIdentifier) that cannot carry a property decorator
-  // in place. The listed property names are registered in the same
-  // property-introduction map a property decorator would populate.
+  // in place
   properties?: readonly string[];
 };
 
