@@ -9,9 +9,9 @@ const PARTNER_TIER_FIELD_ID = 'd4fa6461-37b6-49ee-9181-dd482e74a70b';
 const PARTNER_VALIDATION_STAGE_FIELD_ID =
   '2ca9856f-f54a-4326-9ff3-668fd7da0b50';
 
-// Prod view id — current TABLE grouped by validationStage (1.1.7 install).
+// Prod view id — grouped TABLE by validationStage (1.1.8 install).
 export const PARTNERS_PER_STAGE_VIEW_UNIVERSAL_IDENTIFIER =
-  '972fec7c-6a10-4ab7-a2ae-5b82e0f672aa';
+  'd617c0ec-4680-4661-b836-f55bd5818d01';
 
 export default defineView({
   universalIdentifier: PARTNERS_PER_STAGE_VIEW_UNIVERSAL_IDENTIFIER,
@@ -25,31 +25,31 @@ export default defineView({
   kanbanAggregateOperationFieldMetadataUniversalIdentifier: PARTNER_NAME_FIELD_ID,
   groups: [
     {
-      universalIdentifier: '615909f0-5bb8-46a7-8e31-9dbe71e8783e',
+      universalIdentifier: '206dae2f-0e2c-4f9c-b221-bd20bc7f6f3a',
       fieldValue: 'APPLICATION',
       position: 0,
       isVisible: true,
     },
     {
-      universalIdentifier: '60761273-760a-45a1-b556-2a2f79ca08b9',
+      universalIdentifier: 'cb7e8665-ec5e-4381-b368-f3a8683a286f',
       fieldValue: 'POTENTIAL',
       position: 1,
       isVisible: true,
     },
     {
-      universalIdentifier: '0ad73459-80c7-426c-9f3c-4b78e816f996',
+      universalIdentifier: '7933ecc5-7288-46c3-ab9d-5128872014b6',
       fieldValue: 'VALIDATED',
       position: 2,
       isVisible: true,
     },
     {
-      universalIdentifier: 'b0f5a6d2-c757-45ab-b7f3-c88ed929ffc8',
+      universalIdentifier: 'f8b73d70-e9a1-4656-808b-e48cffcbbe23',
       fieldValue: 'FORMER',
       position: 3,
       isVisible: true,
     },
     {
-      universalIdentifier: '2614f48d-dc5f-4e8f-a7d5-51f8a605fd3b',
+      universalIdentifier: 'fa61dcab-c9c2-482b-951c-14f8ef93e34e',
       fieldValue: 'REJECTED',
       position: 4,
       isVisible: true,
@@ -57,27 +57,27 @@ export default defineView({
   ],
   fields: [
     {
-      universalIdentifier: 'c34c2063-30fc-41a3-97f2-532cb2a03246',
+      universalIdentifier: '5e83f83f-6bc8-490e-9bd9-4f3b4455d774',
       fieldMetadataUniversalIdentifier: PARTNER_NAME_FIELD_ID,
       position: 0,
       isVisible: true,
       size: 200,
     },
     {
-      universalIdentifier: 'c6b6aaa8-0027-433a-b1b5-411cbb4c0b89',
+      universalIdentifier: 'a11b2e6a-87a1-4fc1-8f05-21bfc91668e0',
       fieldMetadataUniversalIdentifier: PARTNER_COUNTRY_FIELD_ID,
       position: 1,
       isVisible: true,
     },
     {
-      universalIdentifier: '3ef82c01-bc52-4a85-8ac3-931648e76b4c',
+      universalIdentifier: 'a286d270-db12-44ef-88da-a2873ddea5a0',
       fieldMetadataUniversalIdentifier: PARTNER_SCOPE_FIELD_ID,
       position: 2,
       isVisible: true,
       size: 200,
     },
     {
-      universalIdentifier: '1d0c0dd8-f94a-4523-8c89-14eed8f14b76',
+      universalIdentifier: '85b58c37-5e29-427e-a9de-1afd6dc60590',
       fieldMetadataUniversalIdentifier: PARTNER_TIER_FIELD_ID,
       position: 3,
       isVisible: true,
