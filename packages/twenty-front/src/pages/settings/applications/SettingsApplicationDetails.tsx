@@ -3,6 +3,7 @@ import { useResolvedApplicationDescription } from '@/applications/hooks/useResol
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -20,6 +21,7 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
@@ -80,6 +82,7 @@ export const SettingsApplicationDetails = () => {
   const manifest = detail?.manifest as Manifest | undefined;
   const app = manifest?.application;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const { publicFunctionDomain } = useAtomStateValue(domainConfigurationState);
   const isStandardApplication = isTwentyStandardApplication(application);
   const isCustomApplication = isWorkspaceCustomApplication(
     application,
@@ -228,7 +231,15 @@ export const SettingsApplicationDetails = () => {
     (() => {
       const hasVariables = (application?.applicationVariables ?? []).length > 0;
       const hasConnectionProviders = connectionProviders.length > 0;
-      const hasNothingToConfigure = !hasVariables && !hasConnectionProviders;
+      const hasHttpTriggeredFunctions = (
+        application?.logicFunctions ?? []
+      ).some((logicFunction) =>
+        isDefined(logicFunction.httpRouteTriggerSettings),
+      );
+      const canShowFunctionDomain =
+        isNonEmptyString(publicFunctionDomain) && hasHttpTriggeredFunctions;
+      const hasNothingToConfigure =
+        !hasVariables && !hasConnectionProviders && !canShowFunctionDomain;
 
       return {
         id: 'settings',

@@ -270,6 +270,12 @@ export class ClientConfig {
   @Field(() => String)
   frontDomain: string;
 
+  // Base domain on which HTTP logic functions are served in isolation
+  // (e.g. withtwenty.com → {workspaceSubdomain}.withtwenty.com). Null when no
+  // public domain is configured (self-hosting), in which case /s/ is used.
+  @Field(() => String, { nullable: true })
+  publicFunctionDomain: string | null;
+
   @Field(() => Boolean)
   analyticsEnabled: boolean;
 
