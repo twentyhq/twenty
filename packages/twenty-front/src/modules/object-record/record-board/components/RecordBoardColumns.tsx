@@ -1,3 +1,4 @@
+import { RecordBoardHiddenRelationGroupsPlaceholder } from '@/object-record/record-board/components/RecordBoardHiddenRelationGroupsPlaceholder';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
@@ -31,6 +32,7 @@ export const RecordBoardColumns = () => {
           />
         );
       })}
+      <RecordBoardHiddenRelationGroupsPlaceholder />
     </StyledColumnContainer>
   );
 };
