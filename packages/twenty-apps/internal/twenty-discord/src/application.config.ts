@@ -13,8 +13,6 @@ export default defineApplication({
   logoUrl: 'public/twenty-discord.svg',
   author: 'Twenty',
   category: 'Communication',
-  aboutDescription:
-    'Official Discord connector for Twenty CRM. Create a Discord application at https://discord.com/developers/applications, copy its bot token into the DISCORD_BOT_TOKEN application variable, then invite the bot to each server you want workflows to post in. Use workflow actions to post, update, or delete bot messages and add reactions.',
   websiteUrl: 'https://docs.twenty.com/developers/extend/apps/getting-started',
   termsUrl: 'https://www.twenty.com/terms',
   emailSupport: 'contact@twenty.com',

@@ -1,6 +1,4 @@
-import { useContext } from 'react';
-
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './AnimatedCheckmark.module.scss';
 
@@ -17,7 +15,7 @@ export const AnimatedCheckmark = ({
   duration = 0.5,
   size = 28,
 }: AnimatedCheckmarkProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <svg
@@ -27,7 +25,7 @@ export const AnimatedCheckmark = ({
       height={size}
     >
       <path
-        className={styles.path}
+        className={isAnimating ? styles.animatedPath : undefined}
         fill="none"
         stroke={color ?? theme.grayScale.gray1}
         strokeWidth={4}

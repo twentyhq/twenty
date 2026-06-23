@@ -140,7 +140,8 @@ const deriveAllMetadataEventsFromUpdateAction = ({
     case 'fieldPermission':
     case 'viewSort':
     case 'webhook':
-    case 'connectionProvider': {
+    case 'connectionProvider':
+    case 'searchFieldMetadata': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,
       );

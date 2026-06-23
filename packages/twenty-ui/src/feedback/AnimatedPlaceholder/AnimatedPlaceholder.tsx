@@ -1,11 +1,11 @@
 import { clsx } from 'clsx';
-import { useContext, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { BACKGROUND } from '@ui/feedback/AnimatedPlaceholder/constants/Background';
 import { DARK_BACKGROUND } from '@ui/feedback/AnimatedPlaceholder/constants/DarkBackground';
 import { DARK_MOVING_IMAGE } from '@ui/feedback/AnimatedPlaceholder/constants/DarkMovingImage';
 import { MOVING_IMAGE } from '@ui/feedback/AnimatedPlaceholder/constants/MovingImage';
-import { ThemeContext } from '@ui/theme-constants';
+import { useThemeColorScheme } from '@ui/theme-constants';
 
 import styles from './AnimatedPlaceholder.module.scss';
 
@@ -20,7 +20,7 @@ type AnimatedPlaceholderProps = {
 };
 
 export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
-  const { colorScheme } = useContext(ThemeContext);
+  const colorScheme = useThemeColorScheme();
   const movingImageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
