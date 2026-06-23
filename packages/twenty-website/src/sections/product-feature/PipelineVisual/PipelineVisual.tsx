@@ -8,7 +8,6 @@ import {
 } from '@tabler/icons-react';
 import {
   type PointerEvent as ReactPointerEvent,
-  useCallback,
   useRef,
   useState,
 } from 'react';
@@ -23,7 +22,6 @@ import { CARDS } from './data/cards';
 import { INITIAL_LANES } from './data/initial-lanes';
 import { LANES_META } from './data/lanes-meta';
 import { CardFlipAnimationEffect } from './effect-components/CardFlipAnimationEffect';
-import { PointerCaptureCleanupEffect } from './effect-components/PointerCaptureCleanupEffect';
 import { type PipelineCardAnimations } from './types/pipeline-card-animations';
 import { type PipelineCardElements } from './types/pipeline-card-elements';
 import { type PipelineCardId } from './types/pipeline-card-id';
@@ -193,8 +191,6 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
   const activePointerRef = useRef<number | null>(null);
   const dragStateRef = useRef<DragState | null>(null);
 
-  const getActivePointerId = useCallback(() => activePointerRef.current, []);
-
   const captureRects = () => {
     const rects: PipelineCardRects = {};
 
@@ -352,10 +348,6 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
         cardRefs={cardRefs}
         lanes={lanes}
         pendingRectsRef={pendingRectsRef}
-      />
-      <PointerCaptureCleanupEffect
-        getActivePointerId={getActivePointerId}
-        interactionRef={interactionRef}
       />
       <BoardHeader>
         <IconLayoutKanban size={14} stroke={1.6} />
