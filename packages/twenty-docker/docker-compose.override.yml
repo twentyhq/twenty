@@ -1,0 +1,32 @@
+x-image: &image "twenty-custom:${TWENTY_VERSION:-dev}"
+
+x-build: &build
+  image: *image
+  build:
+    context: ../..                  # repo ROOT: the Dockerfile compiles sibling packages
+    dockerfile: packages/twenty-docker/twenty/Dockerfile
+    target: twenty                  # server+frontend stage. Without this, BuildKit builds the LAST stage (twenty-app-dev), the all-in-one image with bundled Postgres/Redis/s6 that breaks in a compose stack.
+
+# Shared keys ONLY. Do NOT add the worker's migration/cron flags here, or you risk overriding the values upstream hardcodes on the worker.
+x-baked-env: &baked-env
+  SERVER_URL: http://localhost:${TWENTY_PORT}
+  ENCRYPTION_KEY: ${ENCRYPTION_KEY}   # must be identical on server & worker
+
+services:
+  server:
+    <<: *build        # adds image + build to the inherited server definition
+    ports: !override
+      - "${TWENTY_PORT}:${TWENTY_PORT}"
+    environment:
+      NODE_PORT: ${TWENTY_PORT}
+      DISABLE_DB_MIGRATIONS: "false"
+      <<: *baked-env  # merged over upstream's env; your values win per-key
+    healthcheck:
+      test: curl --fail http://localhost:${TWENTY_PORT}/healthz
+      start_period: 90s             # grace window for first-boot migrations
+      retries: 30                   # base test/interval inherited unchanged
+
+  worker:
+    image: *image                   # SAME tag, NO build block -> image built once, reused
+    environment:
+      <<: *baked-env

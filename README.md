@@ -1,4 +1,4 @@
-<p align="center">
+<!-- <p align="center">
   <a href="https://www.twenty.com">
     <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />
   </a>
@@ -161,4 +161,53 @@ Thanks to these amazing services that we use and recommend for code review (Grep
 
 # Join the Community
 
-<p><a href="https://github.com/twentyhq/twenty"><img src="./packages/twenty-website/public/images/readme/star-icon.svg" width="12" height="12"/> Star the repo</a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://github.com/twentyhq/twenty/discussions"><img src="./packages/twenty-website/public/images/readme/message-icon.svg" width="12" height="12"/> Feature requests</a> · <a href="https://github.com/orgs/twentyhq/projects/1/views/35"><img src="./packages/twenty-website/public/images/readme/rocket-icon.svg" width="12" height="12"/> Releases</a> · <a href="https://twitter.com/twentycrm"><img src="./packages/twenty-website/public/images/readme/x-icon.svg" width="12" height="12"/> X</a> · <a href="https://www.linkedin.com/company/twenty/"><img src="./packages/twenty-website/public/images/readme/linkedin-icon.svg" width="12" height="12"/> LinkedIn</a> · <a href="https://twenty.crowdin.com/twenty"><img src="./packages/twenty-website/public/images/readme/language-icon.svg" width="12" height="12"/> Crowdin</a> · <a href="https://github.com/twentyhq/twenty/contribute"><img src="./packages/twenty-website/public/images/readme/code-icon.svg" width="12" height="12"/> Contribute</a></p>
+<p><a href="https://github.com/twentyhq/twenty"><img src="./packages/twenty-website/public/images/readme/star-icon.svg" width="12" height="12"/> Star the repo</a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://github.com/twentyhq/twenty/discussions"><img src="./packages/twenty-website/public/images/readme/message-icon.svg" width="12" height="12"/> Feature requests</a> · <a href="https://github.com/orgs/twentyhq/projects/1/views/35"><img src="./packages/twenty-website/public/images/readme/rocket-icon.svg" width="12" height="12"/> Releases</a> · <a href="https://twitter.com/twentycrm"><img src="./packages/twenty-website/public/images/readme/x-icon.svg" width="12" height="12"/> X</a> · <a href="https://www.linkedin.com/company/twenty/"><img src="./packages/twenty-website/public/images/readme/linkedin-icon.svg" width="12" height="12"/> LinkedIn</a> · <a href="https://twenty.crowdin.com/twenty"><img src="./packages/twenty-website/public/images/readme/language-icon.svg" width="12" height="12"/> Crowdin</a> · <a href="https://github.com/twentyhq/twenty/contribute"><img src="./packages/twenty-website/public/images/readme/code-icon.svg" width="12" height="12"/> Contribute</a></p> -->
+
+# RevenueStorm CRM
+
+A Customer Relationship Management built for Headstorm. Designed to manage the sales lifecycle with a ***CMap*** integration. A full-stack project built upon the open-source CRM, ***[Twenty](https://github.com/twentyhq/twenty)***.
+
+---
+
+### Workspaces
+
+| Workspace | Description |
+|-----------|-------------|
+| Sales Person View | *User-specific view. Can edit your designated sheet, and all sheets are visible.* |
+| Sales Team View | *Overview of sales performance metrics* |
+| Company Performance & Forecast | *Success tracking* |
+
+---
+
+# Use
+
+### Prerequisites
+- Docker
+
+### Getting Started
+```bash
+git clone https://github.com/Headstorm/revenuestorm-crm.git
+cd revenuestorm-crm/packages/twenty-docker/
+cp .env.example .env    # then set TWENTY_VERSION (+ any secrets) in it
+docker compose build
+docker compose up -d --wait
+# open http://localhost:2020
+```
+
+### Common Errors
+```bash
+ERROR:  relation "core.workspace" does not exist at character 30
+STATEMENT:  SELECT EXISTS (SELECT 1 FROM core.workspace WHERE id = '<ID>')
+ERROR:  relation "core.workspace" does not exist
+LINE 1: SELECT EXISTS (SELECT 1 FROM core.workspace WHERE id = '<ID_PART>...
+                                     ^
+s6-rc: warning: unable to start service init-db: command exited 1
+```
+
+---
+
+### Learn More About ***Twenty***
+
+- [Twenty Apps documentation](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start)
+- [twenty-sdk CLI reference](https://www.npmjs.com/package/twenty-sdk)
+- [Discord](https://discord.gg/cx5n4Jzs57)
