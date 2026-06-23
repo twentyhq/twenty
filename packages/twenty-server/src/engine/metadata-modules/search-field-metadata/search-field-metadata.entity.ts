@@ -50,6 +50,15 @@ export class SearchFieldMetadataEntity extends SyncableEntity {
   @JoinColumn({ name: 'fieldMetadataId' })
   fieldMetadata: Relation<FieldMetadataEntity>;
 
+  // Parent TS_VECTOR field this row contributes to. Nullable for now; populated by
+  // the 2.16 backfill and enforced NOT NULL in a follow-up slow instance command.
+  @Column({ nullable: true, type: 'uuid' })
+  tsVectorFieldMetadataId: string | null;
+
+  @ManyToOne(() => FieldMetadataEntity, { onDelete: 'CASCADE', nullable: true })
+  @JoinColumn({ name: 'tsVectorFieldMetadataId' })
+  tsVectorFieldMetadata: Relation<FieldMetadataEntity> | null;
+
   @Column({ nullable: false, type: 'float' })
   position: number;
 

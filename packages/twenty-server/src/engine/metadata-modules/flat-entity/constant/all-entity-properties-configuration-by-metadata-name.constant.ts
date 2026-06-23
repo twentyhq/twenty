@@ -1780,6 +1780,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'fieldMetadataUniversalIdentifier',
     },
+    tsVectorFieldMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'tsVectorFieldMetadataUniversalIdentifier',
+    },
     position: {
       toCompare: true,
       toStringify: false,

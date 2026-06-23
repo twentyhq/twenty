@@ -26,5 +26,7 @@ export const buildFlatSearchFieldMetadataForField = ({
       flatObjectMetadata.applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
     fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+    // Populated in the 2.16 backfill milestone; nullable until then.
+    tsVectorFieldMetadataUniversalIdentifier: null,
   };
 };
