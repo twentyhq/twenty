@@ -34,6 +34,7 @@ export class GoogleCalendarGetEventsService {
     let nextSyncToken: string | null | undefined;
     let nextPageToken: string | undefined;
     const calendarEventIds: string[] = [];
+    const calendarEventIdsToDelete: string[] = [];
 
     let hasMoreEvents = true;
 
@@ -68,7 +69,17 @@ export class GoogleCalendarGetEventsService {
         break;
       }
 
-      calendarEventIds.push(...items.map((item) => item.id).filter(isString));
+      for (const item of items) {
+        if (!isString(item.id)) {
+          continue;
+        }
+
+        if (item.status === 'cancelled') {
+          calendarEventIdsToDelete.push(item.id);
+        } else {
+          calendarEventIds.push(item.id);
+        }
+      }
 
       if (!nextPageToken) {
         hasMoreEvents = false;
@@ -77,7 +88,7 @@ export class GoogleCalendarGetEventsService {
 
     return {
       calendarEventIds,
-      calendarEventIdsToDelete: [],
+      calendarEventIdsToDelete,
       nextSyncCursor: nextSyncToken || '',
     };
   }

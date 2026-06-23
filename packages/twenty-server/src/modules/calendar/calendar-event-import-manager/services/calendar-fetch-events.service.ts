@@ -8,6 +8,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 import {
   CalendarEventImportErrorHandlerService,
   CalendarEventImportSyncStep,
@@ -30,6 +31,7 @@ export class CalendarFetchEventsService {
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
+    private readonly calendarEventCleanerService: CalendarEventCleanerService,
   ) {}
 
   public async fetchCalendarEvents(
@@ -68,6 +70,10 @@ export class CalendarFetchEventsService {
               eventExternalId: Any(calendarEventIdsToDelete),
               calendarChannelId: calendarChannel.id,
             });
+
+            await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
+              workspaceId,
+            );
           }
 
           if (calendarEventIds.length > 0) {

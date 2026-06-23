@@ -38,6 +38,10 @@ export class GoogleCalendarImportEventsService {
           .catch((error: GaxiosError) => {
             const status = error.response?.status;
 
+            if (status === 404 || status === 410) {
+              return null;
+            }
+
             if (!isDefined(status)) {
               throw parseGaxiosError(error);
             }

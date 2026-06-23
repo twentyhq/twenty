@@ -30,6 +30,10 @@ const mockGlobalWorkspaceOrmManager = {
   }),
 };
 
+const mockCalendarEventCleanerService = {
+  cleanWorkspaceCalendarEvents: jest.fn(),
+};
+
 const workspaceId = 'workspace-123';
 
 const baseConnectedAccount = {
@@ -68,6 +72,7 @@ describe('CalendarFetchEventsService', () => {
       mockCalendarChannelSyncStatusService as any,
       mockGetCalendarEventsService as any,
       mockCalendarEventImportErrorHandlerService as any,
+      mockCalendarEventCleanerService as any,
     );
   });
 
