@@ -8,6 +8,39 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEventExceptionValue = {
+  type?: string;
+  value?: string;
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  fingerprint?: string[];
+  level?: string;
+  tags?: Record<string, string>;
+};
+
+const getExceptionValues = (event: SentryEvent) => {
+  return event.exception?.values ?? [];
+};
+
+const isMultiSelectValueTypeMismatchEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some((exception) => {
+    const isFieldValueIncludesError =
+      exception.value?.includes('fieldValue.includes is not a function') ??
+      false;
+    const isValuesIncludesError =
+      exception.value?.includes('values.includes is not a function') ?? false;
+
+    return (
+      exception.type === 'TypeError' &&
+      (isFieldValueIncludesError || isValuesIncludesError)
+    );
+  });
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +87,24 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isMultiSelectValueTypeMismatchEvent(event)) {
+                event.fingerprint = [
+                  'object-record',
+                  'multi-select',
+                  'value-type-mismatch',
+                ];
+                event.level = 'warning';
+                event.tags = {
+                  ...event.tags,
+                  feature: 'object-record',
+                  component: 'multi-select-display',
+                  cause: 'value-type-mismatch',
+                };
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);

@@ -10,11 +10,11 @@ export const MultiSelectFieldDisplay = () => {
 
   const { isFocused } = useFieldFocus();
 
-  const selectedOptions = fieldValue
-    ? fieldDefinition.metadata.options?.filter((option) =>
-        fieldValue.includes(option.value),
-      )
-    : [];
+  const fieldValueAsArray = Array.isArray(fieldValue) ? fieldValue : [];
+
+  const selectedOptions = fieldDefinition.metadata.options?.filter((option) =>
+    fieldValueAsArray.includes(option.value),
+  );
 
   if (!isDefined(selectedOptions)) return null;
 
@@ -30,7 +30,7 @@ export const MultiSelectFieldDisplay = () => {
     </ExpandableList>
   ) : (
     <MultiSelectDisplay
-      values={fieldValue}
+      values={fieldValueAsArray}
       options={fieldDefinition.metadata.options}
     />
   );

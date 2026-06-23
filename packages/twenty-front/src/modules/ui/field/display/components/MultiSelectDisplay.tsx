@@ -24,9 +24,11 @@ export const MultiSelectDisplay = ({
   values: FieldMultiSelectValue | undefined;
   options: SelectOption[];
 }) => {
-  const selectedOptions = values
-    ? options?.filter((option) => values.includes(option.value))
-    : [];
+  const valuesAsArray = Array.isArray(values) ? values : [];
+
+  const selectedOptions = options?.filter((option) =>
+    valuesAsArray.includes(option.value),
+  );
 
   if (!isDefined(selectedOptions)) return null;
 
