@@ -151,6 +151,14 @@ describe('Object metadata update - search vector side effect', () => {
     expect(settings.asExpression).toContain(NEW_LABEL_IDENTIFIER_FIELD_NAME);
     expect(settings.asExpression).toContain('name');
 
+    // Position-ordered derivation appends the new label identifier last: the provisioned
+    // name row (position 0) stays first, the relabel row (max position + 1) comes after.
+    const asExpression = settings.asExpression as string;
+
+    expect(asExpression.indexOf('"name"')).toBeLessThan(
+      asExpression.indexOf(`"${NEW_LABEL_IDENTIFIER_FIELD_NAME}"`),
+    );
+
     // The record is now reachable through the new label identifier value.
     const searchByNewLabelField = await search({
       searchInput: RECORD_FIELD_VALUE,

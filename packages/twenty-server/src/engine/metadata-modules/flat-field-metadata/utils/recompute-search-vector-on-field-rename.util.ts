@@ -54,16 +54,12 @@ export const recomputeSearchVectorOnFieldRename = ({
     return EMPTY_SIDE_EFFECT;
   }
 
-  const searchFieldMetadataFieldIds = objectSearchFieldMetadatas.map(
-    (searchFieldMetadata) => searchFieldMetadata.fieldMetadataId,
-  );
-
   return {
     flatSearchVectorFieldToUpdate:
       recomputeSearchVectorFieldFromSearchFieldMetadatas({
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        searchFieldMetadataFieldIds,
+        searchFieldMetadatas: objectSearchFieldMetadatas,
         overrideFlatFieldMetadataById: new Map([
           [toFlatFieldMetadata.id, toFlatFieldMetadata],
         ]),

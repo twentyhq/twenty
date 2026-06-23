@@ -6,12 +6,14 @@ import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-mana
 export const buildFlatSearchFieldMetadataForField = ({
   flatObjectMetadata,
   flatFieldMetadata,
+  position,
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
     'applicationUniversalIdentifier' | 'universalIdentifier'
   >;
   flatFieldMetadata: { universalIdentifier: string };
+  position: number;
 }): UniversalFlatSearchFieldMetadata => {
   const createdAt = new Date().toISOString();
 
@@ -19,6 +21,7 @@ export const buildFlatSearchFieldMetadataForField = ({
     universalIdentifier: v4(),
     createdAt,
     updatedAt: createdAt,
+    position,
     applicationUniversalIdentifier:
       flatObjectMetadata.applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,

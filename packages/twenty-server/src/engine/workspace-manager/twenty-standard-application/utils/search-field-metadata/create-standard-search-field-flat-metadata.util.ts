@@ -12,6 +12,7 @@ import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/w
 export type CreateStandardSearchFieldOptions<O extends AllStandardObjectName> =
   {
     fieldName: AllStandardObjectFieldName<O>;
+    position: number;
   };
 
 export type CreateStandardSearchFieldArgs<
@@ -26,7 +27,7 @@ export const createStandardSearchFieldFlatMetadata = <
 >({
   workspaceId,
   objectName,
-  context: { fieldName },
+  context: { fieldName, position },
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
   twentyStandardApplicationId,
@@ -65,6 +66,7 @@ export const createStandardSearchFieldFlatMetadata = <
     objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
     fieldMetadataId,
     fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+    position,
     workspaceId,
     createdAt: now,
     updatedAt: now,

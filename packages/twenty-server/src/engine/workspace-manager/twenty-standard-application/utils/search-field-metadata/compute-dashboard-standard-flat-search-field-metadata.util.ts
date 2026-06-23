@@ -18,12 +18,13 @@ export const buildDashboardStandardFlatSearchFieldMetadatas = ({
   CreateStandardSearchFieldArgs<'dashboard'>,
   'context'
 >): FlatSearchFieldMetadata[] =>
-  SEARCH_FIELDS_FOR_DASHBOARD.map((searchField) =>
+  SEARCH_FIELDS_FOR_DASHBOARD.map((searchField, position) =>
     createStandardSearchFieldFlatMetadata({
       objectName,
       workspaceId,
       context: {
         fieldName: searchField.name as AllStandardObjectFieldName<'dashboard'>,
+        position,
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,

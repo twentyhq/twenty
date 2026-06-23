@@ -18,12 +18,13 @@ export const buildNoteStandardFlatSearchFieldMetadatas = ({
   CreateStandardSearchFieldArgs<'note'>,
   'context'
 >): FlatSearchFieldMetadata[] =>
-  SEARCH_FIELDS_FOR_NOTES.map((searchField) =>
+  SEARCH_FIELDS_FOR_NOTES.map((searchField, position) =>
     createStandardSearchFieldFlatMetadata({
       objectName,
       workspaceId,
       context: {
         fieldName: searchField.name as AllStandardObjectFieldName<'note'>,
+        position,
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,

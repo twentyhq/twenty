@@ -27,6 +27,7 @@ export const buildDefaultSearchFieldMetadatasForCustomObject = ({
   const nameSearchFieldMetadata = buildFlatSearchFieldMetadataForField({
     flatObjectMetadata,
     flatFieldMetadata: nameField,
+    position: 0,
   });
 
   return {

@@ -65,18 +65,16 @@ export const computeSearchFieldMetadataDeletionForDeletedFields = ({
 
     searchFieldMetadatasToDelete.push(...rowsToDelete);
 
-    const remainingFieldIds = objectSearchFieldMetadatas
-      .filter(
-        (searchFieldMetadata) =>
-          !deletedFieldIds.has(searchFieldMetadata.fieldMetadataId),
-      )
-      .map((searchFieldMetadata) => searchFieldMetadata.fieldMetadataId);
+    const remainingSearchFieldMetadatas = objectSearchFieldMetadatas.filter(
+      (searchFieldMetadata) =>
+        !deletedFieldIds.has(searchFieldMetadata.fieldMetadataId),
+    );
 
     const flatSearchVectorFieldToUpdate =
       recomputeSearchVectorFieldFromSearchFieldMetadatas({
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        searchFieldMetadataFieldIds: remainingFieldIds,
+        searchFieldMetadatas: remainingSearchFieldMetadatas,
       });
 
     if (isDefined(flatSearchVectorFieldToUpdate)) {

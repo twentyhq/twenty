@@ -76,6 +76,7 @@ const buildSearchFieldMetadata = ({
   objectMetadataUniversalIdentifier,
   fieldMetadataUniversalIdentifier,
   applicationUniversalIdentifier,
+  position = 0,
 }: {
   id: string;
   universalIdentifier: string;
@@ -84,6 +85,7 @@ const buildSearchFieldMetadata = ({
   objectMetadataUniversalIdentifier: string;
   fieldMetadataUniversalIdentifier: string;
   applicationUniversalIdentifier: string;
+  position?: number;
 }): FlatSearchFieldMetadata => {
   const createdAt = '2024-01-01T00:00:00.000Z';
 
@@ -96,6 +98,7 @@ const buildSearchFieldMetadata = ({
     fieldMetadataUniversalIdentifier,
     applicationId: 'unused-application-id',
     applicationUniversalIdentifier,
+    position,
     workspaceId: 'workspace-id',
     createdAt,
     updatedAt: createdAt,
@@ -176,6 +179,8 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
     expect(customApplicationRows?.[0].objectMetadataUniversalIdentifier).toBe(
       customObject.universalIdentifier,
     );
+    // Custom object name field is seeded at position 0.
+    expect(customApplicationRows?.[0].position).toBe(0);
     // No spurious row for the prefix-overlapping `nameDescription` field.
     expect(
       customApplicationRows?.some(
@@ -402,6 +407,64 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
           phoneNumberFieldUniversalIdentifier,
       ),
     ).toBe(false);
+  });
+
+  it('carries the position from the standard maps row onto the backfilled standard row', () => {
+    const standardObjectId = 'standard-object-id';
+    const standardObjectUniversalIdentifier = 'standard-object-uid';
+    const emailsFieldId = 'emails-field-id';
+    const emailsFieldUniversalIdentifier = 'emails-field-uid';
+
+    const emailsField = getFlatFieldMetadataMock({
+      id: emailsFieldId,
+      universalIdentifier: emailsFieldUniversalIdentifier,
+      objectMetadataId: standardObjectId,
+      objectMetadataUniversalIdentifier: standardObjectUniversalIdentifier,
+      type: FieldMetadataType.TEXT,
+      name: 'emails',
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    const standardObject = getStandardFlatObjectMetadataMock({
+      id: standardObjectId,
+      universalIdentifier: standardObjectUniversalIdentifier,
+      isSearchable: true,
+      labelIdentifierFieldMetadataId: emailsFieldId,
+      fieldIds: [emailsFieldId],
+    });
+
+    // The standard maps row sits at position 3 (e.g. SEARCH_FIELDS_FOR_PERSON order);
+    // backfill must replicate that ordinal, not reset it to 0.
+    const standardSearchFieldMetadata = buildSearchFieldMetadata({
+      id: 'emails-search-field-id',
+      universalIdentifier: 'emails-search-field-uid',
+      objectMetadataId: standardObjectId,
+      fieldMetadataId: emailsFieldId,
+      objectMetadataUniversalIdentifier: standardObjectUniversalIdentifier,
+      fieldMetadataUniversalIdentifier: emailsFieldUniversalIdentifier,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      position: 3,
+    });
+
+    const { flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier } =
+      buildSearchFieldMetadataBackfillOperations({
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([standardObject]),
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([emailsField]),
+        flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
+        standardFlatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([
+          standardSearchFieldMetadata,
+        ]),
+      });
+
+    const standardApplicationRows =
+      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier[
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+      ];
+
+    expect(standardApplicationRows).toHaveLength(1);
+    expect(standardApplicationRows?.[0].position).toBe(3);
   });
 
   it('is a no-op when the searchFieldMetadata rows already exist (idempotent)', () => {

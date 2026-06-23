@@ -79,11 +79,26 @@ export const recomputeSearchVectorOnLabelIdentifierUpdate = ({
     return EMPTY_SIDE_EFFECT;
   }
 
-  const nextSearchFieldMetadataFieldIds = [
-    ...existingSearchFieldMetadatas.map(
-      (searchFieldMetadata) => searchFieldMetadata.fieldMetadataId,
-    ),
-    newLabelIdentifierFieldMetadataId,
+  const newLabelIdentifierPosition =
+    existingSearchFieldMetadatas.reduce(
+      (maxPosition, searchFieldMetadata) =>
+        Math.max(maxPosition, searchFieldMetadata.position),
+      -1,
+    ) + 1;
+
+  const newSearchFieldMetadata = buildFlatSearchFieldMetadataForField({
+    flatObjectMetadata: fromFlatObjectMetadata,
+    flatFieldMetadata: newLabelIdentifierField,
+    position: newLabelIdentifierPosition,
+  });
+
+  const nextSearchFieldMetadatas = [
+    ...existingSearchFieldMetadatas,
+    {
+      fieldMetadataId: newLabelIdentifierFieldMetadataId,
+      position: newLabelIdentifierPosition,
+      universalIdentifier: newSearchFieldMetadata.universalIdentifier,
+    },
   ];
 
   return {
@@ -91,13 +106,8 @@ export const recomputeSearchVectorOnLabelIdentifierUpdate = ({
       recomputeSearchVectorFieldFromSearchFieldMetadatas({
         flatObjectMetadata: fromFlatObjectMetadata,
         flatFieldMetadataMaps,
-        searchFieldMetadataFieldIds: nextSearchFieldMetadataFieldIds,
+        searchFieldMetadatas: nextSearchFieldMetadatas,
       }),
-    searchFieldMetadatasToCreate: [
-      buildFlatSearchFieldMetadataForField({
-        flatObjectMetadata: fromFlatObjectMetadata,
-        flatFieldMetadata: newLabelIdentifierField,
-      }),
-    ],
+    searchFieldMetadatasToCreate: [newSearchFieldMetadata],
   };
 };

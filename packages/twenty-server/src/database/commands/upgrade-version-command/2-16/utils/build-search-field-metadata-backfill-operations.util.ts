@@ -51,9 +51,11 @@ export const buildSearchFieldMetadataBackfillOperations = ({
   const pushCandidateIfMissing = ({
     objectMetadataUniversalIdentifier,
     fieldMetadataUniversalIdentifier,
+    position,
   }: {
     objectMetadataUniversalIdentifier: string;
     fieldMetadataUniversalIdentifier: string;
+    position: number;
   }): void => {
     const flatObjectMetadata =
       flatObjectMetadataMaps.byUniversalIdentifier[
@@ -85,6 +87,7 @@ export const buildSearchFieldMetadataBackfillOperations = ({
       buildFlatSearchFieldMetadataForField({
         flatObjectMetadata,
         flatFieldMetadata,
+        position,
       }),
     );
   };
@@ -98,6 +101,7 @@ export const buildSearchFieldMetadataBackfillOperations = ({
         standardSearchFieldMetadata.objectMetadataUniversalIdentifier,
       fieldMetadataUniversalIdentifier:
         standardSearchFieldMetadata.fieldMetadataUniversalIdentifier,
+      position: standardSearchFieldMetadata.position,
     });
   }
 
@@ -153,6 +157,7 @@ export const buildSearchFieldMetadataBackfillOperations = ({
       objectMetadataUniversalIdentifier:
         flatObjectMetadata.universalIdentifier,
       fieldMetadataUniversalIdentifier: nameFieldMetadata.universalIdentifier,
+      position: 0,
     });
   }
 

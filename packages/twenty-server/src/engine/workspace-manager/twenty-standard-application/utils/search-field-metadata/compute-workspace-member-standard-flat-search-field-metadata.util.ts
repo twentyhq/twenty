@@ -18,13 +18,14 @@ export const buildWorkspaceMemberStandardFlatSearchFieldMetadatas = ({
   CreateStandardSearchFieldArgs<'workspaceMember'>,
   'context'
 >): FlatSearchFieldMetadata[] =>
-  SEARCH_FIELDS_FOR_WORKSPACE_MEMBER.map((searchField) =>
+  SEARCH_FIELDS_FOR_WORKSPACE_MEMBER.map((searchField, position) =>
     createStandardSearchFieldFlatMetadata({
       objectName,
       workspaceId,
       context: {
         fieldName:
           searchField.name as AllStandardObjectFieldName<'workspaceMember'>,
+        position,
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,

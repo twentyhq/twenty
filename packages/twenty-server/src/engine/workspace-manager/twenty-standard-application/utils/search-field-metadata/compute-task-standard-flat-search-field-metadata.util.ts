@@ -18,12 +18,13 @@ export const buildTaskStandardFlatSearchFieldMetadatas = ({
   CreateStandardSearchFieldArgs<'task'>,
   'context'
 >): FlatSearchFieldMetadata[] =>
-  SEARCH_FIELDS_FOR_TASKS.map((searchField) =>
+  SEARCH_FIELDS_FOR_TASKS.map((searchField, position) =>
     createStandardSearchFieldFlatMetadata({
       objectName,
       workspaceId,
       context: {
         fieldName: searchField.name as AllStandardObjectFieldName<'task'>,
+        position,
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,

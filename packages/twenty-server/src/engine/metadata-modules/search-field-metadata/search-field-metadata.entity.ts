@@ -44,6 +44,9 @@ export class SearchFieldMetadataEntity extends SyncableEntity {
   @JoinColumn({ name: 'fieldMetadataId' })
   fieldMetadata: Relation<FieldMetadataEntity>;
 
+  @Column({ nullable: false, type: 'float' })
+  position: number;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

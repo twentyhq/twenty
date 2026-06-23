@@ -9,19 +9,20 @@ import {
 export type SearchVectorTargetField = {
   name: string;
   type: FieldMetadataType;
-  createdAt: string;
-  // Tie-break for fields sharing a createdAt (field id, or universalIdentifier when
-  // not yet persisted).
+  // Per-object ordinal from the searchFieldMetadata row, driving deterministic order.
+  position: number;
+  // Tie-break for rows sharing a position (searchFieldMetadata universalIdentifier).
   sortKey: string;
 };
 
 export const buildSearchVectorTargetField = (
-  field: { name: string; type: FieldMetadataType; createdAt: string },
+  field: { name: string; type: FieldMetadataType },
+  position: number,
   sortKey: string,
 ): SearchVectorTargetField => ({
   name: field.name,
   type: field.type,
-  createdAt: field.createdAt,
+  position,
   sortKey,
 });
 
@@ -36,8 +37,8 @@ export const computeSearchVectorAsExpressionFromSearchFieldMetadatas = (
     ...targetSearchableFields,
   ]
     .sort((a, b) => {
-      if (a.createdAt !== b.createdAt) {
-        return a.createdAt < b.createdAt ? -1 : 1;
+      if (a.position !== b.position) {
+        return a.position - b.position;
       }
 
       return a.sortKey < b.sortKey ? -1 : a.sortKey > b.sortKey ? 1 : 0;

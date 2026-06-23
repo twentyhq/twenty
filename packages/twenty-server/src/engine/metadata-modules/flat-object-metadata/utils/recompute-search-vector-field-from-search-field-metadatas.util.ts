@@ -7,6 +7,7 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -19,8 +20,12 @@ import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-me
 
 type RecomputeSearchVectorFieldFromSearchFieldMetadatasArgs = {
   flatObjectMetadata: FlatObjectMetadata;
-  // Post-change field ids targeted by the object's searchFieldMetadata rows.
-  searchFieldMetadataFieldIds: string[];
+  // Post-change searchFieldMetadata rows for the object, carrying the field id and the
+  // per-object position that drives the deterministic asExpression order.
+  searchFieldMetadatas: Pick<
+    FlatSearchFieldMetadata,
+    'fieldMetadataId' | 'position' | 'universalIdentifier'
+  >[];
   // Takes precedence over the flat maps when resolving an id — for a field created or
   // renamed in the same migration, whose maps entry is absent or stale.
   overrideFlatFieldMetadataById?: Map<string, FlatFieldMetadata>;
@@ -29,7 +34,7 @@ type RecomputeSearchVectorFieldFromSearchFieldMetadatasArgs = {
 export const recomputeSearchVectorFieldFromSearchFieldMetadatas = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
-  searchFieldMetadataFieldIds,
+  searchFieldMetadatas,
   overrideFlatFieldMetadataById,
 }: RecomputeSearchVectorFieldFromSearchFieldMetadatasArgs):
   | FlatFieldMetadata<FieldMetadataType.TS_VECTOR>
@@ -54,8 +59,11 @@ export const recomputeSearchVectorFieldFromSearchFieldMetadatas = ({
     );
   }
 
-  const targetSearchableFields = searchFieldMetadataFieldIds.map(
-    (fieldMetadataId) => {
+  const targetSearchableFields = searchFieldMetadatas.map(
+    (searchFieldMetadata) => {
+      const { fieldMetadataId, position, universalIdentifier } =
+        searchFieldMetadata;
+
       const overriddenFlatFieldMetadata =
         overrideFlatFieldMetadataById?.get(fieldMetadataId);
 
@@ -75,7 +83,8 @@ export const recomputeSearchVectorFieldFromSearchFieldMetadatas = ({
 
       return buildSearchVectorTargetField(
         flatFieldMetadata,
-        flatFieldMetadata.id,
+        position,
+        universalIdentifier,
       );
     },
   );
