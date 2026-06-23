@@ -1,7 +1,10 @@
-import { SEARCH_OUTPUT_MAX_LINE_LENGTH } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/search-output-max-line-length.constant';
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { SEARCH_OUTPUT_MAX_MATCH_LENGTH } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/search-output-max-match-length.constant';
+import { isDefined } from 'twenty-shared/utils';
 
 export type SearchMatch = {
-  lineNumber: number;
+  charOffset: number;
   match: string;
   context: string;
 };
@@ -17,64 +20,95 @@ const escapeRegExp = (value: string): string =>
 
 const compilePattern = (pattern: string): RegExp => {
   try {
-    return new RegExp(pattern);
+    return new RegExp(pattern, 'g');
   } catch {
-    return new RegExp(escapeRegExp(pattern));
+    return new RegExp(escapeRegExp(pattern), 'g');
   }
 };
 
-const truncateLine = (line: string): string =>
-  line.length > SEARCH_OUTPUT_MAX_LINE_LENGTH
-    ? `${line.slice(0, SEARCH_OUTPUT_MAX_LINE_LENGTH)}…`
-    : line;
+const truncateMatch = (match: string): string => {
+  if (match.length <= SEARCH_OUTPUT_MAX_MATCH_LENGTH) {
+    return match;
+  }
+
+  const half = Math.floor((SEARCH_OUTPUT_MAX_MATCH_LENGTH - 1) / 2);
+
+  return `${match.slice(0, half)}…${match.slice(match.length - half)}`;
+};
+
+const buildContext = ({
+  content,
+  index,
+  length,
+  contextChars,
+}: {
+  content: string;
+  index: number;
+  length: number;
+  contextChars: number;
+}): string => {
+  const start = Math.max(0, index - contextChars);
+  const end = Math.min(content.length, index + length + contextChars);
+
+  const prefix = start > 0 ? '…' : '';
+  const suffix = end < content.length ? '…' : '';
+
+  return `${prefix}${content.slice(start, end)}${suffix}`;
+};
 
 export const searchOutput = ({
   content,
   pattern,
   maxMatches,
   offset,
-  contextLines,
+  contextChars,
 }: {
   content: string;
   pattern: string;
   maxMatches: number;
   offset: number;
-  contextLines: number;
+  contextChars: number;
 }): SearchOutputResult => {
-  const lines = content.split('\n');
-  const regex = compilePattern(pattern);
-
-  const matchLineIndices: number[] = [];
-
-  for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-    if (regex.test(lines[lineIndex])) {
-      matchLineIndices.push(lineIndex);
-    }
+  if (!isNonEmptyString(pattern)) {
+    throw new Error('Search pattern must be a non-empty string.');
   }
 
-  const totalMatches = matchLineIndices.length;
-  const selected = matchLineIndices.slice(offset, offset + maxMatches);
+  const regex = compilePattern(pattern);
 
-  const matches: SearchMatch[] = selected.map((lineIndex) => {
-    const start = Math.max(0, lineIndex - contextLines);
-    const end = Math.min(lines.length - 1, lineIndex + contextLines);
+  const matches: SearchMatch[] = [];
+  let totalMatches = 0;
 
-    const contextBlock: string[] = [];
+  let execResult = regex.exec(content);
 
-    for (let cursor = start; cursor <= end; cursor++) {
-      contextBlock.push(`${cursor + 1}: ${truncateLine(lines[cursor])}`);
+  while (isDefined(execResult)) {
+    const index = execResult.index;
+    const matched = execResult[0];
+
+    if (totalMatches >= offset && matches.length < maxMatches) {
+      matches.push({
+        charOffset: index,
+        match: truncateMatch(matched),
+        context: buildContext({
+          content,
+          index,
+          length: matched.length,
+          contextChars,
+        }),
+      });
     }
 
-    return {
-      lineNumber: lineIndex + 1,
-      match: truncateLine(lines[lineIndex]),
-      context: contextBlock.join('\n'),
-    };
-  });
+    totalMatches += 1;
+
+    if (matched.length === 0) {
+      regex.lastIndex += 1;
+    }
+
+    execResult = regex.exec(content);
+  }
 
   return {
     matches,
     totalMatches,
-    hasMore: offset + selected.length < totalMatches,
+    hasMore: offset + matches.length < totalMatches,
   };
 };
