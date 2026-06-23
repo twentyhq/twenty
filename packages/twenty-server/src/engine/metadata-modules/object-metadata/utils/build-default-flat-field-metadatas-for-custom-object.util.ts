@@ -1,4 +1,4 @@
-import { getSystemFieldUniversalIdentifier } from 'twenty-shared/application';
+import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
@@ -41,10 +41,10 @@ const buildObjectSystemFlatFieldMetadatas = ({
   } = PARTIAL_SYSTEM_FLAT_FIELD_METADATAS;
 
   const systemFieldUniversalIdentifier = (fieldName: string) =>
-    getSystemFieldUniversalIdentifier({
+    getFieldUniversalIdentifier({
       ownerApplicationUniversalIdentifier: applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-      fieldName,
+      name: fieldName,
     });
 
   return {
@@ -133,10 +133,10 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           type: FieldMetadataType.TEXT,
           isLabelSyncedWithName: false,
           isUnique: false,
-          universalIdentifier: getSystemFieldUniversalIdentifier({
+          universalIdentifier: getFieldUniversalIdentifier({
             ownerApplicationUniversalIdentifier: applicationUniversalIdentifier,
             objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-            fieldName: 'name',
+            name: 'name',
           }),
           name: 'name',
           label: 'Name',

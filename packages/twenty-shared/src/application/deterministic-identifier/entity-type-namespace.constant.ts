@@ -21,7 +21,9 @@ export type DeterministicEntityType =
   | 'logicFunction'
   | 'agent'
   | 'skill'
-  | 'connectionProvider';
+  | 'connectionProvider'
+  | 'applicationVariable'
+  | 'rolePermissionFlag';
 
 export const ENTITY_TYPE_NAMESPACE_BY_TYPE = {
   object: '5a40f2f8-560f-49e3-9f21-0c8ddfb5ce63',
@@ -47,4 +49,6 @@ export const ENTITY_TYPE_NAMESPACE_BY_TYPE = {
   agent: '466d0f14-f119-4b8b-bd46-54e29cbe1ad8',
   skill: 'ba3a4b9e-aa36-4f79-8754-03012924222e',
   connectionProvider: '7dec282b-dee7-46a0-91da-6da9c4409e38',
+  applicationVariable: '42d92292-187d-4335-ba9f-c7dee738fc00',
+  rolePermissionFlag: 'ad5661fb-71c8-4061-8e41-a6b999197531',
 } as const satisfies Record<DeterministicEntityType, string>;

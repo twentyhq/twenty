@@ -27,34 +27,37 @@ export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
-export { computeUniversalIdentifier } from './deterministic-identifier/compute-universal-identifier.util';
-export type {
-  SystemRecordViewKind,
-  SystemIndexKind,
-  SystemRecordPageTabKind,
-  SystemRecordPageWidgetKind,
-} from './deterministic-identifier/deterministic-identifier-discriminator.constant';
-export {
-  DISCRIMINATOR_BY_ENTITY_TYPE,
-  SYSTEM_RECORD_VIEW_DISCRIMINATOR,
-  SYSTEM_INDEX_DISCRIMINATOR,
-  SYSTEM_RECORD_PAGE_LAYOUT_DISCRIMINATOR,
-  SYSTEM_RECORD_PAGE_TAB_DISCRIMINATOR,
-  SYSTEM_RECORD_PAGE_WIDGET_DISCRIMINATOR,
-  SYSTEM_NAVIGATION_COMMAND_DISCRIMINATOR,
-} from './deterministic-identifier/deterministic-identifier-discriminator.constant';
-export {
-  getSystemFieldUniversalIdentifier,
-  getRecordViewUniversalIdentifier,
-  getViewFieldUniversalIdentifier,
-  getDefaultIndexUniversalIdentifier,
-  getRecordPageLayoutUniversalIdentifier,
-  getRecordPageTabUniversalIdentifier,
-  getRecordPageWidgetUniversalIdentifier,
-  getNavigationCommandUniversalIdentifier,
-} from './deterministic-identifier/deterministic-identifier-reference.util';
+export { computeOwnerScopedUniversalIdentifier } from './deterministic-identifier/compute-owner-scoped-universal-identifier.util';
 export type { DeterministicEntityType } from './deterministic-identifier/entity-type-namespace.constant';
 export { ENTITY_TYPE_NAMESPACE_BY_TYPE } from './deterministic-identifier/entity-type-namespace.constant';
+export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
+export { getApplicationVariableUniversalIdentifier } from './deterministic-identifier/get-application-variable-universal-identifier.util';
+export { getCommandMenuItemUniversalIdentifier } from './deterministic-identifier/get-command-menu-item-universal-identifier.util';
+export { getConnectionProviderUniversalIdentifier } from './deterministic-identifier/get-connection-provider-universal-identifier.util';
+export { getFieldPermissionUniversalIdentifier } from './deterministic-identifier/get-field-permission-universal-identifier.util';
+export { getFieldUniversalIdentifier } from './deterministic-identifier/get-field-universal-identifier.util';
+export { getFieldsWidgetViewUniversalIdentifier } from './deterministic-identifier/get-fields-widget-view-universal-identifier.util';
+export { getFrontComponentUniversalIdentifier } from './deterministic-identifier/get-front-component-universal-identifier.util';
+export { getIndexUniversalIdentifier } from './deterministic-identifier/get-index-universal-identifier.util';
+export { getLogicFunctionUniversalIdentifier } from './deterministic-identifier/get-logic-function-universal-identifier.util';
+export { getNavigationCommandUniversalIdentifier } from './deterministic-identifier/get-navigation-command-universal-identifier.util';
+export { getNavigationMenuItemUniversalIdentifier } from './deterministic-identifier/get-navigation-menu-item-universal-identifier.util';
+export { getObjectPermissionUniversalIdentifier } from './deterministic-identifier/get-object-permission-universal-identifier.util';
+export { getObjectUniversalIdentifier } from './deterministic-identifier/get-object-universal-identifier.util';
+export { getPageLayoutTabUniversalIdentifier } from './deterministic-identifier/get-page-layout-tab-universal-identifier.util';
+export { getPageLayoutUniversalIdentifier } from './deterministic-identifier/get-page-layout-universal-identifier.util';
+export { getPageLayoutWidgetUniversalIdentifier } from './deterministic-identifier/get-page-layout-widget-universal-identifier.util';
+export { getPermissionFlagUniversalIdentifier } from './deterministic-identifier/get-permission-flag-universal-identifier.util';
+export { getRecordPageLayoutUniversalIdentifier } from './deterministic-identifier/get-record-page-layout-universal-identifier.util';
+export { getRolePermissionFlagUniversalIdentifier } from './deterministic-identifier/get-role-permission-flag-universal-identifier.util';
+export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-universal-identifier.util';
+export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
+export { getSkillUniversalIdentifier } from './deterministic-identifier/get-skill-universal-identifier.util';
+export { getViewFieldUniversalIdentifier } from './deterministic-identifier/get-view-field-universal-identifier.util';
+export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get-view-filter-universal-identifier.util';
+export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-view-group-universal-identifier.util';
+export { getViewSortUniversalIdentifier } from './deterministic-identifier/get-view-sort-universal-identifier.util';
+export { getViewUniversalIdentifier } from './deterministic-identifier/get-view-universal-identifier.util';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
   RegularFieldManifest,
