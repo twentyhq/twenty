@@ -15,6 +15,7 @@ export enum RouteTriggerExceptionCode {
   ROUTE_TRIGGER_USER_UNCAUGHT_ERROR = 'ROUTE_TRIGGER_USER_UNCAUGHT_ERROR',
   ROUTE_TRIGGER_PLATFORM_ERROR = 'ROUTE_TRIGGER_PLATFORM_ERROR',
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
+  LEGACY_ROUTE_DEPRECATED = 'LEGACY_ROUTE_DEPRECATED',
 }
 
 const getRouteTriggerExceptionUserFriendlyMessage = (
@@ -41,6 +42,8 @@ const getRouteTriggerExceptionUserFriendlyMessage = (
       return msg`An unexpected error occurred while executing the logic function.`;
     case RouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED:
       return msg`Too many requests. Please try again later.`;
+    case RouteTriggerExceptionCode.LEGACY_ROUTE_DEPRECATED:
+      return msg`This endpoint is no longer available on /s/. Use the dedicated public domain URL instead.`;
     default:
       assertUnreachable(code);
   }

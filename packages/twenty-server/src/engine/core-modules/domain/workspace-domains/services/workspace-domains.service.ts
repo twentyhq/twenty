@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -99,8 +100,12 @@ export class WorkspaceDomainsService {
   async resolveWorkspaceAndPublicDomain(origin: string): Promise<{
     workspace: WorkspaceEntity | undefined;
     publicDomain: PublicDomainEntity | null;
+    // True when the request was served from an origin isolated from the main
+    // Twenty app (a registered public domain or a *.<publicBase> subdomain),
+    // where it is safe to relax the response/request header restrictions.
+    isIsolatedOrigin: boolean;
   }> {
-    const { subdomain, domain } =
+    const { subdomain, domain, isPublicDomainOrigin } =
       this.domainServerConfigService.getSubdomainAndDomainFromUrl(origin);
 
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
@@ -113,11 +118,49 @@ export class WorkspaceDomainsService {
       return {
         workspace: await this.getDefaultWorkspace(),
         publicDomain: publicDomain ?? null,
+        isIsolatedOrigin: isPublicDomainOrigin || isDefined(publicDomain),
+      };
+    }
+
+    // Isolated public function domain (e.g. {workspaceSubdomain}.withtwenty.com).
+    if (isPublicDomainOrigin) {
+      const hostname = new URL(origin).hostname;
+
+      // An explicitly registered public domain (possibly application-scoped)
+      // takes precedence over the default per-workspace function subdomain.
+      const registeredPublicDomain = await this.publicDomainRepository.findOne({
+        where: { domain: hostname },
+        relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
+      });
+
+      if (isDefined(registeredPublicDomain)) {
+        return {
+          workspace: registeredPublicDomain.workspace ?? undefined,
+          publicDomain: registeredPublicDomain,
+          isIsolatedOrigin: true,
+        };
+      }
+
+      const workspaceFromSubdomain = isDefined(subdomain)
+        ? ((await this.workspaceRepository.findOne({
+            where: { subdomain },
+            relations: ['workspaceSSOIdentityProviders'],
+          })) ?? undefined)
+        : undefined;
+
+      return {
+        workspace: workspaceFromSubdomain,
+        publicDomain: null,
+        isIsolatedOrigin: true,
       };
     }
 
     if (!domain && !subdomain) {
-      return { workspace: undefined, publicDomain: null };
+      return {
+        workspace: undefined,
+        publicDomain: null,
+        isIsolatedOrigin: false,
+      };
     }
 
     const where = isDefined(domain) ? { customDomain: domain } : { subdomain };
@@ -132,6 +175,7 @@ export class WorkspaceDomainsService {
       return {
         workspace: workspaceFromCustomDomainOrSubdomain,
         publicDomain: null,
+        isIsolatedOrigin: false,
       };
     }
 
@@ -143,7 +187,37 @@ export class WorkspaceDomainsService {
     return {
       workspace: publicDomain?.workspace ?? undefined,
       publicDomain: publicDomain ?? null,
+      isIsolatedOrigin: isDefined(publicDomain),
     };
+  }
+
+  isPublicFunctionDomainHost(host?: string | null): boolean {
+    return this.domainServerConfigService.isPublicFunctionDomainHost(host);
+  }
+
+  // Builds the canonical isolated URL of a logic function route, e.g.
+  // https://{workspaceSubdomain}.withtwenty.com/my-route. Returns undefined
+  // when no public domain base is configured (self-hosting).
+  buildPublicFunctionUrl({
+    workspace,
+    path,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'subdomain'>;
+    path: string;
+  }): string | undefined {
+    const publicBaseHostname =
+      this.domainServerConfigService.getPublicBaseHostnameOrUndefined();
+
+    if (!isNonEmptyString(publicBaseHostname)) {
+      return undefined;
+    }
+
+    const url = this.domainServerConfigService.getPublicDomainUrl();
+
+    url.hostname = `${workspace.subdomain}.${publicBaseHostname}`;
+    url.pathname = path.startsWith('/') ? path : `/${path}`;
+
+    return url.toString();
   }
 
   private getCustomWorkspaceUrl(customDomain: string) {

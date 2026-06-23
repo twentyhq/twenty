@@ -27,6 +27,7 @@ import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
+import { PublicFunctionDomainRewriteMiddleware } from 'src/engine/middlewares/public-function-domain-rewrite.middleware';
 import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -112,6 +113,12 @@ export class AppModule {
   }
 
   configure(consumer: MiddlewareConsumer) {
+    // Must run before route matching so isolated public-domain requests
+    // (e.g. acme.withtwenty.com/my-route) are rewritten onto the /s/ controller.
+    consumer
+      .apply(PublicFunctionDomainRewriteMiddleware)
+      .forRoutes({ path: '*path', method: RequestMethod.ALL });
+
     consumer
       .apply(
         GraphQLHydrateRequestFromTokenMiddleware,
