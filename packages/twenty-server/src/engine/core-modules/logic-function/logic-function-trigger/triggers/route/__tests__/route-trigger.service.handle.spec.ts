@@ -47,14 +47,17 @@ describe('RouteTriggerService.handle', () => {
       method: 'POST',
     }) as unknown as Request;
 
-  const buildLogicFunction = (createdAt: Date): LogicFunctionEntity =>
+  const buildLogicFunction = (
+    createdAt: Date,
+    isAuthRequired = false,
+  ): LogicFunctionEntity =>
     ({
       id: 'lf-1',
       workspaceId: 'workspace-1',
       httpRouteTriggerSettings: {
         path: '/webhook',
         httpMethod: HTTPMethod.POST,
-        isAuthRequired: false,
+        isAuthRequired,
       },
       createdAt,
     }) as unknown as LogicFunctionEntity;
@@ -115,6 +118,29 @@ describe('RouteTriggerService.handle', () => {
     });
 
     expect(run).not.toHaveBeenCalled();
+  });
+
+  it('exempts authenticated routes from the cutoff on /s/', async () => {
+    resolveWorkspaceAndPublicDomain.mockResolvedValue({
+      workspace: { id: 'workspace-1', subdomain: 'acme' },
+      publicDomain: null,
+      isIsolatedOrigin: false,
+    });
+    find.mockResolvedValue([buildLogicFunction(AFTER_CUTOFF, true)]);
+    getConfig.mockReturnValue(CUTOFF_ISO);
+    validateTokenByRequest.mockResolvedValue({
+      workspace: { id: 'workspace-1' },
+      userWorkspaceId: 'uw-1',
+      user: { id: 'u-1' },
+    });
+
+    const result = await buildService().handle({
+      request: buildRequest(),
+      httpMethod: HTTPMethod.POST,
+    });
+
+    expect(result.isIsolatedOrigin).toBe(false);
+    expect(run).toHaveBeenCalled();
   });
 
   it('still serves on /s/ a function created before the cutoff', async () => {
