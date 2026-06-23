@@ -1,15 +1,17 @@
 # ===========================================================================
-# Render server-only image (Orbitor / Twenty backend: API + worker)
+# Server-only image (Orbitor / Twenty backend: API server + BullMQ worker)
 # ---------------------------------------------------------------------------
-# Render Blueprints CANNOT select a Docker build target, and they build the
-# LAST stage of the referenced Dockerfile. The shared
-# packages/twenty-docker/twenty/Dockerfile ends in `twenty-app-dev` (an
-# all-in-one dev image), so we cannot point Render at it. This file mirrors
-# only the server stages of that Dockerfile (server-deps -> twenty-server-build
-# -> twenty-server) so the production server is the final stage.
+# Both the Railway "server" and "worker" services build from THIS file (the
+# worker just overrides the start command to `yarn worker:prod`).
 #
-# The frontend is served separately from Vercel, so the memory-heavy front
-# build is intentionally omitted here (lighter, faster, no OOM on Render).
+# Why a separate Dockerfile: the shared packages/twenty-docker/twenty/Dockerfile
+# has multiple stages and ends in `twenty-app-dev` (an all-in-one dev image).
+# Most platforms build the LAST stage and can't pick a target, so this file
+# mirrors only the server stages (server-deps -> twenty-server-build ->
+# twenty-server) so the production server is the final stage.
+#
+# The frontend is served separately (Cloudflare Pages), so the memory-heavy
+# front build is intentionally omitted here (lighter, faster, no OOM).
 #
 # Keep in sync with the `twenty-server` stage of
 # packages/twenty-docker/twenty/Dockerfile.

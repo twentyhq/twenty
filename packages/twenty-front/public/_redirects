@@ -1,0 +1,2 @@
+# Cloudflare Pages SPA fallback: serve the app shell for any client-side route.
+/*    /index.html   200
