@@ -117,7 +117,7 @@ export class AppModule {
     // (e.g. acme.withtwenty.com/my-route) are rewritten onto the /s/ controller.
     consumer
       .apply(PublicFunctionDomainRewriteMiddleware)
-      .forRoutes({ path: '*path', method: RequestMethod.ALL });
+      .forRoutes({ path: '{*path}', method: RequestMethod.ALL });
 
     consumer
       .apply(

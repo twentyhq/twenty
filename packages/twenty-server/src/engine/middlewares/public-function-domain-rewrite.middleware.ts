@@ -27,7 +27,10 @@ export class PublicFunctionDomainRewriteMiddleware implements NestMiddleware {
       publicDomainBaseHostname,
     });
 
-    const isAlreadyPrefixed = req.url === '/s' || req.url.startsWith('/s/');
+    // req.url carries the query string; compare on the pathname so a request
+    // like /s?foo=bar is still recognized as already prefixed.
+    const pathname = req.url.split('?')[0];
+    const isAlreadyPrefixed = pathname === '/s' || pathname.startsWith('/s/');
 
     if (isPublicFunctionDomain && !isAlreadyPrefixed) {
       req.url = `/s${req.url}`;

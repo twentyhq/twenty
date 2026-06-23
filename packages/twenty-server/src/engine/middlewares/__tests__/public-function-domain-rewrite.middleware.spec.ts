@@ -60,6 +60,17 @@ describe('PublicFunctionDomainRewriteMiddleware', () => {
     expect(req.url).toBe('/s/webhook');
   });
 
+  it('does not double-prefix /s with a query string', () => {
+    const middleware = buildMiddleware('https://withtwenty.com');
+
+    const { req } = run(middleware, {
+      host: 'acme.withtwenty.com',
+      url: '/s?foo=bar',
+    });
+
+    expect(req.url).toBe('/s?foo=bar');
+  });
+
   it('leaves the main app domain untouched', () => {
     const middleware = buildMiddleware('https://withtwenty.com');
 
