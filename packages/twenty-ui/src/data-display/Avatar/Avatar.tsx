@@ -1,12 +1,12 @@
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 import { stringToThemeColorP3String } from '@ui/utilities';
 import { type Nullable } from '@ui/utilities/types/Nullable';
 
@@ -41,7 +41,7 @@ export const Avatar = ({
   backgroundColor,
   borderColor,
 }: AvatarProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const [erroredAvatarImageURI, setErroredAvatarImageURI] = useState<
     string | null

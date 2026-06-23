@@ -1,13 +1,13 @@
 import { clsx } from 'clsx';
 import { motion, type MotionProps } from 'framer-motion';
-import { type ComponentProps, type MouseEvent, useContext } from 'react';
+import { type ComponentProps, type MouseEvent } from 'react';
 
 import { type IconComponent } from '@ui/icon';
 import {
   type LightIconButtonAccent,
   type LightIconButtonSize,
 } from '@ui/input/LightIconButton/LightIconButton';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './AnimatedLightIconButton.module.scss';
 
@@ -40,7 +40,7 @@ export const AnimatedLightIconButton = ({
   onClick,
   title,
 }: AnimatedLightIconButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <button

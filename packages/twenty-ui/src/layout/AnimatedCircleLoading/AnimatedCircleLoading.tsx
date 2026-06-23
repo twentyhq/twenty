@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import React, { useContext } from 'react';
+import React from 'react';
 
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './AnimatedCircleLoading.module.scss';
 
@@ -10,7 +10,7 @@ export const AnimatedCircleLoading = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <motion.div
