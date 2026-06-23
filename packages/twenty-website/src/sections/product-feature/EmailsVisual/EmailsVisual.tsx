@@ -88,7 +88,7 @@ export function EmailsVisual({ active: _active }: { active: boolean }) {
         </InboxHeader>
         <ThreadList>
           {THREADS.map((thread) => (
-            <ThreadRow key={thread.participants[0].name} thread={thread} />
+            <ThreadRow key={thread.date} thread={thread} />
           ))}
         </ThreadList>
       </Panel>
