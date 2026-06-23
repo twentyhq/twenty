@@ -153,6 +153,89 @@ const stripUnavailableRelations = (
   return options;
 };
 
+// Hidden columns are removed from the entity metadata while their migration
+// has not run yet, so an explicit `select` that names one (e.g. the metadata
+// cache selecting 'universalIdentifier') would make TypeORM throw
+// `Property "..." was not found`. Strip those names so the read degrades to the
+// columns that actually exist at the current upgrade cursor.
+const stripHiddenColumnsFromSelect = (
+  state: UpgradeAwareRepositoryState,
+  entityClass: Function,
+  options: unknown,
+): unknown => {
+  if (!isDefined(options) || typeof options !== 'object') {
+    return options;
+  }
+
+  const withSelect = options as { select?: unknown };
+
+  if (!isDefined(withSelect.select)) {
+    return options;
+  }
+
+  const hiddenColumnNames = state.getHiddenColumnPropertyNames(entityClass);
+
+  if (hiddenColumnNames.size === 0) {
+    return options;
+  }
+
+  if (Array.isArray(withSelect.select)) {
+    const filtered = (withSelect.select as string[]).filter(
+      (name) => !hiddenColumnNames.has(name),
+    );
+
+    if (filtered.length === withSelect.select.length) {
+      return options;
+    }
+
+    logger.log(
+      `[upgrade-proxy] strip hidden columns from select on ${entityClass.name}: ${(
+        withSelect.select as string[]
+      )
+        .filter((name) => hiddenColumnNames.has(name))
+        .join(',')}`,
+    );
+
+    // An empty select would make TypeORM select every column, so drop the key
+    // entirely to fall back to the default (all currently-visible columns).
+    if (filtered.length === 0) {
+      const { select: _select, ...rest } = withSelect;
+
+      return rest;
+    }
+
+    return { ...withSelect, select: filtered };
+  }
+
+  if (typeof withSelect.select === 'object') {
+    const filtered: Record<string, unknown> = {};
+    let removedAny = false;
+
+    for (const [name, value] of Object.entries(
+      withSelect.select as Record<string, unknown>,
+    )) {
+      if (hiddenColumnNames.has(name)) {
+        removedAny = true;
+        continue;
+      }
+
+      filtered[name] = value;
+    }
+
+    if (!removedAny) {
+      return options;
+    }
+
+    logger.log(
+      `[upgrade-proxy] strip hidden columns from select on ${entityClass.name}`,
+    );
+
+    return { ...withSelect, select: filtered };
+  }
+
+  return options;
+};
+
 const isRelationAvailable = (
   metadata: EntityMetadata,
   state: UpgradeAwareRepositoryState,
@@ -262,7 +345,11 @@ const handleRepositoryMethodCall = <Entity extends object>({
   const rewrittenArgs =
     METHODS_THAT_ACCEPT_FIND_OPTIONS.has(methodName) && args.length > 0
       ? [
-          stripUnavailableRelations(target.metadata, state, args[0]),
+          stripHiddenColumnsFromSelect(
+            state,
+            entityClass,
+            stripUnavailableRelations(target.metadata, state, args[0]),
+          ),
           ...args.slice(1),
         ]
       : args;

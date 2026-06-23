@@ -17,11 +17,15 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
+// searchFieldMetadata only becomes a usable (syncable) entity in 2.16: the table
+// is empty until then and gains universalIdentifier/applicationId/position in that
+// release. Treating the whole entity as introduced in 2.16 makes upgrade-time
+// reads short-circuit to empty until the migration has run, instead of selecting
+// columns that do not exist yet on the old schema.
 @Entity({ name: 'searchFieldMetadata', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName:
     ADD_UNIVERSAL_IDENTIFIER_AND_APPLICATION_ID_TO_SEARCH_FIELD_METADATA_UPGRADE_COMMAND_NAME,
-  properties: ['universalIdentifier', 'applicationId', 'position'],
 })
 @Unique('IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE', [
   'objectMetadataId',

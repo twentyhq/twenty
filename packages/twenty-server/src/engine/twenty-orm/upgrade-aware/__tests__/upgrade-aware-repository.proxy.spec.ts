@@ -71,4 +71,69 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
     await expect(wrapped.find()).resolves.toEqual([]);
     expect(find).not.toHaveBeenCalled();
   });
+
+  describe('hidden column stripping from select', () => {
+    class AvailableEntity {}
+
+    const buildState = (hiddenColumns: string[]): UpgradeAwareRepositoryState =>
+      ({
+        isEntityAvailable: () => true,
+        getHiddenColumnPropertyNames: () => new Set(hiddenColumns),
+      }) as unknown as UpgradeAwareRepositoryState;
+
+    const buildWrappedRepository = (state: UpgradeAwareRepositoryState) => {
+      const find = jest.fn().mockResolvedValue([]);
+      const repository = {
+        find,
+        metadata: { relations: [], targetName: 'AvailableEntity' },
+      } as unknown as Repository<AvailableEntity>;
+
+      const wrapped = wrapRepositoryWithUpgradeAwareProxy({
+        repository,
+        entityClass: AvailableEntity,
+        state,
+      });
+
+      return { find, wrapped };
+    };
+
+    it('removes a hidden column from a select array', async () => {
+      const { find, wrapped } = buildWrappedRepository(
+        buildState(['universalIdentifier']),
+      );
+
+      await wrapped.find({
+        select: ['id', 'universalIdentifier', 'objectMetadataId'],
+        where: { objectMetadataId: 'x' },
+      } as Parameters<typeof wrapped.find>[0]);
+
+      expect(find).toHaveBeenCalledWith({
+        select: ['id', 'objectMetadataId'],
+        where: { objectMetadataId: 'x' },
+      });
+    });
+
+    it('drops the select key entirely when every selected column is hidden', async () => {
+      const { find, wrapped } = buildWrappedRepository(
+        buildState(['universalIdentifier']),
+      );
+
+      await wrapped.find({
+        select: ['universalIdentifier'],
+        where: { objectMetadataId: 'x' },
+      } as Parameters<typeof wrapped.find>[0]);
+
+      expect(find).toHaveBeenCalledWith({ where: { objectMetadataId: 'x' } });
+    });
+
+    it('leaves the select untouched when no selected column is hidden', async () => {
+      const { find, wrapped } = buildWrappedRepository(buildState([]));
+
+      await wrapped.find({
+        select: ['id', 'objectMetadataId'],
+      } as Parameters<typeof wrapped.find>[0]);
+
+      expect(find).toHaveBeenCalledWith({ select: ['id', 'objectMetadataId'] });
+    });
+  });
 });
