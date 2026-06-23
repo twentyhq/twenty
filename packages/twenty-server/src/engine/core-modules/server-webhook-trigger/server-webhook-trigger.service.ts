@@ -3,8 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
@@ -20,7 +21,7 @@ import {
   ServerWebhookTriggerExceptionCode,
 } from 'src/engine/core-modules/server-webhook-trigger/exceptions/server-webhook-trigger.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ResolverResult = {
@@ -33,8 +34,8 @@ export class ServerWebhookTriggerService {
   private readonly logger = new Logger(ServerWebhookTriggerService.name);
 
   constructor(
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    @InjectRepository(ApplicationRegistrationEntity)
+    private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -56,28 +57,15 @@ export class ServerWebhookTriggerService {
       );
     }
 
-    // The resolver lives in the owner workspace (workspaceId = registration's
-    // workspaceId) and carries serverWebhookTriggerSettings. Single join to
-    // discover it; subsequent target lookups go through the cache.
-    const resolverLogicFunction = await this.logicFunctionRepository
-      .createQueryBuilder('lf')
-      .innerJoin('core.application', 'app', 'app.id = lf."applicationId"')
-      .innerJoin(
-        'core.applicationRegistration',
-        'reg',
-        'reg.id = app."applicationRegistrationId"',
-      )
-      .where('lf."universalIdentifier" = :uid', {
-        uid: resolverLogicFunctionUniversalIdentifier,
-      })
-      .andWhere('lf."workspaceId" = reg."workspaceId"')
-      .andWhere('lf."serverWebhookTriggerSettings" IS NOT NULL')
-      .andWhere('lf."deletedAt" IS NULL')
-      .andWhere('reg."deletedAt" IS NULL')
-      .andWhere('reg."workspaceId" IS NOT NULL')
-      .getOne();
+    // The resolver lives in an application-registration owner workspace and
+    // carries `serverWebhookTriggerSettings`. We look it up via the workspace
+    // cache, restricted to owner workspaces of (alive) application
+    // registrations.
+    const resolverMatch = await this.findResolverInOwnerWorkspaces(
+      resolverLogicFunctionUniversalIdentifier,
+    );
 
-    if (!isDefined(resolverLogicFunction)) {
+    if (!isDefined(resolverMatch)) {
       throw new ServerWebhookTriggerException(
         `Server resolver function ${resolverLogicFunctionUniversalIdentifier} not found`,
         ServerWebhookTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
@@ -88,17 +76,17 @@ export class ServerWebhookTriggerService {
       request,
       pathParameters: {},
       forwardedRequestHeaders:
-        resolverLogicFunction.serverWebhookTriggerSettings
+        resolverMatch.logicFunction.serverWebhookTriggerSettings
           ?.forwardedRequestHeaders ?? [],
       userWorkspaceId: null,
     });
 
-    // Step 1: run the resolver in the owner workspace. It returns a
-    // `{ workspaceId, payload? }` shape that selects the target workspace
-    // and (optionally) transforms the payload handed to the target.
+    // Step 1: run the resolver in the owner workspace. It returns
+    // `{ workspaceId, payload? }` selecting the target workspace and
+    // (optionally) transforming the payload handed to the target.
     const resolverResult = await this.runFunction({
-      logicFunctionId: resolverLogicFunction.id,
-      workspaceId: resolverLogicFunction.workspaceId,
+      logicFunctionId: resolverMatch.logicFunction.id,
+      workspaceId: resolverMatch.ownerWorkspaceId,
       payload: event,
     });
     const resolved = this.parseResolverResult(resolverResult);
@@ -132,6 +120,41 @@ export class ServerWebhookTriggerService {
     }
 
     return buildRouteTriggerResponse(targetResult.data);
+  }
+
+  private async findResolverInOwnerWorkspaces(
+    universalIdentifier: string,
+  ): Promise<
+    { ownerWorkspaceId: string; logicFunction: FlatLogicFunction } | undefined
+  > {
+    const registrations = await this.applicationRegistrationRepository.find({
+      where: { ownerWorkspaceId: Not(IsNull()) },
+      select: ['ownerWorkspaceId'],
+    });
+
+    const ownerWorkspaceIds = Array.from(
+      new Set(
+        registrations
+          .map((registration) => registration.ownerWorkspaceId)
+          .filter((workspaceId): workspaceId is string =>
+            isDefined(workspaceId),
+          ),
+      ),
+    );
+
+    for (const ownerWorkspaceId of ownerWorkspaceIds) {
+      const logicFunction = await this.findCachedLogicFunction({
+        workspaceId: ownerWorkspaceId,
+        universalIdentifier,
+        requireServerWebhookTrigger: true,
+      });
+
+      if (isDefined(logicFunction)) {
+        return { ownerWorkspaceId, logicFunction };
+      }
+    }
+
+    return undefined;
   }
 
   private parseResolverResult(result: {
@@ -168,29 +191,29 @@ export class ServerWebhookTriggerService {
   private async findCachedLogicFunction({
     workspaceId,
     universalIdentifier,
+    requireServerWebhookTrigger = false,
   }: {
     workspaceId: string;
     universalIdentifier: string;
-  }): Promise<{ id: string } | undefined> {
+    requireServerWebhookTrigger?: boolean;
+  }): Promise<FlatLogicFunction | undefined> {
     try {
       const { flatLogicFunctionMaps } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'flatLogicFunctionMaps',
         ]);
 
-      const candidate = Object.values(
-        flatLogicFunctionMaps.byUniversalIdentifier,
-      ).find(
+      return Object.values(flatLogicFunctionMaps.byUniversalIdentifier).find(
         (logicFunction) =>
           isDefined(logicFunction) &&
           logicFunction.universalIdentifier === universalIdentifier &&
-          !isDefined(logicFunction.deletedAt),
+          !isDefined(logicFunction.deletedAt) &&
+          (!requireServerWebhookTrigger ||
+            isDefined(logicFunction.serverWebhookTriggerSettings)),
       );
-
-      return isDefined(candidate) ? { id: candidate.id } : undefined;
     } catch (error) {
       this.logger.warn(
-        `Failed to resolve target ${universalIdentifier} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to resolve ${universalIdentifier} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
       );
 
       return undefined;

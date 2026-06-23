@@ -1,6 +1,7 @@
 import { type Request } from 'express';
 import { type Repository } from 'typeorm';
 
+import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import {
   LogicFunctionExecutionException,
@@ -10,9 +11,11 @@ import {
 import { ServerWebhookTriggerExceptionCode } from 'src/engine/core-modules/server-webhook-trigger/exceptions/server-webhook-trigger.exception';
 import { ServerWebhookTriggerService } from 'src/engine/core-modules/server-webhook-trigger/server-webhook-trigger.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+const RESOLVER_UID = 'resolver-uid';
+const TARGET_UID = 'target-uid';
 
 const buildExecuteResult = (
   data: object | null,
@@ -35,9 +38,6 @@ const buildExecuteResult = (
     : {}),
 });
 
-const RESOLVER_UID = 'resolver-uid';
-const TARGET_UID = 'target-uid';
-
 const buildRequest = (body: object | null = {}): Request =>
   ({
     method: 'POST',
@@ -50,14 +50,8 @@ const buildRequest = (body: object | null = {}): Request =>
 
 describe('ServerWebhookTriggerService', () => {
   let service: ServerWebhookTriggerService;
-  let queryBuilder: {
-    innerJoin: jest.Mock;
-    where: jest.Mock;
-    andWhere: jest.Mock;
-    getOne: jest.Mock;
-  };
-  let logicFunctionRepository: jest.Mocked<
-    Pick<Repository<LogicFunctionEntity>, 'createQueryBuilder'>
+  let applicationRegistrationRepository: jest.Mocked<
+    Pick<Repository<ApplicationRegistrationEntity>, 'find'>
   >;
   let logicFunctionExecutorService: jest.Mocked<
     Pick<LogicFunctionExecutorService, 'execute'>
@@ -74,19 +68,58 @@ describe('ServerWebhookTriggerService', () => {
       targetLogicFunctionUniversalIdentifier: TARGET_UID,
     });
 
+  // Each workspace's cache holds only its own logic functions. The resolver
+  // lives in `owner-ws` (a registration owner); the target lives in
+  // `target-ws` (resolved at runtime).
+  const buildWorkspaceCacheMock = ({
+    ownerWorkspaceId = 'owner-ws',
+    targetWorkspaceId = 'target-ws',
+    ownerHasResolver = true,
+    targetHasTarget = true,
+  }: {
+    ownerWorkspaceId?: string;
+    targetWorkspaceId?: string;
+    ownerHasResolver?: boolean;
+    targetHasTarget?: boolean;
+  } = {}) =>
+    jest.fn().mockImplementation(async (workspaceId: string) => {
+      if (workspaceId === ownerWorkspaceId && ownerHasResolver) {
+        return {
+          flatLogicFunctionMaps: {
+            byUniversalIdentifier: {
+              'resolver-id': {
+                id: 'resolver-id',
+                universalIdentifier: RESOLVER_UID,
+                deletedAt: null,
+                serverWebhookTriggerSettings: {
+                  forwardedRequestHeaders: ['x-test'],
+                },
+              },
+            },
+          },
+        };
+      }
+
+      if (workspaceId === targetWorkspaceId && targetHasTarget) {
+        return {
+          flatLogicFunctionMaps: {
+            byUniversalIdentifier: {
+              'target-id': {
+                id: 'target-id',
+                universalIdentifier: TARGET_UID,
+                deletedAt: null,
+              },
+            },
+          },
+        };
+      }
+
+      return { flatLogicFunctionMaps: { byUniversalIdentifier: {} } };
+    });
+
   beforeEach(() => {
-    queryBuilder = {
-      innerJoin: jest.fn().mockReturnThis(),
-      where: jest.fn().mockReturnThis(),
-      andWhere: jest.fn().mockReturnThis(),
-      getOne: jest.fn().mockResolvedValue({
-        id: 'resolver-1',
-        workspaceId: 'owner-ws',
-        serverWebhookTriggerSettings: { forwardedRequestHeaders: ['x-test'] },
-      }),
-    };
-    logicFunctionRepository = {
-      createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
+    applicationRegistrationRepository = {
+      find: jest.fn().mockResolvedValue([{ ownerWorkspaceId: 'owner-ws' }]),
     };
     logicFunctionExecutorService = {
       execute: jest
@@ -102,22 +135,12 @@ describe('ServerWebhookTriggerService', () => {
         .mockResolvedValueOnce(buildExecuteResult({ ok: true })),
     };
     workspaceCacheService = {
-      getOrRecompute: jest.fn().mockResolvedValue({
-        flatLogicFunctionMaps: {
-          byUniversalIdentifier: {
-            'target-id': {
-              id: 'target-id',
-              universalIdentifier: TARGET_UID,
-              deletedAt: null,
-            },
-          },
-        },
-      }),
+      getOrRecompute: buildWorkspaceCacheMock(),
     };
     twentyConfigService = { get: jest.fn().mockReturnValue(true) };
 
     service = new ServerWebhookTriggerService(
-      logicFunctionRepository as unknown as Repository<LogicFunctionEntity>,
+      applicationRegistrationRepository as unknown as Repository<ApplicationRegistrationEntity>,
       logicFunctionExecutorService as unknown as LogicFunctionExecutorService,
       workspaceCacheService as unknown as WorkspaceCacheService,
       twentyConfigService as unknown as TwentyConfigService,
@@ -130,7 +153,7 @@ describe('ServerWebhookTriggerService', () => {
     expect(logicFunctionExecutorService.execute).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({
-        logicFunctionId: 'resolver-1',
+        logicFunctionId: 'resolver-id',
         workspaceId: 'owner-ws',
       }),
     );
@@ -158,8 +181,18 @@ describe('ServerWebhookTriggerService', () => {
     });
   });
 
-  it('throws LOGIC_FUNCTION_NOT_FOUND when no resolver exists in any owner workspace', async () => {
-    queryBuilder.getOne.mockResolvedValue(null);
+  it('throws LOGIC_FUNCTION_NOT_FOUND when no owner workspace has the resolver', async () => {
+    workspaceCacheService.getOrRecompute = buildWorkspaceCacheMock({
+      ownerHasResolver: false,
+    });
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerWebhookTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+    });
+  });
+
+  it('throws LOGIC_FUNCTION_NOT_FOUND when no application registrations exist', async () => {
+    applicationRegistrationRepository.find.mockResolvedValue([]);
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerWebhookTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
@@ -189,10 +222,9 @@ describe('ServerWebhookTriggerService', () => {
   });
 
   it('throws LOGIC_FUNCTION_NOT_FOUND when the target is missing in the resolved workspace', async () => {
-    workspaceCacheService.getOrRecompute.mockResolvedValue({
-      flatLogicFunctionMaps: { byUniversalIdentifier: {} },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
+    workspaceCacheService.getOrRecompute = buildWorkspaceCacheMock({
+      targetHasTarget: false,
+    });
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerWebhookTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
@@ -235,25 +267,19 @@ describe('ServerWebhookTriggerService', () => {
     });
   });
 
-  it('asserts the query filters by server-webhook + alive predicates', async () => {
+  it('deduplicates owner workspaceIds returned by the registration query', async () => {
+    applicationRegistrationRepository.find.mockResolvedValue([
+      { ownerWorkspaceId: 'owner-ws' },
+      { ownerWorkspaceId: 'owner-ws' },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ] as any);
+
     await handle();
 
-    const whereClauses = [
-      ...queryBuilder.where.mock.calls.map((c) => c[0]),
-      ...queryBuilder.andWhere.mock.calls.map((c) => c[0]),
-    ];
-
-    expect(whereClauses).toEqual(
-      expect.arrayContaining([
-        expect.stringContaining('lf."universalIdentifier" = :uid'),
-        expect.stringContaining('lf."workspaceId" = reg."workspaceId"'),
-        expect.stringContaining(
-          'lf."serverWebhookTriggerSettings" IS NOT NULL',
-        ),
-        expect.stringContaining('lf."deletedAt" IS NULL'),
-        expect.stringContaining('reg."deletedAt" IS NULL'),
-        expect.stringContaining('reg."workspaceId" IS NOT NULL'),
-      ]),
+    const calls = workspaceCacheService.getOrRecompute.mock.calls.filter(
+      ([workspaceId]) => workspaceId === 'owner-ws',
     );
+
+    expect(calls).toHaveLength(1);
   });
 });
