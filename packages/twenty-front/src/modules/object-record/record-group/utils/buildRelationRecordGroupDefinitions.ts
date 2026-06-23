@@ -10,9 +10,17 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
 const NO_VALUE_RECORD_GROUP_ID_SUFFIX = 'no-value';
+const NO_VALUE_ORDER_KEY = '__no_value__';
 
 type GroupByResultGroup = RecordGqlConnectionEdgesRequired & {
   groupByDimensionValues: (string | null)[];
+};
+
+export type RelationRecordGroupOrder = {
+  value: string | null;
+  viewGroupId?: string;
+  isVisible: boolean;
+  position: number;
 };
 
 export const buildRelationRecordGroupDefinitions = ({
@@ -20,15 +28,23 @@ export const buildRelationRecordGroupDefinitions = ({
   relationFieldName,
   mainGroupByFieldMetadataId,
   targetObjectMetadataItem,
+  priorOrder,
 }: {
   groups: GroupByResultGroup[];
   relationFieldName: string;
   mainGroupByFieldMetadataId: string;
   targetObjectMetadataItem: EnrichedObjectMetadataItem | undefined;
+  priorOrder: RelationRecordGroupOrder[];
 }): RecordGroupDefinition[] => {
-  let hasNoValueGroup = false;
+  const priorOrderByKey = new Map<string, RelationRecordGroupOrder>();
+  for (const order of priorOrder) {
+    priorOrderByKey.set(order.value ?? NO_VALUE_ORDER_KEY, order);
+  }
+
+  type DraftGroup = { definition: RecordGroupDefinition; orderRank: number };
+  const draftGroups: DraftGroup[] = [];
   const seenValues = new Set<string>();
-  const valueGroupDefinitions: RecordGroupDefinition[] = [];
+  let hasNoValueGroup = false;
 
   for (const group of groups) {
     const groupValue = group.groupByDimensionValues?.[0] ?? null;
@@ -57,39 +73,48 @@ export const buildRelationRecordGroupDefinitions = ({
           }).name
         : groupValue;
 
-    valueGroupDefinitions.push({
-      id: groupValue,
-      type: RecordGroupDefinitionType.Value,
-      title,
-      value: groupValue,
-      color: 'transparent',
-      position: 0,
-      isVisible: true,
-      relationRecord,
+    const prior = priorOrderByKey.get(groupValue);
+
+    draftGroups.push({
+      definition: {
+        id: groupValue,
+        type: RecordGroupDefinitionType.Value,
+        title,
+        value: groupValue,
+        color: 'transparent',
+        position: 0,
+        isVisible: prior?.isVisible ?? true,
+        relationRecord,
+        viewGroupId: prior?.viewGroupId,
+      },
+      orderRank: prior?.position ?? Number.MAX_SAFE_INTEGER - 1,
     });
   }
 
-  const sortedValueGroupDefinitions = valueGroupDefinitions
-    .sort((a, b) => a.title.localeCompare(b.title))
-    .map((groupDefinition, index) => ({
-      ...groupDefinition,
-      position: index,
-    }));
+  if (hasNoValueGroup) {
+    const prior = priorOrderByKey.get(NO_VALUE_ORDER_KEY);
 
-  if (!hasNoValueGroup) {
-    return sortedValueGroupDefinitions;
+    draftGroups.push({
+      definition: {
+        id: `${mainGroupByFieldMetadataId}-${NO_VALUE_RECORD_GROUP_ID_SUFFIX}`,
+        type: RecordGroupDefinitionType.NoValue,
+        title: 'No Value',
+        value: null,
+        color: 'transparent',
+        position: 0,
+        isVisible: prior?.isVisible ?? true,
+        viewGroupId: prior?.viewGroupId,
+      },
+      orderRank: prior?.position ?? Number.MAX_SAFE_INTEGER,
+    });
   }
 
-  return [
-    ...sortedValueGroupDefinitions,
-    {
-      id: `${mainGroupByFieldMetadataId}-${NO_VALUE_RECORD_GROUP_ID_SUFFIX}`,
-      type: RecordGroupDefinitionType.NoValue,
-      title: 'No Value',
-      value: null,
-      color: 'transparent',
-      position: sortedValueGroupDefinitions.length,
-      isVisible: true,
-    },
-  ];
+  return draftGroups
+    .sort((a, b) => {
+      if (a.orderRank !== b.orderRank) {
+        return a.orderRank - b.orderRank;
+      }
+      return a.definition.title.localeCompare(b.definition.title);
+    })
+    .map(({ definition }, index) => ({ ...definition, position: index }));
 };
