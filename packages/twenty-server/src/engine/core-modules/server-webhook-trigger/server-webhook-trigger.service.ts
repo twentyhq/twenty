@@ -114,7 +114,8 @@ export class ServerWebhookTriggerService {
   ): ServerWebhookTriggerExceptionCode {
     if (
       error instanceof LogicFunctionExecutionException &&
-      error.code === LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+      error.code ===
+        LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
     ) {
       return ServerWebhookTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
     }
