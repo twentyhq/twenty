@@ -1,6 +1,11 @@
 import { clampToRange } from '@/platform/motion';
 
-export type PipelineCardId = 'airbnb' | 'figma' | 'github';
+export type PipelineCardId =
+  | 'airbnb'
+  | 'figma'
+  | 'github'
+  | 'notion'
+  | 'stripe';
 export type PipelineLaneIndex = 0 | 1 | 2;
 export type PipelineLanes = [
   PipelineCardId[],

@@ -4,13 +4,13 @@ import { styled } from '@linaria/react';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
+  IconChevronDown,
+  IconCreativeCommonsSa,
   IconCurrencyDollar,
-  IconId,
   IconLayoutKanban,
   IconPlus,
-  IconStar,
+  IconRobot,
   IconUser,
-  IconUserCircle,
 } from '@tabler/icons-react';
 import {
   type ComponentType,
@@ -28,9 +28,9 @@ import { previewFontSize } from '@/app-preview/preview-font-size';
 import { Chip } from '@/app-preview/primitives/Chip';
 import { FaviconLogo } from '@/app-preview/primitives/FaviconLogo';
 import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
+import { PreviewAvatar } from '@/app-preview/primitives/PreviewAvatar';
 import { PreviewTag } from '@/app-preview/primitives/PreviewTag';
 import { type CellSelectColor } from '@/app-preview/types';
-import { RatingStar } from '@/icons';
 import { clampToRange } from '@/platform/motion';
 import { EASING } from '@/tokens';
 
@@ -43,8 +43,6 @@ import {
 
 const CARD_DROP_MS = 300;
 
-const STAR_POSITIONS = [1, 2, 3, 4, 5];
-
 type DealPerson = {
   avatarUrl: string;
   name: string;
@@ -55,15 +53,22 @@ type DealCompany = {
   name: string;
 };
 
+// The record's creator, mirroring twenty's createdBy actor: a teammate shows a
+// rounded avatar, while non-human sources (API, system) show their source icon.
+type DealActor = {
+  avatarUrl?: string;
+  name: string;
+  source: 'member' | 'system';
+};
+
 type DealData = {
   amount: string;
+  avatarTone: string;
   company: DealCompany;
   contact: DealPerson;
+  createdBy: DealActor;
   date: string;
   id: PipelineCardId;
-  owner: DealPerson;
-  rating: number;
-  recordId: string;
   title: string;
 };
 
@@ -71,53 +76,82 @@ const PEOPLE = sharedAssetUrls.peopleAvatars;
 
 const CARDS: Record<PipelineCardId, DealData> = {
   github: {
-    amount: '$6,562.04',
+    amount: '$75k',
+    avatarTone: 'blue',
     company: { domain: 'github.com', name: 'Github' },
     contact: { avatarUrl: PEOPLE.chrisWanstrath, name: 'Chris Wanstrath' },
-    date: 'Jun 16, 2023',
+    createdBy: { name: 'System', source: 'system' },
+    date: 'Jan 25, 2026 9:26 PM',
     id: 'github',
-    owner: { avatarUrl: PEOPLE.eddyCue, name: 'Eddy Cue' },
-    rating: 2,
-    recordId: 'OPP-1',
-    title: 'Platform Expansion',
+    title: 'API Integration Deal',
   },
   figma: {
-    amount: '$8,250.00',
+    amount: '$30k',
+    avatarTone: 'orange',
     company: { domain: 'figma.com', name: 'Figma' },
     contact: { avatarUrl: PEOPLE.dylanField, name: 'Dylan Field' },
-    date: 'Jun 21, 2023',
+    createdBy: { name: 'System', source: 'system' },
+    date: 'Jan 15, 2026 9:27 PM',
     id: 'figma',
-    owner: { avatarUrl: PEOPLE.jeffWilliams, name: 'Jeff Williams' },
-    rating: 2,
-    recordId: 'OPP-2',
-    title: 'Design Tooling',
+    title: 'Design Partnership',
   },
   airbnb: {
-    amount: '$2,433.89',
+    amount: '$50k',
+    avatarTone: 'green',
     company: { domain: 'airbnb.com', name: 'Airbnb' },
     contact: { avatarUrl: PEOPLE.brianChesky, name: 'Brian Chesky' },
-    date: 'Jun 6, 2023',
+    createdBy: {
+      avatarUrl: PEOPLE.eddyCue,
+      name: 'Eddy Cue',
+      source: 'member',
+    },
+    date: 'Mar 10, 2026 9:26 PM',
     id: 'airbnb',
-    owner: { avatarUrl: PEOPLE.katherineAdams, name: 'Katherine Adams' },
-    rating: 3,
-    recordId: 'OPP-8',
-    title: 'Travel Partnership',
+    title: 'Enterprise Plan Upgrade',
+  },
+  notion: {
+    amount: '$45k',
+    avatarTone: 'purple',
+    company: { domain: 'notion.com', name: 'Notion' },
+    contact: { avatarUrl: PEOPLE.ivanZhao, name: 'Ivan Zhao' },
+    createdBy: {
+      avatarUrl: PEOPLE.anonymousFelix,
+      name: 'Félix Malfait',
+      source: 'member',
+    },
+    date: 'Feb 18, 2026 3:14 PM',
+    id: 'notion',
+    title: 'Workspace Rollout',
+  },
+  stripe: {
+    amount: '$60k',
+    avatarTone: 'pink',
+    company: { domain: 'stripe.com', name: 'Stripe' },
+    contact: { avatarUrl: PEOPLE.patrickCollison, name: 'Patrick Collison' },
+    createdBy: { name: 'System', source: 'system' },
+    date: 'Feb 2, 2026 11:02 AM',
+    id: 'stripe',
+    title: 'Billing Expansion',
   },
 };
 
-const INITIAL_LANES: PipelineLanes = [['github'], ['airbnb'], ['figma']];
+const INITIAL_LANES: PipelineLanes = [
+  ['github', 'notion'],
+  ['airbnb'],
+  ['figma', 'stripe'],
+];
 
 const LANES_META: { color: CellSelectColor; label: string }[] = [
-  { color: 'pink', label: 'Identified' },
-  { color: 'purple', label: 'Qualified' },
-  { color: 'blue', label: 'Proposal' },
+  { color: 'pink', label: 'New' },
+  { color: 'purple', label: 'Meeting' },
+  { color: 'blue', label: 'Customer' },
 ];
 
 const Root = styled.div`
   background: ${THEME_LIGHT.background.primary};
   display: flex;
   flex-direction: column;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   height: 100%;
   overflow: hidden;
   position: relative;
@@ -127,7 +161,7 @@ const Root = styled.div`
 const BoardHeader = styled.div`
   align-items: center;
   border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
-  color: ${THEME_LIGHT.font.color.tertiary};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
   flex-shrink: 0;
   gap: 6px;
@@ -136,14 +170,20 @@ const BoardHeader = styled.div`
 `;
 
 const BoardTitle = styled.span`
-  color: ${THEME_LIGHT.font.color.primary};
+  color: ${THEME_LIGHT.font.color.secondary};
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
-  font-weight: ${THEME_LIGHT.font.weight.medium};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
 `;
 
-const BoardCount = styled.span`
-  color: ${THEME_LIGHT.font.color.tertiary};
+// Mirrors twenty-front's StyledDropdownLabelAdornments: the record count and
+// the dropdown chevron both read gray8, distinct from the secondary view name.
+const BoardAdornments = styled.span`
+  align-items: center;
+  color: ${THEME_LIGHT.color.gray8};
+  display: flex;
+  flex-shrink: 0;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  gap: 4px;
 `;
 
 const ColumnsHeaderGrid = styled.div`
@@ -192,15 +232,22 @@ const DealCard = styled.div`
   background: ${THEME_LIGHT.background.secondary};
   border: 1px solid ${THEME_LIGHT.border.color.medium};
   border-radius: ${THEME_LIGHT.border.radius.sm};
-  cursor: grab;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   overflow: hidden;
   touch-action: none;
   user-select: none;
 
-  &:active {
-    cursor: grabbing;
+  &:hover {
+    border-color: ${THEME_LIGHT.border.color.strong};
+  }
+
+  &:hover .deal-card-checkbox {
+    max-width: 24px;
+    opacity: 1;
+    pointer-events: auto;
   }
 
   &[data-dragging] {
@@ -211,15 +258,26 @@ const DealCard = styled.div`
 const CardHeader = styled.div`
   align-items: center;
   display: flex;
-  gap: 8px;
-  justify-content: space-between;
   padding: 8px 8px 4px;
+`;
+
+// The record identifier (avatar + name), mirroring twenty-front's
+// StyledRecordChipContainer: flexes to fill so the name ellipsizes and the
+// selection checkbox sits at the right edge.
+const CardIdentifier = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const CardTitle = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
+  flex: 1 1 auto;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
-  font-weight: ${THEME_LIGHT.font.weight.medium};
+  font-weight: ${THEME_LIGHT.font.weight.regular};
   line-height: 1.4;
   min-width: 0;
   overflow: hidden;
@@ -227,18 +285,28 @@ const CardTitle = styled.span`
   white-space: nowrap;
 `;
 
-const CheckboxContainer = styled.div`
+// twenty-front's checkbox-container: hidden until the card is hovered, then
+// the DealCard :hover rule eases it open (max-width 0 → 24px). The 5px padding
+// matches the hoverable checkbox's tap target.
+const CardCheckbox = styled.div`
   align-items: center;
   display: flex;
-  flex: 0 0 24px;
-  height: 24px;
+  flex-shrink: 0;
   justify-content: center;
-  width: 24px;
+  margin-left: auto;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 5px;
+  pointer-events: none;
+  transition: all ease-in-out 160ms;
 `;
 
+// The Secondary checkbox, unchecked: a square outlined in secondaryInverted.
 const CheckboxBox = styled.div`
-  border: 1px solid ${THEME_LIGHT.border.color.strong};
-  border-radius: 3px;
+  border: 1px solid ${THEME_LIGHT.border.color.secondaryInverted};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  flex-shrink: 0;
   height: 14px;
   width: 14px;
 `;
@@ -287,23 +355,35 @@ const FieldText = styled.span`
   white-space: nowrap;
 `;
 
-const StarsRow = styled.div`
+// twenty-front's inline-cell hover (StyledRecordInlineCellNormalModeOuterContainer):
+// editable values fill with a transparent.light background and a pointer cursor;
+// readonly fields (data-readonly, e.g. Created by) instead show a medium outline
+// with the default cursor. Hugs its content so the highlight wraps the value.
+const HoverableValue = styled.div`
   align-items: center;
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  cursor: pointer;
   display: inline-flex;
-  gap: 2px;
-  padding: 0 4px;
-`;
+  max-width: 100%;
+  min-width: 0;
+  outline: 1px solid transparent;
+  /* The value sits inside overflow:hidden wrappers, so an outset outline would
+     clip; inset it by 1px so the readonly border renders in full. */
+  outline-offset: -1px;
+  overflow: hidden;
+  padding: 2px 4px;
 
-const StarGlyph = styled.span`
-  align-items: center;
-  color: ${THEME_LIGHT.background.quaternary};
-  display: inline-flex;
-  height: 12px;
-  justify-content: center;
-  width: 12px;
+  &:hover {
+    background-color: ${THEME_LIGHT.background.transparent.light};
+  }
 
-  &[data-filled] {
-    color: ${THEME_LIGHT.font.color.secondary};
+  &[data-readonly] {
+    cursor: default;
+  }
+
+  &[data-readonly]:hover {
+    background-color: transparent;
+    outline-color: ${THEME_LIGHT.border.color.medium};
   }
 `;
 
@@ -386,45 +466,67 @@ function DealPersonChip({ person }: { person: DealPerson }) {
   );
 }
 
+function renderCreatedByLeftComponent(actor: DealActor): ReactNode {
+  if (actor.source === 'member') {
+    return (
+      <PersonAvatar
+        person={{
+          avatarUrl: actor.avatarUrl,
+          kind: 'person',
+          name: actor.name,
+        }}
+      />
+    );
+  }
+  return <IconRobot size={16} stroke={1.6} />;
+}
+
+function CreatedByChip({ actor }: { actor: DealActor }) {
+  return (
+    <Chip
+      clickable={false}
+      label={actor.name}
+      leftComponent={renderCreatedByLeftComponent(actor)}
+      variant="transparent"
+    />
+  );
+}
+
 function OpportunityCard({ data }: { data: DealData }) {
   return (
     <>
       <CardHeader>
-        <CardTitle>{data.title}</CardTitle>
-        <CheckboxContainer>
+        <CardIdentifier>
+          <PreviewAvatar size={16} tone={data.avatarTone}>
+            {data.title.charAt(0)}
+          </PreviewAvatar>
+          <CardTitle>{data.title}</CardTitle>
+        </CardIdentifier>
+        <CardCheckbox className="deal-card-checkbox">
           <CheckboxBox />
-        </CheckboxContainer>
+        </CardCheckbox>
       </CardHeader>
       <CardFields>
         <FieldRow icon={IconCurrencyDollar}>
-          <FieldText>{data.amount}</FieldText>
+          <HoverableValue>
+            <FieldText>{data.amount}</FieldText>
+          </HoverableValue>
+        </FieldRow>
+        <FieldRow icon={IconCreativeCommonsSa}>
+          <HoverableValue data-readonly="">
+            <CreatedByChip actor={data.createdBy} />
+          </HoverableValue>
+        </FieldRow>
+        <FieldRow icon={IconCalendarEvent}>
+          <HoverableValue>
+            <FieldText>{data.date}</FieldText>
+          </HoverableValue>
         </FieldRow>
         <FieldRow icon={IconBuildingSkyscraper}>
           <CompanyChip company={data.company} />
         </FieldRow>
-        <FieldRow icon={IconUserCircle}>
-          <DealPersonChip person={data.owner} />
-        </FieldRow>
-        <FieldRow icon={IconStar}>
-          <StarsRow>
-            {STAR_POSITIONS.map((position) => (
-              <StarGlyph
-                data-filled={position <= data.rating ? '' : undefined}
-                key={position}
-              >
-                <RatingStar fillColor="currentColor" />
-              </StarGlyph>
-            ))}
-          </StarsRow>
-        </FieldRow>
-        <FieldRow icon={IconCalendarEvent}>
-          <FieldText>{data.date}</FieldText>
-        </FieldRow>
         <FieldRow icon={IconUser}>
           <DealPersonChip person={data.contact} />
-        </FieldRow>
-        <FieldRow icon={IconId}>
-          <FieldText>{data.recordId}</FieldText>
         </FieldRow>
       </CardFields>
     </>
@@ -692,8 +794,11 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
     <Root>
       <BoardHeader>
         <IconLayoutKanban size={14} stroke={1.6} />
-        <BoardTitle>All Opportunities</BoardTitle>
-        <BoardCount>· 3</BoardCount>
+        <BoardTitle>By Stage</BoardTitle>
+        <BoardAdornments>
+          · 5
+          <IconChevronDown size={14} stroke={1.6} />
+        </BoardAdornments>
       </BoardHeader>
 
       <ColumnsHeaderGrid>
@@ -726,7 +831,7 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
               </DealCard>
             ))}
             <AddCardRow>
-              <IconPlus size={12} stroke={1.6} />
+              <IconPlus size={16} stroke={1.6} />
               New
             </AddCardRow>
           </LaneBody>
