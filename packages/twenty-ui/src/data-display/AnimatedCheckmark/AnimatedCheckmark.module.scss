@@ -1,5 +1,6 @@
 .animatedPath {
-  animation: draw-checkmark var(--animated-checkmark-duration, 0.5s) ease forwards;
+  animation: draw-checkmark var(--animated-checkmark-duration, 0.5s) ease
+    forwards;
 }
 
 @keyframes draw-checkmark {
