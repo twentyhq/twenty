@@ -175,7 +175,7 @@ describe('searchOutput', () => {
     expect(result.totalMatches).toBe(1);
     expect(result.matches[0].match).toContain('…');
     expect(result.matches[0].match.length).toBeLessThanOrEqual(
-      SEARCH_OUTPUT_MAX_MATCH_LENGTH + 1,
+      SEARCH_OUTPUT_MAX_MATCH_LENGTH,
     );
   });
 

@@ -36,7 +36,7 @@ const truncateMatch = (match: string): string => {
     return match;
   }
 
-  const half = Math.floor(SEARCH_OUTPUT_MAX_MATCH_LENGTH / 2);
+  const half = Math.floor((SEARCH_OUTPUT_MAX_MATCH_LENGTH - 1) / 2);
 
   return `${match.slice(0, half)}…${match.slice(match.length - half)}`;
 };
