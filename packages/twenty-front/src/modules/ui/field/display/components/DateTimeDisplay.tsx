@@ -4,8 +4,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { UserContext } from '@/users/contexts/UserContext';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isValid } from 'date-fns';
 import { useContext } from 'react';
 import { Temporal } from 'temporal-polyfill';
+import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 import { EllipsisDisplay } from './EllipsisDisplay';
@@ -36,14 +38,24 @@ export const DateTimeDisplay = ({
     localeCatalog: dateLocale.localeCatalog,
   });
 
+  // A date-time field can hold a date-only value (e.g. "2026-05-07") through
+  // imports or API writes. Temporal.Instant.from is strict and throws on such
+  // values, which would crash the whole field/widget. Parse leniently like
+  // formatDateTimeString does, so the timezone hint degrades instead of crashing.
+  const parsedDate = isNonEmptyString(value) ? new Date(value) : null;
+  const instant =
+    isDefined(parsedDate) && isValid(parsedDate)
+      ? Temporal.Instant.fromEpochMilliseconds(parsedDate.getTime())
+      : null;
+
   return (
     <EllipsisDisplay>
       {formattedDate}
       <span></span>
-      {isNonEmptyString(value) && (
+      {isDefined(instant) && (
         <>
           <StyledTimeZoneSpacer />
-          <TimeZoneAbbreviation instant={Temporal.Instant.from(value)} />
+          <TimeZoneAbbreviation instant={instant} />
         </>
       )}
     </EllipsisDisplay>
