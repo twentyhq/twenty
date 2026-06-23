@@ -2,6 +2,7 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/data-display';
@@ -46,7 +47,7 @@ export const SidePanelContextRecordChipAvatars = ({
         <Icon color={IconColor} size={theme.icon.size.sm} />
       ) : (
         <Avatar
-          avatarUrl={recordChipData.avatarUrl}
+          avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl)}
           placeholderColorSeed={recordChipData.recordId}
           placeholder={recordChipData.name}
           type={recordChipData.avatarType}

@@ -39,10 +39,10 @@ export const FieldWidgetRelationTable = ({
     ? widget.configuration.viewId
     : undefined;
 
-  const targetObjectMetadataId =
+  const relationObjectMetadataId =
     fieldDefinition.metadata.relationObjectMetadataId;
 
-  if (!isDefined(viewId) || !isDefined(targetObjectMetadataId)) {
+  if (!isDefined(viewId) || !isDefined(relationObjectMetadataId)) {
     return null;
   }
 
@@ -52,7 +52,7 @@ export const FieldWidgetRelationTable = ({
     >
       <StyledContainer>
         <RecordTableWidgetRendererContent
-          objectMetadataId={targetObjectMetadataId}
+          objectMetadataId={relationObjectMetadataId}
           viewId={viewId}
           widgetId={widget.id}
           isReadOnly={isPageLayoutInEditMode}

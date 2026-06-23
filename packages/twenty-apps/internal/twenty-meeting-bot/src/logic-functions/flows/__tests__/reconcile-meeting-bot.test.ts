@@ -7,6 +7,11 @@ import { reconcileMeetingBotForCalendarEventIds } from 'src/logic-functions/flow
 const scheduleRecallBotMock = vi.hoisted(() => vi.fn());
 const rescheduleRecallBotMock = vi.hoisted(() => vi.fn());
 const cancelRecallBotMock = vi.hoisted(() => vi.fn());
+const getCurrentWorkspaceIdMock = vi.hoisted(() => vi.fn());
+
+vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
+  getCurrentWorkspaceId: getCurrentWorkspaceIdMock,
+}));
 
 vi.mock('src/logic-functions/recall-api/schedule-recall-bot.util', () => ({
   scheduleRecallBot: scheduleRecallBotMock,
@@ -21,6 +26,7 @@ vi.mock('src/logic-functions/recall-api/cancel-recall-bot.util', () => ({
 }));
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
+const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const FUTURE_STARTS_AT = '2026-01-01T13:00:00.000Z';
 const FUTURE_RECALL_BOT_JOIN_AT = '2026-01-01T12:59:00.000Z';
 const FUTURE_ENDS_AT = '2026-01-01T14:00:00.000Z';
@@ -207,6 +213,8 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
+    getCurrentWorkspaceIdMock.mockReset();
+    getCurrentWorkspaceIdMock.mockReturnValue(WORKSPACE_ID);
     scheduleRecallBotMock.mockReset();
     scheduleRecallBotMock.mockResolvedValue({
       ok: true,
@@ -255,6 +263,7 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
       meetingUrl: 'https://meet.example.com/customer-sync',
       joinAt: FUTURE_RECALL_BOT_JOIN_AT,
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
         twentyCalendarEventId: 'calendar-event-1',
         twentyRealMeetingKey:
@@ -405,6 +414,7 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
       meetingUrl: 'https://meet.example.com/customer-sync',
       joinAt: FUTURE_RECALL_BOT_JOIN_AT,
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
         twentyCalendarEventId: 'calendar-event-1',
         twentyRealMeetingKey:

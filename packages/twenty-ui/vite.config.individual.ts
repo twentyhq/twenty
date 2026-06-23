@@ -6,7 +6,10 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 import packageJson from './package.json';
 
-const depNames = Object.keys(packageJson.dependencies || {});
+const depNames = Object.keys({
+  ...(packageJson.dependencies || {}),
+  ...(packageJson.peerDependencies || {}),
+});
 
 const isExternal = (id: string): boolean =>
   depNames.some((dep) => id === dep || id.startsWith(dep + '/'));

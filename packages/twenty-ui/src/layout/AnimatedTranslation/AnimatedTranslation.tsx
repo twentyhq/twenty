@@ -1,13 +1,12 @@
 import { motion } from 'framer-motion';
-import { useContext } from 'react';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 type AnimatedTranslationProps = {
   children: React.ReactNode;
 };
 
 export const AnimatedTranslation = ({ children }: AnimatedTranslationProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <motion.div

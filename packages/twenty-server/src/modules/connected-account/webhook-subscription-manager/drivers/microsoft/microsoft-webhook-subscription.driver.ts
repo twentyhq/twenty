@@ -1,0 +1,132 @@
+import { Injectable } from '@nestjs/common';
+
+import { type Subscription } from '@microsoft/microsoft-graph-types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { WebhookSubscriptionChannelType } from 'twenty-shared/types';
+
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { MICROSOFT_SUBSCRIPTION_TTL_MS } from 'src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/microsoft-subscription-ttl-ms.constant';
+import {
+  WebhookSubscriptionDriverException,
+  WebhookSubscriptionDriverExceptionCode,
+} from 'src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception';
+import {
+  type WebhookSubscriptionContext,
+  type WebhookSubscriptionDriver,
+  type WebhookSubscriptionResult,
+} from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
+import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
+
+type MicrosoftGraphResourceConfig = Pick<
+  Subscription,
+  'resource' | 'changeType'
+> & {
+  notificationPath: string;
+};
+
+const MICROSOFT_GRAPH_RESOURCE_CONFIG_BY_CHANNEL_TYPE: Record<
+  WebhookSubscriptionChannelType,
+  MicrosoftGraphResourceConfig
+> = {
+  [WebhookSubscriptionChannelType.MESSAGING]: {
+    resource: '/me/messages',
+    changeType: 'created,updated',
+    notificationPath: 'webhooks/microsoft/messaging',
+  },
+  [WebhookSubscriptionChannelType.CALENDAR]: {
+    resource: '/me/events',
+    changeType: 'created,updated,deleted',
+    notificationPath: 'webhooks/microsoft/calendar',
+  },
+};
+
+@Injectable()
+export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDriver {
+  constructor(
+    private readonly microsoftOAuth2ClientProvider: MicrosoftOAuth2ClientProvider,
+    private readonly twentyConfigService: TwentyConfigService,
+  ) {}
+
+  async createSubscription(
+    connectedAccountId: string,
+    channelType: WebhookSubscriptionChannelType,
+    clientState: string,
+  ): Promise<WebhookSubscriptionResult> {
+    const resourceConfig =
+      MICROSOFT_GRAPH_RESOURCE_CONFIG_BY_CHANNEL_TYPE[channelType];
+    const graphClient =
+      await this.microsoftOAuth2ClientProvider.getClient(connectedAccountId);
+
+    const notificationUrl = `${this.twentyConfigService.get('SERVER_URL')}/${resourceConfig.notificationPath}`;
+
+    const subscriptionPayload: Subscription = {
+      changeType: resourceConfig.changeType,
+      notificationUrl,
+      lifecycleNotificationUrl: notificationUrl,
+      resource: resourceConfig.resource,
+      expirationDateTime: new Date(
+        Date.now() + MICROSOFT_SUBSCRIPTION_TTL_MS,
+      ).toISOString(),
+      clientState,
+    };
+
+    const subscription: Subscription = await graphClient
+      .api('/subscriptions')
+      .post(subscriptionPayload);
+
+    return this.toResult(subscription);
+  }
+
+  async renewSubscription(
+    context: WebhookSubscriptionContext,
+  ): Promise<WebhookSubscriptionResult> {
+    const graphClient = await this.microsoftOAuth2ClientProvider.getClient(
+      context.connectedAccountId,
+    );
+
+    const subscriptionPatch: Subscription = {
+      expirationDateTime: new Date(
+        Date.now() + MICROSOFT_SUBSCRIPTION_TTL_MS,
+      ).toISOString(),
+    };
+
+    const renewedSubscription: Subscription = await graphClient
+      .api(`/subscriptions/${context.externalSubscriptionId}`)
+      .patch(subscriptionPatch);
+
+    return this.toResult(renewedSubscription);
+  }
+
+  async deleteSubscription(context: WebhookSubscriptionContext): Promise<void> {
+    if (!isDefined(context.externalSubscriptionId)) {
+      return;
+    }
+
+    const graphClient = await this.microsoftOAuth2ClientProvider.getClient(
+      context.connectedAccountId,
+    );
+
+    await graphClient
+      .api(`/subscriptions/${context.externalSubscriptionId}`)
+      .delete();
+  }
+
+  private toResult(subscription: Subscription): WebhookSubscriptionResult {
+    if (
+      !isDefined(subscription.id) ||
+      !isDefined(subscription.expirationDateTime)
+    ) {
+      throw new WebhookSubscriptionDriverException(
+        'Microsoft Graph subscription response did not include an id or expiration',
+        WebhookSubscriptionDriverExceptionCode.PROVIDER_RESPONSE_INVALID,
+      );
+    }
+
+    return {
+      externalSubscriptionId: subscription.id,
+      externalResourceId: null,
+      expiresAt: new Date(subscription.expirationDateTime),
+    };
+  }
+}

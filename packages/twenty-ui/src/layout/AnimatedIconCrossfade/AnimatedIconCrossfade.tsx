@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './AnimatedIconCrossfade.module.scss';
 
@@ -19,7 +19,7 @@ export const AnimatedIconCrossfade = ({
   InactiveIcon,
   size,
 }: AnimatedIconCrossfadeProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const iconSize = size ?? theme.icon.size.sm;
 

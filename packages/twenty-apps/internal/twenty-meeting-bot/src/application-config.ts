@@ -10,6 +10,7 @@ import { MEETING_BOT_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIF
 import { MEETING_BOT_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/meeting-bot-waiting-room-timeout-seconds-app-variable-universal-identifier';
 import { DEFAULT_MEETING_BOT_JOIN_EARLY_MINUTES } from 'src/logic-functions/constants/default-meeting-bot-join-early-minutes';
 import { DEFAULT_MEETING_BOT_NAME } from 'src/logic-functions/constants/default-meeting-bot-name';
+import { DEFAULT_MEETING_BOT_RECORDING_RETENTION_HOURS } from 'src/logic-functions/constants/default-meeting-bot-recording-retention-hours';
 import { DEFAULT_RECALL_REGION } from 'src/logic-functions/constants/default-recall-region';
 import { MEETING_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS } from 'src/logic-functions/constants/meeting-bot-everyone-left-timeout-seconds';
 import { MEETING_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-everyone-left-timeout-seconds-env-var-name';
@@ -17,6 +18,7 @@ import { MEETING_BOT_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions
 import { MEETING_BOT_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-name-env-var-name';
 import { MEETING_BOT_NOONE_JOINED_TIMEOUT_SECONDS } from 'src/logic-functions/constants/meeting-bot-noone-joined-timeout-seconds';
 import { MEETING_BOT_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-noone-joined-timeout-seconds-env-var-name';
+import { MEETING_BOT_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-recording-retention-hours-env-var-name';
 import { MEETING_BOT_WAITING_ROOM_TIMEOUT_SECONDS } from 'src/logic-functions/constants/meeting-bot-waiting-room-timeout-seconds';
 import { MEETING_BOT_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-waiting-room-timeout-seconds-env-var-name';
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
@@ -77,6 +79,10 @@ export default defineApplication({
     },
     [RECALL_REGION_ENV_VAR_NAME]: {
       description: `Recall.ai region used for API requests. Defaults to ${DEFAULT_RECALL_REGION} when unset. Europe Frankfurt is eu-central-1.`,
+      isSecret: false,
+    },
+    [MEETING_BOT_RECORDING_RETENTION_HOURS_ENV_VAR_NAME]: {
+      description: `How many hours Recall.ai retains recording media after processing. Defaults to ${DEFAULT_MEETING_BOT_RECORDING_RETENTION_HOURS} hours (6 days and 22 hours) to stay below Recall.ai's 7-day free storage window. Values above 168 hours may incur Recall.ai storage charges.`,
       isSecret: false,
     },
     [RECALL_WEBHOOK_SECRET_ENV_VAR_NAME]: {

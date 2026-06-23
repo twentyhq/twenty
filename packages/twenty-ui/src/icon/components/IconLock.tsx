@@ -1,13 +1,11 @@
-import { useContext } from 'react';
-
 import IconLockRaw from '@assets/icons/lock.svg?react';
 import { type IconComponentProps } from '@ui/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 type IconLockCustomProps = Pick<IconComponentProps, 'size'>;
 
 export const IconLockCustom = (props: IconLockCustomProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
   return <IconLockRaw height={size} width={size} />;

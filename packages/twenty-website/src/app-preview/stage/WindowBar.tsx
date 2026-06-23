@@ -25,7 +25,7 @@ const BarRoot = styled.div<{ $grabbable?: boolean; $isDragging?: boolean }>`
 
 const Title = styled.span`
   color: ${stage.titleColor};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   font-weight: ${THEME_LIGHT.font.weight.medium};
   justify-self: center;

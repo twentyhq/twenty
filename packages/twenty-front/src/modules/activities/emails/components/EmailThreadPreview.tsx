@@ -14,6 +14,7 @@ import {
   type TimelineThread,
 } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;
@@ -118,7 +119,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
-            avatarUrl={thread?.firstParticipant?.avatarUrl}
+            avatarUrl={getAbsoluteImageUrl(thread?.firstParticipant?.avatarUrl)}
             placeholder={thread.firstParticipant.displayName}
             placeholderColorSeed={
               thread.firstParticipant.workspaceMemberId ||
@@ -129,7 +130,9 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
           {isDefined(thread?.lastTwoParticipants?.[0]) && (
             <StyledAvatarWrapper>
               <Avatar
-                avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
+                avatarUrl={getAbsoluteImageUrl(
+                  thread.lastTwoParticipants[0].avatarUrl,
+                )}
                 placeholder={thread.lastTwoParticipants[0].displayName}
                 placeholderColorSeed={
                   thread.lastTwoParticipants[0].workspaceMemberId ||
@@ -142,7 +145,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
           {finalDisplayedName && (
             <StyledAvatarWrapper>
               <Avatar
-                avatarUrl={finalAvatarUrl}
+                avatarUrl={getAbsoluteImageUrl(finalAvatarUrl)}
                 placeholder={finalDisplayedName}
                 type="rounded"
                 color={isCountIcon ? theme.grayScale.gray11 : undefined}

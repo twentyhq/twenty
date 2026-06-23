@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useContext } from 'react';
 import { type AnimationDuration } from '@ui/theme';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 type AnimatedEaseInOutProps = {
   isOpen: boolean;
@@ -20,7 +19,7 @@ export const AnimatedEaseInOut = ({
   duration = 'normal',
   initial = true,
 }: AnimatedEaseInOutProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <AnimatePresence initial={initial}>

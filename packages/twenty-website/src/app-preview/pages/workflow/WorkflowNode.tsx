@@ -114,7 +114,7 @@ const NodeContent = styled.div`
 
 const NodeLabel = styled.div`
   color: ${colors.textLight};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 11px;
   font-weight: ${THEME_LIGHT.font.weight.semiBold};
   line-height: 1;
@@ -122,7 +122,7 @@ const NodeLabel = styled.div`
 
 const NodeTitle = styled.div`
   color: ${colors.textPrimary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;

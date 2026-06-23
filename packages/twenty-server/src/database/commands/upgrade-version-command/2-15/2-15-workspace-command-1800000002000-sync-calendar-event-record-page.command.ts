@@ -61,11 +61,16 @@ const CALENDAR_EVENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
     .widgets.fields.universalIdentifier,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
     .widgets.participants.universalIdentifier,
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
-    .widgets.callRecordings.universalIdentifier,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
     .timeline.widgets.timeline.universalIdentifier,
 ];
+
+const CALENDAR_EVENT_CALL_RECORDINGS_WIDGET_UNIVERSAL_IDENTIFIER =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
+    .widgets.callRecordings.universalIdentifier;
+
+const CALENDAR_EVENT_CALL_RECORDINGS_FIELD_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.calendarEvent.fields.callRecordings.universalIdentifier;
 
 @RegisteredWorkspaceCommand('2.15.0', 1800000002000)
 @Command({
@@ -96,6 +101,7 @@ export class SyncCalendarEventRecordPageCommand extends ActiveOrSuspendedWorkspa
 
     const {
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       flatViewMaps,
       flatViewFieldMaps,
       flatViewFieldGroupMaps,
@@ -104,6 +110,7 @@ export class SyncCalendarEventRecordPageCommand extends ActiveOrSuspendedWorkspa
       flatPageLayoutWidgetMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
       'flatViewMaps',
       'flatViewFieldMaps',
       'flatViewFieldGroupMaps',
@@ -124,6 +131,19 @@ export class SyncCalendarEventRecordPageCommand extends ActiveOrSuspendedWorkspa
 
       return;
     }
+
+    const hasCallRecordingsField = isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        CALENDAR_EVENT_CALL_RECORDINGS_FIELD_UNIVERSAL_IDENTIFIER
+      ],
+    );
+
+    const pageLayoutWidgetUniversalIdentifiers = hasCallRecordingsField
+      ? [
+          ...CALENDAR_EVENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS,
+          CALENDAR_EVENT_CALL_RECORDINGS_WIDGET_UNIVERSAL_IDENTIFIER,
+        ]
+      : CALENDAR_EVENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS;
 
     const { allFlatEntityMaps: standardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
@@ -169,8 +189,7 @@ export class SyncCalendarEventRecordPageCommand extends ActiveOrSuspendedWorkspa
         standardFlatEntityMaps:
           standardAllFlatEntityMaps.flatPageLayoutWidgetMaps,
         existingFlatEntityMaps: flatPageLayoutWidgetMaps,
-        universalIdentifiers:
-          CALENDAR_EVENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS,
+        universalIdentifiers: pageLayoutWidgetUniversalIdentifiers,
       });
 
     const totalOperationCount =
