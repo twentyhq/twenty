@@ -58,6 +58,20 @@ export const sanitizeRawUpdateFieldInput = ({
       });
   }
 
+  // System fields (createdAt, updatedAt, createdBy, ...) are framework-managed and
+  // must stay active: deactivating one drops its value from the UI and silently
+  // no-ops sorting while the column stays populated. Deletion is blocked the same way.
+  if (
+    !isSystemBuild &&
+    existingFlatFieldMetadata.isSystem &&
+    updatedEditableFieldProperties.isActive === false
+  ) {
+    throw new FieldMetadataException(
+      `Cannot deactivate system field "${existingFlatFieldMetadata.name}"`,
+      FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+    );
+  }
+
   if (!isStandardField || isSystemBuild) {
     return {
       updatedEditableFieldProperties,
