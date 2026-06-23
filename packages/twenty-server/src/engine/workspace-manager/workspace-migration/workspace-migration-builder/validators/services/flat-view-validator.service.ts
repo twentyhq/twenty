@@ -1,19 +1,12 @@
 import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import {
-  CoreObjectNameSingular,
-  FieldMetadataType,
-  RelationType,
-  ViewType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -25,10 +18,8 @@ export class FlatViewValidatorService {
 
   private isAllowedKanbanMainGroupByField({
     mainGroupByFieldMetadata,
-    flatObjectMetadataMaps,
   }: {
     mainGroupByFieldMetadata: UniversalFlatFieldMetadata;
-    flatObjectMetadataMaps: UniversalFlatEntityMaps<UniversalFlatObjectMetadata>;
   }): boolean {
     if (mainGroupByFieldMetadata.type === FieldMetadataType.SELECT) {
       return true;
@@ -40,30 +31,10 @@ export class FlatViewValidatorService {
       return false;
     }
 
-    const isManyToOneRelation =
+    return (
       mainGroupByFieldMetadata.type === FieldMetadataType.RELATION &&
       mainGroupByFieldMetadata.universalSettings?.relationType ===
-        RelationType.MANY_TO_ONE;
-
-    if (!isManyToOneRelation) {
-      return false;
-    }
-
-    const relationTargetObjectMetadataUniversalIdentifier =
-      mainGroupByFieldMetadata.relationTargetObjectMetadataUniversalIdentifier;
-
-    if (!isDefined(relationTargetObjectMetadataUniversalIdentifier)) {
-      return false;
-    }
-
-    const relationTargetObjectMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: relationTargetObjectMetadataUniversalIdentifier,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    return (
-      relationTargetObjectMetadata?.nameSingular ===
-      CoreObjectNameSingular.WorkspaceMember
+        RelationType.MANY_TO_ONE
     );
   }
 
@@ -73,7 +44,6 @@ export class FlatViewValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewMaps: optimisticFlatViewMaps,
       flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.view
@@ -161,7 +131,6 @@ export class FlatViewValidatorService {
       } else if (
         !this.isAllowedKanbanMainGroupByField({
           mainGroupByFieldMetadata,
-          flatObjectMetadataMaps,
         })
       ) {
         validationResult.errors.push({
@@ -195,7 +164,6 @@ export class FlatViewValidatorService {
       } else if (
         !this.isAllowedKanbanMainGroupByField({
           mainGroupByFieldMetadata,
-          flatObjectMetadataMaps,
         })
       ) {
         validationResult.errors.push({
@@ -367,7 +335,6 @@ export class FlatViewValidatorService {
       } else if (
         !this.isAllowedKanbanMainGroupByField({
           mainGroupByFieldMetadata,
-          flatObjectMetadataMaps,
         })
       ) {
         validationResult.errors.push({
