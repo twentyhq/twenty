@@ -8,6 +8,31 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEventExceptionValue = {
+  type?: string;
+  value?: string;
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  fingerprint?: string[];
+  tags?: Record<string, string>;
+};
+
+const getExceptionValues = (event: SentryEvent) => {
+  return event.exception?.values ?? [];
+};
+
+const isProseMirrorPositionOutsideFragmentEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) =>
+      exception.type === 'RangeError' &&
+      exception.value?.includes('outside of fragment') === true,
+  );
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +79,23 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isProseMirrorPositionOutsideFragmentEvent(event)) {
+                event.fingerprint = [
+                  'advanced-text-editor',
+                  'prosemirror',
+                  'position-outside-fragment',
+                ];
+                event.tags = {
+                  ...event.tags,
+                  feature: 'advanced-text-editor',
+                  component: 'prosemirror',
+                  cause: 'position-outside-fragment',
+                };
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);

@@ -96,10 +96,23 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
       imageWrapper.style.width = `${newWidth}px`;
     };
 
+    const stopResize = () => {
+      currentResizeParams = null;
+      setResizeParams(null);
+
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
     const handleMouseUp = (event: MouseEvent) => {
       const imageWrapper = imageWrapperRef.current;
 
-      if (!isDefined(imageWrapper) || !isDefined(currentResizeParams)) {
+      if (!isDefined(currentResizeParams)) {
+        return;
+      }
+
+      if (!isDefined(imageWrapper)) {
+        stopResize();
         return;
       }
 
@@ -108,16 +121,11 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
         isHovering
       ) {
         setIsHovering(false);
-        return;
       }
 
       const finalWidth = imageWrapper.clientWidth;
-      currentResizeParams = null;
-      setResizeParams(null);
+      stopResize();
       updateAttributes({ width: finalWidth });
-
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
     };
 
     const startResize = (resizeParams: ResizeParams) => {
