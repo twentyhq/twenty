@@ -4,10 +4,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { healCallRecordingsMissingBot } from 'src/logic-functions/flows/heal-call-recordings-missing-bot.util';
 
 const scheduleRecallBotMock = vi.hoisted(() => vi.fn());
-const fetchCurrentWorkspaceIdMock = vi.hoisted(() => vi.fn());
+const getCurrentWorkspaceIdMock = vi.hoisted(() => vi.fn());
 
-vi.mock('src/logic-functions/data/fetch-current-workspace-id.util', () => ({
-  fetchCurrentWorkspaceId: fetchCurrentWorkspaceIdMock,
+vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
+  getCurrentWorkspaceId: getCurrentWorkspaceIdMock,
 }));
 
 vi.mock('src/logic-functions/recall-api/schedule-recall-bot.util', () => ({
@@ -133,8 +133,8 @@ const buildCalendarEvent = (
 describe('healCallRecordingsMissingBot', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    fetchCurrentWorkspaceIdMock.mockReset();
-    fetchCurrentWorkspaceIdMock.mockResolvedValue(WORKSPACE_ID);
+    getCurrentWorkspaceIdMock.mockReset();
+    getCurrentWorkspaceIdMock.mockReturnValue(WORKSPACE_ID);
     scheduleRecallBotMock.mockReset();
     scheduleRecallBotMock.mockResolvedValue({
       ok: true,

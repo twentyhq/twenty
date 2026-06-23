@@ -6,10 +6,10 @@ import { reapOrphanedMeetingBots } from 'src/logic-functions/flows/reap-orphaned
 const listScheduledRecallBotsMock = vi.hoisted(() => vi.fn());
 const cancelRecallBotMock = vi.hoisted(() => vi.fn());
 const ejectRecallBotMock = vi.hoisted(() => vi.fn());
-const fetchCurrentWorkspaceIdMock = vi.hoisted(() => vi.fn());
+const getCurrentWorkspaceIdMock = vi.hoisted(() => vi.fn());
 
-vi.mock('src/logic-functions/data/fetch-current-workspace-id.util', () => ({
-  fetchCurrentWorkspaceId: fetchCurrentWorkspaceIdMock,
+vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
+  getCurrentWorkspaceId: getCurrentWorkspaceIdMock,
 }));
 
 vi.mock(
@@ -92,8 +92,8 @@ const buildCurrentWorkspaceBot = ({
 describe('reapOrphanedMeetingBots', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    fetchCurrentWorkspaceIdMock.mockReset();
-    fetchCurrentWorkspaceIdMock.mockResolvedValue(CURRENT_WORKSPACE_ID);
+    getCurrentWorkspaceIdMock.mockReset();
+    getCurrentWorkspaceIdMock.mockReturnValue(CURRENT_WORKSPACE_ID);
     listScheduledRecallBotsMock.mockReset();
     cancelRecallBotMock.mockReset();
     cancelRecallBotMock.mockResolvedValue({ ok: true });
@@ -399,7 +399,7 @@ describe('reapOrphanedMeetingBots', () => {
   });
 
   it('skips reaping when the current workspace cannot be resolved', async () => {
-    fetchCurrentWorkspaceIdMock.mockResolvedValue(undefined);
+    getCurrentWorkspaceIdMock.mockReturnValue(undefined);
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
       bots: [

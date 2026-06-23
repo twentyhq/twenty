@@ -5,8 +5,8 @@ import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-r
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
-import { fetchCurrentWorkspaceId } from 'src/logic-functions/data/fetch-current-workspace-id.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
+import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import {
@@ -42,7 +42,7 @@ export const reapOrphanedMeetingBots = async ({
     return { scannedBotCount: 0, canceledExternalBotIds: [] };
   }
 
-  const currentWorkspaceId = await fetchCurrentWorkspaceId();
+  const currentWorkspaceId = getCurrentWorkspaceId();
 
   if (isUndefined(currentWorkspaceId)) {
     console.warn(

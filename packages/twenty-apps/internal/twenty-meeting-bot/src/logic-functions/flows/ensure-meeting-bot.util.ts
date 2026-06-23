@@ -5,8 +5,8 @@ import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-r
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotMetadata } from 'src/logic-functions/domain/build-recall-bot-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
-import { fetchCurrentWorkspaceId } from 'src/logic-functions/data/fetch-current-workspace-id.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
+import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
@@ -37,7 +37,7 @@ export const ensureMeetingBot = async (
     return false;
   }
 
-  const workspaceId = await fetchCurrentWorkspaceId();
+  const workspaceId = getCurrentWorkspaceId();
 
   if (isUndefined(workspaceId)) {
     console.error(
