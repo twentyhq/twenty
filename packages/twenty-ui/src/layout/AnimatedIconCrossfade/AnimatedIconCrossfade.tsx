@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import React, { useContext } from 'react';
+import { clsx } from 'clsx';
+import { useContext } from 'react';
 
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme-constants';
@@ -32,34 +32,22 @@ export const AnimatedIconCrossfade = ({
         } as React.CSSProperties
       }
     >
-      <motion.div
-        className={styles.layer}
-        initial={false}
-        animate={{
-          opacity: isActive ? 0 : 1,
-          scale: isActive ? 0.85 : 1,
-        }}
-        transition={{
-          duration: theme.animation.duration.fast,
-          ease: 'easeInOut',
-        }}
+      <div
+        className={clsx(
+          styles.layer,
+          isActive ? styles.hidden : styles.visible,
+        )}
       >
         <InactiveIcon size={iconSize} />
-      </motion.div>
-      <motion.div
-        className={styles.layer}
-        initial={false}
-        animate={{
-          opacity: isActive ? 1 : 0,
-          scale: isActive ? 1 : 0.85,
-        }}
-        transition={{
-          duration: theme.animation.duration.fast,
-          ease: 'easeInOut',
-        }}
+      </div>
+      <div
+        className={clsx(
+          styles.layer,
+          isActive ? styles.visible : styles.hidden,
+        )}
       >
         <ActiveIcon size={iconSize} />
-      </motion.div>
+      </div>
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import { clsx } from 'clsx';
-import { type MotionProps, motion } from 'framer-motion';
 import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -17,13 +16,12 @@ import {
 
 import styles from './AnimatedButton.module.scss';
 
-export type AnimatedButtonProps = ButtonProps &
-  Pick<MotionProps, 'animate' | 'transition'> & {
-    animatedSvg: React.ReactNode;
-    soonLabel?: string;
-    // Renders a square icon-only button (width matches the size-based height).
-    square?: boolean;
-  };
+export type AnimatedButtonProps = ButtonProps & {
+  animatedSvg: React.ReactNode;
+  soonLabel?: string;
+  // Renders a square icon-only button (width matches the size-based height).
+  square?: boolean;
+};
 
 type AnimatedButtonDynamicStyles = {
   background: string;
@@ -329,8 +327,6 @@ export const AnimatedButton = ({
   dataTestId,
   hotkeys,
   ariaLabel,
-  animate,
-  transition,
   dataClickOutsideId,
   dataGloballyPreventClickOutside,
   soonLabel = 'Soon',
@@ -392,23 +388,11 @@ export const AnimatedButton = ({
       data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
     >
       {Icon && (
-        <motion.div
-          className={styles.motion}
-          animate={animate}
-          transition={transition}
-        >
+        <div className={styles.motion}>
           <Icon size={theme.icon.size.sm} aria-hidden />
-        </motion.div>
+        </div>
       )}
-      {animatedSvg && (
-        <motion.div
-          className={styles.motion}
-          animate={animate}
-          transition={transition}
-        >
-          {animatedSvg}
-        </motion.div>
-      )}
+      {animatedSvg && <div className={styles.motion}>{animatedSvg}</div>}
       {title}
       {hotkeys && !isMobile && (
         <>
