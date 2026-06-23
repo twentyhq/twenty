@@ -14,9 +14,7 @@ import {
 import type { CustomException } from 'src/utils/custom-exception';
 
 @Catch(ServerWebhookTriggerException)
-export class ServerWebhookTriggerRestApiExceptionFilter
-  implements ExceptionFilter
-{
+export class ServerWebhookTriggerRestApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
   ) {}

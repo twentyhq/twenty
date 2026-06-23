@@ -74,9 +74,7 @@ describe('ServerCronTriggerCronJob', () => {
   });
 
   it('skips rows whose cron pattern does not match the current minute', async () => {
-    jest
-      .useFakeTimers()
-      .setSystemTime(new Date('2026-06-23T10:30:00.000Z'));
+    jest.useFakeTimers().setSystemTime(new Date('2026-06-23T10:30:00.000Z'));
 
     const { job, messageQueueService } = buildJob({
       rows: [

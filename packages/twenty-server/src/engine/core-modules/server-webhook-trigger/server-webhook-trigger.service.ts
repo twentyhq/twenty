@@ -43,11 +43,7 @@ export class ServerWebhookTriggerService {
     // billing, throttling, env vars all apply against that workspace.
     const ownerLogicFunction = await this.logicFunctionRepository
       .createQueryBuilder('lf')
-      .innerJoin(
-        'core.application',
-        'app',
-        'app.id = lf."applicationId"',
-      )
+      .innerJoin('core.application', 'app', 'app.id = lf."applicationId"')
       .innerJoin(
         'core.applicationRegistration',
         'reg',

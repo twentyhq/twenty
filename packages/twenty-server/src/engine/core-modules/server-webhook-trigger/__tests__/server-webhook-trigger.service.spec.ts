@@ -130,7 +130,9 @@ describe('ServerWebhookTriggerService', () => {
       expect.arrayContaining([
         expect.stringContaining('lf."universalIdentifier" = :uid'),
         expect.stringContaining('lf."workspaceId" = reg."workspaceId"'),
-        expect.stringContaining('lf."serverWebhookTriggerSettings" IS NOT NULL'),
+        expect.stringContaining(
+          'lf."serverWebhookTriggerSettings" IS NOT NULL',
+        ),
         expect.stringContaining('lf."deletedAt" IS NULL'),
         expect.stringContaining('reg."deletedAt" IS NULL'),
         expect.stringContaining('reg."workspaceId" IS NOT NULL'),
