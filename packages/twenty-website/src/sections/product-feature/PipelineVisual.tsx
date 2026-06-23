@@ -277,7 +277,7 @@ const CardTitle = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
   flex: 1 1 auto;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
-  font-weight: ${THEME_LIGHT.font.weight.regular};
+  font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
   min-width: 0;
   overflow: hidden;
