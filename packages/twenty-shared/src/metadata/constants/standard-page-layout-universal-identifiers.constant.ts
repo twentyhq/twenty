@@ -426,33 +426,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   },
-  calendarEventRecordPage: {
-    universalIdentifier: 'b9b10e40-9ce2-4704-8ac6-c6e92e2563c1',
-    tabs: {
-      home: {
-        universalIdentifier: 'c80a0407-25f5-438b-8c32-1ce9cde95657',
-        widgets: {
-          fields: {
-            universalIdentifier: 'fea5c1c2-0c1d-4d2e-a14c-a10108b0db0f',
-          },
-          participants: {
-            universalIdentifier: '6faea537-02fa-4993-957c-f2e1654986bd',
-          },
-          callRecordings: {
-            universalIdentifier: 'f473b435-e2d4-4928-8d90-1db0094389f7',
-          },
-        },
-      },
-      timeline: {
-        universalIdentifier: '9cb35d6d-932d-49bc-b303-593116ca5343',
-        widgets: {
-          timeline: {
-            universalIdentifier: '8273e2c4-cc17-4d3e-ba08-5bac612b5d44',
-          },
-        },
-      },
-    },
-  },
   calendarEventParticipantRecordPage: {
     universalIdentifier: '20202020-a10c-400c-800c-ca1e0a0c0001',
     tabs: {

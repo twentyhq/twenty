@@ -23,17 +23,5 @@ export const computeStandardCalendarEventViews = (
         calendarFieldName: 'startsAt',
       },
     }),
-    calendarEventRecordPageFields: createStandardViewFlatMetadata({
-      ...args,
-      objectName: 'calendarEvent',
-      context: {
-        viewName: 'calendarEventRecordPageFields',
-        name: 'Calendar Event Record Page Fields',
-        type: ViewType.FIELDS_WIDGET,
-        key: null,
-        position: 0,
-        icon: 'IconList',
-      },
-    }),
   };
 };
