@@ -1,9 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { SEARCH_OUTPUT_MAX_LINE_LENGTH } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/search-output-max-line-length.constant';
+import RE2 from 're2';
+
+import { SEARCH_OUTPUT_MAX_MATCH_LENGTH } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/search-output-max-match-length.constant';
 import { isDefined } from 'twenty-shared/utils';
 
 export type SearchMatch = {
-  lineNumber: number;
+  charOffset: number;
   match: string;
   context: string;
 };
@@ -23,37 +25,40 @@ const compilePattern = (pattern: string): RegExp => {
   }
 
   try {
-    return new RegExp(pattern);
+    return new RE2(pattern, 'g');
   } catch {
-    return new RegExp(escapeRegExp(pattern));
+    return new RE2(escapeRegExp(pattern), 'g');
   }
 };
 
-const truncateLine = (line: string): string =>
-  line.length > SEARCH_OUTPUT_MAX_LINE_LENGTH
-    ? `${line.slice(0, SEARCH_OUTPUT_MAX_LINE_LENGTH)}…`
-    : line;
-
-
-const truncateAroundMatch = (
-  line: string,
-  matchIndex: number,
-  matchLength: number,
-): string => {
-  if (line.length <= SEARCH_OUTPUT_MAX_LINE_LENGTH) {
-    return line;
+const truncateMatch = (match: string): string => {
+  if (match.length <= SEARCH_OUTPUT_MAX_MATCH_LENGTH) {
+    return match;
   }
 
-  const matchCenter = matchIndex + Math.floor(matchLength / 2);
-  const half = Math.floor(SEARCH_OUTPUT_MAX_LINE_LENGTH / 2);
+  const half = Math.floor(SEARCH_OUTPUT_MAX_MATCH_LENGTH / 2);
 
-  const end = Math.min(line.length, Math.max(matchCenter + half, half * 2));
-  const start = Math.max(0, end - SEARCH_OUTPUT_MAX_LINE_LENGTH);
+  return `${match.slice(0, half)}…${match.slice(match.length - half)}`;
+};
+
+const buildContext = ({
+  content,
+  index,
+  length,
+  contextChars,
+}: {
+  content: string;
+  index: number;
+  length: number;
+  contextChars: number;
+}): string => {
+  const start = Math.max(0, index - contextChars);
+  const end = Math.min(content.length, index + length + contextChars);
 
   const prefix = start > 0 ? '…' : '';
-  const suffix = end < line.length ? '…' : '';
+  const suffix = end < content.length ? '…' : '';
 
-  return `${prefix}${line.slice(start, end)}${suffix}`;
+  return `${prefix}${content.slice(start, end)}${suffix}`;
 };
 
 export const searchOutput = ({
@@ -61,60 +66,50 @@ export const searchOutput = ({
   pattern,
   maxMatches,
   offset,
-  contextLines,
+  contextChars,
 }: {
   content: string;
   pattern: string;
   maxMatches: number;
   offset: number;
-  contextLines: number;
+  contextChars: number;
 }): SearchOutputResult => {
-  const lines = content.split('\n');
   const regex = compilePattern(pattern);
 
-  const matchLineIndices: number[] = [];
+  const matches: SearchMatch[] = [];
+  let totalMatches = 0;
 
-  for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-    if (regex.test(lines[lineIndex])) {
-      matchLineIndices.push(lineIndex);
+  let execResult = regex.exec(content);
+
+  while (isDefined(execResult)) {
+    const index = execResult.index;
+    const matched = execResult[0];
+
+    if (totalMatches >= offset && matches.length < maxMatches) {
+      matches.push({
+        charOffset: index,
+        match: truncateMatch(matched),
+        context: buildContext({
+          content,
+          index,
+          length: matched.length,
+          contextChars,
+        }),
+      });
     }
+
+    totalMatches += 1;
+
+    if (matched.length === 0) {
+      regex.lastIndex += 1;
+    }
+
+    execResult = regex.exec(content);
   }
-
-  const totalMatches = matchLineIndices.length;
-  const selected = matchLineIndices.slice(offset, offset + maxMatches);
-
-  const matches: SearchMatch[] = selected.map((lineIndex) => {
-    const start = Math.max(0, lineIndex - contextLines);
-    const end = Math.min(lines.length - 1, lineIndex + contextLines);
-
-    const matchInLine = regex.exec(lines[lineIndex]);
-
-    const truncateMatchedLine = (line: string): string =>
-      isDefined(matchInLine)
-        ? truncateAroundMatch(line, matchInLine.index, matchInLine[0].length)
-        : truncateLine(line);
-
-    const contextBlock: string[] = [];
-
-    for (let cursor = start; cursor <= end; cursor++) {
-      const lineText =
-        cursor === lineIndex
-          ? truncateMatchedLine(lines[cursor])
-          : truncateLine(lines[cursor]);
-
-      contextBlock.push(`${cursor + 1}: ${lineText}`);
-    }
-
-    return {
-      lineNumber: lineIndex + 1,
-      match: truncateMatchedLine(lines[lineIndex]),
-      context: contextBlock.join('\n'),
-    };
-  });
 
   return {
     matches,
     totalMatches,
-    hasMore: offset + selected.length < totalMatches,
+    hasMore: offset + matches.length < totalMatches,
   };
 };

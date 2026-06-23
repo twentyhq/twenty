@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FileFolder } from 'twenty-shared/types';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { DEFAULT_SEARCH_OUTPUT_CONTEXT_LINES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/default-search-output-context-lines.constant';
+import { DEFAULT_SEARCH_OUTPUT_CONTEXT_CHARS } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/default-search-output-context-chars.constant';
 import { DEFAULT_SEARCH_OUTPUT_MAX_MATCHES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/default-search-output-max-matches.constant';
 import { SearchOutputInputZodSchema } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool.schema';
 import { searchOutput } from 'src/engine/core-modules/tool/tools/output-navigation-tool/utils/search-output.util';
@@ -18,7 +18,7 @@ export class SearchOutputTool implements Tool {
   private readonly logger = new Logger(SearchOutputTool.name);
 
   description =
-    'Search (grep-like) within a large spilled tool output for a text or regex pattern, returning matching lines with surrounding context. Supports stateless pagination via offset. Use this to locate an error message or key in a file too large to inline.';
+    'Search (grep -o style) within a large spilled tool output for a text or regex pattern, returning every occurrence with surrounding characters of context. Works on raw text of any shape (CSV, HTML, stringified JSON, plain text), including single-line content. Supports stateless pagination via offset. Use this to locate an error message or key in a file too large to inline.';
 
   inputSchema = SearchOutputInputZodSchema;
 
@@ -37,12 +37,14 @@ export class SearchOutputTool implements Tool {
         success: false,
         message: 'Invalid input for search output',
         error: parseResult.error.issues
-          .map((issue) => `${issue.path.join('.') || '(root)'}: ${issue.message}`)
+          .map(
+            (issue) => `${issue.path.join('.') || '(root)'}: ${issue.message}`,
+          )
           .join('; '),
       };
     }
 
-    const { fileId, pattern, maxMatches, offset, contextLines } =
+    const { fileId, pattern, maxMatches, offset, contextChars } =
       parseResult.data;
 
     let fileContent: { buffer: Buffer; mimeType: string } | null;
@@ -71,22 +73,14 @@ export class SearchOutputTool implements Tool {
       };
     }
 
-    const rawContent = fileContent.buffer.toString('utf-8');
-
-    let content: string;
-
-    try {
-      content = JSON.stringify(JSON.parse(rawContent), null, 2);
-    } catch {
-      content = rawContent;
-    }
+    const content = fileContent.buffer.toString('utf-8');
 
     const result = searchOutput({
       content,
       pattern,
       maxMatches: maxMatches ?? DEFAULT_SEARCH_OUTPUT_MAX_MATCHES,
       offset: offset ?? 0,
-      contextLines: contextLines ?? DEFAULT_SEARCH_OUTPUT_CONTEXT_LINES,
+      contextChars: contextChars ?? DEFAULT_SEARCH_OUTPUT_CONTEXT_CHARS,
     });
 
     return {
@@ -94,7 +88,7 @@ export class SearchOutputTool implements Tool {
       message:
         result.totalMatches === 0
           ? `No matches for "${pattern}"`
-          : `Found ${result.totalMatches} match(es) for "${pattern}"`,
+          : `Found ${result.totalMatches} occurrence(s) for "${pattern}"`,
       result,
     };
   }
