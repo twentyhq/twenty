@@ -117,7 +117,10 @@ describe('get_workflow_current_version tool', () => {
 
     expect(result.success).toBe(true);
 
-    if (!('workflowVersion' in result) || result.workflowVersion === undefined) {
+    if (
+      !('workflowVersion' in result) ||
+      result.workflowVersion === undefined
+    ) {
       throw new Error('Expected workflowVersion to be present in the result');
     }
 
