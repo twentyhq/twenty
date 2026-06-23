@@ -1,22 +1,25 @@
 import { getAgentUniversalIdentifier } from '@/application/deterministic-identifier/get-agent-universal-identifier.util';
 import { getApplicationVariableUniversalIdentifier } from '@/application/deterministic-identifier/get-application-variable-universal-identifier.util';
-import { getCommandMenuItemUniversalIdentifier } from '@/application/deterministic-identifier/get-command-menu-item-universal-identifier.util';
+import {
+  getCommandMenuItemUniversalIdentifier,
+  getNavigationCommandUniversalIdentifier,
+} from '@/application/deterministic-identifier/get-command-menu-item-universal-identifier.util';
 import { getConnectionProviderUniversalIdentifier } from '@/application/deterministic-identifier/get-connection-provider-universal-identifier.util';
 import { getFieldPermissionUniversalIdentifier } from '@/application/deterministic-identifier/get-field-permission-universal-identifier.util';
 import { getFieldUniversalIdentifier } from '@/application/deterministic-identifier/get-field-universal-identifier.util';
-import { getFieldsWidgetViewUniversalIdentifier } from '@/application/deterministic-identifier/get-fields-widget-view-universal-identifier.util';
 import { getFrontComponentUniversalIdentifier } from '@/application/deterministic-identifier/get-front-component-universal-identifier.util';
 import { getIndexUniversalIdentifier } from '@/application/deterministic-identifier/get-index-universal-identifier.util';
 import { getLogicFunctionUniversalIdentifier } from '@/application/deterministic-identifier/get-logic-function-universal-identifier.util';
-import { getNavigationCommandUniversalIdentifier } from '@/application/deterministic-identifier/get-navigation-command-universal-identifier.util';
 import { getNavigationMenuItemUniversalIdentifier } from '@/application/deterministic-identifier/get-navigation-menu-item-universal-identifier.util';
 import { getObjectPermissionUniversalIdentifier } from '@/application/deterministic-identifier/get-object-permission-universal-identifier.util';
 import { getObjectUniversalIdentifier } from '@/application/deterministic-identifier/get-object-universal-identifier.util';
 import { getPageLayoutTabUniversalIdentifier } from '@/application/deterministic-identifier/get-page-layout-tab-universal-identifier.util';
-import { getPageLayoutUniversalIdentifier } from '@/application/deterministic-identifier/get-page-layout-universal-identifier.util';
+import {
+  getPageLayoutUniversalIdentifier,
+  getRecordPageLayoutUniversalIdentifier,
+} from '@/application/deterministic-identifier/get-page-layout-universal-identifier.util';
 import { getPageLayoutWidgetUniversalIdentifier } from '@/application/deterministic-identifier/get-page-layout-widget-universal-identifier.util';
 import { getPermissionFlagUniversalIdentifier } from '@/application/deterministic-identifier/get-permission-flag-universal-identifier.util';
-import { getRecordPageLayoutUniversalIdentifier } from '@/application/deterministic-identifier/get-record-page-layout-universal-identifier.util';
 import { getRolePermissionFlagUniversalIdentifier } from '@/application/deterministic-identifier/get-role-permission-flag-universal-identifier.util';
 import { getRoleUniversalIdentifier } from '@/application/deterministic-identifier/get-role-universal-identifier.util';
 import { getSelectOptionUniversalIdentifier } from '@/application/deterministic-identifier/get-select-option-universal-identifier.util';
@@ -25,7 +28,11 @@ import { getViewFieldUniversalIdentifier } from '@/application/deterministic-ide
 import { getViewFilterUniversalIdentifier } from '@/application/deterministic-identifier/get-view-filter-universal-identifier.util';
 import { getViewGroupUniversalIdentifier } from '@/application/deterministic-identifier/get-view-group-universal-identifier.util';
 import { getViewSortUniversalIdentifier } from '@/application/deterministic-identifier/get-view-sort-universal-identifier.util';
-import { getViewUniversalIdentifier } from '@/application/deterministic-identifier/get-view-universal-identifier.util';
+import {
+  getFieldsWidgetViewUniversalIdentifier,
+  getIndexViewUniversalIdentifier,
+  getViewUniversalIdentifier,
+} from '@/application/deterministic-identifier/get-view-universal-identifier.util';
 
 const APP = '11111111-1111-1111-1111-111111111111';
 
@@ -82,10 +89,9 @@ describe('deterministic identifier utils', () => {
         value: 'OPTION_A',
       }),
       view,
-      indexView: getViewUniversalIdentifier({
+      indexView: getIndexViewUniversalIdentifier({
         ownerApplicationUniversalIdentifier: APP,
         objectUniversalIdentifier: object,
-        key: 'INDEX',
       }),
       fieldsWidgetView: getFieldsWidgetViewUniversalIdentifier({
         ownerApplicationUniversalIdentifier: APP,

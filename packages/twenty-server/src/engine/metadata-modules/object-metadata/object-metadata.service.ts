@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import {
+  getIndexViewUniversalIdentifier,
   getNavigationCommandUniversalIdentifier,
-  getViewUniversalIdentifier,
 } from 'twenty-shared/application';
 import {
   ViewKey,
@@ -682,11 +682,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       mainGroupByFieldMetadataUniversalIdentifier: null,
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       position: 0,
-      universalIdentifier: getViewUniversalIdentifier({
+      universalIdentifier: getIndexViewUniversalIdentifier({
         ownerApplicationUniversalIdentifier:
           flatApplication.universalIdentifier,
         objectUniversalIdentifier: objectMetadata.universalIdentifier,
-        key: ViewKey.INDEX,
       }),
       visibility: ViewVisibility.WORKSPACE,
       createdByUserWorkspaceId: null,
