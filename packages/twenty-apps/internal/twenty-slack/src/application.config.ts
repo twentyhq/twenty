@@ -13,8 +13,6 @@ export default defineApplication({
   logoUrl: 'public/twenty-slack.svg',
   author: 'Twenty',
   category: 'Communication',
-  aboutDescription:
-    'Official Slack connector for Twenty CRM. Install a Slack app on api.slack.com, add the OAuth client ID and secret as server variables, then connect Slack per member or as a shared workspace connection. Use workflow actions to post, update, or delete messages, send ephemeral notes, and add reactions using the connected account.',
   websiteUrl: 'https://docs.twenty.com/developers/extend/apps/getting-started',
   termsUrl: 'https://www.twenty.com/terms',
   emailSupport: 'contact@twenty.com',

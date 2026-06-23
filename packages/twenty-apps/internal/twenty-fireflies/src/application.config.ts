@@ -1,6 +1,5 @@
 import { defineApplication } from 'twenty-sdk/define';
 
-import { ABOUT_DESCRIPTION } from 'src/constants/ABOUT_DESCRIPTION.md';
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
   FIREFLIES_API_KEY_VARIABLE_UNIVERSAL_IDENTIFIER,
@@ -15,7 +14,6 @@ export default defineApplication({
   logoUrl: 'public/twenty-fireflies.svg',
   author: 'Twenty',
   category: 'Productivity',
-  aboutDescription: ABOUT_DESCRIPTION,
   screenshots: [
     'public/gallery/transcript-on-calendar-event.png',
     'public/gallery/summary-on-calendar-event.png',
