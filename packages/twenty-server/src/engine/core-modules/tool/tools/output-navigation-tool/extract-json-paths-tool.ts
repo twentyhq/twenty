@@ -109,8 +109,7 @@ export class ExtractJsonPathsTool implements Tool {
     });
 
     const resolvedCount = results.filter(
-      (result): result is { path: string; value: unknown } =>
-        'value' in result,
+      (result): result is { path: string; value: unknown } => 'value' in result,
     ).length;
 
     if (resolvedCount === 0) {

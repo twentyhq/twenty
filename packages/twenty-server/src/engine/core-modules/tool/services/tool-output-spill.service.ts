@@ -52,14 +52,19 @@ export class ToolOutputSpillService {
       return output;
     }
 
-    const serialized = JSON.stringify(output);
+    let serialized: string | undefined;
+
+    try {
+      serialized = JSON.stringify(output);
+    } catch {
+      return output;
+    }
 
     if (!isDefined(serialized)) {
       return output;
     }
 
     const sizeBytes = Buffer.byteLength(serialized);
-    console.log('sizeBytes', sizeBytes);
 
     if (sizeBytes <= MAX_INLINE_TOOL_OUTPUT_BYTES) {
       return output;

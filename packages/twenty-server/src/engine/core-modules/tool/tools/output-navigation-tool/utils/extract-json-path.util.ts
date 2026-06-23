@@ -17,6 +17,8 @@ const WILDCARD_REGEX = /^\[\*\]/;
 const SLICE_REGEX = /^\[(-?\d+)?:(-?\d+)?\]/;
 const INDEX_REGEX = /^\[(-?\d+)\]/;
 
+const unescapeQuotedKey = (key: string): string => key.replace(/\\(.)/g, '$1');
+
 const describeType = (value: unknown): string => {
   if (isNull(value)) {
     return 'null';
@@ -53,7 +55,7 @@ export const parseJsonPath = (path: string): Accessor[] => {
       (match = KEY_DOUBLE_QUOTE_REGEX.exec(rest)) ||
       (match = KEY_SINGLE_QUOTE_REGEX.exec(rest))
     ) {
-      accessors.push({ type: 'key', key: match[1] });
+      accessors.push({ type: 'key', key: unescapeQuotedKey(match[1]) });
     } else if ((match = WILDCARD_REGEX.exec(rest))) {
       accessors.push({ type: 'wildcard' });
     } else if ((match = SLICE_REGEX.exec(rest))) {
@@ -91,7 +93,7 @@ const resolveAccessors = (value: unknown, accessors: Accessor[]): unknown => {
 
       const record = value as Record<string, unknown>;
 
-      if (!(head.key in record)) {
+      if (!Object.prototype.hasOwnProperty.call(record, head.key)) {
         throw new JsonPathError(`Key "${head.key}" not found`);
       }
 
@@ -169,10 +171,15 @@ export const boundValue = (
     return limited;
   }
 
+  const entries = Object.entries(value);
   const output: Record<string, unknown> = {};
 
-  for (const [key, child] of Object.entries(value)) {
+  for (const [key, child] of entries.slice(0, maxItems)) {
     output[key] = boundValue(child, maxItems, maxDepth, depth + 1);
+  }
+
+  if (entries.length > maxItems) {
+    output['...'] = `(${entries.length - maxItems} more keys)`;
   }
 
   return output;

@@ -53,7 +53,8 @@ const buildShape = (
       return 'array[0]';
     }
 
-    const firstElementShape = buildShape(value[0], depth + 1, maxDepth);
+    const firstElementShape =
+      depth >= maxDepth ? 'object' : buildShape(value[0], depth + 1, maxDepth);
 
     if (isString(firstElementShape)) {
       return `array[${value.length}] of ${firstElementShape}`;

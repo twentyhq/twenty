@@ -83,14 +83,14 @@ describe('searchOutput', () => {
 
   it('falls back to literal matching for invalid regex', () => {
     const result = searchOutput({
-      content: 'a (b) c\nd e f',
-      pattern: '(b)',
+      content: 'a (b c\nd e f',
+      pattern: '(b',
       maxMatches: 10,
       offset: 0,
       contextLines: 0,
     });
 
     expect(result.totalMatches).toBe(1);
-    expect(result.matches[0].match).toBe('a (b) c');
+    expect(result.matches[0].match).toBe('a (b c');
   });
 });

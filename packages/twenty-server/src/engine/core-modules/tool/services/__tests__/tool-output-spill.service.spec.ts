@@ -82,8 +82,9 @@ describe('ToolOutputSpillService', () => {
 
     expect(envelope.spilled).toBe(true);
     expect(outputRef.fileId).toBe('file-123');
-    expect(outputRef.mimeType).toBe('application/json');
-    expect(outputRef.sizeBytes).toBeGreaterThan(16384);
+    expect(outputRef.filename).toMatch(
+      /^tool-output-find_many_companies-.+\.json$/,
+    );
     expect(envelope.shape).toBeDefined();
     expect(envelope.hint).toContain('extract_json_paths');
   });
