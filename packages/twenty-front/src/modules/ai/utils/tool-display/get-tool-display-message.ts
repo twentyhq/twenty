@@ -4,9 +4,9 @@ import { z } from 'zod';
 
 import { type ToolDisplayContext } from '@/ai/types/tool-display-context.type';
 import { type ToolInput } from '@/ai/types/ToolInput';
+import { buildNamedItemsStatusMessage } from '@/ai/utils/tool-display/build-named-items-status-message.util';
 import { buildToolStatusMessageByCategory } from '@/ai/utils/tool-display/build-tool-status-message-by-category.util';
 import { extractSearchQuery } from '@/ai/utils/tool-display/extract-search-query.util';
-import { getInnerToolName } from '@/ai/utils/tool-display/get-inner-tool-name.util';
 import { pickStatusLabel } from '@/ai/utils/tool-display/pick-status-label.util';
 import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
 
@@ -79,73 +79,47 @@ const buildToolDisplayMessage = ({
     case 'learn_tools': {
       const parsed = LearnToolsSchema.safeParse(input);
 
-      if (parsed.success && parsed.data.toolNames.length > 0) {
-        const labels: string[] = [];
-
-        for (const name of parsed.data.toolNames) {
-          labels.push(
-            getInnerToolName({
-              toolName: name,
-              labelByName: displayContext.labelByName,
-              output,
-            }),
-          );
-        }
-
-        const names = labels.join(', ');
-
-        return pickStatusLabel({
-          isFinished,
-          completedLabel: t`Learned ${names}`,
-          loadingLabel: t`Learning ${names}`,
-        });
-      }
-
-      return pickStatusLabel({
+      return buildNamedItemsStatusMessage({
+        names: parsed.success ? parsed.data.toolNames : [],
         isFinished,
-        completedLabel: t`Learned tools`,
-        loadingLabel: t`Learning tools...`,
+        displayContext,
+        output,
+        loadingLabel: (formattedNames) => t`Learning ${formattedNames}`,
+        completedLabel: (formattedNames) => t`Learned ${formattedNames}`,
+        loadingFallback: t`Learning tools...`,
+        completedFallback: t`Learned tools`,
       });
     }
     case 'load_skills': {
       const parsed = LoadSkillsSchema.safeParse(input);
 
-      if (parsed.success && parsed.data.skillNames.length > 0) {
-        const labels: string[] = [];
-
-        for (const name of parsed.data.skillNames) {
-          labels.push(
-            getInnerToolName({
-              toolName: name,
-              labelByName: displayContext.labelByName,
-              output,
-            }),
-          );
-        }
-
-        const names = labels.join(', ');
-
-        return pickStatusLabel({
-          isFinished,
-          completedLabel: t`Loaded ${names}`,
-          loadingLabel: t`Loading ${names}`,
-        });
-      }
-
-      return pickStatusLabel({
+      return buildNamedItemsStatusMessage({
+        names: parsed.success ? parsed.data.skillNames : [],
         isFinished,
-        completedLabel: t`Loaded skills`,
-        loadingLabel: t`Loading skills...`,
+        displayContext,
+        output,
+        loadingLabel: (formattedNames) => t`Loading ${formattedNames}`,
+        completedLabel: (formattedNames) => t`Loaded ${formattedNames}`,
+        loadingFallback: t`Loading skills...`,
+        completedFallback: t`Loaded skills`,
       });
     }
     case 'code_interpreter': {
       const parsed = ModelGeneratedLabelSchema.safeParse(input);
 
-      if (parsed.success) {
+      if (
+        parsed.success &&
+        isNonEmptyString(parsed.data.loadingMessage)
+      ) {
+        const completedMessage = isNonEmptyString(
+          parsed.data.completedMessage,
+        )
+          ? parsed.data.completedMessage
+          : parsed.data.loadingMessage;
+
         return pickStatusLabel({
           isFinished,
-          completedLabel:
-            parsed.data.completedMessage ?? parsed.data.loadingMessage,
+          completedLabel: completedMessage,
           loadingLabel: parsed.data.loadingMessage,
         });
       }

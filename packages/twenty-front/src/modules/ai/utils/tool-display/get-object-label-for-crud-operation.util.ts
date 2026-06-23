@@ -1,5 +1,7 @@
+import { i18n } from '@lingui/core';
+
 import {
-  CRUD_TOOL_PLURAL_OPERATIONS,
+  isCrudPluralOperation,
   type CrudToolOperation,
 } from '@/ai/constants/crud-tool-operation-verbs.constant';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -30,9 +32,9 @@ export const getObjectLabelForCrudOperation = ({
     return undefined;
   }
 
-  const objectLabel = CRUD_TOOL_PLURAL_OPERATIONS.has(operation)
+  const objectLabel = isCrudPluralOperation(operation)
     ? objectMetadata.labelPlural
     : objectMetadata.labelSingular;
 
-  return objectLabel.toLowerCase();
+  return objectLabel.toLocaleLowerCase(i18n.locale);
 };

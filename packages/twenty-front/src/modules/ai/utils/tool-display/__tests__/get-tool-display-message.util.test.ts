@@ -163,7 +163,8 @@ describe('getToolDisplayMessage', () => {
       });
 
       expect(message).toContain('Learned');
-      expect(message).toContain('find_many_companies, create_one_task');
+      expect(message).toContain('find_many_companies');
+      expect(message).toContain('create_one_task');
     });
 
     it('should show generic message without tool names', () => {
@@ -192,7 +193,8 @@ describe('getToolDisplayMessage', () => {
         displayContext,
       });
 
-      expect(message).toContain('Search companies, Create task');
+      expect(message).toContain('Search companies');
+      expect(message).toContain('Create task');
     });
 
     it('should fall back to the raw tool name when the label map has no entry', () => {
@@ -207,7 +209,8 @@ describe('getToolDisplayMessage', () => {
         displayContext,
       });
 
-      expect(message).toContain('Search companies, app_unknown_tool');
+      expect(message).toContain('Search companies');
+      expect(message).toContain('app_unknown_tool');
     });
 
     it('should resolve labels from output when not in the label map', () => {
@@ -309,6 +312,17 @@ describe('getToolDisplayMessage', () => {
     it('should fall back to generic label when loadingMessage is absent', () => {
       const message = getToolDisplayMessage({
         input: { code: 'print(1)' },
+        toolName: 'code_interpreter',
+        isFinished: false,
+        displayContext: emptyDisplayContext,
+      });
+
+      expect(message).toContain('Running code');
+    });
+
+    it('should fall back to generic label when loadingMessage is empty', () => {
+      const message = getToolDisplayMessage({
+        input: { code: 'print(1)', loadingMessage: '' },
         toolName: 'code_interpreter',
         isFinished: false,
         displayContext: emptyDisplayContext,
