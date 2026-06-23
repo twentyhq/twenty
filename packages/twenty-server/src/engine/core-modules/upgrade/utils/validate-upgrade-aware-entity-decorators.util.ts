@@ -49,18 +49,18 @@ export type UpgradeAwareDecoratorReferenceProblem =
 export const validateUpgradeAwareEntityDecorators = ({
   entityClasses,
   stepNameToIndex,
-  knownPropertyNamesByEntityClass,
+  columnPropertyNamesByEntityClass,
 }: {
   entityClasses: Function[];
   stepNameToIndex: ReadonlyMap<string, number>;
-  knownPropertyNamesByEntityClass?: ReadonlyMap<Function, ReadonlySet<string>>;
+  columnPropertyNamesByEntityClass?: ReadonlyMap<Function, ReadonlySet<string>>;
 }): UpgradeAwareDecoratorReferenceProblem[] => {
   const problems: UpgradeAwareDecoratorReferenceProblem[] = [];
 
   for (const entityClass of entityClasses) {
     const entityName = entityClass.name;
-    const knownPropertyNames =
-      knownPropertyNamesByEntityClass?.get(entityClass);
+    const columnPropertyNames =
+      columnPropertyNamesByEntityClass?.get(entityClass);
 
     const classIntroduced = getWasIntroducedInUpgradeClassMetadata(entityClass);
 
@@ -127,8 +127,8 @@ export const validateUpgradeAwareEntityDecorators = ({
       }
 
       if (
-        isDefined(knownPropertyNames) &&
-        !knownPropertyNames.has(propertyName)
+        isDefined(columnPropertyNames) &&
+        !columnPropertyNames.has(propertyName)
       ) {
         problems.push({
           kind: 'unknown-property-name',

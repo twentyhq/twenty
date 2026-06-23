@@ -115,7 +115,7 @@ describe('validateUpgradeAwareEntityDecorators', () => {
     expect(problems).toEqual([]);
   });
 
-  describe('known property name validation', () => {
+  describe('column property name validation', () => {
     it('reports an introduced property name that does not exist on the entity', () => {
       @WasIntroducedInUpgrade({
         upgradeCommandName: KNOWN_CMD,
@@ -126,7 +126,7 @@ describe('validateUpgradeAwareEntityDecorators', () => {
       const problems = validateUpgradeAwareEntityDecorators({
         entityClasses: [EntityWithTypo],
         stepNameToIndex: buildStepNameToIndex([KNOWN_CMD]),
-        knownPropertyNamesByEntityClass: new Map([
+        columnPropertyNamesByEntityClass: new Map([
           [EntityWithTypo, new Set(['universalIdentifier', 'position'])],
         ]),
       });
@@ -141,7 +141,33 @@ describe('validateUpgradeAwareEntityDecorators', () => {
       ]);
     });
 
-    it('reports no problem when all introduced property names exist', () => {
+    it('reports a relation property name (resolution only acts on columns)', () => {
+      @WasIntroducedInUpgrade({
+        upgradeCommandName: KNOWN_CMD,
+        properties: ['application'],
+      })
+      class EntityTargetingRelation {}
+
+      const problems = validateUpgradeAwareEntityDecorators({
+        entityClasses: [EntityTargetingRelation],
+        stepNameToIndex: buildStepNameToIndex([KNOWN_CMD]),
+        // 'application' is a relation, not a column, so it is not in the set.
+        columnPropertyNamesByEntityClass: new Map([
+          [EntityTargetingRelation, new Set(['applicationId'])],
+        ]),
+      });
+
+      expect(problems).toEqual([
+        {
+          kind: 'unknown-property-name',
+          entityName: 'EntityTargetingRelation',
+          decorator: '@WasIntroducedInUpgrade',
+          propertyName: 'application',
+        },
+      ]);
+    });
+
+    it('reports no problem when all introduced property names are columns', () => {
       @WasIntroducedInUpgrade({
         upgradeCommandName: KNOWN_CMD,
         properties: ['universalIdentifier', 'position'],
@@ -151,7 +177,7 @@ describe('validateUpgradeAwareEntityDecorators', () => {
       const problems = validateUpgradeAwareEntityDecorators({
         entityClasses: [ValidEntity],
         stepNameToIndex: buildStepNameToIndex([KNOWN_CMD]),
-        knownPropertyNamesByEntityClass: new Map([
+        columnPropertyNamesByEntityClass: new Map([
           [ValidEntity, new Set(['universalIdentifier', 'position'])],
         ]),
       });
@@ -159,7 +185,7 @@ describe('validateUpgradeAwareEntityDecorators', () => {
       expect(problems).toEqual([]);
     });
 
-    it('skips property name validation when no known property names are provided', () => {
+    it('skips property name validation when no column property names are provided', () => {
       @WasIntroducedInUpgrade({
         upgradeCommandName: KNOWN_CMD,
         properties: ['anythingGoes'],
