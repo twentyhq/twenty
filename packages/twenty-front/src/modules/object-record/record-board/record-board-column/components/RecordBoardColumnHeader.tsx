@@ -2,9 +2,9 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getRecordGroupByFieldColumnName } from '@/object-metadata/utils/getRecordGroupByFieldColumnName';
-import { isManyToOneRelationToWorkspaceMember } from '@/object-metadata/utils/isManyToOneRelationToWorkspaceMember';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
@@ -25,8 +25,8 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Avatar, Tag } from 'twenty-ui/data-display';
+import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/data-display';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -87,24 +87,6 @@ const StyledTagContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledPersonChip = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  max-width: 100%;
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const StyledPersonName = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 const StyledDropdownContainer = styled.div`
   min-width: 0;
   overflow: hidden;
@@ -147,22 +129,16 @@ export const RecordBoardColumnHeader = () => {
 
   const { toggleDropdown } = useToggleDropdown();
 
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
-  );
-
   const isValueGroup =
     columnDefinition.type === RecordGroupDefinitionType.Value;
 
-  const isGroupedByWorkspaceMemberRelation =
-    isManyToOneRelationToWorkspaceMember(selectFieldMetadataItem);
+  const relationTargetObjectNameSingular =
+    selectFieldMetadataItem.relation?.targetObjectMetadata.nameSingular;
 
-  const groupWorkspaceMember =
-    isGroupedByWorkspaceMemberRelation && isValueGroup
-      ? currentWorkspaceMembers.find(
-          (workspaceMember) => workspaceMember.id === columnDefinition.value,
-        )
-      : undefined;
+  const relationRecord = columnDefinition.relationRecord;
+
+  const isGroupedByRelationValue =
+    isManyToOneRelationField(selectFieldMetadataItem) && isValueGroup;
 
   const dropdownId = `record-board-column-dropdown-${columnDefinition.id}`;
 
@@ -191,21 +167,16 @@ export const RecordBoardColumnHeader = () => {
                   y: 10,
                 }}
                 clickableComponent={
-                  isGroupedByWorkspaceMemberRelation && isValueGroup ? (
-                    <StyledPersonChip>
-                      <Avatar
-                        avatarUrl={groupWorkspaceMember?.avatarUrl}
-                        placeholder={columnDefinition.title}
-                        placeholderColorSeed={
-                          columnDefinition.value ?? undefined
-                        }
-                        size="md"
-                        type="rounded"
+                  isGroupedByRelationValue &&
+                  isDefined(relationRecord) &&
+                  isDefined(relationTargetObjectNameSingular) ? (
+                    <StyledTagContainer>
+                      <RecordChip
+                        objectNameSingular={relationTargetObjectNameSingular}
+                        record={relationRecord}
+                        forceDisableClick
                       />
-                      <StyledPersonName>
-                        {columnDefinition.title}
-                      </StyledPersonName>
-                    </StyledPersonChip>
+                    </StyledTagContainer>
                   ) : (
                     <StyledTagContainer>
                       <Tag
