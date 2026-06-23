@@ -2,20 +2,22 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
-import {
-  LogicFunctionTriggerJob,
-  type LogicFunctionTriggerJobData,
-} from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import {
+  ServerCronTriggerDispatchJob,
+  type ServerCronTriggerDispatchJobData,
+} from 'src/engine/core-modules/server-cron-trigger/jobs/server-cron-trigger-dispatch.job';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { shouldRunNow } from 'src/utils/should-run-now.utils';
 
 export const SERVER_CRON_TRIGGER_CRON_PATTERN = '* * * * *';
@@ -25,10 +27,11 @@ export class ServerCronTriggerCronJob {
   private readonly logger = new Logger(ServerCronTriggerCronJob.name);
 
   constructor(
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
-    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
-    private readonly messageQueueService: MessageQueueService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectMessageQueue(MessageQueue.cronQueue)
+    private readonly cronQueueService: MessageQueueService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -44,45 +47,59 @@ export class ServerCronTriggerCronJob {
 
     const now = new Date();
 
-    // Only the owner-workspace copy of each server-exposed function is
-    // eligible: `lf.workspaceId = reg."workspaceId"` (the owner workspace).
-    const serverCrons = await this.logicFunctionRepository
-      .createQueryBuilder('lf')
-      .innerJoin('core.application', 'app', 'app.id = lf."applicationId"')
-      .innerJoin(
-        'core.applicationRegistration',
-        'reg',
-        'reg.id = app."applicationRegistrationId"',
-      )
-      .where('lf."serverCronTriggerSettings" IS NOT NULL')
-      .andWhere('lf."deletedAt" IS NULL')
-      .andWhere('lf."workspaceId" = reg."workspaceId"')
-      .andWhere('reg."deletedAt" IS NULL')
-      .andWhere('reg."workspaceId" IS NOT NULL')
-      .getMany();
+    const activeWorkspaces = await this.workspaceRepository.find({
+      where: { activationStatus: WorkspaceActivationStatus.ACTIVE },
+      select: ['id'],
+    });
 
-    for (const logicFunction of serverCrons) {
-      const pattern = logicFunction.serverCronTriggerSettings?.pattern;
-
-      if (!isDefined(pattern) || !shouldRunNow(pattern, now)) {
-        continue;
-      }
-
+    for (const activeWorkspace of activeWorkspaces) {
       try {
-        await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
-          LogicFunctionTriggerJob.name,
-          [
-            {
-              logicFunctionId: logicFunction.id,
-              workspaceId: logicFunction.workspaceId,
-              payload: { source: 'server-cron' },
-            },
-          ],
-          { retryLimit: 3 },
+        const { flatLogicFunctionMaps } =
+          await this.workspaceCacheService.getOrRecompute(activeWorkspace.id, [
+            'flatLogicFunctionMaps',
+          ]);
+
+        const logicFunctions = Object.values(
+          flatLogicFunctionMaps.byUniversalIdentifier,
         );
+
+        for (const logicFunction of logicFunctions) {
+          if (!isDefined(logicFunction)) {
+            continue;
+          }
+
+          if (isDefined(logicFunction.deletedAt)) {
+            continue;
+          }
+
+          const settings = logicFunction.serverCronTriggerSettings;
+
+          if (!isDefined(settings?.pattern)) {
+            continue;
+          }
+
+          if (!isDefined(settings.targetLogicFunctionUniversalIdentifier)) {
+            continue;
+          }
+
+          if (!shouldRunNow(settings.pattern, now)) {
+            continue;
+          }
+
+          await this.cronQueueService.add<ServerCronTriggerDispatchJobData>(
+            ServerCronTriggerDispatchJob.name,
+            {
+              resolverLogicFunctionId: logicFunction.id,
+              ownerWorkspaceId: activeWorkspace.id,
+              targetLogicFunctionUniversalIdentifier:
+                settings.targetLogicFunctionUniversalIdentifier,
+            },
+            { retryLimit: 3 },
+          );
+        }
       } catch (error) {
         this.logger.error(
-          `Failed to enqueue server cron for function ${logicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+          `Error processing workspace ${activeWorkspace.id}: ${error instanceof Error ? error.message : String(error)}`,
           error instanceof Error ? error.stack : undefined,
         );
       }

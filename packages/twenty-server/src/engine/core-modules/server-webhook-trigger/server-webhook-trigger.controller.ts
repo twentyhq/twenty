@@ -24,10 +24,17 @@ export class ServerWebhookTriggerController {
     private readonly serverWebhookTriggerService: ServerWebhookTriggerService,
   ) {}
 
-  @Post(':logicFunctionUniversalIdentifier')
+  // The resolver function runs in the owner workspace; its job is to extract
+  // a workspaceId from the request. The target function then runs in that
+  // resolved workspace and its response is what the webhook returns.
+  @Post(
+    ':resolverLogicFunctionUniversalIdentifier/:targetLogicFunctionUniversalIdentifier',
+  )
   async post(
-    @Param('logicFunctionUniversalIdentifier')
-    logicFunctionUniversalIdentifier: string,
+    @Param('resolverLogicFunctionUniversalIdentifier')
+    resolverLogicFunctionUniversalIdentifier: string,
+    @Param('targetLogicFunctionUniversalIdentifier')
+    targetLogicFunctionUniversalIdentifier: string,
     @Req() request: Request,
     @Res() response: Response,
   ) {
@@ -35,7 +42,8 @@ export class ServerWebhookTriggerController {
       response,
       await this.serverWebhookTriggerService.handle({
         request,
-        logicFunctionUniversalIdentifier,
+        resolverLogicFunctionUniversalIdentifier,
+        targetLogicFunctionUniversalIdentifier,
       }),
     );
   }

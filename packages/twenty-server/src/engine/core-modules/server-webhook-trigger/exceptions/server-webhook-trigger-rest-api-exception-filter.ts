@@ -51,6 +51,15 @@ export class ServerWebhookTriggerRestApiExceptionFilter implements ExceptionFilt
           response,
           500,
         );
+      case ServerWebhookTriggerExceptionCode.RESOLVER_INVALID_RESULT:
+        return this.httpExceptionHandlerService.handleError(
+          exception as CustomException,
+          response,
+          502,
+          undefined,
+          undefined,
+          { shouldBeCapturedBySentry: false },
+        );
       default: {
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,

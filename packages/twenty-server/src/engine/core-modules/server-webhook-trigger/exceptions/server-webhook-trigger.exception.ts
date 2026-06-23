@@ -9,6 +9,7 @@ export enum ServerWebhookTriggerExceptionCode {
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
   SERVER_WEBHOOK_USER_UNCAUGHT_ERROR = 'SERVER_WEBHOOK_USER_UNCAUGHT_ERROR',
   SERVER_WEBHOOK_PLATFORM_ERROR = 'SERVER_WEBHOOK_PLATFORM_ERROR',
+  RESOLVER_INVALID_RESULT = 'RESOLVER_INVALID_RESULT',
 }
 
 const getServerWebhookTriggerExceptionUserFriendlyMessage = (
@@ -23,6 +24,8 @@ const getServerWebhookTriggerExceptionUserFriendlyMessage = (
       return msg`Logic function execution failed.`;
     case ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_PLATFORM_ERROR:
       return msg`An unexpected error occurred while handling the webhook.`;
+    case ServerWebhookTriggerExceptionCode.RESOLVER_INVALID_RESULT:
+      return msg`Resolver logic function returned an invalid result.`;
     default:
       assertUnreachable(code);
   }

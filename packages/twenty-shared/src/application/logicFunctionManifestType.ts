@@ -27,6 +27,7 @@ export type CronTriggerSettings = {
 
 export type ServerCronTriggerSettings = {
   pattern: string;
+  targetLogicFunctionUniversalIdentifier: string;
 };
 
 export type DatabaseEventTriggerSettings = {

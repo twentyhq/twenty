@@ -1,29 +1,37 @@
-import { LogicFunctionTriggerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { ServerCronTriggerDispatchJob } from 'src/engine/core-modules/server-cron-trigger/jobs/server-cron-trigger-dispatch.job';
 import { ServerCronTriggerCronJob } from 'src/engine/core-modules/server-cron-trigger/server-cron-trigger.cron.job';
 
 describe('ServerCronTriggerCronJob', () => {
-  // Always restore real timers so a failing assertion in the fake-clock
-  // case doesn't leak mocked time into later specs.
   afterEach(() => {
     jest.useRealTimers();
   });
 
   const buildJob = ({
-    rows,
+    activeWorkspaces,
+    logicFunctionsByWorkspace,
     featureEnabled = true,
   }: {
-    rows: Array<Record<string, unknown>>;
+    activeWorkspaces: Array<{ id: string }>;
+    logicFunctionsByWorkspace: Record<string, Array<Record<string, unknown>>>;
     featureEnabled?: boolean;
   }) => {
-    const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
-    const queryBuilder = {
-      innerJoin: jest.fn().mockReturnThis(),
-      where: jest.fn().mockReturnThis(),
-      andWhere: jest.fn().mockReturnThis(),
-      getMany: jest.fn().mockResolvedValue(rows),
+    const cronQueueService = { add: jest.fn().mockResolvedValue(undefined) };
+    const workspaceRepository = {
+      find: jest.fn().mockResolvedValue(activeWorkspaces),
     };
-    const repository = {
-      createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
+    const workspaceCacheService = {
+      getOrRecompute: jest
+        .fn()
+        .mockImplementation(async (workspaceId: string) => ({
+          flatLogicFunctionMaps: {
+            byUniversalIdentifier: Object.fromEntries(
+              (logicFunctionsByWorkspace[workspaceId] ?? []).map((lf) => [
+                lf.id as string,
+                lf,
+              ]),
+            ),
+          },
+        })),
     };
     const twentyConfigService = {
       get: jest.fn().mockReturnValue(featureEnabled),
@@ -31,91 +39,175 @@ describe('ServerCronTriggerCronJob', () => {
 
     const job = new ServerCronTriggerCronJob(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      repository as any,
+      workspaceRepository as any,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      messageQueueService as any,
+      workspaceCacheService as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      cronQueueService as any,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       twentyConfigService as any,
     );
 
-    return { job, messageQueueService, queryBuilder, twentyConfigService };
+    return {
+      job,
+      cronQueueService,
+      workspaceRepository,
+      workspaceCacheService,
+      twentyConfigService,
+    };
   };
 
-  it('enqueues a due cron with a valid pattern and owner', async () => {
-    const { job, messageQueueService } = buildJob({
-      rows: [
-        {
-          id: 'lf-1',
-          workspaceId: 'ws-1',
-          serverCronTriggerSettings: { pattern: '* * * * *' },
-        },
-      ],
+  it('enqueues a dispatch job per due server cron found through the workspace cache', async () => {
+    const { job, cronQueueService } = buildJob({
+      activeWorkspaces: [{ id: 'ws-owner' }],
+      logicFunctionsByWorkspace: {
+        'ws-owner': [
+          {
+            id: 'lf-1',
+            deletedAt: null,
+            serverCronTriggerSettings: {
+              pattern: '* * * * *',
+              targetLogicFunctionUniversalIdentifier: 'target-uid',
+            },
+          },
+        ],
+      },
     });
 
     await job.handle();
 
-    expect(messageQueueService.add).toHaveBeenCalledWith(
-      LogicFunctionTriggerJob.name,
-      [
-        {
-          logicFunctionId: 'lf-1',
-          workspaceId: 'ws-1',
-          payload: { source: 'server-cron' },
-        },
-      ],
+    expect(cronQueueService.add).toHaveBeenCalledWith(
+      ServerCronTriggerDispatchJob.name,
+      {
+        resolverLogicFunctionId: 'lf-1',
+        ownerWorkspaceId: 'ws-owner',
+        targetLogicFunctionUniversalIdentifier: 'target-uid',
+      },
       { retryLimit: 3 },
     );
   });
 
   it('returns early when the feature is disabled', async () => {
-    const { job, messageQueueService, queryBuilder } = buildJob({
-      rows: [],
+    const { job, cronQueueService, workspaceRepository } = buildJob({
+      activeWorkspaces: [],
+      logicFunctionsByWorkspace: {},
       featureEnabled: false,
     });
 
     await job.handle();
 
-    expect(queryBuilder.getMany).not.toHaveBeenCalled();
-    expect(messageQueueService.add).not.toHaveBeenCalled();
+    expect(workspaceRepository.find).not.toHaveBeenCalled();
+    expect(cronQueueService.add).not.toHaveBeenCalled();
   });
 
   it('skips rows whose cron pattern does not match the current minute', async () => {
     jest.useFakeTimers().setSystemTime(new Date('2026-06-23T10:30:00.000Z'));
 
-    const { job, messageQueueService } = buildJob({
-      rows: [
-        {
-          id: 'lf-2',
-          workspaceId: 'ws-1',
-          // 0 0 * * 0 = midnight on Sundays — does not match the clock above
-          serverCronTriggerSettings: { pattern: '0 0 * * 0' },
-        },
-      ],
+    const { job, cronQueueService } = buildJob({
+      activeWorkspaces: [{ id: 'ws-owner' }],
+      logicFunctionsByWorkspace: {
+        'ws-owner': [
+          {
+            id: 'lf-1',
+            deletedAt: null,
+            serverCronTriggerSettings: {
+              pattern: '0 0 * * 0',
+              targetLogicFunctionUniversalIdentifier: 'target-uid',
+            },
+          },
+        ],
+      },
     });
 
     await job.handle();
 
-    expect(messageQueueService.add).not.toHaveBeenCalled();
+    expect(cronQueueService.add).not.toHaveBeenCalled();
   });
 
-  it('filters by server-cron + owner-workspace + alive predicates at the SQL layer', async () => {
-    const { job, queryBuilder } = buildJob({ rows: [] });
+  it('ignores logic functions that lack server cron settings or a target identifier', async () => {
+    const { job, cronQueueService } = buildJob({
+      activeWorkspaces: [{ id: 'ws-owner' }],
+      logicFunctionsByWorkspace: {
+        'ws-owner': [
+          {
+            id: 'lf-without-server-cron',
+            deletedAt: null,
+            cronTriggerSettings: { pattern: '* * * * *' },
+          },
+          {
+            id: 'lf-without-target',
+            deletedAt: null,
+            serverCronTriggerSettings: { pattern: '* * * * *' },
+          },
+          {
+            id: 'lf-deleted',
+            deletedAt: new Date(),
+            serverCronTriggerSettings: {
+              pattern: '* * * * *',
+              targetLogicFunctionUniversalIdentifier: 'target-uid',
+            },
+          },
+        ],
+      },
+    });
 
     await job.handle();
 
-    const whereCalls = [
-      ...queryBuilder.where.mock.calls,
-      ...queryBuilder.andWhere.mock.calls,
-    ].flat();
+    expect(cronQueueService.add).not.toHaveBeenCalled();
+  });
 
-    expect(whereCalls).toEqual(
-      expect.arrayContaining([
-        expect.stringContaining('lf."serverCronTriggerSettings" IS NOT NULL'),
-        expect.stringContaining('lf."deletedAt" IS NULL'),
-        expect.stringContaining('lf."workspaceId" = reg."workspaceId"'),
-        expect.stringContaining('reg."deletedAt" IS NULL'),
-        expect.stringContaining('reg."workspaceId" IS NOT NULL'),
-      ]),
+  it('continues iterating workspaces when one workspace cache lookup fails', async () => {
+    const cronQueueService = { add: jest.fn().mockResolvedValue(undefined) };
+    const workspaceRepository = {
+      find: jest.fn().mockResolvedValue([{ id: 'ws-broken' }, { id: 'ws-ok' }]),
+    };
+    const workspaceCacheService = {
+      getOrRecompute: jest
+        .fn()
+        .mockImplementation(async (workspaceId: string) => {
+          if (workspaceId === 'ws-broken') {
+            throw new Error('cache miss');
+          }
+
+          return {
+            flatLogicFunctionMaps: {
+              byUniversalIdentifier: {
+                'lf-ok': {
+                  id: 'lf-ok',
+                  deletedAt: null,
+                  serverCronTriggerSettings: {
+                    pattern: '* * * * *',
+                    targetLogicFunctionUniversalIdentifier: 'target-uid',
+                  },
+                },
+              },
+            },
+          };
+        }),
+    };
+    const twentyConfigService = { get: jest.fn().mockReturnValue(true) };
+
+    const job = new ServerCronTriggerCronJob(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      workspaceRepository as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      workspaceCacheService as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      cronQueueService as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      twentyConfigService as any,
+    );
+
+    await job.handle();
+
+    expect(cronQueueService.add).toHaveBeenCalledTimes(1);
+    expect(cronQueueService.add).toHaveBeenCalledWith(
+      ServerCronTriggerDispatchJob.name,
+      expect.objectContaining({
+        resolverLogicFunctionId: 'lf-ok',
+        ownerWorkspaceId: 'ws-ok',
+      }),
+      { retryLimit: 3 },
     );
   });
 });

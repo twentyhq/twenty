@@ -1,22 +1,47 @@
 import { type Request } from 'express';
 import { type Repository } from 'typeorm';
 
+import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
+  type LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { type LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { ServerWebhookTriggerExceptionCode } from 'src/engine/core-modules/server-webhook-trigger/exceptions/server-webhook-trigger.exception';
 import { ServerWebhookTriggerService } from 'src/engine/core-modules/server-webhook-trigger/server-webhook-trigger.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const LOGIC_FUNCTION_UID = 'lf-universal-id';
+const buildExecuteResult = (
+  data: object | null,
+  error?: { errorMessage: string },
+): LogicFunctionExecuteResult => ({
+  data,
+  duration: 1,
+  logs: '',
+  status: error
+    ? LogicFunctionExecutionStatus.ERROR
+    : LogicFunctionExecutionStatus.SUCCESS,
+  ...(error
+    ? {
+        error: {
+          errorType: 'Error',
+          errorMessage: error.errorMessage,
+          stackTrace: '',
+        },
+      }
+    : {}),
+});
+
+const RESOLVER_UID = 'resolver-uid';
+const TARGET_UID = 'target-uid';
 
 const buildRequest = (body: object | null = {}): Request =>
   ({
     method: 'POST',
-    path: `/webhooks/server/${LOGIC_FUNCTION_UID}`,
+    path: `/webhooks/server/${RESOLVER_UID}/${TARGET_UID}`,
     query: {},
     headers: {},
     rawBody: Buffer.from(JSON.stringify(body ?? {}), 'utf-8'),
@@ -34,15 +59,19 @@ describe('ServerWebhookTriggerService', () => {
   let logicFunctionRepository: jest.Mocked<
     Pick<Repository<LogicFunctionEntity>, 'createQueryBuilder'>
   >;
-  let logicFunctionTriggerService: jest.Mocked<
-    Pick<LogicFunctionTriggerService, 'run'>
+  let logicFunctionExecutorService: jest.Mocked<
+    Pick<LogicFunctionExecutorService, 'execute'>
+  >;
+  let workspaceCacheService: jest.Mocked<
+    Pick<WorkspaceCacheService, 'getOrRecompute'>
   >;
   let twentyConfigService: jest.Mocked<Pick<TwentyConfigService, 'get'>>;
 
   const handle = () =>
     service.handle({
       request: buildRequest(),
-      logicFunctionUniversalIdentifier: LOGIC_FUNCTION_UID,
+      resolverLogicFunctionUniversalIdentifier: RESOLVER_UID,
+      targetLogicFunctionUniversalIdentifier: TARGET_UID,
     });
 
   beforeEach(() => {
@@ -51,48 +80,74 @@ describe('ServerWebhookTriggerService', () => {
       where: jest.fn().mockReturnThis(),
       andWhere: jest.fn().mockReturnThis(),
       getOne: jest.fn().mockResolvedValue({
-        id: 'lf-1',
-        workspaceId: 'ws-1',
+        id: 'resolver-1',
+        workspaceId: 'owner-ws',
         serverWebhookTriggerSettings: { forwardedRequestHeaders: ['x-test'] },
       }),
     };
     logicFunctionRepository = {
       createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
     };
-    logicFunctionTriggerService = {
-      run: jest.fn().mockResolvedValue({
-        kind: 'response',
-        response: { statusCode: 200, headers: {}, body: { ok: true } },
+    logicFunctionExecutorService = {
+      execute: jest
+        .fn()
+        // resolver returns { workspaceId, payload }
+        .mockResolvedValueOnce(
+          buildExecuteResult({
+            workspaceId: 'target-ws',
+            payload: { from: 'resolver' },
+          }),
+        )
+        // target returns the final response body
+        .mockResolvedValueOnce(buildExecuteResult({ ok: true })),
+    };
+    workspaceCacheService = {
+      getOrRecompute: jest.fn().mockResolvedValue({
+        flatLogicFunctionMaps: {
+          byUniversalIdentifier: {
+            'target-id': {
+              id: 'target-id',
+              universalIdentifier: TARGET_UID,
+              deletedAt: null,
+            },
+          },
+        },
       }),
     };
     twentyConfigService = { get: jest.fn().mockReturnValue(true) };
 
     service = new ServerWebhookTriggerService(
       logicFunctionRepository as unknown as Repository<LogicFunctionEntity>,
-      logicFunctionTriggerService as unknown as LogicFunctionTriggerService,
+      logicFunctionExecutorService as unknown as LogicFunctionExecutorService,
+      workspaceCacheService as unknown as WorkspaceCacheService,
       twentyConfigService as unknown as TwentyConfigService,
     );
   });
 
-  it('resolves the owner-workspace copy and runs it', async () => {
+  it('runs the resolver in the owner workspace then the target in the resolved workspace', async () => {
     const result = await handle();
 
-    expect(logicFunctionTriggerService.run).toHaveBeenCalledWith(
+    expect(logicFunctionExecutorService.execute).toHaveBeenNthCalledWith(
+      1,
       expect.objectContaining({
-        logicFunction: expect.objectContaining({
-          id: 'lf-1',
-          workspaceId: 'ws-1',
-        }),
-        forwardedRequestHeaders: ['x-test'],
-        userId: null,
-        userWorkspaceId: null,
+        logicFunctionId: 'resolver-1',
+        workspaceId: 'owner-ws',
       }),
     );
-    expect(result).toEqual({
-      statusCode: 200,
-      headers: {},
-      body: { ok: true },
-    });
+    expect(logicFunctionExecutorService.execute).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        logicFunctionId: 'target-id',
+        workspaceId: 'target-ws',
+        payload: { from: 'resolver' },
+      }),
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        statusCode: 200,
+        body: { ok: true },
+      }),
+    );
   });
 
   it('refuses when the feature is disabled', async () => {
@@ -103,7 +158,7 @@ describe('ServerWebhookTriggerService', () => {
     });
   });
 
-  it('throws LOGIC_FUNCTION_NOT_FOUND when no owner-workspace copy exists', async () => {
+  it('throws LOGIC_FUNCTION_NOT_FOUND when no resolver exists in any owner workspace', async () => {
     queryBuilder.getOne.mockResolvedValue(null);
 
     await expect(handle()).rejects.toMatchObject({
@@ -111,11 +166,46 @@ describe('ServerWebhookTriggerService', () => {
     });
   });
 
-  it('surfaces a userError as a webhook exception', async () => {
-    logicFunctionTriggerService.run.mockResolvedValue({
-      kind: 'userError',
-      errorMessage: 'boom',
+  it('throws RESOLVER_INVALID_RESULT when the resolver does not return a workspaceId', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockResolvedValueOnce(
+      buildExecuteResult({ not_a_workspace: true }),
+    );
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerWebhookTriggerExceptionCode.RESOLVER_INVALID_RESULT,
     });
+  });
+
+  it('throws USER_UNCAUGHT_ERROR when the resolver returns an error', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockResolvedValueOnce(
+      buildExecuteResult(null, { errorMessage: 'boom' }),
+    );
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_USER_UNCAUGHT_ERROR,
+    });
+  });
+
+  it('throws LOGIC_FUNCTION_NOT_FOUND when the target is missing in the resolved workspace', async () => {
+    workspaceCacheService.getOrRecompute.mockResolvedValue({
+      flatLogicFunctionMaps: { byUniversalIdentifier: {} },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerWebhookTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+    });
+  });
+
+  it('surfaces a target userError as a webhook exception', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute
+      .mockResolvedValueOnce(buildExecuteResult({ workspaceId: 'target-ws' }))
+      .mockResolvedValueOnce(
+        buildExecuteResult(null, { errorMessage: 'boom' }),
+      );
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_USER_UNCAUGHT_ERROR,
@@ -123,7 +213,8 @@ describe('ServerWebhookTriggerService', () => {
   });
 
   it('maps a LogicFunctionExecutionException(LOGIC_FUNCTION_NOT_FOUND) to the webhook not-found code', async () => {
-    logicFunctionTriggerService.run.mockRejectedValue(
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockRejectedValue(
       new LogicFunctionExecutionException(
         'not found',
         LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
@@ -136,7 +227,8 @@ describe('ServerWebhookTriggerService', () => {
   });
 
   it('falls back to PLATFORM_ERROR for any other thrown executor error', async () => {
-    logicFunctionTriggerService.run.mockRejectedValue(new Error('boom'));
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockRejectedValue(new Error('boom'));
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_PLATFORM_ERROR,
