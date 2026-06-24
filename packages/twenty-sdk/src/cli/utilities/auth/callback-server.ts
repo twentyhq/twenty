@@ -195,7 +195,7 @@ export const startCallbackServer = (options?: {
       const url = new URL(req.url ?? '/', `http://127.0.0.1`);
 
       if (url.pathname !== '/callback') {
-        res.writeHead(404);
+        res.writeHead(404, { Connection: 'close' });
         res.end('Not found');
 
         return;
@@ -205,40 +205,36 @@ export const startCallbackServer = (options?: {
       const error = url.searchParams.get('error');
       const isDarkMode = url.searchParams.get('theme') === 'dark';
 
-      // Frame the response with an explicit Content-Length (rather than letting
-      // Node fall back to chunked transfer encoding) and only resolve the
-      // callback once the body has been fully flushed to the socket.
-      //
-      // The caller (login-oauth) resolves waitForCallback, exchanges the code
-      // for tokens, then tears the server down — close() calls
-      // closeAllConnections(), which destroys the still-open socket with a RST.
-      // Against a remote server the token exchange is slow enough that the page
-      // flushes first, but on localhost it returns almost instantly, so the
-      // teardown races in before the bytes leave and the browser is left with a
-      // dead/blank page (connection refused/reset). Resolving in the res.end
-      // completion callback guarantees the page is delivered before the token
-      // exchange and teardown can run.
-      const sendHtml = (body: string, onFlushed: () => void) => {
-        res.writeHead(200, {
-          'Content-Type': 'text/html',
-          'Content-Length': Buffer.byteLength(body),
-          Connection: 'close',
-        });
-        res.end(body, onFlushed);
-      };
+      const result: CallbackResult = code
+        ? { success: true, code }
+        : {
+            success: false,
+            error:
+              error ??
+              url.searchParams.get('error_description') ??
+              'Unknown error',
+          };
 
-      if (code) {
-        sendHtml(successHtml(isDarkMode), () =>
-          callbackResolve({ success: true, code }),
-        );
-      } else {
-        const errorMessage =
-          error ?? url.searchParams.get('error_description') ?? 'Unknown error';
+      const body = result.success
+        ? successHtml(isDarkMode)
+        : errorHtml(result.error, isDarkMode);
 
-        sendHtml(errorHtml(errorMessage, isDarkMode), () =>
-          callbackResolve({ success: false, error: errorMessage }),
-        );
-      }
+      res.writeHead(200, {
+        'Content-Type': 'text/html',
+        'Content-Length': Buffer.byteLength(body),
+        Connection: 'close',
+      });
+
+      // Resolve the callback only once this socket has fully closed, not as soon
+      // as the body is written. The caller (login-oauth) tears the server down
+      // the instant waitForCallback resolves; if we resolved earlier the
+      // teardown would hard-destroy the still-open socket with a TCP RST, and on
+      // fast localhost the RST reaches the browser before it has drained the
+      // response — the kernel then discards the unread bytes and the page is
+      // blank. Letting the socket close gracefully (Connection: close → FIN)
+      // guarantees the page is delivered before we hand control back.
+      res.on('close', () => callbackResolve(result));
+      res.end(body);
     });
 
     server.listen(0, '127.0.0.1', () => {
@@ -269,8 +265,13 @@ export const startCallbackServer = (options?: {
         },
         close: () => {
           clearTimeout(timeoutHandle);
-          server.closeAllConnections();
+          // Stop accepting new connections and free the port immediately, but
+          // never hard-destroy live sockets: closeAllConnections() would RST the
+          // socket still delivering the page and leave the browser blank.
+          // closeIdleConnections() only reaps idle keep-alive sockets (which
+          // carry no pending response) so the process can still exit.
           server.close();
+          server.closeIdleConnections();
         },
       });
     });

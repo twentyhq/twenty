@@ -83,10 +83,11 @@ describe('startCallbackServer', () => {
     }
   });
 
-  // Reproduces the dev-mode failure: the caller resolves waitForCallback and
-  // immediately tears the server down (closeAllConnections destroys the
-  // socket). The page must still arrive complete because we resolve only after
-  // the body has flushed — otherwise the teardown RST leaves a dead page.
+  // Reproduces the dev-mode failure: the caller tears the server down the
+  // instant the callback resolves. waitForCallback only resolves once the
+  // socket has closed gracefully, so the browser receives the complete page —
+  // whereas hard-destroying the socket (the old closeAllConnections) would RST
+  // it and leave a blank page on fast localhost.
   it('should deliver the full page even when the server is closed right after the callback resolves', async () => {
     const server = await startCallbackServer();
 
