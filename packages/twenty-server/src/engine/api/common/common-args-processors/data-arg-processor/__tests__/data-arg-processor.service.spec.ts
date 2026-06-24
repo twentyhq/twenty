@@ -225,6 +225,86 @@ describe('DataArgProcessorService', () => {
     ]);
   });
 
+  describe('server-controlled system fields', () => {
+    // Builds a maps entry for a single field, allowing override of the
+    // server-controlled flags so we can exercise the read-only guard.
+    const createSystemFieldMaps = ({
+      name,
+      type,
+      isUIEditable,
+    }: {
+      name: string;
+      type: FieldMetadataType;
+      isUIEditable: boolean;
+    }): FlatEntityMaps<FlatFieldMetadata> => ({
+      byUniversalIdentifier: {
+        [`${name}-universal-id`]: {
+          id: `${name}-id`,
+          name,
+          type,
+          isNullable: true,
+          objectMetadataId: 'object-id',
+          universalIdentifier: `${name}-universal-id`,
+          isUIEditable,
+          isSystemSideEffect: !isUIEditable,
+        } as FlatFieldMetadata,
+      },
+      universalIdentifierById: {
+        [`${name}-id`]: `${name}-universal-id`,
+      },
+      universalIdentifiersByApplicationId: {},
+    });
+
+    const emptyObjectMaps: FlatEntityMaps<FlatObjectMetadata> = {
+      byUniversalIdentifier: {},
+      universalIdentifierById: {},
+      universalIdentifiersByApplicationId: {},
+    };
+
+    it.each(['createdAt', 'updatedAt', 'deletedAt'])(
+      'should reject client-supplied value for read-only system field %s',
+      async (fieldName) => {
+        const flatFieldMetadataMaps = createSystemFieldMaps({
+          name: fieldName,
+          type: FieldMetadataType.DATE_TIME,
+          isUIEditable: false,
+        });
+        const flatObjectMetadata = createFlatObjectMetadata([fieldName]);
+
+        await expect(
+          dataArgProcessorService.process({
+            partialRecordInputs: [{ [fieldName]: '1999-01-01T00:00:00.000Z' }],
+            authContext: createMockAuthContext(),
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
+            flatObjectMetadataMaps: emptyObjectMaps,
+          }),
+        ).rejects.toThrow(
+          `Field "${fieldName}" is read-only and cannot be set by the client.`,
+        );
+      },
+    );
+
+    it('should allow client-supplied value for an editable DATE_TIME field', async () => {
+      const flatFieldMetadataMaps = createSystemFieldMaps({
+        name: 'closeDate',
+        type: FieldMetadataType.DATE_TIME,
+        isUIEditable: true,
+      });
+      const flatObjectMetadata = createFlatObjectMetadata(['closeDate']);
+
+      const result = await dataArgProcessorService.process({
+        partialRecordInputs: [{ closeDate: '1999-01-01T00:00:00.000Z' }],
+        authContext: createMockAuthContext(),
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps: emptyObjectMaps,
+      });
+
+      expect(result).toEqual([{ closeDate: '1999-01-01T00:00:00.000Z' }]);
+    });
+  });
+
   describe('failing inputs validation', () => {
     const fieldMetadataTypesToTest = Object.keys(
       failingInputsByFieldMetadataType,

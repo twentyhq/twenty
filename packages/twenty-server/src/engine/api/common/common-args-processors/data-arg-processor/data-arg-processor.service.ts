@@ -140,6 +140,24 @@ export class DataArgProcessorService {
           );
         }
 
+        // Reject client-supplied values for server-controlled system fields
+        // (createdAt/updatedAt/deletedAt). These are managed by the server and
+        // accepting them would let callers forge audit timestamps or soft-delete
+        // records outside the delete flow. Actor fields (createdBy/updatedBy) are
+        // intentionally left to ActorFromAuthContextService, which still honors a
+        // client-supplied source, so we narrow the guard to system DATE_TIME fields.
+        if (
+          fieldMetadata.isUIEditable === false &&
+          fieldMetadata.type === FieldMetadataType.DATE_TIME &&
+          isDefined(value)
+        ) {
+          throw new CommonQueryRunnerException(
+            `Field "${key}" is read-only and cannot be set by the client.`,
+            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+          );
+        }
+
         if (
           !isDefined(fieldMetadata.defaultValue) &&
           !fieldMetadata.isNullable &&
