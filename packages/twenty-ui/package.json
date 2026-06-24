@@ -92,22 +92,9 @@
   },
   "files": [
     "dist",
-    "accessibility",
-    "assets",
-    "data-display",
-    "feedback",
-    "icon",
-    "input",
-    "json-visualizer",
-    "layout",
-    "navigation",
-    "styles",
-    "surfaces",
-    "testing",
-    "theme",
-    "theme-constants",
-    "typography",
-    "utilities"
+    "!dist/individual",
+    "!dist/individual/**",
+    "!dist/**/*.map"
   ],
   "exports": {
     ".": {
