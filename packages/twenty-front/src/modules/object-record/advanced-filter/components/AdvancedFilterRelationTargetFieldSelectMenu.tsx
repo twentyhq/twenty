@@ -59,7 +59,7 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
   const targetObjectMetadataId =
     isDefined(sourceFieldMetadataItem) &&
     isManyToOneRelationField(sourceFieldMetadataItem)
-      ? sourceFieldMetadataItem.relation.targetObjectMetadata.id
+      ? sourceFieldMetadataItem.relation?.targetObjectMetadata.id
       : null;
 
   const { filterableFieldMetadataItems: relationTargetFields } =
