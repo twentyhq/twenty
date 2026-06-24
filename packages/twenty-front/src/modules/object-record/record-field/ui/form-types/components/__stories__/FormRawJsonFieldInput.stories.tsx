@@ -17,6 +17,39 @@ export default meta;
 
 type Story = StoryObj<typeof FormRawJsonFieldInput>;
 
+// Reproduces the side-panel overlap: a long validation error wraps to several
+// lines and must push the following field down instead of rendering on top of
+// it (e.g. the HTTP Request action Body field, see PR #21886).
+export const WithError: Story = {
+  args: {
+    label: 'Body',
+    placeholder: 'Enter valid json',
+    error:
+      'Use only letters, numbers, underscores, dots or hyphens (max 64 characters).',
+    onChange: fn(),
+  },
+  render: (args) => (
+    <div style={{ width: 240 }}>
+      <FormRawJsonFieldInput {...args} />
+      <FormRawJsonFieldInput
+        label="Headers"
+        placeholder="Enter valid json"
+        defaultValue={null}
+        onChange={fn()}
+      />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const error = await canvas.findByText(
+      'Use only letters, numbers, underscores, dots or hyphens (max 64 characters).',
+    );
+
+    expect(error).toBeVisible();
+  },
+};
+
 export const Default: Story = {
   args: {
     label: 'JSON field',
