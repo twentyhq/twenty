@@ -2232,6 +2232,7 @@ type DomainValidRecords {
   id: UUID!
   domain: String!
   records: [DomainRecord!]!
+  isCustomDomainEnabled: Boolean
 }
 
 type UpsertRowLevelPermissionPredicatesResult {

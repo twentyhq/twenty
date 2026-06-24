@@ -400,7 +400,6 @@ exports[`syncApplication should delete old field and create equivalent one when 
           "isSystem": false,
           "isSystemSideEffect": false,
           "isUIEditable": true,
-          "isUIReadOnly": false,
           "isUnique": false,
           "kanbanAggregateOperationViewIds": [],
           "kanbanAggregateOperationViewUniversalIdentifiers": [],
