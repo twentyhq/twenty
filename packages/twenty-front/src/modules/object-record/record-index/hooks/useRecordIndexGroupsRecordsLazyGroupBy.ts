@@ -64,26 +64,16 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
     ],
   );
 
-  const groupByGqlInput = useMemo(
-    () =>
-      isDefined(groupByFieldMetadataItem)
-        ? buildGroupByFieldObject({
-            field: groupByFieldMetadataItem,
-          })
-        : {},
-    [groupByFieldMetadataItem],
-  );
-
   const defaultVariables = useMemo(
     () => ({
       filter: combinedFilters,
-      groupBy: {
-        ...groupByGqlInput,
-      },
+      groupBy: isDefined(groupByFieldMetadataItem)
+        ? buildGroupByFieldObject({ field: groupByFieldMetadataItem })
+        : {},
       orderByForRecords: orderBy,
       limit: recordGroupsLimit,
     }),
-    [combinedFilters, groupByGqlInput, orderBy, recordGroupsLimit],
+    [combinedFilters, groupByFieldMetadataItem, orderBy, recordGroupsLimit],
   );
 
   const executeRecordIndexGroupsRecordsLazyGroupBy = useCallback(
