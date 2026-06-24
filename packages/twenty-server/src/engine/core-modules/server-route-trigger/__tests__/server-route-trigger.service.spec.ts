@@ -9,7 +9,6 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { ServerRouteTriggerExceptionCode } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.service';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
@@ -55,7 +54,6 @@ describe('ServerRouteTriggerService', () => {
   let logicFunctionExecutorService: jest.Mocked<
     Pick<LogicFunctionExecutorService, 'execute'>
   >;
-  let twentyConfigService: jest.Mocked<Pick<TwentyConfigService, 'get'>>;
 
   const handle = () =>
     service.handle({
@@ -98,12 +96,10 @@ describe('ServerRouteTriggerService', () => {
         // target returns the final response body
         .mockResolvedValueOnce(buildExecuteResult({ ok: true })),
     };
-    twentyConfigService = { get: jest.fn().mockReturnValue(true) };
 
     service = new ServerRouteTriggerService(
       logicFunctionRepository as unknown as Repository<LogicFunctionEntity>,
       logicFunctionExecutorService as unknown as LogicFunctionExecutorService,
-      twentyConfigService as unknown as TwentyConfigService,
     );
   });
 
@@ -131,14 +127,6 @@ describe('ServerRouteTriggerService', () => {
         body: { ok: true },
       }),
     );
-  });
-
-  it('refuses when the feature is disabled', async () => {
-    twentyConfigService.get.mockReturnValue(false);
-
-    await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.FEATURE_DISABLED,
-    });
   });
 
   it('throws LOGIC_FUNCTION_NOT_FOUND when no row matches the universalIdentifier', async () => {

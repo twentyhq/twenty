@@ -5,7 +5,6 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum ServerRouteTriggerExceptionCode {
-  FEATURE_DISABLED = 'FEATURE_DISABLED',
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
   SERVER_ROUTE_USER_UNCAUGHT_ERROR = 'SERVER_ROUTE_USER_UNCAUGHT_ERROR',
@@ -17,8 +16,6 @@ const getServerRouteTriggerExceptionUserFriendlyMessage = (
   code: ServerRouteTriggerExceptionCode,
 ) => {
   switch (code) {
-    case ServerRouteTriggerExceptionCode.FEATURE_DISABLED:
-      return msg`Server logic functions are disabled on this instance.`;
     case ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
       return msg`Server logic function not found.`;
     case ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED:

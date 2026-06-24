@@ -20,7 +20,6 @@ import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 type ResolverResult = {
@@ -37,7 +36,6 @@ export class ServerRouteTriggerService {
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async handle({
@@ -47,13 +45,6 @@ export class ServerRouteTriggerService {
     request: Request;
     resolverLogicFunctionUniversalIdentifier: string;
   }): Promise<RouteTriggerResponse> {
-    if (!this.twentyConfigService.get('IS_SERVER_LOGIC_FUNCTION_ENABLED')) {
-      throw new ServerRouteTriggerException(
-        'Server logic functions are disabled on this instance',
-        ServerRouteTriggerExceptionCode.FEATURE_DISABLED,
-      );
-    }
-
     const resolver = await this.findResolver({
       logicFunctionUniversalIdentifier:
         resolverLogicFunctionUniversalIdentifier,
