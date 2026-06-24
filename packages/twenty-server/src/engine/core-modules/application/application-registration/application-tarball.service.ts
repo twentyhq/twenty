@@ -202,18 +202,19 @@ export class ApplicationTarballService {
         },
       });
 
+      // Cast the payload: the manifest JSON column holds the full Manifest
+      // type, which TypeORM's _QueryDeepPartialEntity can't recurse into
+      // cleanly.
       await this.appRegistrationRepository.update(appRegistration.id, {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
         tarballFileId: savedFile.id,
         name: manifest.application?.displayName ?? 'Unknown App',
-        // The manifest JSON column carries the full Manifest type, which
-        // TypeORM's _QueryDeepPartialEntity can't recurse into cleanly.
-        manifest: manifest as unknown as QueryDeepPartialEntity<ApplicationRegistrationEntity>['manifest'],
+        manifest,
         latestAvailableVersion: packageJson?.version ?? null,
         isListed: false,
         isFeatured: false,
         ownerWorkspaceId: params.ownerWorkspaceId,
-      });
+      } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
 
       if (manifest.application?.serverVariables) {
         await this.applicationRegistrationVariableService.syncVariableSchemas(
