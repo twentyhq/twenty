@@ -5,8 +5,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { type Temporal } from 'temporal-polyfill';
-import { isDefined, parseToInstantOrThrow } from 'twenty-shared/utils';
+import { Temporal } from 'temporal-polyfill';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 import { EllipsisDisplay } from './EllipsisDisplay';
@@ -37,28 +36,14 @@ export const DateTimeDisplay = ({
     localeCatalog: dateLocale.localeCatalog,
   });
 
-  const getInstant = (): Temporal.Instant | null => {
-    if (!isNonEmptyString(value)) {
-      return null;
-    }
-
-    try {
-      return parseToInstantOrThrow(value);
-    } catch {
-      return null;
-    }
-  };
-
-  const instant = getInstant();
-
   return (
     <EllipsisDisplay>
       {formattedDate}
       <span></span>
-      {isDefined(instant) && (
+      {isNonEmptyString(value) && (
         <>
           <StyledTimeZoneSpacer />
-          <TimeZoneAbbreviation instant={instant} />
+          <TimeZoneAbbreviation instant={Temporal.Instant.from(value)} />
         </>
       )}
     </EllipsisDisplay>
