@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 
 export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   attachment: [{ name: 'name', type: FieldMetadataType.TEXT }],
@@ -53,4 +53,9 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
     { name: 'name', type: FieldMetadataType.FULL_NAME },
     { name: 'userEmail', type: FieldMetadataType.TEXT },
   ],
-} satisfies Record<AllStandardObjectName, FieldTypeAndNameMetadata[]>;
+} satisfies {
+  [ObjectName in AllStandardObjectName]: {
+    name: AllStandardObjectFieldName<ObjectName>;
+    type: FieldMetadataType;
+  }[];
+};
