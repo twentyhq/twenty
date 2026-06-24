@@ -406,7 +406,7 @@ export type ApplicationVariable = {
   isSecret: Scalars['Boolean']['output'];
   key: Scalars['String']['output'];
   options?: Maybe<Scalars['JSON']['output']>;
-  type: Scalars['String']['output'];
+  type?: Maybe<Scalars['String']['output']>;
   value: Scalars['String']['output'];
 };
 
