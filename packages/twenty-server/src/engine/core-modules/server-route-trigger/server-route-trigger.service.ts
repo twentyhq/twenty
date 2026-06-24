@@ -54,9 +54,6 @@ export class ServerRouteTriggerService {
       );
     }
 
-    // A server-route resolver is a logic function that carries
-    // `serverRouteTriggerSettings` (the opt-in marker). It runs in its own
-    // workspace (the application's owner workspace).
     const resolver = await this.findResolver({
       logicFunctionUniversalIdentifier:
         resolverLogicFunctionUniversalIdentifier,
@@ -77,11 +74,6 @@ export class ServerRouteTriggerService {
       userWorkspaceId: null,
     });
 
-    // Step 1: run the resolver. It returns
-    // `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`,
-    // selecting both the target workspace AND the target function. The
-    // resolver is the single point of authorization — the URL only carries
-    // the resolver's identifier.
     const resolverResult = await this.runFunction({
       logicFunctionUniversalIdentifier: resolver.universalIdentifier,
       workspaceId: resolver.workspaceId,
@@ -89,10 +81,6 @@ export class ServerRouteTriggerService {
     });
     const resolved = this.parseResolverResult(resolverResult);
 
-    // Step 2: run the target in the resolved workspace. The target is a
-    // regular workspace logic function — addressed by the
-    // universalIdentifier the resolver returned. `(universalIdentifier,
-    // workspaceId)` is unique, so we don't need a separate id lookup.
     const targetResult = await this.runFunction({
       logicFunctionUniversalIdentifier:
         resolved.targetLogicFunctionUniversalIdentifier,
@@ -115,14 +103,6 @@ export class ServerRouteTriggerService {
   }: {
     logicFunctionUniversalIdentifier: string;
   }): Promise<LogicFunctionEntity | null> {
-    // `(universalIdentifier, workspaceId)` is the SyncableEntity unique key,
-    // so a single universalIdentifier can have one row per workspace that
-    // installed the app. The resolver lives in the application
-    // registration's *owner workspace* — that's the canonical, manifest-
-    // managed copy. We load the application -> applicationRegistration
-    // chain and keep the one whose workspaceId matches the
-    // registration's ownerWorkspaceId. Other workspaces' copies are
-    // intentionally ignored even if they carry serverRouteTriggerSettings.
     const candidates = await this.logicFunctionRepository.find({
       where: { universalIdentifier: logicFunctionUniversalIdentifier },
       relations: { application: { applicationRegistration: true } },
@@ -185,9 +165,6 @@ export class ServerRouteTriggerService {
     workspaceId: string;
     payload: object;
   }): Promise<{ data: object | null; error?: { errorMessage: string } }> {
-    // `(universalIdentifier, workspaceId)` is unique — resolve the row
-    // straight from the repository rather than threading DB ids through
-    // the call chain.
     const logicFunction = await this.logicFunctionRepository.findOne({
       where: {
         universalIdentifier: logicFunctionUniversalIdentifier,

@@ -24,12 +24,6 @@ export class ServerRouteTriggerController {
     private readonly serverRouteTriggerService: ServerRouteTriggerService,
   ) {}
 
-  // The resolver function runs in the owner workspace; its job is to extract
-  // both a workspaceId and the target logic function's universalIdentifier
-  // from the request. The target function then runs in that resolved
-  // workspace and its response is what the server route returns. The
-  // resolver is the single point of authorization — clients only address
-  // it by `universalIdentifier`.
   @Post(':resolverLogicFunctionUniversalIdentifier')
   async post(
     @Param('resolverLogicFunctionUniversalIdentifier')
