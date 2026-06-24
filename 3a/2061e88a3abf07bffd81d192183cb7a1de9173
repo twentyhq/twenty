@@ -1,0 +1,23 @@
+packages/twenty-front/src/modules/object-record/record-field/ui/utils/__tests__/computeDraftValueFromFieldValue.test.ts
+  s_35892942d7e0a6::t_bc74a898c687fb 97-119
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
+  s_35892942d7e0a6::t_9d99c980d1bc9d 92
+packages/twenty-front/src/modules/object-record/record-field/ui/utils/computeDraftValueFromFieldValue.ts
+  s_35892942d7e0a6::t_612c928e734f35 68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "3a2061e88a3abf07bffd81d192183cb7a1de9173",
+  "prompts": {},
+  "sessions": {
+    "s_35892942d7e0a6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa469098-23d2-4e87-9b82-23f0c53dd368",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "RISHAV DEWAN <rishavdewan10@gmail.com>"
+    }
+  }
+}

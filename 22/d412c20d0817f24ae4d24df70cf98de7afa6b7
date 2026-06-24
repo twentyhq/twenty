@@ -1,0 +1,26 @@
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
+  s_35892942d7e0a6::t_b0ff3aef6c88ef 89-92
+packages/twenty-front/src/modules/object-record/record-field/ui/utils/__tests__/computeDraftValueFromFieldValue.test.ts
+  s_35892942d7e0a6::t_d1f76687a38805 1-120
+packages/twenty-shared/src/types/FieldMetadataMultiItemSettings.ts
+  s_35892942d7e0a6::t_75c97001dac0e2 10
+packages/twenty-front/src/modules/object-record/record-field/ui/utils/computeDraftValueFromFieldValue.ts
+  s_35892942d7e0a6::t_25e0b62075dca7 65-69,76
+  s_35892942d7e0a6::t_893de20e39f33d 72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "22d412c20d0817f24ae4d24df70cf98de7afa6b7",
+  "prompts": {},
+  "sessions": {
+    "s_35892942d7e0a6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa469098-23d2-4e87-9b82-23f0c53dd368",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "RISHAV DEWAN <rishavdewan10@gmail.com>"
+    }
+  }
+}
