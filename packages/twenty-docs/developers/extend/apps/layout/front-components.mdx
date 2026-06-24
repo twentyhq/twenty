@@ -204,7 +204,7 @@ A logic function declared with `httpRouteTriggerSettings` is exposed under the `
 
 The `RestApiClient` is built for exactly this. It reads `TWENTY_API_URL` and `TWENTY_APP_ACCESS_TOKEN` from the worker environment, attaches the `Authorization: Bearer` header, serializes and parses JSON, and throws a `RestApiClientError` when the token or URL is missing or the response is non-2xx — so you don't reimplement that boilerplate in every component.
 
-> **On Twenty Cloud, HTTP-triggered logic functions are also available on a dedicated domain** at `https://<your-workspace-subdomain>.withtwenty.com<path>`. `RestApiClient` uses it automatically, so the code below is unchanged. For external callers, copy the exact URL from the function's **HTTP trigger** settings or the application's **Settings** tab.
+> **On Twenty Cloud, HTTP-triggered logic functions are served on a dedicated domain** at `https://<your-workspace-subdomain>.withtwenty.com<path>`. `RestApiClient` uses it automatically, so the code below is unchanged. For external callers, copy the exact URL from the function's **HTTP trigger** settings or the application's **Settings** tab — on Twenty Cloud new routes must use it, as the legacy `/s/` route returns `410 Gone` (it stays only for self-hosting).
 
 A headless front component can run the call on mount via the `Command` component, then unmount automatically:
 
