@@ -12,6 +12,7 @@ describe('CronTriggerDeduplicationService', () => {
 
   const pattern = '*/5 * * * *';
   const dueNow = new Date('2025-01-01T10:00:00.100Z');
+  const driftedDueNow = new Date('2025-01-01T10:00:59.100Z');
   const notDueNow = new Date('2025-01-01T10:01:30.100Z');
 
   beforeEach(async () => {
@@ -55,5 +56,34 @@ describe('CronTriggerDeduplicationService', () => {
 
     expect(await service.shouldDispatch('key', pattern, dueNow)).toBe(false);
     expect(cacheStorageService.set).not.toHaveBeenCalled();
+  });
+
+  it('claims the same key for an on-time and a drifted tick of the same trigger', async () => {
+    cacheStorageService.get.mockResolvedValue(undefined);
+
+    await service.shouldDispatch('key', pattern, dueNow);
+    await service.shouldDispatch('key', pattern, driftedDueNow);
+
+    const triggerTimestamp = new Date('2025-01-01T10:00:00.000Z').getTime();
+
+    expect(cacheStorageService.set).toHaveBeenNthCalledWith(
+      1,
+      `key:${triggerTimestamp}`,
+      true,
+      expect.any(Number),
+    );
+    expect(cacheStorageService.set).toHaveBeenNthCalledWith(
+      2,
+      `key:${triggerTimestamp}`,
+      true,
+      expect.any(Number),
+    );
+  });
+
+  it('returns false for an invalid cron pattern', async () => {
+    expect(await service.shouldDispatch('key', 'not-a-cron', dueNow)).toBe(
+      false,
+    );
+    expect(cacheStorageService.get).not.toHaveBeenCalled();
   });
 });
