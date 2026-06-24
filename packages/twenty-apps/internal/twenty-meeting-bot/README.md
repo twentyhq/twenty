@@ -44,10 +44,10 @@ on.
 - **On by default.** Once an admin installs the app and configures Recall.ai
   credentials, every eligible meeting is recorded automatically — there is
   nothing each person has to switch on.
-- **A meeting is eligible when** it is upcoming, not canceled, has a conference
-  link, and its **Recording Bot** field is On. If any of those isn't true — the
-  event was canceled, you turned recording Off, there's no video link, or the
-  meeting has already started or passed — no bot is scheduled.
+- **A meeting is eligible when** it is not canceled, has a conference link, has
+  not ended yet, and its **Recording Bot** field is On. If any of those isn't
+  true — the event was canceled, you turned recording Off, there's no video
+  link, or the meeting has already ended — no bot is scheduled.
 - **Opting out of a single meeting.** Open the event and set **Recording Bot**
   to Off (or do it from the calendar events list view). The app cancels any bot
   it had scheduled for that meeting.
@@ -102,7 +102,7 @@ What this app intentionally does **not** do in v1:
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| No bot joined a meeting | Recording Bot was Off, the event had no conference link, it wasn't synced from a connected calendar, or `RECALL_API_KEY` isn't set | Confirm the event is On, upcoming, has a video link, and came from a synced calendar; admin: confirm `RECALL_API_KEY` is set |
+| No bot joined a meeting | **Recording Bot** was Off, the event had no conference link, it wasn't synced from a connected calendar, or `RECALL_API_KEY` isn't set | Confirm the event is On, upcoming, has a video link, and came from a synced calendar; admin: confirm `RECALL_API_KEY` is set |
 | Recording never reaches `COMPLETED` | A Recall webhook was missed, or only one of audio/video was produced | The reconciliation job pulls the latest status from Recall within a few minutes; if it stays `FAILED_UNKNOWN`, inspect the bot in the Recall dashboard |
 | Transcript empty, or marked pending/failed | Recall hasn't finished async transcription yet, or transcription failed for that call | Wait for the reconciliation job to ingest the transcript; a persistent failure leaves a marker in the transcript |
 | Webhook rejected with `401` (Recall keeps retrying) | `RECALL_WEBHOOK_SECRET` doesn't match the Recall endpoint's signing secret | Re-copy the `whsec_…` secret from the Recall webhook endpoint into the `RECALL_WEBHOOK_SECRET` server variable |
@@ -143,14 +143,29 @@ A workspace admin can tune bot behavior through application variables:
 
 ### Configuring the Recall webhook
 
-The app exposes a server route, `POST /webhook/recall`, that verifies the
-Recall/Svix signature and advances the matching CallRecording's lifecycle
-status (`JOINING` → `RECORDING` → `PROCESSING`, or `FAILED_UNKNOWN`). It never
-moves a status backward, so out-of-order or duplicate deliveries are safe, and
-it returns a non-2xx response on signature failures so Recall retries.
+The app exposes a server webhook route that verifies the Recall/Svix signature,
+advances the matching CallRecording's lifecycle status (`JOINING` → `RECORDING`
+→ `PROCESSING`, or `FAILED_UNKNOWN`), and — once the recording finishes —
+ingests the audio, video, and transcript. It never moves a status backward, so
+out-of-order or duplicate deliveries are safe, and it returns a non-2xx response
+on signature failures so Recall retries.
 
-1. In the Recall.ai dashboard, create a **Status Change** webhook endpoint
-   pointing at your deployment's `POST /webhook/recall` URL.
+Use this URL on your deployment, replacing only the host:
+
+```text
+https://<your-twenty-host>/webhooks/server/8da4b8b5-5edf-4880-b51f-ab6e679ec617/9215afe6-1497-4149-a49d-e608e239bbaf
+```
+
+The first ID is the **Twenty Meeting Bot application registration**. The second
+ID is the **Recall webhook logic function**.
+
+1. In the Recall.ai dashboard, create a webhook endpoint pointing at your
+   deployment's webhook URL, subscribed to the **bot status-change**,
+   **recording**, and **transcript** events (`bot.status_change`,
+   `recording.done`, `recording.failed`, `transcript.done`,
+   `transcript.failed`). Status-change drives the lifecycle; the recording and
+   transcript events trigger media and transcript ingestion. Subscribing to
+   status changes alone leaves ingestion to the reconciliation backstop.
 2. Copy the endpoint's signing secret — it starts with `whsec_`.
 3. Set it as the `RECALL_WEBHOOK_SECRET` server variable on the **Twenty
    Meeting Bot** application registration.
