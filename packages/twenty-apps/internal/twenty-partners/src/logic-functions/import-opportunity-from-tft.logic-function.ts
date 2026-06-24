@@ -25,7 +25,6 @@ const dropNulls = (value: unknown): unknown =>
         : value;
 
 // Request contract — the JSON the TFT workflow POSTs.
-// TFT sends useCase; partners stores it on Opportunity.need (Needs).
 export const importOpportunityFromTftSchema = z.preprocess(dropNulls, z.object({
   tftOpportunityId: z.string().optional(),
   name: z.string().trim().min(1),

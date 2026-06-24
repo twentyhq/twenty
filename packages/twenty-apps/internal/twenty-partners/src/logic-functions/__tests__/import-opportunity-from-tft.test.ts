@@ -79,9 +79,7 @@ describe('import-opportunity-from-tft handler', () => {
       .mockResolvedValueOnce({ createOpportunity: { id: 'opp-1' } });
 
     const result = await handler(
-      authedEvent(
-        baseInput({ useCase: 'Migrate from HubSpot, ~30 sales users' }),
-      ),
+      authedEvent(baseInput({ useCase: 'Migrate from HubSpot, ~30 sales users' })),
     );
 
     expect(result).toEqual({ ok: true, created: true, id: 'opp-1' });
@@ -89,8 +87,7 @@ describe('import-opportunity-from-tft handler', () => {
     const createOppCall = mutationMock.mock.calls.find(
       ([arg]) => 'createOpportunity' in arg,
     );
-    const data = createOppCall?.[0].createOpportunity.__args.data;
-    expect(data).toEqual({
+    expect(createOppCall?.[0].createOpportunity.__args.data).toEqual({
       name: 'Acme rollout',
       tftOpportunityId: 'tft-opp-1',
       amount: { amountMicros: 5000000, currencyCode: 'EUR' },
@@ -100,7 +97,6 @@ describe('import-opportunity-from-tft handler', () => {
       companyId: 'company-1',
       pointOfContactId: 'person-1',
     });
-    expect(data).not.toHaveProperty('useCase');
   });
 
   it('drops null amountMicros/closeDate instead of failing validation', async () => {
