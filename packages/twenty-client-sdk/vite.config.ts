@@ -3,11 +3,6 @@ import { defineConfig } from 'vite';
 
 import { entryFileNames, isExternal } from './vite.shared';
 
-// Metadata is intentionally excluded here and built on its own
-// (vite.metadata.config.ts). This multi-entry build hoists code shared across
-// entries into a chunk-*.mjs, but the front-component renderer loads the
-// metadata client as a single blob-URL module and cannot resolve relative chunk
-// imports — so metadata must be a single self-contained file.
 const entries = [
   'src/core/index.ts',
   'src/rest/index.ts',

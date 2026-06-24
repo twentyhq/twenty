@@ -126,23 +126,14 @@ test.describe('Postcard card front component', () => {
       await expect(page.getByText(fallback, { exact: false })).toHaveCount(0);
     }
 
-    // SDK health panel: exercises all three twenty-client-sdk entrypoints from
-    // inside the front component. `core` and `metadata` are served to the
-    // renderer as standalone blob modules — if either bundle regresses to an
-    // unresolved chunk import, that module throws on load and the whole
-    // component fails to render, so these assertions guard that path.
     const sdkPanel = page.getByTestId(CARD_TEST_IDS.sdkPanel);
     await expect(sdkPanel).toBeVisible();
 
-    // core + metadata round-trip a permission-independent `__typename` query;
-    // reaching "ok" proves the blob module both loaded and functions.
     await expect(page.getByTestId(CARD_TEST_IDS.sdkCore)).toHaveText('core: ok');
     await expect(page.getByTestId(CARD_TEST_IDS.sdkMetadata)).toHaveText(
       'metadata: ok',
     );
 
-    // rest is bundled into the component (not a blob module), so it can't hit
-    // the chunk-resolution failure; assert only that its probe resolved.
     await expect(page.getByTestId(CARD_TEST_IDS.sdkRest)).toHaveText(
       /rest: (ok|error)/,
     );
