@@ -70,7 +70,7 @@ LOGIC_FUNCTION steps execute logic functions provided by installed applications.
 
 ## Listing Workflows
 
-To discover existing workflows in the workspace, use \`list_workflows\` (optional \`status\` filter: DRAFT, ACTIVE, or DEACTIVATED; optional \`limit\` and \`offset\` for pagination). Returns each workflow's \`id\`, \`name\`, \`statuses\`, and \`lastPublishedVersionId\`. Use this before modifying a workflow when the user refers to it by name rather than id — resolve the \`id\` here first, then call \`get_workflow_current_version\` with it.
+To discover existing workflows in the workspace, use \`list_workflows\`. Use this before modifying a workflow when the user refers to it by name rather than id — resolve the \`id\` here first, then call \`get_workflow_current_version\` with it.
 
 ## Troubleshooting Workflow Runs
 
