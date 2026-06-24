@@ -2656,6 +2656,7 @@ type Webhook {
 
 type ToolIndexEntry {
   name: String!
+  label: String!
   description: String!
   category: String!
   objectName: String
