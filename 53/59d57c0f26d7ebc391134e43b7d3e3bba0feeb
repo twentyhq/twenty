@@ -1,0 +1,19 @@
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service.ts
+  s_47b33e25f96fca::t_d1b962a36a2900 90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "5359d57c0f26d7ebc391134e43b7d3e3bba0feeb",
+  "prompts": {},
+  "sessions": {
+    "s_47b33e25f96fca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52e8b61d-c2a5-470f-9272-a73ed75c984c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
