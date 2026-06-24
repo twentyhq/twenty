@@ -34,6 +34,8 @@ import { AddIsSystemSideEffectFastInstanceCommand } from 'src/database/commands/
 import { BackfillConnectionSecuritySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-slow-1781461753981-backfill-connection-security';
 import { AddChannelWebhookSubscriptionFieldsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782152096938-add-channel-webhook-subscription-fields';
 import { AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782200000000-add-universal-identifier-and-application-id-to-search-field-metadata';
+import { AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782225430654-add-ts-vector-field-metadata-id-to-search-field-metadata';
+import { BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-slow-1782225430655-backfill-ts-vector-field-metadata-id-on-search-field-metadata';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
@@ -76,8 +78,7 @@ import { AddLogicFunctionExecutionModeFastInstanceCommand } from 'src/database/c
 import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1798400000000-encrypt-non-secret-application-variable';
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action';
-import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781900000000-add-view-kanban-column-width';import { AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782225430654-add-ts-vector-field-metadata-id-to-search-field-metadata';
-import { BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-slow-1782225430655-backfill-ts-vector-field-metadata-id-on-search-field-metadata';
+import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781900000000-add-view-kanban-column-width';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

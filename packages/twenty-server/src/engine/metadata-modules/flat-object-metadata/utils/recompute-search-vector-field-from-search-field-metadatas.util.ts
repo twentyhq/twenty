@@ -20,16 +20,56 @@ import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-me
 
 type RecomputeSearchVectorFieldFromSearchFieldMetadatasArgs = {
   flatObjectMetadata: FlatObjectMetadata;
-  // Post-change searchFieldMetadata rows for the object, carrying the field id and the
-  // per-object position that drives the deterministic asExpression order.
+  // Post-change searchFieldMetadata rows for the object, carrying the indexed field id,
+  // the per-object position driving the deterministic asExpression order, and the FK to
+  // the TS_VECTOR field they feed (the authoritative grouping key).
   searchFieldMetadatas: Pick<
     FlatSearchFieldMetadata,
-    'fieldMetadataId' | 'position' | 'universalIdentifier'
+    | 'fieldMetadataId'
+    | 'position'
+    | 'universalIdentifier'
+    | 'tsVectorFieldMetadataId'
   >[];
   // Takes precedence over the flat maps when resolving an id — for a field created or
   // renamed in the same migration, whose maps entry is absent or stale.
   overrideFlatFieldMetadataById?: Map<string, FlatFieldMetadata>;
 } & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'>;
+
+// Resolves the TS_VECTOR field the rows feed. Today every row of an object points at the
+// same vector, so we group on the FK and resolve that single target. Falls back to the
+// object's system searchVector field by name only when there are no rows left to read the
+// FK from (e.g. every indexed field was deleted), so an emptied surface still clears it.
+const resolveTargetSearchVectorField = ({
+  targetTsVectorFieldMetadataId,
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
+  overrideFlatFieldMetadataById,
+}: {
+  targetTsVectorFieldMetadataId: string | undefined;
+} & Pick<
+  RecomputeSearchVectorFieldFromSearchFieldMetadatasArgs,
+  'flatObjectMetadata' | 'flatFieldMetadataMaps' | 'overrideFlatFieldMetadataById'
+>): FlatFieldMetadata | undefined => {
+  if (isDefined(targetTsVectorFieldMetadataId)) {
+    return (
+      overrideFlatFieldMetadataById?.get(targetTsVectorFieldMetadataId) ??
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: targetTsVectorFieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      })
+    );
+  }
+
+  const objectFlatFieldMetadatas =
+    findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityIds: flatObjectMetadata.fieldIds,
+    });
+
+  return objectFlatFieldMetadatas.find(
+    (field) => field.name === SEARCH_VECTOR_FIELD.name,
+  );
+};
 
 export const recomputeSearchVectorFieldFromSearchFieldMetadatas = ({
   flatObjectMetadata,
@@ -39,15 +79,23 @@ export const recomputeSearchVectorFieldFromSearchFieldMetadatas = ({
 }: RecomputeSearchVectorFieldFromSearchFieldMetadatasArgs):
   | FlatFieldMetadata<FieldMetadataType.TS_VECTOR>
   | undefined => {
-  const objectFlatFieldMetadatas =
-    findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: flatObjectMetadata.fieldIds,
-    });
+  const targetTsVectorFieldMetadataId =
+    searchFieldMetadatas[0]?.tsVectorFieldMetadataId;
 
-  const searchVectorField = objectFlatFieldMetadatas.find(
-    (field) => field.name === SEARCH_VECTOR_FIELD.name,
-  );
+  const targetSearchFieldMetadatas = isDefined(targetTsVectorFieldMetadataId)
+    ? searchFieldMetadatas.filter(
+        (searchFieldMetadata) =>
+          searchFieldMetadata.tsVectorFieldMetadataId ===
+          targetTsVectorFieldMetadataId,
+      )
+    : searchFieldMetadatas;
+
+  const searchVectorField = resolveTargetSearchVectorField({
+    targetTsVectorFieldMetadataId,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    overrideFlatFieldMetadataById,
+  });
 
   if (
     !isDefined(searchVectorField) ||
@@ -59,7 +107,7 @@ export const recomputeSearchVectorFieldFromSearchFieldMetadatas = ({
     );
   }
 
-  const targetSearchableFields = searchFieldMetadatas.map(
+  const targetSearchableFields = targetSearchFieldMetadatas.map(
     (searchFieldMetadata) => {
       const { fieldMetadataId, position, universalIdentifier } =
         searchFieldMetadata;
