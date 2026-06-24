@@ -1616,6 +1616,10 @@ type BillingPaymentIntent {
   paymentIntentType: String!
 }
 
+type BillingSetupIntent {
+  clientSecret: String!
+}
+
 type BillingSession {
   url: String
 }
@@ -3298,6 +3302,7 @@ type Mutation {
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
+  createBillingPaymentMethodSetupIntent: BillingSetupIntent!
   switchSubscriptionInterval: BillingUpdate!
   switchBillingPlan: BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!
