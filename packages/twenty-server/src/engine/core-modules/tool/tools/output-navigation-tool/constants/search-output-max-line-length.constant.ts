@@ -1,1 +1,0 @@
-export const SEARCH_OUTPUT_MAX_LINE_LENGTH = 500;

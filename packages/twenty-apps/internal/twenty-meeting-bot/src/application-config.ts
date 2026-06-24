@@ -30,6 +30,7 @@ export default defineApplication({
   displayName: APP_DISPLAY_NAME,
   description: APP_DESCRIPTION,
   logoUrl: 'public/logo.svg',
+  screenshots: ['public/gallery/twenty-meeting-bot-cover.png'],
   applicationVariables: {
     [MEETING_BOT_NAME_ENV_VAR_NAME]: {
       universalIdentifier: MEETING_BOT_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,

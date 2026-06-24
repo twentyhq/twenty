@@ -112,12 +112,10 @@ export class TimelineActivitySeederService {
   constructor(private readonly objectMetadataService: ObjectMetadataService) {}
 
   private getLinkedActivityName(activityType: string): string {
-    // Notes and tasks use the legacy format: linked-{type}.created
     if (activityType === 'note' || activityType === 'task') {
       return `linked-${activityType}.created`;
     }
 
-    // Calendar events and messages use the new format: {type}.linked
     return `${activityType}.linked`;
   }
 

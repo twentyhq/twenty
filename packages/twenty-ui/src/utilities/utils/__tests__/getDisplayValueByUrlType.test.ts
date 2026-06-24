@@ -137,6 +137,80 @@ describe('getDisplayValueByUrlType', () => {
     });
   });
 
+  describe('instagram', () => {
+    it('should extract handle from Instagram profile URL with @ prefix', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://www.instagram.com/ptcrash',
+      });
+      expect(result).toBe('@ptcrash');
+    });
+
+    it('should handle Instagram URL without protocol', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'instagram.com/ptcrash',
+      });
+      expect(result).toBe('@ptcrash');
+    });
+
+    it('should handle Instagram URL without www', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/ptcrash',
+      });
+      expect(result).toBe('@ptcrash');
+    });
+
+    it('should ignore a trailing slash', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/ptcrash/',
+      });
+      expect(result).toBe('@ptcrash');
+    });
+
+    it('should ignore a query string', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/ptcrash?hl=en',
+      });
+      expect(result).toBe('@ptcrash');
+    });
+
+    it('should decode URL-encoded characters in the handle', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/john%20doe',
+      });
+      expect(result).toBe('@john doe');
+    });
+
+    it('should return "Instagram" for a post URL', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/p/ABC123',
+      });
+      expect(result).toBe('Instagram');
+    });
+
+    it('should return "Instagram" for a reel URL', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/reel/xyz',
+      });
+      expect(result).toBe('Instagram');
+    });
+
+    it('should return "Instagram" when no handle can be extracted', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://www.instagram.com/',
+      });
+      expect(result).toBe('Instagram');
+    });
+  });
+
   describe('url type', () => {
     it('should return undefined for generic url type', () => {
       const result = getDisplayValueByUrlType({

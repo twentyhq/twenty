@@ -8,8 +8,9 @@ export const SearchOutputInputZodSchema = z.object({
     ),
   pattern: z
     .string()
+    .min(1)
     .describe(
-      'Text or regular expression to search for. Matched line by line against the indented JSON representation of the file.',
+      'Text or regular expression to search for. Treated as a regular expression when valid, otherwise as a literal string. Matched against the raw file text.',
     ),
   maxMatches: z
     .number()
@@ -17,22 +18,22 @@ export const SearchOutputInputZodSchema = z.object({
     .positive()
     .max(100)
     .optional()
-    .describe('Maximum number of matches to return (default 10).'),
+    .describe('Maximum number of occurrences to return (default 10).'),
   offset: z
     .number()
     .int()
     .nonnegative()
     .optional()
     .describe(
-      'Number of matches to skip before returning results, for stateless pagination (default 0).',
+      'Number of occurrences to skip before returning results, for stateless pagination (default 0).',
     ),
-  contextLines: z
+  contextChars: z
     .number()
     .int()
     .nonnegative()
-    .max(10)
+    .max(2000)
     .optional()
     .describe(
-      'Lines of context to include before and after each match (default 2).',
+      'Number of characters of context to include before and after each occurrence (default 100).',
     ),
 });

@@ -8,12 +8,11 @@ import { CALENDAR_EVENT_RECORDING_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 's
 import { CALENDAR_EVENT_RECORDING_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER } from 'src/constants/calendar-event-recording-page-layout-tab-universal-identifier';
 import { CALENDAR_EVENT_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER } from 'src/constants/calendar-event-recording-page-layout-widget-universal-identifier';
 
-// Position 15 slots the tab between the standard Home (10) and Timeline (20) tabs.
 export default definePageLayoutTab({
   universalIdentifier:
     CALENDAR_EVENT_RECORDING_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
-  title: 'Recording',
-  position: 15,
+  title: 'Call Recording',
+  position: 25,
   icon: 'IconVideo',
   layoutMode: PageLayoutTabLayoutMode.CANVAS,
   pageLayoutUniversalIdentifier:
@@ -22,9 +21,8 @@ export default definePageLayoutTab({
     {
       universalIdentifier:
         CALENDAR_EVENT_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
-      title: 'Recording',
+      title: 'Transcript',
       type: 'FRONT_COMPONENT',
-      gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
       configuration: {
         configurationType: 'FRONT_COMPONENT',
         frontComponentUniversalIdentifier:
