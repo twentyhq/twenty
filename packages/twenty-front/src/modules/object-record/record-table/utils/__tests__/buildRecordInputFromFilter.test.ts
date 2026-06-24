@@ -82,7 +82,7 @@ describe('buildRecordInputFromFilter', () => {
       objectMetadataItem: mockObjectMetadataItem,
     });
 
-    expect(result.createdAt).toEqual(new Date('2025-06-15T10:29:00.000Z'));
+    expect(result.createdAt).toBe('2025-06-15T10:29:00.000Z');
   });
 
   it('should not subtract a minute for DATE_TIME with IS operand', () => {
@@ -100,7 +100,26 @@ describe('buildRecordInputFromFilter', () => {
       objectMetadataItem: mockObjectMetadataItem,
     });
 
-    expect(result.createdAt).toEqual(filterDate);
+    expect(result.createdAt).toBe(filterDate.toISOString());
+  });
+
+  it('should assign an ISO string (not a Date) for DATE_TIME with IS_RELATIVE operand', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          fieldMetadataId: FIELD_ID_DATE_TIME,
+          type: 'DATE_TIME',
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: 'THIS_QUARTER',
+        }),
+      ],
+      objectMetadataItem: mockObjectMetadataItem,
+    });
+
+    expect(typeof result.createdAt).toBe('string');
+    expect(() =>
+      new Date(result.createdAt as string).toISOString(),
+    ).not.toThrow();
   });
 
   it('should deep-merge a single composite address sub-field starting from empty object', () => {

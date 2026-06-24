@@ -65,10 +65,14 @@ export const buildRecordInputFromFilter = ({
           value,
         );
       } else if (
-        fieldMetadataItem.type === FieldMetadataType.DATE_TIME &&
-        filter.operand === ViewFilterOperand.IS_BEFORE
+        fieldMetadataItem.type === FieldMetadataType.DATE_TIME ||
+        fieldMetadataItem.type === FieldMetadataType.DATE
       ) {
-        recordInput[fieldMetadataItem.name] = subMinutes(value as Date, 1);
+        const dateValue =
+          filter.operand === ViewFilterOperand.IS_BEFORE
+            ? subMinutes(value as Date, 1)
+            : (value as Date);
+        recordInput[fieldMetadataItem.name] = dateValue.toISOString();
       } else {
         recordInput[fieldMetadataItem.name] = value;
       }
