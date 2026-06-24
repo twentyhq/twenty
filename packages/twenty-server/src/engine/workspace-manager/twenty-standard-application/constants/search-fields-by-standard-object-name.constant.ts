@@ -3,13 +3,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 
-// Single source of truth for every standard object's searchVector field set.
-// The Record is keyed by AllStandardObjectName, so the compiler forces every standard
-// object to declare its list. Both consumers read from here: the searchVector
-// asExpression (compute-*-standard-flat-field-metadata builders) and the
-// searchFieldMetadata rows (build-standard-flat-search-field-metadata-maps).
-// Junction objects with no searchable text field index their UUID id (their label
-// identifier); objects whose searchVector indexes nothing keep an empty list.
 export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   attachment: [{ name: 'name', type: FieldMetadataType.TEXT }],
   blocklist: [{ name: 'handle', type: FieldMetadataType.TEXT }],

@@ -15,7 +15,7 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
 export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
@@ -196,7 +196,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         settings: {
           generatedType: 'STORED',
           asExpression: getTsVectorColumnExpressionFromFields(
-            SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION,
+            SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
           ),
         },
       },
