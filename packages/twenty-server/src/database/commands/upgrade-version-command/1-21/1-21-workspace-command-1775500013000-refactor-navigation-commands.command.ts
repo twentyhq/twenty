@@ -202,7 +202,6 @@ export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspac
           workspaceId,
           position: nextPosition++,
           now,
-          universalIdentifier,
         }),
       );
     }
