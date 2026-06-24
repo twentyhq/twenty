@@ -66,10 +66,6 @@ export class ServerRouteTriggerService {
       );
     }
 
-    // The application registration the resolver belongs to is the trust
-    // boundary: the resolver may only dispatch to a target that belongs to the
-    // same registration. findResolver already guarantees this relation is
-    // loaded for the selected candidate.
     const applicationRegistrationId =
       resolver.application?.applicationRegistration?.id;
 
@@ -95,10 +91,6 @@ export class ServerRouteTriggerService {
     });
     const resolved = this.parseResolverResult(resolverResult);
 
-    // Scope the target to the resolver's own application registration. This
-    // enforces tenant isolation: the resolver cannot reach a function from a
-    // different application, nor a workspace where its application is not
-    // installed (no installed copy means no matching row).
     const targetResult = await this.runFunction({
       logicFunctionUniversalIdentifier:
         resolved.targetLogicFunctionUniversalIdentifier,
@@ -217,9 +209,6 @@ export class ServerRouteTriggerService {
         `Server logic function ${logicFunction.id} failed in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
       );
-      // Do not surface raw executor/internal error messages to the
-      // (unauthenticated) caller — log the detail above and return a generic
-      // message keyed off the mapped code instead.
       const code = this.mapExecutorErrorToServerRouteCode(error);
 
       throw new ServerRouteTriggerException(

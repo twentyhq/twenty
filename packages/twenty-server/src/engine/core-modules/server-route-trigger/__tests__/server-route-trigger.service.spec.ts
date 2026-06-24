@@ -326,10 +326,6 @@ describe('ServerRouteTriggerService', () => {
   it('scopes the target lookup to the resolver application registration', async () => {
     await handle();
 
-    // First findOne resolves the resolver (no registration scoping); the
-    // second resolves the target and must be constrained to the resolver's
-    // own application registration so it cannot reach another app's functions
-    // or a workspace where the app is not installed.
     expect(logicFunctionRepository.findOne).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({
