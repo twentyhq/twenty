@@ -40,7 +40,7 @@ const buildExecuteResult = (
 const buildRequest = (body: object | null = {}): Request =>
   ({
     method: 'POST',
-    path: `/server-routes/${RESOLVER_UID}`,
+    path: `/webhooks/server/${RESOLVER_UID}`,
     query: {},
     headers: {},
     rawBody: Buffer.from(JSON.stringify(body ?? {}), 'utf-8'),

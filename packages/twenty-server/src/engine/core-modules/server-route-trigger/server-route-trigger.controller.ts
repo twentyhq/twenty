@@ -16,7 +16,7 @@ import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('server-routes')
+@Controller('webhooks/server')
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 @UseFilters(ServerRouteTriggerRestApiExceptionFilter)
 export class ServerRouteTriggerController {
