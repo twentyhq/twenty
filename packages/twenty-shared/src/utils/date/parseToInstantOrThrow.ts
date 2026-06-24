@@ -1,22 +1,9 @@
 import { isValid, parse } from 'date-fns';
 import { Temporal } from 'temporal-polyfill';
 
+import { NON_ISO_DATE_FORMATS } from '@/utils/date/dateInputFormats';
 import { turnJSDateToPlainDate } from '@/utils/date/turnJSDateToPlainDate';
 import { isDefined } from '@/utils/validation';
-
-const NON_ISO_DATE_FORMATS = [
-  'yyyy.MM.dd',
-  'yyyy/MM/dd',
-  'MM-dd-yyyy',
-  'MM/dd/yyyy',
-  'MM.dd.yyyy',
-  'MMMM d, yyyy',
-  'MMM d, yyyy',
-  'd MMMM yyyy',
-  'd MMM yyyy',
-  'dd-MMM-yyyy',
-  'yyyy-MMM-dd',
-];
 
 const tryParseInstant = (
   parseInstant: () => Temporal.Instant,
