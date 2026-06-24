@@ -15,7 +15,7 @@ const meta: Meta<typeof DateTimeDisplay> = {
         value={{
           dateFormat: DateFormat.DAY_FIRST,
           timeFormat: TimeFormat.HOUR_24,
-          timeZone: 'Pacific/Tahiti', // Non-system time zone renders the timezone abbreviation
+          timeZone: 'Pacific/Tahiti',
         }}
       >
         <Story />
@@ -41,8 +41,6 @@ export const Default: Story = {
   },
 };
 
-// A date-time field can hold a date-only value (e.g. through imports or API
-// writes). This used to throw in Temporal.Instant.from and crash the field.
 export const DateOnlyValue: Story = {
   args: {
     value: '2026-05-07',

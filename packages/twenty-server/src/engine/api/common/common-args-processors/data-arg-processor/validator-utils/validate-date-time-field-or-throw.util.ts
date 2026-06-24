@@ -35,25 +35,25 @@ const ACCEPTED_DATE_TIME_FORMATS = [
   'yyyy-MMM-dd',
 ];
 
-// Normalize any accepted date-time input to a canonical ISO 8601 instant.
-// Lenient input is intentional, but the stored value must be a full instant so
-// downstream consumers (DB, mutation response, timeline events, frontend) never
-// receive a date-only string for a DATE_TIME field.
-const normalizeToInstantStringOrNull = (value: string): string | null => {
-  // Strict ISO 8601 carrying an offset/Z is an exact instant: keep it as-is,
-  // independent of the server time zone.
+const parseStrictInstantStringOrNull = (value: string): string | null => {
   try {
     return Temporal.Instant.from(value).toString();
   } catch {
-    // Not a strict instant (zoneless, date-only, or alternative format below).
+    return null;
+  }
+};
+
+const normalizeToInstantStringOrNull = (value: string): string | null => {
+  const strictInstantString = parseStrictInstantStringOrNull(value);
+
+  if (isString(strictInstantString)) {
+    return strictInstantString;
   }
 
   for (const format of ACCEPTED_DATE_TIME_FORMATS) {
     const parsed = parse(value, format, new Date());
 
     if (isValid(parsed)) {
-      // These formats carry no offset; interpret the parsed wall-clock fields as
-      // UTC so a date-only value becomes midnight UTC, deterministically.
       return Temporal.PlainDateTime.from({
         year: parsed.getFullYear(),
         month: parsed.getMonth() + 1,

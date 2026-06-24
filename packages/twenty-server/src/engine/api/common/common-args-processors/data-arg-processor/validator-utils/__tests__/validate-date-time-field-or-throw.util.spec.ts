@@ -2,9 +2,6 @@ import { validateDateTimeFieldOrThrow } from 'src/engine/api/common/common-args-
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 describe('validateDateTimeFieldOrThrow', () => {
-  // The validator accepts lenient input but normalizes every value to a
-  // canonical ISO 8601 instant so a date-only value can never reach storage,
-  // the mutation response, or timeline events for a DATE_TIME field.
   describe('valid inputs (normalized to a canonical instant)', () => {
     it('should return null when value is null', () => {
       const result = validateDateTimeFieldOrThrow(null, 'testField');

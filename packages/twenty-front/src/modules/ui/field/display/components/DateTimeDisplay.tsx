@@ -37,10 +37,6 @@ export const DateTimeDisplay = ({
     localeCatalog: dateLocale.localeCatalog,
   });
 
-  // A date-time field can hold a legacy date-only value (e.g. "2026-05-07") from
-  // imports or API writes. Temporal.Instant.from is strict and throws on those,
-  // which would crash the whole field/widget. Parse leniently so the timezone
-  // hint degrades instead of crashing.
   const instant = isNonEmptyString(value)
     ? parseStringToInstantOrNull(value)
     : null;
