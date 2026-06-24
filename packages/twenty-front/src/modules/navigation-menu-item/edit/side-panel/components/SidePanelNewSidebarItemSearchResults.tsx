@@ -49,11 +49,13 @@ export const SidePanelNewSidebarItemSearchResults = ({
     useFilteredObjectMetadataItems();
   const { views, objectMetadataIdsWithIndexView, viewIdsAlreadyAdded } =
     useNavigationMenuObjectMetadataForSection(currentItems);
-  const { availableSearchRecords, recordSearchLoading } =
+  const trimmedSearchValue = searchValue.trim();
+  const { availableSearchRecords, isSearchDebouncing, recordSearchLoading } =
     useAvailableNavigationMenuItemSearchRecords({
-      searchInput: searchValue,
-      skip: !isNonEmptyString(searchValue),
+      searchInput: trimmedSearchValue,
+      skip: !isNonEmptyString(trimmedSearchValue),
     });
+  const isRecordSearchLoading = recordSearchLoading || isSearchDebouncing;
 
   const availableViews = views
     .filter((view) => view.key !== ViewKey.INDEX)
@@ -64,17 +66,31 @@ export const SidePanelNewSidebarItemSearchResults = ({
     availableViews.map((view) => view.objectMetadataId),
   );
 
-  const { availableObjectMetadataItems, objectMetadataItemsWithViews } =
-    getAvailableObjectMetadataForNewSidebarItem({
-      objectMetadataItems,
-      activeNonSystemObjectMetadataItems,
-      objectMetadataIdsWithIndexView,
-      objectMetadataIdsWithDisplayableViews,
-    });
+  const {
+    availableObjectMetadataItems,
+    availableSystemObjectMetadataItems,
+    objectMetadataItemsWithViews,
+    availableSystemObjectMetadataItemsForView,
+  } = getAvailableObjectMetadataForNewSidebarItem({
+    objectMetadataItems,
+    activeNonSystemObjectMetadataItems,
+    objectMetadataIdsWithIndexView,
+    objectMetadataIdsWithDisplayableViews,
+  });
+
+  const searchableObjectMetadataItems = [
+    ...availableObjectMetadataItems,
+    ...availableSystemObjectMetadataItems,
+  ].toSorted((a, b) => a.labelPlural.localeCompare(b.labelPlural));
+
+  const searchableObjectMetadataItemsWithViews = [
+    ...objectMetadataItemsWithViews,
+    ...availableSystemObjectMetadataItemsForView,
+  ];
 
   const filteredObjectMetadataItems = filterBySearchQuery({
-    items: availableObjectMetadataItems,
-    searchQuery: searchValue,
+    items: searchableObjectMetadataItems,
+    searchQuery: trimmedSearchValue,
     getSearchableValues: (item) => [
       item.labelPlural,
       item.labelSingular,
@@ -84,7 +100,7 @@ export const SidePanelNewSidebarItemSearchResults = ({
   });
 
   const objectMetadataItemIdsWithViews = new Set(
-    objectMetadataItemsWithViews.map((item) => item.id),
+    searchableObjectMetadataItemsWithViews.map((item) => item.id),
   );
 
   const filteredViews = filterBySearchQuery({
@@ -93,7 +109,7 @@ export const SidePanelNewSidebarItemSearchResults = ({
         objectMetadataItemIdsWithViews.has(view.objectMetadataId),
       )
       .sort((viewA, viewB) => viewA.name.localeCompare(viewB.name)),
-    searchQuery: searchValue,
+    searchQuery: trimmedSearchValue,
     getSearchableValues: (view) => [view.name],
   });
 
@@ -107,7 +123,7 @@ export const SidePanelNewSidebarItemSearchResults = ({
     filteredObjectMetadataItems.length === 0 &&
     filteredViews.length === 0 &&
     availableSearchRecords.length === 0 &&
-    !recordSearchLoading;
+    !isRecordSearchLoading;
 
   const handleSelectObject = (
     objectMetadataItem: EnrichedObjectMetadataItem,
@@ -168,7 +184,7 @@ export const SidePanelNewSidebarItemSearchResults = ({
       {({ innerRef, droppableProps, placeholder }) => (
         <SidePanelList
           selectableItemIds={selectableItemIds}
-          loading={recordSearchLoading}
+          loading={isRecordSearchLoading}
           noResults={isEmpty}
           noResultsText={t`No results found`}
         >

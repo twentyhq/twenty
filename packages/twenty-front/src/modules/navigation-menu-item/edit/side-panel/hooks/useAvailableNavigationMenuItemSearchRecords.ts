@@ -1,15 +1,11 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
-import { useQuery } from '@apollo/client/react';
 
-import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
-import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SearchDocument } from '~/generated/graphql';
+import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
+import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
+import { isDefined } from 'twenty-shared/utils';
 
 export type NavigationMenuItemSearchRecord = {
   recordId: string;
@@ -30,40 +26,20 @@ export const useAvailableNavigationMenuItemSearchRecords = ({
   skip = false,
 }: UseAvailableNavigationMenuItemSearchRecordsParams) => {
   const { currentItems } = useNavigationMenuItemEditController();
-  const coreClient = useApolloCoreClient();
-  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
-  const sidePanelShowHiddenObjects = useAtomStateValue(
-    sidePanelShowHiddenObjectsState,
-  );
+  const trimmedSearchInput = searchInput.trim();
 
-  const [deferredSearchInput] = useDebounce(searchInput, 300);
+  const [deferredSearchInput] = useDebounce(trimmedSearchInput, 300);
 
-  const includedObjectNameSingulars = useMemo(() => {
-    if (isDefined(selectedObjectNameSingular)) {
-      return [selectedObjectNameSingular];
-    }
-
-    return readableObjectMetadataItems
-      .filter((item) => sidePanelShowHiddenObjects || item.isSearchable)
-      .map((item) => item.nameSingular);
-  }, [
-    readableObjectMetadataItems,
+  const includedObjectNameSingulars = useSearchableObjectNameSingulars({
     selectedObjectNameSingular,
-    sidePanelShowHiddenObjects,
-  ]);
+  });
 
-  const { data: searchData, loading: recordSearchLoading } = useQuery(
-    SearchDocument,
-    {
-      client: coreClient,
-      variables: {
-        searchInput: deferredSearchInput,
-        limit: MAX_SEARCH_RESULTS,
-        includedObjectNameSingulars,
-      },
-      skip,
-    },
-  );
+  const { loading: recordSearchLoading, searchRecords } =
+    useObjectRecordSearchRecords({
+      objectNameSingulars: includedObjectNameSingulars,
+      searchInput: deferredSearchInput,
+      skip: skip || !isNonEmptyString(deferredSearchInput),
+    });
 
   const recordIdsAlreadyAdded = useMemo(
     () =>
@@ -77,7 +53,7 @@ export const useAvailableNavigationMenuItemSearchRecords = ({
 
   const availableSearchRecords = useMemo(
     () =>
-      (searchData?.search?.edges?.map((edge) => edge.node) ?? [])
+      searchRecords
         .filter((record) => !recordIdsAlreadyAdded.has(record.recordId))
         .map(
           (record): NavigationMenuItemSearchRecord => ({
@@ -87,12 +63,14 @@ export const useAvailableNavigationMenuItemSearchRecords = ({
             imageUrl: record.imageUrl,
           }),
         ),
-    [recordIdsAlreadyAdded, searchData],
+    [recordIdsAlreadyAdded, searchRecords],
   );
 
   return {
     availableSearchRecords,
     deferredSearchInput,
+    isSearchDebouncing: trimmedSearchInput !== deferredSearchInput,
     recordSearchLoading,
+    trimmedSearchInput,
   };
 };

@@ -16,17 +16,23 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
   const [selectedObjectNameSingular, setSelectedObjectNameSingular] = useState<
     string | null
   >(null);
-  const { availableSearchRecords, deferredSearchInput, recordSearchLoading } =
-    useAvailableNavigationMenuItemSearchRecords({
-      searchInput: recordSearchInput,
-      selectedObjectNameSingular,
-    });
+  const {
+    availableSearchRecords,
+    isSearchDebouncing,
+    recordSearchLoading,
+    trimmedSearchInput,
+  } = useAvailableNavigationMenuItemSearchRecords({
+    searchInput: recordSearchInput,
+    selectedObjectNameSingular,
+    skip: !isNonEmptyString(recordSearchInput.trim()),
+  });
 
-  const isEmpty = availableSearchRecords.length === 0 && !recordSearchLoading;
+  const isRecordSearchLoading = recordSearchLoading || isSearchDebouncing;
+  const isEmpty = availableSearchRecords.length === 0 && !isRecordSearchLoading;
   const selectableItemIds = isEmpty
     ? []
     : availableSearchRecords.map((record) => record.recordId);
-  const noResultsText = isNonEmptyString(deferredSearchInput.trim())
+  const noResultsText = isNonEmptyString(trimmedSearchInput)
     ? t`No results found`
     : t`Type to search records`;
 
@@ -46,7 +52,7 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
         {({ innerRef, droppableProps, placeholder }) => (
           <SidePanelList
             selectableItemIds={selectableItemIds}
-            loading={recordSearchLoading}
+            loading={isRecordSearchLoading}
             noResults={isEmpty}
             noResultsText={noResultsText}
           >
