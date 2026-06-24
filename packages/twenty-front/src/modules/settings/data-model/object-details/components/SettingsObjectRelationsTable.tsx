@@ -143,11 +143,7 @@ export const SettingsObjectRelationsTable = ({
         (!isHiddenSystemField(field) && !isRelationToSystemObject)
       );
     });
-  }, [
-    objectMetadataItem.fields,
-    isAdvancedModeEnabled,
-    objectMetadataItems,
-  ]);
+  }, [objectMetadataItem.fields, isAdvancedModeEnabled, objectMetadataItems]);
 
   const sortedRelationFields = useSortedArray(relationFields, tableMetadata);
 
