@@ -164,7 +164,7 @@ export class ApplicationRegistrationVariableService {
   async isConfiguredBatch(
     applicationRegistrationIds: string[],
   ): Promise<Map<string, boolean>> {
-    const [variables, registrations, installedApps] = await Promise.all([
+    const [variables, registrations] = await Promise.all([
       this.variableRepository.find({
         where: { applicationRegistrationId: In(applicationRegistrationIds) },
       }),
@@ -172,30 +172,46 @@ export class ApplicationRegistrationVariableService {
         where: { id: In(applicationRegistrationIds) },
         select: { id: true, manifest: true, ownerWorkspaceId: true },
       }),
-      this.applicationRepository.find({
-        where: { applicationRegistrationId: In(applicationRegistrationIds) },
-        select: { applicationRegistrationId: true, workspaceId: true },
-      }),
     ]);
+
+    const ownerWorkspaceIds = registrations
+      .map((registration) => registration.ownerWorkspaceId)
+      .filter(isDefined);
+
+    const installedOnOwnerWorkspace = await this.applicationRepository.find({
+      where: {
+        applicationRegistrationId: In(applicationRegistrationIds),
+        workspaceId: In(ownerWorkspaceIds),
+      },
+      select: { applicationRegistrationId: true, workspaceId: true },
+    });
+
+    const registrationById = new Map(
+      registrations.map(
+        (registration) => [registration.id, registration] as const,
+      ),
+    );
+    const registrationIdsMissingRequiredVariable = new Set(
+      variables
+        .filter((variable) => variable.isRequired && !variable.isFilled)
+        .map((variable) => variable.applicationRegistrationId),
+    );
+    const installedOnOwnerWorkspaceKeys = new Set(
+      installedOnOwnerWorkspace.map(
+        (app) => `${app.applicationRegistrationId}:${app.workspaceId}`,
+      ),
+    );
 
     const result = new Map<string, boolean>();
 
     for (const id of applicationRegistrationIds) {
-      const registration = registrations.find(
-        (registration) => registration.id === id,
-      );
+      const registration = registrationById.get(id);
 
-      const areVariablesConfigured = variables
-        .filter(
-          (variable) =>
-            variable.applicationRegistrationId === id && variable.isRequired,
-        )
-        .every((variable) => variable.isFilled);
+      const areVariablesConfigured =
+        !registrationIdsMissingRequiredVariable.has(id);
 
-      const isInstalledOnOwnerWorkspace = installedApps.some(
-        (app) =>
-          app.applicationRegistrationId === id &&
-          app.workspaceId === registration?.ownerWorkspaceId,
+      const isInstalledOnOwnerWorkspace = installedOnOwnerWorkspaceKeys.has(
+        `${id}:${registration?.ownerWorkspaceId}`,
       );
 
       result.set(
