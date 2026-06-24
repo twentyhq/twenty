@@ -25,14 +25,6 @@ import { getMatchingTriggerTimestamp } from 'src/utils/should-run-now.utils';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
-// The root job runs every minute and re-dispatches any cron whose trigger falls
-// within the last minute. Because that detection window equals the tick interval,
-// a tick that drifts across the minute boundary can match the same trigger twice
-// (e.g. a job firing at 17:00 and again at 17:01). We claim each (function,
-// trigger) pair in the cache before enqueuing so a given trigger dispatches once.
-// The TTL only needs to outlive the detection window; distinct triggers always
-// have distinct timestamps (hence distinct keys), so this never suppresses a
-// later, legitimate run.
 const CRON_DISPATCH_DEDUP_TTL_MS = 2 * 60_000;
 
 @Processor(MessageQueue.cronQueue)
