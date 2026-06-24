@@ -134,12 +134,11 @@ const handleRecallStatusEvent = async ({
   }
 
   const updateData: CallRecordingUpdateFields = {
-    status: callRecordingStatus,
     ...(isUndefined(webhookEvent.externalBotId)
       ? {}
       : { externalBotId: webhookEvent.externalBotId }),
     ...buildExternalRecordingIdUpdate(webhookEvent),
-    ...buildMeetingBotFailureReasonUpdate({
+    ...buildCallRecordingStatusUpdate({
       reason: getRecallWebhookFailureReason(webhookEvent),
       status: callRecordingStatus,
     }),
@@ -168,16 +167,18 @@ const handleRecallStatusEvent = async ({
       }),
     );
 
-    Object.assign(
-      updateData,
+    const terminalArtifactGateFailureUpdate =
       buildTerminalArtifactGateFailureUpdate({
         callRecording,
         providerLookupFailed:
           externalRecordingIdResolution.providerLookupFailed,
         updateData,
         webhookEvent,
-      }),
-    );
+      });
+
+    if (!isUndefined(terminalArtifactGateFailureUpdate)) {
+      Object.assign(updateData, terminalArtifactGateFailureUpdate);
+    }
   }
 
   const { completesIngestion } = await persistCallRecordingProgress(client, {
@@ -318,16 +319,38 @@ const buildExternalRecordingIdUpdate = (
     ? {}
     : { externalRecordingId: webhookEvent.externalRecordingId };
 
-const buildMeetingBotFailureReasonUpdate = ({
+type NonFailedCallRecordingStatus = Exclude<
+  CallRecordingStatus,
+  CallRecordingStatus.FAILED
+>;
+
+type CallRecordingStatusUpdate =
+  | {
+      status: NonFailedCallRecordingStatus;
+    }
+  | {
+      status: CallRecordingStatus.FAILED;
+      meetingBotFailureReason: string;
+    };
+
+type TerminalArtifactGateFailureUpdate = {
+  status: CallRecordingStatus.FAILED;
+  meetingBotFailureReason: string;
+};
+
+const buildCallRecordingStatusUpdate = ({
   reason,
   status,
 }: {
   reason: string;
   status: CallRecordingStatus;
-}): Pick<CallRecordingUpdateFields, 'meetingBotFailureReason'> =>
-  status === CallRecordingStatus.FAILED
-    ? { meetingBotFailureReason: reason }
-    : {};
+}): CallRecordingStatusUpdate => {
+  if (status === CallRecordingStatus.FAILED) {
+    return { status, meetingBotFailureReason: reason };
+  }
+
+  return { status };
+};
 
 const buildTerminalArtifactGateFailureUpdate = ({
   callRecording,
@@ -339,20 +362,21 @@ const buildTerminalArtifactGateFailureUpdate = ({
   providerLookupFailed: boolean;
   updateData: CallRecordingUpdateFields;
   webhookEvent: RecallWebhookEvent;
-}): Pick<CallRecordingUpdateFields, 'status' | 'meetingBotFailureReason'> => {
+}): TerminalArtifactGateFailureUpdate | undefined => {
   if (updateData.status === CallRecordingStatus.FAILED) {
     return isUndefined(updateData.meetingBotFailureReason)
       ? {
+          status: CallRecordingStatus.FAILED,
           meetingBotFailureReason: getRecallWebhookFailureReason(webhookEvent),
         }
-      : {};
+      : undefined;
   }
 
   if (
     providerLookupFailed ||
     hasRecordingArtifactPath({ callRecording, updateData })
   ) {
-    return {};
+    return undefined;
   }
 
   return {
@@ -372,13 +396,16 @@ const hasRecordingArtifactPath = ({
 }: {
   callRecording: MatchedCallRecording;
   updateData: CallRecordingUpdateFields;
-}): boolean =>
-  !isUndefined(
-    updateData.externalRecordingId ?? callRecording.externalRecordingId,
-  ) ||
-  isNonEmptyArray(updateData.audio ?? callRecording.audio) ||
-  isNonEmptyArray(updateData.video ?? callRecording.video) ||
-  hasReachableTranscript(updateData.transcript ?? callRecording.transcript);
+}): boolean => {
+  return (
+    !isUndefined(
+      updateData.externalRecordingId ?? callRecording.externalRecordingId,
+    ) ||
+    isNonEmptyArray(updateData.audio ?? callRecording.audio) ||
+    isNonEmptyArray(updateData.video ?? callRecording.video) ||
+    hasReachableTranscript(updateData.transcript ?? callRecording.transcript)
+  );
+};
 
 const hasReachableTranscript = (transcript: unknown): boolean => {
   if (isNull(transcript) || isUndefined(transcript)) {

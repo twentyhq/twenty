@@ -22,11 +22,11 @@ const FAILED_STATUS = 'FAILED';
 
 @RegisteredWorkspaceCommand('2.16.0', 1799100001000)
 @Command({
-  name: 'upgrade:2-16:rename-call-recording-failed-status',
+  name: 'upgrade:2-16:sync-call-recording-status',
   description:
-    'Rename CallRecording status FAILED_UNKNOWN to FAILED in existing workspaces',
+    'Sync CallRecording status metadata from FAILED_UNKNOWN to FAILED in existing workspaces',
 })
-export class RenameCallRecordingFailedStatusCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class SyncCallRecordingStatusCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -95,14 +95,14 @@ export class RenameCallRecordingFailedStatusCommand extends ActiveOrSuspendedWor
 
     if (!hasLegacyFailedStatus) {
       this.logger.log(
-        `CallRecording failed status already migrated for workspace ${workspaceId}, skipping`,
+        `CallRecording status metadata already synced for workspace ${workspaceId}, skipping`,
       );
 
       return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Renaming CallRecording status ${LEGACY_FAILED_STATUS} to ${FAILED_STATUS} for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Syncing CallRecording status metadata from ${LEGACY_FAILED_STATUS} to ${FAILED_STATUS} for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -139,7 +139,7 @@ export class RenameCallRecordingFailedStatusCommand extends ActiveOrSuspendedWor
 
     if (validateAndBuildResult.status === 'fail') {
       throw new Error(
-        `Failed to rename CallRecording failed status for workspace ${workspaceId}: ${JSON.stringify(
+        `Failed to sync CallRecording status metadata for workspace ${workspaceId}: ${JSON.stringify(
           validateAndBuildResult,
           null,
           2,
@@ -148,7 +148,7 @@ export class RenameCallRecordingFailedStatusCommand extends ActiveOrSuspendedWor
     }
 
     this.logger.log(
-      `Renamed CallRecording status ${LEGACY_FAILED_STATUS} to ${FAILED_STATUS} for workspace ${workspaceId}`,
+      `Synced CallRecording status metadata from ${LEGACY_FAILED_STATUS} to ${FAILED_STATUS} for workspace ${workspaceId}`,
     );
   }
 }

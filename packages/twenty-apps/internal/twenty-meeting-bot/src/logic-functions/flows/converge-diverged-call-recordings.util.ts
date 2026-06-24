@@ -286,15 +286,17 @@ const convergeCallRecording = async ({
     );
   }
 
-  Object.assign(
-    updateData,
+  const terminalArtifactGateFailureUpdate =
     buildTerminalArtifactGateFailureUpdate({
       candidate,
       convergence,
       externalRecordingId,
       updateData,
-    }),
-  );
+    });
+
+  if (!isUndefined(terminalArtifactGateFailureUpdate)) {
+    Object.assign(updateData, terminalArtifactGateFailureUpdate);
+  }
 
   const completesIngestion = shouldCompleteCallRecordingIngestion({
     current: candidate,
@@ -358,6 +360,11 @@ const buildConvergenceFieldUpdates = ({
   return updateData;
 };
 
+type TerminalArtifactGateFailureUpdate = {
+  status: CallRecordingStatus.FAILED;
+  meetingBotFailureReason: string;
+};
+
 const buildTerminalArtifactGateFailureUpdate = ({
   candidate,
   convergence,
@@ -368,7 +375,7 @@ const buildTerminalArtifactGateFailureUpdate = ({
   convergence: RecallBotConvergence;
   externalRecordingId: string | undefined;
   updateData: CallRecordingUpdateFields;
-}): Pick<CallRecordingUpdateFields, 'status' | 'meetingBotFailureReason'> => {
+}): TerminalArtifactGateFailureUpdate | undefined => {
   if (
     candidate.status === CallRecordingStatus.COMPLETED ||
     updateData.status === CallRecordingStatus.FAILED ||
@@ -376,7 +383,7 @@ const buildTerminalArtifactGateFailureUpdate = ({
     !isUndefined(externalRecordingId) ||
     hasRecordingArtifactPath({ candidate, updateData })
   ) {
-    return {};
+    return undefined;
   }
 
   return {
@@ -392,10 +399,13 @@ const hasRecordingArtifactPath = ({
 }: {
   candidate: DivergedCallRecordingCandidate;
   updateData: CallRecordingUpdateFields;
-}): boolean =>
-  isNonEmptyArray(updateData.audio ?? candidate.audio) ||
-  isNonEmptyArray(updateData.video ?? candidate.video) ||
-  hasReachableTranscript(updateData.transcript ?? candidate.transcript);
+}): boolean => {
+  return (
+    isNonEmptyArray(updateData.audio ?? candidate.audio) ||
+    isNonEmptyArray(updateData.video ?? candidate.video) ||
+    hasReachableTranscript(updateData.transcript ?? candidate.transcript)
+  );
+};
 
 const hasReachableTranscript = (transcript: unknown): boolean => {
   if (isUndefined(transcript)) {
