@@ -9,7 +9,6 @@ import { v4 } from 'uuid';
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -30,7 +29,6 @@ export class WorkflowRunWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -91,15 +89,6 @@ export class WorkflowRunWorkspaceService {
           );
         }
 
-        const position = await this.recordPositionService.buildRecordPosition({
-          value: 'first',
-          objectMetadata: {
-            isCustom: false,
-            nameSingular: 'workflowRun',
-          },
-          workspaceId,
-        });
-
         const initState = this.getInitState(
           workflowVersion,
           triggerPayload,
@@ -118,6 +107,10 @@ export class WorkflowRunWorkspaceService {
         const workflowRunCount = workflowRunCountMatch
           ? parseInt(workflowRunCountMatch[1], 10)
           : 0;
+
+        const position = isDefined(lastWorkflowRun?.position)
+          ? lastWorkflowRun.position - 1
+          : 1;
 
         const workflowRun = {
           id: workflowRunId ?? v4(),
