@@ -44,7 +44,7 @@ const WorkspaceCreationStateSetterEffect = () => {
     setIsMultiWorkspaceEnabled(true);
     setDomainConfiguration({
       frontDomain: 'twenty.com',
-      defaultSubdomain: undefined,
+      defaultSubdomain: 'app',
     });
   }, [setSignInUpStep, setIsMultiWorkspaceEnabled, setDomainConfiguration]);
 
