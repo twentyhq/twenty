@@ -386,8 +386,9 @@ jobs:
 
   cross-version-upgrade:
     needs: [upgrade-changed-files-check, server-build]
-    if: needs.upgrade-changed-files-check.outputs.any_changed == 'true'
     uses: ./.github/workflows/ci-cross-version-upgrade.yaml
+    with:
+      skip: ${{ needs.upgrade-changed-files-check.outputs.any_changed != 'true' }}
 
   ci-server-status-check:
     if: always() && !cancelled()

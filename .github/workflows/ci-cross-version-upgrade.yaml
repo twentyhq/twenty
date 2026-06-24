@@ -13,6 +13,11 @@ run-name: cross-version-upgrade ${{ inputs.from_version || 'v1.22' }} → curren
 on:
   workflow_call:
     inputs:
+      skip:
+        type: boolean
+        required: false
+        default: false
+        description: 'Set to true to skip the upgrade check and report success immediately'
       from_version:
         type: string
         required: false
@@ -43,7 +48,14 @@ env:
   SEED_WORKSPACE_ID: 20202020-1c25-4d02-bf25-6aeccf7ea419
 
 jobs:
+  no-op:
+    if: format('{0}', inputs.skip) == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Cross-version upgrade check skipped (upgrade path not touched)"
+
   cross-version-upgrade:
+    if: format('{0}', inputs.skip) != 'true'
     timeout-minutes: 45
     runs-on: ubuntu-latest
     steps:
