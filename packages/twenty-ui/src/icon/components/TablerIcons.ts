@@ -430,6 +430,7 @@ export {
   IconWebhook,
   IconWindow,
   IconWorld,
+  IconWorldWww,
   IconX,
 } from '@tabler/icons-react';
 
