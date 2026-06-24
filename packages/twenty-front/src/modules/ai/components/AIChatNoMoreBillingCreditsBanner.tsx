@@ -3,6 +3,7 @@ import { useAiChatEndTrialPeriod } from '@/ai/hooks/useAiChatEndTrialPeriod';
 import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
 import { useCreditUpgradeAction } from '@/settings/billing/hooks/useCreditUpgradeAction';
+import { useIsEmbeddedCardPaymentAvailable } from '@/settings/billing/hooks/useIsEmbeddedCardPaymentAvailable';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -36,6 +37,8 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
     isEndTrialLoading,
     hasPaymentMethod,
   } = useAiChatEndTrialPeriod();
+
+  const isEmbeddedCardPaymentAvailable = useIsEmbeddedCardPaymentAvailable();
 
   const {
     nextPrice,
@@ -82,7 +85,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
         }
       />
       {isTrialing &&
-        (hasPaymentMethod === false ? (
+        (hasPaymentMethod === false && isEmbeddedCardPaymentAvailable ? (
           <AddCreditCardModal
             modalInstanceId={AI_CHAT_END_TRIAL_PERIOD_MODAL_ID}
             finalRedirectPath={finalRedirectPath}

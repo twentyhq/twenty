@@ -3,6 +3,7 @@ import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardM
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
+import { useIsEmbeddedCardPaymentAvailable } from '@/settings/billing/hooks/useIsEmbeddedCardPaymentAvailable';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -23,6 +24,7 @@ export const InformationBannerEndTrialPeriod = () => {
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,
   );
+  const isEmbeddedCardPaymentAvailable = useIsEmbeddedCardPaymentAvailable();
 
   return (
     <>
@@ -48,7 +50,7 @@ export const InformationBannerEndTrialPeriod = () => {
         isButtonDisabled={isLoading}
       />
       {hasPermissionToEndTrialPeriod &&
-        (billingHasPaymentMethod === false ? (
+        (billingHasPaymentMethod === false && isEmbeddedCardPaymentAvailable ? (
           <AddCreditCardModal
             modalInstanceId={INFORMATION_BANNER_END_TRIAL_PERIOD_MODAL_ID}
             onPaymentMethodAdded={async () => {
