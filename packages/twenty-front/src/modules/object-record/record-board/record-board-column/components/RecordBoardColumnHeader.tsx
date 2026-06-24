@@ -12,10 +12,8 @@ import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/rec
 import { RecordBoardColumnResizeHandler } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnResizeHandler';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
-import { RecordGroupRelationChip } from '@/object-record/record-group/components/RecordGroupRelationChip';
-import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
 import { getRecordGroupByFieldColumnName } from '@/object-record/record-group/utils/getRecordGroupByFieldColumnName';
-import { isRelationValueRecordGroup } from '@/object-record/record-group/utils/isRelationValueRecordGroup';
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -25,7 +23,6 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { Tag } from 'twenty-ui/data-display';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -130,11 +127,6 @@ export const RecordBoardColumnHeader = () => {
 
   const dropdownId = `record-board-column-dropdown-${columnDefinition.id}`;
 
-  const isRelationValueGroup = isRelationValueRecordGroup({
-    fieldMetadataItem: selectFieldMetadataItem,
-    recordGroupDefinition: columnDefinition,
-  });
-
   const handleCreateNewRecordClick = async () => {
     await createNewIndexRecord({
       position: 'first',
@@ -161,34 +153,10 @@ export const RecordBoardColumnHeader = () => {
                 }}
                 clickableComponent={
                   <StyledTagContainer>
-                    {isRelationValueGroup ? (
-                      <RecordGroupRelationChip
-                        fieldMetadataItem={selectFieldMetadataItem}
-                        recordId={columnDefinition.value!}
-                      />
-                    ) : (
-                      <Tag
-                        variant={
-                          columnDefinition.type ===
-                          RecordGroupDefinitionType.Value
-                            ? 'solid'
-                            : 'outline'
-                        }
-                        color={
-                          columnDefinition.type ===
-                          RecordGroupDefinitionType.Value
-                            ? columnDefinition.color
-                            : 'transparent'
-                        }
-                        text={columnDefinition.title}
-                        weight={
-                          columnDefinition.type ===
-                          RecordGroupDefinitionType.Value
-                            ? 'regular'
-                            : 'medium'
-                        }
-                      />
-                    )}
+                    <RecordGroupChip
+                      recordGroupDefinition={columnDefinition}
+                      fieldMetadataItem={selectFieldMetadataItem}
+                    />
                   </StyledTagContainer>
                 }
                 dropdownComponents={<RecordBoardColumnDropdownMenu />}
