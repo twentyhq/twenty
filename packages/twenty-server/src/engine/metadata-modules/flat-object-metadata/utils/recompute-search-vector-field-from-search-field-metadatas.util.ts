@@ -48,7 +48,9 @@ const resolveTargetSearchVectorField = ({
   targetTsVectorFieldMetadataId: string | undefined;
 } & Pick<
   RecomputeSearchVectorFieldFromSearchFieldMetadatasArgs,
-  'flatObjectMetadata' | 'flatFieldMetadataMaps' | 'overrideFlatFieldMetadataById'
+  | 'flatObjectMetadata'
+  | 'flatFieldMetadataMaps'
+  | 'overrideFlatFieldMetadataById'
 >): FlatFieldMetadata | undefined => {
   if (isDefined(targetTsVectorFieldMetadataId)) {
     return (
