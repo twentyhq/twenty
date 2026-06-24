@@ -72,7 +72,7 @@ export class ApplicationInstallService {
   async previewApplicationInstall(params: {
     appRegistrationId: string;
     version?: string;
-  }): Promise<{ manifest: Manifest }> {
+  }): Promise<{ manifest: Manifest; setupPlan: any; permissionPlan: any }> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
     });
@@ -97,17 +97,54 @@ export class ApplicationInstallService {
       );
     }
 
+    const manifest = resolvedPackage.manifest;
+
+    const setupPlanItems: any[] = [];
+    let requiresManualSetup = false;
+
+    const checkPlacements = (items: any[] | undefined, type: string) => {
+      for (const item of items ?? []) {
+        if (item.isRequired || !item.canApplyAutomatically) {
+          setupPlanItems.push({
+            type,
+            name: item.name || item.title || item.label || 'Unknown',
+            isRequired: !!item.isRequired,
+            canApplyAutomatically: !!item.canApplyAutomatically,
+          });
+          if (!item.canApplyAutomatically) {
+            requiresManualSetup = true;
+          }
+        }
+      }
+    };
+
+    checkPlacements(manifest.views?.flatMap((v: any) => v.fields || []), 'View Field');
+    checkPlacements(manifest.pageLayouts?.flatMap((p: any) => p.widgets || []), 'Page Layout Widget');
+    checkPlacements(manifest.navigationMenuItems, 'Navigation Menu Item');
+    checkPlacements(manifest.commandMenuItems, 'Command Menu Item');
+
+    const setupPlan = {
+      items: setupPlanItems,
+      requiresManualSetup,
+    };
+
+    const requestedPermissions = manifest.roles?.flatMap((r: any) => r.permissions?.map((p: any) => p.name) || []) || [];
+    const permissionPlan = {
+      requestedPermissions: [...new Set(requestedPermissions)],
+    };
+
     await this.applicationPackageFetcherService.cleanupExtractedDir(
       resolvedPackage.cleanupDir,
     );
 
-    return { manifest: resolvedPackage.manifest };
+    return { manifest, setupPlan, permissionPlan };
   }
 
   async installApplication(params: {
     appRegistrationId: string;
     version?: string;
     workspaceId: string;
+    deferSetup?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
@@ -148,6 +185,7 @@ export class ApplicationInstallService {
         this.doInstallApplication(appRegistration, {
           version: params.version,
           workspaceId: params.workspaceId,
+          deferSetup: params.deferSetup,
         }),
       lockKey,
       { ttl: 60_000, ms: 500, maxRetries: 120 },
@@ -156,7 +194,7 @@ export class ApplicationInstallService {
 
   private async doInstallApplication(
     appRegistration: ApplicationRegistrationEntity,
-    params: { version?: string; workspaceId: string },
+    params: { version?: string; workspaceId: string; deferSetup?: boolean },
   ): Promise<boolean> {
     const resolvedPackage =
       await this.applicationPackageFetcherService.resolvePackage(
@@ -282,6 +320,24 @@ export class ApplicationInstallService {
           applicationId: application.id,
           applicationUniversalIdentifier: universalIdentifier,
         });
+      }
+
+      if (!params.deferSetup) {
+        await this.runPostInstallHook({
+          manifest: resolvedPackage.manifest,
+          workspaceId: params.workspaceId,
+          previousVersion,
+          newVersion,
+          isVersionUpgrade,
+          universalIdentifier,
+        });
+
+        if (application.setupStatus !== ApplicationSetupStatus.COMPLETE) {
+          await this.applicationService.update(application.id, {
+            setupStatus: ApplicationSetupStatus.COMPLETE,
+            workspaceId: params.workspaceId,
+          });
+        }
       }
 
       this.logger.log(

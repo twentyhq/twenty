@@ -108,6 +108,7 @@ export class MarketplaceResolver {
       appRegistrationId: registration.id,
       version,
       workspaceId: workspace.id,
+      deferSetup: true,
     });
 
     return this.applicationService.findOneApplicationOrThrow({
