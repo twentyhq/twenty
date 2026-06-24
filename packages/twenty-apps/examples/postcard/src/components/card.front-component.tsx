@@ -108,12 +108,6 @@ const SdkProbeRow = ({
   </span>
 );
 
-// Exercises every twenty-client-sdk entrypoint the app consumes from inside a
-// front component. `core` and `metadata` are loaded by the renderer as separate
-// blob modules, so a bundling regression (e.g. an unresolved chunk import) would
-// throw on module load and stop this whole component from rendering — this panel
-// is the end-to-end guard against that. Each probe is isolated so one client's
-// failure cannot mask another's.
 const SdkHealthPanel = () => {
   const [coreState, setCoreState] = useState<SdkProbeState>('pending');
   const [metadataState, setMetadataState] = useState<SdkProbeState>('pending');
@@ -138,8 +132,6 @@ const SdkHealthPanel = () => {
       }
     };
 
-    // `__typename` is schema- and permission-independent, so it verifies the
-    // GraphQL clients load and round-trip without depending on workspace data.
     probe(() => new CoreApiClient().query({ __typename: true }), setCoreState);
     probe(
       () => new MetadataApiClient().query({ __typename: true }),
