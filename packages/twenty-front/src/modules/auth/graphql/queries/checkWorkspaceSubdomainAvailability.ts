@@ -6,6 +6,7 @@ export const CHECK_WORKSPACE_SUBDOMAIN_AVAILABILITY = gql`
       isValid
       available
       suggestedSubdomain
+      suggestedSubdomains
     }
   }
 `;

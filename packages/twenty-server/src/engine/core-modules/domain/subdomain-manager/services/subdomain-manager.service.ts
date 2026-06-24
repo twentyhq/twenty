@@ -23,6 +23,7 @@ import {
 const SUBDOMAIN_MAX_LENGTH = 30;
 const MAX_NUMBERED_SUFFIX_ATTEMPTS = 50;
 const MAX_RANDOM_FALLBACK_ATTEMPTS = 10;
+const SUBDOMAIN_SUGGESTIONS_COUNT = 3;
 
 @Injectable()
 export class SubdomainManagerService {
@@ -62,6 +63,15 @@ export class SubdomainManagerService {
   }
 
   async findAvailableSubdomain(desired: string): Promise<string> {
+    const [availableSubdomain] = await this.findAvailableSubdomains(desired, 1);
+
+    return availableSubdomain;
+  }
+
+  async findAvailableSubdomains(
+    desired: string,
+    count: number,
+  ): Promise<string[]> {
     const derivedBase = isSubdomainValid(desired)
       ? desired
       : getSubdomainSlugFromDisplayName(desired);
@@ -71,27 +81,46 @@ export class SubdomainManagerService {
         ? derivedBase
         : generateRandomSubdomain();
 
-    if (await this.isSubdomainFreeToUse(base)) {
-      return base;
-    }
+    const availableSubdomains: string[] = [];
 
-    for (let suffix = 2; suffix <= MAX_NUMBERED_SUFFIX_ATTEMPTS; suffix++) {
-      const candidate = this.appendNumberedSuffix(base, suffix);
-
-      if (await this.isSubdomainFreeToUse(candidate)) {
-        return candidate;
+    const collectIfFreeToUse = async (candidate: string) => {
+      if (
+        !availableSubdomains.includes(candidate) &&
+        (await this.isSubdomainFreeToUse(candidate))
+      ) {
+        availableSubdomains.push(candidate);
       }
+    };
+
+    await collectIfFreeToUse(base);
+
+    for (
+      let suffix = 2;
+      suffix <= MAX_NUMBERED_SUFFIX_ATTEMPTS &&
+      availableSubdomains.length < count;
+      suffix++
+    ) {
+      await collectIfFreeToUse(this.appendNumberedSuffix(base, suffix));
     }
 
-    for (let attempt = 0; attempt < MAX_RANDOM_FALLBACK_ATTEMPTS; attempt++) {
+    for (
+      let attempt = 0;
+      attempt < MAX_RANDOM_FALLBACK_ATTEMPTS &&
+      availableSubdomains.length < count;
+      attempt++
+    ) {
+      await collectIfFreeToUse(generateRandomSubdomain());
+    }
+
+    while (availableSubdomains.length < count) {
       const candidate = generateRandomSubdomain();
 
-      if (await this.isSubdomainFreeToUse(candidate)) {
-        return candidate;
+      if (!availableSubdomains.includes(candidate)) {
+        availableSubdomains.push(candidate);
       }
     }
 
-    return generateRandomSubdomain();
+    return availableSubdomains;
   }
 
   async getSubdomainAvailability(
@@ -100,12 +129,21 @@ export class SubdomainManagerService {
     const isValid = isSubdomainValid(subdomain);
     const available = isValid && (await this.isSubdomainFreeToUse(subdomain));
 
-    // Autofill adopts this directly, so never echo an invalid input back.
-    const suggestedSubdomain = available
-      ? subdomain
-      : await this.findAvailableSubdomain(subdomain);
+    // Autofill adopts the first suggestion directly, so never echo an invalid
+    // input back.
+    const suggestedSubdomains = available
+      ? [subdomain]
+      : await this.findAvailableSubdomains(
+          subdomain,
+          SUBDOMAIN_SUGGESTIONS_COUNT,
+        );
 
-    return { isValid, available, suggestedSubdomain };
+    return {
+      isValid,
+      available,
+      suggestedSubdomain: suggestedSubdomains[0],
+      suggestedSubdomains,
+    };
   }
 
   async isSubdomainAvailable(subdomain: string) {
