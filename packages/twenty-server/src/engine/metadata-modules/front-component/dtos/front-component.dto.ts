@@ -78,9 +78,4 @@ export class FrontComponentDTO {
 
   @Field(() => GraphQLJSON, { nullable: true })
   applicationVariables?: Record<string, string>;
-
-  @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  functionBaseUrl?: string;
 }

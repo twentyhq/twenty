@@ -324,7 +324,6 @@ type FrontComponent {
   usesSdkClient: Boolean!
   applicationTokenPair: ApplicationTokenPair
   applicationVariables: JSON
-  functionBaseUrl: String
 }
 
 type CommandMenuItem {

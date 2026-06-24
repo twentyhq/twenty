@@ -1,14 +1,14 @@
 import {
   DEFAULT_API_KEY_NAME,
+  DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
-  DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
 
 const isDefined = <T>(value: T): value is NonNullable<T> =>
   value !== null && value !== undefined;
 
 export type RestApiClientOptions = {
-  functionUrl?: string;
+  baseUrl?: string;
   token?: string;
   fetch?: typeof globalThis.fetch;
   defaultHeaders?: HeadersInit;
@@ -53,9 +53,6 @@ const getProcessEnvironment = (): ProcessEnvironment => {
   return processObject?.env ?? {};
 };
 
-const normalizeBaseUrl = (value: string): string =>
-  value.trim().replace(/\/+$/, '');
-
 const buildRequestUrl = (
   baseUrl: string,
   path: string,
@@ -87,7 +84,7 @@ const buildRequestUrl = (
 };
 
 export class RestApiClient {
-  private functionUrl: string | undefined;
+  private baseUrl: string | undefined;
   private token: string | undefined;
   private defaultHeaders: HeadersInit | undefined;
   private fetchImplementation: typeof globalThis.fetch | null;
@@ -95,7 +92,7 @@ export class RestApiClient {
   private refreshAccessTokenPromise: Promise<string | null> | null = null;
 
   constructor(options?: RestApiClientOptions) {
-    this.functionUrl = options?.functionUrl;
+    this.baseUrl = options?.baseUrl;
     this.token = options?.token;
     this.defaultHeaders = options?.defaultHeaders;
     this.fetchImplementation = options?.fetch ?? globalThis.fetch ?? null;
@@ -140,6 +137,19 @@ export class RestApiClient {
 
   delete<TResponse = unknown>(path: string, options?: RestApiRequestOptions) {
     return this.execute<TResponse>('DELETE', path, undefined, options);
+  }
+
+  private resolveBaseUrl(): string {
+    const baseUrl =
+      this.baseUrl ?? getProcessEnvironment()[DEFAULT_API_URL_NAME];
+
+    if (!isDefined(baseUrl) || baseUrl.trim().length === 0) {
+      throw new RestApiClientError(
+        `Missing API url. Set the \`${DEFAULT_API_URL_NAME}\` environment variable or pass \`baseUrl\` to \`RestApiClient\`.`,
+      );
+    }
+
+    return baseUrl.replace(/\/+$/, '');
   }
 
   private resolveToken(): string {
@@ -288,33 +298,6 @@ export class RestApiClient {
     return parsedBody as TResponse;
   }
 
-  private resolveFunctionUrl(): string | undefined {
-    const functionUrl =
-      this.functionUrl ?? getProcessEnvironment()[DEFAULT_FUNCTIONS_URL_NAME];
-
-    if (!isDefined(functionUrl)) {
-      return undefined;
-    }
-
-    const normalizedFunctionUrl = normalizeBaseUrl(functionUrl);
-
-    return normalizedFunctionUrl.length === 0
-      ? undefined
-      : normalizedFunctionUrl;
-  }
-
-  private resolveRequestBaseUrl(): string {
-    const baseUrl = this.resolveFunctionUrl();
-
-    if (!isDefined(baseUrl)) {
-      throw new RestApiClientError(
-        `Missing functions url. Set the \`${DEFAULT_FUNCTIONS_URL_NAME}\` environment variable or pass \`functionUrl\` to \`RestApiClient\`.`,
-      );
-    }
-
-    return baseUrl;
-  }
-
   private async execute<TResponse>(
     method: string,
     path: string,
@@ -322,7 +305,7 @@ export class RestApiClient {
     requestOptions?: RestApiRequestOptions,
   ): Promise<TResponse> {
     const url = buildRequestUrl(
-      this.resolveRequestBaseUrl(),
+      this.resolveBaseUrl(),
       path,
       requestOptions?.query,
     );

@@ -19,7 +19,7 @@ describe('RestApiClient', () => {
   beforeEach(() => {
     (globalThis as Record<string, unknown>).process = {
       env: {
-        TWENTY_FUNCTIONS_URL: 'https://acme.withtwenty.com',
+        TWENTY_API_URL: 'https://api.twenty.test',
         TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
       },
     };
@@ -32,52 +32,24 @@ describe('RestApiClient', () => {
     vi.restoreAllMocks();
   });
 
-  it('targets the injected function url with a bearer token and parses the JSON response', async () => {
+  it('should call the resolved url with a bearer token and parse the JSON response', async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValue(buildResponse(JSON.stringify({ id: '42' })));
 
     const client = new RestApiClient({ fetch: fetchMock });
 
-    const result = await client.get('/my-app/my-route');
+    const result = await client.get('/s/my-app/my-route');
 
     expect(result).toEqual({ id: '42' });
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
     const [url, requestInit] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://acme.withtwenty.com/my-app/my-route');
+    expect(url).toBe('https://api.twenty.test/s/my-app/my-route');
     expect((requestInit.headers as Headers).get('Authorization')).toBe(
       'Bearer app-access-token',
     );
     expect(requestInit.method).toBe('GET');
-  });
-
-  it('prefers an explicit functionUrl option, trimming whitespace', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
-
-    const client = new RestApiClient({
-      fetch: fetchMock,
-      functionUrl: '  https://app.example.com  ',
-    });
-
-    await client.post('/my-app/my-route', { name: 'Twenty' });
-
-    const [url] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://app.example.com/my-app/my-route');
-  });
-
-  it('trims surrounding whitespace from the function url', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
-
-    const client = new RestApiClient({
-      fetch: fetchMock,
-      functionUrl: '  https://acme.withtwenty.com  ',
-    });
-
-    await client.get('/my-app/my-route');
-
-    const [url] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://acme.withtwenty.com/my-app/my-route');
   });
 
   it('should serialize a JSON body and set the content type on post', async () => {
@@ -85,7 +57,7 @@ describe('RestApiClient', () => {
 
     const client = new RestApiClient({ fetch: fetchMock });
 
-    await client.post('/my-app/my-route', { name: 'Twenty' });
+    await client.post('/s/my-app/my-route', { name: 'Twenty' });
 
     const [, requestInit] = fetchMock.mock.calls[0];
     expect(requestInit.method).toBe('POST');
@@ -100,23 +72,23 @@ describe('RestApiClient', () => {
 
     const client = new RestApiClient({ fetch: fetchMock });
 
-    await client.get('/my-app/my-route', {
+    await client.get('/s/my-app/my-route', {
       query: { limit: 10, search: undefined, includeArchived: false },
     });
 
     const [url] = fetchMock.mock.calls[0];
     expect(url).toBe(
-      'https://acme.withtwenty.com/my-app/my-route?limit=10&includeArchived=false',
+      'https://api.twenty.test/s/my-app/my-route?limit=10&includeArchived=false',
     );
   });
 
-  it('should throw a RestApiClientError when no base url is available', async () => {
+  it('should throw a RestApiClientError when the api url is missing', async () => {
     (globalThis as Record<string, unknown>).process = { env: {} };
     const fetchMock = vi.fn();
 
     const client = new RestApiClient({ fetch: fetchMock });
 
-    await expect(client.get('/my-app/my-route')).rejects.toBeInstanceOf(
+    await expect(client.get('/s/my-app/my-route')).rejects.toBeInstanceOf(
       RestApiClientError,
     );
     expect(fetchMock).not.toHaveBeenCalled();
@@ -124,13 +96,13 @@ describe('RestApiClient', () => {
 
   it('should throw a RestApiClientError when the access token is missing', async () => {
     (globalThis as Record<string, unknown>).process = {
-      env: { TWENTY_FUNCTIONS_URL: 'https://acme.withtwenty.com' },
+      env: { TWENTY_API_URL: 'https://api.twenty.test' },
     };
     const fetchMock = vi.fn();
 
     const client = new RestApiClient({ fetch: fetchMock });
 
-    await expect(client.get('/my-app/my-route')).rejects.toBeInstanceOf(
+    await expect(client.get('/s/my-app/my-route')).rejects.toBeInstanceOf(
       RestApiClientError,
     );
     expect(fetchMock).not.toHaveBeenCalled();
@@ -146,7 +118,7 @@ describe('RestApiClient', () => {
 
     const client = new RestApiClient({ fetch: fetchMock });
 
-    await expect(client.get('/my-app/my-route')).rejects.toMatchObject({
+    await expect(client.get('/s/my-app/my-route')).rejects.toMatchObject({
       status: 404,
       body: { message: 'Not found' },
     });
@@ -167,7 +139,7 @@ describe('RestApiClient', () => {
 
     const client = new RestApiClient({ fetch: fetchMock });
 
-    const result = await client.get('/my-app/my-route');
+    const result = await client.get('/s/my-app/my-route');
 
     expect(result).toEqual({ ok: true });
     expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);

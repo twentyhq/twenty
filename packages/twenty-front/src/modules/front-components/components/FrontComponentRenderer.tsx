@@ -1,5 +1,9 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { FrontComponentRendererWithSdkClient } from '@/front-components/components/FrontComponentRendererWithSdkClient';
+import { getFunctionsBaseUrl } from '@/settings/logic-functions/utils/getLogicFunctionHttpUrl';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
@@ -28,6 +32,9 @@ export const FrontComponentRenderer = ({
 }: FrontComponentRendererProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
+
+  const { publicFunctionDomain } = useAtomStateValue(domainConfigurationState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const setFrontComponentApplicationTokenPair = useSetAtomComponentState(
     frontComponentApplicationTokenPairComponentState,
@@ -105,7 +112,10 @@ export const FrontComponentRenderer = ({
     data.frontComponent.applicationVariables ?? undefined;
 
   const functionsBaseUrl =
-    data.frontComponent.functionBaseUrl ?? `${REACT_APP_SERVER_BASE_URL}/s`;
+    getFunctionsBaseUrl({
+      publicFunctionDomain,
+      workspaceSubdomain: currentWorkspace?.subdomain,
+    }) ?? `${REACT_APP_SERVER_BASE_URL}/s`;
 
   if (usesSdkClient) {
     return (
