@@ -12,6 +12,8 @@ import { AppPath } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { buildEmailFrom } from 'src/utils/build-email-from';
+
 import {
   AppTokenEntity,
   AppTokenType,
@@ -139,9 +141,10 @@ export class EmailVerificationService {
     const subject = i18n._(emailVerificationMsg);
 
     await this.emailService.send({
-      from: `${this.twentyConfigService.get(
-        'EMAIL_FROM_NAME',
-      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: buildEmailFrom(
+        this.twentyConfigService.get('EMAIL_FROM_ADDRESS'),
+        this.twentyConfigService.get('EMAIL_FROM_NAME'),
+      ),
       to: email,
       subject,
       text,

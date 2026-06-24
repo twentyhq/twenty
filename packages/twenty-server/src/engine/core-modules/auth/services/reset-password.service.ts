@@ -17,6 +17,8 @@ import {
 } from 'twenty-shared/utils';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
+import { buildEmailFrom } from 'src/utils/build-email-from';
+
 import {
   AppTokenEntity,
   AppTokenType,
@@ -207,9 +209,10 @@ export class ResetPasswordService {
     const subject = i18n._(subjectTemplate);
 
     await this.emailService.send({
-      from: `${this.twentyConfigService.get(
-        'EMAIL_FROM_NAME',
-      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: buildEmailFrom(
+        this.twentyConfigService.get('EMAIL_FROM_ADDRESS'),
+        this.twentyConfigService.get('EMAIL_FROM_NAME'),
+      ),
       to: user.email,
       subject,
       text,

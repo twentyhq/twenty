@@ -12,6 +12,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
+import { buildEmailFrom } from 'src/utils/build-email-from';
+
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -138,9 +140,10 @@ export class CleanerWorkspaceService {
 
     await this.emailService.send({
       to: workspaceMember.userEmail,
-      from: `${this.twentyConfigService.get(
-        'EMAIL_FROM_NAME',
-      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: buildEmailFrom(
+        this.twentyConfigService.get('EMAIL_FROM_ADDRESS'),
+        this.twentyConfigService.get('EMAIL_FROM_NAME'),
+      ),
       subject,
       html,
       text,
@@ -216,9 +219,10 @@ export class CleanerWorkspaceService {
 
     await this.emailService.send({
       to: workspaceMember.userEmail,
-      from: `${this.twentyConfigService.get(
-        'EMAIL_FROM_NAME',
-      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: buildEmailFrom(
+        this.twentyConfigService.get('EMAIL_FROM_ADDRESS'),
+        this.twentyConfigService.get('EMAIL_FROM_NAME'),
+      ),
       subject: 'Your workspace has been deleted',
       html,
       text,

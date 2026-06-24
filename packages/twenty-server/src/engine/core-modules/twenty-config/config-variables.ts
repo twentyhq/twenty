@@ -405,14 +405,14 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
-    description: 'Email address used as the sender for outgoing emails',
+    description: 'Email address used as the sender for outgoing emails. Accepts plain "user@domain.com" or RFC 5322 format "Display Name <user@domain.com>". Display name in this field takes precedence over EMAIL_FROM_NAME.',
     type: ConfigVariableType.STRING,
   })
   EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
-    description: 'Name used in the From header for outgoing emails',
+    description: 'Name used in the From header for outgoing emails. Only used when EMAIL_FROM_ADDRESS does not contain a display name.',
     type: ConfigVariableType.STRING,
   })
   EMAIL_FROM_NAME = 'Felix from Twenty';

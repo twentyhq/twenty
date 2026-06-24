@@ -14,6 +14,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
+import { buildEmailFrom } from 'src/utils/build-email-from';
+
 import {
   AppTokenEntity,
   AppTokenType,
@@ -728,9 +730,10 @@ export class AuthService {
     const subject = i18n._(passwordChangedMsg);
 
     await this.emailService.send({
-      from: `${this.twentyConfigService.get(
-        'EMAIL_FROM_NAME',
-      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: buildEmailFrom(
+        this.twentyConfigService.get('EMAIL_FROM_ADDRESS'),
+        this.twentyConfigService.get('EMAIL_FROM_NAME'),
+      ),
       to: user.email,
       subject,
       text,

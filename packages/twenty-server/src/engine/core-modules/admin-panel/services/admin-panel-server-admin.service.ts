@@ -9,6 +9,8 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { buildEmailFrom } from 'src/utils/build-email-from';
+
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type ServerAdminDTO } from 'src/engine/core-modules/admin-panel/dtos/server-admin.dto';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -226,7 +228,10 @@ export class AdminPanelServerAdminService {
       const actorName = `${actor.firstName} ${actor.lastName}`.trim();
       const targetName =
         `${targetUser.firstName} ${targetUser.lastName}`.trim();
-      const from = `${this.twentyConfigService.get('EMAIL_FROM_NAME')} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`;
+      const from = buildEmailFrom(
+        this.twentyConfigService.get('EMAIL_FROM_ADDRESS'),
+        this.twentyConfigService.get('EMAIL_FROM_NAME'),
+      );
 
       const recipientsByLocale = new Map<UserEntity['locale'], UserEntity[]>();
 
