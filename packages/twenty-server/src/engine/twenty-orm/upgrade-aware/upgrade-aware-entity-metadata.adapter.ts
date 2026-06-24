@@ -347,6 +347,10 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
 
   private validateDecoratorsAgainstSequence(): void {
     const entityClasses: Function[] = [];
+    const columnPropertyNamesByEntityClass = new Map<
+      Function,
+      ReadonlySet<string>
+    >();
 
     for (const metadata of this.coreDataSource.entityMetadatas) {
       if (typeof metadata.target !== 'function') {
@@ -354,11 +358,16 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
       }
 
       entityClasses.push(metadata.target);
+      columnPropertyNamesByEntityClass.set(
+        metadata.target,
+        new Set(metadata.columns.map((column) => column.propertyName)),
+      );
     }
 
     const problems = validateUpgradeAwareEntityDecorators({
       entityClasses,
       stepNameToIndex: this.stepNameToIndex,
+      columnPropertyNamesByEntityClass,
     });
 
     if (problems.length === 0) {
