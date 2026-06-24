@@ -37,3 +37,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 *.d.ts
+# keep the hand-authored CSS module declaration (rule above targets generated output)
+!src/types/css.d.ts

@@ -20,7 +20,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@sniptt/guards": "^0.2.0"
+    "@sniptt/guards": "^0.2.0",
+    "twenty-ui": "^1.0.0-alpha.1"
   },
   "devDependencies": {
     "@emotion/react": "^11.14.0",

@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 import { useMemo } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { TranscriptEntryList } from 'src/front-components/components/TranscriptEntryList';
 import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
 import { type CalendarEventRecordingParticipant } from 'src/front-components/types/calendar-event-recording-participant.type';
 import { parseTranscriptEntries } from 'src/front-components/utils/parse-transcript-entries.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
@@ -12,10 +12,10 @@ import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.
 
 const StyledTranscriptCenteredState = styled.div`
   align-items: center;
-  color: ${recordingThemeCssVariables.font.colorTertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex: 1;
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
+  font-size: ${themeCssVariables.font.size.sm};
   justify-content: center;
 `;
 

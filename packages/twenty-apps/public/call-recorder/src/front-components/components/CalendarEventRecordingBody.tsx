@@ -1,29 +1,29 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordingTranscript } from 'src/front-components/components/RecordingTranscript';
 import { RecordingVideoPlayer } from 'src/front-components/components/RecordingVideoPlayer';
 import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
 import { type CalendarEventRecordingParticipant } from 'src/front-components/types/calendar-event-recording-participant.type';
 
 const StyledCenteredState = styled.div`
   align-items: center;
   box-sizing: border-box;
-  color: ${recordingThemeCssVariables.font.colorTertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  font-family: ${recordingThemeCssVariables.font.family};
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.sm};
   justify-content: center;
   min-height: 240px;
-  padding: ${recordingThemeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing['4']};
 `;
 
 const StyledRecordingContainer = styled.div<{
   $hasVideo?: boolean;
 }>`
   display: grid;
-  gap: ${recordingThemeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing['2']};
   grid-template-rows: ${({ $hasVideo }) =>
     $hasVideo ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)'};
   min-height: 0;

@@ -1,21 +1,21 @@
 import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarEventRecordingBody } from 'src/front-components/components/CalendarEventRecordingBody';
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
 import { useCalendarEventParticipants } from 'src/front-components/hooks/use-calendar-event-participants';
 import { useCalendarEventRecording } from 'src/front-components/hooks/use-calendar-event-recording';
 
 const TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS = 0.25;
 
 const StyledRecordingShell = styled.div`
-  background: ${recordingThemeCssVariables.background.primary};
+  background: ${themeCssVariables.background.primary};
   border: 1px solid transparent;
   border-bottom: 1px solid transparent;
-  border-radius: ${recordingThemeCssVariables.border.radiusMd};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
-  font-family: ${recordingThemeCssVariables.font.family};
-  padding: ${recordingThemeCssVariables.spacing[4]};
+  font-family: ${themeCssVariables.font.family};
+  padding: ${themeCssVariables.spacing['4']};
   position: relative;
   width: 100%;
 `;
@@ -24,31 +24,31 @@ const StyledRecordingHeader = styled.div`
   align-items: center;
   box-sizing: border-box;
   display: flex;
-  height: ${recordingThemeCssVariables.spacing[6]};
+  height: ${themeCssVariables.spacing['6']};
 `;
 
 const StyledRecordingTitle = styled.h2`
-  color: ${recordingThemeCssVariables.font.colorPrimary};
+  color: ${themeCssVariables.font.color.primary};
   flex: 1;
-  font-size: ${recordingThemeCssVariables.font.sizeMd};
-  font-weight: ${recordingThemeCssVariables.font.weightMedium};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
   margin: 0;
   overflow: hidden;
-  padding-inline: ${recordingThemeCssVariables.spacing[1]};
+  padding-inline: ${themeCssVariables.spacing['1']};
   user-select: none;
 `;
 
 const StyledRecordingBody = styled.div`
   box-sizing: border-box;
-  margin-top: ${recordingThemeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing['2']};
 `;
 
 const StyledRecordingContentFrame = styled.div`
-  background-color: ${recordingThemeCssVariables.background.secondary};
-  border: 1px solid ${recordingThemeCssVariables.border.colorMedium};
-  border-radius: ${recordingThemeCssVariables.border.radiusMd};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
-  padding: ${recordingThemeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing['2']};
 `;
 
 type CalendarEventRecordingContentProps = {
