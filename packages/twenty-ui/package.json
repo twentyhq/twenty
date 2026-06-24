@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "description": "Twenty's shared React UI component library.",
   "license": "AGPL-3.0",
   "repository": {
@@ -92,22 +92,9 @@
   },
   "files": [
     "dist",
-    "accessibility",
-    "assets",
-    "data-display",
-    "feedback",
-    "icon",
-    "input",
-    "json-visualizer",
-    "layout",
-    "navigation",
-    "styles",
-    "surfaces",
-    "testing",
-    "theme",
-    "theme-constants",
-    "typography",
-    "utilities"
+    "!dist/individual",
+    "!dist/individual/**",
+    "!dist/**/*.map"
   ],
   "exports": {
     ".": {

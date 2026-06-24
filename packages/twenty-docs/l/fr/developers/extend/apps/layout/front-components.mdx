@@ -200,24 +200,29 @@ export default defineFrontComponent({
 
 Les composants front s’exécutent côté navigateur dans un Web Worker isolé (sandboxed), tandis que les [fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions) s’exécutent côté serveur. Il n’y a aucun appel intra-processus direct entre les deux — à la place, un composant front appelle une fonction logique via HTTP.
 
-Une fonction logique déclarée avec `httpRouteTriggerSettings` est exposée sous le point de terminaison `/s/` à `${TWENTY_API_URL}/s\<path>`. Votre composant front appelle cette route avec le `RestApiClient` de `twenty-client-sdk/rest`, qui s’authentifie avec le `TWENTY_APP_ACCESS_TOKEN` que Twenty injecte dans le worker.
+Une fonction logique déclarée avec `httpRouteTriggerSettings` est accessible via HTTP à son chemin de route. Twenty injecte dans le worker l’URL de base à partir de laquelle vos fonctions sont servies sous la forme de `TWENTY_FUNCTIONS_URL`, ainsi que le `TWENTY_APP_ACCESS_TOKEN` qui authentifie l’appel. Il n’existe pas encore de client SDK dédié pour invoquer vos propres fonctions, donc appelez-les avec un simple `fetch` :
 
-Le `RestApiClient` est conçu exactement pour cela. Il lit `TWENTY_API_URL` et `TWENTY_APP_ACCESS_TOKEN` depuis l’environnement du worker, ajoute l’en-tête `Authorization: Bearer`, sérialise et analyse le JSON, et déclenche une `RestApiClientError` lorsque le jeton ou l’URL est manquant ou que la réponse n’est pas de type 2xx — afin que vous n’ayez pas à réimplémenter ce boilerplate dans chaque composant.
+> **Sur Twenty Cloud, les fonctions logiques déclenchées par HTTP sont servies sur un domaine dédié par espace de travail** à l’adresse `https://\<your-workspace-subdomain>.twenty.com\<path>` — c’est exactement ce à quoi `TWENTY_FUNCTIONS_URL` correspond. Pour les appelants externes, copiez l’URL exacte à partir des paramètres **HTTP trigger** de la fonction ou de l’onglet **Settings** de l’application.
+
+<Warning>
+  L’ancienne route de fonction `/s/` est **obsolète** et sera **désactivée le 2026-07-24**. Utilisez plutôt `TWENTY_FUNCTIONS_URL` (ci-dessus), et migrez toutes les URL `/s/` en dur avant cette date. La route `/s/` reste disponible pour l’auto-hébergement.
+</Warning>
 
 Un composant front sans interface (headless) peut effectuer l’appel au montage via le composant `Command`, puis se démonter automatiquement :
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    const client = new RestApiClient();
-
-    await client.post('/s/github/fetch-prs', {
-      owner: 'twentyhq',
-      repo: 'twenty',
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
     });
   };
 
@@ -233,7 +238,7 @@ export default defineFrontComponent({
 });
 ```
 
-Le chemin transmis au client est le chemin public de la route — la propriété `httpRouteTriggerSettings.path` de la fonction logique, préfixée par `/s`. Conservez `isAuthRequired: true` ; le client fournit le jeton d’accès de l’application que Twenty émet pour votre composant :
+Le chemin ajouté à `TWENTY_FUNCTIONS_URL` correspond au `httpRouteTriggerSettings.path` de la fonction logique. Conservez `isAuthRequired: true` ; le `TWENTY_APP_ACCESS_TOKEN` que Twenty génère pour votre composant authentifie la requête :
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -258,12 +263,12 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_API_URL` et `TWENTY_APP_ACCESS_TOKEN` sont injectés automatiquement — voir [Variables d’application](#application-variables). Comme les variables d’application secrètes ne sont jamais exposées aux composants front, conservez les clés d’API et les autres éléments sensibles dans la fonction logique, et non dans le composant front.
+`TWENTY_FUNCTIONS_URL` et `TWENTY_APP_ACCESS_TOKEN` sont injectés automatiquement — voir [Variables d’application](#application-variables). Comme les variables d’application secrètes ne sont jamais exposées aux composants front, conservez les clés d’API et les autres éléments sensibles dans la fonction logique, et non dans le composant front.
 </Note>
 
-### Référence de `RestApiClient`
+### Appeler l’API REST de Twenty
 
-Importez `RestApiClient` depuis `twenty-client-sdk/rest`. Il appartient à la même famille de clients que `CoreApiClient` et `MetadataApiClient`, mais cible les routes HTTP de votre application au lieu de l’API GraphQL.
+Pour lire ou écrire des enregistrements Twenty depuis un composant frontal, utilisez `RestApiClient` depuis `twenty-client-sdk/rest`. Il appartient à la même famille de clients que `CoreApiClient` et `MetadataApiClient`, mais cible l’API REST de Twenty (`/rest/...`) plutôt que l’API GraphQL, en lisant son URL de base depuis `TWENTY_API_URL`.
 
 | Méthode                           | Description                                          |
 | --------------------------------- | ---------------------------------------------------- |
@@ -280,7 +285,7 @@ Par défaut, l’URL de base et le jeton sont résolus à partir de l’environn
 
 ```ts
 const client = new RestApiClient({
-  baseUrl: 'https://api.example.com',
+  baseUrl: 'https://myworkspace.twenty.com',
   token: 'my-token',
 });
 ```
@@ -293,8 +298,8 @@ import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 const client = new RestApiClient();
 
 try {
-  const prs = await client.get('/s/github/fetch-prs', {
-    query: { state: 'open' },
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
   });
 } catch (error) {
   if (error instanceof RestApiClientError) {
@@ -374,10 +379,11 @@ Les variables secrètes (`isSecret: true`) ne sont **pas** exposées aux composa
 
 Les variables système suivantes sont toujours disponibles via `process.env` :
 
-| Variable                  | Description                                               |
-| ------------------------- | --------------------------------------------------------- |
-| `TWENTY_API_URL`          | URL de base de l’API Twenty                               |
-| `TWENTY_APP_ACCESS_TOKEN` | Jeton de courte durée limité au rôle de votre application |
+| Variable                  | Description                                                                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | URL de base à partir de laquelle les fonctions logiques HTTP de votre application sont servies (utilisée par `RestApiClient`) |
+| `TWENTY_API_URL`          | URL de base de l’API principale de Twenty                                                                                     |
+| `TWENTY_APP_ACCESS_TOKEN` | Jeton de courte durée limité au rôle de votre application                                                                     |
 
 ## API de communication de l'hôte
 
