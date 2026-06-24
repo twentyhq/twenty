@@ -12,7 +12,6 @@ import { buildCallRecordingStandardFlatSearchFieldMetadatas } from 'src/engine/w
 import { buildCompanyStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-company-standard-flat-search-field-metadata.util';
 import { buildDashboardStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-dashboard-standard-flat-search-field-metadata.util';
 import { buildMessageCampaignStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-campaign-standard-flat-search-field-metadata.util';
-import { buildMessageChannelMessageAssociationMessageFolderStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-channel-message-association-message-folder-standard-flat-search-field-metadata.util';
 import { buildMessageChannelMessageAssociationStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-channel-message-association-standard-flat-search-field-metadata.util';
 import { buildMessageListMemberStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-list-member-standard-flat-search-field-metadata.util';
 import { buildMessageListStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-list-standard-flat-search-field-metadata.util';
@@ -37,13 +36,12 @@ type StandardSearchFieldBuilder<P extends AllStandardObjectName> = (
   args: Omit<CreateStandardSearchFieldArgs<P>, 'context'>,
 ) => FlatSearchFieldMetadata[];
 
-// Rows are emitted for every object that authors a searchVector, not just the
+// Rows are emitted for every object that authors a non-empty searchVector, not just the
 // isSearchable ones: object-level isSearchable only gates global search, while
 // scoped/record-picker search (and the searchVector column itself) is decoupled from it.
 // Each object's row set mirrors its searchVector asExpression, built from the same
 // SEARCH_FIELDS_FOR_* constant. Junction objects with no searchable text field index
-// their UUID id (their label identifier) so the rows still mirror the column and the
-// record stays resolvable by its full id — there are no excluded objects.
+// their UUID id (their label identifier) so the rows still mirror the column.
 const STANDARD_FLAT_SEARCH_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: buildAttachmentStandardFlatSearchFieldMetadatas,
   blocklist: buildBlocklistStandardFlatSearchFieldMetadatas,
@@ -59,8 +57,6 @@ const STANDARD_FLAT_SEARCH_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   messageCampaign: buildMessageCampaignStandardFlatSearchFieldMetadatas,
   messageChannelMessageAssociation:
     buildMessageChannelMessageAssociationStandardFlatSearchFieldMetadatas,
-  messageChannelMessageAssociationMessageFolder:
-    buildMessageChannelMessageAssociationMessageFolderStandardFlatSearchFieldMetadatas,
   messageList: buildMessageListStandardFlatSearchFieldMetadatas,
   messageListMember: buildMessageListMemberStandardFlatSearchFieldMetadatas,
   messageParticipant: buildMessageParticipantStandardFlatSearchFieldMetadatas,
