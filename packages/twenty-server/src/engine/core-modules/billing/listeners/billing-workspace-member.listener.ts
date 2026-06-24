@@ -10,8 +10,7 @@ import {
   UpdateSubscriptionQuantityJob,
   type UpdateSubscriptionQuantityJobData,
 } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
-import { getUpdateSubscriptionQuantityJobId } from 'src/engine/core-modules/billing/jobs/get-update-subscription-quantity-job-id.util';
-import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity-job-delay-ms.constant';
+import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-delay-ms.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -43,7 +42,6 @@ export class BillingWorkspaceMemberListener {
       UpdateSubscriptionQuantityJob.name,
       { workspaceId: payload.workspaceId },
       {
-        id: getUpdateSubscriptionQuantityJobId(payload.workspaceId),
         delay: UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS,
       },
     );
