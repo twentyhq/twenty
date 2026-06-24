@@ -33,14 +33,22 @@ const buildRegistration = (
   }) as unknown as ApplicationRegistrationEntity;
 
 const serverRouteManifest = {
-  logicFunctions: [{ serverRouteTriggerSettings: { forwardedRequestHeaders: [] } }],
+  logicFunctions: [
+    { serverRouteTriggerSettings: { forwardedRequestHeaders: [] } },
+  ],
 };
 
 describe('ApplicationRegistrationVariableService.isConfiguredBatch', () => {
   let service: ApplicationRegistrationVariableService;
-  let variableRepository: jest.Mocked<Pick<Repository<ApplicationRegistrationVariableEntity>, 'find'>>;
-  let applicationRegistrationRepository: jest.Mocked<Pick<Repository<ApplicationRegistrationEntity>, 'find'>>;
-  let applicationRepository: jest.Mocked<Pick<Repository<ApplicationEntity>, 'find'>>;
+  let variableRepository: jest.Mocked<
+    Pick<Repository<ApplicationRegistrationVariableEntity>, 'find'>
+  >;
+  let applicationRegistrationRepository: jest.Mocked<
+    Pick<Repository<ApplicationRegistrationEntity>, 'find'>
+  >;
+  let applicationRepository: jest.Mocked<
+    Pick<Repository<ApplicationEntity>, 'find'>
+  >;
 
   const setup = ({
     variables = [buildVariable()],
@@ -49,13 +57,18 @@ describe('ApplicationRegistrationVariableService.isConfiguredBatch', () => {
   }: {
     variables?: ApplicationRegistrationVariableEntity[];
     registrations?: ApplicationRegistrationEntity[];
-    installedApps?: Pick<ApplicationEntity, 'applicationRegistrationId' | 'workspaceId'>[];
+    installedApps?: Pick<
+      ApplicationEntity,
+      'applicationRegistrationId' | 'workspaceId'
+    >[];
   }) => {
     variableRepository = { find: jest.fn().mockResolvedValue(variables) };
     applicationRegistrationRepository = {
       find: jest.fn().mockResolvedValue(registrations),
     };
-    applicationRepository = { find: jest.fn().mockResolvedValue(installedApps) };
+    applicationRepository = {
+      find: jest.fn().mockResolvedValue(installedApps),
+    };
 
     service = new ApplicationRegistrationVariableService(
       variableRepository as unknown as Repository<ApplicationRegistrationVariableEntity>,
@@ -86,7 +99,8 @@ describe('ApplicationRegistrationVariableService.isConfiguredBatch', () => {
       registrations: [
         buildRegistration({
           ownerWorkspaceId: null,
-          manifest: serverRouteManifest as ApplicationRegistrationEntity['manifest'],
+          manifest:
+            serverRouteManifest as ApplicationRegistrationEntity['manifest'],
         }),
       ],
     });
@@ -100,7 +114,8 @@ describe('ApplicationRegistrationVariableService.isConfiguredBatch', () => {
     setup({
       registrations: [
         buildRegistration({
-          manifest: serverRouteManifest as ApplicationRegistrationEntity['manifest'],
+          manifest:
+            serverRouteManifest as ApplicationRegistrationEntity['manifest'],
         }),
       ],
       installedApps: [
@@ -117,7 +132,8 @@ describe('ApplicationRegistrationVariableService.isConfiguredBatch', () => {
     setup({
       registrations: [
         buildRegistration({
-          manifest: serverRouteManifest as ApplicationRegistrationEntity['manifest'],
+          manifest:
+            serverRouteManifest as ApplicationRegistrationEntity['manifest'],
         }),
       ],
       installedApps: [

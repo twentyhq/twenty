@@ -227,10 +227,7 @@ export class ApplicationRegistrationVariableService {
       result.set(
         id,
         areVariablesConfigured &&
-          this.isServerRouteConfigured(
-            registrationById.get(id),
-            installedKeys,
-          ),
+          this.isServerRouteConfigured(registrationById.get(id), installedKeys),
       );
     }
 
