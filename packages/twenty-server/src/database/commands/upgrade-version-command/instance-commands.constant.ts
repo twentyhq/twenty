@@ -78,6 +78,7 @@ import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/comma
 import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action';
 import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781900000000-add-view-kanban-column-width';
 import { AddPrimaryPublicDomainToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782281874768-add-primary-public-domain-to-application';
+import { MakePublicDomainApplicationIdNotNullSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-slow-1782281874769-make-public-domain-application-id-not-null';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -158,4 +159,5 @@ export const INSTANCE_COMMANDS = [
   AddChannelWebhookSubscriptionFieldsFastInstanceCommand,
   AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstanceCommand,
   AddPrimaryPublicDomainToApplicationFastInstanceCommand,
+  MakePublicDomainApplicationIdNotNullSlowInstanceCommand,
 ];
