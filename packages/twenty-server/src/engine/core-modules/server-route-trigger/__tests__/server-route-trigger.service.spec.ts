@@ -50,14 +50,8 @@ const buildRequest = (body: object | null = {}): Request =>
 
 describe('ServerRouteTriggerService', () => {
   let service: ServerRouteTriggerService;
-  let resolverQueryBuilder: {
-    innerJoin: jest.Mock;
-    where: jest.Mock;
-    andWhere: jest.Mock;
-    getOne: jest.Mock;
-  };
   let logicFunctionRepository: jest.Mocked<
-    Pick<Repository<LogicFunctionEntity>, 'createQueryBuilder'>
+    Pick<Repository<LogicFunctionEntity>, 'findOne'>
   >;
   let logicFunctionExecutorService: jest.Mocked<
     Pick<LogicFunctionExecutorService, 'execute'>
@@ -74,18 +68,12 @@ describe('ServerRouteTriggerService', () => {
     });
 
   beforeEach(() => {
-    resolverQueryBuilder = {
-      innerJoin: jest.fn().mockReturnThis(),
-      where: jest.fn().mockReturnThis(),
-      andWhere: jest.fn().mockReturnThis(),
-      getOne: jest.fn().mockResolvedValue({
+    logicFunctionRepository = {
+      findOne: jest.fn().mockResolvedValue({
         id: 'resolver-id',
         workspaceId: 'owner-ws',
         serverRouteTriggerSettings: { forwardedRequestHeaders: ['x-test'] },
       }),
-    };
-    logicFunctionRepository = {
-      createQueryBuilder: jest.fn().mockReturnValue(resolverQueryBuilder),
     };
     logicFunctionExecutorService = {
       execute: jest
@@ -159,7 +147,7 @@ describe('ServerRouteTriggerService', () => {
   });
 
   it('throws LOGIC_FUNCTION_NOT_FOUND when the resolver is not found', async () => {
-    resolverQueryBuilder.getOne.mockResolvedValue(null);
+    logicFunctionRepository.findOne.mockResolvedValue(null);
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
@@ -253,36 +241,16 @@ describe('ServerRouteTriggerService', () => {
     });
   });
 
-  it('filters the resolver query by serverRouteTriggerSettings + owner-workspace + alive predicates', async () => {
+  it('looks up the resolver by universalIdentifier and serverRouteTriggerSettings opt-in', async () => {
     await handle();
 
-    const whereClauses = [
-      ...resolverQueryBuilder.where.mock.calls.map((c) => c[0]),
-      ...resolverQueryBuilder.andWhere.mock.calls.map((c) => c[0]),
-    ];
+    const findArgs = logicFunctionRepository.findOne.mock.calls[0][0];
 
-    expect(whereClauses).toEqual(
-      expect.arrayContaining([
-        expect.stringContaining('lf."universalIdentifier" = :uid'),
-        expect.stringContaining('lf."workspaceId" = reg."workspaceId"'),
-        expect.stringContaining('lf."serverRouteTriggerSettings" IS NOT NULL'),
-        expect.stringContaining('lf."deletedAt" IS NULL'),
-        expect.stringContaining('reg."deletedAt" IS NULL'),
-        expect.stringContaining('reg."workspaceId" IS NOT NULL'),
-      ]),
-    );
-
-    // Guard against accidental removal of the joins — the where clauses
-    // reference `app` and `reg` aliases that only exist via these joins.
-    const joinTargets = resolverQueryBuilder.innerJoin.mock.calls.map(
-      (c) => c[0],
-    );
-
-    expect(joinTargets).toEqual(
-      expect.arrayContaining([
-        'core.application',
-        'core.applicationRegistration',
-      ]),
+    expect(findArgs?.where).toEqual(
+      expect.objectContaining({
+        universalIdentifier: RESOLVER_UID,
+        serverRouteTriggerSettings: expect.anything(),
+      }),
     );
   });
 

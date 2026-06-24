@@ -3,9 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isString } from '@sniptt/guards';
 import { Request } from 'express';
-import { type ServerRouteTriggerSettings } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import {
   LogicFunctionExecutionException,
@@ -29,12 +28,6 @@ type ResolverResult = {
   workspaceId: string;
   targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
-};
-
-type ResolverMatch = {
-  id: string;
-  ownerWorkspaceId: string;
-  serverRouteTriggerSettings: ServerRouteTriggerSettings | null;
 };
 
 @Injectable()
@@ -63,14 +56,13 @@ export class ServerRouteTriggerService {
       );
     }
 
-    // A server-route resolver is a logic function that:
-    // 1. carries `serverRouteTriggerSettings` (it's opted in),
-    // 2. lives in the owner workspace of an alive ApplicationRegistration
-    //    (`lf.workspaceId = reg."workspaceId"`).
-    // One indexed query, no per-workspace iteration.
-    const resolver = await this.findResolver(
-      resolverLogicFunctionUniversalIdentifier,
-    );
+    // A server-route resolver is a logic function that carries
+    // `serverRouteTriggerSettings` (the opt-in marker). It runs in its own
+    // workspace (the application's owner workspace).
+    const resolver = await this.findResolver({
+      logicFunctionUniversalIdentifier:
+        resolverLogicFunctionUniversalIdentifier,
+    });
 
     if (!isDefined(resolver)) {
       throw new ServerRouteTriggerException(
@@ -87,14 +79,14 @@ export class ServerRouteTriggerService {
       userWorkspaceId: null,
     });
 
-    // Step 1: run the resolver in the owner workspace. It returns
+    // Step 1: run the resolver. It returns
     // `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`,
     // selecting both the target workspace AND the target function. The
     // resolver is the single point of authorization — the URL only carries
     // the resolver's identifier.
     const resolverResult = await this.runFunction({
       logicFunctionId: resolver.id,
-      workspaceId: resolver.ownerWorkspaceId,
+      workspaceId: resolver.workspaceId,
       payload: event,
     });
     const resolved = this.parseResolverResult(resolverResult);
@@ -131,36 +123,17 @@ export class ServerRouteTriggerService {
     return buildRouteTriggerResponse(targetResult.data);
   }
 
-  private async findResolver(
-    logicFunctionUniversalIdentifier: string,
-  ): Promise<ResolverMatch | undefined> {
-    const resolver = await this.logicFunctionRepository
-      .createQueryBuilder('lf')
-      .innerJoin('core.application', 'app', 'app.id = lf."applicationId"')
-      .innerJoin(
-        'core.applicationRegistration',
-        'reg',
-        'reg.id = app."applicationRegistrationId"',
-      )
-      .where('lf."universalIdentifier" = :uid', {
-        uid: logicFunctionUniversalIdentifier,
-      })
-      .andWhere('lf."workspaceId" = reg."workspaceId"')
-      .andWhere('lf."serverRouteTriggerSettings" IS NOT NULL')
-      .andWhere('lf."deletedAt" IS NULL')
-      .andWhere('reg."deletedAt" IS NULL')
-      .andWhere('reg."workspaceId" IS NOT NULL')
-      .getOne();
-
-    if (!isDefined(resolver)) {
-      return undefined;
-    }
-
-    return {
-      id: resolver.id,
-      ownerWorkspaceId: resolver.workspaceId,
-      serverRouteTriggerSettings: resolver.serverRouteTriggerSettings,
-    };
+  private async findResolver({
+    logicFunctionUniversalIdentifier,
+  }: {
+    logicFunctionUniversalIdentifier: string;
+  }): Promise<LogicFunctionEntity | null> {
+    return await this.logicFunctionRepository.findOne({
+      where: {
+        universalIdentifier: logicFunctionUniversalIdentifier,
+        serverRouteTriggerSettings: Not(IsNull()),
+      },
+    });
   }
 
   private parseResolverResult(result: {
