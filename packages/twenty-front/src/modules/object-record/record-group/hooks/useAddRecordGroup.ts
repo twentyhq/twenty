@@ -66,6 +66,22 @@ export const useAddRecordGroup = () => {
       position: maxPosition + 1,
     };
 
+    const result = await performViewGroupAPICreate({
+      inputs: [
+        {
+          id: newViewGroup.id,
+          viewId: currentViewId,
+          fieldValue: newViewGroup.fieldValue,
+          isVisible: newViewGroup.isVisible,
+          position: newViewGroup.position,
+        },
+      ],
+    });
+
+    if (result.status !== 'successful') {
+      return;
+    }
+
     addToDraft({
       key: 'viewGroups',
       items: [{ ...newViewGroup, viewId: currentViewId }],
@@ -77,18 +93,6 @@ export const useAddRecordGroup = () => {
       mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
       viewGroups: [...view.viewGroups, newViewGroup],
       objectMetadataItem,
-    });
-
-    await performViewGroupAPICreate({
-      inputs: [
-        {
-          id: newViewGroup.id,
-          viewId: currentViewId,
-          fieldValue: newViewGroup.fieldValue,
-          isVisible: newViewGroup.isVisible,
-          position: newViewGroup.position,
-        },
-      ],
     });
   };
 
