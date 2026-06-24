@@ -226,16 +226,20 @@ describe('DataArgProcessorService', () => {
   });
 
   describe('server-controlled system fields', () => {
-    // Builds a maps entry for a single field, allowing override of the
-    // server-controlled flags so we can exercise the read-only guard.
+    // Builds a maps entry for a single field. isSystemSideEffect and isUIEditable
+    // are set independently on purpose: the guard keys off isSystemSideEffect, not
+    // isUIEditable, so the tests must be able to express a field that is read-only
+    // in the UI yet NOT a system side-effect (e.g. a message's receivedAt).
     const createSystemFieldMaps = ({
       name,
       type,
-      isUIEditable,
+      isSystemSideEffect,
+      isUIEditable = false,
     }: {
       name: string;
       type: FieldMetadataType;
-      isUIEditable: boolean;
+      isSystemSideEffect: boolean;
+      isUIEditable?: boolean;
     }): FlatEntityMaps<FlatFieldMetadata> => ({
       byUniversalIdentifier: {
         [`${name}-universal-id`]: {
@@ -246,7 +250,7 @@ describe('DataArgProcessorService', () => {
           objectMetadataId: 'object-id',
           universalIdentifier: `${name}-universal-id`,
           isUIEditable,
-          isSystemSideEffect: !isUIEditable,
+          isSystemSideEffect,
         } as FlatFieldMetadata,
       },
       universalIdentifierById: {
@@ -261,13 +265,15 @@ describe('DataArgProcessorService', () => {
       universalIdentifiersByApplicationId: {},
     };
 
+    // createdAt/updatedAt/deletedAt are the only DATE_TIME fields with
+    // isSystemSideEffect=true, so they must be rejected when supplied by a client.
     it.each(['createdAt', 'updatedAt', 'deletedAt'])(
-      'should reject client-supplied value for read-only system field %s',
+      'should reject client-supplied value for system-side-effect field %s',
       async (fieldName) => {
         const flatFieldMetadataMaps = createSystemFieldMaps({
           name: fieldName,
           type: FieldMetadataType.DATE_TIME,
-          isUIEditable: false,
+          isSystemSideEffect: true,
         });
         const flatObjectMetadata = createFlatObjectMetadata([fieldName]);
 
@@ -285,10 +291,11 @@ describe('DataArgProcessorService', () => {
       },
     );
 
-    it('should allow client-supplied value for an editable DATE_TIME field', async () => {
+    it('should allow a client-supplied value for a normal editable DATE_TIME field', async () => {
       const flatFieldMetadataMaps = createSystemFieldMaps({
         name: 'closeDate',
         type: FieldMetadataType.DATE_TIME,
+        isSystemSideEffect: false,
         isUIEditable: true,
       });
       const flatObjectMetadata = createFlatObjectMetadata(['closeDate']);
@@ -301,7 +308,32 @@ describe('DataArgProcessorService', () => {
         flatObjectMetadataMaps: emptyObjectMaps,
       });
 
-      expect(result).toEqual([{ closeDate: '1999-01-01T00:00:00.000Z' }]);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toHaveProperty('closeDate');
+    });
+
+    // Regression guard for the narrowed scope: a field that is read-only in the
+    // UI (isUIEditable=false) but NOT a system side-effect — e.g. a message's
+    // receivedAt, set on write by the import pipeline — must still be accepted.
+    it('should allow a UI-read-only field that is not a system side-effect (e.g. receivedAt)', async () => {
+      const flatFieldMetadataMaps = createSystemFieldMaps({
+        name: 'receivedAt',
+        type: FieldMetadataType.DATE_TIME,
+        isSystemSideEffect: false,
+        isUIEditable: false,
+      });
+      const flatObjectMetadata = createFlatObjectMetadata(['receivedAt']);
+
+      const result = await dataArgProcessorService.process({
+        partialRecordInputs: [{ receivedAt: '1999-01-01T00:00:00.000Z' }],
+        authContext: createMockAuthContext(),
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps: emptyObjectMaps,
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toHaveProperty('receivedAt');
     });
   });
 

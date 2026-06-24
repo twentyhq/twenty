@@ -140,14 +140,19 @@ export class DataArgProcessorService {
           );
         }
 
-        // Reject client-supplied values for server-controlled system fields
-        // (createdAt/updatedAt/deletedAt). These are managed by the server and
-        // accepting them would let callers forge audit timestamps or soft-delete
-        // records outside the delete flow. Actor fields (createdBy/updatedBy) are
-        // intentionally left to ActorFromAuthContextService, which still honors a
-        // client-supplied source, so we narrow the guard to system DATE_TIME fields.
+        // Reject client-supplied values for server-controlled audit timestamps
+        // (createdAt/updatedAt/deletedAt). These carry isSystemSideEffect and are
+        // managed by the server; accepting them lets callers forge audit
+        // timestamps or soft-delete records outside the delete flow. We key off
+        // isSystemSideEffect (not isUIEditable) so domain fields that are read-only
+        // in the UI but legitimately set on write by backend flows (e.g. a
+        // message's receivedAt, set by the import pipeline) are unaffected — among
+        // DATE_TIME fields only createdAt/updatedAt/deletedAt are isSystemSideEffect.
+        // Actor fields (createdBy/updatedBy) are left to ActorFromAuthContextService
+        // (which still honors a client source), so the guard stays scoped to
+        // system DATE_TIME fields.
         if (
-          fieldMetadata.isUIEditable === false &&
+          fieldMetadata.isSystemSideEffect === true &&
           fieldMetadata.type === FieldMetadataType.DATE_TIME &&
           isDefined(value)
         ) {
