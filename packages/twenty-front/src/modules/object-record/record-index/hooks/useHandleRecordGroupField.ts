@@ -1,6 +1,7 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -44,9 +45,12 @@ export const useHandleRecordGroupField = () => {
         return;
       }
 
+      const isRelationGroupBy = isManyToOneRelationField(fieldMetadataItem);
+
       if (
-        isUndefinedOrNull(fieldMetadataItem.options) ||
-        fieldMetadataItem.options.length === 0
+        !isRelationGroupBy &&
+        (isUndefinedOrNull(fieldMetadataItem.options) ||
+          fieldMetadataItem.options.length === 0)
       ) {
         return;
       }
@@ -73,7 +77,9 @@ export const useHandleRecordGroupField = () => {
         ),
       );
 
-      const viewGroupsToCreate = fieldMetadataItem.options
+      const viewGroupsToCreate = (
+        isRelationGroupBy ? [] : (fieldMetadataItem.options ?? [])
+      )
         .filter(
           (option) =>
             !existingGroupKeys.has(`${fieldMetadataItem.id}:${option.value}`),
@@ -97,7 +103,7 @@ export const useHandleRecordGroupField = () => {
           id: v4(),
           fieldValue: '',
           isVisible: true,
-          position: fieldMetadataItem.options.length,
+          position: viewGroupsToCreate.length,
         } satisfies ViewGroup);
       }
 
