@@ -52,11 +52,11 @@ export const ObjectOptionsDropdownAddRecordGroupContent = () => {
     onContentChange('recordGroups');
   };
 
-  const handleMorphItemSelected = async (
-    selectedMorphItem?: RecordPickerPickableMorphItem,
+  const handleRecordSelected = async (
+    selectedItem?: RecordPickerPickableMorphItem,
   ) => {
-    if (isDefined(selectedMorphItem?.recordId)) {
-      await addRecordGroup(selectedMorphItem.recordId);
+    if (isDefined(selectedItem?.recordId)) {
+      await addRecordGroup(selectedItem.recordId);
     }
 
     handleBack();
@@ -80,7 +80,7 @@ export const ObjectOptionsDropdownAddRecordGroupContent = () => {
         <SingleRecordPickerMenuItemsWithSearch
           focusId={ADD_RECORD_GROUP_PICKER_INSTANCE_ID}
           onCancel={handleBack}
-          onMorphItemSelected={handleMorphItemSelected}
+          onMorphItemSelected={handleRecordSelected}
           objectNameSingulars={[targetObjectNameSingular]}
           excludedRecordIds={excludedRecordIds}
         />
