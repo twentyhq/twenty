@@ -190,6 +190,8 @@ export class FlatFieldMetadataValidatorService {
       });
     }
 
+    // Relation/morph fields are foreign keys with no literal defaultValue (always null),
+    // so the non-nullable defaultValue check does not apply to them.
     if (
       !isMorphOrRelationUniversalFlatFieldMetadata(
         flatFieldMetadataToValidate,
