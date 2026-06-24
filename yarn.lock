@@ -29277,7 +29277,6 @@ __metadata:
     uuid: "npm:^13.0.2"
     vite: "npm:^8.0.0"
     vite-plugin-dts: "npm:^4.5.4"
-    vite-tsconfig-paths: "npm:^4.2.1"
   bin:
     create-twenty-app: dist/cli.cjs
   languageName: unknown
@@ -34278,13 +34277,6 @@ __metadata:
     slash: "npm:^5.1.0"
     unicorn-magic: "npm:^0.4.0"
   checksum: 10c0/fc0675e01dc1da5095f30dccc46a3047fc38d45ca08c21c1aa871bd79d38682f507d84a159be168019db5fffaa09c5663c3679c29190a2d4f999dc91d7ff6406
-  languageName: node
-  linkType: hard
-
-"globrex@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "globrex@npm:0.1.2"
-  checksum: 10c0/a54c029520cf58bda1d8884f72bd49b4cd74e977883268d931fd83bcbd1a9eb96d57c7dbd4ad80148fb9247467ebfb9b215630b2ed7563b2a8de02e1ff7f89d1
   languageName: node
   linkType: hard
 
@@ -52162,20 +52154,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsconfck@npm:^3.0.3":
-  version: 3.1.1
-  resolution: "tsconfck@npm:3.1.1"
-  peerDependencies:
-    typescript: ^5.0.0
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  bin:
-    tsconfck: bin/tsconfck.js
-  checksum: 10c0/e133eb308ba37e8db8dbac1905bddaaf4a62f0e01aa88143e19867e274a877b86b35cf69c9a0172ca3e7d1a4bb32400381ac7f7a1429e34250a8d7ae55aee3e7
-  languageName: node
-  linkType: hard
-
 "tsconfig-paths-webpack-plugin@npm:4.2.0":
   version: 4.2.0
   resolution: "tsconfig-paths-webpack-plugin@npm:4.2.0"
@@ -52304,7 +52282,6 @@ __metadata:
     typescript: "npm:^5.9.3"
     vite: "npm:^8.0.0"
     vite-plugin-dts: "npm:^4.5.4"
-    vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
@@ -52430,7 +52407,6 @@ __metadata:
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
     vite-plugin-dts: "npm:^4.5.4"
-    vite-tsconfig-paths: "npm:^4.2.1"
     zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -52611,7 +52587,6 @@ __metadata:
     use-debounce: "npm:^10.0.0"
     uuid: "npm:^11.1.1"
     vite-plugin-svgr: "npm:^4.3.0"
-    vite-tsconfig-paths: "npm:^4.2.1"
     xlsx-ugnis: "npm:^0.19.3"
     zod: "npm:^4.1.11"
   languageName: unknown
@@ -52665,7 +52640,6 @@ __metadata:
     uuid: "npm:^13.0.2"
     vite: "npm:^8.0.0"
     vite-plugin-dts: "npm:^4.5.4"
-    vite-tsconfig-paths: "npm:^4.2.1"
     wait-on: "npm:^9.0.10"
   bin:
     twenty: dist/cli.cjs
@@ -52932,7 +52906,6 @@ __metadata:
     uuid: "npm:^11.1.1"
     vite: "npm:^8.0.0"
     vite-plugin-dts: "npm:^4.5.4"
-    vite-tsconfig-paths: "npm:^4.2.1"
     zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -52988,7 +52961,6 @@ __metadata:
     vite-plugin-dts: "npm:^4.5.4"
     vite-plugin-sass-dts: "npm:^1.3.31"
     vite-plugin-svgr: "npm:^4.3.0"
-    vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.1.0"
     zod: "npm:^4.1.11"
   peerDependencies:
@@ -53068,7 +53040,6 @@ __metadata:
     twenty-shared: "workspace:*"
     vite: "npm:^8.0.0"
     vite-plugin-dts: "npm:^4.5.4"
-    vite-tsconfig-paths: "npm:^4.2.1"
     zapier-platform-cli: "npm:^19.0.0"
     zapier-platform-core: "npm:19.0.0"
     zod: "npm:^4.1.11"
@@ -54722,22 +54693,6 @@ __metadata:
   peerDependencies:
     vite: ">=2.6.0"
   checksum: 10c0/3e1959fec626bb4f5a8ec13ff15bc40ffbc1c0ff38149bebe3f37dc2d67ed1f276f129ff7983e06946cf712e19996affd9d6868aa7d20d8921d1fe4449109b55
-  languageName: node
-  linkType: hard
-
-"vite-tsconfig-paths@npm:^4.2.1":
-  version: 4.3.2
-  resolution: "vite-tsconfig-paths@npm:4.3.2"
-  dependencies:
-    debug: "npm:^4.1.1"
-    globrex: "npm:^0.1.2"
-    tsconfck: "npm:^3.0.3"
-  peerDependencies:
-    vite: "*"
-  peerDependenciesMeta:
-    vite:
-      optional: true
-  checksum: 10c0/f390ac1d1c3992fc5ac50f9274c1090f8b55ab34a89ea88893db9a6924a3b26c9f64bc1163615150ad100749db73b6b2cf1d57f6cd60df6e762ceb5b8ad30024
   languageName: node
   linkType: hard
 
