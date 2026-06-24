@@ -61,24 +61,24 @@ export const validateFlatObjectMetadataIdentifiers = ({
         userFriendlyMessage: msg`Field cannot be used as label identifier due to its type`,
       });
     }
-
-    if (isDefined(imageIdentifierFieldMetadataUniversalIdentifier)) {
-      const relatedUniversalFlatFieldMetadata =
-        findFlatEntityByUniversalIdentifier({
-          universalIdentifier: imageIdentifierFieldMetadataUniversalIdentifier,
-          flatEntityMaps: universalFlatFieldMetadataMaps,
-        });
-
-      if (!isDefined(relatedUniversalFlatFieldMetadata)) {
-        errors.push({
-          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-          message:
-            'imageIdentifierFieldMetadataUniversalIdentifier validation failed: related field metadata not found',
-          userFriendlyMessage: msg`Field declared as image identifier not found`,
-        });
-      }
-    }
-
-    return errors;
   }
+
+  if (isDefined(imageIdentifierFieldMetadataUniversalIdentifier)) {
+    const relatedUniversalFlatFieldMetadata =
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: imageIdentifierFieldMetadataUniversalIdentifier,
+        flatEntityMaps: universalFlatFieldMetadataMaps,
+      });
+
+    if (!isDefined(relatedUniversalFlatFieldMetadata)) {
+      errors.push({
+        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        message:
+          'imageIdentifierFieldMetadataUniversalIdentifier validation failed: related field metadata not found',
+        userFriendlyMessage: msg`Field declared as image identifier not found`,
+      });
+    }
+  }
+
+  return errors;
 };
