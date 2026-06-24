@@ -184,6 +184,37 @@ describe('convergeDivergedCallRecordings', () => {
     });
   });
 
+  it('marks FAILED when Recall is done but has no recording artifact path', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        status_changes: [
+          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        ],
+        recordings: [],
+      },
+    });
+    const client = buildClient([buildStuckRecordingNode()]);
+
+    const result = await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listRecallTranscriptsMock).not.toHaveBeenCalled();
+    expect(ingestCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'FAILED',
+          meetingBotFailureReason: 'recording_artifacts_unavailable',
+        },
+      },
+    ]);
+    expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
+  });
+
   it('completes and charges when convergence lands the last artifact', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
@@ -308,7 +339,7 @@ describe('convergeDivergedCallRecordings', () => {
     expect(result.skippedNotStartedCallRecordingIds).toEqual([]);
   });
 
-  it('marks FAILED_UNKNOWN without clearing the bot id when Recall returns 404', async () => {
+  it('marks FAILED without clearing the bot id when Recall returns 404', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: false,
       status: 404,
@@ -324,7 +355,10 @@ describe('convergeDivergedCallRecordings', () => {
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
-        data: { status: 'FAILED_UNKNOWN' },
+        data: {
+          status: 'FAILED',
+          meetingBotFailureReason: 'recall_bot_not_found',
+        },
       },
     ]);
     expect(result.markedFailedCallRecordingIds).toEqual(['call-recording-1']);
@@ -658,12 +692,13 @@ describe('convergeDivergedCallRecordings', () => {
       {
         id: 'call-recording-1',
         data: {
-          status: 'FAILED_UNKNOWN',
+          status: 'FAILED',
           transcript: {
             recallTranscriptId: 'recall-transcript-1',
             status: 'FAILED',
             subCode: 'audio_missing',
           },
+          meetingBotFailureReason: 'transcript_failed:audio_missing',
         },
       },
     ]);

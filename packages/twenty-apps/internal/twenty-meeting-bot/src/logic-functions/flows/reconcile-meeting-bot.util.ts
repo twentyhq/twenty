@@ -457,14 +457,19 @@ const buildPolicyManagedCallRecordingUpdateFields = ({
   calendarEvent: CalendarEventRecord;
 }): CallRecordingUpdateFields =>
   canResetCallRecordingStatusToScheduled(existingCallRecording.status)
-    ? buildScheduledCallRecordingFields(calendarEvent)
+    ? {
+        ...buildScheduledCallRecordingFields(calendarEvent),
+        ...(isUndefined(existingCallRecording.meetingBotFailureReason)
+          ? {}
+          : { meetingBotFailureReason: null }),
+      }
     : buildCalendarDrivenCallRecordingFields(calendarEvent);
 
 const canResetCallRecordingStatusToScheduled = (
   status: string | undefined,
 ): boolean =>
   status === CallRecordingStatus.SCHEDULED ||
-  status === CallRecordingStatus.FAILED_UNKNOWN;
+  status === CallRecordingStatus.FAILED;
 
 const buildRemovedCalendarEventIdsByMeetingKey = (
   removedOccurrences: RemovedMeetingBotOccurrence[],

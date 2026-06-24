@@ -227,6 +227,16 @@ export const successfulCreateInputByFieldMetadataType: {
         );
       },
     },
+    {
+      input: {
+        dateTimeField: '2026-05-07',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toISOString() === '2026-05-07T00:00:00.000Z';
+      },
+    },
   ],
   [FieldMetadataType.BOOLEAN]: [
     {

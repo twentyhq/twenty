@@ -29,7 +29,7 @@ A workspace admin can adjust bot behavior through application variables:
 
 ### Configuring the webhook
 
-The app exposes an unauthenticated route, `POST /webhook/recall`, that verifies the Recall/Svix signature and updates the matching `CallRecording`'s lifecycle status (`JOINING` → `RECORDING` → `PROCESSING`, or `FAILED_UNKNOWN`).
+The app exposes an unauthenticated route, `POST /webhook/recall`, that verifies the Recall/Svix signature and updates the matching `CallRecording`'s lifecycle status (`JOINING` → `RECORDING` → `PROCESSING`, or `FAILED`).
 
 1. In the Recall.ai dashboard, create a webhook endpoint (Status Change Webhooks) pointing at the public URL of this app's `POST /webhook/recall` route.
 2. Copy the endpoint's signing secret — it starts with `whsec_`.

@@ -2656,6 +2656,7 @@ type Webhook {
 
 type ToolIndexEntry {
   name: String!
+  label: String!
   description: String!
   category: String!
   objectName: String
@@ -3113,13 +3114,6 @@ type Query {
   getViewGroup(id: String!): ViewGroup
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
-  findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
-  findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
-  findManyApplicationRegistrations: [ApplicationRegistration!]!
-  findOneApplicationRegistration(id: String!): ApplicationRegistration!
-  findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
-  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
-  applicationRegistrationTarballUrl(id: String!): String
   minimalMetadata: MinimalMetadata!
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
@@ -3138,6 +3132,13 @@ type Query {
   checkWorkspaceSubdomainAvailability(subdomain: String!): SubdomainAvailabilityDTO!
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
+  findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
+  findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
+  findManyApplicationRegistrations: [ApplicationRegistration!]!
+  findOneApplicationRegistration(id: String!): ApplicationRegistration!
+  findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
+  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
+  applicationRegistrationTarballUrl(id: String!): String
   currentUser: User!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
@@ -3380,15 +3381,6 @@ type Mutation {
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
-  createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
-  updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
-  deleteApplicationRegistration(id: String!): Boolean!
-  rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
-  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  deleteApplicationRegistrationVariable(id: String!): Boolean!
-  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
-  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
@@ -3422,6 +3414,15 @@ type Mutation {
   generatePlaygroundToken: AuthToken!
   emailPasswordResetLink(email: String!, workspaceId: UUID): EmailPasswordResetLink!
   updatePasswordViaResetToken(passwordResetToken: String!, newPassword: String!): InvalidatePassword!
+  createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
+  updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
+  deleteApplicationRegistration(id: String!): Boolean!
+  rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
+  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
+  updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
+  deleteApplicationRegistrationVariable(id: String!): Boolean!
+  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
+  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   initiateOTPProvisioning(loginToken: String!, origin: String!): InitiateTwoFactorAuthenticationProvisioning!
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
   deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
@@ -4021,6 +4022,7 @@ input CreateLogicFunctionFromSourceInput {
   cronTriggerSettings: JSON
   databaseEventTriggerSettings: JSON
   httpRouteTriggerSettings: JSON
+  serverRouteTriggerSettings: JSON
   toolTriggerSettings: JSON
   workflowActionTriggerSettings: JSON
 }
@@ -4407,6 +4409,40 @@ input UpdateCalendarChannelInputUpdates {
   isSyncEnabled: Boolean
 }
 
+input FileAttachmentInput {
+  id: UUID!
+  filename: String!
+}
+
+input CreateSkillInput {
+  id: UUID
+  name: String!
+  label: String!
+  icon: String
+  description: String
+  content: String!
+}
+
+input UpdateSkillInput {
+  id: UUID!
+  name: String
+  label: String
+  icon: String
+  description: String
+  content: String
+  isActive: Boolean
+}
+
+input GetAuthorizationUrlForSSOInput {
+  identityProviderId: UUID!
+  workspaceInviteHash: String
+}
+
+input SignUpInNewWorkspaceInput {
+  displayName: String
+  subdomain: String
+}
+
 input CreateApplicationRegistrationInput {
   name: String!
   universalIdentifier: String
@@ -4443,40 +4479,6 @@ input UpdateApplicationRegistrationVariablePayload {
   value: String
   resetValue: Boolean
   description: String
-}
-
-input FileAttachmentInput {
-  id: UUID!
-  filename: String!
-}
-
-input CreateSkillInput {
-  id: UUID
-  name: String!
-  label: String!
-  icon: String
-  description: String
-  content: String!
-}
-
-input UpdateSkillInput {
-  id: UUID!
-  name: String
-  label: String
-  icon: String
-  description: String
-  content: String
-  isActive: Boolean
-}
-
-input GetAuthorizationUrlForSSOInput {
-  identityProviderId: UUID!
-  workspaceInviteHash: String
-}
-
-input SignUpInNewWorkspaceInput {
-  displayName: String
-  subdomain: String
 }
 
 input UpdateWorkspaceMemberSettingsInput {

@@ -32,7 +32,9 @@ export type { DeterministicEntityNamespace } from './deterministic-identifier/de
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
 export { getApplicationVariableUniversalIdentifier } from './deterministic-identifier/get-application-variable-universal-identifier.util';
 export {
-  getCommandMenuItemUniversalIdentifier,
+  getGlobalCommandMenuItemUniversalIdentifier,
+  getGlobalObjectContextCommandMenuItemUniversalIdentifier,
+  getRecordSelectionCommandMenuItemUniversalIdentifier,
   getNavigationCommandUniversalIdentifier,
 } from './deterministic-identifier/get-command-menu-item-universal-identifier.util';
 export { getConnectionProviderUniversalIdentifier } from './deterministic-identifier/get-connection-provider-universal-identifier.util';
@@ -41,7 +43,12 @@ export { getFieldUniversalIdentifier } from './deterministic-identifier/get-fiel
 export { getFrontComponentUniversalIdentifier } from './deterministic-identifier/get-front-component-universal-identifier.util';
 export { getIndexUniversalIdentifier } from './deterministic-identifier/get-index-universal-identifier.util';
 export { getLogicFunctionUniversalIdentifier } from './deterministic-identifier/get-logic-function-universal-identifier.util';
-export { getNavigationMenuItemUniversalIdentifier } from './deterministic-identifier/get-navigation-menu-item-universal-identifier.util';
+export {
+  getFolderNavigationMenuItemUniversalIdentifier,
+  getObjectNavigationMenuItemUniversalIdentifier,
+  getViewNavigationMenuItemUniversalIdentifier,
+  getLinkNavigationMenuItemUniversalIdentifier,
+} from './deterministic-identifier/get-navigation-menu-item-universal-identifier.util';
 export { getObjectPermissionUniversalIdentifier } from './deterministic-identifier/get-object-permission-universal-identifier.util';
 export { getObjectUniversalIdentifier } from './deterministic-identifier/get-object-universal-identifier.util';
 export { getPageLayoutTabUniversalIdentifier } from './deterministic-identifier/get-page-layout-tab-universal-identifier.util';
@@ -53,8 +60,10 @@ export { getPageLayoutWidgetUniversalIdentifier } from './deterministic-identifi
 export { getPermissionFlagUniversalIdentifier } from './deterministic-identifier/get-permission-flag-universal-identifier.util';
 export { getRolePermissionFlagUniversalIdentifier } from './deterministic-identifier/get-role-permission-flag-universal-identifier.util';
 export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-universal-identifier.util';
+export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/get-search-field-universal-identifier.util';
 export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
 export { getSkillUniversalIdentifier } from './deterministic-identifier/get-skill-universal-identifier.util';
+export { getViewFieldGroupUniversalIdentifier } from './deterministic-identifier/get-view-field-group-universal-identifier.util';
 export { getViewFieldUniversalIdentifier } from './deterministic-identifier/get-view-field-universal-identifier.util';
 export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get-view-filter-universal-identifier.util';
 export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-view-group-universal-identifier.util';
@@ -108,10 +117,7 @@ export type {
 } from './roleManifestType';
 export type { RunAgentInput, RunAgentResult } from './runAgentType';
 export type { ServerVariables } from './server-variables.type';
-export type {
-  WebhookWorkspaceIdSource,
-  ServerWebhookTriggerSettings,
-} from './serverWebhookTriggerSettingsType';
+export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';

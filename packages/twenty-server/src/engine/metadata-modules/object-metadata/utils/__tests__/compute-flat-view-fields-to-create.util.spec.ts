@@ -40,7 +40,7 @@ const makeFieldMetadata = (
 };
 
 const flatApplication = {
-  universalIdentifier: '20202020-1111-4111-8111-111111111111',
+  universalIdentifier: 'app-uid',
   id: 'app-id',
 } as never;
 

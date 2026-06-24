@@ -2,7 +2,7 @@ import { type CallRecordingUpdateFields } from 'src/logic-functions/data/update-
 
 type CallRecordingTranscriptArtifactUpdateFields = Pick<
   CallRecordingUpdateFields,
-  'status' | 'transcript'
+  'meetingBotFailureReason' | 'status' | 'transcript'
 >;
 
 export type ReconcileCallRecordingTranscriptArtifactResult = {

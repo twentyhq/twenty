@@ -11,9 +11,13 @@ export type ToolSetToDescriptorsOptions = {
   icon?: string;
 };
 
-// Converts a ToolSet (with Zod schemas and closures) into an array of
-// serializable ToolDescriptor objects. Used by providers that delegate to
-// existing factory services (workflow, view, dashboard, metadata).
+export const humanizeToolName = (name: string): string =>
+  name
+    .split('_')
+    .filter((word) => word.length > 0)
+    .map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`)
+    .join(' ');
+
 export const toolSetToDescriptors = (
   toolSet: ToolSet,
   category: ToolCategory,
@@ -24,6 +28,7 @@ export const toolSetToDescriptors = (
   return Object.entries(toolSet).map(([name, tool]) => {
     const base: ToolIndexEntry = {
       name,
+      label: humanizeToolName(name),
       description: tool.description ?? '',
       category,
       executionRef: { kind: 'static' as const, toolId: name },
