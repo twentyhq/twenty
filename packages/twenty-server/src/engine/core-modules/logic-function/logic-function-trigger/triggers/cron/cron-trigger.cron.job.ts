@@ -5,6 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -18,9 +21,19 @@ import {
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { shouldRunNow } from 'src/utils/should-run-now.utils';
+import { getMatchingTriggerTimestamp } from 'src/utils/should-run-now.utils';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
+
+// The root job runs every minute and re-dispatches any cron whose trigger falls
+// within the last minute. Because that detection window equals the tick interval,
+// a tick that drifts across the minute boundary can match the same trigger twice
+// (e.g. a job firing at 17:00 and again at 17:01). We claim each (function,
+// trigger) pair in the cache before enqueuing so a given trigger dispatches once.
+// The TTL only needs to outlive the detection window; distinct triggers always
+// have distinct timestamps (hence distinct keys), so this never suppresses a
+// later, legitimate run.
+const CRON_DISPATCH_DEDUP_TTL_MS = 2 * 60_000;
 
 @Processor(MessageQueue.cronQueue)
 export class CronTriggerCronJob {
@@ -33,6 +46,8 @@ export class CronTriggerCronJob {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineLock)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -73,9 +88,26 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          if (!shouldRunNow(cronSettings.pattern, now)) {
+          const triggerTimestamp = getMatchingTriggerTimestamp(
+            cronSettings.pattern,
+            now,
+          );
+
+          if (triggerTimestamp === null) {
             continue;
           }
+
+          const dedupKey = `logic-function-cron:${activeWorkspace.id}:${logicFunction.id}:${triggerTimestamp}`;
+
+          if (await this.cacheStorageService.get<boolean>(dedupKey)) {
+            continue;
+          }
+
+          await this.cacheStorageService.set(
+            dedupKey,
+            true,
+            CRON_DISPATCH_DEDUP_TTL_MS,
+          );
 
           await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
             LogicFunctionTriggerJob.name,

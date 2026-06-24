@@ -1,4 +1,7 @@
-import { shouldRunNow } from 'src/utils/should-run-now.utils';
+import {
+  getMatchingTriggerTimestamp,
+  shouldRunNow,
+} from 'src/utils/should-run-now.utils';
 
 const getNowDate = (hour: string) => {
   return new Date(`2025-01-01T${hour}.100Z`);
@@ -43,5 +46,31 @@ describe('shouldRunNow', () => {
     expect(shouldRunNow(cron, getNowDate('10:06:00'), interval2min)).toBe(
       false,
     );
+  });
+});
+
+describe('getMatchingTriggerTimestamp', () => {
+  const cron = '*/5 * * * *'; // every 5 minutes (timezone-agnostic)
+
+  it('returns the same trigger timestamp for two ticks within the same window', () => {
+    // An on-time tick and a tick that drifts almost a full minute later both
+    // resolve to the same 10:00:00 trigger, so callers can dedupe on it.
+    const onTime = getMatchingTriggerTimestamp(cron, getNowDate('10:00:00'));
+    const drifted = getMatchingTriggerTimestamp(cron, getNowDate('10:00:59'));
+
+    expect(onTime).toBe(new Date('2025-01-01T10:00:00.000Z').getTime());
+    expect(drifted).toBe(onTime);
+  });
+
+  it('returns null when no trigger falls within the window', () => {
+    expect(
+      getMatchingTriggerTimestamp(cron, getNowDate('10:01:30')),
+    ).toBeNull();
+  });
+
+  it('returns null for an invalid pattern', () => {
+    expect(
+      getMatchingTriggerTimestamp('invalid', getNowDate('10:00:00')),
+    ).toBeNull();
   });
 });
