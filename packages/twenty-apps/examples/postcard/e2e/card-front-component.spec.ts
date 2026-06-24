@@ -134,8 +134,6 @@ test.describe('Postcard card front component', () => {
       'metadata: ok',
     );
 
-    await expect(page.getByTestId(CARD_TEST_IDS.sdkRest)).toHaveText(
-      /rest: (ok|error)/,
-    );
+    await expect(page.getByTestId(CARD_TEST_IDS.sdkRest)).toHaveText('rest: ok');
   });
 });
