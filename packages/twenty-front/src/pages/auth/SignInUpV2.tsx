@@ -10,13 +10,10 @@ import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-import { Logo } from '@/auth/components/Logo';
-import { Title } from '@/auth/components/Title';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
-import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
+import { SignInUpV2StandardContent } from '@/auth/sign-in-up/components/SignInUpV2StandardContent';
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
-import { WorkspaceSelectionFooter } from '@/auth/sign-in-up/components/WorkspaceSelectionFooter';
 import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
 import { SignInUpWorkspaceCreationForm } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
@@ -24,7 +21,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
-import { type JSX, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
 import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision';
@@ -34,12 +31,9 @@ import { clientConfigApiStatusState } from '@/client-config/states/clientConfigA
 import { ModalContent } from 'twenty-ui/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui/layout';
-import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
 const StyledLoaderContainer = styled.div`
   align-items: center;
@@ -57,49 +51,6 @@ const StyledBackground = styled.div`
   height: 100dvh;
   width: 100%;
 `;
-
-const StandardContent = ({
-  workspacePublicData,
-  signInUpForm,
-  signInUpStep,
-  title,
-  onClickOnLogo,
-}: {
-  workspacePublicData: PublicWorkspaceData | null;
-  signInUpForm: JSX.Element | null;
-  signInUpStep: SignInUpStep;
-  title: string;
-  onClickOnLogo: () => void;
-}) => {
-  return (
-    <StyledBackground>
-      <ModalContent isVerticallyCentered isHorizontallyCentered>
-        <AnimatedEaseIn>
-          <Logo
-            secondaryLogo={workspacePublicData?.logo}
-            placeholder={workspacePublicData?.displayName}
-            onClick={onClickOnLogo}
-            to={AppPath.SignInUpV2}
-          />
-        </AnimatedEaseIn>
-        <Title animate>{title}</Title>
-        {signInUpForm}
-        {signInUpStep === SignInUpStep.WorkspaceSelection && (
-          <WorkspaceSelectionFooter />
-        )}
-        {![
-          SignInUpStep.Password,
-          SignInUpStep.TwoFactorAuthenticationProvision,
-          SignInUpStep.TwoFactorAuthenticationVerification,
-          SignInUpStep.WorkspaceSelection,
-          SignInUpStep.WorkspaceCreation,
-        ].includes(signInUpStep) && (
-          <FooterNote secondaryAgreement="dataProcessingAgreement" />
-        )}
-      </ModalContent>
-    </StyledBackground>
-  );
-};
 
 export const SignInUpV2 = () => {
   const { t } = useLingui();
@@ -234,23 +185,21 @@ export const SignInUpV2 = () => {
     workspacePublicData,
   ]);
 
-  if (signInUpStep === SignInUpStep.EmailVerification) {
-    return (
-      <StyledBackground>
+  return (
+    <StyledBackground>
+      {signInUpStep === SignInUpStep.EmailVerification ? (
         <ModalContent isVerticallyCentered isHorizontallyCentered>
           <EmailVerificationSent email={searchParams.get('email')} />
         </ModalContent>
-      </StyledBackground>
-    );
-  }
-
-  return (
-    <StandardContent
-      workspacePublicData={workspacePublicData}
-      signInUpForm={signInUpForm}
-      signInUpStep={signInUpStep}
-      title={title}
-      onClickOnLogo={onClickOnLogo}
-    />
+      ) : (
+        <SignInUpV2StandardContent
+          workspacePublicData={workspacePublicData}
+          signInUpForm={signInUpForm}
+          signInUpStep={signInUpStep}
+          title={title}
+          onClickOnLogo={onClickOnLogo}
+        />
+      )}
+    </StyledBackground>
   );
 };
