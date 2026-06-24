@@ -1,0 +1,23 @@
+packages/twenty-server/test/integration/utils/create-app.ts
+  s_8a5a157e980979::t_ac67110cfdbe4d 118-121
+  s_8a5a157e980979::t_2f10b38af426ea 26-27
+packages/twenty-server/test/integration/utils/relax-migration-lock-timeout.util.ts
+  s_8a5a157e980979::t_b2d5226d84032f 24-27,29-33
+  s_8a5a157e980979::t_9560301df90243 1-23,28,34-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "efbeb66d0a5e554bddaeedb98142d93003f1900e",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
