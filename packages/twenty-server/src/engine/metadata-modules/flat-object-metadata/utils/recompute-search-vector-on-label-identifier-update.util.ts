@@ -109,6 +109,7 @@ export const recomputeSearchVectorOnLabelIdentifierUpdate = ({
       fieldMetadataId: newLabelIdentifierFieldMetadataId,
       position: newLabelIdentifierPosition,
       universalIdentifier: newSearchFieldMetadata.universalIdentifier,
+      tsVectorFieldMetadataId: tsVectorFlatFieldMetadata.id,
     },
   ];
 
