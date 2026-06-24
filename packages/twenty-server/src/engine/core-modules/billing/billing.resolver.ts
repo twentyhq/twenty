@@ -14,7 +14,6 @@ import { BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/d
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
 import { BillingPaymentIntentDTO } from 'src/engine/core-modules/billing/dtos/billing-payment-intent.dto';
 import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-session.dto';
-import { BillingSetupIntentDTO } from 'src/engine/core-modules/billing/dtos/billing-setup-intent.dto';
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
@@ -179,14 +178,14 @@ export class BillingResolver {
     });
   }
 
-  @Mutation(() => BillingSetupIntentDTO)
+  @Mutation(() => BillingPaymentIntentDTO)
   @UseGuards(
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
   async createBillingPaymentMethodSetupIntent(
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<BillingSetupIntentDTO> {
+  ): Promise<BillingPaymentIntentDTO> {
     return this.billingPortalWorkspaceService.createPaymentMethodSetupIntent(
       workspace,
     );

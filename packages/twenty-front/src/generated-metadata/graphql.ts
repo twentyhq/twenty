@@ -624,11 +624,6 @@ export type BillingPaymentIntent = {
   paymentIntentType: Scalars['String']['output'];
 };
 
-export type BillingSetupIntent = {
-  __typename?: 'BillingSetupIntent';
-  clientSecret: Scalars['String']['output'];
-};
-
 export type BillingPlan = {
   __typename?: 'BillingPlan';
   baseProducts: Array<BillingLicensedProduct>;
@@ -2473,7 +2468,7 @@ export type Mutation = {
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
   createApprovedAccessDomain: ApprovedAccessDomain;
-  createBillingPaymentMethodSetupIntent: BillingSetupIntent;
+  createBillingPaymentMethodSetupIntent: BillingPaymentIntent;
   createChatThread: AgentChatThread;
   createCommandMenuItem: CommandMenuItem;
   createDevelopmentApplication: DevelopmentApplication;
@@ -7753,7 +7748,7 @@ export type CreateSubscriptionPaymentIntentMutation = { __typename?: 'Mutation',
 export type CreateBillingPaymentMethodSetupIntentMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CreateBillingPaymentMethodSetupIntentMutation = { __typename?: 'Mutation', createBillingPaymentMethodSetupIntent: { __typename?: 'BillingSetupIntent', clientSecret: string } };
+export type CreateBillingPaymentMethodSetupIntentMutation = { __typename?: 'Mutation', createBillingPaymentMethodSetupIntent: { __typename?: 'BillingPaymentIntent', clientSecret: string } };
 
 export type EndSubscriptionTrialPeriodMutationVariables = Exact<{ [key: string]: never; }>;
 

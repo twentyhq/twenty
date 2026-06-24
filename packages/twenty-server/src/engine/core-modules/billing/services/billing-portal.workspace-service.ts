@@ -189,7 +189,7 @@ export class BillingPortalWorkspaceService {
   // the card can be saved, after which the trial can be ended.
   async createPaymentMethodSetupIntent(
     workspace: WorkspaceEntity,
-  ): Promise<{ clientSecret: string }> {
+  ): Promise<{ clientSecret: string; paymentIntentType: string }> {
     const subscription = await this.billingSubscriptionRepository.findOne(
       workspace.id,
       {
@@ -218,7 +218,10 @@ export class BillingPortalWorkspaceService {
       ),
     );
 
-    return { clientSecret: setupIntent.client_secret };
+    return {
+      clientSecret: setupIntent.client_secret,
+      paymentIntentType: 'setup',
+    };
   }
 
   // A failed earlier attempt leaves an incomplete subscription; it must not
