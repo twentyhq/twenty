@@ -225,21 +225,19 @@ export const ResourceCreditPriceSelector = ({
         )}
       </StyledRow>
       {!isTrialing &&
-        (isDefined(newTotalDisplay) || isDefined(newRolloverCapDisplay)) && (
+        isChanged &&
+        isDefined(newTotalDisplay) &&
+        isDefined(newRolloverCapDisplay) && (
           <StyledSummary>
-            {isDefined(newTotalDisplay) && (
-              <SettingsBillingLabelValueItem
-                label={t`New ${intervalAdjective} total`}
-                value={`$${newTotalDisplay}`}
-                isValueInPrimaryColor
-              />
-            )}
-            {isDefined(newRolloverCapDisplay) && (
-              <SettingsBillingLabelValueItem
-                label={t`New rollover cap`}
-                value={t`${newRolloverCapDisplay} credits`}
-              />
-            )}
+            <SettingsBillingLabelValueItem
+              label={t`New ${intervalAdjective} total`}
+              value={`$${newTotalDisplay}`}
+              isValueInPrimaryColor
+            />
+            <SettingsBillingLabelValueItem
+              label={t`New rollover cap`}
+              value={t`${newRolloverCapDisplay} credits`}
+            />
           </StyledSummary>
         )}
       <ConfirmationModal
