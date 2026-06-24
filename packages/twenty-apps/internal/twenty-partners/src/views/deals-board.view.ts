@@ -5,6 +5,7 @@ import {
   defineView,
 } from 'twenty-sdk/define';
 
+import { OPPORTUNITY_STAGE_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/opportunity-stage-options';
 import { OPPORTUNITY_IS_LISTED_FIELD_ID } from 'src/fields/opportunity-is-listed.field';
 import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-on-opportunity.field';
 import { APPLICATIONS_ON_OPPORTUNITY_FIELD_ID } from 'src/objects/application.object';
@@ -12,9 +13,7 @@ import { APPLICATIONS_ON_OPPORTUNITY_FIELD_ID } from 'src/objects/application.ob
 export const DEALS_BOARD_VIEW_UNIVERSAL_IDENTIFIER =
   '39c3ffbc-e91a-46b9-a9c6-4d186d5b3dcf';
 
-const OPPORTUNITY_STAGE_FIELD_ID =
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.stage
-    .universalIdentifier;
+const OPPORTUNITY_STAGE_FIELD_ID = OPPORTUNITY_STAGE_FIELD_UNIVERSAL_IDENTIFIER;
 
 export default defineView({
   universalIdentifier: DEALS_BOARD_VIEW_UNIVERSAL_IDENTIFIER,

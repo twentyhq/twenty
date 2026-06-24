@@ -110,7 +110,7 @@ export const SettingsCustomDomain = () => {
                       Icon={IconReload}
                       title={t`Reload`}
                       variant="primary"
-                      onClick={checkCustomDomainRecords}
+                      onClick={() => checkCustomDomainRecords()}
                       type="button"
                     />
                   </StyledButtonContainer>

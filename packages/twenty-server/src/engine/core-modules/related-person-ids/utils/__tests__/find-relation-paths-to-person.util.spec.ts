@@ -18,7 +18,11 @@ type RelationSpec = {
   inverseFieldName: string;
 };
 
-const buildGraphFixtures = (graph: Record<string, RelationSpec[]>) => {
+const buildGraphFixtures = (
+  graph: Record<string, RelationSpec[]>,
+  options: { systemObjectNames?: string[] } = {},
+) => {
+  const systemObjectNames = options.systemObjectNames ?? [];
   const fieldId = (objectNameSingular: string, fieldName: string) =>
     `${objectNameSingular}.${fieldName}`;
 
@@ -82,6 +86,7 @@ const buildGraphFixtures = (graph: Record<string, RelationSpec[]>) => {
       targetObjectMetadata: {
         id: spec.targetObjectNameSingular,
         nameSingular: spec.targetObjectNameSingular,
+        isSystem: systemObjectNames.includes(spec.targetObjectNameSingular),
       },
       sourceFieldMetadata: { name: spec.fieldName },
       targetFieldMetadata: { name: spec.inverseFieldName },
@@ -256,6 +261,62 @@ describe('findRelationPathsToPerson', () => {
           direction: RelationType.ONE_TO_MANY,
           queryObjectNameSingular: 'person',
           joinColumnName: 'companyId',
+        },
+      ],
+    ]);
+  });
+
+  it('does not traverse system objects while looking for related people', () => {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      buildGraphFixtures(
+        {
+          opportunity: [
+            {
+              fieldName: 'pointOfContact',
+              relationType: RelationType.MANY_TO_ONE,
+              targetObjectNameSingular: 'person',
+              inverseFieldName: 'pointOfContactForOpportunities',
+            },
+            {
+              fieldName: 'owner',
+              relationType: RelationType.MANY_TO_ONE,
+              targetObjectNameSingular: 'workspaceMember',
+              inverseFieldName: 'ownedOpportunities',
+            },
+          ],
+          workspaceMember: [
+            {
+              fieldName: 'messageParticipants',
+              relationType: RelationType.ONE_TO_MANY,
+              targetObjectNameSingular: 'messageParticipant',
+              inverseFieldName: 'workspaceMember',
+            },
+          ],
+          messageParticipant: [
+            {
+              fieldName: 'person',
+              relationType: RelationType.MANY_TO_ONE,
+              targetObjectNameSingular: 'person',
+              inverseFieldName: 'messageParticipants',
+            },
+          ],
+          person: [],
+        },
+        { systemObjectNames: ['workspaceMember', 'messageParticipant'] },
+      );
+
+    expect(
+      findRelationPathsToPerson({
+        rootObjectNameSingular: 'opportunity',
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    ).toEqual([
+      [
+        {
+          direction: RelationType.MANY_TO_ONE,
+          queryObjectNameSingular: 'opportunity',
+          joinColumnName: 'pointOfContactId',
         },
       ],
     ]);

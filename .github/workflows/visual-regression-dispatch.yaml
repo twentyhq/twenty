@@ -10,7 +10,7 @@ name: Visual Regression Dispatch
 
 on:
   workflow_run:
-    workflows: ['CI New UI', 'CI Front']
+    workflows: ['CI UI', 'CI Front']
     types: [completed]
 
 permissions:
@@ -39,7 +39,7 @@ jobs:
           script: |
             const name = context.payload.workflow_run.name;
             const projectByWorkflow = {
-              'CI New UI': 'twenty-ui',
+              'CI UI': 'twenty-ui',
               'CI Front': 'twenty-front',
             };
             const project = projectByWorkflow[name] ?? 'twenty-front';

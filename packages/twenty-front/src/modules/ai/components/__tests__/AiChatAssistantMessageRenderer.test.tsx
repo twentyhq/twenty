@@ -139,7 +139,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
   });
 
-  it('should render tool-execute_tool wrapping code_interpreter via ToolStepRenderer after refetch', () => {
+  it('should render tool-execute_tool wrapping code_interpreter via ThinkingStepsDisplay after refetch', () => {
     const messageParts = [
       {
         type: 'tool-execute_tool',
@@ -157,10 +157,10 @@ describe('AiChatAssistantMessageRenderer', () => {
 
     renderAssistantRenderer(messageParts);
 
-    expect(screen.queryByTestId('thinking-steps-display')).toBeNull();
-    expect(screen.getByTestId('tool-step-renderer')).toHaveTextContent(
-      'tool-execute_tool',
+    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
+      'thinking-1-answer-pending',
     );
+    expect(screen.queryByTestId('tool-step-renderer')).toBeNull();
   });
 
   it('should hide execute_tool wrapping code_interpreter when data-code-execution parts exist', () => {
