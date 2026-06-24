@@ -50,9 +50,10 @@ describe('process-recall-webhook', () => {
 
     expect(coreApiClientMock).toHaveBeenCalledTimes(1);
     expect(handleRecallWebhookMock).toHaveBeenCalledTimes(1);
-    expect(handleRecallWebhookMock).toHaveBeenCalledWith(
-      expect.objectContaining({ body }),
-    );
+    expect(handleRecallWebhookMock).toHaveBeenCalledWith({
+      client: coreApiClientMock.mock.instances[0],
+      body,
+    });
     expect(result).toEqual({ status: 'updated' });
   });
 });
