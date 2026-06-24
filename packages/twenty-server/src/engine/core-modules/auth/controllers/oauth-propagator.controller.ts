@@ -12,12 +12,9 @@ import {
 import { Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
@@ -26,7 +23,6 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 export class OAuthPropagatorController {
   constructor(
     private readonly domainServerConfigService: DomainServerConfigService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
@@ -55,6 +51,10 @@ export class OAuthPropagatorController {
       throw new BadRequestException('Invalid redirect URI in state');
     }
 
+    if (!['http:', 'https:'].includes(redirectUrl.protocol)) {
+      throw new BadRequestException('Invalid redirect URI in state');
+    }
+
     const isValidDomain = await this.isValidDomain(redirectUrl);
 
     if (!isValidDomain) {
@@ -70,17 +70,29 @@ export class OAuthPropagatorController {
   }
 
   private async isValidDomain(url: URL): Promise<boolean> {
-    if (
-      this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT
-    ) {
+    const frontHostname = this.domainServerConfigService.getFrontUrl().hostname;
+
+    if (url.hostname === frontHostname) {
       return true;
     }
 
-    const workspace =
-      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
-        url.href,
+    const { workspace, publicDomain } =
+      await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(
+        url.origin,
       );
 
-    return isDefined(workspace);
+    if (isDefined(publicDomain) && publicDomain.domain === url.hostname) {
+      return true;
+    }
+
+    if (!isDefined(workspace)) {
+      return false;
+    }
+
+    if (workspace.isCustomDomainEnabled && workspace.customDomain === url.hostname) {
+      return true;
+    }
+
+    return `${workspace.subdomain}.${frontHostname}` === url.hostname;
   }
 }
