@@ -200,24 +200,29 @@ export default defineFrontComponent({
 
 تعمل مكونات الواجهة الأمامية في المتصفح داخل Web Worker معزول، بينما تعمل [الدوال المنطقية](/l/ar/developers/extend/apps/logic/logic-functions) على جانب الخادم. لا توجد استدعاءات مباشرة ضمن العملية بين الاثنين — بدلاً من ذلك، يصل مكون الواجهة الأمامية إلى الدالة المنطقية عبر HTTP.
 
-يتم إتاحة الدالة المنطقية المُعلَنة باستخدام `httpRouteTriggerSettings` تحت نقطة النهاية `/s/` عند `${TWENTY_API_URL}/s\<path>`. يستدعي مكون الواجهة الأمامية ذلك المسار باستخدام `RestApiClient` من `twenty-client-sdk/rest`، والذي يقوم بالمصادقة باستخدام `TWENTY_APP_ACCESS_TOKEN` الذي تقوم Twenty بحقنه في الـ worker.
+يتم الوصول إلى الدالة المنطقية المُعلَنة باستخدام `httpRouteTriggerSettings` عبر HTTP عند مسار التوجيه الخاص بها. يقوم Twenty بحقن عنوان URL الأساسي الذي تُقدَّم منه الدوال الخاصة بك في عامل التشغيل على أنه `TWENTY_FUNCTIONS_URL`، إلى جانب `TWENTY_APP_ACCESS_TOKEN` الذي يُصادِّق الاستدعاء. لا يوجد عميل SDK مخصص لاستدعاء دوالك الخاصة بعد، لذا استدعِها باستخدام `fetch` عادي:
 
-تم تصميم `RestApiClient` خصيصًا لهذا الغرض. يقوم بقراءة `TWENTY_API_URL` و`TWENTY_APP_ACCESS_TOKEN` من بيئة الـ worker، وإرفاق ترويسة `Authorization: Bearer`، وتسلسل وتحليل JSON، وإثارة `RestApiClientError` عندما يكون الرمز المميز أو عنوان URL مفقودًا أو عندما يكون الرد غير 2xx — حتى لا تعيد تنفيذ هذا الـ boilerplate في كل مكون.
+> **على Twenty Cloud، يتم تقديم الدوال المنطقية المُفعَّلة عبر HTTP على نطاق مخصص لكل مساحة عمل** عند `https://\<your-workspace-subdomain>.twenty.com\<path>` — وهذا بالضبط ما تُشير إليه قيمة `TWENTY_FUNCTIONS_URL`. للمتصلين الخارجيين، انسخ عنوان URL الدقيق من إعدادات **HTTP trigger** الخاصة بالدالة أو من علامة تبويب **Settings** في التطبيق.
+
+<Warning>
+  مسار الدالة القديم `/s/` **مهمَل (deprecated)** وسيتم **إيقاف تفعيله في 2026-07-24**. استخدم بدلًا من ذلك `TWENTY_FUNCTIONS_URL` (أعلاه)، ورحِّل أي عناوين URL ثابتة من نوع `/s/` قبل ذلك التاريخ. يبقى مسار `/s/` متاحًا للاستضافة الذاتية.
+</Warning>
 
 يمكن لمكون واجهة أمامية عديم الرأس تنفيذ الاستدعاء عند التركيب عبر مكون `Command`، ثم إلغاء التركيب تلقائيًا:
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    const client = new RestApiClient();
-
-    await client.post('/s/github/fetch-prs', {
-      owner: 'twentyhq',
-      repo: 'twenty',
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
     });
   };
 
@@ -233,7 +238,7 @@ export default defineFrontComponent({
 });
 ```
 
-المسار المُمرَّر إلى العميل هو المسار العام للمسار (route) — قيمة `httpRouteTriggerSettings.path` الخاصة بدالة المنطق (logic function) مع إضافة البادئة `/s`. أبقِ `isAuthRequired: true`؛ يزوّد العميل مكوّنك برمز وصول التطبيق الذي تُصدِره Twenty:
+المسار المُضاف إلى `TWENTY_FUNCTIONS_URL` هو قيمة `httpRouteTriggerSettings.path` الخاصة بدالة المنطق (logic function). أبقِ `isAuthRequired: true`؛ فرمز `TWENTY_APP_ACCESS_TOKEN` الذي تُنشئه Twenty لمكوِّنك هو ما يصادق على الطلب:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -258,12 +263,12 @@ export default defineLogicFunction({
 ```
 
 <Note>
-يتم حقن `TWENTY_API_URL` و`TWENTY_APP_ACCESS_TOKEN` تلقائيًا — انظر [متغيرات التطبيق](#application-variables). نظرًا لأن متغيرات التطبيق السرية لا تُعرَض أبدًا على مكونات الواجهة الأمامية، احتفِظ بمفاتيح واجهة برمجة التطبيقات والمنطق الحساس الآخر داخل الدالة المنطقية، وليس في مكون الواجهة الأمامية.
+يتم حقن `TWENTY_FUNCTIONS_URL` و`TWENTY_APP_ACCESS_TOKEN` تلقائيًا — انظر [متغيرات التطبيق](#application-variables). نظرًا لأن متغيرات التطبيق السرية لا تُعرَض أبدًا على مكونات الواجهة الأمامية، احتفِظ بمفاتيح واجهة برمجة التطبيقات والمنطق الحساس الآخر داخل الدالة المنطقية، وليس في مكون الواجهة الأمامية.
 </Note>
 
-### مرجع RestApiClient
+### استدعاء واجهة REST API الخاصة بـ Twenty
 
-استورد `RestApiClient` من `twenty-client-sdk/rest`. ينتمي إلى نفس عائلة العملاء مثل `CoreApiClient` و`MetadataApiClient`، لكنه يستهدف مسارات HTTP الخاصة بتطبيقك بدلاً من واجهة GraphQL API.
+لقراءة سجلات Twenty أو كتابتها من مكوِّن واجهة أمامية، استخدم `RestApiClient` من `twenty-client-sdk/rest`. ينتمي إلى نفس عائلة العملاء مثل `CoreApiClient` و`MetadataApiClient`، لكنه يستهدف واجهة REST API الخاصة بـ Twenty (`/rest/...`) بدلًا من واجهة GraphQL API، ويقرأ عنوان URL الأساسي الخاص بها من `TWENTY_API_URL`.
 
 | طريقة                             | الوصف                      |
 | --------------------------------- | -------------------------- |
@@ -280,7 +285,7 @@ export default defineLogicFunction({
 
 ```ts
 const client = new RestApiClient({
-  baseUrl: 'https://api.example.com',
+  baseUrl: 'https://myworkspace.twenty.com',
   token: 'my-token',
 });
 ```
@@ -293,8 +298,8 @@ import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 const client = new RestApiClient();
 
 try {
-  const prs = await client.get('/s/github/fetch-prs', {
-    query: { state: 'open' },
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
   });
 } catch (error) {
   if (error instanceof RestApiClientError) {
@@ -374,10 +379,11 @@ export default defineFrontComponent({
 
 متغيرات النظام التالية تكون متاحة دائمًا عبر `process.env`:
 
-| المتغيّر                  | الوصف                                   |
-| ------------------------- | --------------------------------------- |
-| `TWENTY_API_URL`          | عنوان URL الأساسي لـ Twenty API         |
-| `TWENTY_APP_ACCESS_TOKEN` | رمز مميز قصير العمر مُقيَّد بدور تطبيقك |
+| المتغيّر                  | الوصف                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | عنوان URL الأساسي الذي تُقدَّم منه دوال منطق HTTP الخاصة بتطبيقك (يُستخدم بواسطة `RestApiClient`) |
+| `TWENTY_API_URL`          | عنوان URL الأساسي لـ Twenty Core API                                                              |
+| `TWENTY_APP_ACCESS_TOKEN` | رمز مميز قصير العمر مُقيَّد بدور تطبيقك                                                           |
 
 ## واجهة الاتصال مع المضيف
 

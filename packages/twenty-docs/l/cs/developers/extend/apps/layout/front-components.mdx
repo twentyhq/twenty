@@ -200,24 +200,29 @@ export default defineFrontComponent({
 
 Front komponenty běží v prohlížeči v izolovaném web workeru, zatímco [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions) běží na serveru. Neexistuje mezi nimi žádné přímé volání v rámci jednoho procesu — místo toho se front komponenta k logické funkci připojuje přes HTTP.
 
-Logická funkce deklarovaná pomocí `httpRouteTriggerSettings` je vystavena pod endpointem `/s/` na `${TWENTY_API_URL}/s\<path>`. Vaše front komponenta volá tuto trasu pomocí `RestApiClient` z `twenty-client-sdk/rest`, který se autentizuje pomocí `TWENTY_APP_ACCESS_TOKEN`, který Twenty do workeru vkládá.
+Logická funkce deklarovaná pomocí `httpRouteTriggerSettings` je přes HTTP dostupná na své cestě (route path). Twenty vloží do workeru základní URL, ze které jsou vaše funkce poskytovány, jako `TWENTY_FUNCTIONS_URL` spolu s `TWENTY_APP_ACCESS_TOKEN`, který volání autentizuje. Zatím neexistuje žádný specializovaný klient SDK pro volání vlastních funkcí, takže je volejte pomocí prostého `fetch`:
 
-`RestApiClient` je přesně pro tento účel. Z worker prostředí čte `TWENTY_API_URL` a `TWENTY_APP_ACCESS_TOKEN`, přidává hlavičku `Authorization: Bearer`, serializuje a parsuje JSON a vyhazuje `RestApiClientError`, pokud token nebo URL chybí nebo je odpověď mimo rozsah 2xx — takže nemusíte tento boilerplate znovu implementovat v každé komponentě.
+> **V Twenty Cloud jsou logické funkce spouštěné přes HTTP poskytovány na vyhrazené doméně pro každý workspace** na adrese `https://\<your-workspace-subdomain>.twenty.com\<path>` — právě na tuto adresu `TWENTY_FUNCTIONS_URL` směřuje. Pro externí volající zkopírujte přesnou URL z nastavení funkce **HTTP trigger** nebo z karty **Settings** aplikace.
+
+<Warning>
+  Původní funkční trasa `/s/` je **zastaralá** a bude **deaktivována dne 2026-07-24**. Místo toho použijte `TWENTY_FUNCTIONS_URL` (viz výše) a do tohoto data migrujte všechny pevně zakódované adresy URL `/s/`. Trasa `/s/` zůstává k dispozici pro self-hosting.
+</Warning>
 
 Headless front komponenta může volání spustit při mountu přes komponentu `Command` a poté se automaticky odmountovat:
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    const client = new RestApiClient();
-
-    await client.post('/s/github/fetch-prs', {
-      owner: 'twentyhq',
-      repo: 'twenty',
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
     });
   };
 
@@ -233,7 +238,7 @@ export default defineFrontComponent({
 });
 ```
 
-Cesta předaná klientovi je veřejná cesta trasy — `httpRouteTriggerSettings.path` logické funkce s předponou `/s`. Ponechte `isAuthRequired: true`; klient poskytuje pro vaši komponentu přístupový token aplikace vydaný Twenty:
+Cesta připojená k `TWENTY_FUNCTIONS_URL` je `httpRouteTriggerSettings.path` logické funkce. Ponechte `isAuthRequired: true`; `TWENTY_APP_ACCESS_TOKEN`, který Twenty vygeneruje pro vaši komponentu, požadavek autentizuje:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -258,12 +263,12 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_API_URL` a `TWENTY_APP_ACCESS_TOKEN` jsou vloženy automaticky — viz [Proměnné aplikace](#application-variables). Protože tajné proměnné aplikace nejsou nikdy vystaveny front komponentám, ponechte API klíče a další citlivou logiku v logické funkci, ne ve front komponentě.
+`TWENTY_FUNCTIONS_URL` a `TWENTY_APP_ACCESS_TOKEN` jsou vloženy automaticky — viz [Proměnné aplikace](#application-variables). Protože tajné proměnné aplikace nejsou nikdy vystaveny front komponentám, ponechte API klíče a další citlivou logiku v logické funkci, ne ve front komponentě.
 </Note>
 
-### Reference `RestApiClient`
+### Volání Twenty REST API
 
-Importujte `RestApiClient` z `twenty-client-sdk/rest`. Patří do stejné rodiny klientů jako `CoreApiClient` a `MetadataApiClient`, ale cílí na HTTP trasy vaší aplikace místo na GraphQL API.
+Pro čtení nebo zápis záznamů Twenty z front komponenty použijte `RestApiClient` z `twenty-client-sdk/rest`. Patří do stejné rodiny klientů jako `CoreApiClient` a `MetadataApiClient`, ale cílí na Twenty REST API (`/rest/...`) místo na GraphQL API a svou základní URL čte z `TWENTY_API_URL`.
 
 | Metoda                            | Popis                                      |
 | --------------------------------- | ------------------------------------------ |
@@ -280,7 +285,7 @@ Základní URL a token jsou ve výchozím nastavení odvozeny z prostředí. Pod
 
 ```ts
 const client = new RestApiClient({
-  baseUrl: 'https://api.example.com',
+  baseUrl: 'https://myworkspace.twenty.com',
   token: 'my-token',
 });
 ```
@@ -293,8 +298,8 @@ import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 const client = new RestApiClient();
 
 try {
-  const prs = await client.get('/s/github/fetch-prs', {
-    query: { state: 'open' },
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
   });
 } catch (error) {
   if (error instanceof RestApiClientError) {
@@ -374,10 +379,11 @@ Tajné proměnné (`isSecret: true`) **nejsou** zpřístupněny front-endovým k
 
 Následující systémové proměnné jsou vždy dostupné přes `process.env`:
 
-| Proměnná                  | Popis                                                          |
-| ------------------------- | -------------------------------------------------------------- |
-| `TWENTY_API_URL`          | Základní URL Twenty API                                        |
-| `TWENTY_APP_ACCESS_TOKEN` | Krátkodobý token s oprávněními omezenými na roli vaší aplikace |
+| Proměnná                  | Popis                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `TWENTY_FUNCTIONS_URL`    | Základní URL, ze které jsou poskytovány HTTP logické funkce vaší aplikace (používá ji `RestApiClient`) |
+| `TWENTY_API_URL`          | Základní URL Twenty core API                                                                           |
+| `TWENTY_APP_ACCESS_TOKEN` | Krátkodobý token s oprávněními omezenými na roli vaší aplikace                                         |
 
 ## API komunikace s hostitelem
 
