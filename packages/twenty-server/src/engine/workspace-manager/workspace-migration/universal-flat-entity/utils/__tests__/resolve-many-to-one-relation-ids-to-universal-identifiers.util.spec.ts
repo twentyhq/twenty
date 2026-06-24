@@ -157,7 +157,9 @@ describe('resolveManyToOneRelationIdsToUniversalIdentifiers', () => {
             fieldMetadataIdToUniversalIdentifierMap: new Map([
               ['field-id-1', 'field-ui-1'],
             ]),
-            viewIdToUniversalIdentifierMap: new Map([['view-id-1', 'view-ui-1']]),
+            viewIdToUniversalIdentifierMap: new Map([
+              ['view-id-1', 'view-ui-1'],
+            ]),
             viewFieldGroupIdToUniversalIdentifierMap: new Map(),
           }),
         ),
