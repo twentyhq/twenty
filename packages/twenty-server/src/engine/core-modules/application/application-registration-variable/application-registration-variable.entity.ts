@@ -15,6 +15,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { GraphQLJSON } from 'graphql-type-json';
+import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type ApplicationVariableOption,
+  type ApplicationVariableType,
+} from 'twenty-shared/application';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
@@ -56,6 +63,16 @@ export class ApplicationRegistrationVariableEntity {
   @Field()
   @Column({ nullable: false, type: 'boolean', default: false })
   isRequired: boolean;
+
+  // FieldMetadataType subset driving value serialization and UI rendering.
+  @Field()
+  @Column({ nullable: false, type: 'text', default: FieldMetadataType.TEXT })
+  type: ApplicationVariableType;
+
+  // Only used for SELECT / MULTI_SELECT types.
+  @Field(() => GraphQLJSON, { nullable: true })
+  @Column({ nullable: true, type: 'jsonb', default: null })
+  options: ApplicationVariableOption[] | null;
 
   @Field()
   get isFilled(): boolean {

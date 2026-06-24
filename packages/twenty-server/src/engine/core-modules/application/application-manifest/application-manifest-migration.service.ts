@@ -257,7 +257,7 @@ export class ApplicationManifestMigrationService {
     );
 
     if (!dryRun) {
-      await this.syncDefaultRoleAndSettingsCustomTab({
+      await this.syncDefaultRole({
         manifest,
         workspaceId,
         ownerFlatApplication,
@@ -270,7 +270,7 @@ export class ApplicationManifestMigrationService {
     };
   }
 
-  private async syncDefaultRoleAndSettingsCustomTab({
+  private async syncDefaultRole({
     manifest,
     workspaceId,
     ownerFlatApplication,
@@ -279,13 +279,10 @@ export class ApplicationManifestMigrationService {
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
   }) {
-    const {
-      flatRoleMaps: refreshedFlatRoleMaps,
-      flatFrontComponentMaps: refreshedFlatFrontComponentMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatRoleMaps',
-      'flatFrontComponentMaps',
-    ]);
+    const { flatRoleMaps: refreshedFlatRoleMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRoleMaps',
+      ]);
 
     let defaultRoleId: string | null = null;
 
@@ -310,31 +307,14 @@ export class ApplicationManifestMigrationService {
       }
     }
 
-    let settingsCustomTabFrontComponentId: string | null = null;
-
-    const settingsCustomTabUniversalIdentifier =
-      manifest.application.settingsCustomTabFrontComponentUniversalIdentifier;
-
-    if (isDefined(settingsCustomTabUniversalIdentifier)) {
-      const flatFrontComponent = findFlatEntityByUniversalIdentifier({
-        flatEntityMaps: refreshedFlatFrontComponentMaps,
-        universalIdentifier: settingsCustomTabUniversalIdentifier,
+    // `settingsCustomTabFrontComponentUniversalIdentifier` is deprecated and
+    // intentionally ignored here. Existing custom tab configurations are left
+    // untouched on the application but are no longer synced or rendered.
+    if (isDefined(defaultRoleId)) {
+      await this.applicationService.update(ownerFlatApplication.id, {
+        workspaceId,
+        defaultRoleId,
       });
-
-      if (!isDefined(flatFrontComponent)) {
-        throw new ApplicationException(
-          `Failed to resolve front component for settingsCustomTabFrontComponentUniversalIdentifier ${settingsCustomTabUniversalIdentifier}`,
-          ApplicationExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      settingsCustomTabFrontComponentId = flatFrontComponent.id;
     }
-
-    await this.applicationService.update(ownerFlatApplication.id, {
-      workspaceId,
-      settingsCustomTabFrontComponentId,
-      ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
-    });
   }
 }

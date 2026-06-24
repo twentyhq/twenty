@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type Manifest,
+  serializeApplicationVariableValue,
+} from 'twenty-shared/application';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -617,13 +620,18 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const [key, applicationVariableManifest] of Object.entries(
       manifest.application.applicationVariables ?? {},
     )) {
+      const type = applicationVariableManifest.type ?? FieldMetadataType.TEXT;
+
       const plaintextValue =
         'value' in applicationVariableManifest
-          ? applicationVariableManifest.value
-          : undefined;
+          ? serializeApplicationVariableValue(
+              applicationVariableManifest.value,
+              type,
+            )
+          : '';
 
       const isSecret = applicationVariableManifest.isSecret;
-      const rawValue = isSecret ? '' : (plaintextValue ?? '');
+      const rawValue = isSecret ? '' : plaintextValue;
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
@@ -637,6 +645,8 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             ),
             description: applicationVariableManifest.description,
             isSecret,
+            type,
+            options: applicationVariableManifest.options,
             applicationUniversalIdentifier,
             now,
           }),

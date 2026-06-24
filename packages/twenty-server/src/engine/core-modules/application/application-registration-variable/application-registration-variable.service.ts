@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ServerVariables } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, type Repository } from 'typeorm';
 
@@ -133,6 +134,8 @@ export class ApplicationRegistrationVariableService {
           description: schema.description ?? '',
           isSecret: schema.isSecret ?? true,
           isRequired: schema.isRequired ?? false,
+          type: schema.type ?? FieldMetadataType.TEXT,
+          options: schema.options ?? null,
         });
       } else {
         await this.variableRepository.save(
@@ -143,6 +146,8 @@ export class ApplicationRegistrationVariableService {
             description: schema.description ?? '',
             isSecret: schema.isSecret ?? true,
             isRequired: schema.isRequired ?? false,
+            type: schema.type ?? FieldMetadataType.TEXT,
+            options: schema.options ?? null,
           }),
         );
       }

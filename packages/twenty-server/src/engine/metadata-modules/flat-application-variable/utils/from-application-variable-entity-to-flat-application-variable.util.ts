@@ -29,6 +29,8 @@ export const fromApplicationVariableEntityToFlatApplicationVariable = ({
     value: applicationVariableEntity.value,
     description: applicationVariableEntity.description,
     isSecret: applicationVariableEntity.isSecret,
+    type: applicationVariableEntity.type,
+    options: applicationVariableEntity.options,
     workspaceId: applicationVariableEntity.workspaceId,
     universalIdentifier: applicationVariableEntity.universalIdentifier,
     applicationId: applicationVariableEntity.applicationId,

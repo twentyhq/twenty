@@ -34,6 +34,7 @@ import { AddIsSystemSideEffectFastInstanceCommand } from 'src/database/commands/
 import { BackfillConnectionSecuritySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-slow-1781461753981-backfill-connection-security';
 import { AddChannelWebhookSubscriptionFieldsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782152096938-add-channel-webhook-subscription-fields';
 import { AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782200000000-add-universal-identifier-and-application-id-to-search-field-metadata';
+import { AddTypeAndOptionsToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782300000000-add-type-and-options-to-application-variables';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
@@ -156,4 +157,5 @@ export const INSTANCE_COMMANDS = [
   AddViewKanbanColumnWidthFastInstanceCommand,
   AddChannelWebhookSubscriptionFieldsFastInstanceCommand,
   AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstanceCommand,
+  AddTypeAndOptionsToApplicationVariablesFastInstanceCommand,
 ];

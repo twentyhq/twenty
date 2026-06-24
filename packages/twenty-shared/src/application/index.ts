@@ -10,9 +10,17 @@
 export type { AgentManifest } from './agentManifestType';
 export type { AppConnection } from './appConnectionType';
 export type { ApplicationManifest } from './applicationType';
+export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
+export {
+  deserializeApplicationVariableValue,
+  serializeApplicationVariableValue,
+} from './utils/applicationVariableValueSerialization';
 export type {
   ApplicationVariable,
+  ApplicationVariableOption,
   ApplicationVariables,
+  ApplicationVariableType,
+  ApplicationVariableValue,
 } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';

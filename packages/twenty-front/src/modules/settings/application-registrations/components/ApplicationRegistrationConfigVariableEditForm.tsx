@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ApplicationVariableOption } from 'twenty-shared/application';
 import { ConfigVariableEdit } from '@/settings/config-variables/components/ConfigVariableEdit';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
 
 type VariableData = {
   id: string;
@@ -10,6 +11,8 @@ type VariableData = {
   value?: string | null;
   description: string;
   isFilled: boolean;
+  type?: string | null;
+  options?: ApplicationVariableOption[] | null;
 };
 
 export const ApplicationRegistrationConfigVariableEditForm = ({
@@ -58,12 +61,13 @@ export const ApplicationRegistrationConfigVariableEditForm = ({
       title={variable.key}
       description={variable.description}
       input={
-        <TextInput
+        <SettingsApplicationVariableInput
+          type={variable.type}
           value={value}
+          options={variable.options}
           placeholder={!isEditing ? (variable.value ?? t`Enter a value`) : ''}
           onChange={setValue}
           disabled={!isEditing}
-          fullWidth
         />
       }
       isEditing={isEditing}
