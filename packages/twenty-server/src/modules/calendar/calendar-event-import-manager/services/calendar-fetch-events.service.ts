@@ -87,7 +87,7 @@ export class CalendarFetchEventsService {
               workspaceId,
             );
           } else {
-            await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
+            await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
               [calendarChannel.id],
               workspaceId,
             );
