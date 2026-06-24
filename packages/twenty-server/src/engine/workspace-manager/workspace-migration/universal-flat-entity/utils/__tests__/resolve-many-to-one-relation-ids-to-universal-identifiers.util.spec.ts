@@ -138,6 +138,35 @@ describe('resolveManyToOneRelationIdsToUniversalIdentifiers', () => {
         }),
       );
     });
+
+    it('should throw a malformed-entity error when a non-nullable foreign key is itself missing', () => {
+      expect(() =>
+        resolveManyToOneRelationIdsToUniversalIdentifiers(
+          buildArgs({
+            metadataName: 'viewField',
+            entity: {
+              id: 'view-field-id-1',
+              applicationId: 'app-id-1',
+              fieldMetadataId: null,
+              viewId: 'view-id-1',
+              viewFieldGroupId: null,
+            },
+            applicationIdToUniversalIdentifierMap: new Map([
+              ['app-id-1', 'app-ui-1'],
+            ]),
+            fieldMetadataIdToUniversalIdentifierMap: new Map([
+              ['field-id-1', 'field-ui-1'],
+            ]),
+            viewIdToUniversalIdentifierMap: new Map([['view-id-1', 'view-ui-1']]),
+            viewFieldGroupIdToUniversalIdentifierMap: new Map(),
+          }),
+        ),
+      ).toThrow(
+        expect.objectContaining({
+          code: FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
+        }),
+      );
+    });
   });
 
   describe('nullable relations', () => {

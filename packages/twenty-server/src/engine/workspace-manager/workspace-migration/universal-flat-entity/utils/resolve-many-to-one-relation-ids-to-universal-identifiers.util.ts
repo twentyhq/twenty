@@ -87,16 +87,20 @@ export const resolveManyToOneRelationIdsToUniversalIdentifiers = <
     } = relationEntry;
     const foreignKeyId = readEntityForeignKey(foreignKey);
 
-    if (isNullable && !isDefined(foreignKeyId)) {
-      resolvedUniversalIdentifierByForeignKey[universalForeignKey] = null;
+    if (!isDefined(foreignKeyId)) {
+      if (isNullable) {
+        resolvedUniversalIdentifierByForeignKey[universalForeignKey] = null;
 
-      continue;
+        continue;
+      }
+
+      throw new FlatEntityMapsException(
+        `Missing non-nullable foreign key ${foreignKey} on ${metadataName} ${entityId} (relation to ${targetMetadataName})`,
+        FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
+      );
     }
 
     const mapKey = `${targetMetadataName}IdToUniversalIdentifierMap`;
-    // Generic indexed access can't be resolved to a Map by the compiler, so the
-    // value is cast as possibly-undefined and validated below instead of being
-    // blindly cast to a non-nullable Map.
     const targetIdToUniversalIdentifierMap = idToUniversalIdentifierMaps[
       mapKey as keyof typeof idToUniversalIdentifierMaps
     ] as unknown as Map<string, string> | undefined;
@@ -108,9 +112,8 @@ export const resolveManyToOneRelationIdsToUniversalIdentifiers = <
       );
     }
 
-    const universalIdentifier = isDefined(foreignKeyId)
-      ? targetIdToUniversalIdentifierMap.get(foreignKeyId)
-      : undefined;
+    const universalIdentifier =
+      targetIdToUniversalIdentifierMap.get(foreignKeyId);
 
     if (!isDefined(universalIdentifier)) {
       throw new FlatEntityMapsException(
