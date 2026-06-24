@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isString } from '@sniptt/guards';
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   LogicFunctionExecutionException,
@@ -128,12 +128,27 @@ export class ServerRouteTriggerService {
   }: {
     logicFunctionUniversalIdentifier: string;
   }): Promise<LogicFunctionEntity | null> {
-    return await this.logicFunctionRepository.findOne({
-      where: {
-        universalIdentifier: logicFunctionUniversalIdentifier,
-        serverRouteTriggerSettings: Not(IsNull()),
-      },
+    // `(universalIdentifier, workspaceId)` is the SyncableEntity unique key,
+    // so a single universalIdentifier can have one row per workspace that
+    // installed the app. The resolver lives in the application
+    // registration's *owner workspace* — that's the canonical, manifest-
+    // managed copy. We load the application -> applicationRegistration
+    // chain and keep the one whose workspaceId matches the
+    // registration's ownerWorkspaceId. Other workspaces' copies are
+    // intentionally ignored even if they carry serverRouteTriggerSettings.
+    const candidates = await this.logicFunctionRepository.find({
+      where: { universalIdentifier: logicFunctionUniversalIdentifier },
+      relations: { application: { applicationRegistration: true } },
     });
+
+    return (
+      candidates.find(
+        (candidate) =>
+          isDefined(candidate.application?.applicationRegistration) &&
+          candidate.workspaceId ===
+            candidate.application.applicationRegistration.ownerWorkspaceId,
+      ) ?? null
+    );
   }
 
   private parseResolverResult(result: {

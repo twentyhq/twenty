@@ -51,7 +51,7 @@ const buildRequest = (body: object | null = {}): Request =>
 describe('ServerRouteTriggerService', () => {
   let service: ServerRouteTriggerService;
   let logicFunctionRepository: jest.Mocked<
-    Pick<Repository<LogicFunctionEntity>, 'findOne'>
+    Pick<Repository<LogicFunctionEntity>, 'find'>
   >;
   let logicFunctionExecutorService: jest.Mocked<
     Pick<LogicFunctionExecutorService, 'execute'>
@@ -67,13 +67,19 @@ describe('ServerRouteTriggerService', () => {
       resolverLogicFunctionUniversalIdentifier: RESOLVER_UID,
     });
 
+  const buildResolverRow = (overrides: Record<string, unknown> = {}) => ({
+    id: 'resolver-id',
+    workspaceId: 'owner-ws',
+    serverRouteTriggerSettings: { forwardedRequestHeaders: ['x-test'] },
+    application: {
+      applicationRegistration: { ownerWorkspaceId: 'owner-ws' },
+    },
+    ...overrides,
+  });
+
   beforeEach(() => {
     logicFunctionRepository = {
-      findOne: jest.fn().mockResolvedValue({
-        id: 'resolver-id',
-        workspaceId: 'owner-ws',
-        serverRouteTriggerSettings: { forwardedRequestHeaders: ['x-test'] },
-      }),
+      find: jest.fn().mockResolvedValue([buildResolverRow()]),
     };
     logicFunctionExecutorService = {
       execute: jest
@@ -146,12 +152,58 @@ describe('ServerRouteTriggerService', () => {
     });
   });
 
-  it('throws LOGIC_FUNCTION_NOT_FOUND when the resolver is not found', async () => {
-    logicFunctionRepository.findOne.mockResolvedValue(null);
+  it('throws LOGIC_FUNCTION_NOT_FOUND when no row matches the universalIdentifier', async () => {
+    logicFunctionRepository.find.mockResolvedValue([]);
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
     });
+  });
+
+  it('throws LOGIC_FUNCTION_NOT_FOUND when only non-owner-workspace copies exist', async () => {
+    logicFunctionRepository.find.mockResolvedValue([
+      buildResolverRow({
+        workspaceId: 'other-ws',
+        application: {
+          applicationRegistration: { ownerWorkspaceId: 'owner-ws' },
+        },
+      }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ] as any);
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+    });
+  });
+
+  it('picks the owner-workspace copy when multiple workspaces installed the app', async () => {
+    logicFunctionRepository.find.mockResolvedValue([
+      buildResolverRow({
+        id: 'tenant-copy',
+        workspaceId: 'tenant-ws',
+        application: {
+          applicationRegistration: { ownerWorkspaceId: 'owner-ws' },
+        },
+      }),
+      buildResolverRow({
+        id: 'owner-copy',
+        workspaceId: 'owner-ws',
+        application: {
+          applicationRegistration: { ownerWorkspaceId: 'owner-ws' },
+        },
+      }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ] as any);
+
+    await handle();
+
+    expect(logicFunctionExecutorService.execute).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        logicFunctionId: 'owner-copy',
+        workspaceId: 'owner-ws',
+      }),
+    );
   });
 
   it('throws RESOLVER_INVALID_RESULT when the resolver does not return a workspaceId', async () => {
@@ -241,15 +293,19 @@ describe('ServerRouteTriggerService', () => {
     });
   });
 
-  it('looks up the resolver by universalIdentifier and serverRouteTriggerSettings opt-in', async () => {
+  it('looks up the resolver by universalIdentifier and loads the application registration chain', async () => {
     await handle();
 
-    const findArgs = logicFunctionRepository.findOne.mock.calls[0][0];
+    const findArgs = logicFunctionRepository.find.mock.calls[0][0];
 
     expect(findArgs?.where).toEqual(
+      expect.objectContaining({ universalIdentifier: RESOLVER_UID }),
+    );
+    expect(findArgs?.relations).toEqual(
       expect.objectContaining({
-        universalIdentifier: RESOLVER_UID,
-        serverRouteTriggerSettings: expect.anything(),
+        application: expect.objectContaining({
+          applicationRegistration: true,
+        }),
       }),
     );
   });
