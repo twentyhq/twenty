@@ -616,6 +616,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description:
+      'Maximum size in bytes of the key-value store available to each application per workspace',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  APPLICATION_KEY_VALUE_STORAGE_MAX_SIZE_IN_BYTES: number = 10 * 1024 * 1024;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Region for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })

@@ -51,5 +51,8 @@ export type { AppConnection } from '@/sdk/logic-function/connections/types/app-c
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
+export { kv } from '@/sdk/logic-function/kv-store/kv-store';
+export type { KvSetOptions } from '@/sdk/logic-function/kv-store/kv-store';
+
 export { Response } from '@/sdk/logic-function/response';
 export type { ResponseInit } from '@/sdk/logic-function/response';

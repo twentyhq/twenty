@@ -402,6 +402,88 @@ end`;
     return false;
   }
 
+  // Raw string read/write used by the application key-value store, where we
+  // need byte-accurate accounting (STRLEN) and therefore store the value
+  // verbatim instead of going through cache-manager's JSON serialization.
+  async getString(key: string): Promise<string | null> {
+    if (this.isRedisCache()) {
+      const value = await (this.cache as RedisCache).store.client.get(
+        this.getKey(key),
+      );
+
+      return value ?? null;
+    }
+
+    return (await this.get<string>(key)) ?? null;
+  }
+
+  async setString(
+    key: string,
+    value: string,
+    ttlMs?: Milliseconds,
+  ): Promise<void> {
+    if (this.isRedisCache()) {
+      await (this.cache as RedisCache).store.client.set(
+        this.getKey(key),
+        value,
+        ttlMs ? { PX: ttlMs } : undefined,
+      );
+
+      return;
+    }
+
+    await this.set(key, value, ttlMs);
+  }
+
+  async getStringLength(key: string): Promise<number> {
+    if (this.isRedisCache()) {
+      return (this.cache as RedisCache).store.client.strLen(this.getKey(key));
+    }
+
+    return (await this.getString(key))?.length ?? 0;
+  }
+
+  async scanAndSumStringLengths(scanPattern: string): Promise<number> {
+    if (!this.isRedisCache()) {
+      throw new Error(
+        'scanAndSumStringLengths is only supported with Redis cache',
+      );
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+    let cursor = 0;
+    let totalLength = 0;
+
+    do {
+      const result = await redisClient.scan(cursor, {
+        MATCH: `${this.namespace}:${scanPattern}`,
+        COUNT: 100,
+      });
+
+      cursor = result.cursor;
+      const keys = result.keys;
+
+      if (keys.length > 0) {
+        const pipeline = redisClient.multi();
+
+        for (const key of keys) {
+          pipeline.strLen(key);
+        }
+
+        const results = await pipeline.exec();
+
+        for (const result of results) {
+          if (result instanceof Error) {
+            throw result;
+          }
+          totalLength += result as number;
+        }
+      }
+    } while (cursor !== 0);
+
+    return totalLength;
+  }
+
   private isRedisCache() {
     // oxlint-disable-next-line typescript/no-explicit-any
     return (this.cache.store as any)?.name === 'redis';
