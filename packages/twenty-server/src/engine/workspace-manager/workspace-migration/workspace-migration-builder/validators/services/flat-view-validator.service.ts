@@ -135,8 +135,8 @@ export class FlatViewValidatorService {
       ) {
         validationResult.errors.push({
           code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`Kanban main group by field must be a SELECT field`,
-          userFriendlyMessage: msg`Kanban main group by field must be a select field`,
+          message: t`Kanban main group by field must be a SELECT or a many-to-one relation field`,
+          userFriendlyMessage: msg`Kanban main group by field must be a select or a many-to-one relation field`,
         });
       }
     }
@@ -168,8 +168,8 @@ export class FlatViewValidatorService {
       ) {
         validationResult.errors.push({
           code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`Kanban main group by field must be a SELECT field`,
-          userFriendlyMessage: msg`Kanban main group by field must be a select field`,
+          message: t`Kanban main group by field must be a SELECT or a many-to-one relation field`,
+          userFriendlyMessage: msg`Kanban main group by field must be a select or a many-to-one relation field`,
         });
       }
     }
@@ -339,8 +339,8 @@ export class FlatViewValidatorService {
       ) {
         validationResult.errors.push({
           code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`Kanban main group by field must be a SELECT field`,
-          userFriendlyMessage: msg`Kanban main group by field must be a select field`,
+          message: t`Kanban main group by field must be a SELECT or a many-to-one relation field`,
+          userFriendlyMessage: msg`Kanban main group by field must be a select or a many-to-one relation field`,
         });
       }
     }
