@@ -409,6 +409,7 @@
               "pages": [
                 "developers/extend/apps/logic/overview",
                 "developers/extend/apps/logic/logic-functions",
+                "developers/extend/apps/logic/key-value-store",
                 "developers/extend/apps/logic/skills-and-agents",
                 "developers/extend/apps/logic/connections"
               ]

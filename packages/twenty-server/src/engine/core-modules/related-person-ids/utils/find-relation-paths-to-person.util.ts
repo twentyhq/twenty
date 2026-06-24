@@ -15,6 +15,9 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 const PERSON_OBJECT_NAME_SINGULAR = 'person';
 const DEFAULT_MAX_RELATION_DEPTH_TO_PERSON = 3;
 
+const isSystemObjectMetadata = (objectMetadata: { isSystem?: boolean }) =>
+  objectMetadata.isSystem === true;
+
 export type RelationHopToPerson = {
   direction: RelationType;
   queryObjectNameSingular: string;
@@ -103,14 +106,21 @@ export const findRelationPathsToPerson = ({
           },
         ];
 
-        const targetObjectId = relation.targetObjectMetadata.id;
-
         if (
           relation.targetObjectMetadata.nameSingular ===
           PERSON_OBJECT_NAME_SINGULAR
         ) {
           pathsToPerson.push(nextPath);
-        } else if (!visitedObjectIds.has(targetObjectId)) {
+          continue;
+        }
+
+        if (isSystemObjectMetadata(relation.targetObjectMetadata)) {
+          continue;
+        }
+
+        const targetObjectId = relation.targetObjectMetadata.id;
+
+        if (!visitedObjectIds.has(targetObjectId)) {
           objectIdsReachedThisDepth.add(targetObjectId);
           nextFrontier.push({ objectId: targetObjectId, path: nextPath });
         }
