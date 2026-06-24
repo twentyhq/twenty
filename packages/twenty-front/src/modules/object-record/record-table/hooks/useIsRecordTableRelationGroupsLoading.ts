@@ -4,7 +4,7 @@ import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRel
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { recordTableRelationGroupsDiscoveredFieldIdComponentState } from '@/object-record/record-table/states/recordTableRelationGroupsDiscoveredFieldIdComponentState';
+import { recordTableRelationGroupsDiscoverySettledFieldIdComponentState } from '@/object-record/record-table/states/recordTableRelationGroupsDiscoverySettledFieldIdComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
@@ -20,9 +20,10 @@ export const useIsRecordTableRelationGroupsLoading = () => {
     recordTableId,
   );
 
-  const recordTableRelationGroupsDiscoveredFieldId = useAtomComponentStateValue(
-    recordTableRelationGroupsDiscoveredFieldIdComponentState,
-  );
+  const recordTableRelationGroupsDiscoverySettledFieldId =
+    useAtomComponentStateValue(
+      recordTableRelationGroupsDiscoverySettledFieldIdComponentState,
+    );
 
   const isRelationGrouping =
     isDefined(recordIndexGroupFieldMetadataItem) &&
@@ -31,7 +32,7 @@ export const useIsRecordTableRelationGroupsLoading = () => {
   return (
     isRelationGrouping &&
     !hasRecordGroups &&
-    recordTableRelationGroupsDiscoveredFieldId !==
+    recordTableRelationGroupsDiscoverySettledFieldId !==
       recordIndexGroupFieldMetadataItem.id
   );
 };

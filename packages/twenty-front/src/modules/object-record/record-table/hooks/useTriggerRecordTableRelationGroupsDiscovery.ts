@@ -12,7 +12,7 @@ import { mergeRelationRecordGroupDefinitions } from '@/object-record/record-grou
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupsRecordsLazyGroupBy } from '@/object-record/record-index/hooks/useRecordIndexGroupsRecordsLazyGroupBy';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { recordTableRelationGroupsDiscoveredFieldIdComponentState } from '@/object-record/record-table/states/recordTableRelationGroupsDiscoveredFieldIdComponentState';
+import { recordTableRelationGroupsDiscoverySettledFieldIdComponentState } from '@/object-record/record-table/states/recordTableRelationGroupsDiscoverySettledFieldIdComponentState';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -41,9 +41,9 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
 
   const { setRecordGroups } = useSetRecordGroups();
 
-  const setRecordTableRelationGroupsDiscoveredFieldId =
+  const setRecordTableRelationGroupsDiscoverySettledFieldId =
     useSetAtomComponentState(
-      recordTableRelationGroupsDiscoveredFieldIdComponentState,
+      recordTableRelationGroupsDiscoverySettledFieldIdComponentState,
     );
 
   const discoveryRecordGqlFields = useMemo<
@@ -87,7 +87,7 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
       );
 
       if (!isDefined(result)) {
-        setRecordTableRelationGroupsDiscoveredFieldId(
+        setRecordTableRelationGroupsDiscoverySettledFieldId(
           recordIndexGroupFieldMetadataItem.id,
         );
 
@@ -99,7 +99,7 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
       const groups = result.data?.[queryFieldName];
 
       if (!isDefined(groups)) {
-        setRecordTableRelationGroupsDiscoveredFieldId(
+        setRecordTableRelationGroupsDiscoverySettledFieldId(
           recordIndexGroupFieldMetadataItem.id,
         );
 
@@ -132,7 +132,7 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
         objectMetadataItemId: objectMetadataItem.id,
       });
 
-      setRecordTableRelationGroupsDiscoveredFieldId(
+      setRecordTableRelationGroupsDiscoverySettledFieldId(
         recordIndexGroupFieldMetadataItem.id,
       );
 
@@ -147,7 +147,7 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
       recordIndexGroupFieldMetadataItem,
       recordIndexId,
       setRecordGroups,
-      setRecordTableRelationGroupsDiscoveredFieldId,
+      setRecordTableRelationGroupsDiscoverySettledFieldId,
     ]);
 
   return { triggerRecordTableRelationGroupsDiscovery };
