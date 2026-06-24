@@ -138,14 +138,6 @@ export const useCreateAppRouter = (
             }
           />
           <Route
-            path={AppPath.SignInUpV2}
-            element={
-              <LazyRoute fallback={null}>
-                <SignInUpV2 />
-              </LazyRoute>
-            }
-          />
-          <Route
             path={AppPath.Invite}
             element={
               <LazyRoute fallback={null}>
@@ -271,6 +263,14 @@ export const useCreateAppRouter = (
           </Route>
         </Route>
         <Route element={<BlankLayout />}>
+          <Route
+            path={AppPath.SignInUpV2}
+            element={
+              <LazyRoute fallback={null}>
+                <SignInUpV2 />
+              </LazyRoute>
+            }
+          />
           <Route
             path={AppPath.Authorize}
             element={

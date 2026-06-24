@@ -50,6 +50,14 @@ const StyledLoaderContainer = styled.div`
   width: 100%;
 `;
 
+const StyledBackground = styled.div`
+  background: ${themeCssVariables.background.secondary};
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 100%;
+`;
+
 const StandardContent = ({
   workspacePublicData,
   signInUpForm,
@@ -64,30 +72,32 @@ const StandardContent = ({
   onClickOnLogo: () => void;
 }) => {
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
-      <AnimatedEaseIn>
-        <Logo
-          secondaryLogo={workspacePublicData?.logo}
-          placeholder={workspacePublicData?.displayName}
-          onClick={onClickOnLogo}
-          to={AppPath.SignInUpV2}
-        />
-      </AnimatedEaseIn>
-      <Title animate>{title}</Title>
-      {signInUpForm}
-      {signInUpStep === SignInUpStep.WorkspaceSelection && (
-        <WorkspaceSelectionFooter />
-      )}
-      {![
-        SignInUpStep.Password,
-        SignInUpStep.TwoFactorAuthenticationProvision,
-        SignInUpStep.TwoFactorAuthenticationVerification,
-        SignInUpStep.WorkspaceSelection,
-        SignInUpStep.WorkspaceCreation,
-      ].includes(signInUpStep) && (
-        <FooterNote secondaryAgreement="dataProcessingAgreement" />
-      )}
-    </ModalContent>
+    <StyledBackground>
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
+        <AnimatedEaseIn>
+          <Logo
+            secondaryLogo={workspacePublicData?.logo}
+            placeholder={workspacePublicData?.displayName}
+            onClick={onClickOnLogo}
+            to={AppPath.SignInUpV2}
+          />
+        </AnimatedEaseIn>
+        <Title animate>{title}</Title>
+        {signInUpForm}
+        {signInUpStep === SignInUpStep.WorkspaceSelection && (
+          <WorkspaceSelectionFooter />
+        )}
+        {![
+          SignInUpStep.Password,
+          SignInUpStep.TwoFactorAuthenticationProvision,
+          SignInUpStep.TwoFactorAuthenticationVerification,
+          SignInUpStep.WorkspaceSelection,
+          SignInUpStep.WorkspaceCreation,
+        ].includes(signInUpStep) && (
+          <FooterNote secondaryAgreement="dataProcessingAgreement" />
+        )}
+      </ModalContent>
+    </StyledBackground>
   );
 };
 
@@ -226,9 +236,11 @@ export const SignInUpV2 = () => {
 
   if (signInUpStep === SignInUpStep.EmailVerification) {
     return (
-      <ModalContent isVerticallyCentered isHorizontallyCentered>
-        <EmailVerificationSent email={searchParams.get('email')} />
-      </ModalContent>
+      <StyledBackground>
+        <ModalContent isVerticallyCentered isHorizontallyCentered>
+          <EmailVerificationSent email={searchParams.get('email')} />
+        </ModalContent>
+      </StyledBackground>
     );
   }
 
