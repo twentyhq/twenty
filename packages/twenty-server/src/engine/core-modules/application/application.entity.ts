@@ -122,6 +122,10 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   applicationRegistration: Relation<ApplicationRegistrationEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.16.0_AddPrimaryPublicDomainToApplicationFastInstanceCommand_1782281874768',
+  })
   primaryPublicDomainId: string | null;
 
   @ManyToOne(() => PublicDomainEntity, {
