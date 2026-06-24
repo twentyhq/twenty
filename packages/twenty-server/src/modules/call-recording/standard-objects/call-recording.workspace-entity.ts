@@ -1,11 +1,18 @@
-import { type RichTextMetadata } from 'twenty-shared/types';
+import { FieldMetadataType, type RichTextMetadata } from 'twenty-shared/types';
 
 import { type FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type CallRecordingRequestStatus } from 'src/modules/call-recording/common/enums/call-recording-request-status.enum';
 import { type CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
+
+const TITLE_FIELD_NAME = 'title';
+
+export const SEARCH_FIELDS_FOR_CALL_RECORDING: FieldTypeAndNameMetadata[] = [
+  { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
+];
 
 export class CallRecordingWorkspaceEntity extends BaseWorkspaceEntity {
   title: string | null;
