@@ -180,20 +180,19 @@ The status code must be a valid HTTP status code (between 100 and 599). Response
 The trigger has two parts:
 
 1. A **resolver** logic function — declared with `serverWebhookTriggerSettings` — runs in your **owner workspace** (the workspace that owns the application registration). Its only job is to inspect the incoming request and return `{ workspaceId, payload? }`.
-2. A **target** logic function — a regular per-workspace logic function — then runs in the resolved workspace with the payload returned by the resolver (or the original request payload if the resolver didn't transform it). Its return value becomes the HTTP response.
+2. A **target** logic function — a regular per-workspace logic function — then runs in the resolved workspace with the payload returned by the resolver (or the original request payload if the resolver didn't transform it). Its return value becomes the HTTP response. **The target is where you verify the webhook signature** — it's reachable like any public HTTP endpoint, so treat it as one.
 
 ```ts src/logic-functions/resolve-workspace-from-webhook.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
 
-// Runs in the owner workspace. Verify the signature, then map the
-// incoming request to the target workspace and (optionally) reshape
-// the payload that the target will receive.
+// Runs in the owner workspace. Reads the workspaceId off the request and
+// passes the original payload through so the target can verify the
+// signature.
 const handler = async (event: RoutePayload) => {
   const body = (event.body ?? {}) as { metadata?: { twentyWorkspaceId?: string } };
-  const workspaceId = body.metadata?.twentyWorkspaceId ?? '';
 
-  return { workspaceId, payload: body };
+  return { workspaceId: body.metadata?.twentyWorkspaceId ?? '' };
 };
 
 export default defineLogicFunction({
@@ -210,9 +209,11 @@ export default defineLogicFunction({
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
 
-// Runs in the resolved workspace. Receives the resolver's `payload`.
+// Runs in the resolved workspace. Receives the full RoutePayload (headers
+// and rawBody included), verifies the webhook signature, and does the
+// real work.
 const handler = async (event: RoutePayload) => {
-  // Do the real work here, in the right workspace.
+  // verify signature here — see example below.
   return { received: true };
 };
 
@@ -236,10 +237,10 @@ Both identifiers are the `universalIdentifier`s from your manifest — the resol
 | Field | Type | Notes |
 |-------|------|-------|
 | `workspaceId` | `string` | Workspace UUID where the target will run. |
-| `payload` | `object` (optional) | If set, replaces the request body sent to the target. Useful for stripping signing fields or pre-parsing the event. |
+| `payload` | `object` (optional) | If set, replaces the request body sent to the target. Leave it out (the default) when the target needs the original `rawBody` and headers to verify the signature. |
 
 <Warning>
-**Signature verification is your responsibility.** The platform does not verify webhook signatures — it only runs your resolver, then your target. Verify the signature in the **resolver** (it runs first, in the owner workspace, with access to your application variables) using `event.rawBody` and the headers you listed in `forwardedRequestHeaders`. Throw before returning a `workspaceId` if the signature is invalid. Always verify **before** any side effect and use a constant-time comparison.
+**Signature verification is the target's responsibility.** The platform does not verify webhook signatures — the endpoint behaves like any public HTTP webhook, and the caller controls which target function in the resolved workspace runs. Verify the signature in the **target** using `event.rawBody` and the headers you listed in the resolver's `forwardedRequestHeaders`. Reject (throw or return a non-2xx) **before** any side effect, and use a constant-time comparison. Don't rely on the resolver for verification — when it returns a `payload`, the target loses `rawBody` and headers.
 </Warning>
 
 Most providers sign with HMAC-SHA256; the parts that differ are the header name, the digest encoding, and the signed-payload string. A few examples:
@@ -252,12 +253,13 @@ Most providers sign with HMAC-SHA256; the parts that differ are the header name,
 | Shopify | `x-shopify-hmac-sha256` | `{rawBody}` | base64 |
 | Slack | `x-slack-signature`, `x-slack-request-timestamp` | `v0:{timestamp}:{rawBody}` | hex (prefixed `v0=`) |
 
-Verify the signature in the **resolver**, then return the `workspaceId`:
+Verify the signature **in the target** before any side effect:
 
-```ts src/logic-functions/resolve-workspace-from-webhook.logic-function.ts
+```ts src/logic-functions/handle-provider-webhook.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response } from 'twenty-sdk/logic-function';
 
 const handler = async (event: RoutePayload) => {
   const signature = event.headers['x-hub-signature-256'] ?? '';
@@ -271,26 +273,22 @@ const handler = async (event: RoutePayload) => {
   const b = Buffer.from(expected);
 
   if (a.length !== b.length || !timingSafeEqual(a, b)) {
-    throw new Error('invalid signature');
+    return new Response({ error: 'invalid signature' }, { status: 401 });
   }
 
-  const body = (event.body ?? {}) as { metadata?: { twentyWorkspaceId?: string } };
-
-  return { workspaceId: body.metadata?.twentyWorkspaceId ?? '', payload: body };
+  // ...handle the verified event
+  return { received: true };
 };
 
 export default defineLogicFunction({
-  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
-  name: 'resolve-workspace-from-webhook',
+  universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-provider-webhook',
   handler,
-  serverWebhookTriggerSettings: {
-    forwardedRequestHeaders: ['x-hub-signature-256'],
-  },
 });
 ```
 
 <Note>
-The target runs **synchronously** and its returned value becomes the HTTP response, so providers see your status code and can retry on non-2xx. Keep both handlers fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver runs before any of your business logic, protect this endpoint with rate limiting at your edge.
+The target runs **synchronously** and its returned value becomes the HTTP response, so providers see your status code and can retry on non-2xx. Keep both handlers fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is unauthenticated by design, protect this endpoint with rate limiting at your edge.
 </Note>
 
 #### Database event trigger payload
