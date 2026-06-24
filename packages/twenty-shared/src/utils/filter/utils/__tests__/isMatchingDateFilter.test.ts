@@ -122,6 +122,49 @@ describe('isMatchingDateFilter', () => {
     );
   });
 
+  describe('malformed non-string value', () => {
+    const malformedValues = [{}, [], 42, true];
+
+    it.each(malformedValues)(
+      'does not throw and returns false for comparison operators (value: %s)',
+      (value) => {
+        const comparisonFilters: DateFilter[] = [
+          { eq: testDate },
+          { neq: testDate },
+          { gt: testDate },
+          { gte: testDate },
+          { lt: testDate },
+          { lte: testDate },
+          { in: [testDate] },
+        ];
+
+        for (const dateFilter of comparisonFilters) {
+          expect(
+            isMatchingDateFilter({ dateFilter, value: value as any }),
+          ).toBe(false);
+        }
+      },
+    );
+
+    it.each(malformedValues)(
+      'matches "is: NOT_NULL" but not "is: NULL" for a non-empty value (value: %s)',
+      (value) => {
+        expect(
+          isMatchingDateFilter({
+            dateFilter: { is: 'NOT_NULL' },
+            value: value as any,
+          }),
+        ).toBe(true);
+        expect(
+          isMatchingDateFilter({
+            dateFilter: { is: 'NULL' },
+            value: value as any,
+          }),
+        ).toBe(false);
+      },
+    );
+  });
+
   describe('gt', () => {
     it('value is greater than gt filter', () => {
       expect(

@@ -9,8 +9,12 @@ export const isMatchingDateFilter = ({
   dateFilter: DateFilter;
   value: string | null | undefined;
 }) => {
-  if (!isDefined(value)) {
-    return dateFilter.is === 'NULL';
+  if (dateFilter.is !== undefined) {
+    return dateFilter.is === 'NULL' ? !isDefined(value) : isDefined(value);
+  }
+
+  if (typeof value !== 'string') {
+    return false;
   }
 
   switch (true) {
@@ -22,13 +26,6 @@ export const isMatchingDateFilter = ({
     }
     case dateFilter.in !== undefined: {
       return dateFilter.in.includes(value);
-    }
-    case dateFilter.is !== undefined: {
-      if (dateFilter.is === 'NULL') {
-        return value === null;
-      } else {
-        return value !== null;
-      }
     }
     case dateFilter.gt !== undefined: {
       return isAfter(parseISO(value), parseISO(dateFilter.gt));
