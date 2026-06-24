@@ -42,16 +42,9 @@ export class CronTriggerDeduplicationService {
 
     const dedupKey = `${keyPrefix}:${lastTriggerTimestamp}`;
 
-    if (await this.cacheStorageService.get<boolean>(dedupKey)) {
-      return false;
-    }
-
-    await this.cacheStorageService.set(
+    return this.cacheStorageService.acquireLock(
       dedupKey,
-      true,
       CRON_DISPATCH_DEDUP_TTL_MS,
     );
-
-    return true;
   }
 }
