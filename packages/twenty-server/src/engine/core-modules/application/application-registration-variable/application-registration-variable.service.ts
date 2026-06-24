@@ -7,6 +7,7 @@ import { In, Not, type Repository } from 'typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -23,6 +24,8 @@ export class ApplicationRegistrationVariableService {
     private readonly variableRepository: Repository<ApplicationRegistrationVariableEntity>,
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly encryptionService: SecretEncryptionService,
   ) {}
 
@@ -161,9 +164,21 @@ export class ApplicationRegistrationVariableService {
   async isConfiguredBatch(
     applicationRegistrationIds: string[],
   ): Promise<Map<string, boolean>> {
-    const variables = await this.variableRepository.find({
-      where: { applicationRegistrationId: In(applicationRegistrationIds) },
-    });
+    const [variables, registrations, installedApps] = await Promise.all([
+      this.variableRepository.find({
+        where: { applicationRegistrationId: In(applicationRegistrationIds) },
+      }),
+      this.applicationRegistrationRepository.find({
+        where: { id: In(applicationRegistrationIds) },
+        select: { id: true, manifest: true, ownerWorkspaceId: true },
+      }),
+      this.applicationRepository.find({
+        where: {
+          applicationRegistrationId: In(applicationRegistrationIds),
+        },
+        select: { applicationRegistrationId: true, workspaceId: true },
+      }),
+    ]);
 
     const variablesByRegistrationId = new Map<
       string,
@@ -181,6 +196,24 @@ export class ApplicationRegistrationVariableService {
       );
     }
 
+    const registrationById = new Map(
+      registrations.map(
+        (registration) =>
+          [registration.id, registration] as [
+            string,
+            ApplicationRegistrationEntity,
+          ],
+      ),
+    );
+
+    // Set of `${applicationRegistrationId}:${workspaceId}` for every workspace
+    // where the application is installed.
+    const installedKeys = new Set(
+      installedApps.map(
+        (app) => `${app.applicationRegistrationId}:${app.workspaceId}`,
+      ),
+    );
+
     const result = new Map<string, boolean>();
 
     for (const id of applicationRegistrationIds) {
@@ -189,13 +222,44 @@ export class ApplicationRegistrationVariableService {
         (v) => v.isRequired,
       );
 
+      const areVariablesConfigured = requiredVariables.every((v) => v.isFilled);
+
       result.set(
         id,
-        requiredVariables.every((v) => v.isFilled),
+        areVariablesConfigured &&
+          this.isServerRouteConfigured(
+            registrationById.get(id),
+            installedKeys,
+          ),
       );
     }
 
     return result;
+  }
+
+  // A server-route logic function runs its resolver in the application's owner
+  // workspace, so an app exposing one is only usable — and only listable in the
+  // marketplace — once it is claimed (has an owner workspace) and installed on
+  // that owner workspace.
+  private isServerRouteConfigured(
+    registration: ApplicationRegistrationEntity | undefined,
+    installedKeys: Set<string>,
+  ): boolean {
+    const hasServerRouteFunction =
+      registration?.manifest?.logicFunctions?.some((logicFunction) =>
+        isDefined(logicFunction.serverRouteTriggerSettings),
+      ) ?? false;
+
+    if (!hasServerRouteFunction) {
+      return true;
+    }
+
+    const ownerWorkspaceId = registration?.ownerWorkspaceId;
+
+    return (
+      isDefined(ownerWorkspaceId) &&
+      installedKeys.has(`${registration?.id}:${ownerWorkspaceId}`)
+    );
   }
 
   private async findVariableOrThrow(
