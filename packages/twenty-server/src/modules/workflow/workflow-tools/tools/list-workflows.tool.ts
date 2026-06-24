@@ -79,10 +79,13 @@ export const createListWorkflowsTool = (
         authContext,
       );
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
       return {
         success: false,
-        error: error.message,
-        message: `Failed to list workflows: ${error.message}`,
+        error: errorMessage,
+        message: `Failed to list workflows: ${errorMessage}`,
       };
     }
   },
