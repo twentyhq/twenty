@@ -60,7 +60,7 @@ export default defineLogicFunction({
 * **cron**：使用 CRON 表达式按计划运行你的函数。
 * **databaseEvent**：在工作区对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
 > 例如 `person.updated`、`*.created`、`company.*`
-* **serverWebhook**：从第三方服务（Stripe、GitHub、Svix 等）接收入站 Webhooks 在单个以注册为作用域的端点上，并从有效负载中解析目标工作区。 参见 [服务端 Webhook 触发器](#server-webhook-trigger)。
+* **serverRoute**：公开一个注册作用域的单一 HTTP 路由。 一个在所有者工作区中运行的 **resolver** 函数（使用 `serverRouteTriggerSettings` 声明）会返回目标工作区以及要分发到的目标逻辑函数；平台随后运行该**目标**函数并返回其响应。 参见 [服务端路由触发器](#server-route-trigger)。
 
 <Note>
 你也可以使用 CLI 手动执行函数：
@@ -173,54 +173,108 @@ const handler = async (event: RoutePayload) => {
 状态码必须是有效的 HTTP 状态码（介于 100 和 599 之间）。 响应头名称的匹配不区分大小写。
 </Note>
 
-#### 服务端 Webhook 触发器
+#### 服务端路由触发器
 
-`httpRouteTriggerSettings` 在 `/s/` 下暴露一个函数，并根据请求主机解析 workspace——这在每个 workspace 都有自己域名时有效。 然而，第三方服务商会将每个租户的事件发送到**同一个** webhook URL。 对于这种情况，请使用 `serverWebhookTriggerSettings`：该函数可在注册范围的端点访问，并且 workspace 将从负载中解析。
+`httpRouteTriggerSettings` 在 `/s/` 下暴露一个函数，并根据请求主机解析 workspace——这在每个 workspace 都有自己域名时有效。 然而，第三方服务商会将每个租户的事件发送到**同一个** URL。 在这种情况下，请使用 `serverRouteTriggerSettings`。
 
-```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+触发器由两部分组成：
+
+1. 一个在 **所有者工作区**（拥有应用注册的工作区）中运行的 **resolver** 逻辑函数——使用 `serverRouteTriggerSettings` 声明。 它检查传入请求并返回 `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`，同时选择目标工作区和目标函数。 resolver 是唯一的授权点——URL 只携带 resolver 的标识符。 **这里是验证请求签名的首选位置**：resolver 在任何副作用之前运行，可以访问原始的 `rawBody` 和转发的请求头，并且可以在不触及目标的情况下直接拒绝请求。
+2. 一个 **target** 逻辑函数——一个常规的、按工作区划分的逻辑函数——随后在解析得到的工作区中运行，并使用 resolver 返回的负载（如果 resolver 未对其进行转换，则使用原始请求负载）。 它的返回值将成为 HTTP 响应。
+
+```ts src/logic-functions/resolve-server-route.logic-function.ts
+import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
-import { Response } from 'twenty-sdk/logic-function';
 
+// Runs in the owner workspace. Verifies the request signature, picks
+// which target function should handle the event, and returns the
+// workspace + target the platform should dispatch to.
 const handler = async (event: RoutePayload) => {
-  // Verify the signature yourself before doing anything (see below).
-  // Return a non-2xx Response to make the provider retry.
-  return { received: true };
+  // Fail closed if the secret isn't configured — never fall back to an
+  // empty key, which would let any caller forge a matching signature.
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+
+  if (!secret) {
+    throw new Error('GITHUB_WEBHOOK_SECRET is not configured');
+  }
+
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    throw new Error('invalid signature');
+  }
+
+  const body = (event.body ?? {}) as {
+    metadata?: { twentyWorkspaceId?: string };
+    type?: string;
+  };
+
+  return {
+    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    // Route different event types to different target functions.
+    targetLogicFunctionUniversalIdentifier:
+      body.type === 'invoice.paid'
+        ? 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10' // handle-invoice-paid
+        : 'd5f3b0c2-8e5f-5d0b-a0c3-3f2e7b5d9f21', // handle-other-event
+  };
 };
 
 export default defineLogicFunction({
   universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
-  name: 'handle-provider-webhook',
+  name: 'resolve-server-route',
   handler,
-  serverWebhookTriggerSettings: {
-    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
-    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  serverRouteTriggerSettings: {
+    forwardedRequestHeaders: ['x-hub-signature-256'],
   },
 });
 ```
 
-该函数可在以下地址访问：
+```ts src/logic-functions/handle-invoice-paid.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the resolved workspace. The resolver has already authenticated
+// the request, so this handler can focus on the actual work.
+const handler = async (event: RoutePayload) => {
+  // ...handle the verified event
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-invoice-paid',
+  handler,
+});
+```
+
+该端点可在以下地址访问：
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
 ```
 
-这两个标识符都是来自清单的 `universalIdentifier`——即应用注册的 universalIdentifier 和此逻辑函数的 universalIdentifier。 在服务商处注册该 URL。
+该标识符是清单（manifest）中 resolver 的 `universalIdentifier`。 在服务商处注册该 URL。
 
-**Workspace 解析。** 由于一个端点为每个 workspace 提供服务，你的集成必须在传递内容中的某处放入目标 `workspaceId`，而 `workspaceIdResolver.{ source, path }` 用于告知平台从哪里读取它：
+**Resolver 合约。** SDK 的 `LogicFunctionConfig` 类型在编译时强制执行这一点：一旦你设置了 `serverRouteTriggerSettings`，你的处理程序就被限制为返回 `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }`（或其 `Promise`）。 `workspaceId` 必须是已安装目标函数的工作区，否则请求会以 `404` 被拒绝。
 
-| 字段   | 值                                   | 备注                                                                                  |
-| ---- | ----------------------------------- | ----------------------------------------------------------------------------------- |
-| `来源` | `body` \| `query` \| `header`       | `body` 读取解析后的 JSON。 `query` 是最通用的——通常你可以控制所注册的回调 URL，因此可以追加 `?twentyWorkspaceId=…`。 |
-| `路径` | 点路径，例如 `metadata.twentyWorkspaceId` | 仅限字母数字 / `_` / `-` 片段；原型键将被拒绝。                                                      |
-
-解析得到的值必须是有效的 workspace UUID，**并且** 你的应用必须已安装在该 workspace 中，否则请求会在函数运行前被拒绝。
+| 字段                                       | 类型           | 备注                                     |
+| ---------------------------------------- | ------------ | -------------------------------------- |
+| `workspaceId`                            | `string`     | 目标将运行所在的工作区 UUID。                      |
+| `targetLogicFunctionUniversalIdentifier` | `string`     | 要在该工作区中调用的逻辑函数的 `universalIdentifier`。 |
+| `payload`                                | `object`（可选） | 如果设置，将会替换发送到目标的请求正文。                   |
 
 <Warning>
-**签名验证由你负责。** 平台不会为此触发器验证 webhook 签名——它只会解析 workspace 并运行你的函数。 你的处理程序必须使用 `event.rawBody` 以及你在 `forwardedRequestHeaders` 中列出的请求头自行验证签名，并与作为服务器/应用变量存储的密钥进行比对。 始终在产生任何副作用**之前**进行验证，并使用常量时间比较。
+**签名验证由你负责——请在 resolver 中进行验证。** 平台不会验证请求签名。 resolver 是执行验证的推荐位置：它最先运行，可以访问 `event.rawBody` 以及你在 `forwardedRequestHeaders` 中列出的请求头，并且只要抛出错误（或返回任意不匹配的 `workspaceId`），就会在调用目标之前停止分发。 如果你反而将验证下推到 target 中，那么 target 必须小心不要丢失 `rawBody` 和请求头——也就是说，resolver 不应返回 `payload`。 始终在产生任何副作用**之前**进行验证，并使用常量时间比较。
 </Warning>
 
-大多数服务商使用 HMAC-SHA256 进行签名；不同之处在于请求头名称、摘要编码方式以及被签名的负载字符串。 例如：
+对于请求签名，大多数服务商使用 HMAC-SHA256 进行签名；不同之处在于请求头名称、摘要编码方式以及被签名的负载字符串。 例如：
 
 | 提供商                       | 要转发的请求头                                                | 签名字符串                        | 摘要                                 |
 | ------------------------- | ------------------------------------------------------ | ---------------------------- | ---------------------------------- |
@@ -230,31 +284,10 @@ POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniv
 | Shopify                   | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                             |
 | Slack                     | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex（前缀为 `v0=`）                     |
 
-```ts
-import { createHmac, timingSafeEqual } from 'crypto';
-
-const handler = async (event: RoutePayload) => {
-  const signature = event.headers['x-hub-signature-256'] ?? '';
-  const expected =
-    'sha256=' +
-    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
-      .update(event.rawBody ?? '')
-      .digest('hex');
-
-  const a = Buffer.from(signature);
-  const b = Buffer.from(expected);
-
-  if (a.length !== b.length || !timingSafeEqual(a, b)) {
-    return new Response({ error: 'invalid signature' }, { status: 401 });
-  }
-
-  // ...handle the verified event
-  return { received: true };
-};
-```
+上面的 resolver 示例已经展示了 GitHub 的 HMAC-SHA256 流程——请根据你要集成的服务商，调整请求头名称、摘要编码方式以及被签名的负载字符串。
 
 <Note>
-该函数**同步**运行，你返回的值会成为 HTTP 响应，因此服务商可以看到你的状态码，并在非 2xx 时重试。 保持处理程序足够快速——某些服务商（例如 Slack）会在几秒内超时。 由于函数在检查签名前运行，请在边缘通过速率限制来保护此端点。
+target **同步**运行，其返回值会成为 HTTP 响应，因此调用方可以看到你的状态码，并在非 2xx 时进行重试。 保持两个处理程序都足够快速——某些服务商（例如 Slack）会在几秒内超时。 由于 resolver 可以作为公共端点访问，请在边缘（edge）对其进行速率限制保护。
 </Note>
 
 #### 数据库事件触发器有效负载

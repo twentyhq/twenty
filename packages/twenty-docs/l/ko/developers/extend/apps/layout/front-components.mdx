@@ -200,24 +200,29 @@ export default defineFrontComponent({
 
 Front 컴포넌트는 샌드박스된 Web Worker 안에서 브라우저 측에서 실행되고, [logic functions](/l/ko/developers/extend/apps/logic/logic-functions)는 서버 측에서 실행됩니다. 두 요소 사이에는 프로세스 내에서의 직접 호출이 없습니다. 대신, Front 컴포넌트는 HTTP를 통해 로직 함수에 접근합니다.
 
-`httpRouteTriggerSettings`로 선언된 로직 함수는 `${TWENTY_API_URL}/s\<path>`의 `/s/` 엔드포인트 아래에 노출됩니다. 여러분의 Front 컴포넌트는 `twenty-client-sdk/rest`의 `RestApiClient`를 사용해 해당 라우트를 호출하며, Twenty가 워커에 주입하는 `TWENTY_APP_ACCESS_TOKEN`으로 인증합니다.
+`httpRouteTriggerSettings`로 선언된 로직 함수는 HTTP를 통해 해당 라우트 경로에서 액세스할 수 있습니다. Twenty는 워커에 함수들이 제공되는 기본 URL을 `TWENTY_FUNCTIONS_URL`로 주입하고, 호출을 인증하는 `TWENTY_APP_ACCESS_TOKEN`도 함께 주입합니다. 아직 자체 함수를 호출하기 위한 전용 SDK 클라이언트는 없으므로, 일반 `fetch`로 호출하세요:
 
-`RestApiClient`는 바로 이런 용도로 설계되었습니다. 이는 워커 환경에서 `TWENTY_API_URL`과 `TWENTY_APP_ACCESS_TOKEN`을 읽어 `Authorization: Bearer` 헤더를 추가하고, JSON을 직렬화 및 파싱하며, 토큰이나 URL이 없거나 응답이 2xx가 아닐 경우 `RestApiClientError`를 발생시켜, 여러분이 각 컴포넌트마다 이러한 보일러플레이트를 다시 구현하지 않아도 되도록 해 줍니다.
+> **Twenty Cloud에서 HTTP로 트리거되는 로직 함수는 작업공간별 전용 도메인에서 제공됩니다**: `https://\<your-workspace-subdomain>.twenty.com\<path>` — 이는 `TWENTY_FUNCTIONS_URL`이 정확히 가리키는 주소입니다. 외부 호출자의 경우, 함수의 **HTTP trigger** 설정 또는 애플리케이션의 **Settings** 탭에서 정확한 URL을 복사하세요.
+
+<Warning>
+  레거시 `/s/` 함수 라우트는 **사용 중단(deprecated)** 되었으며 **2026-07-24에 비활성화됩니다**. 대신 위의 `TWENTY_FUNCTIONS_URL`을 사용하고, 해당 날짜 이전에 하드 코딩된 모든 `/s/` URL을 마이그레이션하세요. `/s/` 라우트는 셀프 호스팅의 경우 계속 사용 가능합니다.
+</Warning>
 
 헤드리스 Front 컴포넌트는 `Command` 컴포넌트를 통해 마운트 시점에 호출을 실행한 뒤, 자동으로 언마운트될 수 있습니다:
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    const client = new RestApiClient();
-
-    await client.post('/s/github/fetch-prs', {
-      owner: 'twentyhq',
-      repo: 'twenty',
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
     });
   };
 
@@ -233,7 +238,7 @@ export default defineFrontComponent({
 });
 ```
 
-클라이언트에 전달되는 경로는 라우트의 public 경로이며, 로직 함수의 `httpRouteTriggerSettings.path` 앞에 `/s`가 접두사로 붙습니다. `isAuthRequired: true`를 유지하세요. 클라이언트가 컴포넌트용으로 Twenty가 발행한 앱 액세스 토큰을 제공합니다:
+`TWENTY_FUNCTIONS_URL`에 추가되는 경로는 로직 함수의 `httpRouteTriggerSettings.path`입니다. `isAuthRequired: true`로 유지하세요. 컴포넌트를 위해 Twenty가 발급하는 `TWENTY_APP_ACCESS_TOKEN`이 요청을 인증합니다:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -258,12 +263,12 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_API_URL`과 `TWENTY_APP_ACCESS_TOKEN`은 자동으로 주입됩니다. 자세한 내용은 [Application variables](#application-variables)을 참고하세요. 비밀 애플리케이션 변수는 Front 컴포넌트에 절대 노출되지 않으므로, API 키 및 기타 민감한 로직은 Front 컴포넌트가 아니라 로직 함수 안에 유지해야 합니다.
+`TWENTY_FUNCTIONS_URL`과 `TWENTY_APP_ACCESS_TOKEN`은 자동으로 주입됩니다. 자세한 내용은 [Application variables](#application-variables)을 참고하세요. 비밀 애플리케이션 변수는 Front 컴포넌트에 절대 노출되지 않으므로, API 키 및 기타 민감한 로직은 Front 컴포넌트가 아니라 로직 함수 안에 유지해야 합니다.
 </Note>
 
-### RestApiClient 레퍼런스
+### Twenty REST API 호출하기
 
-`RestApiClient`를 `twenty-client-sdk/rest`에서 import하세요. 이는 `CoreApiClient` 및 `MetadataApiClient`와 동일한 클라이언트 패밀리에 속하지만, GraphQL API 대신 앱의 HTTP 라우트를 대상으로 합니다.
+프론트 컴포넌트에서 Twenty 레코드를 읽거나 쓰려면 `twenty-client-sdk/rest`의 `RestApiClient`를 사용하세요. 이는 `CoreApiClient` 및 `MetadataApiClient`와 동일한 클라이언트 패밀리에 속하지만, GraphQL API 대신 Twenty REST API(`/rest/...`)를 대상으로 하며, 기본 URL은 `TWENTY_API_URL`에서 읽어 옵니다.
 
 | 방법                                | 설명                             |
 | --------------------------------- | ------------------------------ |
@@ -280,7 +285,7 @@ export default defineLogicFunction({
 
 ```ts
 const client = new RestApiClient({
-  baseUrl: 'https://api.example.com',
+  baseUrl: 'https://myworkspace.twenty.com',
   token: 'my-token',
 });
 ```
@@ -293,8 +298,8 @@ import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 const client = new RestApiClient();
 
 try {
-  const prs = await client.get('/s/github/fetch-prs', {
-    query: { state: 'open' },
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
   });
 } catch (error) {
   if (error instanceof RestApiClientError) {
@@ -374,10 +379,11 @@ export default defineFrontComponent({
 
 다음 시스템 변수는 항상 `process.env`를 통해 사용할 수 있습니다:
 
-| 변수                        | 설명                       |
-| ------------------------- | ------------------------ |
-| `TWENTY_API_URL`          | Twenty API의 기본 URL       |
-| `TWENTY_APP_ACCESS_TOKEN` | 앱의 역할 범위로 제한된 단기간 유효한 토큰 |
+| 변수                        | 설명                                                |
+| ------------------------- | ------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | 앱의 HTTP 로직 함수가 제공되는 기본 URL(`RestApiClient`에서 사용됨) |
+| `TWENTY_API_URL`          | Twenty 코어 API의 기본 URL                             |
+| `TWENTY_APP_ACCESS_TOKEN` | 앱의 역할 범위로 제한된 단기간 유효한 토큰                          |
 
 ## 호스트 통신 API
 

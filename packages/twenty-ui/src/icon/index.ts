@@ -484,6 +484,7 @@ export {
   IconWebhook,
   IconWindow,
   IconWorld,
+  IconWorldWww,
   IconX,
 } from './components/TablerIcons';
 export { ThinkingOrbitLoaderIcon } from './components/ThinkingOrbitLoaderIcon';
