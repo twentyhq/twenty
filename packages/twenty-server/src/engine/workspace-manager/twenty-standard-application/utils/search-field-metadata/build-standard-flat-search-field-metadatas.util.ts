@@ -7,8 +7,6 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/create-standard-search-field-flat-metadata.util';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 
-// One row per searchVector field, mirroring the SEARCH_FIELDS_FOR_* constant the object's
-// searchVector asExpression is built from, so the rows always stay in sync with the column.
 export const buildStandardFlatSearchFieldMetadatas = <
   O extends AllStandardObjectName,
 >({
