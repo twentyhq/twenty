@@ -262,6 +262,10 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 El identificador es el `universalIdentifier` del resolver de tu manifiesto. Registra esa URL con el proveedor.
 
+<Note>
+**La aplicación debe reclamarse e instalarse en el espacio de trabajo propietario.** Dado que el resolver se ejecuta en el **espacio de trabajo propietario** (el espacio de trabajo que es propietario del registro de la aplicación), un desencadenador de ruta de servidor solo funciona una vez que la aplicación ha sido *reclamada*, es decir, tiene un espacio de trabajo propietario, **y** esa aplicación está **instalada en el espacio de trabajo propietario**. Hasta que ambas condiciones se cumplan, el resolver no tiene dónde ejecutarse, por lo que la ruta no puede despacharse. Por lo tanto, una aplicación que expone una función lógica `serverRouteTriggerSettings` no puede figurar en el marketplace hasta que haya sido reclamada e instalada en su espacio de trabajo propietario.
+</Note>
+
 **Contrato del resolver.** El tipo `LogicFunctionConfig` del SDK aplica esto en tiempo de compilación: tan pronto como configuras `serverRouteTriggerSettings`, tu handler se ve obligado a devolver `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o un `Promise` de esto). El `workspaceId` debe ser un espacio de trabajo donde la función de destino esté instalada; de lo contrario, la solicitud se rechaza con `404`.
 
 | Campo                                    | Tipo                | Notas                                                                                        |
