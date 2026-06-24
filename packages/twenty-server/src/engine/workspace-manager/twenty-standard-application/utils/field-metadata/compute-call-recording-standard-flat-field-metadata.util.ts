@@ -17,6 +17,7 @@ import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-ma
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { CallRecordingRequestStatus } from 'src/modules/call-recording/common/enums/call-recording-request-status.enum';
 import { CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
+import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
 
 export const buildCallRecordingStandardFlatFieldMetadatas = ({
   now,
@@ -487,9 +488,9 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
       isNullable: true,
       settings: {
         generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields([
-          { name: 'title', type: FieldMetadataType.TEXT },
-        ]),
+        asExpression: getTsVectorColumnExpressionFromFields(
+          SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
+        ),
       },
     },
     standardObjectMetadataRelatedEntityIds,
