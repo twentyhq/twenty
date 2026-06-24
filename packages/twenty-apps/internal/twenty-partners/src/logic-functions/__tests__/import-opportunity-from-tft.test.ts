@@ -78,22 +78,29 @@ describe('import-opportunity-from-tft handler', () => {
       .mockResolvedValueOnce({ createPerson: { id: 'person-1' } })
       .mockResolvedValueOnce({ createOpportunity: { id: 'opp-1' } });
 
-    const result = await handler(authedEvent(baseInput()));
+    const result = await handler(
+      authedEvent(
+        baseInput({ useCase: 'Migrate from HubSpot, ~30 sales users' }),
+      ),
+    );
 
     expect(result).toEqual({ ok: true, created: true, id: 'opp-1' });
 
     const createOppCall = mutationMock.mock.calls.find(
       ([arg]) => 'createOpportunity' in arg,
     );
-    expect(createOppCall?.[0].createOpportunity.__args.data).toEqual({
+    const data = createOppCall?.[0].createOpportunity.__args.data;
+    expect(data).toEqual({
       name: 'Acme rollout',
       tftOpportunityId: 'tft-opp-1',
       amount: { amountMicros: 5000000, currencyCode: 'EUR' },
       closeDate: '2026-07-01T00:00:00.000Z',
       stage: 'MEETING',
+      need: 'Migrate from HubSpot, ~30 sales users',
       companyId: 'company-1',
       pointOfContactId: 'person-1',
     });
+    expect(data).not.toHaveProperty('useCase');
   });
 
   it('drops null amountMicros/closeDate instead of failing validation', async () => {
@@ -118,5 +125,29 @@ describe('import-opportunity-from-tft handler', () => {
     )?.[0].createOpportunity.__args.data;
     expect(data).not.toHaveProperty('amount');
     expect(data).not.toHaveProperty('closeDate');
+  });
+
+  it('drops null useCase instead of failing validation', async () => {
+    queryMock
+      .mockResolvedValueOnce({ opportunities: { edges: [] } })
+      .mockResolvedValueOnce({ companies: { edges: [] } })
+      .mockResolvedValueOnce({ people: { edges: [] } });
+    mutationMock
+      .mockResolvedValueOnce({ createCompany: { id: 'company-1' } })
+      .mockResolvedValueOnce({ createPerson: { id: 'person-1' } })
+      .mockResolvedValueOnce({ createOpportunity: { id: 'opp-1' } });
+
+    const body = { ...baseInput(), useCase: null };
+    const result = await handler({
+      body,
+      headers: { 'x-application-secret': SECRET },
+    });
+
+    expect(result).toEqual({ ok: true, created: true, id: 'opp-1' });
+    const data = mutationMock.mock.calls.find(
+      ([arg]) => 'createOpportunity' in arg,
+    )?.[0].createOpportunity.__args.data;
+    expect(data).not.toHaveProperty('need');
+    expect(data).not.toHaveProperty('useCase');
   });
 });
