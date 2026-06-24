@@ -47,9 +47,13 @@ export const RecordTableRelationGroupsDiscoveryEffect = () => {
       return;
     }
 
-    setLastDiscoveryKey(discoveryKey);
-
-    triggerRecordTableRelationGroupsDiscovery();
+    triggerRecordTableRelationGroupsDiscovery().then(
+      (wasDiscoverySuccessful) => {
+        if (wasDiscoverySuccessful) {
+          setLastDiscoveryKey(discoveryKey);
+        }
+      },
+    );
   }, [
     discoveryKey,
     lastDiscoveryKey,

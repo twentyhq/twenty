@@ -73,71 +73,74 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
       recordGqlFieldsOverride: discoveryRecordGqlFields,
     });
 
-  const triggerRecordTableRelationGroupsDiscovery = useCallback(async () => {
-    if (
-      !isDefined(recordIndexGroupFieldMetadataItem) ||
-      !isManyToOneRelationField(recordIndexGroupFieldMetadataItem)
-    ) {
-      return;
-    }
+  const triggerRecordTableRelationGroupsDiscovery =
+    useCallback(async (): Promise<boolean> => {
+      if (
+        !isDefined(recordIndexGroupFieldMetadataItem) ||
+        !isManyToOneRelationField(recordIndexGroupFieldMetadataItem)
+      ) {
+        return false;
+      }
 
-    const result = await executeRecordIndexGroupsRecordsLazyGroupBy().catch(
-      () => null,
-    );
+      const result = await executeRecordIndexGroupsRecordsLazyGroupBy().catch(
+        () => null,
+      );
 
-    if (!isDefined(result)) {
-      return;
-    }
+      if (!isDefined(result)) {
+        return false;
+      }
 
-    const queryFieldName =
-      getGroupByQueryResultGqlFieldName(objectMetadataItem);
-    const groups = result.data?.[queryFieldName];
+      const queryFieldName =
+        getGroupByQueryResultGqlFieldName(objectMetadataItem);
+      const groups = result.data?.[queryFieldName];
 
-    if (!isDefined(groups)) {
-      return;
-    }
+      if (!isDefined(groups)) {
+        return false;
+      }
 
-    const targetObjectMetadataItem = objectMetadataItems.find(
-      (item) =>
-        item.id ===
-        recordIndexGroupFieldMetadataItem.relation.targetObjectMetadata.id,
-    );
+      const targetObjectMetadataItem = objectMetadataItems.find(
+        (item) =>
+          item.id ===
+          recordIndexGroupFieldMetadataItem.relation.targetObjectMetadata.id,
+      );
 
-    const persistedViewGroups = isDefined(contextStoreCurrentViewId)
-      ? (getViewFromState(contextStoreCurrentViewId)?.viewGroups ?? [])
-      : [];
+      const persistedViewGroups = isDefined(contextStoreCurrentViewId)
+        ? (getViewFromState(contextStoreCurrentViewId)?.viewGroups ?? [])
+        : [];
 
-    const recordGroups = mergeRelationRecordGroupDefinitions({
-      groups,
-      relationFieldName: recordIndexGroupFieldMetadataItem.name,
-      mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
-      targetObjectMetadataItem,
-      existingRecordGroupDefinitions: recordGroupDefinitions,
-      persistedViewGroups,
-    });
+      const recordGroups = mergeRelationRecordGroupDefinitions({
+        groups,
+        relationFieldName: recordIndexGroupFieldMetadataItem.name,
+        mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
+        targetObjectMetadataItem,
+        existingRecordGroupDefinitions: recordGroupDefinitions,
+        persistedViewGroups,
+      });
 
-    setRecordGroups({
-      mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
-      recordGroups,
+      setRecordGroups({
+        mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
+        recordGroups,
+        recordIndexId,
+        objectMetadataItemId: objectMetadataItem.id,
+      });
+
+      setRecordTableRelationGroupsDiscoveredFieldId(
+        recordIndexGroupFieldMetadataItem.id,
+      );
+
+      return true;
+    }, [
+      contextStoreCurrentViewId,
+      executeRecordIndexGroupsRecordsLazyGroupBy,
+      getViewFromState,
+      objectMetadataItem,
+      objectMetadataItems,
+      recordGroupDefinitions,
+      recordIndexGroupFieldMetadataItem,
       recordIndexId,
-      objectMetadataItemId: objectMetadataItem.id,
-    });
-
-    setRecordTableRelationGroupsDiscoveredFieldId(
-      recordIndexGroupFieldMetadataItem.id,
-    );
-  }, [
-    contextStoreCurrentViewId,
-    executeRecordIndexGroupsRecordsLazyGroupBy,
-    getViewFromState,
-    objectMetadataItem,
-    objectMetadataItems,
-    recordGroupDefinitions,
-    recordIndexGroupFieldMetadataItem,
-    recordIndexId,
-    setRecordGroups,
-    setRecordTableRelationGroupsDiscoveredFieldId,
-  ]);
+      setRecordGroups,
+      setRecordTableRelationGroupsDiscoveredFieldId,
+    ]);
 
   return { triggerRecordTableRelationGroupsDiscovery };
 };
