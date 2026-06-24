@@ -19540,14 +19540,14 @@ __metadata:
   linkType: hard
 
 "@storybook/addon-a11y@npm:^10.3.3":
-  version: 10.4.1
-  resolution: "@storybook/addon-a11y@npm:10.4.1"
+  version: 10.4.6
+  resolution: "@storybook/addon-a11y@npm:10.4.6"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
     axe-core: "npm:^4.2.0"
   peerDependencies:
-    storybook: ^10.4.1
-  checksum: 10c0/2a051276db77dbf196b0c509aae6e49e1d1a722db1ecd3a73fa60ff8c1d88e61900f9c31a66201cedab8dd555718fca407099b4f27662fd3d9404b2096770344
+    storybook: ^10.4.6
+  checksum: 10c0/cdb88829b82bb2f2caac363eb54981d1573161494da8ac2feb840e36a51951a4a97ecb7985ac152a450b580ec8323dac3fba98dc5533e8b1d32421eeabb42a5e
   languageName: node
   linkType: hard
 
