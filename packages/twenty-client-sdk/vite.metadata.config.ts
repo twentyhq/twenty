@@ -3,12 +3,10 @@ import { defineConfig } from 'vite';
 
 import { entryFileNames, isExternal } from './vite.shared';
 
-// The metadata client is served to front components by the renderer, which
-// loads each SDK client as a single blob-URL module and cannot resolve relative
-// chunk imports. Building it as its own single-entry library guarantees a single
-// self-contained file (no shared chunk-*.mjs), unlike the main multi-entry build
-// in vite.config.ts. Writes dist/metadata.{mjs,cjs} alongside that build's output
-// (emptyOutDir: false so it doesn't wipe it).
+// Built as its own single-entry library so the metadata entrypoint is a single
+// self-contained file, instead of sharing a chunk-*.mjs with the other entries
+// in the main multi-entry build (vite.config.ts). emptyOutDir: false so it
+// writes alongside that build's output rather than wiping it.
 export default defineConfig(() => {
   return {
     root: __dirname,
