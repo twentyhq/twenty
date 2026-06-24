@@ -8,9 +8,6 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
 export const updateOneObjectMetadata = async ({
@@ -24,12 +21,6 @@ export const updateOneObjectMetadata = async ({
     input,
     gqlFields,
   });
-
-  // Updating object metadata can drop indexes under a lock_timeout; let in-flight
-  // jobs settle first so they don't hold the table lock the migration needs.
-  await global.app
-    .get<MessageQueueService>(getQueueToken(MessageQueue.cronQueue))
-    .waitForIdle();
 
   const response = await makeMetadataAPIRequest(graphqlOperation);
 

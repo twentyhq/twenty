@@ -23,6 +23,8 @@ import { JobsModule } from 'src/engine/core-modules/message-queue/jobs.module';
 import { QUEUE_DRIVER } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 
+import { relaxMigrationLockTimeoutForTests } from 'test/integration/utils/relax-migration-lock-timeout.util';
+
 interface TestingModuleCreatePreHook {
   (moduleBuilder: TestingModuleBuilder): TestingModuleBuilder;
 }
@@ -112,6 +114,10 @@ export const createApp = async (
   }
 
   await app.init();
+
+  if (isBullMqDriverEnabled) {
+    relaxMigrationLockTimeoutForTests(app);
+  }
 
   return app;
 };

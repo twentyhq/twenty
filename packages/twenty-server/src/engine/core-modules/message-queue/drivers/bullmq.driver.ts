@@ -8,7 +8,6 @@ import * as Sentry from '@sentry/node';
 import {
   type Job,
   type JobsOptions,
-  type JobType,
   MetricsTime,
   Queue,
   QueueEvents,
@@ -53,16 +52,6 @@ export class BullMQDriver
     MessageQueue,
     Worker
   >;
-
-  // Intentionally excludes 'delayed': repeatable cron jobs sit there permanently,
-  // so counting them would mean the queue is never idle. We only wait for jobs
-  // that are running or ready to run.
-  private readonly PENDING_JOB_STATUSES = [
-    'wait',
-    'active',
-    'prioritized',
-    'waiting-children',
-  ] as const satisfies JobType[];
 
   constructor(
     private options: BullMQDriverOptions,
@@ -286,54 +275,6 @@ export class BullMQDriver
     } finally {
       await queueEvents.close();
       await connection.quit();
-    }
-  }
-
-  // Resolves once every queue has no pending work, debounced by idleMs to bridge
-  // the gap between a job finishing and its continuation being enqueued.
-  async waitForIdle({
-    timeoutMs = 30_000,
-    idleMs = 250,
-    pollMs = 25,
-  }: {
-    timeoutMs?: number;
-    idleMs?: number;
-    pollMs?: number;
-  } = {}): Promise<void> {
-    const queues = Object.values(this.queueMap);
-    const deadline = Date.now() + timeoutMs;
-    let idleSince: number | null = null;
-
-    for (;;) {
-      const pendingCounts = await Promise.all(
-        queues.map(async (queue) => {
-          const counts = await queue.getJobCounts(...this.PENDING_JOB_STATUSES);
-
-          return this.PENDING_JOB_STATUSES.reduce(
-            (sum, status) => sum + (counts[status] ?? 0),
-            0,
-          );
-        }),
-      );
-      const totalPending = pendingCounts.reduce((sum, count) => sum + count, 0);
-
-      if (totalPending === 0) {
-        idleSince ??= Date.now();
-
-        if (Date.now() - idleSince >= idleMs) {
-          return;
-        }
-      } else {
-        idleSince = null;
-
-        if (Date.now() >= deadline) {
-          throw new Error(
-            `Queues did not become idle within ${timeoutMs}ms (pending: ${totalPending})`,
-          );
-        }
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, pollMs));
     }
   }
 

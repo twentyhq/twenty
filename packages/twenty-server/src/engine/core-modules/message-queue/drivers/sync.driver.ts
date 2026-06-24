@@ -34,10 +34,6 @@ export class SyncDriver implements MessageQueueDriver {
     await this.add(queueName, jobName, data);
   }
 
-  async waitForIdle(): Promise<void> {
-    // Jobs run inline with the sync driver, so the queues are always idle.
-  }
-
   async addCron<T extends MessageQueueJobData | undefined>({
     queueName,
     jobName,

@@ -20,11 +20,6 @@ export interface MessageQueueDriver {
     data: T,
     options?: QueueJobOptions,
   ): Promise<void>;
-  waitForIdle(options?: {
-    timeoutMs?: number;
-    idleMs?: number;
-    pollMs?: number;
-  }): Promise<void>;
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
