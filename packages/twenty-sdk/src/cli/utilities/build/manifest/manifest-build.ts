@@ -23,7 +23,7 @@ import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
-import { basename, extname, relative } from 'path';
+import { basename, extname, join, relative } from 'path';
 import { glob } from 'tinyglobby';
 import {
   type AgentManifest,
@@ -72,6 +72,16 @@ const loadAssets = async (appPath: string) => {
   });
 };
 
+const loadReadme = async (appPath: string): Promise<string | undefined> => {
+  try {
+    const content = await readFile(join(appPath, 'README.md'), 'utf-8');
+
+    return content.trim().length > 0 ? content : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 export const buildManifest = async (
   appPath: string,
 ): Promise<{
@@ -81,6 +91,7 @@ export const buildManifest = async (
   warnings: string[];
 }> => {
   const filePaths = await loadSources(appPath);
+  const readmeContent = await loadReadme(appPath);
   const errors: string[] = [];
   const warnings: string[] = [];
 
@@ -553,6 +564,7 @@ export const buildManifest = async (
           ...applicationConfig,
           defaultRoleUniversalIdentifier:
             resolvedDefaultRoleUniversalIdentifier,
+          aboutDescription: readmeContent,
           yarnLockChecksum: null,
           packageJsonChecksum: null,
           ...(postInstallLogicFunctions.length >= 1

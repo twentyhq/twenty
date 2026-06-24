@@ -19,9 +19,13 @@ import {
   type RecordOrMetadataGqlOperationSignature,
 } from 'src/engine/subscriptions/types/event-stream-data.type';
 
+const ACTIVE_STREAM_COUNT_REFRESH_MS = 5 * 60 * 1_000;
+
 @Injectable()
 export class EventStreamService implements OnModuleInit {
   private readonly logger = new Logger(EventStreamService.name);
+  private activeStreamCount = 0;
+  private activeStreamCountRefreshedAt = 0;
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineSubscriptions)
@@ -42,9 +46,19 @@ export class EventStreamService implements OnModuleInit {
   }
 
   async getTotalActiveStreamCount(): Promise<number> {
-    return this.cacheStorageService.scanAndCountSetMembers(
-      'workspace:*:activeStreams',
-    );
+    const now = Date.now();
+    const isStale =
+      now - this.activeStreamCountRefreshedAt >= ACTIVE_STREAM_COUNT_REFRESH_MS;
+
+    if (isStale) {
+      this.activeStreamCount =
+        await this.cacheStorageService.scanAndCountSetMembers(
+          'workspace:*:activeStreams',
+        );
+      this.activeStreamCountRefreshedAt = now;
+    }
+
+    return this.activeStreamCount;
   }
 
   async createEventStream({

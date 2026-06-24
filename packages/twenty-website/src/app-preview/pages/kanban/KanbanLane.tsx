@@ -50,7 +50,7 @@ const LaneTag = styled.span`
   border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.tag.text.gray};
   display: inline-flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.regular};
   height: 20px;
@@ -78,7 +78,7 @@ const LaneTag = styled.span`
 
 const LaneCount = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.regular};
   line-height: 1.4;
@@ -98,7 +98,7 @@ const AddCardButton = styled.div`
   align-items: center;
   color: ${THEME_LIGHT.font.color.tertiary};
   display: inline-flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.regular};
   gap: 4px;

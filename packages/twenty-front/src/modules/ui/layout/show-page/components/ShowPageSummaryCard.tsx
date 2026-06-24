@@ -15,6 +15,7 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;
@@ -148,7 +149,7 @@ export const ShowPageSummaryCard = ({
         hasIcon={isDefined(icon)}
       >
         <Avatar
-          avatarUrl={logoOrAvatar}
+          avatarUrl={getAbsoluteImageUrl(logoOrAvatar)}
           onClick={onUploadPicture ? handleAvatarClick : undefined}
           size="xl"
           placeholderColorSeed={id}

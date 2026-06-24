@@ -78,7 +78,7 @@ const ActiveBadgeLabel = styled.span`
   border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${colors.activeBadgeText};
   display: inline-flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.regular};
   height: 20px;

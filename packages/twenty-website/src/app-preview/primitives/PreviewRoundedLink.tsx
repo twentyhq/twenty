@@ -11,7 +11,7 @@ const LinkPill = styled.span`
   border-radius: ${THEME_LIGHT.border.radius.pill};
   color: ${THEME_LIGHT.font.color.primary};
   display: inline-flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.regular};
   gap: ${APP_PREVIEW_CHROME.spacingBasePx}px;

@@ -51,6 +51,7 @@ export const useMetadataErrorHandler = () => {
     viewSort: t`view sort`,
     applicationVariable: t`application variable`,
     connectionProvider: t`connection provider`,
+    searchFieldMetadata: t`search field metadata`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

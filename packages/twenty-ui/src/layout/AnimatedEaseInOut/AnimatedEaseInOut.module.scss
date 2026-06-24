@@ -1,0 +1,37 @@
+.panel {
+  --animated-ease-in-out-duration: #{duration(normal)};
+
+  overflow: hidden;
+  opacity: 1;
+  height: var(--collapsible-panel-height);
+  margin-top: var(--animated-ease-in-out-margin-top, 0);
+  margin-bottom: var(--animated-ease-in-out-margin-bottom, 0);
+  transition:
+    height var(--animated-ease-in-out-duration) ease-in-out,
+    opacity var(--animated-ease-in-out-duration) ease-in-out,
+    margin var(--animated-ease-in-out-duration) ease-in-out;
+
+  &[data-duration='instant'] {
+    --animated-ease-in-out-duration: #{duration(instant)};
+  }
+
+  &[data-duration='fast'] {
+    --animated-ease-in-out-duration: #{duration(fast)};
+  }
+
+  &[data-duration='slow'] {
+    --animated-ease-in-out-duration: #{duration(slow)};
+  }
+
+  &[data-starting-style] {
+    height: 0;
+    opacity: 0;
+  }
+
+  &[data-ending-style] {
+    height: 0;
+    opacity: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}

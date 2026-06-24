@@ -16,3 +16,17 @@
   max-height: 245px;
   max-width: 245px;
 }
+
+.movingImage {
+  position: absolute;
+  z-index: 2;
+  max-width: 130px;
+  max-height: 130px;
+  transform: translate(var(--parallax-x, 0), var(--parallax-y, 0));
+  transition: transform duration(normal) ease-out;
+}
+
+.movingImageLarge {
+  max-width: 185px;
+  max-height: 185px;
+}

@@ -1,13 +1,12 @@
 import { isNull, isUndefined } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { APPLICATION_ID_ENV_VAR_NAME } from 'src/logic-functions/constants/application-id-env-var-name';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
-import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
+import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import {
@@ -43,12 +42,24 @@ export const reapOrphanedMeetingBots = async ({
     return { scannedBotCount: 0, canceledExternalBotIds: [] };
   }
 
-  const currentApplicationId = getCurrentApplicationId();
-  const appManagedBots = listResult.bots.filter((bot) =>
-    isCurrentApplicationManagedBot({ bot, currentApplicationId }),
+  const currentWorkspaceId = getCurrentWorkspaceId();
+
+  if (isUndefined(currentWorkspaceId)) {
+    console.warn(
+      '[twenty-meeting-bot] cannot reap orphaned Recall bots: workspace id unavailable',
+    );
+
+    return {
+      scannedBotCount: listResult.bots.length,
+      canceledExternalBotIds: [],
+    };
+  }
+
+  const workspaceManagedBots = listResult.bots.filter((bot) =>
+    isCurrentWorkspaceManagedBot({ bot, currentWorkspaceId }),
   );
 
-  if (appManagedBots.length === 0) {
+  if (workspaceManagedBots.length === 0) {
     return {
       scannedBotCount: listResult.bots.length,
       canceledExternalBotIds: [],
@@ -58,7 +69,7 @@ export const reapOrphanedMeetingBots = async ({
   const callRecordings = await findCallRecordingsByIds(
     client,
     getUniqueSortedIds(
-      appManagedBots.map((bot) => getClaimedCallRecordingId(bot)),
+      workspaceManagedBots.map((bot) => getClaimedCallRecordingId(bot)),
     ),
   );
   const callRecordingsById = new Map(
@@ -66,7 +77,7 @@ export const reapOrphanedMeetingBots = async ({
   );
   const canceledExternalBotIds: string[] = [];
 
-  for (const bot of appManagedBots) {
+  for (const bot of workspaceManagedBots) {
     const claimedCallRecordingId = getClaimedCallRecordingId(bot);
     const callRecording = isUndefined(claimedCallRecordingId)
       ? undefined
@@ -99,36 +110,28 @@ const getClaimedCallRecordingId = (
   return normalizeOptionalString(claimedCallRecordingId);
 };
 
-const getClaimedApplicationId = (
+const getClaimedWorkspaceId = (
   bot: RecallScheduledBot,
 ): string | undefined => {
-  const claimedApplicationId = bot.metadata.twentyApplicationId;
+  const claimedWorkspaceId = bot.metadata.twentyWorkspaceId;
 
-  return normalizeOptionalString(claimedApplicationId);
+  return normalizeOptionalString(claimedWorkspaceId);
 };
 
-const getCurrentApplicationId = (): string | undefined =>
-  normalizeOptionalString(
-    getApplicationVariableValue(APPLICATION_ID_ENV_VAR_NAME),
-  );
-
-const isCurrentApplicationManagedBot = ({
+const isCurrentWorkspaceManagedBot = ({
   bot,
-  currentApplicationId,
+  currentWorkspaceId,
 }: {
   bot: RecallScheduledBot;
-  currentApplicationId: string | undefined;
+  currentWorkspaceId: string;
 }): boolean => {
   if (isUndefined(getClaimedCallRecordingId(bot))) {
     return false;
   }
 
-  const claimedApplicationId = getClaimedApplicationId(bot);
+  const claimedWorkspaceId = getClaimedWorkspaceId(bot);
 
-  return (
-    !isUndefined(currentApplicationId) &&
-    claimedApplicationId === currentApplicationId
-  );
+  return claimedWorkspaceId === currentWorkspaceId;
 };
 
 const isBotClaimed = ({

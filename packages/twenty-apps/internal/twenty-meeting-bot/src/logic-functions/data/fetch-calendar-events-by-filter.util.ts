@@ -1,5 +1,5 @@
 import { isString, isUndefined } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';

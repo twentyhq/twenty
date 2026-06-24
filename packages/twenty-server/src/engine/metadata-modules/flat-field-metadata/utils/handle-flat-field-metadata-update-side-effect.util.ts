@@ -15,8 +15,8 @@ import {
   type FieldMetadataUpdateIndexSideEffect,
   handleIndexChangesDuringFieldUpdate,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util';
-import { handleLabelIdentifierChangesDuringFieldUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-label-identifier-changes-during-field-update.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { recomputeSearchVectorOnFieldRename } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-search-vector-on-field-rename.util';
 import { type FlatViewFiltersToDeleteAndUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-filters-on-flat-field-metadata-options-update.util';
 import { type FlatViewGroupsToDeleteUpdateAndCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-groups-on-flat-field-metadata-options-update.util';
 
@@ -41,6 +41,7 @@ type HandleFlatFieldMetadataUpdateSideEffectArgs = FromTo<
     | 'flatViewGroupMaps'
     | 'flatViewMaps'
     | 'flatViewFieldMaps'
+    | 'flatSearchFieldMetadataMaps'
   > & {
     flatApplication: FlatApplication;
   };
@@ -71,6 +72,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
   flatViewGroupMaps,
   flatViewMaps,
   flatViewFieldMaps,
+  flatSearchFieldMetadataMaps,
   flatApplication,
 }: HandleFlatFieldMetadataUpdateSideEffectArgs): FieldInputTranspilationResult<FlatFieldMetadataUpdateSideEffects> => {
   const sideEffectResult = structuredClone(
@@ -143,24 +145,18 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
     flatEntityId: fromFlatFieldMetadata.objectMetadataId,
   });
 
-  const isLabelIdentifierFieldMetadata =
-    flatObjectMetadata.labelIdentifierFieldMetadataId ===
-    toFlatFieldMetadata.id;
+  const { flatSearchVectorFieldToUpdate } = recomputeSearchVectorOnFieldRename({
+    fromFlatFieldMetadata,
+    toFlatFieldMetadata,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    flatSearchFieldMetadataMaps,
+  });
 
-  if (isLabelIdentifierFieldMetadata) {
-    const flatSearchVectorFieldToUpdate =
-      handleLabelIdentifierChangesDuringFieldUpdate({
-        fromFlatFieldMetadata,
-        toFlatFieldMetadata,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      });
-
-    if (isDefined(flatSearchVectorFieldToUpdate)) {
-      sideEffectResult.flatFieldMetadatasToUpdate.push(
-        flatSearchVectorFieldToUpdate,
-      );
-    }
+  if (isDefined(flatSearchVectorFieldToUpdate)) {
+    sideEffectResult.flatFieldMetadatasToUpdate.push(
+      flatSearchVectorFieldToUpdate,
+    );
   }
 
   const {

@@ -1,9 +1,8 @@
 import { clsx } from 'clsx';
-import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 import { type IconComponent } from '@ui/icon';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './FloatingButton.module.scss';
 
@@ -37,7 +36,7 @@ export const FloatingButton = ({
   focus = false,
   to,
 }: FloatingButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   // Replaces the legacy Linaria `as` polymorphism: react-router Link when a
   // `to` is provided, a native button otherwise. Typed as any to forward all

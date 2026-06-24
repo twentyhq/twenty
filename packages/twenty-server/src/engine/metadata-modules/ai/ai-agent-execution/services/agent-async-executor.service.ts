@@ -25,6 +25,7 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/servi
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
+import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
@@ -42,6 +43,7 @@ import {
   extractCacheCreationTokensFromSteps,
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
+import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -148,7 +150,11 @@ export class AgentAsyncExecutorService {
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       let tools: ToolSet = {};
-      let providerOptions = {};
+      let providerOptions = getCallLevelProviderOptions({
+        sdkPackage: registeredModel.sdkPackage,
+        providerOptions: undefined,
+        promptCacheKey: agent?.id,
+      });
 
       if (agent) {
         const agentRoleId = await this.getAgentRoleId(
@@ -191,6 +197,7 @@ export class AgentAsyncExecutorService {
             toolProviderContext,
             {
               categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
+              excludeTools: [...OUTPUT_NAVIGATION_TOOL_NAMES],
               wrapWithErrorContext: false,
             },
           );
@@ -206,10 +213,14 @@ export class AgentAsyncExecutorService {
           ...nativeTools,
         };
 
-        providerOptions =
-          this.aiModelConfigService.getReasoningProviderOptions(
-            registeredModel,
-          );
+        providerOptions = getCallLevelProviderOptions({
+          sdkPackage: registeredModel.sdkPackage,
+          providerOptions:
+            this.aiModelConfigService.getReasoningProviderOptions(
+              registeredModel,
+            ),
+          promptCacheKey: agent?.id,
+        });
       }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
@@ -317,6 +328,11 @@ export class AgentAsyncExecutorService {
 
                  Please generate the structured output based on the execution results and context above.`,
           output: Output.object({ schema: jsonSchema(agentSchema) }),
+          providerOptions: getCallLevelProviderOptions({
+            sdkPackage: registeredModel.sdkPackage,
+            providerOptions: undefined,
+            promptCacheKey: agent?.id,
+          }),
           experimental_telemetry: AI_TELEMETRY_CONFIG,
           onStepFinish: async (step) => {
             const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =

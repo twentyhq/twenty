@@ -2,6 +2,12 @@ import { vi } from 'vitest';
 
 export const USER_WORKSPACE_ID = '11111111-1111-1111-1111-111111111111';
 
+type LinearFetchInit = {
+  method: string;
+  headers: Record<string, string>;
+  body: string;
+};
+
 export const buildConnection = (
   overrides: Partial<Record<string, unknown>> = {},
 ) => ({
@@ -18,19 +24,21 @@ export const buildConnection = (
   ...overrides,
 });
 
-// Stubs `fetch` to first answer the SDK's `/apps/connections/list` call, then
-// the handler's downstream Linear GraphQL request.
+// Stubs `fetch` to first answer the SDK's `listConnections` GraphQL call to
+// `/metadata`, then the handler's downstream Linear GraphQL request.
 export const stubConnectionsThenLinear = (
   connections: ReturnType<typeof buildConnection>[],
   linearJson: unknown,
 ) => {
-  const fetchMock = vi.fn(async (url: string) => {
-    if (url.endsWith('/apps/connections/list')) {
+  const fetchMock = vi.fn(async (url: string, _init: LinearFetchInit) => {
+    if (url.endsWith('/metadata')) {
+      const connectionsJson = { data: { appConnections: connections } };
+
       return {
         ok: true,
         status: 200,
-        json: async () => connections,
-        text: async () => JSON.stringify(connections),
+        json: async () => connectionsJson,
+        text: async () => JSON.stringify(connectionsJson),
       };
     }
 

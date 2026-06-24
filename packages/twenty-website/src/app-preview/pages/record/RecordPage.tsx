@@ -66,7 +66,7 @@ const RecordHeader = styled.div`
 `;
 
 const RecordName = styled.div`
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 20px;
   font-weight: 600;
   color: ${THEME_LIGHT.font.color.primary};
@@ -76,7 +76,7 @@ const RecordName = styled.div`
 
 const RecordMeta = styled.div`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   line-height: 1.4;
 `;
@@ -135,7 +135,7 @@ const FieldIcon = styled.span`
 
 const FieldLabel = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   line-height: 1.4;
   overflow: hidden;
@@ -149,7 +149,7 @@ const MoreToggle = styled.div`
   color: ${THEME_LIGHT.font.color.tertiary};
   cursor: default;
   display: flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   gap: 4px;
   line-height: 1.4;
@@ -182,7 +182,7 @@ const RelationSection = styled.div`
 
 const RelationTitle = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
@@ -215,7 +215,7 @@ const RelationItem = styled.div<{ $highlighted?: boolean; $muted?: boolean }>`
 
 const RelationName = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   line-height: 1.4;
   overflow: hidden;
@@ -290,7 +290,7 @@ const Tab = styled.div<{ $active?: boolean; $clickable?: boolean }>`
 
 const TabInner = styled.span`
   display: flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 500;
   gap: 4px;

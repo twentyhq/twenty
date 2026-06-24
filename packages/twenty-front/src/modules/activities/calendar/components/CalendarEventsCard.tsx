@@ -11,6 +11,7 @@ import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
+import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { H3Title } from 'twenty-ui/typography';
 import {
@@ -19,7 +20,6 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -49,7 +49,7 @@ export const CalendarEventsCard = () => {
   const targetRecord = useTargetRecord();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
+  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords, refetch } =
     useCustomResolver<TimelineCalendarEventsWithTotal>(
       getTimelineCalendarEventsFromObjectRecord,
       'getTimelineCalendarEventsFromObjectRecord',
@@ -57,6 +57,14 @@ export const CalendarEventsCard = () => {
       targetRecord,
       TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     );
+
+  useSubscribeTimelineToParticipantChanges({
+    queryId: `calendar-${targetRecord.id}`,
+    participantObjectNameSingular: 'calendarEventParticipant',
+    relatedPersonIds:
+      data?.getTimelineCalendarEventsFromObjectRecord?.relatedPersonIds ?? [],
+    refetch,
+  });
 
   const { timelineCalendarEvents, totalNumberOfCalendarEvents } =
     data?.getTimelineCalendarEventsFromObjectRecord ?? {};
@@ -88,10 +96,7 @@ export const CalendarEventsCard = () => {
   if (!firstQueryLoading && !timelineCalendarEvents?.length) {
     // TODO: change animated placeholder
     return (
-      <AnimatedPlaceholderEmptyContainer
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-      >
+      <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noMatchRecord" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>

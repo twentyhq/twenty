@@ -74,7 +74,8 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'fieldPermission':
     case 'webhook':
     case 'applicationVariable':
-    case 'connectionProvider': {
+    case 'connectionProvider':
+    case 'searchFieldMetadata': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: flatAction.flatEntity,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,

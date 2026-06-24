@@ -1408,7 +1408,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MARKETPLACE_SETTING_TAB_VISIBLE' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_CALL_RECORDING_ENABLED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MARKETPLACE_SETTING_TAB_VISIBLE' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_CALL_RECORDING_ENABLED' | 'IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1871,6 +1871,7 @@ export interface DomainValidRecords {
     id: Scalars['UUID']
     domain: Scalars['String']
     records: DomainRecord[]
+    isCustomDomainEnabled?: Scalars['Boolean']
     __typename: 'DomainValidRecords'
 }
 
@@ -2303,6 +2304,7 @@ export interface Webhook {
 
 export interface ToolIndexEntry {
     name: Scalars['String']
+    label: Scalars['String']
     description: Scalars['String']
     category: Scalars['String']
     objectName?: Scalars['String']
@@ -2612,7 +2614,7 @@ export interface CollectionHash {
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -4956,6 +4958,7 @@ export interface DomainValidRecordsGenqlSelection{
     id?: boolean | number
     domain?: boolean | number
     records?: DomainRecordGenqlSelection
+    isCustomDomainEnabled?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5422,6 +5425,7 @@ export interface WebhookGenqlSelection{
 
 export interface ToolIndexEntryGenqlSelection{
     name?: boolean | number
+    label?: boolean | number
     description?: boolean | number
     category?: boolean | number
     objectName?: boolean | number
@@ -9081,7 +9085,8 @@ export const enumFeatureFlagKey = {
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
    IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
    IS_SETTINGS_DISCOVERY_HERO_ENABLED: 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' as const,
-   IS_CALL_RECORDING_ENABLED: 'IS_CALL_RECORDING_ENABLED' as const
+   IS_CALL_RECORDING_ENABLED: 'IS_CALL_RECORDING_ENABLED' as const,
+   IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED: 'IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {
@@ -9258,7 +9263,8 @@ export const enumAllMetadataName = {
    frontComponent: 'frontComponent' as const,
    webhook: 'webhook' as const,
    applicationVariable: 'applicationVariable' as const,
-   connectionProvider: 'connectionProvider' as const
+   connectionProvider: 'connectionProvider' as const,
+   searchFieldMetadata: 'searchFieldMetadata' as const
 }
 
 export const enumEventLogTable = {

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
-import { useCallback, useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useCallback } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { RecordChip } from '@/object-record/components/RecordChip';
@@ -117,8 +117,6 @@ const StyledRecordTableDragAndDropPlaceholderCell = styled.div`
 `;
 
 export const RecordTableRecordGroupSection = () => {
-  const { theme } = useContext(ThemeContext);
-
   const currentRecordGroupId = useCurrentRecordGroupId();
 
   const shouldHide = useShouldHideRecordGroup(currentRecordGroupId);
@@ -220,8 +218,7 @@ export const RecordTableRecordGroupSection = () => {
             Icon={IconChevronDown}
             size="small"
             accent="secondary"
-            animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
-            transition={{ duration: theme.animation.duration.normal }}
+            rotate={!isRecordGroupTableSectionToggled ? -90 : 0}
           />
         </StyledAnimatedLightIconButtonContainer>
       </StyledChevronContainer>
