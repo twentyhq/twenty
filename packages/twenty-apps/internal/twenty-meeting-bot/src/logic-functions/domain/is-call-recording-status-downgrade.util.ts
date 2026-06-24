@@ -8,7 +8,7 @@ const CALL_RECORDING_STATUS_PROGRESSION: Record<CallRecordingStatus, number> = {
   [CallRecordingStatus.JOINING]: 1,
   [CallRecordingStatus.RECORDING]: 2,
   [CallRecordingStatus.PROCESSING]: 3,
-  [CallRecordingStatus.FAILED_UNKNOWN]: 4,
+  [CallRecordingStatus.FAILED]: 4,
   [CallRecordingStatus.COMPLETED]: 5,
 };
 

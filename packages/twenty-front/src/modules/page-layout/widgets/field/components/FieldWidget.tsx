@@ -9,7 +9,6 @@ import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junctio
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { CalendarEventParticipantsFieldWidget } from '@/page-layout/widgets/field/components/CalendarEventParticipantsFieldWidget';
 import { FieldWidgetDisplay } from '@/page-layout/widgets/field/components/FieldWidgetDisplay';
 import { FieldWidgetJunctionRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetJunctionRelationCard';
 import { FieldWidgetJunctionRelationField } from '@/page-layout/widgets/field/components/FieldWidgetJunctionRelationField';
@@ -27,7 +26,6 @@ import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelCont
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AnimatedPlaceholder,
@@ -100,19 +98,6 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   });
 
   const fieldDisplayMode = widget.configuration.fieldDisplayMode;
-
-  const isCalendarEventParticipantsField =
-    targetRecord.targetObjectNameSingular ===
-      CoreObjectNameSingular.CalendarEvent &&
-    fieldMetadataItem.name === 'calendarEventParticipants';
-
-  if (isCalendarEventParticipantsField) {
-    return (
-      <SidePanelProvider value={{ isInSidePanel }}>
-        <CalendarEventParticipantsFieldWidget recordId={targetRecord.id} />
-      </SidePanelProvider>
-    );
-  }
 
   if (isFieldMorphRelation(fieldDefinition)) {
     if (fieldDisplayMode === FieldDisplayMode.CARD) {

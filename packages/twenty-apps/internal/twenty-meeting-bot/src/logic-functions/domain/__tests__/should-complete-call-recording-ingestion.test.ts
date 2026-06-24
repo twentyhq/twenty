@@ -65,4 +65,38 @@ describe('shouldCompleteCallRecordingIngestion', () => {
       }),
     ).toBe(false);
   });
+
+  it('does not complete a persisted failed recording', () => {
+    expect(
+      shouldCompleteCallRecordingIngestion({
+        current: {
+          status: CallRecordingStatus.FAILED,
+          startedAt: '2026-06-10T09:00:00.000Z',
+          endedAt: '2026-06-10T10:00:00.000Z',
+          transcript: filledTranscript,
+          audio: filledAudio,
+          video: filledVideo,
+        },
+        updateData: {},
+      }),
+    ).toBe(false);
+  });
+
+  it('does not complete when the incoming update marks the recording as failed', () => {
+    expect(
+      shouldCompleteCallRecordingIngestion({
+        current: {
+          status: CallRecordingStatus.PROCESSING,
+          startedAt: '2026-06-10T09:00:00.000Z',
+          endedAt: '2026-06-10T10:00:00.000Z',
+          transcript: filledTranscript,
+          audio: filledAudio,
+          video: filledVideo,
+        },
+        updateData: {
+          status: CallRecordingStatus.FAILED,
+        },
+      }),
+    ).toBe(false);
+  });
 });

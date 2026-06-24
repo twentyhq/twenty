@@ -7,6 +7,8 @@ describe('isSocialLinkType', () => {
     expect(isSocialLinkType(LinkType.Twitter)).toBe(true);
     expect(isSocialLinkType(LinkType.Facebook)).toBe(true);
     expect(isSocialLinkType(LinkType.Instagram)).toBe(true);
+    expect(isSocialLinkType(LinkType.TikTok)).toBe(true);
+    expect(isSocialLinkType(LinkType.Bluesky)).toBe(true);
   });
 
   it('should return false for a generic url type', () => {

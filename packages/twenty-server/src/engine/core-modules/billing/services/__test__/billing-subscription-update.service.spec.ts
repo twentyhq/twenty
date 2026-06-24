@@ -1079,7 +1079,7 @@ describe('BillingSubscriptionUpdateService', () => {
               quantity: 1,
             },
           ],
-          proration_behavior: 'create_prorations',
+          proration_behavior: 'always_invoice',
         },
       );
       expect(
@@ -1183,7 +1183,7 @@ describe('BillingSubscriptionUpdateService', () => {
               quantity: 1,
             },
           ],
-          proration_behavior: 'create_prorations',
+          proration_behavior: 'always_invoice',
         },
       );
       expect(

@@ -87,7 +87,9 @@ export const SettingsToolDetail = () => {
 
   const isReadOnly = !isCustomTool || isManaged;
 
-  const name = isCustomTool ? logicFunction?.name : toolIdentifier;
+  const displayName = isCustomTool
+    ? logicFunction?.name
+    : (systemTool?.label ?? toolIdentifier);
   const description = isCustomTool
     ? logicFunction?.description
     : systemTool?.description;
@@ -122,9 +124,9 @@ export const SettingsToolDetail = () => {
     }
   }, 1_000);
 
-  const handleNameChange = (value: string) => {
-    setEditedName(value);
-    debouncedSaveName(value);
+  const handleNameChange = (newName: string) => {
+    setEditedName(newName);
+    debouncedSaveName(newName);
   };
 
   const debouncedSaveDescription = useDebouncedCallback(
@@ -174,11 +176,11 @@ export const SettingsToolDetail = () => {
       title={
         isCustomTool ? (
           <SettingsLogicFunctionLabelContainer
-            value={editedName ?? name ?? ''}
+            value={editedName ?? displayName ?? ''}
             onChange={handleNameChange}
           />
         ) : (
-          (name ?? '')
+          (displayName ?? '')
         )
       }
       links={[
@@ -190,7 +192,7 @@ export const SettingsToolDetail = () => {
           children: t`AI`,
           href: getSettingsPath(SettingsPath.AI, undefined, undefined, 'tools'),
         },
-        { children: editedName ?? name ?? '' },
+        { children: editedName ?? displayName ?? '' },
       ]}
     >
       <SettingsPageContainer>

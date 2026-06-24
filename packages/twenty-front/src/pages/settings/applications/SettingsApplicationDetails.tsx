@@ -47,6 +47,7 @@ import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
+import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
@@ -223,7 +224,11 @@ export const SettingsApplicationDetails = () => {
     (() => {
       const hasVariables = (application?.applicationVariables ?? []).length > 0;
       const hasConnectionProviders = connectionProviders.length > 0;
-      const hasNothingToConfigure = !hasVariables && !hasConnectionProviders;
+      const hasHttpTriggeredFunctions =
+        applicationHasHttpTriggeredFunctions(application);
+      const canShowFunctionDomain = hasHttpTriggeredFunctions;
+      const hasNothingToConfigure =
+        !hasVariables && !hasConnectionProviders && !canShowFunctionDomain;
 
       return {
         id: 'settings',

@@ -1,15 +1,8 @@
 import * as React from 'react';
 
+import { type LinkType } from '@ui/navigation/SocialLink/LinkType';
 import { RoundedLink } from '@ui/navigation/RoundedLink/RoundedLink';
 import { getDisplayValueByUrlType } from '@ui/utilities';
-
-export enum LinkType {
-  Url = 'url',
-  LinkedIn = 'linkedin',
-  Twitter = 'twitter',
-  Facebook = 'facebook',
-  Instagram = 'instagram',
-}
 
 type SocialLinkProps = {
   label: string;

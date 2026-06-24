@@ -45,6 +45,7 @@ export const useSettingsAgentToolsTable = () => {
         .map((tool) => ({
           identifier: tool.name,
           name: tool.name,
+          label: tool.label,
           description: tool.description,
           category: tool.category,
           objectName: tool.objectName,

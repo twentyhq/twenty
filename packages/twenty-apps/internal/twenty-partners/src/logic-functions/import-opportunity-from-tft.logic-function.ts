@@ -32,6 +32,7 @@ export const importOpportunityFromTftSchema = z.preprocess(dropNulls, z.object({
   currencyCode: z.string().optional(),
   closeDate: z.string().optional(),
   stage: z.string().optional(),
+  useCase: z.string().optional(),
   company: z
     .object({
       name: z.string().optional(),
@@ -197,6 +198,9 @@ export const handler = async (
     if (isNonEmptyString(input.closeDate)) opportunityData.closeDate = input.closeDate;
     if (isNonEmptyString(input.stage)) {
       opportunityData.stage = input.stage as CoreSchema.OpportunityStageEnum;
+    }
+    if (isNonEmptyString(input.useCase)) {
+      opportunityData.need = input.useCase.trim();
     }
     if (companyId !== undefined) opportunityData.companyId = companyId;
     if (pointOfContactId !== undefined) opportunityData.pointOfContactId = pointOfContactId;
