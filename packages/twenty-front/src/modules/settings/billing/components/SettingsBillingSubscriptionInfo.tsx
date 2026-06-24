@@ -11,11 +11,13 @@ import {
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
+import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
+import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { useHasNextBillingPhase } from '@/settings/billing/hooks/useHasNextBillingPhase';
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
@@ -40,12 +42,13 @@ import {
   IconCalendarRepeat,
   IconCircleX,
   IconCoins,
+  IconSum,
   IconTag,
   IconUsers,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title, Label } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { HorizontalSeparator, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   BillingPlanKey,
@@ -87,6 +90,12 @@ const StyledSwitchButtonContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledTotalGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const SettingsBillingSubscriptionInfo = ({
@@ -132,6 +141,7 @@ export const SettingsBillingSubscriptionInfo = ({
   const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount ?? null;
 
   const {
+    getIntervalLabel,
     getIntervalLabelAsAdjectiveCapitalize,
     confirmationModalSwitchToProMessage,
     confirmationModalSwitchToOrganizationMessage,
@@ -178,6 +188,70 @@ export const SettingsBillingSubscriptionInfo = ({
       item.billingProduct.metadata.productKey ===
       BillingProductKey.BASE_PRODUCT,
   )?.quantity as number | undefined;
+
+  const { formatPrices } = useFormatPrices();
+  const {
+    perSeatAmountCents,
+    seatsSubtotalCents,
+    creditsSubtotalCents,
+    totalCents,
+  } = useBillingSubscriptionCost();
+
+  const perSeatUnit = isMonthlyPlan ? t`mo` : t`yr`;
+  const totalIntervalWord = getIntervalLabel(isMonthlyPlan);
+  const creditsIntervalAdjective =
+    getIntervalLabelAsAdjectiveCapitalize(isMonthlyPlan);
+
+  const perSeatPriceDisplay = isDefined(perSeatAmountCents)
+    ? formatNumber(perSeatAmountCents / 100, { decimals: 2 })
+    : undefined;
+
+  const seatsInlinePrice =
+    isDefined(seats) && isDefined(perSeatPriceDisplay)
+      ? t`${seats} × $${perSeatPriceDisplay} / seat / ${perSeatUnit}`
+      : undefined;
+
+  const totalDisplay = isDefined(totalCents)
+    ? formatNumber(totalCents / 100, { decimals: 2 })
+    : undefined;
+
+  const seatsSubtotalDisplay = isDefined(seatsSubtotalCents)
+    ? formatNumber(seatsSubtotalCents / 100, { decimals: 2 })
+    : undefined;
+  const creditsSubtotalDisplay = isDefined(creditsSubtotalCents)
+    ? formatNumber(creditsSubtotalCents / 100, { decimals: 2 })
+    : undefined;
+
+  const totalRenewDate = isDefined(currentBillingSubscription.currentPeriodEnd)
+    ? getBeautifiedRenewDate()
+    : undefined;
+
+  const totalBreakdownText =
+    isDefined(seatsSubtotalDisplay) && isDefined(creditsSubtotalDisplay)
+      ? t`$${seatsSubtotalDisplay} seats + $${creditsSubtotalDisplay} credits`
+      : undefined;
+  const totalNextChargeText = isDefined(totalRenewDate)
+    ? t`next charge ${totalRenewDate}`
+    : undefined;
+  const totalHelperText = isDefined(totalBreakdownText)
+    ? [totalBreakdownText, totalNextChargeText].filter(isDefined).join(' · ')
+    : undefined;
+
+  const monthlyPerSeatPrice =
+    formatPrices[currentPlan.planKey]?.[SubscriptionInterval.Month];
+  const yearlyPerSeatPrice =
+    formatPrices[currentPlan.planKey]?.[SubscriptionInterval.Year];
+  const yearlyDiscountPercent =
+    isDefined(monthlyPerSeatPrice) &&
+    isDefined(yearlyPerSeatPrice) &&
+    monthlyPerSeatPrice > 0
+      ? Math.round((1 - yearlyPerSeatPrice / monthlyPerSeatPrice) * 100)
+      : 0;
+
+  const switchToYearlyTitle =
+    yearlyDiscountPercent > 0
+      ? t`Switch to Yearly · save ${yearlyDiscountPercent}%`
+      : t`Switch to Yearly`;
 
   // Loading states to avoid race conditions on actions
   const [isSwitchingInterval, setIsSwitchingInterval] = useState(false);
@@ -410,29 +484,39 @@ export const SettingsBillingSubscriptionInfo = ({
         <SubscriptionInfoRowContainer
           label={t`Seats`}
           Icon={IconUsers}
-          currentValue={seats}
+          currentValue={seatsInlinePrice ?? seats}
           nextValue={nextBillingSeats}
         />
         <SubscriptionInfoRowContainer
-          label={t`Credits by period`}
+          label={t`${creditsIntervalAdjective} credits`}
           Icon={IconCoins}
           currentValue={
             isDefined(currentCreditsByPeriod)
-              ? formatNumber(currentCreditsByPeriod, {
-                  abbreviate: true,
-                  decimals: 2,
-                })
+              ? formatNumber(currentCreditsByPeriod, { decimals: 2 })
               : undefined
           }
           nextValue={
             isDefined(nextCreditsByPeriod)
-              ? formatNumber(nextCreditsByPeriod, {
-                  abbreviate: true,
-                  decimals: 2,
-                })
+              ? formatNumber(nextCreditsByPeriod, { decimals: 2 })
               : undefined
           }
         />
+        {isDefined(totalCents) && (
+          <>
+            <HorizontalSeparator
+              noMargin
+              color={themeCssVariables.background.tertiary}
+            />
+            <StyledTotalGroup>
+              <SubscriptionInfoRowContainer
+                label={t`Total per ${totalIntervalWord}`}
+                Icon={IconSum}
+                currentValue={`$${totalDisplay}`}
+              />
+              {isDefined(totalHelperText) && <Label>{totalHelperText}</Label>}
+            </StyledTotalGroup>
+          </>
+        )}
       </SubscriptionInfoContainer>
       <StyledSwitchButtonContainer>
         {isTrialPeriod && hasPermissionToEndTrialPeriod && (
@@ -457,7 +541,7 @@ export const SettingsBillingSubscriptionInfo = ({
           (!nextInterval || currentInterval === nextInterval) && (
             <Button
               Icon={IconArrowUp}
-              title={t`Switch to Yearly`}
+              title={switchToYearlyTitle}
               variant="secondary"
               onClick={() =>
                 openModal(SWITCH_BILLING_INTERVAL_TO_YEARLY_MODAL_ID)

@@ -1,5 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
+import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
@@ -37,6 +39,13 @@ const StyledButtonContainer = styled.div`
   flex: 0 0 auto;
 `;
 
+const StyledSummary = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
+
 export const ResourceCreditPriceSelector = ({
   resourceCreditPrices,
   isTrialing = false,
@@ -46,6 +55,7 @@ export const ResourceCreditPriceSelector = ({
 }) => {
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
   const { formatNumber } = useNumberFormat();
+  const { getTotalCentsWithCreditsAmountCents } = useBillingSubscriptionCost();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -120,10 +130,29 @@ export const ResourceCreditPriceSelector = ({
     openModal(confirmModalId);
   };
 
-  const recurringInterval = getIntervalLabel(
+  const isMonthly =
     currentResourceCreditPrice?.recurringInterval ===
-      SubscriptionInterval.Month,
-  );
+    SubscriptionInterval.Month;
+  const intervalAdjective = getIntervalLabel(isMonthly, true);
+
+  const effectiveResourceCreditPrice =
+    selectedPrice ?? currentResourceCreditPrice;
+  const effectiveCreditUnitAmount = effectiveResourceCreditPrice?.unitAmount;
+  const effectiveCreditAmount = effectiveResourceCreditPrice?.creditAmount;
+
+  const newTotalCents = isDefined(effectiveCreditUnitAmount)
+    ? getTotalCentsWithCreditsAmountCents(effectiveCreditUnitAmount)
+    : undefined;
+  const newRolloverCap = isDefined(effectiveCreditAmount)
+    ? effectiveCreditAmount * 2
+    : undefined;
+
+  const newTotalDisplay = isDefined(newTotalCents)
+    ? formatNumber(newTotalCents / 100, { decimals: 2 })
+    : undefined;
+  const newRolloverCapDisplay = isDefined(newRolloverCap)
+    ? formatNumber(newRolloverCap, { decimals: 2 })
+    : undefined;
 
   const handleConfirmClick = async () => {
     if (!selectedPrice) return;
@@ -163,8 +192,8 @@ export const ResourceCreditPriceSelector = ({
   return (
     <>
       <H2Title
-        title={t`Resource credits`}
-        description={t`Number of new credits allocated every ${recurringInterval}`}
+        title={t`Add ${intervalAdjective} credits`}
+        description={t`Stacks on top of your plan's base credits and adjusts your ${intervalAdjective} bill.`}
       />
       <StyledRow>
         <StyledSelectContainer>
@@ -195,6 +224,24 @@ export const ResourceCreditPriceSelector = ({
           </StyledButtonContainer>
         )}
       </StyledRow>
+      {!isTrialing &&
+        (isDefined(newTotalDisplay) || isDefined(newRolloverCapDisplay)) && (
+          <StyledSummary>
+            {isDefined(newTotalDisplay) && (
+              <SettingsBillingLabelValueItem
+                label={t`New ${intervalAdjective} total`}
+                value={`$${newTotalDisplay}`}
+                isValueInPrimaryColor
+              />
+            )}
+            {isDefined(newRolloverCapDisplay) && (
+              <SettingsBillingLabelValueItem
+                label={t`New rollover cap`}
+                value={t`${newRolloverCapDisplay} credits`}
+              />
+            )}
+          </StyledSummary>
+        )}
       <ConfirmationModal
         modalInstanceId={confirmModalId}
         title={isUpgrade() ? t`Confirm upgrade` : t`Confirm downgrade`}
