@@ -261,6 +261,10 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 L'identificatore è il `universalIdentifier` del resolver dal tuo manifest. Registra quell'URL presso il provider.
 
+<Note>
+**L'applicazione deve essere rivendicata e installata nel workspace del proprietario.** Poiché il resolver viene eseguito nel **workspace del proprietario** (il workspace che possiede la registrazione dell'applicazione), un server route trigger funziona solo quando l'applicazione è stata *rivendicata*, cioè ha un workspace del proprietario, **e** quell'applicazione è **installata nel workspace del proprietario**. Finché entrambe non sono vere, il resolver non ha dove essere eseguito, quindi la route non può essere gestita. Un'applicazione che espone una funzione logica `serverRouteTriggerSettings` quindi non può essere elencata nel marketplace finché non è stata rivendicata e installata nel workspace del proprietario.
+</Note>
+
 **Contratto del resolver.** Il tipo `LogicFunctionConfig` dell'SDK impone questo a tempo di compilazione: non appena imposti `serverRouteTriggerSettings`, il tuo handler è vincolato a restituire `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o una `Promise` di questo valore). Il `workspaceId` deve essere un workspace in cui la funzione di destinazione è installata, altrimenti la richiesta viene rifiutata con `404`.
 
 | Campo                                    | Tipo                 | Note                                                                         |

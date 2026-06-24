@@ -261,6 +261,10 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 Der Bezeichner ist der `universalIdentifier` des Resolvers aus deinem Manifest. Registriere diese URL beim Provider.
 
+<Note>
+**Die Anwendung muss beansprucht und im Arbeitsbereich ihres Besitzers installiert werden.** Da der Resolver im **Owner-Arbeitsbereich** ausgeführt wird (dem Arbeitsbereich, der die Anwendungsregistrierung besitzt), funktioniert ein Server-Route-Trigger nur, wenn die Anwendung *beansprucht* wurde – d. h. sie einen Owner-Arbeitsbereich hat – **und** diese Anwendung **im Owner-Arbeitsbereich installiert ist**. Solange beides nicht zutrifft, hat der Resolver keinen Ausführungsort, sodass die Route nicht ausgeführt werden kann. Eine Anwendung, die eine `serverRouteTriggerSettings`-Logikfunktion bereitstellt, kann daher nicht im Marketplace aufgeführt werden, bevor sie beansprucht und im Owner-Arbeitsbereich installiert wurde.
+</Note>
+
 **Resolver-Vertrag.** Der `LogicFunctionConfig`-Typ des SDK erzwingt dies zur Compile-Zeit: Sobald du `serverRouteTriggerSettings` setzt, ist dein Handler darauf beschränkt, `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (oder ein `Promise` davon) zurückzugeben. Die `workspaceId` muss auf einen Workspace verweisen, in dem die Zielfunktion installiert ist, andernfalls wird die Anfrage mit `404` abgelehnt.
 
 | Feld                                     | Typ                 | Notizen                                                                                  |
@@ -653,7 +657,7 @@ console.log(uploadedFile);
 | `fileBuffer`                       | `Buffer`       | Der Rohinhalt der Datei                                               |
 | `filename`                         | `string`       | Der Name der Datei (wird für Speicherung und Anzeige verwendet)       |
 | `contentType`                      | `Zeichenkette` | MIME-Typ (standardmäßig `application/octet-stream`, wenn weggelassen) |
-| `fieldMetadataUniversalIdentifier` | `Zeichenkette` | Der `universalIdentifier` des Dateityp-Felds in Ihrem Objekt          |
+| `fieldMetadataUniversalIdentifier` | `string`       | Der `universalIdentifier` des Dateityp-Felds in Ihrem Objekt          |
 
 Hauptpunkte:
 * Sie verwendet den `universalIdentifier` des Feldes (nicht dessen arbeitsbereichsspezifische ID), sodass Ihr Upload-Code in jedem Arbeitsbereich funktioniert, in dem Ihre App installiert ist.

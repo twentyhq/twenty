@@ -262,6 +262,10 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 Identifikátor je `universalIdentifier` resolveru z vašeho manifestu. Zaregistrujte tuto adresu URL u poskytovatele.
 
+<Note>
+**Aplikace musí být převzata do vlastnictví a nainstalována v pracovním prostoru vlastníka.** Protože resolver běží v **pracovním prostoru vlastníka** (pracovní prostor, který vlastní registraci aplikace), spouštěč serverové trasy funguje pouze tehdy, když byla aplikace *převzata do vlastnictví* — tj. má pracovní prostor vlastníka — **a** tato aplikace je **nainstalována v pracovním prostoru vlastníka**. Dokud nejsou obě podmínky splněny, resolver nemá kde běžet, takže trasu nelze zpracovat. Aplikace, která zpřístupňuje logickou funkci `serverRouteTriggerSettings`, proto nemůže být uvedena na Marketplace, dokud není převzata do vlastnictví a nainstalována v pracovním prostoru vlastníka.
+</Note>
+
 **Smlouva resolveru.** Typ `LogicFunctionConfig` v SDK toto vynucuje v době kompilace: jakmile nastavíte `serverRouteTriggerSettings`, váš handler je omezen tak, aby vracel `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (nebo `Promise` této hodnoty). `workspaceId` musí být workspace, ve kterém je cílová funkce nainstalována, jinak je request odmítnut s chybou `404`.
 
 | Pole                                     | Typ                  | Poznámky                                                                       |

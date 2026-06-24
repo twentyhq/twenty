@@ -262,6 +262,10 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 Tanımlayıcı, manifest'inizdeki resolver'ın `universalIdentifier` değeridir. Bu URL’yi sağlayıcıya kaydedin.
 
+<Note>
+**Uygulama, sahip çalışma alanında sahiplenilip kurulmalıdır.** Çözücü **sahip çalışma alanında** (uygulama kaydına sahip olan çalışma alanı) çalıştığı için, bir sunucu rota tetikleyicisi yalnızca uygulama *sahiplenildikten* — yani bir sahip çalışma alanına sahiptir — **ve** o uygulama **sahip çalışma alanına kurulduğunda** çalışır. Her ikisi de doğru olana kadar çözücünün çalışacağı bir yer yoktur, bu yüzden rota çalıştırılamaz. Bu nedenle, `serverRouteTriggerSettings` mantık işlevini sunan bir uygulama, sahip çalışma alanında sahiplenilip kurulana kadar pazaryerinde listelenemez.
+</Note>
+
 **Resolver sözleşmesi.** SDK'nin `LogicFunctionConfig` türü bunu derleme zamanında zorunlu kılar: `serverRouteTriggerSettings`'i ayarladığınız anda, işleyicinizin `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (veya bunun bir `Promise`'i) döndürmesi gerekir. `workspaceId`, hedef fonksiyonun kurulu olduğu bir çalışma alanı olmalıdır, aksi takdirde istek `404` ile reddedilir.
 
 | Alan                                     | Tür                     | Notlar                                                                           |
