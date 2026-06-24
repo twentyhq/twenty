@@ -1,5 +1,5 @@
-import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
@@ -40,17 +40,10 @@ const buildObjectSystemFlatFieldMetadatas = ({
     updatedBy,
   } = PARTIAL_SYSTEM_FLAT_FIELD_METADATAS;
 
-  const getSystemFieldUniversalIdentifier = (fieldName: string) =>
-    getFieldUniversalIdentifier({
-      applicationUniversalIdentifier,
-      objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-      name: fieldName,
-    });
-
   return {
     id: {
       ...id,
-      universalIdentifier: getSystemFieldUniversalIdentifier(id.name),
+      universalIdentifier: v4(),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -58,7 +51,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     createdAt: {
       ...createdAt,
-      universalIdentifier: getSystemFieldUniversalIdentifier(createdAt.name),
+      universalIdentifier: v4(),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -66,7 +59,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     createdBy: {
       ...createdBy,
-      universalIdentifier: getSystemFieldUniversalIdentifier(createdBy.name),
+      universalIdentifier: v4(),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -74,7 +67,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     deletedAt: {
       ...deletedAt,
-      universalIdentifier: getSystemFieldUniversalIdentifier(deletedAt.name),
+      universalIdentifier: v4(),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -82,7 +75,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     position: {
       ...position,
-      universalIdentifier: getSystemFieldUniversalIdentifier(position.name),
+      universalIdentifier: v4(),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -90,7 +83,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     searchVector: {
       ...searchVector,
-      universalIdentifier: getSystemFieldUniversalIdentifier(searchVector.name),
+      universalIdentifier: v4(),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -99,7 +92,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     updatedAt: {
       ...updatedAt,
-      universalIdentifier: getSystemFieldUniversalIdentifier(updatedAt.name),
+      universalIdentifier: v4(),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -107,7 +100,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     updatedBy: {
       ...updatedBy,
-      universalIdentifier: getSystemFieldUniversalIdentifier(updatedBy.name),
+      universalIdentifier: v4(),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -133,11 +126,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           type: FieldMetadataType.TEXT,
           isLabelSyncedWithName: false,
           isUnique: false,
-          universalIdentifier: getFieldUniversalIdentifier({
-            applicationUniversalIdentifier,
-            objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-            name: 'name',
-          }),
+          universalIdentifier: v4(),
           name: 'name',
           label: 'Name',
           icon: 'IconAbc',

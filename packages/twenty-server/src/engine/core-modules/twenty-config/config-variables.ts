@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
+  IsDateString,
   IsDefined,
   IsNotEmpty,
   IsOptional,
@@ -695,6 +696,14 @@ export class ConfigVariables {
   LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION?: AwsRegion;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description: 'Enable instance-level (server) logic functions',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_SERVER_LOGIC_FUNCTION_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
     description:
       'Code interpreter driver type - LOCAL for development (unsafe), E2B for sandboxed execution',
@@ -1232,6 +1241,16 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
   PUBLIC_DOMAIN_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'ISO date from which HTTP logic functions are no longer served on the legacy /s/ route. Functions created on or after this date are only reachable on the isolated public domain (*.withtwenty.com). Only enforced when PUBLIC_DOMAIN_URL is set; leave empty to keep serving every function on /s/ (default for self-hosting).',
+    type: ConfigVariableType.STRING,
+  })
+  @IsDateString()
+  @IsOptional()
+  LOGIC_FUNCTION_LEGACY_ROUTE_CUTOFF: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

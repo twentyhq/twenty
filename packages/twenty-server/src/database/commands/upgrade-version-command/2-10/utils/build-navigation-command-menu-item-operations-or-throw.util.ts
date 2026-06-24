@@ -69,7 +69,6 @@ export const buildNavigationCommandMenuItemOperationsOrThrow = ({
         workspaceId,
         position: nextPosition++,
         now,
-        universalIdentifier: commandMenuItemUniversalIdentifier,
       }),
     );
   }

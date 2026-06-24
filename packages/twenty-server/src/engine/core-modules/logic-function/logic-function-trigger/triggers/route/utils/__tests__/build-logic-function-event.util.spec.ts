@@ -107,6 +107,29 @@ describe('filterRequestHeaders', () => {
       'content-type': 'application/json',
     });
   });
+
+  it('should forward every header when forwardAllHeaders is true', () => {
+    const requestHeaders = {
+      'content-type': 'application/json',
+      authorization: 'Bearer token123',
+      'x-custom-header': 'custom-value',
+      'x-array-header': ['a', 'b'],
+      'x-missing': undefined,
+    };
+
+    const result = filterRequestHeaders({
+      requestHeaders,
+      forwardedRequestHeaders: [],
+      forwardAllHeaders: true,
+    });
+
+    expect(result).toEqual({
+      'content-type': 'application/json',
+      authorization: 'Bearer token123',
+      'x-custom-header': 'custom-value',
+      'x-array-header': 'a, b',
+    });
+  });
 });
 
 describe('extractBody', () => {

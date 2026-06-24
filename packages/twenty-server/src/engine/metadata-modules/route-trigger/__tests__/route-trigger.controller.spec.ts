@@ -41,9 +41,8 @@ describe('RouteTriggerController', () => {
     const response = createResponseMock();
 
     handle.mockResolvedValue({
-      statusCode: 200,
-      headers: {},
-      body: { ok: true },
+      response: { statusCode: 200, headers: {}, body: { ok: true } },
+      isIsolatedOrigin: false,
     });
 
     await controller.post(request, response);
@@ -60,9 +59,12 @@ describe('RouteTriggerController', () => {
     const response = createResponseMock();
 
     handle.mockResolvedValue({
-      statusCode: 201,
-      headers: { 'Content-Type': 'text/html', 'Cache-Control': 'no-store' },
-      body: '<h1>Hi</h1>',
+      response: {
+        statusCode: 201,
+        headers: { 'Content-Type': 'text/html', 'Cache-Control': 'no-store' },
+        body: '<h1>Hi</h1>',
+      },
+      isIsolatedOrigin: false,
     });
 
     await controller.get({} as never, response);
@@ -79,18 +81,21 @@ describe('RouteTriggerController', () => {
     expect(response.send).toHaveBeenCalledWith('<h1>Hi</h1>');
   });
 
-  it('drops headers that are not in the allow-list', async () => {
+  it('drops headers that are not in the allow-list on the same-site /s/ route', async () => {
     const response = createResponseMock();
 
     handle.mockResolvedValue({
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'text/html',
-        'Set-Cookie': 'session=abc',
-        'Access-Control-Allow-Origin': '*',
-        'X-Custom': 'foo',
+      response: {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'text/html',
+          'Set-Cookie': 'session=abc',
+          'Access-Control-Allow-Origin': '*',
+          'X-Custom': 'foo',
+        },
+        body: '<h1>Hi</h1>',
       },
-      body: '<h1>Hi</h1>',
+      isIsolatedOrigin: false,
     });
 
     await controller.get({} as never, response);
@@ -110,10 +115,53 @@ describe('RouteTriggerController', () => {
     expect(response.setHeader).not.toHaveBeenCalledWith('X-Custom', 'foo');
   });
 
+  it('forwards every header when the request is served from an isolated origin', async () => {
+    const response = createResponseMock();
+
+    handle.mockResolvedValue({
+      response: {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'text/html',
+          'Permissions-Policy': 'camera=(self)',
+          'Cross-Origin-Opener-Policy': 'same-origin',
+          'Cross-Origin-Embedder-Policy': 'require-corp',
+          'Set-Cookie': 'session=abc',
+          'X-Custom': 'foo',
+        },
+        body: '<h1>Hi</h1>',
+      },
+      isIsolatedOrigin: true,
+    });
+
+    await controller.get({} as never, response);
+
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Permissions-Policy',
+      'camera=(self)',
+    );
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Cross-Origin-Opener-Policy',
+      'same-origin',
+    );
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Cross-Origin-Embedder-Policy',
+      'require-corp',
+    );
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Set-Cookie',
+      'session=abc',
+    );
+    expect(response.setHeader).toHaveBeenCalledWith('X-Custom', 'foo');
+  });
+
   it('sends an empty response when the body is nil', async () => {
     const response = createResponseMock();
 
-    handle.mockResolvedValue({ statusCode: 200, headers: {}, body: null });
+    handle.mockResolvedValue({
+      response: { statusCode: 200, headers: {}, body: null },
+      isIsolatedOrigin: false,
+    });
 
     await controller.get({} as never, response);
 
@@ -125,7 +173,10 @@ describe('RouteTriggerController', () => {
   it('defaults a string body content-type to text/plain when none is set', async () => {
     const response = createResponseMock();
 
-    handle.mockResolvedValue({ statusCode: 200, headers: {}, body: 'plain' });
+    handle.mockResolvedValue({
+      response: { statusCode: 200, headers: {}, body: 'plain' },
+      isIsolatedOrigin: false,
+    });
 
     await controller.get({} as never, response);
 
@@ -140,9 +191,8 @@ describe('RouteTriggerController', () => {
     const response = createResponseMock();
 
     handle.mockResolvedValue({
-      statusCode: 200,
-      headers: {},
-      body: { ok: true },
+      response: { statusCode: 200, headers: {}, body: { ok: true } },
+      isIsolatedOrigin: false,
     });
 
     await controller.get({} as never, response);
@@ -154,9 +204,12 @@ describe('RouteTriggerController', () => {
     const response = createResponseMock();
 
     handle.mockResolvedValue({
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/ld+json' },
-      body: { ok: true },
+      response: {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/ld+json' },
+        body: { ok: true },
+      },
+      isIsolatedOrigin: false,
     });
 
     await controller.get({} as never, response);

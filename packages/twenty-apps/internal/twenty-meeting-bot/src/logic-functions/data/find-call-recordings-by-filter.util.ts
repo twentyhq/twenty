@@ -20,6 +20,7 @@ type CallRecordingNode = {
   calendarEventId?: string | null;
   externalBotId?: string | null;
   externalRecordingId?: string | null;
+  meetingBotFailureReason?: string | null;
 };
 
 export const findCallRecordingsByFilter = async (
@@ -50,6 +51,7 @@ export const findCallRecordingsByFilter = async (
               calendarEventId: true,
               externalBotId: true,
               externalRecordingId: true,
+              meetingBotFailureReason: true,
             },
           },
         },
@@ -74,6 +76,9 @@ export const findCallRecordingsByFilter = async (
     externalBotId: normalizeOptionalString(callRecording.externalBotId),
     externalRecordingId: normalizeOptionalString(
       callRecording.externalRecordingId,
+    ),
+    meetingBotFailureReason: normalizeOptionalString(
+      callRecording.meetingBotFailureReason,
     ),
   }));
 };
