@@ -194,7 +194,13 @@ export class ApplicationTarballService {
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         workspaceId: params.ownerWorkspaceId,
-        fileId: appRegistration.tarballFileId ?? v4(),
+        // Always mint a fresh file id for the uploaded tarball. Reusing the
+        // registration's existing tarballFileId on a re-publish makes writeFile
+        // INSERT a core.file row whose id already exists (the previous tarball's
+        // row is still present), which fails with a primary-key collision
+        // (PK_36b46d232307066b3a2c9ea3a1d) and silently freezes the published
+        // version. The registration is repointed to the new file below.
+        fileId: v4(),
         settings: {
           isTemporaryFile: false,
           toDelete: false,
