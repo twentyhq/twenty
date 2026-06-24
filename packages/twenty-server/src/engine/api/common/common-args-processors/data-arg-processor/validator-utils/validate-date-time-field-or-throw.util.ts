@@ -6,7 +6,7 @@ import { isValid, parse } from 'date-fns';
 import { Temporal } from 'temporal-polyfill';
 import {
   isDefined,
-  parseDateTimeToInstantOrNull,
+  parseToInstantOrThrow,
   turnJSDateToPlainDate,
 } from 'twenty-shared/utils';
 
@@ -29,13 +29,7 @@ const NON_ISO_DATE_FORMATS = [
   'yyyy-MMM-dd',
 ];
 
-const normalizeToInstantStringOrNull = (value: string): string | null => {
-  const instant = parseDateTimeToInstantOrNull(value);
-
-  if (isDefined(instant)) {
-    return instant.toString();
-  }
-
+const parseNonIsoDateToInstantString = (value: string): string | null => {
   for (const format of NON_ISO_DATE_FORMATS) {
     const parsed = parse(value, format, new Date());
 
@@ -50,6 +44,16 @@ const normalizeToInstantStringOrNull = (value: string): string | null => {
   return null;
 };
 
+const normalizeDateTimeStringToInstantString = (
+  value: string,
+): string | null => {
+  try {
+    return parseToInstantOrThrow(value).toString();
+  } catch {
+    return parseNonIsoDateToInstantString(value);
+  }
+};
+
 export const validateDateTimeFieldOrThrow = (
   value: unknown,
   fieldName: string,
@@ -61,9 +65,9 @@ export const validateDateTimeFieldOrThrow = (
   }
 
   if (isString(value)) {
-    const normalizedValue = normalizeToInstantStringOrNull(value);
+    const normalizedValue = normalizeDateTimeStringToInstantString(value);
 
-    if (isString(normalizedValue)) {
+    if (isDefined(normalizedValue)) {
       return normalizedValue;
     }
   }

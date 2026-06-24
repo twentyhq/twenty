@@ -1,6 +1,6 @@
-import { parseDateTimeToInstantOrNull } from '../parseDateTimeToInstantOrNull';
+import { parseToInstantOrThrow } from '../parseToInstantOrThrow';
 
-describe('parseDateTimeToInstantOrNull', () => {
+describe('parseToInstantOrThrow', () => {
   it.each([
     ['2024-01-15T10:30:00Z', '2024-01-15T10:30:00Z'],
     ['2024-01-15T10:30:00.000Z', '2024-01-15T10:30:00Z'],
@@ -10,14 +10,14 @@ describe('parseDateTimeToInstantOrNull', () => {
     ['2024-01-15 10:30', '2024-01-15T10:30:00Z'],
     ['2024-01-15', '2024-01-15T00:00:00Z'],
     ['20240115', '2024-01-15T00:00:00Z'],
-  ])('should normalize %s to the instant %s', (input, expected) => {
-    expect(parseDateTimeToInstantOrNull(input)?.toString()).toBe(expected);
+  ])('should parse %s to the instant %s', (input, expected) => {
+    expect(parseToInstantOrThrow(input).toString()).toBe(expected);
   });
 
   it.each([['2024'], ['2024-01'], ['not-a-date'], [''], ['01/15/2024']])(
-    'should return null for the unparseable value %s',
+    'should throw for the unparseable value %s',
     (input) => {
-      expect(parseDateTimeToInstantOrNull(input)).toBeNull();
+      expect(() => parseToInstantOrThrow(input)).toThrow();
     },
   );
 });
