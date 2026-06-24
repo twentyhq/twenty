@@ -30,9 +30,12 @@ export const serializeApplicationVariableValue = (
       }
       return typeof value === 'string' ? value : JSON.stringify(value);
     case FieldMetadataType.RAW_JSON:
+    case FieldMetadataType.RICH_TEXT:
+      // RICH_TEXT carries an object payload ({ blocknote, markdown }); never
+      // coerce it through String() which would corrupt it to "[object Object]".
       return typeof value === 'string' ? value : JSON.stringify(value);
     default:
-      // TEXT, RICH_TEXT, SELECT, DATE, DATE_TIME
+      // TEXT, SELECT, DATE, DATE_TIME
       return typeof value === 'string' ? value : String(value);
   }
 };
@@ -67,6 +70,7 @@ export const deserializeApplicationVariableValue = (
         return [];
       }
     case FieldMetadataType.RAW_JSON:
+    case FieldMetadataType.RICH_TEXT:
       try {
         return JSON.parse(value) as Record<string, unknown>;
       } catch {

@@ -78,8 +78,12 @@ export const SettingsApplicationVariableInput = ({
     case FieldMetadataType.BOOLEAN:
       return (
         <FormBooleanFieldInput
-          defaultValue={value === 'true'}
-          onChange={(newValue) => onChange(newValue === true ? 'true' : 'false')}
+          defaultValue={value === '' ? undefined : value === 'true'}
+          onChange={(newValue) =>
+            onChange(
+              newValue === true ? 'true' : newValue === false ? 'false' : '',
+            )
+          }
           readonly={disabled}
         />
       );
