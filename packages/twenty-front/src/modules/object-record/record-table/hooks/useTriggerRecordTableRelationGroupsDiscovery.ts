@@ -87,6 +87,10 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
       );
 
       if (!isDefined(result)) {
+        setRecordTableRelationGroupsDiscoveredFieldId(
+          recordIndexGroupFieldMetadataItem.id,
+        );
+
         return false;
       }
 
@@ -95,6 +99,10 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
       const groups = result.data?.[queryFieldName];
 
       if (!isDefined(groups)) {
+        setRecordTableRelationGroupsDiscoveredFieldId(
+          recordIndexGroupFieldMetadataItem.id,
+        );
+
         return false;
       }
 
