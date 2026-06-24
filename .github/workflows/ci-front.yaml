@@ -200,7 +200,7 @@ jobs:
       TASK_CACHE_KEY: front-task-${{ matrix.task }}
     strategy:
       matrix:
-        task: [lint, typecheck, test]
+        task: [lint, typecheck, test, lingui:extract]
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
