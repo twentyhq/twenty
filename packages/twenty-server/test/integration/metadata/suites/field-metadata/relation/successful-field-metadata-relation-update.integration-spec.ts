@@ -143,9 +143,7 @@ describe('Field metadata relation update should succeed', () => {
     expect(data.updateOneField.name).toBe('leadEmployer');
   });
 
-  // Regression test for https://github.com/twentyhq/twenty/issues/21751:
-  // a non-nullable relation has no literal defaultValue, so the update-path
-  // "defaultValue cannot be null for non-nullable fields" check used to reject it.
+  // Regression test for https://github.com/twentyhq/twenty/issues/21751: a non-nullable relation has no literal defaultValue and must still be updatable.
   it('should successfully update a non-nullable relation field', async () => {
     const {
       data: {
