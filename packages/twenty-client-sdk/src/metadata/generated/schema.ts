@@ -4,8 +4,8 @@ export type Scalars = {
     UUID: string,
     DateTime: string,
     Boolean: boolean,
-    Float: number,
     JSON: Record<string, unknown>,
+    Float: number,
     Int: number,
     ConnectionCursor: any,
     JSONObject: any,
@@ -32,6 +32,8 @@ export interface ApplicationRegistrationVariable {
     description: Scalars['String']
     isSecret: Scalars['Boolean']
     isRequired: Scalars['Boolean']
+    type: Scalars['String']
+    options?: Scalars['JSON']
     isFilled: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -246,6 +248,8 @@ export interface ApplicationVariable {
     value: Scalars['String']
     description: Scalars['String']
     isSecret: Scalars['Boolean']
+    type: Scalars['String']
+    options?: Scalars['JSON']
     __typename: 'ApplicationVariable'
 }
 
@@ -475,6 +479,7 @@ export interface Application {
     applicationRegistrationId?: Scalars['UUID']
     canBeUninstalled: Scalars['Boolean']
     defaultRoleId?: Scalars['String']
+    /** @deprecated Custom settings tabs are no longer supported. This field is ignored. */
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     defaultLogicFunctionRole?: Role
     agents: Agent[]
@@ -1424,6 +1429,8 @@ export interface ApplicationRegistrationVariableDTO {
     isSecret: Scalars['Boolean']
     isRequired: Scalars['Boolean']
     isFilled: Scalars['Boolean']
+    type: Scalars['String']
+    options?: Scalars['JSON']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'ApplicationRegistrationVariableDTO'
@@ -3028,6 +3035,8 @@ export interface ApplicationRegistrationVariableGenqlSelection{
     description?: boolean | number
     isSecret?: boolean | number
     isRequired?: boolean | number
+    type?: boolean | number
+    options?: boolean | number
     isFilled?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -3237,6 +3246,8 @@ export interface ApplicationVariableGenqlSelection{
     value?: boolean | number
     description?: boolean | number
     isSecret?: boolean | number
+    type?: boolean | number
+    options?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3508,6 +3519,7 @@ export interface ApplicationGenqlSelection{
     applicationRegistrationId?: boolean | number
     canBeUninstalled?: boolean | number
     defaultRoleId?: boolean | number
+    /** @deprecated Custom settings tabs are no longer supported. This field is ignored. */
     settingsCustomTabFrontComponentId?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
     agents?: AgentGenqlSelection
@@ -4476,6 +4488,8 @@ export interface ApplicationRegistrationVariableDTOGenqlSelection{
     isSecret?: boolean | number
     isRequired?: boolean | number
     isFilled?: boolean | number
+    type?: boolean | number
+    options?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number

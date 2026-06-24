@@ -29,10 +29,17 @@ type ApplicationRegistrationVariable {
   description: String!
   isSecret: Boolean!
   isRequired: Boolean!
+  type: String!
+  options: JSON
   isFilled: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
 type ApplicationRegistration {
   id: UUID!
@@ -113,11 +120,6 @@ enum RowLevelPermissionPredicateOperand {
   IS_TODAY
   VECTOR_SEARCH
 }
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
 
 type ObjectPermission {
   objectMetadataId: UUID!
@@ -296,6 +298,8 @@ type ApplicationVariable {
   value: String!
   description: String!
   isSecret: Boolean!
+  type: String!
+  options: JSON
 }
 
 type AuthToken {
@@ -714,7 +718,7 @@ type Application {
   applicationRegistrationId: UUID
   canBeUninstalled: Boolean!
   defaultRoleId: String
-  settingsCustomTabFrontComponentId: UUID
+  settingsCustomTabFrontComponentId: UUID @deprecated(reason: "Custom settings tabs are no longer supported. This field is ignored.")
   defaultLogicFunctionRole: Role
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
@@ -1794,6 +1798,8 @@ type ApplicationRegistrationVariableDTO {
   isSecret: Boolean!
   isRequired: Boolean!
   isFilled: Boolean!
+  type: String!
+  options: JSON
   createdAt: DateTime!
   updatedAt: DateTime!
 }
