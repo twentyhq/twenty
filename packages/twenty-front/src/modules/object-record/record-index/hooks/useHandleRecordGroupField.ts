@@ -107,12 +107,11 @@ export const useHandleRecordGroupField = () => {
         } satisfies ViewGroup);
       }
 
-      const newViewGroupsList = [
-        ...view.viewGroups.filter(
-          (_group) => view.mainGroupByFieldMetadataId === fieldMetadataItem.id,
-        ),
-        ...viewGroupsToCreate,
-      ];
+      const isSameField =
+        view.mainGroupByFieldMetadataId === fieldMetadataItem.id;
+      const keptGroups = isSameField ? view.viewGroups : [];
+
+      const newViewGroupsList = [...keptGroups, ...viewGroupsToCreate];
 
       setRecordGroupsFromViewGroups({
         viewId: view.id,
