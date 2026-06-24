@@ -3,14 +3,11 @@ import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRel
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 
 export const getRecordGroupByFieldColumnName = (
-  field: Pick<FieldMetadataItem, 'type' | 'relation' | 'name' | 'settings'>,
+  field: Pick<FieldMetadataItem, 'type' | 'relation' | 'name'>,
 ): string => {
   if (!isManyToOneRelationField(field)) {
     return field.name;
   }
 
-  return (
-    field.settings?.joinColumnName ??
-    computeRelationGqlFieldJoinColumnName({ name: field.name })
-  );
+  return computeRelationGqlFieldJoinColumnName({ name: field.name });
 };
