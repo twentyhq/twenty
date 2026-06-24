@@ -5,13 +5,11 @@ import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-funct
 import { ServerRouteTriggerController } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.controller';
 import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.service';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([LogicFunctionEntity]),
     LogicFunctionExecutorModule,
-    WorkspaceCacheModule,
   ],
   controllers: [ServerRouteTriggerController],
   providers: [ServerRouteTriggerService],

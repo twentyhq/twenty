@@ -12,7 +12,6 @@ import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const RESOLVER_UID = 'resolver-uid';
 const TARGET_UID = 'target-uid';
@@ -51,13 +50,10 @@ const buildRequest = (body: object | null = {}): Request =>
 describe('ServerRouteTriggerService', () => {
   let service: ServerRouteTriggerService;
   let logicFunctionRepository: jest.Mocked<
-    Pick<Repository<LogicFunctionEntity>, 'find'>
+    Pick<Repository<LogicFunctionEntity>, 'find' | 'findOne'>
   >;
   let logicFunctionExecutorService: jest.Mocked<
     Pick<LogicFunctionExecutorService, 'execute'>
-  >;
-  let workspaceCacheService: jest.Mocked<
-    Pick<WorkspaceCacheService, 'getOrRecompute'>
   >;
   let twentyConfigService: jest.Mocked<Pick<TwentyConfigService, 'get'>>;
 
@@ -69,6 +65,7 @@ describe('ServerRouteTriggerService', () => {
 
   const buildResolverRow = (overrides: Record<string, unknown> = {}) => ({
     id: 'resolver-id',
+    universalIdentifier: RESOLVER_UID,
     workspaceId: 'owner-ws',
     serverRouteTriggerSettings: { forwardedRequestHeaders: ['x-test'] },
     application: {
@@ -80,6 +77,12 @@ describe('ServerRouteTriggerService', () => {
   beforeEach(() => {
     logicFunctionRepository = {
       find: jest.fn().mockResolvedValue([buildResolverRow()]),
+      findOne: jest
+        .fn()
+        // resolver lookup inside runFunction
+        .mockResolvedValueOnce({ id: 'resolver-id' })
+        // target lookup inside runFunction
+        .mockResolvedValueOnce({ id: 'target-id' }),
     };
     logicFunctionExecutorService = {
       execute: jest
@@ -95,25 +98,11 @@ describe('ServerRouteTriggerService', () => {
         // target returns the final response body
         .mockResolvedValueOnce(buildExecuteResult({ ok: true })),
     };
-    workspaceCacheService = {
-      getOrRecompute: jest.fn().mockResolvedValue({
-        flatLogicFunctionMaps: {
-          byUniversalIdentifier: {
-            'target-id': {
-              id: 'target-id',
-              universalIdentifier: TARGET_UID,
-              deletedAt: null,
-            },
-          },
-        },
-      }),
-    };
     twentyConfigService = { get: jest.fn().mockReturnValue(true) };
 
     service = new ServerRouteTriggerService(
       logicFunctionRepository as unknown as Repository<LogicFunctionEntity>,
       logicFunctionExecutorService as unknown as LogicFunctionExecutorService,
-      workspaceCacheService as unknown as WorkspaceCacheService,
       twentyConfigService as unknown as TwentyConfigService,
     );
   });
@@ -197,11 +186,15 @@ describe('ServerRouteTriggerService', () => {
 
     await handle();
 
-    expect(logicFunctionExecutorService.execute).toHaveBeenNthCalledWith(
+    // runFunction's internal findOne is called with the
+    // (universalIdentifier, workspaceId) of the owner-workspace copy.
+    expect(logicFunctionRepository.findOne).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({
-        logicFunctionId: 'owner-copy',
-        workspaceId: 'owner-ws',
+        where: expect.objectContaining({
+          universalIdentifier: RESOLVER_UID,
+          workspaceId: 'owner-ws',
+        }),
       }),
     );
   });
@@ -242,10 +235,16 @@ describe('ServerRouteTriggerService', () => {
   });
 
   it('throws LOGIC_FUNCTION_NOT_FOUND when the target named by the resolver is missing in the resolved workspace', async () => {
-    workspaceCacheService.getOrRecompute.mockResolvedValue({
-      flatLogicFunctionMaps: { byUniversalIdentifier: {} },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
+    logicFunctionRepository.findOne.mockReset();
+    logicFunctionRepository.findOne
+      // resolver lookup succeeds
+      .mockResolvedValueOnce({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        id: 'resolver-id',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
+      // target lookup returns null
+      .mockResolvedValueOnce(null);
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
@@ -308,16 +307,6 @@ describe('ServerRouteTriggerService', () => {
         }),
       }),
     );
-  });
-
-  it('surfaces a workspace-cache failure on the target lookup as PLATFORM_ERROR (not LOGIC_FUNCTION_NOT_FOUND)', async () => {
-    workspaceCacheService.getOrRecompute.mockRejectedValue(
-      new Error('cache outage'),
-    );
-
-    await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR,
-    });
   });
 
   it('maps a LogicFunctionExecutionException(RATE_LIMIT_EXCEEDED) to the server-route rate-limit code', async () => {

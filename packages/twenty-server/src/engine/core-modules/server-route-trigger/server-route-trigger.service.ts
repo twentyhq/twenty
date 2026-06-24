@@ -22,7 +22,6 @@ import {
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ResolverResult = {
   workspaceId: string;
@@ -38,7 +37,6 @@ export class ServerRouteTriggerService {
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -85,30 +83,19 @@ export class ServerRouteTriggerService {
     // resolver is the single point of authorization — the URL only carries
     // the resolver's identifier.
     const resolverResult = await this.runFunction({
-      logicFunctionId: resolver.id,
+      logicFunctionUniversalIdentifier: resolver.universalIdentifier,
       workspaceId: resolver.workspaceId,
       payload: event,
     });
     const resolved = this.parseResolverResult(resolverResult);
 
-    // Step 2: look up the target in the resolved workspace via the cache,
-    // then run it. The target is a regular workspace logic function —
-    // addressed by the universalIdentifier the resolver returned.
-    const targetLogicFunctionId = await this.findCachedLogicFunctionId({
-      workspaceId: resolved.workspaceId,
+    // Step 2: run the target in the resolved workspace. The target is a
+    // regular workspace logic function — addressed by the
+    // universalIdentifier the resolver returned. `(universalIdentifier,
+    // workspaceId)` is unique, so we don't need a separate id lookup.
+    const targetResult = await this.runFunction({
       logicFunctionUniversalIdentifier:
         resolved.targetLogicFunctionUniversalIdentifier,
-    });
-
-    if (!isDefined(targetLogicFunctionId)) {
-      throw new ServerRouteTriggerException(
-        `Target logic function ${resolved.targetLogicFunctionUniversalIdentifier} not found in workspace ${resolved.workspaceId}`,
-        ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-      );
-    }
-
-    const targetResult = await this.runFunction({
-      logicFunctionId: targetLogicFunctionId,
       workspaceId: resolved.workspaceId,
       payload: resolved.payload ?? event,
     });
@@ -189,63 +176,41 @@ export class ServerRouteTriggerService {
     };
   }
 
-  private async findCachedLogicFunctionId({
-    workspaceId,
-    logicFunctionUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    logicFunctionUniversalIdentifier: string;
-  }): Promise<string | undefined> {
-    let flatLogicFunctionMaps;
-
-    try {
-      ({ flatLogicFunctionMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatLogicFunctionMaps',
-        ]));
-    } catch (error) {
-      // Cache outage / DB failure / recompute bug. Surface as platform
-      // error so the caller sees a 5xx instead of a misleading 404.
-      this.logger.error(
-        `Failed to read flatLogicFunctionMaps for workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-        error instanceof Error ? error.stack : undefined,
-      );
-      throw new ServerRouteTriggerException(
-        `Failed to read logic functions for workspace ${workspaceId}`,
-        ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR,
-      );
-    }
-
-    const logicFunction = Object.values(
-      flatLogicFunctionMaps.byUniversalIdentifier,
-    ).find(
-      (candidate) =>
-        isDefined(candidate) &&
-        candidate.universalIdentifier === logicFunctionUniversalIdentifier &&
-        !isDefined(candidate.deletedAt),
-    );
-
-    return isDefined(logicFunction) ? logicFunction.id : undefined;
-  }
-
   private async runFunction({
-    logicFunctionId,
+    logicFunctionUniversalIdentifier,
     workspaceId,
     payload,
   }: {
-    logicFunctionId: string;
+    logicFunctionUniversalIdentifier: string;
     workspaceId: string;
     payload: object;
   }): Promise<{ data: object | null; error?: { errorMessage: string } }> {
+    // `(universalIdentifier, workspaceId)` is unique — resolve the row
+    // straight from the repository rather than threading DB ids through
+    // the call chain.
+    const logicFunction = await this.logicFunctionRepository.findOne({
+      where: {
+        universalIdentifier: logicFunctionUniversalIdentifier,
+        workspaceId,
+      },
+    });
+
+    if (!isDefined(logicFunction)) {
+      throw new ServerRouteTriggerException(
+        `Logic function ${logicFunctionUniversalIdentifier} not found in workspace ${workspaceId}`,
+        ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
     try {
       return await this.logicFunctionExecutorService.execute({
-        logicFunctionId,
+        logicFunctionId: logicFunction.id,
         workspaceId,
         payload,
       });
     } catch (error) {
       this.logger.error(
-        `Server logic function ${logicFunctionId} failed in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        `Server logic function ${logicFunction.id} failed in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
       );
       throw new ServerRouteTriggerException(
