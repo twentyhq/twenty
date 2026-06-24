@@ -63,6 +63,12 @@ type FieldMetadataFilesSettings = {
 };
 
 type FieldMetadataTsVectorSettings = {
+  /**
+   * @deprecated The searchVector expression is derived from the object's
+   * searchFieldMetadata rows (the source of truth) at provisioning and on every
+   * edit. This stored value is kept only as a denormalized cache for the DDL
+   * boundary; do not author or read it as configuration.
+   */
   asExpression?: string;
   generatedType?: 'STORED' | 'VIRTUAL';
 };

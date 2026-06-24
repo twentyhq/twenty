@@ -441,9 +441,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isUIEditable: false,
       settings: {
         generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
-        ),
       },
     },
     standardObjectMetadataRelatedEntityIds,

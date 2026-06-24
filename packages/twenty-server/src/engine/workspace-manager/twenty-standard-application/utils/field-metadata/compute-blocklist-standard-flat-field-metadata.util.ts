@@ -192,9 +192,6 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       isNullable: true,
       settings: {
         generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
-        ),
       },
     },
     standardObjectMetadataRelatedEntityIds,
