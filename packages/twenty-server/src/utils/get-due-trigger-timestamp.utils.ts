@@ -1,6 +1,6 @@
 import { CronExpressionParser } from 'cron-parser';
 
-export const shouldTriggerNow = (
+export const getDueTriggerTimestamp = (
   pattern: string,
   now: Date,
   rootCronIntervalMs = 60_000,

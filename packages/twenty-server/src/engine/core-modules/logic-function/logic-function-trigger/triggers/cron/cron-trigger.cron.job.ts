@@ -5,9 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -21,11 +19,8 @@ import {
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { shouldTriggerNow } from 'src/utils/should-trigger-now.utils';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
-
-const CRON_DISPATCH_DEDUP_TTL_MS = 2 * 60_000;
 
 @Processor(MessageQueue.cronQueue)
 export class CronTriggerCronJob {
@@ -38,8 +33,7 @@ export class CronTriggerCronJob {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineLock)
-    private readonly cacheStorageService: CacheStorageService,
+    private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -80,23 +74,16 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          const triggerTimestamp = shouldTriggerNow(cronSettings.pattern, now);
+          const shouldDispatch =
+            await this.cronTriggerDeduplicationService.shouldDispatch(
+              `logic-function-cron:${activeWorkspace.id}:${logicFunction.id}`,
+              cronSettings.pattern,
+              now,
+            );
 
-          if (triggerTimestamp === null) {
+          if (!shouldDispatch) {
             continue;
           }
-
-          const dedupKey = `logic-function-cron:${activeWorkspace.id}:${logicFunction.id}:${triggerTimestamp}`;
-
-          if (await this.cacheStorageService.get<boolean>(dedupKey)) {
-            continue;
-          }
-
-          await this.cacheStorageService.set(
-            dedupKey,
-            true,
-            CRON_DISPATCH_DEDUP_TTL_MS,
-          );
 
           await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
             LogicFunctionTriggerJob.name,
