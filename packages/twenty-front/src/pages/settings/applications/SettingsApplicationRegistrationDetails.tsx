@@ -20,6 +20,7 @@ import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -99,7 +100,7 @@ export const SettingsApplicationRegistrationDetails = () => {
           <Avatar
             type="app"
             size="md"
-            avatarUrl={registration.logoUrl ?? undefined}
+            avatarUrl={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
             placeholder={registration.name}
             placeholderColorSeed={registration.name}
           />

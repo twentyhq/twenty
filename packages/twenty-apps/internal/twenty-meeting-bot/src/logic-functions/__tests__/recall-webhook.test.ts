@@ -2,7 +2,9 @@ import { createHmac } from 'crypto';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { recallWebhookRouteHandler } from 'src/logic-functions/recall-webhook';
+import recallWebhookLogicFunction, {
+  recallWebhookRouteHandler,
+} from 'src/logic-functions/recall-webhook';
 
 const getApplicationVariableValueMock = vi.hoisted(() => vi.fn());
 const handleRecallWebhookMock = vi.hoisted(() => vi.fn());
@@ -24,6 +26,7 @@ vi.mock('twenty-client-sdk/core', () => ({
 
 const SECRET_BYTES = Buffer.from('entry-test-secret');
 const SECRET = `whsec_${SECRET_BYTES.toString('base64')}`;
+const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 
 type RecallWebhookRoutePayload = Parameters<
   typeof recallWebhookRouteHandler
@@ -51,6 +54,21 @@ const buildSignedHeaders = (rawBody: string): Record<string, string> => {
   };
 };
 
+const buildRecordingDoneWebhookBody = () => ({
+  event: 'recording.done',
+  data: {
+    bot: {
+      id: 'recall-bot-1',
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+      },
+    },
+    recording: {
+      id: 'recall-recording-1',
+    },
+  },
+});
+
 describe('recallWebhookRouteHandler', () => {
   beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -58,6 +76,29 @@ describe('recallWebhookRouteHandler', () => {
     getApplicationVariableValueMock.mockReturnValue(SECRET);
     handleRecallWebhookMock.mockReset();
     handleRecallWebhookMock.mockResolvedValue({ status: 'updated' });
+  });
+
+  it('declares a server webhook resolver for Recall bot workspace metadata', () => {
+    expect(recallWebhookLogicFunction.success).toBe(true);
+    expect(
+      recallWebhookLogicFunction.config.httpRouteTriggerSettings,
+    ).toBeUndefined();
+    expect(
+      recallWebhookLogicFunction.config.serverWebhookTriggerSettings,
+    ).toEqual({
+      workspaceIdResolver: {
+        source: 'body',
+        path: 'data.bot.metadata.twentyWorkspaceId',
+      },
+      forwardedRequestHeaders: [
+        'webhook-id',
+        'webhook-timestamp',
+        'webhook-signature',
+        'svix-id',
+        'svix-timestamp',
+        'svix-signature',
+      ],
+    });
   });
 
   it('responds 500 when the webhook secret is not configured', async () => {
@@ -133,19 +174,20 @@ describe('recallWebhookRouteHandler', () => {
   });
 
   it('dispatches a correctly signed payload to the handler', async () => {
-    const rawBody = JSON.stringify({ event: 'recording.done' });
+    const body = buildRecordingDoneWebhookBody();
+    const rawBody = JSON.stringify(body);
 
     const result = await recallWebhookRouteHandler(
       buildRoutePayload({
         rawBody,
-        body: { event: 'recording.done' },
+        body,
         headers: buildSignedHeaders(rawBody),
       }),
     );
 
     expect(handleRecallWebhookMock).toHaveBeenCalledTimes(1);
     expect(handleRecallWebhookMock).toHaveBeenCalledWith(
-      expect.objectContaining({ body: { event: 'recording.done' } }),
+      expect.objectContaining({ body }),
     );
     expect(result).toEqual({ status: 'updated' });
   });

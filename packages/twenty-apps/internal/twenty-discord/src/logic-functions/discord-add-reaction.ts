@@ -1,5 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
+import { jsonSchemaToInputSchema } from 'src/logic-functions/utils/json-schema-to-input-schema';
 
 import { DISCORD_ADD_REACTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { discordAddReactionHandler } from 'src/logic-functions/handlers/discord-add-reaction-handler';

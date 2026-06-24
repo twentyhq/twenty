@@ -86,6 +86,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
       flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
+      flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -96,6 +97,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           'flatViewFieldMaps',
           'flatViewMaps',
           'flatCommandMenuItemMaps',
+          'flatSearchFieldMetadataMaps',
         ],
       },
     );
@@ -107,6 +109,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatIndexMetadatasToUpdate,
       flatViewFieldsToCreate,
       flatViewFieldsToUpdate,
+      searchFieldMetadatasToCreate,
     } = fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities({
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -114,6 +117,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatIndexMaps: existingFlatIndexMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
+      flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
     });
 
     const existingFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -173,6 +177,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToCreate: flatViewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: flatViewFieldsToUpdate,
+            },
+            searchFieldMetadata: {
+              flatEntityToCreate: searchFieldMetadatasToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
             },
             commandMenuItem: {
               flatEntityToCreate: [],
@@ -484,6 +493,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const {
       flatObjectMetadataToCreate,
       flatIndexMetadataToCreate,
+      flatSearchFieldMetadataToCreate,
       flatFieldMetadataToCreateOnObject,
       relationTargetFlatFieldMetadataToCreate,
     } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
@@ -601,6 +611,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             pageLayoutWidget: {
               flatEntityToCreate:
                 flatDefaultRecordPageLayoutsToCreate.pageLayoutWidgets,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            searchFieldMetadata: {
+              flatEntityToCreate: flatSearchFieldMetadataToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },

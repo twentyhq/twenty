@@ -1,6 +1,7 @@
 import { type MouseEvent } from 'react';
 
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { Avatar } from 'twenty-ui/data-display';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 
@@ -40,7 +41,7 @@ export const MentionMenuListItem = ({
         <Avatar
           placeholder={label}
           placeholderColorSeed={recordId}
-          avatarUrl={imageUrl}
+          avatarUrl={getAbsoluteImageUrl(imageUrl)}
           type={getAvatarType(objectNameSingular) ?? 'rounded'}
           size="sm"
         />

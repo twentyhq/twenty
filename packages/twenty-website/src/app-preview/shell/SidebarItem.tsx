@@ -94,7 +94,7 @@ const ItemLabel = styled.span<{ $active?: boolean }>`
     $active
       ? THEME_LIGHT.font.color.primary
       : THEME_LIGHT.font.color.secondary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
@@ -106,7 +106,7 @@ const ItemLabel = styled.span<{ $active?: boolean }>`
 
 const ItemMeta = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;

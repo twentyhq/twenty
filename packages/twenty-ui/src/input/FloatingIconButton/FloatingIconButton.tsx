@@ -1,8 +1,8 @@
 import { clsx } from 'clsx';
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { type IconComponent } from '@ui/icon';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './FloatingIconButton.module.scss';
 
@@ -40,7 +40,7 @@ export const FloatingIconButton = ({
   onClick,
   isActive,
 }: FloatingIconButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <button

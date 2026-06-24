@@ -72,6 +72,40 @@ describe('formatUpgradeErrorForStorage', () => {
     expect(stripStack(formatUpgradeErrorForStorage(error))).toMatchSnapshot();
   });
 
+  it('should surface driver details of a QueryFailedError nested in an EXECUTION_FAILED', () => {
+    const driverError = new Error(
+      'duplicate key value violates unique constraint "IDX_PAGE_LAYOUT_WIDGET_UNIVERSAL_ID"',
+    );
+
+    Object.assign(driverError, {
+      code: '23505',
+      detail:
+        'Key (universalIdentifier)=(f473b435-e2d4-4928-8d90-1db0094389f7) already exists.',
+    });
+
+    const action = {
+      type: 'create',
+      metadataName: 'pageLayoutWidget',
+      flatEntity: {
+        universalIdentifier: 'f473b435-e2d4-4928-8d90-1db0094389f7',
+      },
+    } as unknown as AllUniversalWorkspaceMigrationAction;
+
+    const error = new WorkspaceMigrationRunnerException({
+      action,
+      errors: {
+        metadata: new QueryFailedError(
+          'INSERT INTO "core"."pageLayoutWidget" VALUES ($1)',
+          [],
+          driverError,
+        ),
+      },
+      code: WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED,
+    });
+
+    expect(stripStack(formatUpgradeErrorForStorage(error))).toMatchSnapshot();
+  });
+
   it('should format a WorkspaceMigrationBuilderException', () => {
     const report = {
       objectMetadata: [

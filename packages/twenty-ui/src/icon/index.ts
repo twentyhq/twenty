@@ -489,5 +489,4 @@ export {
 export { ThinkingOrbitLoaderIcon } from './components/ThinkingOrbitLoaderIcon';
 export { useIcons } from './hooks/useIcons';
 export { IconsProvider } from './providers/IconsProvider';
-export { iconsState } from './states/iconsState';
 export type { IconComponentProps, IconComponent } from './types/IconComponent';

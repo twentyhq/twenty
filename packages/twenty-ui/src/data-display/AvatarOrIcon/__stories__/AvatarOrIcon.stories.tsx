@@ -1,16 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconBuildingSkyscraper, IconUser } from '@ui/icon';
-import {
-  AVATAR_URL_MOCK,
-  ComponentDecorator,
-  JotaiRootDecorator,
-} from '@ui/testing';
+import { AVATAR_URL_MOCK, ComponentDecorator } from '@ui/testing';
 import { AvatarOrIcon } from '@ui/data-display/AvatarOrIcon/AvatarOrIcon';
 
 const meta: Meta<typeof AvatarOrIcon> = {
   title: 'UI/Data Display/AvatarOrIcon',
   component: AvatarOrIcon,
-  decorators: [ComponentDecorator, JotaiRootDecorator],
+  decorators: [ComponentDecorator],
 };
 
 export default meta;

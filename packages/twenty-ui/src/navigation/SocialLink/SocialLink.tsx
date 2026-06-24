@@ -8,6 +8,7 @@ export enum LinkType {
   LinkedIn = 'linkedin',
   Twitter = 'twitter',
   Facebook = 'facebook',
+  Instagram = 'instagram',
 }
 
 type SocialLinkProps = {

@@ -32,7 +32,7 @@ const TaskCheckbox = styled.span<{ $done?: boolean }>`
 
 const TaskTitle = styled.span<{ $done?: boolean }>`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 500;
   overflow: hidden;
@@ -44,7 +44,7 @@ const TaskTitle = styled.span<{ $done?: boolean }>`
 
 const TaskBody = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -63,7 +63,7 @@ const DueDate = styled.span`
   align-items: center;
   color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   gap: 4px;
   white-space: nowrap;
@@ -76,7 +76,7 @@ const TargetChip = styled.span`
   border-radius: 50px;
   color: ${THEME_LIGHT.font.color.primary};
   display: inline-flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   gap: 4px;
   max-width: 160px;

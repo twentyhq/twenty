@@ -1779,6 +1779,7 @@ enum FeatureFlagKey {
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_SETTINGS_DISCOVERY_HERO_ENABLED
   IS_CALL_RECORDING_ENABLED
+  IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2230,6 +2231,7 @@ type DomainValidRecords {
   id: UUID!
   domain: String!
   records: [DomainRecord!]!
+  isCustomDomainEnabled: Boolean
 }
 
 type UpsertRowLevelPermissionPredicatesResult {
@@ -2990,6 +2992,7 @@ enum AllMetadataName {
   webhook
   applicationVariable
   connectionProvider
+  searchFieldMetadata
 }
 
 type MinimalObjectMetadata {

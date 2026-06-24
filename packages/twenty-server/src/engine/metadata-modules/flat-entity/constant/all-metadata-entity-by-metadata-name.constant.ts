@@ -31,6 +31,7 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
+import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 
 export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   viewField: ViewFieldEntity,
@@ -63,4 +64,5 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   applicationVariable: ApplicationVariableEntity,
   viewSort: ViewSortEntity,
   connectionProvider: ConnectionProviderEntity,
+  searchFieldMetadata: SearchFieldMetadataEntity,
 } as const satisfies Record<AllMetadataName, EntityTarget<ObjectLiteral>>;

@@ -6,8 +6,7 @@ import {
 
 import { ColorSample, type ColorSampleVariant } from '@ui/data-display';
 import { type ThemeColor } from '@ui/theme';
-import { ThemeContext } from '@ui/theme-constants';
-import { useContext } from 'react';
+import { useTheme } from '@ui/theme-constants';
 import {
   DEFAULT_COLOR_LABELS,
   type ColorLabels,
@@ -35,7 +34,7 @@ export const MenuItemSelectColor = ({
   variant = 'default',
   colorLabels = DEFAULT_COLOR_LABELS,
 }: MenuItemSelectColorProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledMenuItemSelect

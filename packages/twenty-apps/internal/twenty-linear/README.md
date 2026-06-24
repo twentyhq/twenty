@@ -53,27 +53,3 @@ this — the OAuth credentials are already configured.
 
 Workspace users will now be able to add Linear connections from the
 **Connections** tab as described above.
-
-### 3. (Developers only) Building the app from source
-
-If you're working on this app rather than installing the published version:
-
-```bash
-cd packages/twenty-apps/internal/twenty-linear
-
-# For day-to-day development (publish + install + watch in one):
-yarn twenty dev
-
-# Manual publish flow (publish registers the app, install activates it):
-yarn twenty app:publish --private
-yarn twenty app:install
-```
-
-`twenty dev` is recommended for iteration — it publishes, installs, and
-watches for changes in one command. Use `twenty app:publish --private` +
-`twenty app:install` when you want to control each step separately (e.g.
-deploying to a production server without auto-installing).
-
-This serves as the reference implementation for Twenty's
-`defineConnectionProvider({ type: 'oauth' })` flow — useful as a template
-when adding OAuth integrations for other providers.

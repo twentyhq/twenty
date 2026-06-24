@@ -1,10 +1,6 @@
-import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
-import { type FlatViewFilter } from '@/metadata-store/types/FlatViewFilter';
-import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterGroup';
-import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
-import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
+import { buildRecordTableWidgetViewSnapshotFromView } from '@/page-layout/widgets/record-table/utils/buildRecordTableWidgetViewSnapshotFromView';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { type View } from '@/views/types/View';
 import { useStore } from 'jotai';
@@ -41,44 +37,7 @@ export const useInitializeRecordTableWidgetViewDraft = ({
       return;
     }
 
-    const {
-      viewFields,
-      viewFilters,
-      viewFilterGroups,
-      viewSorts,
-      viewGroups: _viewGroups,
-      ...viewProps
-    } = view;
-
-    const flatViewFields: FlatViewField[] = viewFields.map((field) => ({
-      ...field,
-      viewId: view.id,
-    }));
-
-    const flatViewFilters: FlatViewFilter[] = viewFilters.map((filter) => ({
-      ...filter,
-      viewId: view.id,
-    }));
-
-    const flatViewFilterGroups: FlatViewFilterGroup[] = (
-      viewFilterGroups ?? []
-    ).map((group) => ({
-      ...group,
-      viewId: view.id,
-    }));
-
-    const flatViewSorts: FlatViewSort[] = viewSorts.map((sort) => ({
-      ...sort,
-      viewId: view.id,
-    }));
-
-    const snapshot: RecordTableWidgetViewSnapshot = {
-      view: viewProps,
-      viewFields: flatViewFields,
-      viewFilters: flatViewFilters,
-      viewFilterGroups: flatViewFilterGroups,
-      viewSorts: flatViewSorts,
-    };
+    const snapshot = buildRecordTableWidgetViewSnapshotFromView(view);
 
     store.set(recordTableWidgetViewDraftState, (prev) => ({
       ...prev,

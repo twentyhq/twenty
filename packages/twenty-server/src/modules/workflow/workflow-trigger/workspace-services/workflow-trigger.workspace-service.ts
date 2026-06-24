@@ -283,6 +283,7 @@ export class WorkflowTriggerWorkspaceService {
           await workflowVersionRepository.update(
             { id: workflow.lastPublishedVersionId },
             { status: WorkflowVersionStatus.ARCHIVED },
+            undefined,
             queryRunner.manager,
           );
         }
@@ -290,6 +291,7 @@ export class WorkflowTriggerWorkspaceService {
         await workflowRepository.update(
           { id: workflow.id },
           { lastPublishedVersionId: workflowVersion.id },
+          undefined,
           queryRunner.manager,
         );
       }
@@ -317,6 +319,7 @@ export class WorkflowTriggerWorkspaceService {
       await workflowVersionRepository.update(
         { id: workflowVersion.id },
         { status: WorkflowVersionStatus.ACTIVE },
+        undefined,
         queryRunner.manager,
       );
 
@@ -374,6 +377,7 @@ export class WorkflowTriggerWorkspaceService {
       await workflowVersionRepository.update(
         { id: workflowVersion.id },
         { status: WorkflowVersionStatus.DEACTIVATED },
+        undefined,
         queryRunner.manager,
       );
 

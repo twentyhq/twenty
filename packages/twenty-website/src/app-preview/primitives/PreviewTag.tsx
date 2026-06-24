@@ -10,7 +10,7 @@ const TagPill = styled.span<{ $background: string; $color: string }>`
   border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${({ $color }) => $color};
   display: inline-flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.regular};
   height: ${THEME_LIGHT.spacing(5)};

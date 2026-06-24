@@ -17,7 +17,7 @@ const BranchLabelPill = styled.div<{ $centered?: boolean }>`
   border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${colors.textLight};
   display: inline-flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 11px;
   font-weight: ${THEME_LIGHT.font.weight.semiBold};
   height: 20px;

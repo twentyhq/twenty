@@ -1,22 +1,21 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "extends": ["../../.oxlintrc.base.json"],
-  "plugins": ["typescript", "import", "unicorn"],
+  "plugins": ["react", "typescript", "import", "unicorn"],
   "categories": {
     "correctness": "off"
   },
   "ignorePatterns": ["node_modules", "dist"],
   "rules": {
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "no-console": "off",
     "no-control-regex": "off",
     "no-debugger": "error",
     "no-duplicate-imports": "error",
     "no-undef": "off",
     "no-unused-vars": "off",
     "no-redeclare": "off",
-
     "import/no-duplicates": "error",
-
     "typescript/no-redeclare": "error",
     "typescript/ban-ts-comment": "error",
     "typescript/consistent-type-imports": [
@@ -35,6 +34,7 @@
       }
     ],
     "typescript/no-empty-function": "off",
+    "typescript/no-explicit-any": "off",
     "typescript/no-unused-vars": [
       "warn",
       {
@@ -44,6 +44,15 @@
         "argsIgnorePattern": "^_"
       }
     ],
-    "typescript/no-explicit-any": "off"
+    "react/no-unescaped-entities": "off",
+    "react/prop-types": "off",
+    "react/jsx-key": "off",
+    "react/display-name": "off",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-no-useless-fragment": "off",
+    "react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   }
 }

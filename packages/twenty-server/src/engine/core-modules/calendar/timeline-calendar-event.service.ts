@@ -88,6 +88,7 @@ export class TimelineCalendarEventService {
           return {
             totalNumberOfCalendarEvents,
             timelineCalendarEvents: [],
+            relatedPersonIds: personIds,
           };
         }
 
@@ -253,6 +254,7 @@ export class TimelineCalendarEventService {
         return {
           totalNumberOfCalendarEvents,
           timelineCalendarEvents,
+          relatedPersonIds: personIds,
         };
       },
       authContext,
@@ -284,6 +286,7 @@ export class TimelineCalendarEventService {
       return {
         totalNumberOfCalendarEvents: 0,
         timelineCalendarEvents: [],
+        relatedPersonIds: [],
       };
     }
 

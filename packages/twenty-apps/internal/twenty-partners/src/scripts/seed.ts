@@ -1,6 +1,6 @@
 // Single demo seed for the twenty-partners app. Idempotent UPSERT by natural key.
 // Covers: partners across ALL validationStage values, companies + people,
-// opportunities across ALL 10 matchStatus values, and partner quotes across ALL
+// opportunities across ALL stage values, and partner quotes across ALL
 // 5 statuses (each linked to a partner + opportunity).
 //
 // Run from this app directory, against a running Twenty server with the app
@@ -77,7 +77,7 @@ const PERSONS = [
 type Opp = {
   name: string;
   companyName: string;
-  matchStatus: string;
+  stage: string;
   partnerSlug?: string;
   numberOfSeats?: number;
   hostingType?: string;
@@ -85,18 +85,18 @@ type Opp = {
   subscriptionFrequency?: string;
 };
 
-// One+ opportunity for every matchStatus value (all 10 covered).
+// One+ opportunity for every stage value (all 5 covered).
 const OPPORTUNITIES: Opp[] = [
-  { name: 'Acme RE — Q3 renewal', companyName: 'Acme Real Estate', matchStatus: 'TO_BE_MATCHED', numberOfSeats: 20, hostingType: 'CLOUD', subscriptionType: 'PRO', subscriptionFrequency: 'ANNUAL' },
-  { name: 'Helix Bio — investor reporting', companyName: 'Helix Bio', matchStatus: 'MANUAL_MATCH', numberOfSeats: 12, hostingType: 'CLOUD', subscriptionType: 'ORG', subscriptionFrequency: 'MONTHLY' },
-  { name: 'Helix Bio — pipeline review', companyName: 'Helix Bio', matchStatus: 'AUTO_MATCH', numberOfSeats: 8 },
-  { name: 'Acme RE — CRM rollout', companyName: 'Acme Real Estate', matchStatus: 'MATCHED', partnerSlug: 'elevate-consulting', numberOfSeats: 30, hostingType: 'CLOUD', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },
-  { name: 'Sunrise — APAC fleet CRM', companyName: 'Sunrise Logistics', matchStatus: 'INTRODUCED_TO_A_PARTNER', partnerSlug: 'nine-dots-ventures', numberOfSeats: 50, hostingType: 'SELF_HOSTING', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },
-  { name: 'Helix Bio — clinical trials CRM', companyName: 'Helix Bio', matchStatus: 'WORKING_WITH_A_PARTNER', partnerSlug: 'netzero-systems', numberOfSeats: 25, hostingType: 'CLOUD', subscriptionType: 'ORG', subscriptionFrequency: 'MONTHLY' },
-  { name: 'Helix Bio — self-host evaluation', companyName: 'Helix Bio', matchStatus: 'IMPLEMENTING', partnerSlug: 'meridian-craft', numberOfSeats: 40, hostingType: 'SELF_HOSTING', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },
-  { name: 'Sunrise — LATAM expansion', companyName: 'Sunrise Logistics', matchStatus: 'WON', partnerSlug: 'nine-dots-ventures', numberOfSeats: 60, hostingType: 'CLOUD', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },
-  { name: 'Acme RE — annual review', companyName: 'Acme Real Estate', matchStatus: 'RECONNECT_LATER', partnerSlug: 'w3villa-technologies', numberOfSeats: 15 },
-  { name: 'Sunrise — vendor onboarding', companyName: 'Sunrise Logistics', matchStatus: 'LOST', numberOfSeats: 10, hostingType: 'CLOUD', subscriptionType: 'PRO', subscriptionFrequency: 'MONTHLY' },
+  { name: 'Acme RE — Q3 renewal', companyName: 'Acme Real Estate', stage: 'NEW', numberOfSeats: 20, hostingType: 'CLOUD', subscriptionType: 'PRO', subscriptionFrequency: 'ANNUAL' },
+  { name: 'Helix Bio — investor reporting', companyName: 'Helix Bio', stage: 'NEW', numberOfSeats: 12, hostingType: 'CLOUD', subscriptionType: 'ORG', subscriptionFrequency: 'MONTHLY' },
+  { name: 'Helix Bio — pipeline review', companyName: 'Helix Bio', stage: 'SCREENING', numberOfSeats: 8 },
+  { name: 'Acme RE — CRM rollout', companyName: 'Acme Real Estate', stage: 'MEETING', partnerSlug: 'elevate-consulting', numberOfSeats: 30, hostingType: 'CLOUD', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },
+  { name: 'Sunrise — APAC fleet CRM', companyName: 'Sunrise Logistics', stage: 'MEETING', partnerSlug: 'nine-dots-ventures', numberOfSeats: 50, hostingType: 'SELF_HOSTING', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },
+  { name: 'Helix Bio — clinical trials CRM', companyName: 'Helix Bio', stage: 'PROPOSAL', partnerSlug: 'netzero-systems', numberOfSeats: 25, hostingType: 'CLOUD', subscriptionType: 'ORG', subscriptionFrequency: 'MONTHLY' },
+  { name: 'Helix Bio — self-host evaluation', companyName: 'Helix Bio', stage: 'PROPOSAL', partnerSlug: 'meridian-craft', numberOfSeats: 40, hostingType: 'SELF_HOSTING', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },
+  { name: 'Sunrise — LATAM expansion', companyName: 'Sunrise Logistics', stage: 'CUSTOMER', partnerSlug: 'nine-dots-ventures', numberOfSeats: 60, hostingType: 'CLOUD', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },
+  { name: 'Acme RE — annual review', companyName: 'Acme Real Estate', stage: 'CUSTOMER', partnerSlug: 'w3villa-technologies', numberOfSeats: 15 },
+  { name: 'Sunrise — vendor onboarding', companyName: 'Sunrise Logistics', stage: 'SCREENING', numberOfSeats: 10, hostingType: 'CLOUD', subscriptionType: 'PRO', subscriptionFrequency: 'MONTHLY' },
 ];
 
 type Quote = { name: string; status: string; partnerSlug: string; contentType: string[] };
@@ -169,7 +169,7 @@ async function main() {
   const oppIdByName = new Map<string, string>();
   for (const o of OPPORTUNITIES) {
     const data: Record<string, unknown> = {
-      name: o.name, matchStatus: o.matchStatus, companyId: companyIdByName.get(o.companyName),
+      name: o.name, stage: o.stage, companyId: companyIdByName.get(o.companyName),
       ...(o.partnerSlug ? { partnerId: partnerIdBySlug.get(o.partnerSlug) } : {}),
       ...(o.numberOfSeats != null ? { numberOfSeats: o.numberOfSeats } : {}),
       ...(o.hostingType ? { hostingType: o.hostingType } : {}),

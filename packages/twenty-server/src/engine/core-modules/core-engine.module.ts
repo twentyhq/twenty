@@ -47,6 +47,7 @@ import { MessageQueueModule } from 'src/engine/core-modules/message-queue/messag
 import { messageQueueModuleFactory } from 'src/engine/core-modules/message-queue/message-queue.module-factory';
 import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
 import { MessagingWebhooksModule } from 'src/modules/messaging-webhooks/messaging-webhooks.module';
+import { ConnectedAccountSyncWebhooksModule } from 'src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
@@ -88,6 +89,7 @@ import { FileModule } from './file/file.module';
     BillingModule,
     BillingWebhookModule,
     MessagingWebhooksModule,
+    ConnectedAccountSyncWebhooksModule,
     UsageModule,
     ClientConfigModule,
     FeatureFlagModule,
