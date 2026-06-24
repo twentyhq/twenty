@@ -60,14 +60,13 @@ export const DestroyRecordsCommand = () => {
       throw new Error('Cannot destroy records without a valid filter');
     }
 
-    await incrementalDestroyManyRecords();
-
-    if (!isSingleRecord) {
-      return;
+    if (!isSingleRecord || isInSidePanel) {
+      closeSidePanelMenu();
     }
 
-    if (isInSidePanel) {
-      closeSidePanelMenu();
+    await incrementalDestroyManyRecords();
+
+    if (!isSingleRecord || isInSidePanel) {
       return;
     }
 
