@@ -271,5 +271,42 @@ describe('ServerRouteTriggerService', () => {
         expect.stringContaining('reg."workspaceId" IS NOT NULL'),
       ]),
     );
+
+    // Guard against accidental removal of the joins — the where clauses
+    // reference `app` and `reg` aliases that only exist via these joins.
+    const joinTargets = resolverQueryBuilder.innerJoin.mock.calls.map(
+      (c) => c[0],
+    );
+
+    expect(joinTargets).toEqual(
+      expect.arrayContaining([
+        'core.application',
+        'core.applicationRegistration',
+      ]),
+    );
+  });
+
+  it('surfaces a workspace-cache failure on the target lookup as PLATFORM_ERROR (not LOGIC_FUNCTION_NOT_FOUND)', async () => {
+    workspaceCacheService.getOrRecompute.mockRejectedValue(
+      new Error('cache outage'),
+    );
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR,
+    });
+  });
+
+  it('maps a LogicFunctionExecutionException(RATE_LIMIT_EXCEEDED) to the server-route rate-limit code', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockRejectedValue(
+      new LogicFunctionExecutionException(
+        'too many requests',
+        LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
+      ),
+    );
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED,
+    });
   });
 });

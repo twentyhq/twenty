@@ -208,29 +208,36 @@ export class ServerRouteTriggerService {
     workspaceId: string;
     logicFunctionUniversalIdentifier: string;
   }): Promise<string | undefined> {
+    let flatLogicFunctionMaps;
+
     try {
-      const { flatLogicFunctionMaps } =
+      ({ flatLogicFunctionMaps } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'flatLogicFunctionMaps',
-        ]);
-
-      const logicFunction = Object.values(
-        flatLogicFunctionMaps.byUniversalIdentifier,
-      ).find(
-        (candidate) =>
-          isDefined(candidate) &&
-          candidate.universalIdentifier === logicFunctionUniversalIdentifier &&
-          !isDefined(candidate.deletedAt),
-      );
-
-      return isDefined(logicFunction) ? logicFunction.id : undefined;
+        ]));
     } catch (error) {
-      this.logger.warn(
-        `Failed to resolve ${logicFunctionUniversalIdentifier} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      // Cache outage / DB failure / recompute bug. Surface as platform
+      // error so the caller sees a 5xx instead of a misleading 404.
+      this.logger.error(
+        `Failed to read flatLogicFunctionMaps for workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
       );
-
-      return undefined;
+      throw new ServerRouteTriggerException(
+        `Failed to read logic functions for workspace ${workspaceId}`,
+        ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR,
+      );
     }
+
+    const logicFunction = Object.values(
+      flatLogicFunctionMaps.byUniversalIdentifier,
+    ).find(
+      (candidate) =>
+        isDefined(candidate) &&
+        candidate.universalIdentifier === logicFunctionUniversalIdentifier &&
+        !isDefined(candidate.deletedAt),
+    );
+
+    return isDefined(logicFunction) ? logicFunction.id : undefined;
   }
 
   private async runFunction({
@@ -263,14 +270,17 @@ export class ServerRouteTriggerService {
   private mapExecutorErrorToServerRouteCode(
     error: unknown,
   ): ServerRouteTriggerExceptionCode {
-    if (
-      error instanceof LogicFunctionExecutionException &&
-      error.code ===
-        LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
-    ) {
-      return ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
+    if (!(error instanceof LogicFunctionExecutionException)) {
+      return ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR;
     }
 
-    return ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR;
+    switch (error.code) {
+      case LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
+        return ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
+      case LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED:
+        return ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED;
+      default:
+        return ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR;
+    }
   }
 }

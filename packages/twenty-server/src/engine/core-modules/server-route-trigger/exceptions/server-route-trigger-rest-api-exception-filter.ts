@@ -36,6 +36,15 @@ export class ServerRouteTriggerRestApiExceptionFilter implements ExceptionFilter
           response,
           503,
         );
+      case ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED:
+        return this.httpExceptionHandlerService.handleError(
+          exception as CustomException,
+          response,
+          429,
+          undefined,
+          undefined,
+          { shouldBeCapturedBySentry: false },
+        );
       case ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
