@@ -70,7 +70,9 @@ jobs:
           printf 'FROM_VERSION=%s\n' "$FROM_VERSION" >> "$GITHUB_ENV"
           # Random per-run secret shared by the old container and the from-source
           # server within this job. Never committed, never reused across runs.
-          printf 'APP_SECRET=%s\n' "$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          GENERATED_APP_SECRET="$(openssl rand -hex 32)"
+          echo "::add-mask::${GENERATED_APP_SECRET}"
+          printf 'APP_SECRET=%s\n' "$GENERATED_APP_SECRET" >> "$GITHUB_ENV"
           echo "Testing upgrade from ${FROM_VERSION} to current (built from source)"
 
       - name: Create Docker network
@@ -90,11 +92,14 @@ jobs:
           for i in $(seq 1 30); do
             if docker exec postgres pg_isready -U postgres 2>/dev/null; then
               echo "Postgres is ready"
-              break
+              exit 0
             fi
             echo "Waiting for Postgres… ($i/30)"
             sleep 2
           done
+          echo "::error::Postgres did not become ready in time"
+          docker logs postgres 2>&1 | tail -50 || true
+          exit 1
 
       - name: Start Redis
         run: |
@@ -107,11 +112,14 @@ jobs:
           for i in $(seq 1 10); do
             if docker exec redis redis-cli ping 2>/dev/null | grep -q PONG; then
               echo "Redis is ready"
-              break
+              exit 0
             fi
             echo "Waiting for Redis… ($i/10)"
             sleep 1
           done
+          echo "::error::Redis did not become ready in time"
+          docker logs redis 2>&1 | tail -50 || true
+          exit 1
 
       # ================================================================
       # Phase 1 — Old version (from Docker Hub): seed and sanity check
@@ -215,8 +223,9 @@ jobs:
           ENV_FILE="packages/twenty-server/.env"
           # Must match the old container's APP_SECRET (same DB, same run-generated secret).
           sed -i "s|^APP_SECRET=.*|APP_SECRET=${APP_SECRET}|" "$ENV_FILE"
-          echo "Using PG_DATABASE_URL / REDIS_URL from .env.example (postgres@localhost:5432/default, redis@localhost:6379)"
-          grep -E '^(PG_DATABASE_URL|REDIS_URL|APP_SECRET)=' "$ENV_FILE"
+          # PG_DATABASE_URL / REDIS_URL come from .env.example (postgres@localhost:5432/default,
+          # redis@localhost:6379). APP_SECRET is intentionally not echoed.
+          grep -E '^(PG_DATABASE_URL|REDIS_URL)=' "$ENV_FILE"
 
       - name: Server / Build
         run: npx nx build twenty-server
@@ -246,9 +255,7 @@ jobs:
       # ================================================================
       # Phase 3 — Smoke tests on upgraded instance
       # ================================================================
-
-      - name: Smoke / Health check
-        run: curl -sf http://localhost:3000/healthz
+      # Health is already asserted by the "Waiting for server starting..." loop.
 
       - name: Smoke / Generate API token
         # Mint a token against the running upgraded server (signed with this run's
