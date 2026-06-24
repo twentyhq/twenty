@@ -18,8 +18,6 @@ export const filterRequestHeaders = ({
   forwardedRequestHeaders: string[];
   forwardAllHeaders?: boolean;
 }): Record<string, string | undefined> => {
-  // Isolated public function domains share nothing with the main app, so every
-  // inbound header can safely be forwarded to the function.
   if (forwardAllHeaders) {
     const allHeaders: Record<string, string | undefined> = {};
 

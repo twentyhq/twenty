@@ -100,9 +100,6 @@ export class WorkspaceDomainsService {
   async resolveWorkspaceAndPublicDomain(origin: string): Promise<{
     workspace: WorkspaceEntity | undefined;
     publicDomain: PublicDomainEntity | null;
-    // True when the request was served from an origin isolated from the main
-    // Twenty app (a registered public domain or a *.<publicBase> subdomain),
-    // where it is safe to relax the response/request header restrictions.
     isIsolatedOrigin: boolean;
   }> {
     const { subdomain, domain, isPublicDomainOrigin } =
@@ -122,12 +119,9 @@ export class WorkspaceDomainsService {
       };
     }
 
-    // Isolated public function domain (e.g. {workspaceSubdomain}.withtwenty.com).
     if (isPublicDomainOrigin) {
       const hostname = new URL(origin).hostname;
 
-      // An explicitly registered public domain (possibly application-scoped)
-      // takes precedence over the default per-workspace function subdomain.
       const registeredPublicDomain = await this.publicDomainRepository.findOne({
         where: { domain: hostname },
         relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
@@ -191,10 +185,6 @@ export class WorkspaceDomainsService {
     };
   }
 
-  // Origin an application's HTTP functions are served from on its isolated
-  // public domain: the app's primary registered domain when set, else the
-  // per-workspace {subdomain}.{publicBase} (e.g. https://acme.withtwenty.com).
-  // Undefined when no public domain is configured (self-hosting).
   buildPublicFunctionBaseUrl({
     workspace,
     primaryPublicDomain,
@@ -220,9 +210,6 @@ export class WorkspaceDomainsService {
     return url.origin;
   }
 
-  // Builds the canonical isolated URL of a logic function route, e.g.
-  // https://{workspaceSubdomain}.withtwenty.com/my-route. Returns undefined
-  // when no public domain base is configured (self-hosting).
   buildPublicFunctionUrl({
     workspace,
     path,

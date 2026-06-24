@@ -1,8 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-// Isolated, cookieless base on which a workspace's HTTP logic functions are
-// served on Twenty Cloud (e.g. https://acme.withtwenty.com). Undefined when no
-// public function domain is configured (self-hosting).
 export const getFunctionsBaseUrl = ({
   publicFunctionDomain,
   workspaceSubdomain,
@@ -20,10 +17,6 @@ export const getFunctionsBaseUrl = ({
   return undefined;
 };
 
-// Builds the public URL of an HTTP-triggered logic function. When a public
-// function domain is configured (Twenty Cloud), the function is served from the
-// isolated origin at https://{workspaceSubdomain}.{publicFunctionDomain}{path}.
-// Otherwise (self-hosting) it falls back to the legacy {serverBaseUrl}/s{path}.
 export const getLogicFunctionHttpUrl = ({
   path,
   serverBaseUrl,

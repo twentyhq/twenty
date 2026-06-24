@@ -10,8 +10,6 @@ import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
-// Educates workspace members about the dedicated, isolated domain on which the
-// application's HTTP-triggered logic functions are served (Twenty Cloud only).
 export const SettingsApplicationFunctionDomainSection = () => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();

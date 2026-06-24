@@ -104,8 +104,6 @@ export const FrontComponentRenderer = ({
   const applicationVariables =
     data.frontComponent.applicationVariables ?? undefined;
 
-  // The server resolves the function base (app's primary domain, else the
-  // workspace's isolated domain). Self-hosting returns null → fall back to /s.
   const functionsBaseUrl =
     data.frontComponent.functionBaseUrl ?? `${REACT_APP_SERVER_BASE_URL}/s`;
 

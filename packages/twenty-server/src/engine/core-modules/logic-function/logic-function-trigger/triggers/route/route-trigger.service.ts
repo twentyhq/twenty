@@ -117,12 +117,6 @@ export class RouteTriggerService {
     );
   }
 
-  // On deployments that expose an isolated public domain (cloud), logic
-  // functions created on or after LOGIC_FUNCTION_LEGACY_ROUTE_CUTOFF are no
-  // longer served on the same-site /s/ route — they must use the isolated
-  // *.withtwenty.com URL. Functions served from the isolated origin itself,
-  // and all functions on self-hosted instances (no cutoff configured), are
-  // always allowed.
   private assertLegacyRouteIsServableOrThrow({
     logicFunction,
     workspace,
@@ -150,7 +144,6 @@ export class RouteTriggerService {
         path: logicFunction.httpRouteTriggerSettings?.path ?? '/',
       });
 
-    // No public domain configured → nothing to migrate users to, keep /s/.
     if (!isDefined(publicFunctionUrl)) {
       return;
     }
@@ -264,8 +257,6 @@ export class RouteTriggerService {
         pathParameters: pathParams,
         forwardedRequestHeaders:
           httpRouteSettings?.forwardedRequestHeaders ?? [],
-        // The isolated origin shares nothing with the main app, so every
-        // request header can safely be forwarded to the function.
         forwardAllHeaders: isIsolatedOrigin,
         userId,
         userWorkspaceId,

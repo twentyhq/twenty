@@ -124,8 +124,6 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'uuid' })
   primaryPublicDomainId: string | null;
 
-  // The application's canonical public domain — the one injected into its front
-  // components as their function base URL. One of the app's `publicDomains`.
   @ManyToOne(() => PublicDomainEntity, {
     onDelete: 'SET NULL',
     nullable: true,

@@ -270,11 +270,7 @@ export class ClientConfig {
   @Field(() => String)
   frontDomain: string;
 
-  // Base domain on which HTTP logic functions are served in isolation
-  // (e.g. withtwenty.com → {workspaceSubdomain}.withtwenty.com). Null when no
-  // public domain is configured (self-hosting), in which case /s/ is used.
-  // REST-only: the frontend reads client config over REST (/client-config), so
-  // this stays out of the GraphQL schema (no @Field) to avoid schema churn.
+  // Served over REST (/client-config), not GraphQL — intentionally no @Field.
   publicFunctionDomain: string | null;
 
   @Field(() => Boolean)

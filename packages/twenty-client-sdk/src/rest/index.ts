@@ -9,11 +9,7 @@ const isDefined = <T>(value: T): value is NonNullable<T> =>
   value !== null && value !== undefined;
 
 export type RestApiClientOptions = {
-  // Base URL the client targets by default — your app's logic functions
-  // (e.g. https://acme.withtwenty.com). The host injects it as TWENTY_FUNCTIONS_URL.
   functionUrl?: string;
-  // The Twenty workspace/core API base (TWENTY_API_URL). Only needed for the
-  // rare case of calling the core REST API instead of your functions.
   workspaceUrl?: string;
   token?: string;
   fetch?: typeof globalThis.fetch;
@@ -326,9 +322,6 @@ export class RestApiClient {
       : normalizedFunctionUrl;
   }
 
-  // The host injects a fully-resolved function base URL (Twenty Cloud: the
-  // app's isolated domain; self-hosted: {apiUrl}/s), so the client just appends
-  // the route path. workspaceUrl is the fallback for the rare core-API call.
   private resolveRequestBaseUrl(): string {
     const baseUrl = this.resolveFunctionUrl() ?? this.resolveWorkspaceUrl();
 
