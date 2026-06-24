@@ -79,11 +79,9 @@ export const useRecordBoardRelationGroupsTotalCount = () => {
       objectMetadataItem,
     });
 
-  const groupByGqlInput =
-    isDefined(recordIndexGroupFieldMetadataItem) &&
-    isManyToOneRelationField(recordIndexGroupFieldMetadataItem)
-      ? buildGroupByFieldObject({ field: recordIndexGroupFieldMetadataItem })
-      : {};
+  const groupByGqlInput = isRelationGrouping
+    ? buildGroupByFieldObject({ field: recordIndexGroupFieldMetadataItem })
+    : {};
 
   const queryFieldName = getGroupByQueryResultGqlFieldName(objectMetadataItem);
 
