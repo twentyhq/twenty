@@ -74,7 +74,7 @@ export default defineApplication({
   serverVariables: {
     [RECALL_API_KEY_ENV_VAR_NAME]: {
       description:
-        'Recall.ai API key for the configured region. Set by the server admin on this registration after installation; used to create, update, and cancel scheduled call recorders.',
+        'Recall.ai API key for the configured region. Set by the server admin on this registration after installation; used to create, update, and cancel scheduled recording bots.',
       isSecret: true,
       isRequired: true,
     },

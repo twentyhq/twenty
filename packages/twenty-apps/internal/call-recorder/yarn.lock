@@ -989,6 +989,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@twentyhq/call-recorder@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@twentyhq/call-recorder@workspace:."
+  dependencies:
+    "@emotion/react": "npm:^11.14.0"
+    "@emotion/styled": "npm:^11.14.0"
+    "@sniptt/guards": "npm:^0.2.0"
+    "@types/node": "npm:^24.7.2"
+    "@types/react": "npm:^19.0.0"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
+    oxlint: "npm:^0.16.0"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
+    twenty-client-sdk: "npm:2.15.0"
+    twenty-sdk: "npm:2.15.0"
+    typescript: "npm:^5.9.3"
+    vite-tsconfig-paths: "npm:^4.2.1"
+    vitest: "npm:^4.1.9"
+  languageName: unknown
+  linkType: soft
+
 "@tybys/wasm-util@npm:^0.10.2":
   version: 0.10.2
   resolution: "@tybys/wasm-util@npm:0.10.2"
@@ -1355,27 +1376,6 @@ __metadata:
   checksum: 10c0/47bd9901d57b857590431243fea704ff18078b16890a6b3e021e12d279bbf211d039155e27d7566b374d49ee1f8189344bac9833dec7a20cdec370506361c938
   languageName: node
   linkType: hard
-
-"call-recorder@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "call-recorder@workspace:."
-  dependencies:
-    "@emotion/react": "npm:^11.14.0"
-    "@emotion/styled": "npm:^11.14.0"
-    "@sniptt/guards": "npm:^0.2.0"
-    "@types/node": "npm:^24.7.2"
-    "@types/react": "npm:^19.0.0"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
-    oxlint: "npm:^0.16.0"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
-    twenty-client-sdk: "npm:2.15.0"
-    twenty-sdk: "npm:2.15.0"
-    typescript: "npm:^5.9.3"
-    vite-tsconfig-paths: "npm:^4.2.1"
-    vitest: "npm:^4.1.9"
-  languageName: unknown
-  linkType: soft
 
 "callsites@npm:^3.0.0":
   version: 3.1.0

@@ -1,8 +1,8 @@
 # Call Recorder
 
-Record your meetings automatically and keep every call inside your CRM. Twenty
-Call Recorder sends a recording bot to your team's calendar meetings, then stores
-the video, audio, and a speaker-attributed transcript on the meeting's record —
+Record your meetings automatically and keep every call inside your CRM. Call
+Recorder sends a recording bot to your team's calendar meetings, then stores the
+video, audio, and a speaker-attributed transcript on the meeting's record —
 searchable, in context, and ready for people, AI agents, and workflows to act
 on.
 
@@ -136,7 +136,7 @@ A workspace admin can tune bot behavior through application variables:
 
 | Application variable | Default | Purpose |
 |---|---|---|
-| `CALL_RECORDER_NAME` | `Call Recorder` | Display name the bot uses when it joins a call. |
+| `CALL_RECORDER_NAME` | `Twenty.com` | Display name the bot uses when it joins a call. |
 | `CALL_RECORDER_JOIN_EARLY_MINUTES` | `1` | Minutes before the start time the bot joins. Set to `0` to join at the scheduled start. |
 | `CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS` | `1200` | Seconds the bot waits in the lobby before giving up and leaving. |
 | `CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS` | `1200` | Seconds the bot stays in an empty meeting when no one else ever joins. |
@@ -168,6 +168,6 @@ ID is the **Recall webhook logic function**.
    transcript events trigger media and transcript ingestion. Subscribing to
    status changes alone leaves ingestion to the reconciliation backstop.
 2. Copy the endpoint's signing secret — it starts with `whsec_`.
-3. Set it as the `RECALL_WEBHOOK_SECRET` server variable on the **Twenty
-   Call Recorder** application registration.
+3. Set it as the `RECALL_WEBHOOK_SECRET` server variable on the
+   **Call Recorder** application registration.
 4. Set `RECALL_API_KEY` (and optionally `RECALL_REGION`) the same way.
