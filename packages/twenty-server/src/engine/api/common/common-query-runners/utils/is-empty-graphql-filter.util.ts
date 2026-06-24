@@ -47,10 +47,14 @@ export const isEmptyGraphqlFilter = (
 
   const hasMeaningfulAnd =
     andConditions.length > 0 &&
-    andConditions.some((condition) => !isEmptyGraphqlFilter(condition, depth + 1));
+    andConditions.some(
+      (condition) => !isEmptyGraphqlFilter(condition, depth + 1),
+    );
   const hasMeaningfulOr =
     orConditions.length > 0 &&
-    orConditions.some((condition) => !isEmptyGraphqlFilter(condition, depth + 1));
+    orConditions.some(
+      (condition) => !isEmptyGraphqlFilter(condition, depth + 1),
+    );
   const hasMeaningfulNot =
     isDefined(notCondition) && !isEmptyGraphqlFilter(notCondition, depth + 1);
 
