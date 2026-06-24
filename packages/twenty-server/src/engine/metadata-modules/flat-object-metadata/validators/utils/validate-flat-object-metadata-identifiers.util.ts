@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import {
   isDefined,
   isLabelIdentifierFieldMetadataTypes,
+  isSearchableFieldType,
 } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -52,25 +53,32 @@ export const validateFlatObjectMetadataIdentifiers = ({
           'labelIdentifierFieldMetadataUniversalIdentifier validation failed: field type not compatible',
         userFriendlyMessage: msg`Field cannot be used as label identifier due to its type: should be of type UUID, text or full name`,
       });
-    }
-  }
-
-  if (isDefined(imageIdentifierFieldMetadataUniversalIdentifier)) {
-    const relatedUniversalFlatFieldMetadata =
-      findFlatEntityByUniversalIdentifier({
-        universalIdentifier: imageIdentifierFieldMetadataUniversalIdentifier,
-        flatEntityMaps: universalFlatFieldMetadataMaps,
-      });
-
-    if (!isDefined(relatedUniversalFlatFieldMetadata)) {
+    } else if (!isSearchableFieldType(universalFlatFieldMetadata.type)) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message:
-          'imageIdentifierFieldMetadataUniversalIdentifier validation failed: related field metadata not found',
-        userFriendlyMessage: msg`Field declared as image identifier not found`,
+          'labelIdentifierFieldMetadataUniversalIdentifier validation failed: field type not compatible',
+        userFriendlyMessage: msg`Field cannot be used as label identifier due to its type`,
       });
     }
-  }
 
-  return errors;
+    if (isDefined(imageIdentifierFieldMetadataUniversalIdentifier)) {
+      const relatedUniversalFlatFieldMetadata =
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier: imageIdentifierFieldMetadataUniversalIdentifier,
+          flatEntityMaps: universalFlatFieldMetadataMaps,
+        });
+
+      if (!isDefined(relatedUniversalFlatFieldMetadata)) {
+        errors.push({
+          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          message:
+            'imageIdentifierFieldMetadataUniversalIdentifier validation failed: related field metadata not found',
+          userFriendlyMessage: msg`Field declared as image identifier not found`,
+        });
+      }
+    }
+
+    return errors;
+  }
 };

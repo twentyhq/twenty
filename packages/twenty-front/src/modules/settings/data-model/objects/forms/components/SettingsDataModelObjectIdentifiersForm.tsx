@@ -13,7 +13,10 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { isLabelIdentifierFieldMetadataTypes } from 'twenty-shared/utils';
+import {
+  isLabelIdentifierFieldMetadataTypes,
+  isSearchableFieldType,
+} from 'twenty-shared/utils';
 import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -80,7 +83,8 @@ export const SettingsDataModelObjectIdentifiersForm = ({
       getActiveFieldMetadataItems(objectMetadataItem)
         .filter(
           ({ id, type }) =>
-            isLabelIdentifierFieldMetadataTypes(type) ||
+            (isLabelIdentifierFieldMetadataTypes(type) &&
+              isSearchableFieldType(type)) ||
             objectMetadataItem.labelIdentifierFieldMetadataId === id,
         )
         .map<SelectOption<string | null>>((fieldMetadataItem) => ({

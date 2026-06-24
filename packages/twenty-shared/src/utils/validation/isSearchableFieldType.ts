@@ -1,10 +1,5 @@
 import { FieldMetadataType } from '@/types';
 
-// UUID has no fuzzy full-text value, but it is kept here because an object's label
-// identifier can be a UUID (see LABEL_IDENTIFIER_FIELD_METADATA_TYPES) and the search
-// vector is built from the label identifier. Excluding it would leave records whose
-// displayed identifier is a UUID unfindable (even by pasting their full id). In practice
-// the only UUID ever fed into a search vector is the label identifier itself.
 const SEARCHABLE_FIELD_TYPES = [
   FieldMetadataType.TEXT,
   FieldMetadataType.FULL_NAME,

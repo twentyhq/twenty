@@ -79,7 +79,7 @@ describe('computeSearchVectorUniversalSettingsFromObjectManifest', () => {
     expect(result?.asExpression).toContain('"emailPrimaryEmail"');
   });
 
-  it('should return asExpression for a UUID label identifier field (a record whose displayed identifier is a UUID must stay findable by its full id)', () => {
+  it('should return asExpression for a UUID label identifier field', () => {
     const result = computeSearchVectorUniversalSettingsFromObjectManifest({
       objectManifest: buildObjectManifest({
         labelIdentifierFieldMetadataUniversalIdentifier: 'field-uuid-id',
