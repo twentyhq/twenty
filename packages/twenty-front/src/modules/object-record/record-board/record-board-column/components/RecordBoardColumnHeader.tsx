@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -7,12 +8,15 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
 import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-board/constants/RecordBoardColumnWidthCssVariableName';
 import { RecordBoardColumnResizeHandler } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnResizeHandler';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
+import { RecordGroupRelationChip } from '@/object-record/record-group/components/RecordGroupRelationChip';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { getRecordGroupByFieldColumnName } from '@/object-record/record-group/utils/getRecordGroupByFieldColumnName';
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -127,10 +131,16 @@ export const RecordBoardColumnHeader = () => {
 
   const dropdownId = `record-board-column-dropdown-${columnDefinition.id}`;
 
+  const isRelationValueGroup =
+    isManyToOneRelationField(selectFieldMetadataItem) &&
+    columnDefinition.type === RecordGroupDefinitionType.Value &&
+    isDefined(columnDefinition.value);
+
   const handleCreateNewRecordClick = async () => {
     await createNewIndexRecord({
       position: 'first',
-      [selectFieldMetadataItem.name]: columnDefinition.value,
+      [getRecordGroupByFieldColumnName(selectFieldMetadataItem)]:
+        columnDefinition.value,
     });
   };
 
@@ -152,27 +162,34 @@ export const RecordBoardColumnHeader = () => {
                 }}
                 clickableComponent={
                   <StyledTagContainer>
-                    <Tag
-                      variant={
-                        columnDefinition.type ===
-                        RecordGroupDefinitionType.Value
-                          ? 'solid'
-                          : 'outline'
-                      }
-                      color={
-                        columnDefinition.type ===
-                        RecordGroupDefinitionType.Value
-                          ? columnDefinition.color
-                          : 'transparent'
-                      }
-                      text={columnDefinition.title}
-                      weight={
-                        columnDefinition.type ===
-                        RecordGroupDefinitionType.Value
-                          ? 'regular'
-                          : 'medium'
-                      }
-                    />
+                    {isRelationValueGroup ? (
+                      <RecordGroupRelationChip
+                        fieldMetadataItem={selectFieldMetadataItem}
+                        recordId={columnDefinition.value!}
+                      />
+                    ) : (
+                      <Tag
+                        variant={
+                          columnDefinition.type ===
+                          RecordGroupDefinitionType.Value
+                            ? 'solid'
+                            : 'outline'
+                        }
+                        color={
+                          columnDefinition.type ===
+                          RecordGroupDefinitionType.Value
+                            ? columnDefinition.color
+                            : 'transparent'
+                        }
+                        text={columnDefinition.title}
+                        weight={
+                          columnDefinition.type ===
+                          RecordGroupDefinitionType.Value
+                            ? 'regular'
+                            : 'medium'
+                        }
+                      />
+                    )}
                   </StyledTagContainer>
                 }
                 dropdownComponents={<RecordBoardColumnDropdownMenu />}
