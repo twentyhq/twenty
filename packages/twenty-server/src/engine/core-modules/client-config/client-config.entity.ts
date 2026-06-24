@@ -270,7 +270,7 @@ export class ClientConfig {
   @Field(() => String)
   frontDomain: string;
 
-  // Served over REST (/client-config), not GraphQL — intentionally no @Field.
+  @Field(() => String, { nullable: true })
   publicFunctionDomain: string | null;
 
   @Field(() => Boolean)
