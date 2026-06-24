@@ -42,13 +42,13 @@ export const AddRecordGroupButton = ({
     .map((viewGroup) => viewGroup.fieldValue)
     .filter(isNonEmptyString);
 
-  const handleMorphItemSelected = async (
-    selectedMorphItem?: RecordPickerPickableMorphItem,
+  const handleRecordSelected = async (
+    selectedItem?: RecordPickerPickableMorphItem,
   ) => {
     closeDropdown(dropdownId);
 
-    if (isDefined(selectedMorphItem?.recordId)) {
-      await addRecordGroup(selectedMorphItem.recordId);
+    if (isDefined(selectedItem?.recordId)) {
+      await addRecordGroup(selectedItem.recordId);
     }
   };
 
@@ -65,7 +65,7 @@ export const AddRecordGroupButton = ({
           focusId={dropdownId}
           componentInstanceId={dropdownId}
           onCancel={() => closeDropdown(dropdownId)}
-          onMorphItemSelected={handleMorphItemSelected}
+          onMorphItemSelected={handleRecordSelected}
           objectNameSingulars={[targetObjectNameSingular]}
           excludedRecordIds={excludedRecordIds}
         />
