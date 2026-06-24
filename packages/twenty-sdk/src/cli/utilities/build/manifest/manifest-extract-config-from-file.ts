@@ -94,6 +94,10 @@ const loadModule = async ({
 
     return appRequire(tempFile) as Record<string, unknown>;
   } finally {
+    // Evict the bundled module from the require cache, otherwise every dev-mode
+    // rebuild leaks one fully-bundled module per entity file into Module._cache
+    // (each under a unique mkdtemp path), eventually exhausting the heap.
+    delete appRequire.cache[tempFile];
     await remove(tempDir);
   }
 };
