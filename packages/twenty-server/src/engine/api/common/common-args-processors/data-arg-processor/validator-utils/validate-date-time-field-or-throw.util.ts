@@ -4,24 +4,18 @@ import { msg } from '@lingui/core/macro';
 import { isDate, isNull, isString } from '@sniptt/guards';
 import { isValid, parse } from 'date-fns';
 import { Temporal } from 'temporal-polyfill';
+import {
+  isDefined,
+  parseDateTimeToInstantOrNull,
+  turnJSDateToPlainDate,
+} from 'twenty-shared/utils';
 
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-const ACCEPTED_DATE_TIME_FORMATS = [
-  "yyyy-MM-dd'T'HH:mm:ss.SSSX",
-  "yyyy-MM-dd'T'HH:mm:ssX",
-  "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-  "yyyy-MM-dd'T'HH:mm:ssxxx",
-  "yyyy-MM-dd'T'HH:mm:ss.SSS",
-  "yyyy-MM-dd'T'HH:mm:ss",
-  'yyyy-MM-dd HH:mm:ss.SSS',
-  'yyyy-MM-dd HH:mm:ss',
-  'yyyy-MM-dd HH:mm',
-  'yyyy-MM-dd',
-  'yyyyMMdd',
+const NON_ISO_DATE_FORMATS = [
   'yyyy.MM.dd',
   'yyyy/MM/dd',
   'MM-dd-yyyy',
@@ -35,34 +29,18 @@ const ACCEPTED_DATE_TIME_FORMATS = [
   'yyyy-MMM-dd',
 ];
 
-const parseStrictInstantStringOrNull = (value: string): string | null => {
-  try {
-    return Temporal.Instant.from(value).toString();
-  } catch {
-    return null;
-  }
-};
-
 const normalizeToInstantStringOrNull = (value: string): string | null => {
-  const strictInstantString = parseStrictInstantStringOrNull(value);
+  const instant = parseDateTimeToInstantOrNull(value);
 
-  if (isString(strictInstantString)) {
-    return strictInstantString;
+  if (isDefined(instant)) {
+    return instant.toString();
   }
 
-  for (const format of ACCEPTED_DATE_TIME_FORMATS) {
+  for (const format of NON_ISO_DATE_FORMATS) {
     const parsed = parse(value, format, new Date());
 
     if (isValid(parsed)) {
-      return Temporal.PlainDateTime.from({
-        year: parsed.getFullYear(),
-        month: parsed.getMonth() + 1,
-        day: parsed.getDate(),
-        hour: parsed.getHours(),
-        minute: parsed.getMinutes(),
-        second: parsed.getSeconds(),
-        millisecond: parsed.getMilliseconds(),
-      })
+      return turnJSDateToPlainDate(parsed)
         .toZonedDateTime('UTC')
         .toInstant()
         .toString();

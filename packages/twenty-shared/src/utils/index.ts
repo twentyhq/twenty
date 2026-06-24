@@ -36,6 +36,7 @@ export { isPlainDateBeforeOrEqual } from './date/isPlainDateBeforeOrEqual';
 export { isPlainDateInSameMonth } from './date/isPlainDateInSameMonth';
 export { isPlainDateInWeekend } from './date/isPlainDateInWeekend';
 export { isSamePlainDate } from './date/isSamePlainDate';
+export { parseDateTimeToInstantOrNull } from './date/parseDateTimeToInstantOrNull';
 export { parseToPlainDateOrThrow } from './date/parseToPlainDateOrThrow';
 export { sortPlainDate } from './date/sortPlainDate';
 export { turnJSDateToPlainDate } from './date/turnJSDateToPlainDate';

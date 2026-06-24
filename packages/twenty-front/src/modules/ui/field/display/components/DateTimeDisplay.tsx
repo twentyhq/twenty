@@ -5,8 +5,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { parseStringToInstantOrNull } from '~/utils/dates/parseStringToInstantOrNull';
+import { isDefined, parseDateTimeToInstantOrNull } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 import { EllipsisDisplay } from './EllipsisDisplay';
@@ -38,7 +37,7 @@ export const DateTimeDisplay = ({
   });
 
   const instant = isNonEmptyString(value)
-    ? parseStringToInstantOrNull(value)
+    ? parseDateTimeToInstantOrNull(value)
     : null;
 
   return (
