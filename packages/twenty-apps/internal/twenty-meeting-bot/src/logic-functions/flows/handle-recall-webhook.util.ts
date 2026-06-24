@@ -4,6 +4,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
+import { buildTranscriptFailureReason } from 'src/logic-functions/domain/build-transcript-failure-reason.util';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
 import { extractRecallBotConvergence } from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
@@ -670,6 +671,3 @@ const applyTranscriptFailure = async ({
     transcriptOutcome: 'FAILED',
   };
 };
-
-const buildTranscriptFailureReason = (subCode: string | null): string =>
-  isNull(subCode) ? 'transcript_failed' : `transcript_failed:${subCode}`;

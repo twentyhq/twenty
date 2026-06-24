@@ -3,6 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import {
@@ -28,13 +29,6 @@ import {
 } from 'src/logic-functions/data/update-call-recording.util';
 
 const CONVERGENCE_LOOKBACK_DAYS = 7;
-
-const NON_TERMINAL_CALL_RECORDING_STATUSES = [
-  CallRecordingStatus.SCHEDULED,
-  CallRecordingStatus.JOINING,
-  CallRecordingStatus.RECORDING,
-  CallRecordingStatus.PROCESSING,
-];
 
 type DivergedCallRecordingCandidate = {
   id: string;

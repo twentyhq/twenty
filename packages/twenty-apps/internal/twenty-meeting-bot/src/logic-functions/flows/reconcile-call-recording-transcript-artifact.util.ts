@@ -3,6 +3,7 @@ import { isNull, isUndefined } from '@sniptt/guards';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
 import { buildPendingTranscriptMarker } from 'src/logic-functions/domain/build-pending-transcript-marker.util';
+import { buildTranscriptFailureReason } from 'src/logic-functions/domain/build-transcript-failure-reason.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/create-async-recall-transcript.util';
@@ -180,6 +181,3 @@ const buildTranscriptFailureUpdate = ({
     ? {}
     : { status: CallRecordingStatus.FAILED }),
 });
-
-const buildTranscriptFailureReason = (subCode: string | null): string =>
-  isNull(subCode) ? 'transcript_failed' : `transcript_failed:${subCode}`;
