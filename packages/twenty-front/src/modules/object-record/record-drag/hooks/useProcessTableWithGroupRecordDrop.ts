@@ -8,6 +8,7 @@ import { isDraggingRecordComponentState } from '@/object-record/record-drag/stat
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { processGroupDrop } from '@/object-record/record-drag/utils/processGroupDrop';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
+import { getRecordGroupByFieldColumnName } from '@/object-record/record-group/utils/getRecordGroupByFieldColumnName';
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -80,6 +81,9 @@ export const useProcessTableWithGroupRecordDrop = () => {
         throw new Error('Field metadata is not defined');
       }
 
+      const recordGroupColumnName =
+        getRecordGroupByFieldColumnName(fieldMetadata);
+
       const existingOriginalDragSelection = store.get(originalDragSelection);
 
       const isCurrentlyDraggingRecord = store.get(isDraggingRecord);
@@ -106,7 +110,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
             idToUpdate: recordId,
             updateOneRecordInput: {
               position,
-              [fieldMetadata.name]: destinationRecordGroup.value,
+              [recordGroupColumnName]: destinationRecordGroup.value,
             },
           });
         },
