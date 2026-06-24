@@ -1,5 +1,40 @@
 .container {
+  --animated-rotate-duration: #{duration(fast)};
+
   align-items: center;
   display: flex;
   justify-content: center;
+  animation: animatedRotateIn var(--animated-rotate-duration) ease;
+
+  &[data-duration='instant'] {
+    --animated-rotate-duration: #{duration(instant)};
+  }
+
+  &[data-duration='normal'] {
+    --animated-rotate-duration: #{duration(normal)};
+  }
+
+  &[data-duration='slow'] {
+    --animated-rotate-duration: #{duration(slow)};
+  }
+}
+
+.animateOnHover {
+  transition: transform duration(fast) ease;
+
+  &:hover {
+    transform: rotate(45deg);
+  }
+}
+
+@keyframes animatedRotateIn {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotate(0deg);
+  }
 }

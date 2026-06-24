@@ -1,9 +1,7 @@
-import { useApolloClient, useMutation } from '@apollo/client/react';
-import {
-  DeleteOneObjectMetadataItemDocument,
-  FindManyCommandMenuItemsDocument,
-} from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { DeleteOneObjectMetadataItemDocument } from '~/generated-metadata/graphql';
 
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
@@ -17,11 +15,10 @@ export const useDeleteOneObjectMetadataItem = () => {
     DeleteOneObjectMetadataItemDocument,
   );
 
-  const client = useApolloClient();
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { removeFromDraft, replaceDraft, applyChanges } =
-    useUpdateMetadataStoreDraft();
+  const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   const deleteOneObjectMetadataItem = async (
     idToDelete: string,
@@ -40,16 +37,7 @@ export const useDeleteOneObjectMetadataItem = () => {
       removeFromDraft({ key: 'objectMetadataItems', itemIds: [idToDelete] });
       applyChanges();
 
-      const commandMenuItemsResult = await client.query({
-        query: FindManyCommandMenuItemsDocument,
-        fetchPolicy: 'network-only',
-      });
-
-      replaceDraft(
-        'commandMenuItems',
-        commandMenuItemsResult.data?.commandMenuItems ?? [],
-      );
-      applyChanges();
+      invalidateMetadataStore();
 
       return {
         status: 'successful',

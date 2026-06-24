@@ -3,6 +3,7 @@ import { useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
 import {
@@ -98,7 +99,7 @@ export const SettingsToolIcon = ({
   if (isDefined(application) && isDefined(marketplaceApp?.logo)) {
     return (
       <Avatar
-        avatarUrl={marketplaceApp?.logo ?? null}
+        avatarUrl={getAbsoluteImageUrl(marketplaceApp?.logo ?? null)}
         placeholder={application.name}
         placeholderColorSeed={application.name}
         type="squared"

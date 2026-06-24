@@ -455,7 +455,7 @@ export default defineObject({
       universalIdentifier: '40d730e3-2785-45c8-aa5f-cc724b1b08e0',
       type: FieldType.LINKS,
       name: 'profilePicture',
-      label: 'Profile Picture',
+      label: 'Profile Picture (legacy)',
       icon: 'IconPhoto',
       isNullable: true,
     },

@@ -1,8 +1,8 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 
 import { SLACK_LIST_CHANNELS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { slackListChannelsHandler } from 'src/logic-functions/handlers/slack-list-channels-handler';
+import { jsonSchemaToInputSchema } from 'src/logic-functions/utils/json-schema-to-input-schema';
 import { slackListChannelsInputSchema } from './schemas/slack-list-channels-input.schema';
 
 export default defineLogicFunction({

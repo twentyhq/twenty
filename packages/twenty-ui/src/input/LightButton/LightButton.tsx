@@ -1,8 +1,8 @@
 import { clsx } from 'clsx';
-import { type MouseEvent, useContext } from 'react';
+import { type MouseEvent } from 'react';
 
 import { type IconComponent } from '@ui/icon';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './LightButton.module.scss';
 
@@ -31,7 +31,7 @@ export const LightButton = ({
   type = 'button',
   onClick,
 }: LightButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <button

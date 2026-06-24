@@ -4,12 +4,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { healCallRecordingsMissingBot } from 'src/logic-functions/flows/heal-call-recordings-missing-bot.util';
 
 const scheduleRecallBotMock = vi.hoisted(() => vi.fn());
+const getCurrentWorkspaceIdMock = vi.hoisted(() => vi.fn());
+
+vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
+  getCurrentWorkspaceId: getCurrentWorkspaceIdMock,
+}));
 
 vi.mock('src/logic-functions/recall-api/schedule-recall-bot.util', () => ({
   scheduleRecallBot: scheduleRecallBotMock,
 }));
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
+const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const UPCOMING_STARTS_AT = '2026-01-01T13:00:00.000Z';
 const UPCOMING_ENDS_AT = '2026-01-01T14:00:00.000Z';
 const PAST_STARTS_AT = '2026-01-01T10:00:00.000Z';
@@ -127,6 +133,8 @@ const buildCalendarEvent = (
 describe('healCallRecordingsMissingBot', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
+    getCurrentWorkspaceIdMock.mockReset();
+    getCurrentWorkspaceIdMock.mockReturnValue(WORKSPACE_ID);
     scheduleRecallBotMock.mockReset();
     scheduleRecallBotMock.mockResolvedValue({
       ok: true,
@@ -147,6 +155,13 @@ describe('healCallRecordingsMissingBot', () => {
 
     expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
     expect(scheduleRecallBotMock).toHaveBeenCalledTimes(1);
+    expect(scheduleRecallBotMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        metadata: expect.objectContaining({
+          twentyWorkspaceId: WORKSPACE_ID,
+        }),
+      }),
+    );
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 

@@ -102,7 +102,7 @@ const SidebarAvatar = styled.div<{
   color: ${({ $color }) => $color};
   display: flex;
   flex: 0 0 auto;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 10px;
   font-weight: ${THEME_LIGHT.font.weight.medium};
   height: 16px;

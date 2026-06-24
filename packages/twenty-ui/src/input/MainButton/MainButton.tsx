@@ -1,8 +1,8 @@
 import { clsx } from 'clsx';
-import React, { type FunctionComponent, useContext } from 'react';
+import React, { type FunctionComponent } from 'react';
 
 import { type IconComponent } from '@ui/icon';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './MainButton.module.scss';
 
@@ -31,7 +31,7 @@ export const MainButton = ({
   disabled,
   className,
 }: MainButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   // Replicates the legacy ternary exactly: fullWidth wins over width, and a
   // falsy width (0) falls back to the 'auto' default.

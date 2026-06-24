@@ -1,4 +1,4 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from '@utils/is-defined';
 
 import { getErrorMessage } from '@modules/resend/shared/utils/get-error-message';

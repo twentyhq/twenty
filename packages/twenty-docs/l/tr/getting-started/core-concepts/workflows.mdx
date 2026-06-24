@@ -20,12 +20,12 @@ Her iş akışının üç bölümü vardır:
 
 ## Tetikleyiciler
 
-| Tetikleyici     | Ne zaman tetiklenir                                                                      |
-| --------------- | ---------------------------------------------------------------------------------------- |
-| **Kayıt olayı** | Bir kayıt oluşturulur, güncellenir, silinir veya upsert edilir                           |
-| **Manuel**      | Bir kullanıcı bir düğmeye tıklar (tek bir kayıtta, birden çok kayıtta veya genel olarak) |
-| **Zamanlama**   | Yinelenen bir aralıkta (cron söz dizimiyle)                                              |
-| **Webhook**     | Harici bir sistem bir HTTP POST gönderir                                                 |
+| Tetikleyici     | Ne zaman tetiklenir                                                                       |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| **Kayıt olayı** | Bir kayıt oluşturulur, güncellenir, silinir veya upsert edilir                            |
+| **Manuel**      | Bir kullanıcı bir düğmeye tıklar (tek bir kayıtta, birden çok kayıtta veya global olarak) |
+| **Program**     | Yinelenen bir aralıkta (cron söz dizimiyle)                                               |
+| **Webhook**     | Harici bir sistem bir HTTP POST gönderir                                                  |
 
 ## Eylemler
 
@@ -43,7 +43,7 @@ Her iş akışının üç bölümü vardır:
 
 ## Oluşturabilecekleriniz
 
-* Bir anlaşma belirli bir aşamaya ulaştığında Slack uyarıları gönderin
+* Bir fırsat belirli bir aşamaya ulaştığında Slack uyarıları gönderin
 * Yeni kişileri harici API'lerden gelen verilerle otomatik olarak zenginleştirin
 * Eski fırsatları tespit edin ve sahibini bilgilendirin
 * Twenty ile faturalandırma sisteminiz arasında verileri senkronize edin

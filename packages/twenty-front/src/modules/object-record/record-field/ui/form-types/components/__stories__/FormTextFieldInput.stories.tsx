@@ -42,6 +42,25 @@ export const WithLabel: Story = {
   },
 };
 
+export const WithError: Story = {
+  args: {
+    label: 'Variable Name',
+    placeholder: 'Text field...',
+    defaultValue: 'invalid name',
+    error:
+      'Use only letters, numbers, underscores, dots or hyphens (max 64 characters).',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const error = await canvas.findByText(
+      'Use only letters, numbers, underscores, dots or hyphens (max 64 characters).',
+    );
+
+    expect(error).toBeVisible();
+  },
+};
+
 export const Multiline: Story = {
   args: {
     label: 'Text',

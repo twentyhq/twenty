@@ -47,6 +47,7 @@ describe('extractRecallBotConvergence', () => {
 
     expect(convergence).toEqual({
       status: 'PROCESSING',
+      failureReason: undefined,
       startedAt: '2026-01-01T13:02:00.000Z',
       endedAt: '2026-01-01T14:00:00.000Z',
       externalRecordingId: 'recall-recording-1',
@@ -65,6 +66,7 @@ describe('extractRecallBotConvergence', () => {
 
     expect(convergence).toEqual({
       status: 'PROCESSING',
+      failureReason: undefined,
       startedAt: '2026-01-01T13:02:00.000Z',
       endedAt: '2026-01-01T14:00:00.000Z',
       externalRecordingId: 'recall-recording-1',
@@ -93,6 +95,7 @@ describe('extractRecallBotConvergence', () => {
   it('returns nothing derivable from an empty bot response', () => {
     expect(extractRecallBotConvergence({})).toEqual({
       status: undefined,
+      failureReason: undefined,
       startedAt: undefined,
       endedAt: undefined,
       externalRecordingId: undefined,
@@ -113,11 +116,27 @@ describe('extractRecallBotConvergence', () => {
 
     expect(convergence).toEqual({
       status: 'RECORDING',
+      failureReason: undefined,
       startedAt: '2026-01-01T13:02:00.000Z',
       endedAt: undefined,
       externalRecordingId: undefined,
       isRecallRecordingDone: false,
     });
+  });
+
+  it('carries the failing Recall status code as the failure reason', () => {
+    const convergence = extractRecallBotConvergence({
+      status_changes: [
+        { code: 'joining_call', created_at: '2026-01-01T12:58:00.000Z' },
+        {
+          code: 'recording_permission_denied',
+          created_at: '2026-01-01T13:02:00.000Z',
+        },
+      ],
+    });
+
+    expect(convergence.status).toBe('FAILED');
+    expect(convergence.failureReason).toBe('recording_permission_denied');
   });
 
   it('leaves the status undefined for unknown latest codes', () => {

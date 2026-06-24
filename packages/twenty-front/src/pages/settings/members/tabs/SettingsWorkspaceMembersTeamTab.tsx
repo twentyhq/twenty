@@ -38,6 +38,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledTableContainer = styled.div<{ hasMoreRows?: boolean }>`
@@ -248,7 +249,9 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                   <TableCell>
                     <StyledIconWrapper>
                       <Avatar
-                        avatarUrl={workspaceMember.avatarUrl}
+                        avatarUrl={getAbsoluteImageUrl(
+                          workspaceMember.avatarUrl,
+                        )}
                         placeholderColorSeed={workspaceMember.id}
                         placeholder={workspaceMember.name.firstName ?? ''}
                         type="rounded"

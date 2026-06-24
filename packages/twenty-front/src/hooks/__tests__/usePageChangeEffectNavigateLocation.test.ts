@@ -130,6 +130,16 @@ const testCases: {
   { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_ONBOARDING, res: AppPath.BookCallDecision },
   { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
 
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: undefined },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_ONBOARDING, res: AppPath.BookCallDecision },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
+
   { loc: AppPath.Invite, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: '/plan-required' },
   { loc: AppPath.Invite, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
   { loc: AppPath.Invite, hasAccessTokenPair: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: undefined },

@@ -14,7 +14,7 @@ Workflows ermöglichen es Ihnen, wiederkehrende Aufgaben zu automatisieren und T
 
 Jeder Workflow besteht aus drei Teilen:
 
-1. **Trigger** — Was den Workflow startet
+1. **Auslöser** — Was den Workflow startet
 2. **Schritte** — Was als Nächstes passiert (eine oder mehrere Aktionen in Folge)
 3. **Variablen** — Daten, die zwischen Schritten fließen
 
@@ -22,16 +22,16 @@ Jeder Workflow besteht aus drei Teilen:
 
 | Auslöser              | Wann er ausgelöst wird                                                                                      |
 | --------------------- | ----------------------------------------------------------------------------------------------------------- |
-| **Datensatzereignis** | Ein Datensatz wird erstellt, aktualisiert, gelöscht oder upserted                                           |
+| **Datensatzereignis** | Ein Datensatz wird erstellt, aktualisiert, gelöscht oder per Upsert eingefügt oder aktualisiert             |
 | **Manuell**           | Ein Benutzer klickt auf eine Schaltfläche (bei einem einzelnen Datensatz, mehreren Datensätzen oder global) |
 | **Zeitplan**          | In einem wiederkehrenden Intervall (Cron-Syntax)                                                            |
 | **Webhook**           | Ein externes System sendet einen HTTP POST                                                                  |
 
 ## Aktionen
 
-Workflows können beliebige Kombinationen verketten aus:
+Workflows können beliebige Kombinationen folgender Elemente verketten:
 
-* **Datensatzvorgänge** — Datensätze erstellen, aktualisieren, finden, löschen oder upserted ausführen
+* **Datensatzvorgänge** — Datensätze erstellen, aktualisieren, finden, löschen oder per Upsert einfügen/aktualisieren
 * **E-Mail senden** — E-Mails von verbundenen Konten senden oder als Entwurf erstellen
 * **HTTP-Anfrage** — Beliebige externe API aufrufen
 * **Code** — Benutzerdefiniertes JavaScript für komplexe Logik ausführen
@@ -45,11 +45,11 @@ Workflows können beliebige Kombinationen verketten aus:
 
 * Slack-Benachrichtigungen senden, wenn ein Deal einen bestimmten Status erreicht
 * Neue Kontakte automatisch mit Daten aus externen APIs anreichern
-* Veraltete Opportunities erkennen und den Eigentümer benachrichtigen
+* Veraltete Verkaufschancen erkennen und den Eigentümer benachrichtigen
 * Daten zwischen Twenty und Ihrem Abrechnungssystem synchronisieren
 * PDFs oder Rechnungen aus Datensatzdaten generieren
 * Automatisch auf eingehende E-Mails antworten, die bestimmten Kriterien entsprechen
 
 <Card title="Vollständige Workflows-Anleitung" icon="arrow-right" href="/l/de/user-guide/workflows/overview">
-  Detaillierte Referenz zu Triggern, Aktionen, Variablen und praxisnahen Automatisierungs-Workflows.
+  Detaillierte Referenz zu Auslösern, Aktionen, Variablen und praxisnahen Automatisierungsbeispielen.
 </Card>

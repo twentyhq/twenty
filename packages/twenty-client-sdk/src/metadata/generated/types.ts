@@ -4344,6 +4344,9 @@ export default {
             "records": [
                 232
             ],
+            "isCustomDomainEnabled": [
+                6
+            ],
             "__typename": [
                 1
             ]
@@ -5198,6 +5201,9 @@ export default {
         },
         "ToolIndexEntry": {
             "name": [
+                1
+            ],
+            "label": [
                 1
             ],
             "description": [
@@ -10327,6 +10333,9 @@ export default {
                 15
             ],
             "httpRouteTriggerSettings": [
+                15
+            ],
+            "serverRouteTriggerSettings": [
                 15
             ],
             "toolTriggerSettings": [

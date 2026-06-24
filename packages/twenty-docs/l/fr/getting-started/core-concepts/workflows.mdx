@@ -1,6 +1,6 @@
 ---
 title: Flux de travail
-description: Automatisez vos processus métier avec le créateur de workflows visuels de Twenty.
+description: Automatisez vos processus métier avec l’outil visuel de création de workflows de Twenty.
 icon: bolt
 ---
 
@@ -20,18 +20,18 @@ Chaque workflow comporte trois parties :
 
 ## Déclencheurs
 
-| Déclencheur                    | Moment où il se déclenche                                                                                    |
+| Déclencheur                    | Moment de déclenchement                                                                                      |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| **Événement d'enregistrement** | Un enregistrement est créé, mis à jour, supprimé ou upserté                                                  |
+| **Événement d'enregistrement** | Un enregistrement est créé, mis à jour, supprimé ou inséré/mis à jour (upsert)                               |
 | **Manuel**                     | Un utilisateur clique sur un bouton (sur un enregistrement unique, plusieurs enregistrements ou globalement) |
-| **Planification**              | À un intervalle récurrent (syntaxe cron)                                                                     |
+| **Planning**                   | À un intervalle récurrent (syntaxe cron)                                                                     |
 | **Webhook**                    | Un système externe envoie une requête HTTP POST                                                              |
 
 ## Actions
 
 Les workflows peuvent enchaîner n'importe quelle combinaison de :
 
-* **Opérations sur les enregistrements** — Créer, mettre à jour, rechercher, supprimer ou upserter des enregistrements
+* **Opérations sur les enregistrements** — Créer, mettre à jour, rechercher, supprimer ou effectuer un upsert (insérer ou mettre à jour) sur des enregistrements
 * **Envoyer un e-mail** — Envoyer ou rédiger des e-mails à partir de comptes connectés
 * **Requête HTTP** — Appeler n'importe quelle API externe
 * **Code** — Exécuter du JavaScript personnalisé pour une logique complexe
@@ -43,11 +43,11 @@ Les workflows peuvent enchaîner n'importe quelle combinaison de :
 
 ## Ce que vous pouvez créer
 
-* Envoyer des alertes Slack lorsqu'une affaire atteint une certaine étape
+* Envoyer des alertes Slack lorsqu’une opportunité atteint une certaine étape
 * Enrichir automatiquement les nouveaux contacts avec des données provenant d'API externes
 * Détecter les opportunités obsolètes et avertir le propriétaire
 * Synchroniser les données entre Twenty et votre système de facturation
-* Générer des PDF ou des factures à partir des données d'enregistrement
+* Générer des PDF ou des factures à partir des données des enregistrements
 * Répondre automatiquement aux e-mails entrants correspondant à certains critères
 
 <Card title="Guide complet des workflows" icon="arrow-right" href="/l/fr/user-guide/workflows/overview">

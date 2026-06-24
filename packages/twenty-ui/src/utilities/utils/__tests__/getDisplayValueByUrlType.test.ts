@@ -1,4 +1,4 @@
-import { LinkType } from '@ui/navigation/SocialLink/SocialLink';
+import { LinkType } from '@ui/navigation/SocialLink/LinkType';
 
 import { getDisplayValueByUrlType } from '../getDisplayValueByUrlType';
 
@@ -86,12 +86,20 @@ describe('getDisplayValueByUrlType', () => {
       expect(result).toBe('@johndoe');
     });
 
-    it('should return "@twitter" when no username can be extracted', () => {
+    it('should return "Twitter" when no username can be extracted', () => {
       const result = getDisplayValueByUrlType({
         type: LinkType.Twitter,
         href: 'https://www.twitter.com',
       });
-      expect(result).toBe('@twitter');
+      expect(result).toBe('Twitter');
+    });
+
+    it('should return "Twitter" for a reserved app route', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Twitter,
+        href: 'https://x.com/home',
+      });
+      expect(result).toBe('Twitter');
     });
   });
 
@@ -134,6 +142,174 @@ describe('getDisplayValueByUrlType', () => {
         href: 'https://www.facebook.com/',
       });
       expect(result).toBe('Facebook');
+    });
+  });
+
+  describe('instagram', () => {
+    it('should extract handle from Instagram profile URL with @ prefix', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://www.instagram.com/ptcrash',
+      });
+      expect(result).toBe('@ptcrash');
+    });
+
+    it('should handle Instagram URL without protocol', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'instagram.com/ptcrash',
+      });
+      expect(result).toBe('@ptcrash');
+    });
+
+    it('should handle Instagram URL without www', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/ptcrash',
+      });
+      expect(result).toBe('@ptcrash');
+    });
+
+    it('should ignore a trailing slash', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/ptcrash/',
+      });
+      expect(result).toBe('@ptcrash');
+    });
+
+    it('should ignore a query string', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/ptcrash?hl=en',
+      });
+      expect(result).toBe('@ptcrash');
+    });
+
+    it('should decode URL-encoded characters in the handle', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/john%20doe',
+      });
+      expect(result).toBe('@john doe');
+    });
+
+    it('should return "Instagram" for a post URL', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/p/ABC123',
+      });
+      expect(result).toBe('Instagram');
+    });
+
+    it('should return "Instagram" for a reel URL', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://instagram.com/reel/xyz',
+      });
+      expect(result).toBe('Instagram');
+    });
+
+    it('should return "Instagram" when no handle can be extracted', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Instagram,
+        href: 'https://www.instagram.com/',
+      });
+      expect(result).toBe('Instagram');
+    });
+  });
+
+  describe('x', () => {
+    it('should extract handle from an x.com URL as a Twitter type', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Twitter,
+        href: 'https://x.com/johndoe',
+      });
+      expect(result).toBe('@johndoe');
+    });
+
+    it('should handle an x.com URL without protocol', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Twitter,
+        href: 'x.com/johndoe',
+      });
+      expect(result).toBe('@johndoe');
+    });
+
+    it('should ignore the path segments of a tweet permalink', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Twitter,
+        href: 'https://x.com/johndoe/status/123456',
+      });
+      expect(result).toBe('@johndoe');
+    });
+
+    it('should ignore a query string', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Twitter,
+        href: 'https://x.com/johndoe?lang=en',
+      });
+      expect(result).toBe('@johndoe');
+    });
+  });
+
+  describe('tiktok', () => {
+    it('should extract handle from a TikTok profile URL', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.TikTok,
+        href: 'https://www.tiktok.com/@johndoe',
+      });
+      expect(result).toBe('@johndoe');
+    });
+
+    it('should handle a TikTok URL without protocol or www', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.TikTok,
+        href: 'tiktok.com/@johndoe',
+      });
+      expect(result).toBe('@johndoe');
+    });
+
+    it('should ignore a trailing path segment', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.TikTok,
+        href: 'https://www.tiktok.com/@johndoe/video/123',
+      });
+      expect(result).toBe('@johndoe');
+    });
+
+    it('should return "TikTok" when no handle can be extracted', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.TikTok,
+        href: 'https://www.tiktok.com/',
+      });
+      expect(result).toBe('TikTok');
+    });
+  });
+
+  describe('bluesky', () => {
+    it('should extract handle from a Bluesky profile URL', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Bluesky,
+        href: 'https://bsky.app/profile/johndoe.bsky.social',
+      });
+      expect(result).toBe('johndoe.bsky.social');
+    });
+
+    it('should handle a Bluesky URL without protocol', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Bluesky,
+        href: 'bsky.app/profile/johndoe.bsky.social',
+      });
+      expect(result).toBe('johndoe.bsky.social');
+    });
+
+    it('should return "Bluesky" when no handle can be extracted', () => {
+      const result = getDisplayValueByUrlType({
+        type: LinkType.Bluesky,
+        href: 'https://bsky.app/profile/',
+      });
+      expect(result).toBe('Bluesky');
     });
   });
 

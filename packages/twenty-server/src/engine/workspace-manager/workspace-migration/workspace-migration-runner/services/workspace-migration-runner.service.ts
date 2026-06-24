@@ -23,6 +23,7 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
+import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 @Injectable()
@@ -283,6 +284,7 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.startTransaction();
 
     const allMetadataEvents: MetadataEvent[] = [];
+    const allAfterCommitSideEffects: AfterCommitSideEffect[] = [];
 
     const transactionStart = performance.now();
     let slowestActionMs = 0;
@@ -294,7 +296,11 @@ export class WorkspaceMigrationRunnerService {
 
       for (const action of actions) {
         const actionStart = performance.now();
-        const { partialOptimisticCache, metadataEvents } =
+        const {
+          partialOptimisticCache,
+          metadataEvents,
+          afterCommitSideEffects,
+        } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
               action,
@@ -330,6 +336,7 @@ export class WorkspaceMigrationRunnerService {
         } as typeof allFlatEntityMaps;
 
         allMetadataEvents.push(...metadataEvents);
+        allAfterCommitSideEffects.push(...afterCommitSideEffects);
       }
 
       const commitStart = performance.now();
@@ -431,6 +438,25 @@ export class WorkspaceMigrationRunnerService {
       `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
       'Runner',
     );
+
+    const sideEffectResults = await Promise.allSettled(
+      allAfterCommitSideEffects.map((sideEffect) =>
+        Promise.resolve().then(() => sideEffect.run()),
+      ),
+    );
+
+    sideEffectResults.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        this.logger.warn(
+          `After-commit side effect failed (${allAfterCommitSideEffects[index].description}): ${
+            result.reason instanceof Error
+              ? result.reason.message
+              : String(result.reason)
+          }`,
+          'Runner',
+        );
+      }
+    });
 
     const hasSchemaMetadataChanged =
       allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||

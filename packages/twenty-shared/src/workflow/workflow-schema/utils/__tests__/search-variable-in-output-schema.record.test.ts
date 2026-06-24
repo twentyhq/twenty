@@ -174,6 +174,26 @@ describe('searchVariableInOutputSchema - record output schema', () => {
     });
   });
 
+  describe('PICK_RECORD routing', () => {
+    it('routes a Pick Record output variable through the record schema', () => {
+      const result = searchVariableInOutputSchema({
+        schema: mockRecordSchema,
+        stepType: 'PICK_RECORD',
+        stepName: 'Pick Company',
+        rawVariableName: '{{step1.name}}',
+        isFullRecord: false,
+      });
+
+      expect(result).toEqual({
+        variableLabel: 'Company Name',
+        variablePathLabel: 'Pick Company > Company Name',
+        variableType: FieldMetadataType.TEXT,
+        fieldMetadataId: 'company-name-metadata-id',
+        compositeFieldSubFieldName: undefined,
+      });
+    });
+  });
+
   describe('error handling', () => {
     it('should handle undefined recordOutputSchema', () => {
       const result = searchVariableThroughRecordOutputSchema({

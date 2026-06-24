@@ -758,6 +758,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prop-types@npm:*":
+  version: 15.7.15
+  resolution: "@types/prop-types@npm:15.7.15"
+  checksum: 10c0/b59aad1ad19bf1733cf524fd4e618196c6c7690f48ee70a327eb450a42aab8e8a063fbe59ca0a5701aebe2d92d582292c0fb845ea57474f6a15f6994b0e260b2
+  languageName: node
+  linkType: hard
+
 "@types/qs@npm:^6.9.0":
   version: 6.15.1
   resolution: "@types/qs@npm:6.15.1"
@@ -765,12 +772,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.0.0":
-  version: 19.2.15
-  resolution: "@types/react@npm:19.2.15"
+"@types/react@npm:^18.2.0":
+  version: 18.3.31
+  resolution: "@types/react@npm:18.3.31"
   dependencies:
+    "@types/prop-types": "npm:*"
     csstype: "npm:^3.2.2"
-  checksum: 10c0/b554eab715bb14e581f0ae60e5cefe91e1a5e06c31022b543a9806cf224aa056f21e4fb46208e46eb934d86ca0b247ebc82377192a0dead303cb28b8764c6e67
+  checksum: 10c0/44180549dd045f536ececd39e39aacdf828e76adc1c4a90b132f453e23cc370c4648d9102ae401172ebd8fd8b1977a901a39e214e53ec77171b27514b588c179
   languageName: node
   linkType: hard
 
@@ -780,6 +788,87 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/fa958e64596ca9487c3ed6012834de70b47f25d971f1950cfb8e6a99cb77ff340ae82ac7627744e01b58010674ef8ede07d5a2ac29ca9ad0d67a430fcc69ae14
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-darwin-arm64@npm:7.0.0-dev.20260619.1":
+  version: 7.0.0-dev.20260619.1
+  resolution: "@typescript/native-preview-darwin-arm64@npm:7.0.0-dev.20260619.1"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-darwin-x64@npm:7.0.0-dev.20260619.1":
+  version: 7.0.0-dev.20260619.1
+  resolution: "@typescript/native-preview-darwin-x64@npm:7.0.0-dev.20260619.1"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-linux-arm64@npm:7.0.0-dev.20260619.1":
+  version: 7.0.0-dev.20260619.1
+  resolution: "@typescript/native-preview-linux-arm64@npm:7.0.0-dev.20260619.1"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-linux-arm@npm:7.0.0-dev.20260619.1":
+  version: 7.0.0-dev.20260619.1
+  resolution: "@typescript/native-preview-linux-arm@npm:7.0.0-dev.20260619.1"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-linux-x64@npm:7.0.0-dev.20260619.1":
+  version: 7.0.0-dev.20260619.1
+  resolution: "@typescript/native-preview-linux-x64@npm:7.0.0-dev.20260619.1"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-win32-arm64@npm:7.0.0-dev.20260619.1":
+  version: 7.0.0-dev.20260619.1
+  resolution: "@typescript/native-preview-win32-arm64@npm:7.0.0-dev.20260619.1"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-win32-x64@npm:7.0.0-dev.20260619.1":
+  version: 7.0.0-dev.20260619.1
+  resolution: "@typescript/native-preview-win32-x64@npm:7.0.0-dev.20260619.1"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview@npm:^7.0.0-dev.20260116.1":
+  version: 7.0.0-dev.20260619.1
+  resolution: "@typescript/native-preview@npm:7.0.0-dev.20260619.1"
+  dependencies:
+    "@typescript/native-preview-darwin-arm64": "npm:7.0.0-dev.20260619.1"
+    "@typescript/native-preview-darwin-x64": "npm:7.0.0-dev.20260619.1"
+    "@typescript/native-preview-linux-arm": "npm:7.0.0-dev.20260619.1"
+    "@typescript/native-preview-linux-arm64": "npm:7.0.0-dev.20260619.1"
+    "@typescript/native-preview-linux-x64": "npm:7.0.0-dev.20260619.1"
+    "@typescript/native-preview-win32-arm64": "npm:7.0.0-dev.20260619.1"
+    "@typescript/native-preview-win32-x64": "npm:7.0.0-dev.20260619.1"
+  dependenciesMeta:
+    "@typescript/native-preview-darwin-arm64":
+      optional: true
+    "@typescript/native-preview-darwin-x64":
+      optional: true
+    "@typescript/native-preview-linux-arm":
+      optional: true
+    "@typescript/native-preview-linux-arm64":
+      optional: true
+    "@typescript/native-preview-linux-x64":
+      optional: true
+    "@typescript/native-preview-win32-arm64":
+      optional: true
+    "@typescript/native-preview-win32-x64":
+      optional: true
+  bin:
+    tsgo: bin/tsgo.js
+  checksum: 10c0/e8bc6cf171ee29131934f662c9b3577374d7e872247831da36a5723abe175998f1318a134ed8eb0ee5213887dbb1f1209fac5555cdf5b6b19d0d7da044d0cdc9
   languageName: node
   linkType: hard
 
@@ -1660,6 +1749,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-tokens@npm:^3.0.0 || ^4.0.0":
+  version: 4.0.0
+  resolution: "js-tokens@npm:4.0.0"
+  checksum: 10c0/e248708d377aa058eacf2037b07ded847790e6de892bbad3dac0abba2e759cb9f121b00099a65195616badcb6eca8d14d975cb3e89eb1cfda644756402c8aeed
+  languageName: node
+  linkType: hard
+
 "jsonc-parser@npm:^3.2.0":
   version: 3.3.1
   resolution: "jsonc-parser@npm:3.3.1"
@@ -1791,6 +1887,17 @@ __metadata:
   version: 4.18.1
   resolution: "lodash@npm:4.18.1"
   checksum: 10c0/757228fc68805c59789e82185135cf85f05d0b2d3d54631d680ca79ec21944ec8314d4533639a14b8bcfbd97a517e78960933041a5af17ecb693ec6eecb99a27
+  languageName: node
+  linkType: hard
+
+"loose-envify@npm:^1.1.0":
+  version: 1.4.0
+  resolution: "loose-envify@npm:1.4.0"
+  dependencies:
+    js-tokens: "npm:^3.0.0 || ^4.0.0"
+  bin:
+    loose-envify: cli.js
+  checksum: 10c0/655d110220983c1a4b9c0c679a2e8016d4b67f6e9c7b5435ff5979ecdb20d0813f4dec0a08674fcbdd4846a3f07edbb50a36811fd37930b94aaa0d9daceb017e
   languageName: node
   linkType: hard
 
@@ -1988,12 +2095,13 @@ __metadata:
   resolution: "people-data-labs@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
-    "@types/react": "npm:^19.0.0"
+    "@types/react": "npm:^18.2.0"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     oxlint: "npm:^0.16.0"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
-    twenty-client-sdk: "npm:2.13.0"
-    twenty-sdk: "npm:2.13.0"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    twenty-client-sdk: "npm:^2.14.0"
+    twenty-sdk: "npm:^2.14.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.0"
@@ -2055,14 +2163,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^19.0.0":
-  version: 19.2.6
-  resolution: "react-dom@npm:19.2.6"
+"react-dom@npm:^18.2.0":
+  version: 18.3.1
+  resolution: "react-dom@npm:18.3.1"
   dependencies:
-    scheduler: "npm:^0.27.0"
+    loose-envify: "npm:^1.1.0"
+    scheduler: "npm:^0.23.2"
   peerDependencies:
-    react: ^19.2.6
-  checksum: 10c0/dbf2aef67857c03a612bc9316a4562e5066f43fa04bf28f7f0734963fc1350da2c9f8eb973930655453281079f30cc8222bab383dbec4b5097084e2c081e3334
+    react: ^18.3.1
+  checksum: 10c0/a752496c1941f958f2e8ac56239172296fcddce1365ce45222d04a1947e0cc5547df3e8447f855a81d6d39f008d7c32eab43db3712077f09e3f67c4874973e85
   languageName: node
   linkType: hard
 
@@ -2088,10 +2197,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^19.0.0":
-  version: 19.2.6
-  resolution: "react@npm:19.2.6"
-  checksum: 10c0/66afde33b9a9ee87b1e1cae39d8e7e040d1262e719524fd70660c4d4ce79929c532ac19fc3df5a911edaf02768fdf2c49de4ede1ba99bc6aad72796e0e26e798
+"react@npm:^18.2.0":
+  version: 18.3.1
+  resolution: "react@npm:18.3.1"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
   languageName: node
   linkType: hard
 
@@ -2188,6 +2299,15 @@ __metadata:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: 10c0/7e3c8b2e88a1841c9671094bbaeebd94448111dd90a81a1f606f3f67708a6ec57763b3b47f06da09fc6054193e0e6709e77325415dc8422b04497a8070fa02d4
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.23.2":
+  version: 0.23.2
+  resolution: "scheduler@npm:0.23.2"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 10c0/26383305e249651d4c58e6705d5f8425f153211aef95f15161c151f7b8de885f24751b377e4a0b3dd42cce09aad3f87a61dab7636859c0d89b7daf1a1e2a5c78
   languageName: node
   linkType: hard
 
@@ -2413,22 +2533,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.13.0":
-  version: 2.13.0
-  resolution: "twenty-client-sdk@npm:2.13.0"
+"twenty-client-sdk@npm:2.14.0, twenty-client-sdk@npm:^2.14.0":
+  version: 2.14.0
+  resolution: "twenty-client-sdk@npm:2.14.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/740464acec94c1d4cc5fa50ed6b190a7f1d1681963f61437a6c704835c05ffe0f5a13e254e57601a99b07bbe0f68483dee19211731853aafbcc15ec79f8039ce
+  checksum: 10c0/eb222a726e21fc98f3a624f9acac7d47f0c769b989911889036665dac7c7c88698ec99beb844bf51a42e1696ea0a067bae8cf47fd751965af52a3720835242f0
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:2.13.0":
-  version: 2.13.0
-  resolution: "twenty-sdk@npm:2.13.0"
+"twenty-sdk@npm:^2.14.0":
+  version: 2.14.0
+  resolution: "twenty-sdk@npm:2.14.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -2445,12 +2565,12 @@ __metadata:
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.13.0"
+    twenty-client-sdk: "npm:2.14.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/51c350abe5d344fcad3c961a77632fd3cb2d91e357d0562b3eb02f05f66dbc41221c5463d0f91c022316a16af03a05ad43f038d9534c0ae31c060008d0e48672
+  checksum: 10c0/c4211772f8dd2ba81074a74be5f616c4c264d6bf8a174c5724be6d1c9a8cb3ca68a2674653bb58c059dae4bf1b0f43f91991e73d6a01395807206f0ac44afb08
   languageName: node
   linkType: hard
 
@@ -2498,9 +2618,9 @@ __metadata:
   linkType: hard
 
 "undici@npm:^6.25.0":
-  version: 6.26.0
-  resolution: "undici@npm:6.26.0"
-  checksum: 10c0/cf2b4caf58c33d6582970991290cc7a6486d6e738845f25dcdd16952d708ec844815c6d30362919764fcaf30f719891289341f1ada496f003ce2700310453a47
+  version: 6.27.0
+  resolution: "undici@npm:6.27.0"
+  checksum: 10c0/f88c3dae3957dbf9d93cb481440aced317bd3c4941b5914fea5efba516d51138988cdb5c76006f0bb1337e41d56c3443351055d492e73af2428521c37ba2a76f
   languageName: node
   linkType: hard
 

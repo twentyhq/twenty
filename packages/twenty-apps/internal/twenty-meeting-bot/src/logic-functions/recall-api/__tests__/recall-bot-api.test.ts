@@ -9,8 +9,10 @@ import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-sch
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
+import { MEETING_BOT_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-recording-retention-hours-env-var-name';
 
 const getRecallApiConfigMock = vi.hoisted(() => vi.fn());
+const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 
 vi.mock('src/logic-functions/recall-api/get-recall-api-config.util', () => ({
   getRecallApiConfig: getRecallApiConfigMock,
@@ -20,6 +22,7 @@ describe('recall bot api', () => {
   const fetchMock = vi.fn();
 
   beforeEach(() => {
+    delete process.env[MEETING_BOT_RECORDING_RETENTION_HOURS_ENV_VAR_NAME];
     getRecallApiConfigMock.mockReset();
     getRecallApiConfigMock.mockReturnValue({
       success: true,
@@ -43,6 +46,7 @@ describe('recall bot api', () => {
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-id',
         twentyCalendarEventId: 'calendar-event-id',
         twentyRealMeetingKey: 'meeting-key',
@@ -67,13 +71,64 @@ describe('recall bot api', () => {
       recording_config: {
         video_mixed_mp4: {},
         audio_mixed_mp3: {},
+        retention: { type: 'timed', hours: 166 },
       },
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-id',
         twentyCalendarEventId: 'calendar-event-id',
         twentyRealMeetingKey: 'meeting-key',
       },
     });
+  });
+
+  it('uses the configured Recall recording retention hours when scheduling a bot', async () => {
+    process.env[MEETING_BOT_RECORDING_RETENTION_HOURS_ENV_VAR_NAME] = '240';
+
+    const result = await scheduleRecallBot({
+      meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      joinAt: '2026-01-01T13:00:00.000Z',
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-id',
+        twentyCalendarEventId: 'calendar-event-id',
+        twentyRealMeetingKey: 'meeting-key',
+      },
+    });
+
+    expect(result).toEqual({ ok: true, externalBotId: 'recall-bot-id' });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).recording_config).toEqual(
+      {
+        video_mixed_mp4: {},
+        audio_mixed_mp3: {},
+        retention: { type: 'timed', hours: 240 },
+      },
+    );
+  });
+
+  it('falls back to safe Recall recording retention hours when the configured value is invalid', async () => {
+    process.env[MEETING_BOT_RECORDING_RETENTION_HOURS_ENV_VAR_NAME] =
+      'seven-days';
+
+    const result = await scheduleRecallBot({
+      meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      joinAt: '2026-01-01T13:00:00.000Z',
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-id',
+        twentyCalendarEventId: 'calendar-event-id',
+        twentyRealMeetingKey: 'meeting-key',
+      },
+    });
+
+    expect(result).toEqual({ ok: true, externalBotId: 'recall-bot-id' });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).recording_config).toEqual(
+      {
+        video_mixed_mp4: {},
+        audio_mixed_mp3: {},
+        retention: { type: 'timed', hours: 166 },
+      },
+    );
   });
 
   it('fails when the create response does not include a bot id', async () => {
@@ -87,6 +142,7 @@ describe('recall bot api', () => {
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-id',
         twentyCalendarEventId: 'calendar-event-id',
         twentyRealMeetingKey: 'meeting-key',
@@ -113,6 +169,7 @@ describe('recall bot api', () => {
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-id',
         twentyCalendarEventId: 'calendar-event-id',
         twentyRealMeetingKey: 'meeting-key',
@@ -125,6 +182,13 @@ describe('recall bot api', () => {
       errorMessage:
         'Recall API responded with HTTP 404: {"detail":"Not found."}',
     });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).recording_config).toEqual(
+      {
+        video_mixed_mp4: {},
+        audio_mixed_mp3: {},
+        retention: { type: 'timed', hours: 166 },
+      },
+    );
   });
 
   it('does not duplicate an existing Token authorization prefix', async () => {
@@ -141,6 +205,7 @@ describe('recall bot api', () => {
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-id',
         twentyCalendarEventId: 'calendar-event-id',
         twentyRealMeetingKey: 'meeting-key',

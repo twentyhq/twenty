@@ -1,90 +1,40 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { useDebounce } from 'use-debounce';
+import { useState } from 'react';
 
-import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
-import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
+import { useAvailableNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/side-panel/hooks/useAvailableNavigationMenuItemSearchRecords';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelObjectFilterDropdown } from '@/side-panel/components/SidePanelObjectFilterDropdown';
-import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SidePanelNewSidebarItemRecordItem } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordItem';
-import { useQuery } from '@apollo/client/react';
-import { SearchDocument } from '~/generated/graphql';
-
-type SearchRecordBase = {
-  recordId: string;
-  objectNameSingular: string;
-  label: string;
-  imageUrl?: string | null;
-};
 
 export const SidePanelNewSidebarItemRecordSubPage = () => {
   const { t } = useLingui();
-  const { currentItems } = useNavigationMenuItemEditController();
   const [recordSearchInput, setRecordSearchInput] = useState('');
-  const [deferredRecordSearchInput] = useDebounce(recordSearchInput, 300);
-  const coreClient = useApolloCoreClient();
-  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const [selectedObjectNameSingular, setSelectedObjectNameSingular] = useState<
     string | null
   >(null);
-  const sidePanelShowHiddenObjects = useAtomStateValue(
-    sidePanelShowHiddenObjectsState,
-  );
-
-  const includedObjectNameSingulars = useMemo(() => {
-    if (isDefined(selectedObjectNameSingular)) {
-      return [selectedObjectNameSingular];
-    }
-
-    return readableObjectMetadataItems
-      .filter((item) => sidePanelShowHiddenObjects || item.isSearchable)
-      .map((item) => item.nameSingular);
-  }, [
-    readableObjectMetadataItems,
+  const {
+    availableSearchRecords,
+    isSearchDebouncing,
+    recordSearchLoading,
+    trimmedSearchInput,
+  } = useAvailableNavigationMenuItemSearchRecords({
+    searchInput: recordSearchInput,
     selectedObjectNameSingular,
-    sidePanelShowHiddenObjects,
-  ]);
+    skip: !isNonEmptyString(recordSearchInput.trim()),
+  });
 
-  const { data: searchData, loading: recordSearchLoading } = useQuery(
-    SearchDocument,
-    {
-      client: coreClient,
-      variables: {
-        searchInput: deferredRecordSearchInput ?? '',
-        limit: MAX_SEARCH_RESULTS,
-        includedObjectNameSingulars,
-      },
-    },
-  );
-
-  const recordIdsAlreadyAdded = new Set(
-    currentItems.flatMap((item) =>
-      isDefined(item.targetRecordId) ? [item.targetRecordId] : [],
-    ),
-  );
-
-  const searchRecords =
-    searchData?.search?.edges?.map((edge) => edge.node) ?? [];
-  const availableSearchRecords = searchRecords.filter(
-    (record) => !recordIdsAlreadyAdded.has(record.recordId),
-  ) as SearchRecordBase[];
-
-  const isEmpty = availableSearchRecords.length === 0 && !recordSearchLoading;
+  const isRecordSearchLoading = recordSearchLoading || isSearchDebouncing;
+  const isEmpty = availableSearchRecords.length === 0 && !isRecordSearchLoading;
   const selectableItemIds = isEmpty
     ? []
     : availableSearchRecords.map((record) => record.recordId);
-  const noResultsText =
-    deferredRecordSearchInput.length > 0
-      ? t`No results found`
-      : t`Type to search records`;
+  const noResultsText = isNonEmptyString(trimmedSearchInput)
+    ? t`No results found`
+    : t`Type to search records`;
 
   return (
     <SidePanelSubViewWithSearch
@@ -102,7 +52,7 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
         {({ innerRef, droppableProps, placeholder }) => (
           <SidePanelList
             selectableItemIds={selectableItemIds}
-            loading={recordSearchLoading}
+            loading={isRecordSearchLoading}
             noResults={isEmpty}
             noResultsText={noResultsText}
           >

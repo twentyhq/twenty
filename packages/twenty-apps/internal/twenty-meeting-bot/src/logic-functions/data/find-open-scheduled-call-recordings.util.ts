@@ -1,4 +1,4 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';

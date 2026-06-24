@@ -198,4 +198,46 @@ describe('defineLogicFunction', () => {
       'Database event trigger must have an eventName',
     );
   });
+
+  it('accepts a serverRouteTriggerSettings resolver returning { workspaceId, targetLogicFunctionUniversalIdentifier }', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Resolve workspace from request',
+      serverRouteTriggerSettings: { forwardedRequestHeaders: ['x-tenant'] },
+      handler: async () => ({
+        workspaceId: 'ws-1',
+        targetLogicFunctionUniversalIdentifier: 'target-uid',
+      }),
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.config.serverRouteTriggerSettings).toBeDefined();
+  });
+
+  it('compile-time rejects a serverRouteTriggerSettings resolver returning the wrong shape', () => {
+    // @ts-expect-error — handler must return { workspaceId: string;
+    // targetLogicFunctionUniversalIdentifier: string } when
+    // `serverRouteTriggerSettings` is set.
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Bad resolver',
+      serverRouteTriggerSettings: { forwardedRequestHeaders: [] },
+      handler: async () => ({ notAWorkspaceId: 'oops' }),
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('compile-time rejects a serverRouteTriggerSettings resolver returning only workspaceId', () => {
+    // @ts-expect-error — handler must also return
+    // `targetLogicFunctionUniversalIdentifier`.
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Resolver missing target',
+      serverRouteTriggerSettings: { forwardedRequestHeaders: [] },
+      handler: async () => ({ workspaceId: 'ws-1' }),
+    });
+
+    expect(result.success).toBe(true);
+  });
 });

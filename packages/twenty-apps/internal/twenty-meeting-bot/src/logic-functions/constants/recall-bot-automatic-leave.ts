@@ -1,9 +1,9 @@
 import { isUndefined } from '@sniptt/guards';
 
+import { MEETING_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-everyone-left-timeout-seconds-env-var-name';
+import { MEETING_BOT_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-noone-joined-timeout-seconds-env-var-name';
+import { MEETING_BOT_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/meeting-bot-waiting-room-timeout-seconds-env-var-name';
 import { RECALL_BOT_EVERYONE_LEFT_MIN_ACTIVATE_AFTER_SECONDS } from 'src/logic-functions/constants/recall-bot-everyone-left-min-activate-after-seconds';
-import { RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-everyone-left-timeout-seconds-env-var-name';
-import { RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-noone-joined-timeout-seconds-env-var-name';
-import { RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-bot-waiting-room-timeout-seconds-env-var-name';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
@@ -20,13 +20,13 @@ export const getRecallBotAutomaticLeave = ():
   | RecallBotAutomaticLeave
   | undefined => {
   const waitingRoomTimeoutSeconds = getOptionalPositiveIntegerVariable(
-    RECALL_BOT_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME,
+    MEETING_BOT_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME,
   );
   const nooneJoinedTimeoutSeconds = getOptionalPositiveIntegerVariable(
-    RECALL_BOT_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME,
+    MEETING_BOT_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME,
   );
   const everyoneLeftTimeoutSeconds = getOptionalPositiveIntegerVariable(
-    RECALL_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME,
+    MEETING_BOT_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME,
   );
 
   const automaticLeave: RecallBotAutomaticLeave = {};

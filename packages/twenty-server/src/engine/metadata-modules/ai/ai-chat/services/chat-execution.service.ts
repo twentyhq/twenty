@@ -13,6 +13,7 @@ import {
   type UIMessage,
   type UITools,
 } from 'ai';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
@@ -59,9 +60,9 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import {
   getCacheProviderOptions,
-  getCallLevelCacheProviderOptions,
+  getCallLevelProviderOptions,
   injectCacheBreakpoint,
-} from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-cache-breakpoint.util';
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
@@ -125,6 +126,8 @@ export class ChatExecutionService {
         workspace.id,
       );
 
+    const locale = userContext.locale as keyof typeof APP_LOCALES;
+
     const toolContext = {
       workspaceId: workspace.id,
       roleId,
@@ -132,13 +135,14 @@ export class ChatExecutionService {
       userId,
       userWorkspaceId,
       threadId,
+      locale,
       onCodeExecutionUpdate,
     };
 
     const toolCatalog = await this.toolRegistry.buildToolIndex(
       workspace.id,
       roleId,
-      { userId, userWorkspaceId },
+      { userId, userWorkspaceId, locale },
     );
 
     const skillCatalog = await this.skillService.findAllFlatSkills(
@@ -152,7 +156,7 @@ export class ChatExecutionService {
     const preloadedTools = await this.toolRegistry.getToolsByName(
       AI_CHAT_TOOL_NAMES_TO_PRELOAD,
       toolContext,
-      { compactOutput: true },
+      { compactOutput: true, spillLargeOutput: true },
     );
 
     const resolvedModelId = modelId ?? workspace.smartModel;
@@ -204,7 +208,7 @@ export class ChatExecutionService {
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
         toolContext,
-        { compactOutput: true },
+        { compactOutput: true, spillLargeOutput: true },
       ),
       [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(
         (skillNames) =>
@@ -407,9 +411,11 @@ export class ChatExecutionService {
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) || hasNoMoreAvailableCredits,
       experimental_telemetry: AI_TELEMETRY_CONFIG,
-      providerOptions: getCallLevelCacheProviderOptions(
-        registeredModel.sdkPackage,
-      ),
+      providerOptions: getCallLevelProviderOptions({
+        sdkPackage: registeredModel.sdkPackage,
+        providerOptions: undefined,
+        promptCacheKey: threadId,
+      }),
       prepareStep: ({ messages }) => {
         stepStartedAt = performance.now();
 

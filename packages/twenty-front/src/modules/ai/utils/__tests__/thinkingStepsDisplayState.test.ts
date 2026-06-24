@@ -41,7 +41,7 @@ const createToolPart = ({
 
 describe('thinkingStepsDisplayState', () => {
   describe('groupContiguousThinkingStepParts', () => {
-    it('should group contiguous reasoning and non-code-interpreter tool parts', () => {
+    it('should group contiguous reasoning and tool parts', () => {
       const parts = [
         { type: 'text', text: 'hello' } as ExtendedUIMessagePart,
         { type: 'step-start' } as ExtendedUIMessagePart,
@@ -77,9 +77,9 @@ describe('thinkingStepsDisplayState', () => {
         type: 'part',
         part: parts[6],
       });
-      expect(groupedParts[3]).toEqual({
-        type: 'part',
-        part: parts[7],
+      expect(groupedParts[3]).toMatchObject({
+        type: 'thinking-steps',
+        parts: [parts[7]],
       });
     });
   });

@@ -3,6 +3,23 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { handleRecallWebhook } from 'src/logic-functions/flows/handle-recall-webhook.util';
 
+const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
+
+const buildRecordingDoneWebhookBody = () => ({
+  event: 'recording.done',
+  data: {
+    bot: {
+      id: 'recall-bot-1',
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+      },
+    },
+    recording: {
+      id: 'recall-recording-1',
+    },
+  },
+});
+
 const getRecallBotMock = vi.hoisted(() => vi.fn());
 const listRecallTranscriptsMock = vi.hoisted(() => vi.fn());
 const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
@@ -331,7 +348,7 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
-  it('falls back to external bot id matching when metadata is absent', async () => {
+  it('falls back to external bot id matching when call recording metadata is absent', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -345,7 +362,12 @@ describe('handleRecallWebhook', () => {
       body: {
         event: 'recording.done',
         data: {
-          bot_id: 'recall-bot-1',
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+            },
+          },
           recording: {
             id: 'recall-recording-1',
           },
@@ -727,15 +749,7 @@ describe('handleRecallWebhook', () => {
 
     await handleRecallWebhook({
       client: client as unknown as CoreApiClient,
-      body: {
-        event: 'recording.done',
-        data: {
-          bot_id: 'recall-bot-1',
-          recording: {
-            id: 'recall-recording-1',
-          },
-        },
-      },
+      body: buildRecordingDoneWebhookBody(),
     });
 
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledTimes(1);
@@ -777,15 +791,7 @@ describe('handleRecallWebhook', () => {
 
     await handleRecallWebhook({
       client: client as unknown as CoreApiClient,
-      body: {
-        event: 'recording.done',
-        data: {
-          bot_id: 'recall-bot-1',
-          recording: {
-            id: 'recall-recording-1',
-          },
-        },
-      },
+      body: buildRecordingDoneWebhookBody(),
     });
 
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
@@ -887,15 +893,7 @@ describe('handleRecallWebhook', () => {
 
     await handleRecallWebhook({
       client: client as unknown as CoreApiClient,
-      body: {
-        event: 'recording.done',
-        data: {
-          bot_id: 'recall-bot-1',
-          recording: {
-            id: 'recall-recording-1',
-          },
-        },
-      },
+      body: buildRecordingDoneWebhookBody(),
     });
 
     expect(ingestCallRecordingMediaMock).toHaveBeenCalledWith({
@@ -951,15 +949,7 @@ describe('handleRecallWebhook', () => {
 
     await handleRecallWebhook({
       client: client as unknown as CoreApiClient,
-      body: {
-        event: 'recording.done',
-        data: {
-          bot_id: 'recall-bot-1',
-          recording: {
-            id: 'recall-recording-1',
-          },
-        },
-      },
+      body: buildRecordingDoneWebhookBody(),
     });
 
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
@@ -976,6 +966,56 @@ describe('handleRecallWebhook', () => {
           audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
         }),
       }),
+    ]);
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
+  });
+
+  it('marks FAILED on recording.done when no recording artifact path exists', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: { id: 'recall-bot-1', recordings: [] },
+    });
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        startedAt: '2026-01-01T13:02:00.000Z',
+        endedAt: '2026-01-01T14:05:00.000Z',
+        transcript: null,
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'recording.done',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+            },
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'recording.done',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'FAILED',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'FAILED',
+          externalBotId: 'recall-bot-1',
+          meetingBotFailureReason: 'recording_artifacts_unavailable',
+        },
+      },
     ]);
     expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
   });
@@ -1197,7 +1237,8 @@ describe('handleRecallWebhook', () => {
             status: 'FAILED',
             subCode: 'transcription_failed',
           },
-          status: 'FAILED_UNKNOWN',
+          meetingBotFailureReason: 'transcript_failed:transcription_failed',
+          status: 'FAILED',
         },
       },
     ]);

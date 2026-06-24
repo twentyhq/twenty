@@ -64,8 +64,7 @@ What this connector intentionally does **not** support in v1:
 - **Slash commands / interactions.** The bot doesn't register or respond to
   `/commands`.
 - **Per-workspace identity.** All Twenty workspaces in the same Twenty
-  deployment share the same Discord bot — see
-  [Why bot token instead of OAuth?](#why-bot-token-instead-of-oauth) below.
+  deployment share the same Discord bot.
 - **2000-character message limit.** Discord rejects longer payloads with
   HTTP 400.
 
@@ -120,54 +119,3 @@ this — the bot credentials are already configured.
 Workspace users can now use the Discord workflow tools immediately — no
 further per-user configuration needed (which is unique vs Linear / Slack
 where each user connects their own account).
-
----
-
-## Why bot token instead of OAuth?
-
-Slack and Linear use OAuth-per-workspace
-(`defineConnectionProvider({ type: 'oauth' })`) so each Twenty workspace
-stores its own access token. Discord works differently:
-
-- Discord's `bot` scope **does** have an OAuth flow, but the `access_token`
-  it returns is a *user* bearer token — useless for bot actions like posting
-  messages. To actually send messages as the bot you need the static
-  **bot token** from the Developer Portal.
-- That bot token is global to the Discord application (and therefore to
-  the Twenty deployment). Discord deprecated per-install bot tokens years
-  ago.
-- Webhooks are a separate auth model but only support posting — no edit,
-  delete, or reactions — so they don't cover Slack/Linear parity.
-
-The result: this connector skips `defineConnectionProvider` entirely and
-reads `DISCORD_BOT_TOKEN` from an `applicationVariable` set once at
-deployment scope. See
-[Discord's OAuth2 docs](https://discord.com/developers/docs/topics/oauth2#bot-users)
-for the underlying reason bot users authenticate via static tokens.
-
----
-
-## Developers only
-
-If you're working on this app rather than installing the published version:
-
-```bash
-cd packages/twenty-apps/internal/twenty-discord
-
-# Day-to-day development (publish + install + watch in one):
-yarn twenty dev
-
-# Run unit tests:
-yarn test
-
-# Lint:
-yarn lint
-```
-
-`twenty dev` is recommended for iteration — it publishes to your local
-Twenty server, installs the app, and watches for changes in one command.
-
-The Discord REST API (v10) is called directly via `fetch` — no `discord.js`
-or other SDK dependency. See
-`src/logic-functions/utils/discord-api-request.ts` for the auth and
-error-handling wrapper that all handlers go through.

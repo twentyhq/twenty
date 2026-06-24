@@ -20,7 +20,6 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/feedback';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
@@ -71,10 +70,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
 
   if (isTasksEmpty) {
     return (
-      <AnimatedPlaceholderEmptyContainer
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-      >
+      <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noTask" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>

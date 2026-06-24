@@ -1,5 +1,5 @@
 import { isUndefined } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
@@ -457,14 +457,19 @@ const buildPolicyManagedCallRecordingUpdateFields = ({
   calendarEvent: CalendarEventRecord;
 }): CallRecordingUpdateFields =>
   canResetCallRecordingStatusToScheduled(existingCallRecording.status)
-    ? buildScheduledCallRecordingFields(calendarEvent)
+    ? {
+        ...buildScheduledCallRecordingFields(calendarEvent),
+        ...(isUndefined(existingCallRecording.meetingBotFailureReason)
+          ? {}
+          : { meetingBotFailureReason: null }),
+      }
     : buildCalendarDrivenCallRecordingFields(calendarEvent);
 
 const canResetCallRecordingStatusToScheduled = (
   status: string | undefined,
 ): boolean =>
   status === CallRecordingStatus.SCHEDULED ||
-  status === CallRecordingStatus.FAILED_UNKNOWN;
+  status === CallRecordingStatus.FAILED;
 
 const buildRemovedCalendarEventIdsByMeetingKey = (
   removedOccurrences: RemovedMeetingBotOccurrence[],

@@ -12,6 +12,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
@@ -63,7 +64,7 @@ export const SettingsRoleAssignmentTableRow = ({
         );
         return (
           <Avatar
-            avatarUrl={enrichedWorkspaceMember?.avatarUrl}
+            avatarUrl={getAbsoluteImageUrl(enrichedWorkspaceMember?.avatarUrl)}
             placeholderColorSeed={enrichedWorkspaceMember?.id}
             placeholder={enrichedWorkspaceMember?.name.firstName ?? ''}
             type="rounded"

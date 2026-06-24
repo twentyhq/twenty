@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import { type BackgroundMockCompany } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
 import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import {
   Avatar,
   Chip,
@@ -125,7 +126,7 @@ export const BackgroundMockTableRow = ({
           leftComponent={
             <Avatar
               type="squared"
-              avatarUrl={logoUrl}
+              avatarUrl={getAbsoluteImageUrl(logoUrl)}
               placeholder={company.name}
               placeholderColorSeed={company.id}
               size="md"
