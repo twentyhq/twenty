@@ -12,6 +12,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
+import { isEmptyGraphqlFilter } from 'src/engine/api/common/common-query-runners/utils/is-empty-graphql-filter.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -133,9 +134,10 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const { flatObjectMetadata } = queryRunnerContext;
 
     assertMutationNotOnRemoteObject(flatObjectMetadata);
-    if (!args.filter) {
+    // Reject empty/logically-trivial filters to avoid updating all records.
+    if (isEmptyGraphqlFilter(args.filter)) {
       throw new CommonQueryRunnerException(
-        'Filter is required',
+        'A non-empty filter is required for bulk update',
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );

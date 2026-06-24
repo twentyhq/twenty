@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
+import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
@@ -21,6 +22,12 @@ export class RestApiUpdateManyHandler extends RestApiBaseHandler {
   async handle(request: AuthenticatedRequest) {
     try {
       const { data, depth, filter } = this.parseRequestArgs(request);
+
+      if (isEmpty(filter)) {
+        throw new BadRequestException(
+          'Filters are mandatory for bulk update operations. Please provide at least one filter to prevent accidental update of all records.',
+        );
+      }
 
       const {
         authContext,
