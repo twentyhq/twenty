@@ -129,8 +129,10 @@ For each confirmed partner, generate three email types. For N confirmed partners
 
 ### Email rules (always applied)
 
+- **English by default.** Write all emails in English unless the lead clearly operates in another language (e.g. a French lead) — then match it. Tutoiement only applies when writing in French.
+- **Keep it short.** Aim for 4-6 sentences, never more than a short screen. Cut throat-clearing, recaps the recipient already knows, and anything the attached brief covers. If a sentence isn't doing work, drop it.
+- Intros are launched in parallel — frame them as already happening, not as a request for permission. Never write "may I introduce you" / "si c'est ok pour toi je te présente" or any permission-asking phrasing. State that the intro(s) are going out.
 - No em dashes (`—`) — use `:` or `,` instead
-- Tutoiement by default
 - Sign: `Cheers,\nRashad\nPartnerships @twenty`
 - Subject prefix: `[Twenty]`
 - No self-introduction for partner emails (they know who Rashad is)
@@ -138,26 +140,26 @@ For each confirmed partner, generate three email types. For N confirmed partners
 
 ### Email 1 — Client notification (one per run)
 
-- **To**: client email
-- **Subject**: `[Twenty] Ton projet CRM — intro(s) à venir`
-- **Content**: who Rashad is + role at Twenty, brief project recap (2 sentences), announce incoming introductions by agency name(s)
+This is a **reply to the existing client thread**, not a new draft. Don't open a Gmail compose for it and don't invent a subject — output the body text only so the user pastes it as a reply in the ongoing thread. No re-introduction (it's an existing conversation).
+
+- **Content**: announce that the intro(s) are going out, in parallel, to [agency name(s)] who'll reach out directly. No permission-asking, no recap.
 
 ### Email 2 per partner — Solo partner outreach
 
 - **To**: partner contact email (from `persons` → `emails.primaryEmail`; leave blank if none found)
-- **Subject**: `[Twenty] Opportunité partenaire : [Client], [one-line project description]`
+- **Subject**: `[Twenty] Partner opportunity: [Client], [one-line project description]`
 - **Content**: why this opportunity matches their profile, project complexity (custom objects, deployment, migration, seats), invite them to respond or get on a call, brief to attach
 
 ### Email 3 per partner — Three-way intro
 
 - **To**: partner contact email
 - **CC**: client email
-- **Subject**: `[Twenty] [Client] x [Partner] : Projet CRM`
+- **Subject**: `[Twenty] [Client] x [Partner]: CRM project`
 - **Content**: introduce client to partner (one sentence each), project in two sentences, brief to attach, hand off
 
 ### Opening in Gmail
 
-Open all emails sequentially with a 1.5s delay between each. Use Python:
+Open the **partner emails only** (Email 2 and Email 3) as new Gmail drafts, sequentially with a 1.5s delay between each. Email 1 is a reply to the existing client thread — output its text for the user to paste, don't open a compose window. Use Python:
 
 ```python
 import subprocess, urllib.parse, time, sys
