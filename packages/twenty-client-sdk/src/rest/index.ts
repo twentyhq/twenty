@@ -9,18 +9,16 @@ const isDefined = <T>(value: T): value is NonNullable<T> =>
   value !== null && value !== undefined;
 
 export type RestApiClientOptions = {
-  baseUrl?: string;
-  functionsBaseUrl?: string;
+  // Base URL the client targets by default — your app's logic functions
+  // (e.g. https://acme.withtwenty.com). The host injects it as TWENTY_FUNCTIONS_URL.
+  functionUrl?: string;
+  // The Twenty workspace/core API base (TWENTY_API_URL). Only needed for the
+  // rare case of calling the core REST API instead of your functions.
+  workspaceUrl?: string;
   token?: string;
   fetch?: typeof globalThis.fetch;
   defaultHeaders?: HeadersInit;
 };
-
-const LEGACY_LOGIC_FUNCTION_ROUTE_PREFIX = '/s';
-
-const isLegacyLogicFunctionRoute = (path: string): boolean =>
-  path === LEGACY_LOGIC_FUNCTION_ROUTE_PREFIX ||
-  path.startsWith(`${LEGACY_LOGIC_FUNCTION_ROUTE_PREFIX}/`);
 
 export type RestApiRequestOptions = {
   headers?: HeadersInit;
@@ -95,8 +93,8 @@ const buildRequestUrl = (
 };
 
 export class RestApiClient {
-  private baseUrl: string | undefined;
-  private functionsBaseUrl: string | undefined;
+  private functionUrl: string | undefined;
+  private workspaceUrl: string | undefined;
   private token: string | undefined;
   private defaultHeaders: HeadersInit | undefined;
   private fetchImplementation: typeof globalThis.fetch | null;
@@ -104,8 +102,8 @@ export class RestApiClient {
   private refreshAccessTokenPromise: Promise<string | null> | null = null;
 
   constructor(options?: RestApiClientOptions) {
-    this.baseUrl = options?.baseUrl;
-    this.functionsBaseUrl = options?.functionsBaseUrl;
+    this.functionUrl = options?.functionUrl;
+    this.workspaceUrl = options?.workspaceUrl;
     this.token = options?.token;
     this.defaultHeaders = options?.defaultHeaders;
     this.fetchImplementation = options?.fetch ?? globalThis.fetch ?? null;
@@ -152,17 +150,19 @@ export class RestApiClient {
     return this.execute<TResponse>('DELETE', path, undefined, options);
   }
 
-  private resolveBaseUrl(): string {
-    const baseUrl =
-      this.baseUrl ?? getProcessEnvironment()[DEFAULT_API_URL_NAME];
+  private resolveWorkspaceUrl(): string | undefined {
+    const workspaceUrl =
+      this.workspaceUrl ?? getProcessEnvironment()[DEFAULT_API_URL_NAME];
 
-    if (!isDefined(baseUrl) || baseUrl.trim().length === 0) {
-      throw new RestApiClientError(
-        `Missing API url. Set the \`${DEFAULT_API_URL_NAME}\` environment variable or pass \`baseUrl\` to \`RestApiClient\`.`,
-      );
+    if (!isDefined(workspaceUrl)) {
+      return undefined;
     }
 
-    return normalizeBaseUrl(baseUrl);
+    const normalizedWorkspaceUrl = normalizeBaseUrl(workspaceUrl);
+
+    return normalizedWorkspaceUrl.length === 0
+      ? undefined
+      : normalizedWorkspaceUrl;
   }
 
   private resolveToken(): string {
@@ -311,40 +311,34 @@ export class RestApiClient {
     return parsedBody as TResponse;
   }
 
-  private resolveFunctionsBaseUrl(): string | undefined {
-    const functionsBaseUrl =
-      this.functionsBaseUrl ??
-      getProcessEnvironment()[DEFAULT_FUNCTIONS_URL_NAME];
+  private resolveFunctionUrl(): string | undefined {
+    const functionUrl =
+      this.functionUrl ?? getProcessEnvironment()[DEFAULT_FUNCTIONS_URL_NAME];
 
-    if (!isDefined(functionsBaseUrl)) {
+    if (!isDefined(functionUrl)) {
       return undefined;
     }
 
-    const normalizedFunctionsBaseUrl = normalizeBaseUrl(functionsBaseUrl);
+    const normalizedFunctionUrl = normalizeBaseUrl(functionUrl);
 
-    return normalizedFunctionsBaseUrl.length === 0
+    return normalizedFunctionUrl.length === 0
       ? undefined
-      : normalizedFunctionsBaseUrl;
+      : normalizedFunctionUrl;
   }
 
-  // Logic-function routes (paths prefixed with /s) are served from the isolated
-  // public domain when one is configured (Twenty Cloud) — the function is
-  // exposed at the root path there, so the /s prefix is stripped. Everything
-  // else, and the self-hosted fallback, keeps using {apiUrl}/s...
-  private resolveRequestBaseUrlAndPath(path: string): {
-    baseUrl: string;
-    path: string;
-  } {
-    const functionsBaseUrl = this.resolveFunctionsBaseUrl();
+  // The host injects a fully-resolved function base URL (Twenty Cloud: the
+  // app's isolated domain; self-hosted: {apiUrl}/s), so the client just appends
+  // the route path. workspaceUrl is the fallback for the rare core-API call.
+  private resolveRequestBaseUrl(): string {
+    const baseUrl = this.resolveFunctionUrl() ?? this.resolveWorkspaceUrl();
 
-    if (isDefined(functionsBaseUrl) && isLegacyLogicFunctionRoute(path)) {
-      const functionPath =
-        path.slice(LEGACY_LOGIC_FUNCTION_ROUTE_PREFIX.length) || '/';
-
-      return { baseUrl: functionsBaseUrl, path: functionPath };
+    if (!isDefined(baseUrl)) {
+      throw new RestApiClientError(
+        `Missing API url. Set the \`${DEFAULT_FUNCTIONS_URL_NAME}\` (or \`${DEFAULT_API_URL_NAME}\`) environment variable, or pass \`functionUrl\` / \`workspaceUrl\` to \`RestApiClient\`.`,
+      );
     }
 
-    return { baseUrl: this.resolveBaseUrl(), path };
+    return baseUrl;
   }
 
   private async execute<TResponse>(
@@ -353,9 +347,11 @@ export class RestApiClient {
     body: unknown,
     requestOptions?: RestApiRequestOptions,
   ): Promise<TResponse> {
-    const { baseUrl, path: targetPath } =
-      this.resolveRequestBaseUrlAndPath(path);
-    const url = buildRequestUrl(baseUrl, targetPath, requestOptions?.query);
+    const url = buildRequestUrl(
+      this.resolveRequestBaseUrl(),
+      path,
+      requestOptions?.query,
+    );
     const token = this.resolveToken();
 
     let response = await this.sendRequest(

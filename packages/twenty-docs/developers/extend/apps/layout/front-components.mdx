@@ -200,9 +200,9 @@ export default defineFrontComponent({
 
 Front components run browser-side in a sandboxed Web Worker, while [logic functions](/developers/extend/apps/logic/logic-functions) run server-side. There is no direct in-process call between the two — instead, a front component reaches a logic function over HTTP.
 
-A logic function declared with `httpRouteTriggerSettings` is exposed under the `/s/` endpoint at `${TWENTY_API_URL}/s<path>`. Your front component calls that route with the `RestApiClient` from `twenty-client-sdk/rest`, which authenticates with the `TWENTY_APP_ACCESS_TOKEN` that Twenty injects into the worker.
+A logic function declared with `httpRouteTriggerSettings` is reachable over HTTP at its route path. Your front component calls it with the `RestApiClient` from `twenty-client-sdk/rest`, which authenticates with the `TWENTY_APP_ACCESS_TOKEN` that Twenty injects into the worker.
 
-The `RestApiClient` is built for exactly this. It reads `TWENTY_API_URL` and `TWENTY_APP_ACCESS_TOKEN` from the worker environment, attaches the `Authorization: Bearer` header, serializes and parses JSON, and throws a `RestApiClientError` when the token or URL is missing or the response is non-2xx — so you don't reimplement that boilerplate in every component.
+The `RestApiClient` is built for exactly this. It reads `TWENTY_FUNCTIONS_URL` (the base your functions are served from) and `TWENTY_APP_ACCESS_TOKEN` from the worker environment, attaches the `Authorization: Bearer` header, serializes and parses JSON, and throws a `RestApiClientError` when the token or URL is missing or the response is non-2xx — so you don't reimplement that boilerplate in every component.
 
 > **On Twenty Cloud, HTTP-triggered logic functions are served on a dedicated domain** at `https://<your-workspace-subdomain>.withtwenty.com<path>`. `RestApiClient` uses it automatically, so the code below is unchanged. For external callers, copy the exact URL from the function's **HTTP trigger** settings or the application's **Settings** tab — on Twenty Cloud new routes must use it, as the legacy `/s/` route returns `410 Gone` (it stays only for self-hosting).
 
@@ -217,7 +217,7 @@ const SyncPrs = () => {
   const execute = async () => {
     const client = new RestApiClient();
 
-    await client.post('/s/github/fetch-prs', {
+    await client.post('/github/fetch-prs', {
       owner: 'twentyhq',
       repo: 'twenty',
     });
@@ -235,7 +235,7 @@ export default defineFrontComponent({
 });
 ```
 
-The path passed to the client is the route's public path — the logic function's `httpRouteTriggerSettings.path` prefixed with `/s`. Keep `isAuthRequired: true`; the client supplies the app access token Twenty mints for your component:
+The path passed to the client is the logic function's `httpRouteTriggerSettings.path`. Keep `isAuthRequired: true`; the client supplies the app access token Twenty mints for your component:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -260,7 +260,7 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_API_URL` and `TWENTY_APP_ACCESS_TOKEN` are injected automatically — see [Application variables](#application-variables). Because secret application variables are never exposed to front components, keep API keys and other sensitive logic in the logic function, not in the front component.
+`TWENTY_FUNCTIONS_URL` and `TWENTY_APP_ACCESS_TOKEN` are injected automatically — see [Application variables](#application-variables). Because secret application variables are never exposed to front components, keep API keys and other sensitive logic in the logic function, not in the front component.
 </Note>
 
 ### RestApiClient reference
@@ -278,11 +278,11 @@ Import `RestApiClient` from `twenty-client-sdk/rest`. It belongs to the same cli
 
 `options` accepts `headers`, `query` (a record of query-string params; nullish values are skipped), and an `AbortSignal` via `signal`. A non-`FormData` object `body` is JSON-serialized automatically. On a `401`, the client refreshes the access token once through the host and retries the request.
 
-The base URL and token are resolved from the environment by default. Pass overrides to the constructor when needed — for example in tests:
+The function base URL and token are resolved from the environment by default. Pass overrides to the constructor when needed — for example in tests, or `workspaceUrl` for the rare case of calling the core REST API instead of your functions:
 
 ```ts
 const client = new RestApiClient({
-  baseUrl: 'https://api.example.com',
+  functionUrl: 'https://acme.withtwenty.com',
   token: 'my-token',
 });
 ```
@@ -295,7 +295,7 @@ import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 const client = new RestApiClient();
 
 try {
-  const prs = await client.get('/s/github/fetch-prs', {
+  const prs = await client.get('/github/fetch-prs', {
     query: { state: 'open' },
   });
 } catch (error) {
@@ -378,7 +378,8 @@ The following system variables are always available via `process.env`:
 
 | Variable | Description |
 |----------|-------------|
-| `TWENTY_API_URL` | Base URL of the Twenty API |
+| `TWENTY_FUNCTIONS_URL` | Base URL your app's HTTP logic functions are served from (used by `RestApiClient`) |
+| `TWENTY_API_URL` | Base URL of the Twenty core API |
 | `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to your app's role |
 
 ## Host communication API

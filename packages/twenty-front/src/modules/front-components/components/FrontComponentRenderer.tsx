@@ -35,10 +35,13 @@ export const FrontComponentRenderer = ({
 
   const { publicFunctionDomain } = useAtomStateValue(domainConfigurationState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const functionsBaseUrl = getFunctionsBaseUrl({
-    publicFunctionDomain,
-    workspaceSubdomain: currentWorkspace?.subdomain,
-  });
+  // Fully-resolved function base the SDK targets: the isolated domain on Twenty
+  // Cloud, or {serverUrl}/s when self-hosting. The SDK just appends the route.
+  const functionsBaseUrl =
+    getFunctionsBaseUrl({
+      publicFunctionDomain,
+      workspaceSubdomain: currentWorkspace?.subdomain,
+    }) ?? `${REACT_APP_SERVER_BASE_URL}/s`;
 
   const setFrontComponentApplicationTokenPair = useSetAtomComponentState(
     frontComponentApplicationTokenPairComponentState,
