@@ -105,9 +105,7 @@ describe('kv', () => {
         ),
       );
 
-      await expect(kv.set('my-key', 'value')).rejects.toThrow(
-        /quota exceeded/,
-      );
+      await expect(kv.set('my-key', 'value')).rejects.toThrow(/quota exceeded/);
     });
   });
 
