@@ -102,8 +102,8 @@ describe('BillingCreditService', () => {
       ).not.toHaveBeenCalled();
     });
 
-    it.each([0, -1, Number.NaN, Number.POSITIVE_INFINITY])(
-      'throws on a non-positive or non-finite amount (%p)',
+    it.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY])(
+      'throws on a non-positive, non-integer or non-finite amount (%p)',
       async (amountMicro) => {
         await expect(
           service.creditWorkspaceBalance({ workspaceId, amountMicro }),

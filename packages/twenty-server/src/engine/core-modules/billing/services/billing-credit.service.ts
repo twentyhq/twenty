@@ -36,9 +36,9 @@ export class BillingCreditService {
       return;
     }
 
-    if (!Number.isFinite(amountMicro) || amountMicro <= 0) {
+    if (!Number.isInteger(amountMicro) || amountMicro <= 0) {
       throw new BillingException(
-        `Cannot credit a non-positive amount (${amountMicro}) to workspace ${workspaceId}`,
+        `Cannot credit a non-positive or non-integer amount (${amountMicro}) to workspace ${workspaceId}`,
         BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID,
       );
     }
