@@ -6,6 +6,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { CrudOperationType } from 'twenty-shared/types';
 import {
   type CreateManyViewGroupsMutationVariables,
@@ -34,10 +35,7 @@ export const usePerformViewGroupAPIPersist = () => {
         ReturnType<typeof updateManyViewGroupsMutation>
       > | null>
     > => {
-      if (
-        !Array.isArray(updateViewGroupInputs.inputs) ||
-        updateViewGroupInputs.inputs.length === 0
-      ) {
+      if (!isNonEmptyArray(updateViewGroupInputs.inputs)) {
         return {
           status: 'successful',
           response: null,
@@ -80,10 +78,7 @@ export const usePerformViewGroupAPIPersist = () => {
         ReturnType<typeof createManyViewGroupsMutation>
       > | null>
     > => {
-      if (
-        !Array.isArray(createViewGroupInputs.inputs) ||
-        createViewGroupInputs.inputs.length === 0
-      ) {
+      if (!isNonEmptyArray(createViewGroupInputs.inputs)) {
         return {
           status: 'successful',
           response: null,
