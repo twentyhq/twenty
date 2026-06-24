@@ -6,7 +6,7 @@ import {
   getSubdomainSlugFromDisplayName,
   isDefined,
 } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { type SubdomainAvailabilityDTO } from 'src/engine/core-modules/domain/subdomain-manager/dtos/subdomain-availability.dto';
 import { type WorkspaceCreationDefaultsDTO } from 'src/engine/core-modules/domain/subdomain-manager/dtos/workspace-creation-defaults.dto';
@@ -81,42 +81,59 @@ export class SubdomainManagerService {
         ? derivedBase
         : generateRandomSubdomain();
 
-    const availableSubdomains: string[] = [];
+    const candidates = this.buildSubdomainCandidates(base);
 
-    const collectIfFreeToUse = async (candidate: string) => {
-      if (
-        !availableSubdomains.includes(candidate) &&
-        (await this.isSubdomainFreeToUse(candidate))
-      ) {
-        availableSubdomains.push(candidate);
-      }
-    };
-
-    await collectIfFreeToUse(base);
-
-    for (
-      let suffix = 2;
-      suffix <= MAX_NUMBERED_SUFFIX_ATTEMPTS &&
-      availableSubdomains.length < count;
-      suffix++
-    ) {
-      await collectIfFreeToUse(this.appendNumberedSuffix(base, suffix));
-    }
-
-    for (
-      let attempt = 0;
-      attempt < MAX_RANDOM_FALLBACK_ATTEMPTS &&
-      availableSubdomains.length < count;
-      attempt++
-    ) {
-      await collectIfFreeToUse(generateRandomSubdomain());
-    }
+    const availableSubdomains =
+      await this.filterFreeToUseSubdomains(candidates);
 
     if (availableSubdomains.length === 0) {
-      availableSubdomains.push(generateRandomSubdomain());
+      return [generateRandomSubdomain()];
     }
 
-    return availableSubdomains;
+    return availableSubdomains.slice(0, count);
+  }
+
+  private buildSubdomainCandidates(base: string): string[] {
+    const numberedCandidates = Array.from(
+      { length: MAX_NUMBERED_SUFFIX_ATTEMPTS - 1 },
+      (_, index) => this.appendNumberedSuffix(base, index + 2),
+    );
+
+    const randomCandidates = Array.from(
+      { length: MAX_RANDOM_FALLBACK_ATTEMPTS },
+      () => generateRandomSubdomain(),
+    );
+
+    return [...new Set([base, ...numberedCandidates, ...randomCandidates])];
+  }
+
+  private async filterFreeToUseSubdomains(
+    candidates: string[],
+  ): Promise<string[]> {
+    const defaultSubdomain = this.twentyConfigService.get('DEFAULT_SUBDOMAIN');
+
+    const validCandidates = candidates.filter(
+      (candidate) =>
+        isSubdomainValid(candidate) && candidate !== defaultSubdomain,
+    );
+
+    if (validCandidates.length === 0) {
+      return [];
+    }
+
+    const existingWorkspaces = await this.workspaceRepository.find({
+      where: { subdomain: In(validCandidates) },
+      withDeleted: true,
+      select: { subdomain: true },
+    });
+
+    const takenSubdomains = new Set(
+      existingWorkspaces.map((workspace) => workspace.subdomain),
+    );
+
+    return validCandidates.filter(
+      (candidate) => !takenSubdomains.has(candidate),
+    );
   }
 
   async getSubdomainAvailability(

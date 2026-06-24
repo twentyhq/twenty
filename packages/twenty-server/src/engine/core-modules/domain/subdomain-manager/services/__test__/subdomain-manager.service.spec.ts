@@ -30,6 +30,17 @@ describe('SubdomainManagerService', () => {
                   : null,
               ),
             ),
+            find: jest.fn(
+              (options: { where: { subdomain: { value: string[] } } }) =>
+                Promise.resolve(
+                  options.where.subdomain.value
+                    .filter(
+                      (candidate) =>
+                        areAllSubdomainsTaken || takenSubdomains.has(candidate),
+                    )
+                    .map((subdomain) => ({ subdomain }) as WorkspaceEntity),
+                ),
+            ),
           } as Partial<Repository<WorkspaceEntity>>,
         },
         {
