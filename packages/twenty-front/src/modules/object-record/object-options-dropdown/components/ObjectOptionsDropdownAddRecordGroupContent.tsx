@@ -75,7 +75,7 @@ export const ObjectOptionsDropdownAddRecordGroupContent = () => {
             />
           }
         >
-          {t`Add group`}
+          {t`New group`}
         </DropdownMenuHeader>
         <SingleRecordPickerMenuItemsWithSearch
           focusId={ADD_RECORD_GROUP_PICKER_INSTANCE_ID}
