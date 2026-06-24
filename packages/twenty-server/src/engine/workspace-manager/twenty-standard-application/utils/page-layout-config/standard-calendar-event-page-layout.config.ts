@@ -29,6 +29,18 @@ const CALENDAR_EVENT_PAGE_TABS = {
             .tabs.home.widgets.fields.universalIdentifier,
         ...WIDGET_PROPS.fields,
       },
+      participants: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.home.widgets.participants.universalIdentifier,
+        title: 'Participants',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.calendarEvent.fields.calendarEventParticipants
+            .universalIdentifier,
+      },
       callRecordings: {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
@@ -36,7 +48,7 @@ const CALENDAR_EVENT_PAGE_TABS = {
         title: 'Call Recordings',
         type: WidgetType.FIELD,
         gridPosition: GRID_POSITIONS.FULL_WIDTH,
-        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.calendarEvent.fields.callRecordings
             .universalIdentifier,
