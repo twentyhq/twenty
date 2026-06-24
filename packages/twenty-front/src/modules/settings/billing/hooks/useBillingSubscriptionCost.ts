@@ -50,7 +50,6 @@ export const useBillingSubscriptionCost = () => {
       : undefined;
 
   return {
-    interval,
     seats,
     perSeatAmountCents,
     seatsSubtotalCents,

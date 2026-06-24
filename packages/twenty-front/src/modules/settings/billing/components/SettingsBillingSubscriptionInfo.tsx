@@ -17,7 +17,6 @@ import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBilli
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
-import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { useHasNextBillingPhase } from '@/settings/billing/hooks/useHasNextBillingPhase';
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
@@ -52,7 +51,6 @@ import { HorizontalSeparator, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   BillingPlanKey,
-  BillingProductKey,
   CancelSwitchBillingIntervalDocument,
   CancelSwitchBillingPlanDocument,
   CancelSwitchResourceCreditPriceDocument,
@@ -143,6 +141,7 @@ export const SettingsBillingSubscriptionInfo = ({
   const {
     getIntervalLabel,
     getIntervalLabelAsAdjectiveCapitalize,
+    getYearlyDiscountPercent,
     confirmationModalSwitchToProMessage,
     confirmationModalSwitchToOrganizationMessage,
     confirmationModalSwitchToMonthlyMessage,
@@ -183,44 +182,32 @@ export const SettingsBillingSubscriptionInfo = ({
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
     usePermissionFlagMap();
 
-  const seats = currentBillingSubscription.billingSubscriptionItems?.find(
-    (item) =>
-      item.billingProduct.metadata.productKey ===
-      BillingProductKey.BASE_PRODUCT,
-  )?.quantity as number | undefined;
-
-  const { formatPrices } = useFormatPrices();
   const {
+    seats,
     perSeatAmountCents,
     seatsSubtotalCents,
     creditsSubtotalCents,
     totalCents,
   } = useBillingSubscriptionCost();
 
+  const formatCentsToDisplay = (cents: number | null | undefined) =>
+    isDefined(cents) ? formatNumber(cents / 100, { decimals: 2 }) : undefined;
+
   const perSeatUnit = isMonthlyPlan ? t`mo` : t`yr`;
   const totalIntervalWord = getIntervalLabel(isMonthlyPlan);
   const creditsIntervalAdjective =
     getIntervalLabelAsAdjectiveCapitalize(isMonthlyPlan);
 
-  const perSeatPriceDisplay = isDefined(perSeatAmountCents)
-    ? formatNumber(perSeatAmountCents / 100, { decimals: 2 })
-    : undefined;
+  const perSeatPriceDisplay = formatCentsToDisplay(perSeatAmountCents);
 
   const seatsInlinePrice =
     isDefined(seats) && isDefined(perSeatPriceDisplay)
       ? t`${seats} × $${perSeatPriceDisplay} / seat / ${perSeatUnit}`
       : undefined;
 
-  const totalDisplay = isDefined(totalCents)
-    ? formatNumber(totalCents / 100, { decimals: 2 })
-    : undefined;
-
-  const seatsSubtotalDisplay = isDefined(seatsSubtotalCents)
-    ? formatNumber(seatsSubtotalCents / 100, { decimals: 2 })
-    : undefined;
-  const creditsSubtotalDisplay = isDefined(creditsSubtotalCents)
-    ? formatNumber(creditsSubtotalCents / 100, { decimals: 2 })
-    : undefined;
+  const totalDisplay = formatCentsToDisplay(totalCents);
+  const seatsSubtotalDisplay = formatCentsToDisplay(seatsSubtotalCents);
+  const creditsSubtotalDisplay = formatCentsToDisplay(creditsSubtotalCents);
 
   const totalRenewDate = isDefined(currentBillingSubscription.currentPeriodEnd)
     ? getBeautifiedRenewDate()
@@ -237,16 +224,7 @@ export const SettingsBillingSubscriptionInfo = ({
     ? [totalBreakdownText, totalNextChargeText].filter(isDefined).join(' · ')
     : undefined;
 
-  const monthlyPerSeatPrice =
-    formatPrices[currentPlan.planKey]?.[SubscriptionInterval.Month];
-  const yearlyPerSeatPrice =
-    formatPrices[currentPlan.planKey]?.[SubscriptionInterval.Year];
-  const yearlyDiscountPercent =
-    isDefined(monthlyPerSeatPrice) &&
-    isDefined(yearlyPerSeatPrice) &&
-    monthlyPerSeatPrice > 0
-      ? Math.round((1 - yearlyPerSeatPrice / monthlyPerSeatPrice) * 100)
-      : 0;
+  const yearlyDiscountPercent = getYearlyDiscountPercent();
 
   const switchToYearlyTitle =
     yearlyDiscountPercent > 0
