@@ -67,6 +67,7 @@ type RecordDetailRelationRecordsListItemProps = {
   onClick: (relationRecordId: string) => void;
   relationRecord: ObjectRecord;
   relationObjectMetadataNameSingular: string;
+  relationObjectMetadataLabelSingular?: string;
   relationFieldMetadataId: string;
 };
 
@@ -75,6 +76,7 @@ export const RecordDetailRelationRecordsListItem = ({
   onClick,
   relationRecord,
   relationObjectMetadataNameSingular,
+  relationObjectMetadataLabelSingular,
   relationFieldMetadataId,
 }: RecordDetailRelationRecordsListItemProps) => {
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
@@ -279,17 +281,17 @@ export const RecordDetailRelationRecordsListItem = ({
       {createPortal(
         <ConfirmationModal
           modalInstanceId={getDeleteRelationModalId(relationRecord.id)}
-          title={t`Delete Related ${relationObjectTypeName}`}
+          title={t`Delete Related ${relationObjectMetadataLabelSingular ?? relationObjectTypeName}`}
           subtitle={
             <Trans>
               Are you sure you want to delete this related{' '}
-              {relationObjectMetadataNameSingular}?
+              {relationObjectMetadataLabelSingular ?? relationObjectMetadataNameSingular}?
               <br />
               This action will break all its relationships with other objects.
             </Trans>
           }
           onConfirmClick={handleConfirmDelete}
-          confirmButtonText={t`Delete ${relationObjectTypeName}`}
+          confirmButtonText={t`Delete ${relationObjectMetadataLabelSingular ?? relationObjectTypeName}`}
         />,
         document.body,
       )}

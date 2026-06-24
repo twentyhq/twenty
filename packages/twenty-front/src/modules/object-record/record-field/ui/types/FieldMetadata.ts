@@ -153,6 +153,8 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
+  relationObjectMetadataLabelPlural: string;
+  relationObjectMetadataLabelSingular: string;
   relationObjectMetadataId: string;
   relationType?: RelationType;
   targetFieldMetadataName?: string;

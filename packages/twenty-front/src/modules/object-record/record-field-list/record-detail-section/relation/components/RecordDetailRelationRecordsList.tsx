@@ -7,6 +7,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type RecordDetailRelationRecordsListProps = {
   objectNameSingular: string;
+  objectLabelSingular?: string;
   value: ObjectRecord;
   fieldMetadataId: string;
 };
@@ -45,6 +46,9 @@ export const RecordDetailRelationRecordsList = ({
               relationRecord={recordWithObjectNameSingular.value}
               relationObjectMetadataNameSingular={
                 recordWithObjectNameSingular.objectNameSingular
+              }
+              relationObjectMetadataLabelSingular={
+                recordWithObjectNameSingular.objectLabelSingular
               }
               relationFieldMetadataId={
                 recordWithObjectNameSingular.fieldMetadataId

@@ -213,6 +213,9 @@ export const RecordDetailRelationSection = ({
               (relationRecord) => ({
                 value: relationRecord,
                 objectNameSingular: relationObjectMetadataNameSingular,
+                objectLabelSingular:
+                  relationObjectMetadataItem.labelSingular ??
+                  relationObjectMetadataItem.nameSingular,
                 fieldMetadataId: relationFieldMetadataId,
               }),
             )}

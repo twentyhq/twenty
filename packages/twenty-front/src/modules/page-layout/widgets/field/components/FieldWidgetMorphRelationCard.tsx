@@ -156,6 +156,7 @@ export const FieldWidgetMorphRelationCard = ({
                     onClick={handleItemClick}
                     relationRecord={item.value}
                     relationObjectMetadataNameSingular={item.objectNameSingular}
+                    relationObjectMetadataLabelSingular={item.objectLabelSingular}
                     relationFieldMetadataId={item.fieldMetadataId}
                   />
                 </Fragment>

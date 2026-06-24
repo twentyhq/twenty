@@ -208,6 +208,8 @@ export const relationFromManyFieldDisplayMock = {
       relationFieldMetadataId: '01fa2247-7937-4493-b7e2-3d72f05d6d25',
       relationObjectMetadataNameSingular: 'company',
       relationObjectMetadataNamePlural: 'companies',
+      relationObjectMetadataLabelSingular: 'Company',
+      relationObjectMetadataLabelPlural: 'Companies',
       objectMetadataNameSingular: 'person',
       options: null,
     },
