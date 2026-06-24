@@ -10,10 +10,7 @@ import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import {
-  buildRelationRecordGroupDefinitions,
-  type RelationRecordGroupOrder,
-} from '@/object-record/record-group/utils/buildRelationRecordGroupDefinitions';
+import { mergeRelationRecordGroupDefinitions } from '@/object-record/record-group/utils/mergeRelationRecordGroupDefinitions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { useRecordIndexGroupsRecordsLazyGroupBy } from '@/object-record/record-index/hooks/useRecordIndexGroupsRecordsLazyGroupBy';
@@ -143,7 +140,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
         const targetObjectMetadataItem = objectMetadataItems.find(
           (item) =>
             item.id ===
-            recordIndexGroupFieldMetadataItem.relation?.targetObjectMetadata.id,
+            recordIndexGroupFieldMetadataItem.relation.targetObjectMetadata.id,
         );
 
         const currentViewId = store.get(currentViewIdCallbackState);
@@ -151,43 +148,14 @@ export const useTriggerRecordBoardInitialQuery = () => {
           ? (getViewFromState(currentViewId)?.viewGroups ?? [])
           : [];
 
-        const priorOrder: RelationRecordGroupOrder[] = isNonEmptyArray(
-          recordGroupDefinitions,
-        )
-          ? recordGroupDefinitions.map((recordGroupDefinition) => ({
-              value: recordGroupDefinition.value,
-              viewGroupId: recordGroupDefinition.viewGroupId,
-              isVisible: recordGroupDefinition.isVisible,
-              position: recordGroupDefinition.position,
-            }))
-          : persistedViewGroups.map((viewGroup) => ({
-              value: viewGroup.fieldValue === '' ? null : viewGroup.fieldValue,
-              viewGroupId: viewGroup.id,
-              isVisible: viewGroup.isVisible,
-              position: viewGroup.position,
-            }));
-
-        recordGroupDefinitionsToFill = buildRelationRecordGroupDefinitions({
+        recordGroupDefinitionsToFill = mergeRelationRecordGroupDefinitions({
           groups,
           relationFieldName: recordIndexGroupFieldMetadataItem.name,
           mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
           targetObjectMetadataItem,
-          priorOrder,
+          existingRecordGroupDefinitions: recordGroupDefinitions,
+          persistedViewGroups,
         });
-
-        const builtRecordGroupValues = new Set(
-          recordGroupDefinitionsToFill.map((definition) => definition.value),
-        );
-        const preservedHiddenRecordGroups = recordGroupDefinitions.filter(
-          (definition) =>
-            !definition.isVisible &&
-            !builtRecordGroupValues.has(definition.value),
-        );
-
-        recordGroupDefinitionsToFill = [
-          ...recordGroupDefinitionsToFill,
-          ...preservedHiddenRecordGroups,
-        ];
 
         setRecordGroups({
           mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,

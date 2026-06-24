@@ -65,8 +65,14 @@ export const usePersistRelationRecordGroups = () => {
         createdViewGroupIdByRecordGroupId.set(recordGroup.id, newViewGroupId);
       }
 
-      await performViewGroupAPICreate({ inputs: createInputs });
-      await performViewGroupAPIUpdate({ inputs: updateInputs });
+      const [createResult] = await Promise.all([
+        performViewGroupAPICreate({ inputs: createInputs }),
+        performViewGroupAPIUpdate({ inputs: updateInputs }),
+      ]);
+
+      if (createResult.status !== 'successful') {
+        return;
+      }
 
       for (const [
         recordGroupId,

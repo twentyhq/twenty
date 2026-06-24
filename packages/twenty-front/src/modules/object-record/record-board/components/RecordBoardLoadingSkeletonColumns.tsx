@@ -3,9 +3,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
 import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-board/constants/RecordBoardColumnWidthCssVariableName';
+import { RECORD_BOARD_LOADING_SKELETON_COLUMNS_COUNT } from '@/object-record/record-board/constants/RecordBoardLoadingSkeletonColumnsCount';
 import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnLoadingSkeletonCards';
-
-const RECORD_BOARD_LOADING_SKELETON_COLUMNS_COUNT = 4;
 
 const StyledColumn = styled.div`
   background-color: ${themeCssVariables.background.primary};

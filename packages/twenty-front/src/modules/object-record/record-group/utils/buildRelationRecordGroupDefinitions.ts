@@ -12,7 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 const NO_VALUE_RECORD_GROUP_ID_SUFFIX = 'no-value';
 const NO_VALUE_ORDER_KEY = '__no_value__';
 
-type GroupByResultGroup = RecordGqlConnectionEdgesRequired & {
+export type GroupByResultGroup = RecordGqlConnectionEdgesRequired & {
   groupByDimensionValues: (string | null)[];
 };
 

@@ -1,4 +1,3 @@
-import { isNonEmptyArray } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,10 +8,7 @@ import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRel
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
-import {
-  buildRelationRecordGroupDefinitions,
-  type RelationRecordGroupOrder,
-} from '@/object-record/record-group/utils/buildRelationRecordGroupDefinitions';
+import { mergeRelationRecordGroupDefinitions } from '@/object-record/record-group/utils/mergeRelationRecordGroupDefinitions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupsRecordsLazyGroupBy } from '@/object-record/record-index/hooks/useRecordIndexGroupsRecordsLazyGroupBy';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -104,48 +100,25 @@ export const useTriggerRecordTableRelationGroupsDiscovery = () => {
     const targetObjectMetadataItem = objectMetadataItems.find(
       (item) =>
         item.id ===
-        recordIndexGroupFieldMetadataItem.relation?.targetObjectMetadata.id,
+        recordIndexGroupFieldMetadataItem.relation.targetObjectMetadata.id,
     );
 
     const persistedViewGroups = isDefined(contextStoreCurrentViewId)
       ? (getViewFromState(contextStoreCurrentViewId)?.viewGroups ?? [])
       : [];
 
-    const priorOrder: RelationRecordGroupOrder[] = isNonEmptyArray(
-      recordGroupDefinitions,
-    )
-      ? recordGroupDefinitions.map((definition) => ({
-          value: definition.value,
-          viewGroupId: definition.viewGroupId,
-          isVisible: definition.isVisible,
-          position: definition.position,
-        }))
-      : persistedViewGroups.map((viewGroup) => ({
-          value: viewGroup.fieldValue === '' ? null : viewGroup.fieldValue,
-          viewGroupId: viewGroup.id,
-          isVisible: viewGroup.isVisible,
-          position: viewGroup.position,
-        }));
-
-    const builtRecordGroups = buildRelationRecordGroupDefinitions({
+    const recordGroups = mergeRelationRecordGroupDefinitions({
       groups,
       relationFieldName: recordIndexGroupFieldMetadataItem.name,
       mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
       targetObjectMetadataItem,
-      priorOrder,
+      existingRecordGroupDefinitions: recordGroupDefinitions,
+      persistedViewGroups,
     });
-
-    const builtRecordGroupValues = new Set(
-      builtRecordGroups.map((definition) => definition.value),
-    );
-    const preservedHiddenRecordGroups = recordGroupDefinitions.filter(
-      (definition) =>
-        !definition.isVisible && !builtRecordGroupValues.has(definition.value),
-    );
 
     setRecordGroups({
       mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem.id,
-      recordGroups: [...builtRecordGroups, ...preservedHiddenRecordGroups],
+      recordGroups,
       recordIndexId,
       objectMetadataItemId: objectMetadataItem.id,
     });
