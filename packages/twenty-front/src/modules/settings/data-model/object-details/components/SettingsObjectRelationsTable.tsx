@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -8,6 +9,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
@@ -19,15 +21,11 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  IconArchive,
-  IconFilter,
-  IconSearch,
-  IconSettings,
-} from 'twenty-ui/icon';
+import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
@@ -79,26 +77,101 @@ type SettingsObjectRelationsTableProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
+const getRelationTargetObjectMetadataIds = (field: FieldMetadataItem) => {
+  if (field.type === FieldMetadataType.MORPH_RELATION) {
+    return (
+      field.morphRelations?.map(
+        (relation) => relation.targetObjectMetadata.id,
+      ) ?? []
+    );
+  }
+
+  return isDefined(field.relation?.targetObjectMetadata.id)
+    ? [field.relation.targetObjectMetadata.id]
+    : [];
+};
+
+const getMorphRelationTargetLabel = (field: FieldMetadataItem) => {
+  if (field.type !== FieldMetadataType.MORPH_RELATION) {
+    return undefined;
+  }
+
+  const morphRelationCount = field.morphRelations?.length ?? 0;
+
+  return morphRelationCount === 1
+    ? '1 Object'
+    : `${morphRelationCount} Objects`;
+};
+
+const getMorphRelationFieldLabel = (field: FieldMetadataItem) => {
+  if (field.type !== FieldMetadataType.MORPH_RELATION) {
+    return undefined;
+  }
+
+  return capitalize(field.name);
+};
+
 export const SettingsObjectRelationsTable = ({
   objectMetadataItem,
 }: SettingsObjectRelationsTableProps) => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const [showInactive, setShowInactive] = useState(true);
-  const [showSystemRelations, setShowSystemRelations] = useState(false);
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const tableMetadata = SETTINGS_OBJECT_RELATION_TABLE_METADATA;
 
+  const { objectMetadataItems } = useFilteredObjectMetadataItems();
+
+  const objectMetadataItemsById = useMemo(
+    () =>
+      new Map(
+        objectMetadataItems.map((objectMetadataItem) => [
+          objectMetadataItem.id,
+          objectMetadataItem,
+        ]),
+      ),
+    [objectMetadataItems],
+  );
+
+  const systemObjectMetadataIds = useMemo(
+    () =>
+      new Set(
+        objectMetadataItems
+          .filter((objectMetadataItem) => objectMetadataItem.isSystem)
+          .map((objectMetadataItem) => objectMetadataItem.id),
+      ),
+    [objectMetadataItems],
+  );
+
   const relationFields = useMemo(() => {
-    return objectMetadataItem.fields.filter(
-      (field) =>
-        (showSystemRelations || !isHiddenSystemField(field)) &&
-        (field.type === FieldMetadataType.RELATION ||
-          field.type === FieldMetadataType.MORPH_RELATION),
-    );
-  }, [objectMetadataItem.fields, showSystemRelations]);
+    return objectMetadataItem.fields.filter((field) => {
+      const isRelationField =
+        field.type === FieldMetadataType.RELATION ||
+        field.type === FieldMetadataType.MORPH_RELATION;
+
+      if (!isRelationField) {
+        return false;
+      }
+
+      const relationTargetObjectMetadataIds =
+        getRelationTargetObjectMetadataIds(field);
+
+      const isRelationToSystemObject = relationTargetObjectMetadataIds.some(
+        (objectMetadataId) => systemObjectMetadataIds.has(objectMetadataId),
+      );
+
+      return (
+        isAdvancedModeEnabled ||
+        (!isHiddenSystemField(field) && !isRelationToSystemObject)
+      );
+    });
+  }, [
+    objectMetadataItem.fields,
+    isAdvancedModeEnabled,
+    systemObjectMetadataIds,
+  ]);
 
   const sortedRelationFields = useSortedArray(relationFields, tableMetadata);
 
@@ -107,16 +180,31 @@ export const SettingsObjectRelationsTable = ({
 
     return sortedRelationFields.filter((field) => {
       const matchesActiveFilter = showInactive || field.isActive;
-      const matchesSearch = normalizeSearchText(field.label).includes(
-        searchNormalized,
-      );
+      const relationTargetObjectLabels = getRelationTargetObjectMetadataIds(
+        field,
+      ).flatMap((objectMetadataId) => {
+        const relationObjectMetadataItem =
+          objectMetadataItemsById.get(objectMetadataId);
+
+        return isDefined(relationObjectMetadataItem)
+          ? [
+              relationObjectMetadataItem.labelSingular,
+              relationObjectMetadataItem.labelPlural,
+            ]
+          : [];
+      });
+
+      const searchableText = [field.label, ...relationTargetObjectLabels]
+        .concat(getMorphRelationTargetLabel(field) ?? [])
+        .concat(getMorphRelationFieldLabel(field) ?? [])
+        .map(normalizeSearchText)
+        .join(' ');
+
+      const matchesSearch = searchableText.includes(searchNormalized);
+
       return matchesActiveFilter && matchesSearch;
     });
-  }, [sortedRelationFields, searchTerm, showInactive]);
-
-  if (relationFields.length === 0) {
-    return null;
-  }
+  }, [objectMetadataItemsById, sortedRelationFields, searchTerm, showInactive]);
 
   return (
     <>
@@ -153,17 +241,6 @@ export const SettingsObjectRelationsTable = ({
                   text={t`Inactive`}
                   toggleSize="small"
                 />
-                {isAdvancedModeEnabled && (
-                  <MenuItemToggle
-                    LeftIcon={IconSettings}
-                    onToggleChange={() =>
-                      setShowSystemRelations(!showSystemRelations)
-                    }
-                    toggled={showSystemRelations}
-                    text={t`System relations`}
-                    toggleSize="small"
-                  />
-                )}
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }
@@ -186,13 +263,19 @@ export const SettingsObjectRelationsTable = ({
         </TableRow>
         <StyledSettingsDataModelTableBodyContainer>
           <TableBody>
-            {filteredRelationFields.map((fieldMetadataItem) => (
-              <SettingsObjectRelationItemTableRow
-                key={fieldMetadataItem.id}
-                fieldMetadataItem={fieldMetadataItem}
-                objectMetadataItem={objectMetadataItem}
-              />
-            ))}
+            {filteredRelationFields.length > 0 ? (
+              filteredRelationFields.map((fieldMetadataItem) => (
+                <SettingsObjectRelationItemTableRow
+                  key={fieldMetadataItem.id}
+                  fieldMetadataItem={fieldMetadataItem}
+                  objectMetadataItem={objectMetadataItem}
+                />
+              ))
+            ) : (
+              <TableCell color={themeCssVariables.font.color.tertiary}>
+                {t`No relation with non-system objects`}
+              </TableCell>
+            )}
           </TableBody>
         </StyledSettingsDataModelTableBodyContainer>
       </Table>

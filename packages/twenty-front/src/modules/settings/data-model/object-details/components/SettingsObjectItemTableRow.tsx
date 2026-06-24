@@ -6,6 +6,7 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
+import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
 import {
   SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   StyledActionTableCell,
@@ -37,21 +38,6 @@ const StyledNameLabel = styled.div`
   white-space: nowrap;
 `;
 
-const StyledInactiveLabel = styled.span`
-  color: ${themeCssVariables.font.color.extraLight};
-  flex: 0 999 auto;
-  font-size: ${themeCssVariables.font.size.sm};
-  min-width: 48px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  &::before {
-    content: '·';
-    margin-right: ${themeCssVariables.spacing[1]};
-  }
-`;
-
 export const SettingsObjectMetadataItemTableRow = ({
   action,
   objectMetadataItem,
@@ -79,7 +65,9 @@ export const SettingsObjectMetadataItemTableRow = ({
               {objectMetadataItem.labelPlural}
             </StyledNameLabel>
             {!objectMetadataItem.isActive && (
-              <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
+              <SettingsNameCellSecondaryLabel>
+                {t`Deactivated`}
+              </SettingsNameCellSecondaryLabel>
             )}
           </StyledNameContainer>
         </StyledNameTableCell>
