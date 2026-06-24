@@ -69,22 +69,17 @@ export const useUpdateRelationOneToManyFieldInput = () => {
           field.name === fieldDefinition.metadata.targetFieldMetadataName,
       );
 
-      if (!isDefined(targetFieldMetadata)) {
-        throw new Error('TargetFieldMetadata is required');
-      }
-
-      let targetGQLFieldName: string;
-      if (targetFieldMetadata.type === FieldMetadataType.MORPH_RELATION) {
-        targetGQLFieldName = computeMorphRelationGqlFieldName({
-          fieldName: fieldDefinition.metadata.targetFieldMetadataName,
-          relationType: targetFieldMetadata.settings?.relationType,
-          targetObjectMetadataNameSingular:
-            sourceObjectMetadataItem.nameSingular,
-          targetObjectMetadataNamePlural: sourceObjectMetadataItem.namePlural,
-        });
-      } else {
-        targetGQLFieldName = fieldDefinition.metadata.targetFieldMetadataName;
-      }
+      const targetGQLFieldName =
+        targetFieldMetadata?.type === FieldMetadataType.MORPH_RELATION
+          ? computeMorphRelationGqlFieldName({
+              fieldName: fieldDefinition.metadata.targetFieldMetadataName,
+              relationType: targetFieldMetadata.settings?.relationType,
+              targetObjectMetadataNameSingular:
+                sourceObjectMetadataItem.nameSingular,
+              targetObjectMetadataNamePlural:
+                sourceObjectMetadataItem.namePlural,
+            })
+          : fieldDefinition.metadata.targetFieldMetadataName;
 
       if (morphItem.isSelected) {
         await recordOneToManyFieldAttachTargetRecord({

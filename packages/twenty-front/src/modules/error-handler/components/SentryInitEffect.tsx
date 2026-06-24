@@ -8,6 +8,32 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEventExceptionValue = {
+  value?: string;
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  fingerprint?: string[];
+  level?: string;
+  tags?: Record<string, string>;
+};
+
+const getExceptionValues = (event: SentryEvent) => {
+  return event.exception?.values ?? [];
+};
+
+const isRelationMetadataMismatchEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) =>
+      exception.value?.includes('TargetFieldMetadata is required') ||
+      exception.value?.includes('invalid relation definition') ||
+      false,
+  );
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +80,22 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isRelationMetadataMismatchEvent(event)) {
+                event.fingerprint = [
+                  'object-record',
+                  'relation-metadata-mismatch',
+                ];
+                event.level = 'warning';
+                event.tags = {
+                  ...event.tags,
+                  feature: 'object-record-relation',
+                  cause: 'metadata-mismatch',
+                };
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);
