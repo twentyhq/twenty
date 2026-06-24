@@ -265,7 +265,9 @@ jobs:
 
       - name: Smoke / Upgrade status
         run: |
-          OUTPUT=$(NO_COLOR=1 npx nx run twenty-server:command-no-deps -- upgrade:status)
+          RAW=$(FORCE_COLOR=0 NO_COLOR=1 npx nx run twenty-server:command-no-deps -- upgrade:status 2>&1)
+          # chalk colorizes even with NO_COLOR under nx — strip ANSI codes before asserting.
+          OUTPUT=$(printf '%s\n' "$RAW" | sed -E 's/\x1b\[[0-9;]*m//g')
           echo "$OUTPUT"
           echo "$OUTPUT" > upgrade-logs/upgrade-status.log
           echo "$OUTPUT" | grep -q "Instance: Up to date" \
