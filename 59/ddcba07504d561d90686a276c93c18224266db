@@ -1,0 +1,29 @@
+packages/twenty-front/src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
+  s_2aee932ceeacde::t_ae466374fafc29 140-142
+packages/twenty-front/src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
+  s_2aee932ceeacde::t_934539b8abc573 89,92,94-95,99
+  s_2aee932ceeacde::t_654c3d9c1362a2 6
+  s_2aee932ceeacde::t_861284c69991b9 160-161
+  s_2aee932ceeacde::t_044f61d498aa2f 90-91
+packages/twenty-front/src/modules/settings/accounts/components/message-folders/utils/__tests__/computeToggleAllFoldersState.test.ts
+  s_2aee932ceeacde::t_7e1bc499d20878 51-55,57-58,60-61
+  s_2aee932ceeacde::t_37b2c056c2d7bc 1-50,56,59,62-71
+packages/twenty-front/src/modules/settings/accounts/components/message-folders/utils/computeToggleAllFoldersState.ts
+  s_2aee932ceeacde::t_8773f9d7be4211 1-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "59ddcba07504d561d90686a276c93c18224266db",
+  "prompts": {},
+  "sessions": {
+    "s_2aee932ceeacde": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fe171c6-7c97-439d-84bd-0bff8463265a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
