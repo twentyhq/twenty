@@ -66,7 +66,9 @@ describe('startCallbackServer', () => {
     try {
       const waitPromise = server.waitForCallback();
 
-      const response = await httpGet(`${server.callbackUrl}?code=test-auth-code`);
+      const response = await httpGet(
+        `${server.callbackUrl}?code=test-auth-code`,
+      );
 
       await waitPromise;
 
@@ -88,7 +90,9 @@ describe('startCallbackServer', () => {
   it('should deliver the full page even when the server is closed right after the callback resolves', async () => {
     const server = await startCallbackServer();
 
-    const responsePromise = httpGet(`${server.callbackUrl}?code=test-auth-code`);
+    const responsePromise = httpGet(
+      `${server.callbackUrl}?code=test-auth-code`,
+    );
 
     await server.waitForCallback();
     server.close();
