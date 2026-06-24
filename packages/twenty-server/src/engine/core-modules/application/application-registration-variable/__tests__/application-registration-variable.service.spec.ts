@@ -36,7 +36,7 @@ const serverRouteManifest = {
   logicFunctions: [
     { serverRouteTriggerSettings: { forwardedRequestHeaders: [] } },
   ],
-};
+} as unknown as ApplicationRegistrationEntity['manifest'];
 
 describe('ApplicationRegistrationVariableService.isConfiguredBatch', () => {
   let service: ApplicationRegistrationVariableService;
@@ -99,8 +99,7 @@ describe('ApplicationRegistrationVariableService.isConfiguredBatch', () => {
       registrations: [
         buildRegistration({
           ownerWorkspaceId: null,
-          manifest:
-            serverRouteManifest as ApplicationRegistrationEntity['manifest'],
+          manifest: serverRouteManifest,
         }),
       ],
     });
@@ -114,8 +113,7 @@ describe('ApplicationRegistrationVariableService.isConfiguredBatch', () => {
     setup({
       registrations: [
         buildRegistration({
-          manifest:
-            serverRouteManifest as ApplicationRegistrationEntity['manifest'],
+          manifest: serverRouteManifest,
         }),
       ],
       installedApps: [
@@ -132,8 +130,7 @@ describe('ApplicationRegistrationVariableService.isConfiguredBatch', () => {
     setup({
       registrations: [
         buildRegistration({
-          manifest:
-            serverRouteManifest as ApplicationRegistrationEntity['manifest'],
+          manifest: serverRouteManifest,
         }),
       ],
       installedApps: [
