@@ -5203,6 +5203,9 @@ export default {
             "name": [
                 1
             ],
+            "label": [
+                1
+            ],
             "description": [
                 1
             ],

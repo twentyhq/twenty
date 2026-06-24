@@ -36,6 +36,12 @@ const SignInUp = lazy(() =>
   })),
 );
 
+const SignInUpV2 = lazy(() =>
+  import('~/pages/auth/SignInUpV2').then((module) => ({
+    default: module.SignInUpV2,
+  })),
+);
+
 const PasswordReset = lazy(() =>
   import('~/pages/auth/PasswordReset').then((module) => ({
     default: module.PasswordReset,
@@ -257,6 +263,14 @@ export const useCreateAppRouter = (
           </Route>
         </Route>
         <Route element={<BlankLayout />}>
+          <Route
+            path={AppPath.SignInUpV2}
+            element={
+              <LazyRoute fallback={null}>
+                <SignInUpV2 />
+              </LazyRoute>
+            }
+          />
           <Route
             path={AppPath.Authorize}
             element={

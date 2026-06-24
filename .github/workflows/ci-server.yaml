@@ -28,6 +28,13 @@ jobs:
         packages/twenty-emails/**
         packages/twenty-shared/**
 
+  upgrade-changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/twenty-server/src/database/commands/upgrade-version-command/**
+        packages/twenty-server/src/engine/core-modules/upgrade/**
+
   server-build:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
@@ -377,6 +384,12 @@ jobs:
           configuration: 'with-db-reset'
           args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
 
+  cross-version-upgrade:
+    needs: [upgrade-changed-files-check, server-build]
+    uses: ./.github/workflows/ci-cross-version-upgrade.yaml
+    with:
+      skip: ${{ needs.upgrade-changed-files-check.outputs.any_changed != 'true' }}
+
   ci-server-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
@@ -390,6 +403,7 @@ jobs:
         server-validation,
         server-test,
         server-integration-test,
+        cross-version-upgrade,
       ]
     steps:
       - name: Fail job if any needs failed
