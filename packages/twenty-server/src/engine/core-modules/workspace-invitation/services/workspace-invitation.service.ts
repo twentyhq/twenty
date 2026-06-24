@@ -12,7 +12,7 @@ import { AppPath, FileFolder } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { parseEmailFromAddress } from 'src/utils/parse-email-from-address';
+import { buildEmailFrom } from 'src/utils/build-email-from';
 
 import {
   AppTokenEntity,
@@ -350,7 +350,10 @@ export class WorkspaceInvitationService {
         const subject = i18n._(joinTeamMsg);
 
         await this.emailService.send({
-          from: `"${sender.name.firstName} ${sender.name.lastName} (via Twenty)" <${parseEmailFromAddress(this.twentyConfigService.get('EMAIL_FROM_ADDRESS')).address}>`,
+          from: buildEmailFrom(
+            this.twentyConfigService.get('EMAIL_FROM_ADDRESS'),
+            `${sender.name.firstName} ${sender.name.lastName} (via Twenty)`,
+          ),
           to: invitation.value.email,
           subject,
           text,

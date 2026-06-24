@@ -30,4 +30,19 @@ describe('buildEmailFrom', () => {
 
     expect(result).toBe('noreply@acme.com');
   });
+
+  it('escapes double quotes in the display name', () => {
+    const result = buildEmailFrom(
+      'noreply@acme.com',
+      'John "The Boss" Doe',
+    );
+
+    expect(result).toBe('"John \\"The Boss\\" Doe" <noreply@acme.com>');
+  });
+
+  it('escapes backslashes in the display name', () => {
+    const result = buildEmailFrom('noreply@acme.com', 'ACME\\Support');
+
+    expect(result).toBe('"ACME\\\\Support" <noreply@acme.com>');
+  });
 });

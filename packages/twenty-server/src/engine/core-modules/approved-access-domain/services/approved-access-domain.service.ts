@@ -8,7 +8,7 @@ import { FileFolder, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { parseEmailFromAddress } from 'src/utils/parse-email-from-address';
+import { buildEmailFrom } from 'src/utils/build-email-from';
 
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -123,7 +123,10 @@ export class ApprovedAccessDomainService {
     });
 
     await this.emailService.send({
-      from: `"${sender.name.firstName} ${sender.name.lastName} (via Twenty)" <${parseEmailFromAddress(this.twentyConfigService.get('EMAIL_FROM_ADDRESS')).address}>`,
+      from: buildEmailFrom(
+        this.twentyConfigService.get('EMAIL_FROM_ADDRESS'),
+        `${sender.name.firstName} ${sender.name.lastName} (via Twenty)`,
+      ),
       to,
       subject: 'Approve your access domain',
       text,
