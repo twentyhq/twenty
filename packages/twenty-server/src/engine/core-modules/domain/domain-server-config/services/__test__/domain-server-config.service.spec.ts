@@ -153,32 +153,4 @@ describe('SubdomainManagerService', () => {
       });
     });
   });
-
-  describe('isPublicFunctionDomainHost', () => {
-    it('is true for a subdomain of the public base', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) =>
-          key === 'PUBLIC_DOMAIN_URL' ? 'https://withtwenty.com' : undefined,
-        );
-
-      expect(
-        domainServerConfigService.isPublicFunctionDomainHost(
-          'acme.withtwenty.com',
-        ),
-      ).toBe(true);
-    });
-
-    it('is false when no public base is configured', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation(() => undefined);
-
-      expect(
-        domainServerConfigService.isPublicFunctionDomainHost(
-          'acme.withtwenty.com',
-        ),
-      ).toBe(false);
-    });
-  });
 });

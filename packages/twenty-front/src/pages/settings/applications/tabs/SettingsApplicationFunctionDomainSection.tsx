@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
+import { getFunctionsBaseUrl } from '@/settings/logic-functions/utils/getLogicFunctionHttpUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Info } from 'twenty-ui/feedback';
 import { IconCopy } from 'twenty-ui/icon';
@@ -17,15 +18,14 @@ export const SettingsApplicationFunctionDomainSection = () => {
   const { publicFunctionDomain, workspaceSubdomain } =
     useGetLogicFunctionHttpUrl();
 
-  if (
-    !isNonEmptyString(publicFunctionDomain) ||
-    !isNonEmptyString(workspaceSubdomain)
-  ) {
+  const baseUrl = getFunctionsBaseUrl({
+    publicFunctionDomain,
+    workspaceSubdomain,
+  });
+
+  if (!isNonEmptyString(baseUrl)) {
     return null;
   }
-
-  const baseDomain = `${workspaceSubdomain}.${publicFunctionDomain}`;
-  const baseUrl = `https://${baseDomain}`;
 
   return (
     <Section>

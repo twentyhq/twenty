@@ -191,10 +191,6 @@ export class WorkspaceDomainsService {
     };
   }
 
-  isPublicFunctionDomainHost(host?: string | null): boolean {
-    return this.domainServerConfigService.isPublicFunctionDomainHost(host);
-  }
-
   // Builds the canonical isolated URL of a logic function route, e.g.
   // https://{workspaceSubdomain}.withtwenty.com/my-route. Returns undefined
   // when no public domain base is configured (self-hosting).

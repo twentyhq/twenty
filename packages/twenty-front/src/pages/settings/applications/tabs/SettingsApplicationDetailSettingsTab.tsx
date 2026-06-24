@@ -1,10 +1,9 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type Application } from '~/generated-metadata/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
 import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable';
 import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection';
+import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 
 export const SettingsApplicationDetailSettingsTab = ({
   application,
@@ -24,9 +23,8 @@ export const SettingsApplicationDetailSettingsTab = ({
     (a, b) => a.key.localeCompare(b.key),
   );
 
-  const hasHttpTriggeredFunctions = (application?.logicFunctions ?? []).some(
-    (logicFunction) => isDefined(logicFunction.httpRouteTriggerSettings),
-  );
+  const hasHttpTriggeredFunctions =
+    applicationHasHttpTriggeredFunctions(application);
 
   return (
     <>

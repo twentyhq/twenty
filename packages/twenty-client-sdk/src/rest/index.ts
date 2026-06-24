@@ -61,6 +61,9 @@ const getProcessEnvironment = (): ProcessEnvironment => {
   return processObject?.env ?? {};
 };
 
+const normalizeBaseUrl = (value: string): string =>
+  value.trim().replace(/\/+$/, '');
+
 const buildRequestUrl = (
   baseUrl: string,
   path: string,
@@ -159,7 +162,7 @@ export class RestApiClient {
       );
     }
 
-    return baseUrl.replace(/\/+$/, '');
+    return normalizeBaseUrl(baseUrl);
   }
 
   private resolveToken(): string {
@@ -317,13 +320,11 @@ export class RestApiClient {
       return undefined;
     }
 
-    const trimmedFunctionsBaseUrl = functionsBaseUrl.trim();
+    const normalizedFunctionsBaseUrl = normalizeBaseUrl(functionsBaseUrl);
 
-    if (trimmedFunctionsBaseUrl.length === 0) {
-      return undefined;
-    }
-
-    return trimmedFunctionsBaseUrl.replace(/\/+$/, '');
+    return normalizedFunctionsBaseUrl.length === 0
+      ? undefined
+      : normalizedFunctionsBaseUrl;
   }
 
   // Logic-function routes (paths prefixed with /s) are served from the isolated

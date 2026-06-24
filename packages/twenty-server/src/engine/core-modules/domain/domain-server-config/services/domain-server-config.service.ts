@@ -43,13 +43,6 @@ export class DomainServerConfigService {
     );
   }
 
-  isPublicFunctionDomainHost(host?: string | null): boolean {
-    return isHostUnderPublicFunctionDomain({
-      host,
-      publicDomainBaseHostname: this.getPublicBaseHostnameOrUndefined(),
-    });
-  }
-
   buildBaseUrl({
     pathname,
     searchParams,
