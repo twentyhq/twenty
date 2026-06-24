@@ -179,17 +179,32 @@ The status code must be a valid HTTP status code (between 100 and 599). Response
 
 The trigger has two parts:
 
-1. A **resolver** logic function — declared with `serverRouteTriggerSettings` — runs in your **owner workspace** (the workspace that owns the application registration). It inspects the incoming request and returns `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, picking *both* the target workspace and the target function. The resolver is the single point of authorization — the URL only carries the resolver's identifier.
-2. A **target** logic function — a regular per-workspace logic function — then runs in the resolved workspace with the payload returned by the resolver (or the original request payload if the resolver didn't transform it). Its return value becomes the HTTP response. **The target is where you verify the request signature** — the route behaves like any public HTTP endpoint, so treat it as one.
+1. A **resolver** logic function — declared with `serverRouteTriggerSettings` — runs in your **owner workspace** (the workspace that owns the application registration). It inspects the incoming request and returns `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, picking *both* the target workspace and the target function. The resolver is the single point of authorization — the URL only carries the resolver's identifier. **This is the preferred place to verify request signatures**: the resolver runs before any side effect, has access to the original `rawBody` and forwarded headers, and can reject without ever touching the target.
+2. A **target** logic function — a regular per-workspace logic function — then runs in the resolved workspace with the payload returned by the resolver (or the original request payload if the resolver didn't transform it). Its return value becomes the HTTP response.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
+import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
 
-// Runs in the owner workspace. Reads the workspaceId off the request,
-// picks which target function should handle it, and passes the original
-// payload through so the target can verify the signature.
+// Runs in the owner workspace. Verifies the request signature, picks
+// which target function should handle the event, and returns the
+// workspace + target the platform should dispatch to.
 const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
+      .update(event.rawBody ?? '')
+      .digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    throw new Error('invalid signature');
+  }
+
   const body = (event.body ?? {}) as {
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
@@ -210,7 +225,7 @@ export default defineLogicFunction({
   name: 'resolve-server-route',
   handler,
   serverRouteTriggerSettings: {
-    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+    forwardedRequestHeaders: ['x-hub-signature-256'],
   },
 });
 ```
@@ -219,11 +234,10 @@ export default defineLogicFunction({
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
 
-// Runs in the resolved workspace. Receives the full RoutePayload (headers
-// and rawBody included), verifies the request signature, and does the
-// real work.
+// Runs in the resolved workspace. The resolver has already authenticated
+// the request, so this handler can focus on the actual work.
 const handler = async (event: RoutePayload) => {
-  // verify signature here — see example below.
+  // ...handle the verified event
   return { received: true };
 };
 
@@ -248,10 +262,10 @@ The identifier is the resolver's `universalIdentifier` from your manifest. Regis
 |-------|------|-------|
 | `workspaceId` | `string` | Workspace UUID where the target will run. |
 | `targetLogicFunctionUniversalIdentifier` | `string` | `universalIdentifier` of the logic function to invoke in that workspace. |
-| `payload` | `object` (optional) | If set, replaces the request body sent to the target. Leave it out (the default) when the target needs the original `rawBody` and headers to verify the signature. |
+| `payload` | `object` (optional) | If set, replaces the request body sent to the target. |
 
 <Warning>
-**Signature verification is the target's responsibility.** The platform does not verify request signatures — the endpoint behaves like any public HTTP route. Verify the signature in the **target** using `event.rawBody` and the headers you listed in the resolver's `forwardedRequestHeaders`. Reject (throw or return a non-2xx) **before** any side effect, and use a constant-time comparison. Don't rely on the resolver for verification — when it returns a `payload`, the target loses `rawBody` and headers.
+**Signature verification is your responsibility — verify in the resolver.** The platform does not verify request signatures. The resolver is the recommended place to do it: it runs first, with access to `event.rawBody` and the headers you listed in `forwardedRequestHeaders`, and a thrown error (or any non-matching `workspaceId`) stops the dispatch before the target is invoked. If you instead push verification down into the target, the target must be careful not to lose `rawBody` and headers — i.e. the resolver must not return a `payload`. Always verify **before** any side effect and use a constant-time comparison.
 </Warning>
 
 For request signatures, most providers sign with HMAC-SHA256; the parts that differ are the header name, the digest encoding, and the signed-payload string. A few examples:
@@ -264,42 +278,10 @@ For request signatures, most providers sign with HMAC-SHA256; the parts that dif
 | Shopify | `x-shopify-hmac-sha256` | `{rawBody}` | base64 |
 | Slack | `x-slack-signature`, `x-slack-request-timestamp` | `v0:{timestamp}:{rawBody}` | hex (prefixed `v0=`) |
 
-Verify the signature **in the target** before any side effect:
-
-```ts src/logic-functions/handle-invoice-paid.logic-function.ts
-import { createHmac, timingSafeEqual } from 'crypto';
-import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
-import { Response } from 'twenty-sdk/logic-function';
-
-const handler = async (event: RoutePayload) => {
-  const signature = event.headers['x-hub-signature-256'] ?? '';
-  const expected =
-    'sha256=' +
-    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
-      .update(event.rawBody ?? '')
-      .digest('hex');
-
-  const a = Buffer.from(signature);
-  const b = Buffer.from(expected);
-
-  if (a.length !== b.length || !timingSafeEqual(a, b)) {
-    return new Response({ error: 'invalid signature' }, { status: 401 });
-  }
-
-  // ...handle the verified event
-  return { received: true };
-};
-
-export default defineLogicFunction({
-  universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
-  name: 'handle-invoice-paid',
-  handler,
-});
-```
+The resolver example above already shows the GitHub HMAC-SHA256 flow — adapt the header name, digest encoding, and signed-payload string per the provider you're integrating.
 
 <Note>
-The target runs **synchronously** and its returned value becomes the HTTP response, so callers see your status code and can retry on non-2xx. Keep both handlers fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is unauthenticated by design, protect this endpoint with rate limiting at your edge.
+The target runs **synchronously** and its returned value becomes the HTTP response, so callers see your status code and can retry on non-2xx. Keep both handlers fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is reachable as a public endpoint, protect it with rate limiting at your edge.
 </Note>
 
 #### Database event trigger payload
