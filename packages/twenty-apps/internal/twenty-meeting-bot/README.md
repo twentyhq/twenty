@@ -33,7 +33,8 @@ on.
 - **Call Recording records.** Each recording is stored as a standard
   **CallRecording**: the mixed audio (MP3) and video (MP4), the transcript, the
   call's actual start and end times, and a lifecycle status (`SCHEDULED` →
-  `JOINING` → `RECORDING` → `PROCESSING` → `COMPLETED`, or `FAILED_UNKNOWN`).
+  `JOINING` → `RECORDING` → `PROCESSING` → `COMPLETED`, or `FAILED`), with a
+  Meeting Bot Failure Reason when failure details are available.
 - **A default role.** A scoped application role that reads calendar events,
   participants, people, and workspace members to decide attendance, and writes
   the resulting CallRecording records, uploads recording media, and fills
@@ -91,7 +92,7 @@ What this app intentionally does **not** do in v1:
 - **A recording completes only when both its audio and video are ingested.**
   Recall produces only the artifacts requested at bot creation (mixed MP3 +
   MP4); a recording reaches `COMPLETED` once both have been stored. If
-  processing fails, it is marked `FAILED_UNKNOWN`.
+  processing fails, it is marked `FAILED`.
 - **Recall.ai media is temporary; Twenty's copy is not.** Recall retains the
   source media for a limited window (about seven days by default) to stay
   inside its free-storage window. Twenty ingests and stores the video, audio,
@@ -103,7 +104,7 @@ What this app intentionally does **not** do in v1:
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | No bot joined a meeting | **Recording Bot** was Off, the event had no conference link, it wasn't synced from a connected calendar, or `RECALL_API_KEY` isn't set | Confirm the event is On, upcoming, has a video link, and came from a synced calendar; admin: confirm `RECALL_API_KEY` is set |
-| Recording never reaches `COMPLETED` | A Recall webhook was missed, or only one of audio/video was produced | The reconciliation job pulls the latest status from Recall within a few minutes; if it stays `FAILED_UNKNOWN`, inspect the bot in the Recall dashboard |
+| Recording never reaches `COMPLETED` | A Recall webhook was missed, or only one of audio/video was produced | The reconciliation job pulls the latest status from Recall within a few minutes; if it is marked `FAILED`, inspect the bot in the Recall dashboard |
 | Transcript empty, or marked pending/failed | Recall hasn't finished async transcription yet, or transcription failed for that call | Wait for the reconciliation job to ingest the transcript; a persistent failure leaves a marker in the transcript |
 | Webhook rejected with `401` (Recall keeps retrying) | `RECALL_WEBHOOK_SECRET` doesn't match the Recall endpoint's signing secret | Re-copy the `whsec_…` secret from the Recall webhook endpoint into the `RECALL_WEBHOOK_SECRET` server variable |
 | Webhook rejected with `500` about the secret | `RECALL_WEBHOOK_SECRET` is not set | Admin: set it on the application registration |
@@ -145,7 +146,7 @@ A workspace admin can tune bot behavior through application variables:
 
 The app exposes a server webhook route that verifies the Recall/Svix signature,
 advances the matching CallRecording's lifecycle status (`JOINING` → `RECORDING`
-→ `PROCESSING`, or `FAILED_UNKNOWN`), and — once the recording finishes —
+→ `PROCESSING`, or `FAILED`), and — once the recording finishes —
 ingests the audio, video, and transcript. It never moves a status backward, so
 out-of-order or duplicate deliveries are safe, and it returns a non-2xx response
 on signature failures so Recall retries.

@@ -1,0 +1,200 @@
+---
+title: مخزن المفاتيح-القيم
+description: احتفظ بالنتائج الوسيطة، وخزّن البيانات مؤقتًا، وشارك الحالة عبر تشغيلات دوال المنطق باستخدام كائن بسيط من نوع مفاتيح-قيم.
+icon: قاعدة البيانات
+---
+
+تعمل دوال المنطق داخل عمليات Node.js معزولة وقصيرة العمر — بمجرد انتهاء التشغيل، لا يظل أي شيء محفوظًا في الذاكرة. عندما تحتاج إلى **تذكر شيء ما بين عمليات التشغيل** (تخزين مؤقت لاستجابة واجهة برمجة تطبيقات مكلفة، أو تخزين مؤشر لمزامنات تزايدية، أو تقليل التكرار في العمل، أو تمرير الحالة من دالة إلى أخرى)، احتفظ به في قاعدة بيانات مساحة العمل.
+
+لا تحتاج إلى بُنية تخزين أولية مخصصة لهذا: كائن تقني صغير يحتوي على حقل `key` وحقل `value` يمنحك مخزن مفاتيح-قيم دائم، محدود النطاق في مساحة العمل، ويمكن الاستعلام عنه من خلال نفس [عميل واجهة برمجة التطبيقات المُنمَّط](/l/ar/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk) الذي تستخدمه بالفعل للسجلات.
+
+```text
+  ┌─────────────────┐   set(key, value)    ┌──────────────────────────┐
+  │ Logic function  │ ───────────────────▶ │ "KV Store" object        │
+  │ (your handler)  │ ◀─────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   get(key)           └──────────────────────────┘
+```
+
+## عرّف كائن المخزن
+
+عرِّف كائنًا مخصصًا بحقلين — `key` (حقل `TEXT` فريد) و `value` (حقل `RAW_JSON` حتى تتمكن من تخزين أي حمولة قابلة للتسلسل إلى JSON). راجع [Objects](/l/ar/developers/extend/apps/data/objects) للحصول على مرجع `defineObject` الكامل.
+
+```ts src/objects/kv-store.object.ts
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+export const KV_STORE_UNIVERSAL_IDENTIFIER =
+  '2f1c8a90-3b6d-4e2a-9c47-7d0e5a1b9f33';
+export const KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER =
+  '4a7e2d11-9c83-4f60-b5a2-1e6c8d0f4b21';
+export const KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER =
+  '8b3f6c02-5d19-47ae-9f31-2c4a7e0b6d58';
+
+export default defineObject({
+  universalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
+  nameSingular: 'kvStore',
+  namePlural: 'kvStores',
+  labelSingular: 'KV Store',
+  labelPlural: 'KV Store',
+  description: 'Key-value storage for logic functions',
+  icon: 'IconDatabase',
+  fields: [
+    {
+      universalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
+      name: 'key',
+      type: FieldType.TEXT,
+      label: 'Key',
+      description: 'Unique lookup key',
+      icon: 'IconKey',
+    },
+    {
+      universalIdentifier: KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER,
+      name: 'value',
+      type: FieldType.RAW_JSON,
+      label: 'Value',
+      description: 'Stored JSON payload',
+      icon: 'IconJson',
+    },
+  ],
+});
+```
+
+### فرض تفرد المفتاح
+
+أضف **فهرسًا فريدًا** على `key` حتى لا يمكن أبدًا أن يكون لنفس المفتاح صفّان. هذه هي البنية الأولية الموصى بها لفرض التفرد — راجع [Data → Unique indexes](/l/ar/developers/extend/apps/data/overview#unique-indexes).
+
+```ts src/indexes/kv-store-key.index.ts
+import { defineIndex } from 'twenty-sdk/define';
+import {
+  KV_STORE_UNIVERSAL_IDENTIFIER,
+  KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
+} from '../objects/kv-store.object';
+
+export default defineIndex({
+  universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e14',
+  objectUniversalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
+  isUnique: true,
+  fields: [
+    {
+      universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e15',
+      fieldUniversalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  ],
+});
+```
+
+## القراءة والكتابة من دالة منطقية
+
+قم بتغليف الكائن بعدد قليل من الأدوات المساعدة الصغيرة بحيث يَظهر باقي الشفرة وكأنه واجهة برمجة تطبيقات لمخزن مفاتيح-قيم — `get` و `set` و `del`. تستخدم هذه الأدوات [`CoreApiClient`](/l/ar/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk)، الذي يتم توليده من مخطط مساحة العمل الخاصة بك ويكون مُنمَّطًا بالكامل مقابل كائن `kvStore`.
+
+```ts src/logic-functions/handlers/kv-store.ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
+
+const client = new CoreApiClient();
+
+// Look up a single row by its key.
+const findByKey = async (key: string) => {
+  const { kvStores } = await client.query({
+    kvStores: {
+      __args: { filter: { key: { eq: key } }, first: 1 },
+      edges: { node: { id: true, value: true } },
+    },
+  });
+
+  return kvStores.edges[0]?.node;
+};
+
+// Read a value. Returns undefined when the key is missing.
+export const get = async <TValue>(key: string): Promise<TValue | undefined> => {
+  const row = await findByKey(key);
+
+  return isDefined(row) ? (row.value as TValue) : undefined;
+};
+
+// Write a value. Creates the row on first write, updates it afterwards (upsert).
+export const set = async (key: string, value: unknown): Promise<void> => {
+  const existing = await findByKey(key);
+
+  if (isDefined(existing)) {
+    await client.mutation({
+      updateKvStore: {
+        __args: { id: existing.id, data: { value } },
+        id: true,
+      },
+    });
+    return;
+  }
+
+  await client.mutation({
+    createKvStore: {
+      __args: { data: { key, value } },
+      id: true,
+    },
+  });
+};
+
+// Delete a value. No-op when the key is missing.
+export const del = async (key: string): Promise<void> => {
+  const existing = await findByKey(key);
+
+  if (isDefined(existing)) {
+    await client.mutation({
+      deleteKvStore: { __args: { id: existing.id }, id: true },
+    });
+  }
+};
+```
+
+<Note>
+يحمي الفهرس الفريد من التكرارات، لكن عمليتي تشغيل تكتبان **نفس المفتاح الجديد** في اللحظة نفسها يمكن أن تتسابقا بين عملية البحث والإنشاء. اعتبر أن عملية الإنشاء التي تفشل بسبب قيد التفرد تعني "أن طرفًا آخر سبقك" — التقط هذا الخطأ وأعد القراءة، أو أعد المحاولة كعملية تحديث.
+</Note>
+
+## استخدمه: خزّن استدعاء مكلفًا في الذاكرة المؤقتة
+
+استخدام شائع هو التخزين المؤقت لاستجابة جهة خارجية بطيئة أو مقيدة بمعدل معيّن حتى تعيد عمليات التشغيل المتكررة استخدامها بدلًا من دفع التكلفة في كل مرة.
+
+```ts src/logic-functions/getExchangeRate.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { get, set } from './handlers/kv-store';
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
+type CachedRate = { rate: number; fetchedAt: number };
+
+const handler = async (params: { from: string; to: string }) => {
+  const cacheKey = `exchange-rate:${params.from}:${params.to}`;
+  const cached = await get<CachedRate>(cacheKey);
+
+  if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
+    return { rate: cached.rate, cached: true };
+  }
+
+  const response = await fetch(
+    `https://api.example.com/rate?from=${params.from}&to=${params.to}`,
+  );
+  const { rate } = (await response.json()) as { rate: number };
+
+  await set(cacheKey, { rate, fetchedAt: Date.now() });
+
+  return { rate, cached: false };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'd9b2f4e6-1c83-4a07-9e52-6b1d3c8a0f47',
+  name: 'get-exchange-rate',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+## أنماط ونصائح
+
+* **مساحات الأسماء.** أضف بادئة إلى المفاتيح للحفاظ على فصل الاهتمامات المختلفة ولتسهيل عمليات البحث المجمّعة — `sync-cursor:linear` و `cache:exchange-rate:USD:EUR` و `lock:nightly-report`. رشِّح باستخدام `key: { like: 'cache:%' }` لسرد أو مسح مساحة اسم كاملة.
+* **انتهاء الصلاحية (TTL).** لا يحتوي المخزن على آلية انتهاء صلاحية مدمجة. قم بتخزين طابع زمني داخل `value` (كما في مثال التخزين المؤقت) وتحقق منه عند القراءة، أو أضف حقل `DATE_TIME` وقم دوريًا بمسح الصفوف القديمة من [دالة يتم تشغيلها بواسطة cron](/l/ar/developers/extend/apps/logic/logic-functions).
+* **ما الذي يتم تخزينه.** يمكن لـ `RAW_JSON` أن يحتوي على أي قيمة قابلة للتسلسل إلى JSON — أرقام، سلاسل نصية، مصفوفات، كائنات. حافظ على صِغر الإدخالات؛ فهذا مخصّص للتنسيق والتخزين المؤقت، وليس للملفات الكبيرة أو الكتل الثنائية الضخمة. بالنسبة للملفات، استخدم حقل `FILES` ودالة [`uploadFile`](/l/ar/developers/extend/apps/logic/logic-functions#uploading-files).
+* **الرؤية والصلاحيات.** تعيش الصفوف في قاعدة بيانات مساحة العمل مثل أي سجل آخر، لذا يمكن الاستعلام عنها عبر واجهة برمجة التطبيقات وتلتزم [بدور](/l/ar/developers/extend/apps/config/roles) التطبيق لديك. لإبقاء المخزن خارج واجهة المستخدم الرئيسية، اتركه خارج [قائمة التنقل](/l/ar/developers/extend/apps/layout/navigation-menu-items).
+* **تحديد النطاق على سجل معيّن.** هل تحتاج إلى حالة لكل سجل بدلًا من مفاتيح عالمية؟ أضف [علاقة](/l/ar/developers/extend/apps/data/relations) من كائن المخزن إلى الكائن المستهدف بدلًا من ترميز المعرّف داخل المفتاح.
+
+<Note>
+هذا عُرف وليس ميزة منفصلة — "مخزن المفاتيح-القيم (KV Store)" هو مجرد كائن مخصص عادي تقوم بتعريفه والاستعلام عنه باستخدام واجهة برمجة التطبيقات القياسية. هذا يعني أنه يستفيد من نفس آليات المزامنة والصلاحيات والأدوات مثل باقي بيانات تطبيقك.
+</Note>

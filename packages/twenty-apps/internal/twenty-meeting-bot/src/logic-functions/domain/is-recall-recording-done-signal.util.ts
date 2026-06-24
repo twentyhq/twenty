@@ -4,4 +4,10 @@ export const isRecallRecordingDoneSignal = ({
 }: {
   event: string;
   statusCode: string | undefined;
-}): boolean => event === 'recording.done' || statusCode === 'done';
+}): boolean => {
+  return (
+    event === 'recording.done' ||
+    event === 'recording.failed' ||
+    statusCode === 'done'
+  );
+};

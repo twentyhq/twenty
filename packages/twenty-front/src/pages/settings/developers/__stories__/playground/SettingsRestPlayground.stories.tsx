@@ -12,6 +12,11 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 const meta: Meta<typeof SettingsRestPlayground> = {
   title: 'Pages/Settings/Playground/RestPlayground',
   component: SettingsRestPlayground,
+  // Scalar renders an embedded API reference that manipulates browser history
+  // and can reload the headless storybook test iframe. Exclude this
+  // 3rd-party-tool wrapper from the vitest run; it remains available in
+  // Storybook UI. (!test removes the auto-applied `test` tag.)
+  tags: ['!test'],
   decorators: [
     (Story) => {
       jotaiStore.set(playgroundApiKeyState.atom, {
