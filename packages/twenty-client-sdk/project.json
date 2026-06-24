@@ -14,7 +14,7 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "npx rimraf dist && npx vite build && tsx scripts/bundle-metadata-client.ts",
+          "npx rimraf dist && npx vite build && npx vite build -c vite.metadata.config.ts",
           "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
         ],
         "parallel": false

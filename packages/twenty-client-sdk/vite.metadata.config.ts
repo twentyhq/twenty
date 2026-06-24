@@ -3,21 +3,16 @@ import { defineConfig } from 'vite';
 
 import { entryFileNames, isExternal } from './vite.shared';
 
-// Metadata is intentionally excluded here and built on its own
-// (vite.metadata.config.ts). This multi-entry build hoists code shared across
-// entries into a chunk-*.mjs, but the front-component renderer loads the
-// metadata client as a single blob-URL module and cannot resolve relative chunk
-// imports — so metadata must be a single self-contained file.
-const entries = [
-  'src/core/index.ts',
-  'src/rest/index.ts',
-  'src/generate/index.ts',
-];
-
+// The metadata client is served to front components by the renderer, which
+// loads each SDK client as a single blob-URL module and cannot resolve relative
+// chunk imports. Building it as its own single-entry library guarantees a single
+// self-contained file (no shared chunk-*.mjs), unlike the main multi-entry build
+// in vite.config.ts. Writes dist/metadata.{mjs,cjs} alongside that build's output
+// (emptyOutDir: false so it doesn't wipe it).
 export default defineConfig(() => {
   return {
     root: __dirname,
-    cacheDir: '../../node_modules/.vite/packages/twenty-client-sdk',
+    cacheDir: '../../node_modules/.vite/packages/twenty-client-sdk-metadata',
     resolve: {
       tsconfigPaths: true,
       alias: {
@@ -27,7 +22,7 @@ export default defineConfig(() => {
     build: {
       emptyOutDir: false,
       outDir: 'dist',
-      lib: { entry: entries, name: 'twenty-client-sdk' },
+      lib: { entry: 'src/metadata/index.ts', name: 'twenty-client-sdk' },
       rollupOptions: {
         external: isExternal,
         output: [
