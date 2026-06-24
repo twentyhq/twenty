@@ -77,11 +77,11 @@ jobs:
         uses: ./.github/actions/yarn-install
       - name: Build twenty-shared
         run: npx nx build twenty-shared
-      - name: Server / Run lint & typecheck
+      - name: Server / Run lint, typecheck & lingui extract
         uses: ./.github/actions/nx-affected
         with:
           tag: scope:backend
-          tasks: lint,typecheck
+          tasks: lint,typecheck,lingui:extract
 
   server-previous-version-upgrade-mutation-guard:
     timeout-minutes: 5

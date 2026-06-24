@@ -35,6 +35,8 @@ jobs:
         uses: ./.github/actions/yarn-install
       - name: Build twenty-emails
         run: npx nx build twenty-emails
+      - name: Extract translations (lingui)
+        run: npx nx run twenty-emails:lingui:extract
       - name: Run email tests
         run: |
           # Start the email server in the background
