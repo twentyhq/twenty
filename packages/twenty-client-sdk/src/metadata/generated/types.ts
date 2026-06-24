@@ -713,6 +713,9 @@ export default {
             "applicationVariables": [
                 15
             ],
+            "functionBaseUrl": [
+                1
+            ],
             "__typename": [
                 1
             ]
