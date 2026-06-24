@@ -58,19 +58,16 @@ export const useHandleRecordGroupField = () => {
             ?.updateView as GqlView;
 
           if (isDefined(updatedRelationView)) {
-            await loadRecordIndexStates(
-              updatedRelationView,
-              objectMetadataItem,
-            );
+            loadRecordIndexStates(updatedRelationView, objectMetadataItem);
           }
-        }
 
-        setRecordGroupsFromViewGroups({
-          viewId: view.id,
-          mainGroupByFieldMetadataId: fieldMetadataItem.id,
-          viewGroups: [],
-          objectMetadataItem,
-        });
+          setRecordGroupsFromViewGroups({
+            viewId: view.id,
+            mainGroupByFieldMetadataId: fieldMetadataItem.id,
+            viewGroups: [],
+            objectMetadataItem,
+          });
+        }
 
         return;
       }
@@ -94,7 +91,7 @@ export const useHandleRecordGroupField = () => {
           ?.updateView as GqlView;
 
         if (isDefined(updatedView)) {
-          await loadRecordIndexStates(updatedView, objectMetadataItem);
+          loadRecordIndexStates(updatedView, objectMetadataItem);
         }
       }
 
