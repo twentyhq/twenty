@@ -13,12 +13,14 @@ export const InputErrorHelper = ({
   children,
 }: {
   children?: React.ReactNode;
-}) => (
-  <>
-    {isDefined(children) && (
-      <StyledInputErrorHelper aria-live="polite">
-        {children}
-      </StyledInputErrorHelper>
-    )}
-  </>
-);
+}) => {
+  if (!isDefined(children)) {
+    return null;
+  }
+
+  return (
+    <StyledInputErrorHelper aria-live="polite">
+      {children}
+    </StyledInputErrorHelper>
+  );
+};

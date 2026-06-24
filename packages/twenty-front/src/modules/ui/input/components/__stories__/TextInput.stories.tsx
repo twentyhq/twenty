@@ -68,3 +68,27 @@ export const WithRightAdornment: Story = {
     rightAdornment: '@twenty.com',
   },
 };
+
+export const WithError: Story = {
+  args: {
+    label: 'Email',
+    value: 'not-an-email',
+    error: 'Email is invalid',
+  },
+};
+
+// The error message renders in normal flow and pushes the next field down
+// instead of overlapping it (see PR #21886).
+export const ErrorDoesNotOverlapNextField: Story = {
+  args: {
+    label: 'Email',
+    value: 'not-an-email',
+    error: 'Email is invalid',
+  },
+  render: (args) => (
+    <div style={{ display: 'flex', flexDirection: 'column', width: 200 }}>
+      <Render {...args} />
+      <TextInput label="Password" placeholder="••••••••" />
+    </div>
+  ),
+};
