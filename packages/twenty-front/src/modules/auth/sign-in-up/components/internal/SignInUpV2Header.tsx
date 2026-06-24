@@ -4,14 +4,14 @@ import { IconChevronLeft } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const TWENTY_LOGO_URL = `${window.location.origin}/images/icons/android/android-launchericon-192-192.png`;
+const HEADER_CENTER_WIDTH = 340;
 
 const StyledHeader = styled.div`
   align-items: center;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[8]};
+  padding: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
@@ -23,13 +23,22 @@ const StyledSide = styled.div`
 
 const StyledLeftSide = styled(StyledSide)`
   justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-right: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledCenter = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: flex-start;
+  width: ${HEADER_CENTER_WIDTH}px;
 `;
 
 const StyledLogo = styled.div`
+  background-image: url('/images/integrations/twenty-logo.svg');
   background-size: cover;
-  border-radius: ${themeCssVariables.border.radius.sm};
   height: ${themeCssVariables.spacing[6]};
+  opacity: 0.4;
   width: ${themeCssVariables.spacing[6]};
 `;
 
@@ -51,7 +60,9 @@ export const SignInUpV2Header = ({ onBack }: SignInUpV2HeaderProps) => {
           aria-label={t`Go back`}
         />
       </StyledLeftSide>
-      <StyledLogo style={{ backgroundImage: `url(${TWENTY_LOGO_URL})` }} />
+      <StyledCenter>
+        <StyledLogo />
+      </StyledCenter>
       <StyledSide />
     </StyledHeader>
   );
