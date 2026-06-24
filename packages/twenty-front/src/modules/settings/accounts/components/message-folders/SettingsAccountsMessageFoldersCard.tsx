@@ -2,7 +2,6 @@ import { type MessageFolder } from '@/accounts/types/MessageFolder';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
 import { SettingsMessageFoldersSkeletonLoader } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersSkeletonLoader';
 import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
-import { computeFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
 import { useMyMessageFolders } from '@/settings/accounts/hooks/useMyMessageFolders';
 import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
@@ -112,13 +111,10 @@ export const SettingsAccountsMessageFoldersCard = () => {
 
   const handleToggleFolder = async (folderToToggle: MessageFolder) => {
     const isSynced = !folderToToggle.isSynced;
-    const folderIdsToToggle = computeFolderIdsForSyncToggle({
-      folderId: folderToToggle.id,
-    });
 
     try {
       await updateMessageFoldersSyncStatus({
-        messageFolderIds: folderIdsToToggle,
+        messageFolderIds: [folderToToggle.id],
         isSynced,
       });
     } catch (error) {
