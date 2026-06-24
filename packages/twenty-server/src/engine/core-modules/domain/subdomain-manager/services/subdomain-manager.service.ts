@@ -6,7 +6,7 @@ import {
   getSubdomainSlugFromDisplayName,
   isDefined,
 } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { type SubdomainAvailabilityDTO } from 'src/engine/core-modules/domain/subdomain-manager/dtos/subdomain-availability.dto';
 import { type WorkspaceCreationDefaultsDTO } from 'src/engine/core-modules/domain/subdomain-manager/dtos/workspace-creation-defaults.dto';
@@ -23,6 +23,7 @@ import {
 const SUBDOMAIN_MAX_LENGTH = 30;
 const MAX_NUMBERED_SUFFIX_ATTEMPTS = 50;
 const MAX_RANDOM_FALLBACK_ATTEMPTS = 10;
+const SUBDOMAIN_SUGGESTIONS_COUNT = 3;
 
 @Injectable()
 export class SubdomainManagerService {
@@ -62,6 +63,15 @@ export class SubdomainManagerService {
   }
 
   async findAvailableSubdomain(desired: string): Promise<string> {
+    const [availableSubdomain] = await this.findAvailableSubdomains(desired, 1);
+
+    return availableSubdomain;
+  }
+
+  async findAvailableSubdomains(
+    desired: string,
+    count: number,
+  ): Promise<string[]> {
     const derivedBase = isSubdomainValid(desired)
       ? desired
       : getSubdomainSlugFromDisplayName(desired);
@@ -71,27 +81,59 @@ export class SubdomainManagerService {
         ? derivedBase
         : generateRandomSubdomain();
 
-    if (await this.isSubdomainFreeToUse(base)) {
-      return base;
+    const candidates = this.buildSubdomainCandidates(base);
+
+    const availableSubdomains =
+      await this.filterFreeToUseSubdomains(candidates);
+
+    if (availableSubdomains.length === 0) {
+      return [generateRandomSubdomain()];
     }
 
-    for (let suffix = 2; suffix <= MAX_NUMBERED_SUFFIX_ATTEMPTS; suffix++) {
-      const candidate = this.appendNumberedSuffix(base, suffix);
+    return availableSubdomains.slice(0, count);
+  }
 
-      if (await this.isSubdomainFreeToUse(candidate)) {
-        return candidate;
-      }
+  private buildSubdomainCandidates(base: string): string[] {
+    const numberedCandidates = Array.from(
+      { length: MAX_NUMBERED_SUFFIX_ATTEMPTS - 1 },
+      (_, index) => this.appendNumberedSuffix(base, index + 2),
+    );
+
+    const randomCandidates = Array.from(
+      { length: MAX_RANDOM_FALLBACK_ATTEMPTS },
+      () => generateRandomSubdomain(),
+    );
+
+    return [...new Set([base, ...numberedCandidates, ...randomCandidates])];
+  }
+
+  private async filterFreeToUseSubdomains(
+    candidates: string[],
+  ): Promise<string[]> {
+    const defaultSubdomain = this.twentyConfigService.get('DEFAULT_SUBDOMAIN');
+
+    const validCandidates = candidates.filter(
+      (candidate) =>
+        isSubdomainValid(candidate) && candidate !== defaultSubdomain,
+    );
+
+    if (validCandidates.length === 0) {
+      return [];
     }
 
-    for (let attempt = 0; attempt < MAX_RANDOM_FALLBACK_ATTEMPTS; attempt++) {
-      const candidate = generateRandomSubdomain();
+    const existingWorkspaces = await this.workspaceRepository.find({
+      where: { subdomain: In(validCandidates) },
+      withDeleted: true,
+      select: { subdomain: true },
+    });
 
-      if (await this.isSubdomainFreeToUse(candidate)) {
-        return candidate;
-      }
-    }
+    const takenSubdomains = new Set(
+      existingWorkspaces.map((workspace) => workspace.subdomain),
+    );
 
-    return generateRandomSubdomain();
+    return validCandidates.filter(
+      (candidate) => !takenSubdomains.has(candidate),
+    );
   }
 
   async getSubdomainAvailability(
@@ -100,12 +142,21 @@ export class SubdomainManagerService {
     const isValid = isSubdomainValid(subdomain);
     const available = isValid && (await this.isSubdomainFreeToUse(subdomain));
 
-    // Autofill adopts this directly, so never echo an invalid input back.
-    const suggestedSubdomain = available
-      ? subdomain
-      : await this.findAvailableSubdomain(subdomain);
+    // Autofill adopts the first suggestion directly, so never echo an invalid
+    // input back.
+    const suggestedSubdomains = available
+      ? [subdomain]
+      : await this.findAvailableSubdomains(
+          subdomain,
+          SUBDOMAIN_SUGGESTIONS_COUNT,
+        );
 
-    return { isValid, available, suggestedSubdomain };
+    return {
+      isValid,
+      available,
+      suggestedSubdomain: suggestedSubdomains[0],
+      suggestedSubdomains,
+    };
   }
 
   async isSubdomainAvailable(subdomain: string) {

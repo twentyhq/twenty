@@ -2355,6 +2355,7 @@ type SubdomainAvailabilityDTO {
   isValid: Boolean!
   available: Boolean!
   suggestedSubdomain: String!
+  suggestedSubdomains: [String!]!
 }
 
 type WorkspaceCreationDefaultsDTO {

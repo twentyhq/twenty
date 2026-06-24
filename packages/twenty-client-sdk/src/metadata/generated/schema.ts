@@ -2012,6 +2012,7 @@ export interface SubdomainAvailabilityDTO {
     isValid: Scalars['Boolean']
     available: Scalars['Boolean']
     suggestedSubdomain: Scalars['String']
+    suggestedSubdomains: Scalars['String'][]
     __typename: 'SubdomainAvailabilityDTO'
 }
 
@@ -5117,6 +5118,7 @@ export interface SubdomainAvailabilityDTOGenqlSelection{
     isValid?: boolean | number
     available?: boolean | number
     suggestedSubdomain?: boolean | number
+    suggestedSubdomains?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
