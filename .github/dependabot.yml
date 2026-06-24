@@ -18,3 +18,28 @@ updates:
       # chokidar is pinned to v3 via a resolution: v4+ dropped native macOS
       # FSEvents and hits EMFILE on a repo this size (see #20316)
       - dependency-name: "chokidar"
+  # Public Twenty apps are standalone packages (own lockfiles) excluded from the
+  # root entry above. Each app folder is updated weekly, grouped into a single PR.
+  - package-ecosystem: "npm"
+    directories:
+      - "/packages/twenty-apps/public/*"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    versioning-strategy: "lockfile-only"
+    groups:
+      twenty-apps-public:
+        patterns:
+          - "*"
+  # Internal Twenty apps, same treatment as the public apps above.
+  - package-ecosystem: "npm"
+    directories:
+      - "/packages/twenty-apps/internal/*"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    versioning-strategy: "lockfile-only"
+    groups:
+      twenty-apps-internal:
+        patterns:
+          - "*"
