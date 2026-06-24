@@ -9,6 +9,7 @@ import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -205,7 +206,9 @@ export class ApplicationTarballService {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
         tarballFileId: savedFile.id,
         name: manifest.application?.displayName ?? 'Unknown App',
-        manifest,
+        // The manifest JSON column carries the full Manifest type, which
+        // TypeORM's _QueryDeepPartialEntity can't recurse into cleanly.
+        manifest: manifest as unknown as QueryDeepPartialEntity<ApplicationRegistrationEntity>['manifest'],
         latestAvailableVersion: packageJson?.version ?? null,
         isListed: false,
         isFeatured: false,
