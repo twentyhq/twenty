@@ -1773,7 +1773,6 @@ enum FeatureFlagKey {
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_MARKETPLACE_SETTING_TAB_VISIBLE
-  IS_PUBLIC_DOMAIN_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
@@ -1948,6 +1947,7 @@ type ClientConfig {
   isEmailVerificationRequired: Boolean!
   defaultSubdomain: String
   frontDomain: String!
+  publicFunctionDomain: String
   analyticsEnabled: Boolean!
   support: Support!
   isAttachmentPreviewEnabled: Boolean!
@@ -3449,8 +3449,7 @@ type Mutation {
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   saveImapSmtpCaldavAccount(handle: String!, connectionParameters: EmailAccountConnectionParameters!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
-  createPublicDomain(domain: String!, applicationId: String): PublicDomain!
-  updatePublicDomain(domain: String!, applicationId: String): PublicDomain!
+  createPublicDomain(domain: String!, applicationId: String!): PublicDomain!
   deletePublicDomain(domain: String!): Boolean!
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!

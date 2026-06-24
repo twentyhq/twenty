@@ -9,6 +9,13 @@ export class AddApplicationIdToPublicDomainFastInstanceCommand implements FastIn
     await queryRunner.query(
       `ALTER TABLE "core"."publicDomain" ADD "applicationId" uuid`,
     );
+    // Public domains are now strictly bound to an application; pre-existing unbound domains cannot be migrated.
+    await queryRunner.query(
+      `DELETE FROM "core"."publicDomain" WHERE "applicationId" IS NULL`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."publicDomain" ALTER COLUMN "applicationId" SET NOT NULL`,
+    );
     await queryRunner.query(
       `CREATE INDEX "IDX_PUBLIC_DOMAIN_APPLICATION_ID" ON "core"."publicDomain" ("applicationId")`,
     );

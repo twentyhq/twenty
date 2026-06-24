@@ -34,17 +34,17 @@ export class PublicDomainEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'boolean', default: false, nullable: false })
   isValidated: boolean;
 
-  @Column({ type: 'uuid', nullable: true })
-  applicationId: string | null;
+  @Column({ type: 'uuid', nullable: false })
+  applicationId: string;
 
   @ManyToOne(
     () => ApplicationEntity,
     (application) => application.publicDomains,
     {
       onDelete: 'CASCADE',
-      nullable: true,
+      nullable: false,
     },
   )
   @JoinColumn({ name: 'applicationId' })
-  application: Relation<ApplicationEntity> | null;
+  application: Relation<ApplicationEntity>;
 }

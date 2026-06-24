@@ -28,8 +28,10 @@ export const SettingsApplicationDetailSettingsTab = ({
 
   return (
     <>
-      {hasHttpTriggeredFunctions && (
-        <SettingsApplicationFunctionDomainSection />
+      {hasHttpTriggeredFunctions && application?.id && (
+        <SettingsApplicationFunctionDomainSection
+          applicationId={application.id}
+        />
       )}
       {application?.id && (
         <SettingsApplicationConnectionsSection applicationId={application.id} />
