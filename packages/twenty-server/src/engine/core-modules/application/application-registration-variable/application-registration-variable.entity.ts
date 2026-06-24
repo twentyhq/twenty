@@ -65,7 +65,9 @@ export class ApplicationRegistrationVariableEntity {
   isRequired: boolean;
 
   // FieldMetadataType subset driving value serialization and UI rendering.
-  @Field()
+  // Explicit GraphQL type: ApplicationVariableType is a string union with no
+  // runtime representation, so @Field() can't infer it via reflection.
+  @Field(() => String)
   @Column({ nullable: false, type: 'text', default: FieldMetadataType.TEXT })
   type: ApplicationVariableType;
 
