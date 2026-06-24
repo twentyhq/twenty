@@ -7,7 +7,6 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class MakePublicDomainApplicationIdNotNullSlowInstanceCommand
   implements SlowInstanceCommand
 {
-  // Public domains are now strictly bound to an application; pre-existing unbound domains cannot be migrated.
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
       `DELETE FROM "core"."publicDomain" WHERE "applicationId" IS NULL`,
