@@ -1,15 +1,6 @@
 name: CI - Cross-Version Upgrade
 run-name: cross-version-upgrade ${{ inputs.from_version || 'v1.22' }} → current (from source)
 
-# Verifies that a database created and seeded by the oldest supported Twenty
-# release can be upgraded by the current version built from source, and that
-# the upgraded instance comes up healthy with its data still queryable.
-#
-# - Old version: pulled from Docker Hub (twentycrm/twenty:<from_version>), run as a container.
-# - New version: built from source, reusing the `server-build` nx cache when available
-#   (only to skip rebuilding — a cache miss just builds cold). Runs the `upgrade` command
-#   against the same database, then starts the server and runs smoke queries.
-
 on:
   workflow_call:
     inputs:
