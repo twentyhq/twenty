@@ -2,12 +2,12 @@ import { createHmac } from 'crypto';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { PROCESS_RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/process-recall-webhook-logic-function-universal-identifier';
 import recallWebhookLogicFunction, {
   recallWebhookRouteHandler,
 } from 'src/logic-functions/recall-webhook';
 
 const getApplicationVariableValueMock = vi.hoisted(() => vi.fn());
-const handleRecallWebhookMock = vi.hoisted(() => vi.fn());
 
 vi.mock(
   'src/logic-functions/utils/get-application-variable-value.util',
@@ -15,14 +15,6 @@ vi.mock(
     getApplicationVariableValue: getApplicationVariableValueMock,
   }),
 );
-
-vi.mock('src/logic-functions/flows/handle-recall-webhook.util', () => ({
-  handleRecallWebhook: handleRecallWebhookMock,
-}));
-
-vi.mock('twenty-client-sdk/core', () => ({
-  CoreApiClient: vi.fn(),
-}));
 
 const SECRET_BYTES = Buffer.from('entry-test-secret');
 const SECRET = `whsec_${SECRET_BYTES.toString('base64')}`;
@@ -71,25 +63,18 @@ const buildRecordingDoneWebhookBody = () => ({
 
 describe('recallWebhookRouteHandler', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
     getApplicationVariableValueMock.mockReset();
     getApplicationVariableValueMock.mockReturnValue(SECRET);
-    handleRecallWebhookMock.mockReset();
-    handleRecallWebhookMock.mockResolvedValue({ status: 'updated' });
   });
 
-  it('declares a server webhook resolver for Recall bot workspace metadata', () => {
+  it('declares a server route trigger that forwards the webhook signature headers', () => {
     expect(recallWebhookLogicFunction.success).toBe(true);
     expect(
       recallWebhookLogicFunction.config.httpRouteTriggerSettings,
     ).toBeUndefined();
     expect(
-      recallWebhookLogicFunction.config.serverWebhookTriggerSettings,
+      recallWebhookLogicFunction.config.serverRouteTriggerSettings,
     ).toEqual({
-      workspaceIdResolver: {
-        source: 'body',
-        path: 'data.bot.metadata.twentyWorkspaceId',
-      },
       forwardedRequestHeaders: [
         'webhook-id',
         'webhook-timestamp',
@@ -101,83 +86,73 @@ describe('recallWebhookRouteHandler', () => {
     });
   });
 
-  it('responds 500 when the webhook secret is not configured', async () => {
+  it('throws when the webhook secret is not configured', () => {
     getApplicationVariableValueMock.mockReturnValue(undefined);
 
-    const result = await recallWebhookRouteHandler(
-      buildRoutePayload({ rawBody: '{}', body: {} }),
-    );
-
-    expect(result).toMatchObject({
-      __twentyHttpResponse: true,
-      status: 500,
-      body: {
-        error: expect.stringContaining('RECALL_WEBHOOK_SECRET'),
-      },
-    });
+    expect(() =>
+      recallWebhookRouteHandler(buildRoutePayload({ rawBody: '{}', body: {} })),
+    ).toThrow('RECALL_WEBHOOK_SECRET');
   });
 
-  it('responds 500 when the raw body is not forwarded', async () => {
-    const result = await recallWebhookRouteHandler(
-      buildRoutePayload({ body: {} }),
-    );
-
-    expect(result).toMatchObject({
-      __twentyHttpResponse: true,
-      status: 500,
-      body: {
-        error: expect.stringContaining('Raw request body'),
-      },
-    });
+  it('throws when the raw body is not forwarded', () => {
+    expect(() =>
+      recallWebhookRouteHandler(buildRoutePayload({ body: {} })),
+    ).toThrow('Raw request body');
   });
 
-  it('responds 401 when the signature is invalid', async () => {
-    const result = await recallWebhookRouteHandler(
-      buildRoutePayload({
-        rawBody: '{}',
-        body: {},
-        headers: {
-          'webhook-id': 'msg_entry_test',
-          'webhook-timestamp': Math.floor(Date.now() / 1000).toString(),
-          'webhook-signature': 'v1,not-a-real-signature',
-        },
-      }),
-    );
-
-    expect(result).toMatchObject({
-      __twentyHttpResponse: true,
-      status: 401,
-      body: {
-        error: expect.stringContaining('Invalid webhook signature'),
-      },
-    });
+  it('throws when the signature is invalid', () => {
+    expect(() =>
+      recallWebhookRouteHandler(
+        buildRoutePayload({
+          rawBody: '{}',
+          body: {},
+          headers: {
+            'webhook-id': 'msg_entry_test',
+            'webhook-timestamp': Math.floor(Date.now() / 1000).toString(),
+            'webhook-signature': 'v1,not-a-real-signature',
+          },
+        }),
+      ),
+    ).toThrow('Invalid webhook signature');
   });
 
-  it('responds 400 when a correctly signed payload is empty', async () => {
+  it('throws when a correctly signed payload is empty', () => {
     const rawBody = 'null';
 
-    const result = await recallWebhookRouteHandler(
-      buildRoutePayload({
-        rawBody,
-        body: null,
-        headers: buildSignedHeaders(rawBody),
-      }),
-    );
-
-    expect(result).toMatchObject({
-      __twentyHttpResponse: true,
-      status: 400,
-      body: {
-        error: 'Webhook payload was empty',
-      },
-    });
+    expect(() =>
+      recallWebhookRouteHandler(
+        buildRoutePayload({
+          rawBody,
+          body: null,
+          headers: buildSignedHeaders(rawBody),
+        }),
+      ),
+    ).toThrow('Webhook payload was empty');
   });
 
-  it('dispatches a correctly signed payload to the handler', async () => {
+  it('throws when the workspace id is missing from the bot metadata', () => {
+    const body = {
+      event: 'recording.done',
+      data: { bot: { id: 'recall-bot-1' } },
+    };
+    const rawBody = JSON.stringify(body);
+
+    expect(() =>
+      recallWebhookRouteHandler(
+        buildRoutePayload({
+          rawBody,
+          body,
+          headers: buildSignedHeaders(rawBody),
+        }),
+      ),
+    ).toThrow('workspace id');
+  });
+
+  it('resolves the target workspace for a correctly signed payload', () => {
     const body = buildRecordingDoneWebhookBody();
     const rawBody = JSON.stringify(body);
 
-    const result = await recallWebhookRouteHandler(
+    const result = recallWebhookRouteHandler(
       buildRoutePayload({
         rawBody,
         body,
@@ -185,10 +160,11 @@ describe('recallWebhookRouteHandler', () => {
       }),
     );
 
-    expect(handleRecallWebhookMock).toHaveBeenCalledTimes(1);
-    expect(handleRecallWebhookMock).toHaveBeenCalledWith(
-      expect.objectContaining({ body }),
-    );
-    expect(result).toEqual({ status: 'updated' });
+    expect(result).toEqual({
+      workspaceId: WORKSPACE_ID,
+      targetLogicFunctionUniversalIdentifier:
+        PROCESS_RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      payload: body,
+    });
   });
 });
