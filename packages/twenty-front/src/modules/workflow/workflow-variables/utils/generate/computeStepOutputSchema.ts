@@ -167,7 +167,8 @@ export const computeStepOutputSchema = ({
     case 'CREATE_RECORD':
     case 'UPDATE_RECORD':
     case 'DELETE_RECORD':
-    case 'UPSERT_RECORD': {
+    case 'UPSERT_RECORD':
+    case 'PICK_RECORD': {
       const objectName = step.settings?.input?.objectName;
 
       if (!isDefined(objectName)) {

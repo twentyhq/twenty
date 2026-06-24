@@ -1,10 +1,10 @@
 import { Input } from '@base-ui/react/input';
 import { clsx } from 'clsx';
-import { type ReactNode, useContext, useId, useState } from 'react';
+import { type ReactNode, useId, useState } from 'react';
 
 import { IconFilter, IconSearch } from '@ui/icon';
 import { IconButton } from '@ui/input/IconButton/IconButton';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './SearchInput.module.scss';
 
@@ -35,7 +35,7 @@ export const SearchInput = ({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledby,
 }: SearchInputProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const [isFocused, setIsFocused] = useState(false);
   const generatedId = useId();
   const inputId = id ?? generatedId;

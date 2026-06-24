@@ -16,6 +16,7 @@ import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { wrapWithErrorHandler } from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
+import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -27,6 +28,7 @@ export class ToolRegistryService {
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
     private readonly toolExecutorService: ToolExecutorService,
+    private readonly toolOutputSpillService: ToolOutputSpillService,
   ) {}
 
   async getCatalog(context: ToolProviderContext): Promise<ToolIndexEntry[]> {
@@ -106,10 +108,12 @@ export class ToolRegistryService {
     options?: {
       wrapWithErrorContext?: boolean;
       compactOutput?: boolean;
+      spillLargeOutput?: boolean;
     },
   ): ToolSet {
     const toolSet: ToolSet = {};
     const compactOutput = options?.compactOutput ?? false;
+    const spillLargeOutput = options?.spillLargeOutput ?? false;
 
     for (const descriptor of descriptors) {
       const schema = descriptor.inputSchema as Record<string, unknown>;
@@ -123,9 +127,17 @@ export class ToolRegistryService {
           context,
         );
 
-        return compactOutput
+        const compacted = compactOutput
           ? (compactToolOutput(result) as ToolOutput)
           : result;
+
+        return spillLargeOutput
+          ? this.toolOutputSpillService.spillIfTooLarge(
+              compacted,
+              { workspaceId: context.workspaceId },
+              { toolName: descriptor.name },
+            )
+          : compacted;
       };
 
       toolSet[descriptor.name] = {
@@ -165,6 +177,7 @@ export class ToolRegistryService {
     context: ToolContext,
     options?: {
       compactOutput?: boolean;
+      spillLargeOutput?: boolean;
     },
   ): Promise<ToolSet> {
     const fullContext = this.buildContextFromToolContext(context);
@@ -188,6 +201,7 @@ export class ToolRegistryService {
 
     return this.hydrateToolSet(descriptors, fullContext, {
       compactOutput: options?.compactOutput,
+      spillLargeOutput: options?.spillLargeOutput,
     });
   }
 
@@ -266,7 +280,7 @@ export class ToolRegistryService {
     toolName: string,
     args: Record<string, unknown> | undefined,
     context: ToolContext,
-    options?: { compactOutput?: boolean },
+    options?: { compactOutput?: boolean; spillLargeOutput?: boolean },
   ): Promise<ToolOutput> {
     try {
       const fullContext = this.buildContextFromToolContext(context);
@@ -297,9 +311,17 @@ export class ToolRegistryService {
         fullContext,
       );
 
-      return options?.compactOutput
+      const compacted = options?.compactOutput
         ? (compactToolOutput(result) as ToolOutput)
         : result;
+
+      return options?.spillLargeOutput
+        ? this.toolOutputSpillService.spillIfTooLarge(
+            compacted,
+            { workspaceId: fullContext.workspaceId },
+            { toolName },
+          )
+        : compacted;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -320,8 +342,13 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
-    const { categories, excludeTools, wrapWithErrorContext, compactOutput } =
-      options;
+    const {
+      categories,
+      excludeTools,
+      wrapWithErrorContext,
+      compactOutput,
+      spillLargeOutput,
+    } = options;
     const categorySet = categories ? new Set(categories) : undefined;
 
     const results = await Promise.all(
@@ -355,6 +382,7 @@ export class ToolRegistryService {
     const toolSet = this.hydrateToolSet(filteredDescriptors, context, {
       wrapWithErrorContext,
       compactOutput,
+      spillLargeOutput,
     });
 
     this.logger.log(

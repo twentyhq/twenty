@@ -31,4 +31,5 @@ export const METADATA_EVENTS_TO_EMIT = {
   webhook: false,
   applicationVariable: false,
   connectionProvider: true,
+  searchFieldMetadata: true,
 } as const satisfies { [P in AllMetadataName]: boolean };

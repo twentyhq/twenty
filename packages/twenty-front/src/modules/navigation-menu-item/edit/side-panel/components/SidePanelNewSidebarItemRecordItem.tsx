@@ -14,6 +14,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SearchRecord = {
   recordId: string;
@@ -90,7 +91,7 @@ export const SidePanelNewSidebarItemRecordItem = ({
                 ? 'squared'
                 : 'rounded'
             }
-            avatarUrl={record.imageUrl}
+            avatarUrl={getAbsoluteImageUrl(record.imageUrl)}
             placeholderColorSeed={record.recordId}
             placeholder={record.label}
           />

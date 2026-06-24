@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'src/utils/is-defined';
 
 const FIREFLIES_API_URL = 'https://api.fireflies.ai/graphql';
 

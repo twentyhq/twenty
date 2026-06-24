@@ -1,10 +1,8 @@
-# twenty-slack
+# Slack for Twenty
 
-Slack tools for **Twenty workflows** and **agents** (the same logic functions
+Slack tools for **Twenty workflows** and **agents** — the same logic functions
 are available as workflow steps and as tools where your deployment exposes
-them). Uses the official
-[`@slack/web-api`](https://github.com/slackapi/node-slack-sdk) `WebClient`
-(Slack retries and error types).
+them.
 
 ## What you can do
 
@@ -63,8 +61,7 @@ Both routes require an authenticated Twenty user and use the same shared Slack c
    only under **User Token Scopes** — or Slack will refuse install with *“doesn’t
    have a bot user to install”* until at least one bot scope exists.
 
-   The scopes **requested at connect time** are defined in
-   `src/connection-providers/slack-connection.ts` and must also appear under
+   The scopes **requested at connect time** must also appear under
    **Bot Token Scopes** on the Slack app (Slack validates the set). Current
    list:
 
@@ -74,7 +71,7 @@ Both routes require an authenticated Twenty user and use the same shared Slack c
    - `groups:read` — list private channels the bot is in
    - `reactions:write` — add reactions
 
-   If you **add or remove** scopes in that file or in the Slack app, existing
+   If you **add or remove** scopes for this app or in the Slack app, existing
    installs must **re-authorize** (disconnect and **Add connection** again, or
    reinstall the Slack app to the workspace) so the token picks up new scopes.
 
@@ -110,17 +107,4 @@ Both routes require an authenticated Twenty user and use the same shared Slack c
 
 Once connected, workflow steps use the connection access token: a
 **workspace** connection is preferred when present; otherwise the first
-connection returned for the Slack provider is used (see
-`src/logic-functions/utils/get-slack-connection.ts`).
-
-## Development
-
-```bash
-cd packages/twenty-apps/internal/twenty-slack
-yarn install
-yarn lint
-yarn test
-```
-
-Use `yarn twenty dev` from this directory to develop against a local Twenty
-instance (see other internal apps in this monorepo).
+connection returned for the Slack provider is used.

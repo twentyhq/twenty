@@ -4,8 +4,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 
-import { DataSource } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -346,13 +346,28 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
   }
 
   private validateDecoratorsAgainstSequence(): void {
-    const entityClasses = this.coreDataSource.entityMetadatas
-      .map((metadata) => metadata.target)
-      .filter((target): target is Function => typeof target === 'function');
+    const entityClasses: Function[] = [];
+    const columnPropertyNamesByEntityClass = new Map<
+      Function,
+      ReadonlySet<string>
+    >();
+
+    for (const metadata of this.coreDataSource.entityMetadatas) {
+      if (typeof metadata.target !== 'function') {
+        continue;
+      }
+
+      entityClasses.push(metadata.target);
+      columnPropertyNamesByEntityClass.set(
+        metadata.target,
+        new Set(metadata.columns.map((column) => column.propertyName)),
+      );
+    }
 
     const problems = validateUpgradeAwareEntityDecorators({
       entityClasses,
       stepNameToIndex: this.stepNameToIndex,
+      columnPropertyNamesByEntityClass,
     });
 
     if (problems.length === 0) {

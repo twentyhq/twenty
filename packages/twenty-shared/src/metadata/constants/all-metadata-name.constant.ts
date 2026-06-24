@@ -29,4 +29,5 @@ export const ALL_METADATA_NAME = {
   webhook: 'webhook',
   applicationVariable: 'applicationVariable',
   connectionProvider: 'connectionProvider',
+  searchFieldMetadata: 'searchFieldMetadata',
 } as const;

@@ -34,6 +34,9 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@babel/plugin-transform-export-namespace-from": "^7.24.6",
+    "@babel/preset-react": "^7.24.6",
+    "@babel/preset-typescript": "^7.24.6",
     "@lingui/cli": "^5.1.2",
     "@lingui/conf": "5.1.2",
     "@lingui/format-po": "5.1.2",

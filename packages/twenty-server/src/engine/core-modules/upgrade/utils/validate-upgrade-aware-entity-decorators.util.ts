@@ -38,19 +38,29 @@ export type UpgradeAwareDecoratorReferenceProblem =
       scope: 'class' | `property:${string}`;
       introductionUpgradeCommandName: string;
       removalUpgradeCommandName: string;
+    }
+  | {
+      kind: 'unknown-property-name';
+      entityName: string;
+      decorator: '@WasIntroducedInUpgrade';
+      propertyName: string;
     };
 
 export const validateUpgradeAwareEntityDecorators = ({
   entityClasses,
   stepNameToIndex,
+  columnPropertyNamesByEntityClass,
 }: {
   entityClasses: Function[];
   stepNameToIndex: ReadonlyMap<string, number>;
+  columnPropertyNamesByEntityClass?: ReadonlyMap<Function, ReadonlySet<string>>;
 }): UpgradeAwareDecoratorReferenceProblem[] => {
   const problems: UpgradeAwareDecoratorReferenceProblem[] = [];
 
   for (const entityClass of entityClasses) {
     const entityName = entityClass.name;
+    const columnPropertyNames =
+      columnPropertyNamesByEntityClass?.get(entityClass);
 
     const classIntroduced = getWasIntroducedInUpgradeClassMetadata(entityClass);
 
@@ -113,6 +123,18 @@ export const validateUpgradeAwareEntityDecorators = ({
           decorator: '@WasIntroducedInUpgrade',
           scope: `property:${propertyName}`,
           upgradeCommandName: options.upgradeCommandName,
+        });
+      }
+
+      if (
+        isDefined(columnPropertyNames) &&
+        !columnPropertyNames.has(propertyName)
+      ) {
+        problems.push({
+          kind: 'unknown-property-name',
+          entityName,
+          decorator: '@WasIntroducedInUpgrade',
+          propertyName,
         });
       }
     }
@@ -249,6 +271,10 @@ export const formatUpgradeAwareDecoratorReferenceProblems = (
 
       if (problem.kind === 'rename-history-out-of-order') {
         return `  - ${problem.entityName} @WasRenamedInUpgrade (${problem.scope}): "${problem.offendingUpgradeCommandName}" must come after "${problem.precedingUpgradeCommandName}" in the upgrade sequence`;
+      }
+
+      if (problem.kind === 'unknown-property-name') {
+        return `  - ${problem.entityName} ${problem.decorator} (property:${problem.propertyName}): "${problem.propertyName}" is not a known property on the entity (check the spelling in the properties array)`;
       }
 
       return `  - ${problem.entityName} @WasRemovedInUpgrade (${problem.scope}): removal step "${problem.removalUpgradeCommandName}" must come after introduction step "${problem.introductionUpgradeCommandName}" in the upgrade sequence`;

@@ -38,7 +38,7 @@ const FileIconChip = styled.span<{ $color: string }>`
 const FileName = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
   flex: 1;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -56,7 +56,7 @@ const FileDate = styled.span`
 
 const FileDateText = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   white-space: nowrap;
 `;

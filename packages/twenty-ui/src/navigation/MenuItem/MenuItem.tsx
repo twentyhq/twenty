@@ -6,12 +6,11 @@ import {
   type MouseEvent,
   type ReactElement,
   type ReactNode,
-  useContext,
 } from 'react';
 
 import { MenuItemHotKeys } from '@ui/navigation/MenuItemHotKeys/MenuItemHotKeys';
 import { type ThemeColor } from '@ui/theme';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 import { clsx } from 'clsx';
 import { type Nullable } from '@ui/utilities/types/Nullable';
 import { MenuItemLeftContent } from '@ui/navigation/MenuItem/parts/MenuItemLeftContent';
@@ -98,7 +97,7 @@ export const MenuItem = ({
   hotKeys,
   isSubMenuOpened = false,
 }: MenuItemProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {

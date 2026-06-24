@@ -17,6 +17,7 @@ import {
 } from 'typeorm';
 import { type PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type UpdateOptions } from 'typeorm/repository/UpdateOptions';
 import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -592,6 +593,7 @@ export class WorkspaceRepository<
       | ObjectId[]
       | FindOptionsWhere<T>,
     partialEntity: QueryDeepPartialEntity<T>,
+    options?: UpdateOptions,
     entityManager?: WorkspaceEntityManager,
     selectedColumns?: string[],
   ): Promise<UpdateResult> {
@@ -610,6 +612,7 @@ export class WorkspaceRepository<
       this.target,
       criteria,
       partialEntity,
+      options,
       permissionOptions,
       selectedColumns,
     );

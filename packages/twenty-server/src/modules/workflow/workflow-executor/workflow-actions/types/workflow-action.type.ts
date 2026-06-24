@@ -14,6 +14,7 @@ import {
   type WorkflowCreateRecordActionSettings,
   type WorkflowDeleteRecordActionSettings,
   type WorkflowFindRecordsActionSettings,
+  type WorkflowPickRecordActionSettings,
   type WorkflowUpdateRecordActionSettings,
   type WorkflowUpsertRecordActionSettings,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-settings.type';
@@ -77,6 +78,11 @@ export type WorkflowFindRecordsAction = BaseWorkflowAction & {
   settings: WorkflowFindRecordsActionSettings;
 };
 
+export type WorkflowPickRecordAction = BaseWorkflowAction & {
+  type: WorkflowActionType.PICK_RECORD;
+  settings: WorkflowPickRecordActionSettings;
+};
+
 export type WorkflowFormAction = BaseWorkflowAction & {
   type: WorkflowActionType.FORM;
   settings: WorkflowFormActionSettings;
@@ -126,6 +132,7 @@ export type WorkflowAction =
   | WorkflowDeleteRecordAction
   | WorkflowUpsertRecordAction
   | WorkflowFindRecordsAction
+  | WorkflowPickRecordAction
   | WorkflowFormAction
   | WorkflowFilterAction
   | WorkflowIfElseAction

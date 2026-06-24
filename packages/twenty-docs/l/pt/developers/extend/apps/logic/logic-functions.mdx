@@ -60,6 +60,7 @@ Para invocar uma função de lógica acionada por rota a partir de um componente
 * **cron**: Executa sua função em um agendamento usando uma expressão CRON.
 * **databaseEvent**: Executa em eventos do ciclo de vida de objetos do espaço de trabalho. Quando a operação do evento é `updated`, campos específicos a serem observados podem ser especificados no array `updatedFields`. Se deixar indefinido ou vazio, qualquer atualização acionará a função.
 > por exemplo, `person.updated`, `*.created`, `company.*`
+* **serverWebhook**: Recebe webhooks de entrada de um serviço de terceiros (Stripe, GitHub, Svix, …) em um único endpoint com escopo de registro e resolve o workspace de destino a partir do payload. Veja [gatilho de webhook de servidor](#server-webhook-trigger).
 
 <Note>
 Você também pode executar manualmente uma função usando a CLI:
@@ -169,6 +170,90 @@ Por motivos de segurança, os cabeçalhos de resposta são restringidos a uma li
 
 <Note>
 O código de status deve ser um código de status HTTP válido (entre 100 e 599). Os nomes dos cabeçalhos de resposta são comparados sem distinção entre maiúsculas e minúsculas.
+</Note>
+
+#### Gatilho de webhook do servidor
+
+`httpRouteTriggerSettings` expõe uma função em `/s/` e resolve o workspace a partir do host da solicitação — o que funciona quando cada workspace tem seu próprio domínio. Provedores de terceiros, entretanto, entregam os eventos de todos os workspaces para **uma** URL de webhook. Para esse caso, use `serverWebhookTriggerSettings`: a função fica acessível em um endpoint com escopo de registro e o workspace é resolvido a partir do payload.
+
+```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  // Verify the signature yourself before doing anything (see below).
+  // Return a non-2xx Response to make the provider retry.
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-provider-webhook',
+  handler,
+  serverWebhookTriggerSettings: {
+    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
+    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  },
+});
+```
+
+A função fica acessível em:
+
+```
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+```
+
+Ambos os identificadores são os `universalIdentifier`s do seu manifesto — o da aplicação registrada e o desta função de lógica. Registre essa URL junto ao provedor.
+
+**Resolução de workspace.** Como um endpoint atende a todos os workspaces, sua integração deve colocar o `workspaceId` de destino em algum lugar na entrega, e `workspaceIdResolver.{ source, path }` informa à plataforma onde lê-lo:
+
+| Campo    | Valores                                                       | Notas                                                                                                                                                          |
+| -------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source` | `body` \| `query` \| `header`                                 | `body` lê o JSON já analisado. `query` é o mais universal — você normalmente controla a URL de callback que registra, então acrescente `?twentyWorkspaceId=…`. |
+| `path`   | caminho com pontos, por exemplo, `metadata.twentyWorkspaceId` | Restrito a segmentos alfanuméricos / `_` / `-`; chaves de protótipo são rejeitadas.                                                                            |
+
+O valor resolvido deve ser um UUID de workspace válido **e** seu aplicativo deve estar instalado nesse workspace; caso contrário, a solicitação é rejeitada antes que a função seja executada.
+
+<Warning>
+**A verificação da assinatura é de sua responsabilidade.** A plataforma não verifica assinaturas de webhook para esse gatilho — ela apenas resolve o workspace e executa sua função. Seu handler deve verificar a assinatura usando `event.rawBody` e os headers que você listou em `forwardedRequestHeaders`, comparando com um segredo armazenado como variável de servidor/aplicação. Sempre verifique **antes** de qualquer efeito colateral e use uma comparação em tempo constante.
+</Warning>
+
+A maioria dos provedores assina com HMAC-SHA256; as partes que diferem são o nome do header, a codificação do digest e a string de payload assinada. Alguns exemplos:
+
+| Provedor                     | Headers a encaminhar                                   | String assinada              | Digest                                                  |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | ------------------------------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (o segredo está em base64 após remover `whsec_`) |
+| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                     |
+| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (prefixado com `sha256=`)                           |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                  |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (prefixado com `v0=`)                               |
+
+```ts
+import { createHmac, timingSafeEqual } from 'crypto';
+
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
+      .update(event.rawBody ?? '')
+      .digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    return new Response({ error: 'invalid signature' }, { status: 401 });
+  }
+
+  // ...handle the verified event
+  return { received: true };
+};
+```
+
+<Note>
+A função é executada **sincronamente** e o valor que você retorna se torna a resposta HTTP, portanto os provedores veem seu código de status e podem tentar novamente em caso de não 2xx. Mantenha os handlers rápidos — alguns provedores (por exemplo, Slack) atingem timeout em poucos segundos. Como a função é executada antes de a assinatura ser verificada, proteja esse endpoint com rate limiting na sua borda.
 </Note>
 
 #### Payload do gatilho de evento do banco de dados

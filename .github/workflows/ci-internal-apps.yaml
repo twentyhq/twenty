@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       application:
-        description: 'Internal app folder name to test (e.g. "twenty-linear"). Leave empty to test all non-excluded apps. Runs even if in CI_EXCLUDED_APPLICATIONS.'
+        description: 'Internal app folder name to test (e.g. "twenty-linear"). Leave empty to test all apps.'
         required: false
         default: ''
         type: string
@@ -62,11 +62,6 @@ jobs:
           const fs = require('fs');
           const path = require('path');
           const root = 'packages/twenty-apps/internal';
-          // CI_EXCLUDED_APPLICATIONS is temporary: it skips applications from CI to
-          // keep this PR small while the remaining apps are made CI-ready. Remove an
-          // app from this list once its checks pass, and delete the list entirely
-          // once every application is covered.
-          const CI_EXCLUDED_APPLICATIONS = ['call-recording', 'exa', 'people-data-labs', 'self-hosting', 'twenty-discord', 'twenty-fireflies', 'twenty-for-twenty', 'twenty-linear', 'twenty-meeting-bot', 'twenty-partners'];
           const eventName = process.env.EVENT_NAME;
           const changedFiles = JSON.parse(process.env.CHANGED_FILES || '[]');
           const changedApps = new Set();
@@ -81,9 +76,9 @@ jobs:
             .filter((name) => fs.existsSync(path.join(root, name, 'package.json')))
             .filter((name) => {
               if (eventName === 'workflow_dispatch') {
-                return requestedApp ? name === requestedApp : !CI_EXCLUDED_APPLICATIONS.includes(name);
+                return requestedApp ? name === requestedApp : true;
               }
-              return !CI_EXCLUDED_APPLICATIONS.includes(name) && changedApps.has(name);
+              return changedApps.has(name);
             })
             .map((name) => {
               const appPath = path.join(root, name);

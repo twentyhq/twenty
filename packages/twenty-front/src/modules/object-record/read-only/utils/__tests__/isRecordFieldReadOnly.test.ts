@@ -10,7 +10,6 @@ describe('isRecordFieldReadOnly', () => {
 
   const mockParams = {
     isRecordReadOnly: false,
-    isFieldCustom: false,
     objectPermissions: mockObjectPermissions,
     fieldMetadataId: 'field-123',
     fieldMetadataType: FieldMetadataType.TEXT,
@@ -88,7 +87,35 @@ describe('isRecordFieldReadOnly', () => {
     expect(result).toBe(false);
   });
 
-  it('should return true when field is non-custom on a system object', () => {
+  it('should return true when field is from the standard application on a system object', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      isSystemObject: true,
+      isFieldFromStandardApplication: true,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIEditable: true,
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when field is not from the standard application on a system object', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      isSystemObject: true,
+      isFieldFromStandardApplication: false,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIEditable: true,
+      },
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return true when field application is not resolved on a system object', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
       isSystemObject: true,
@@ -99,20 +126,6 @@ describe('isRecordFieldReadOnly', () => {
     });
 
     expect(result).toBe(true);
-  });
-
-  it('should return false when field is custom on a system object', () => {
-    const result = isRecordFieldReadOnly({
-      ...mockParams,
-      isSystemObject: true,
-      isFieldCustom: true,
-      fieldMetadataItem: {
-        id: 'field-123',
-        isUIEditable: true,
-      },
-    });
-
-    expect(result).toBe(false);
   });
 
   it('should return false when isSystemObject is not provided', () => {

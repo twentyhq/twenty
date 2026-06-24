@@ -44,7 +44,7 @@ const StyledContainer = styled.div<{ $maxWidth?: number }>`
   color: ${THEME_LIGHT.font.color.primary};
   cursor: inherit;
   display: inline-flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.regular};
   gap: ${THEME_LIGHT.spacing(1)};

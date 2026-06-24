@@ -64,6 +64,11 @@ export { workflowLogicFunctionActionSchema } from './schemas/logic-function-acti
 export { workflowLogicFunctionActionSettingsSchema } from './schemas/logic-function-action-settings-schema';
 export { workflowManualTriggerSchema } from './schemas/manual-trigger-schema';
 export { objectRecordSchema } from './schemas/object-record-schema';
+export { workflowPickRecordActionSchema } from './schemas/pick-record-action-schema';
+export {
+  workflowPickRecordStrategySchema,
+  workflowPickRecordActionSettingsSchema,
+} from './schemas/pick-record-action-settings-schema';
 export { workflowSendEmailActionSchema } from './schemas/send-email-action-schema';
 export type { WorkflowEmailFiles } from './schemas/send-email-action-settings-schema';
 export {

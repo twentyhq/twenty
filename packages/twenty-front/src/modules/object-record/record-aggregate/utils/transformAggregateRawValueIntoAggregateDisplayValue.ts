@@ -1,6 +1,7 @@
 import { type Locale } from 'date-fns';
 
 import { type DateFormat } from '@/localization/constants/DateFormat';
+import { type NumberFormat } from '@/localization/constants/NumberFormat';
 import { type TimeFormat } from '@/localization/constants/TimeFormat';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
@@ -26,6 +27,7 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
   timeZone,
   localeCatalog,
   numberFormat,
+  chartNumberFormat,
 }: {
   aggregateFieldMetadataItem: Nullable<FieldMetadataItem>;
   aggregateOperation: ExtendedAggregateOperations;
@@ -34,7 +36,8 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
   timeFormat: TimeFormat;
   timeZone: string;
   localeCatalog: Locale;
-  numberFormat?: ChartNumberFormat;
+  numberFormat?: NumberFormat;
+  chartNumberFormat?: ChartNumberFormat;
 }): string => {
   if (!isDefined(aggregateRawValue)) {
     return '-';
@@ -43,7 +46,7 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
       aggregateOperation as AggregateOperations,
     )
   ) {
-    return `${aggregateRawValue}`;
+    return formatNumber(Number(aggregateRawValue), { format: numberFormat });
   } else if (!isDefined(aggregateFieldMetadataItem)) {
     return '-';
   } else if (
@@ -51,13 +54,13 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
       aggregateOperation as AggregateOperations,
     )
   ) {
-    return `${formatNumber(Number(aggregateRawValue) * 100)}%`;
+    return `${formatNumber(Number(aggregateRawValue) * 100, { format: numberFormat })}%`;
   } else {
     switch (aggregateFieldMetadataItem.type) {
       case FieldMetadataType.CURRENCY: {
         const amount = Number(aggregateRawValue) / 1_000_000;
-        return numberFormat === ChartNumberFormat.FULL
-          ? formatNumber(amount, { decimals: 2 })
+        return chartNumberFormat === ChartNumberFormat.FULL
+          ? formatNumber(amount, { decimals: 2, format: numberFormat })
           : formatToShortNumber(amount);
       }
 
@@ -65,11 +68,11 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
         const castedValue = Number(aggregateRawValue);
         const { decimals, type } = aggregateFieldMetadataItem.settings ?? {};
         if (type === 'percentage') {
-          return `${formatNumber(castedValue * 100, { decimals })}%`;
+          return `${formatNumber(castedValue * 100, { decimals, format: numberFormat })}%`;
         }
-        return numberFormat === ChartNumberFormat.SHORT
+        return chartNumberFormat === ChartNumberFormat.SHORT
           ? formatToShortNumber(castedValue)
-          : formatNumber(castedValue, { decimals });
+          : formatNumber(castedValue, { decimals, format: numberFormat });
       }
 
       case FieldMetadataType.DATE_TIME: {

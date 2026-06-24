@@ -29,6 +29,7 @@ runs:
           -p 2021:2021 \
           -e NODE_PORT=2021 \
           -e SERVER_URL=http://localhost:2021 \
+          -e MARKETPLACE_CATALOG_SYNC_CRON_ENABLED=false \
           twentycrm/twenty-app-dev:${{ inputs.twenty-version }}
 
         echo "Waiting for Twenty test instance to become healthy…"

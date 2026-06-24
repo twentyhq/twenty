@@ -6,8 +6,7 @@ import {
 import { Tag } from '@ui/data-display';
 import { type IconComponent } from '@ui/icon';
 import { type ThemeColor } from '@ui/theme';
-import { ThemeContext } from '@ui/theme-constants';
-import { useContext } from 'react';
+import { useTheme } from '@ui/theme-constants';
 import { StyledMenuItemSelect } from '@ui/navigation/MenuItemSelect/MenuItemSelect';
 
 type MenuItemSelectTagProps = {
@@ -33,7 +32,7 @@ export const MenuItemSelectTag = ({
   variant = 'solid',
   LeftIcon,
 }: MenuItemSelectTagProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledMenuItemSelect

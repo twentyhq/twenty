@@ -16,10 +16,6 @@ const mockCalendarChannelRepository = {
   update: jest.fn(),
 };
 
-const mockCalendarEventsImportService = {
-  processCalendarEventsImport: jest.fn(),
-};
-
 const mockCalendarEventImportErrorHandlerService = {
   handleDriverException: jest.fn(),
 };
@@ -32,6 +28,10 @@ const mockGlobalWorkspaceOrmManager = {
   executeInWorkspaceContext: jest.fn(async (callback: () => Promise<void>) => {
     await callback();
   }),
+};
+
+const mockCalendarEventCleanerService = {
+  cleanWorkspaceCalendarEvents: jest.fn(),
 };
 
 const workspaceId = 'workspace-123';
@@ -60,8 +60,8 @@ describe('CalendarFetchEventsService', () => {
     jest.clearAllMocks();
 
     mockGetCalendarEventsService.getCalendarEvents.mockResolvedValue({
-      fullEvents: true,
-      calendarEvents: [{ id: 'event-1' }],
+      calendarEventIds: ['event-1'],
+      calendarEventIdsToDelete: [],
       nextSyncCursor: 'new-cursor-abc',
     });
 
@@ -72,7 +72,7 @@ describe('CalendarFetchEventsService', () => {
       mockCalendarChannelSyncStatusService as any,
       mockGetCalendarEventsService as any,
       mockCalendarEventImportErrorHandlerService as any,
-      mockCalendarEventsImportService as any,
+      mockCalendarEventCleanerService as any,
     );
   });
 
@@ -157,8 +157,8 @@ describe('CalendarFetchEventsService', () => {
 
       jest.clearAllMocks();
       mockGetCalendarEventsService.getCalendarEvents.mockResolvedValue({
-        fullEvents: true,
-        calendarEvents: [{ id: 'event-2' }],
+        calendarEventIds: ['event-2'],
+        calendarEventIdsToDelete: [],
         nextSyncCursor: 'new-cursor-def',
       });
 
@@ -194,8 +194,8 @@ describe('CalendarFetchEventsService', () => {
 
       jest.clearAllMocks();
       mockGetCalendarEventsService.getCalendarEvents.mockResolvedValue({
-        fullEvents: true,
-        calendarEvents: [{ id: 'event-3' }],
+        calendarEventIds: ['event-3'],
+        calendarEventIdsToDelete: [],
         nextSyncCursor: 'newer-cursor',
       });
 

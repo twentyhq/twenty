@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
-import { isUndefined } from '@sniptt/guards';
+import { useMemo } from 'react';
 
+import { TranscriptEntryListItem } from 'src/front-components/components/TranscriptEntryListItem';
 import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
-import {
-  type TranscriptEntry,
-  type TranscriptWord,
-} from 'src/front-components/types/transcript-entry.type';
+import { type CalendarEventRecordingParticipant } from 'src/front-components/types/calendar-event-recording-participant.type';
+import { type TranscriptEntry } from 'src/front-components/types/transcript-entry.type';
+import { buildCalendarEventParticipantBySpeakerName } from 'src/front-components/utils/build-calendar-event-participant-by-speaker-name.util';
 import { findActiveTranscriptEntryIndex } from 'src/front-components/utils/find-active-transcript-entry-index.util';
-import { formatTranscriptTimestamp } from 'src/front-components/utils/format-transcript-timestamp.util';
+import { getCalendarEventParticipantForSpeakerName } from 'src/front-components/utils/get-calendar-event-participant-for-speaker-name.util';
 
 const StyledTranscriptContainer = styled.div`
   display: flex;
@@ -15,103 +15,47 @@ const StyledTranscriptContainer = styled.div`
   flex-direction: column;
   gap: ${recordingThemeCssVariables.spacing[2]};
   min-height: 0;
-  overflow-y: auto;
-`;
-
-const StyledEntry = styled.div<{ $isActive: boolean }>`
-  background: ${({ $isActive }) =>
-    $isActive
-      ? recordingThemeCssVariables.background.transparentBlue
-      : 'transparent'};
-  border-radius: ${recordingThemeCssVariables.border.radiusMd};
-  display: flex;
-  flex-direction: column;
-  gap: ${recordingThemeCssVariables.spacing[1]};
-  padding: ${recordingThemeCssVariables.spacing[3]};
-`;
-
-const StyledEntryHeader = styled.div`
-  align-items: baseline;
-  display: flex;
-  gap: ${recordingThemeCssVariables.spacing[2]};
-`;
-
-const StyledSpeakerName = styled.span`
-  color: ${recordingThemeCssVariables.font.colorPrimary};
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
-  font-weight: ${recordingThemeCssVariables.font.weightMedium};
-`;
-
-const StyledTimestamp = styled.span`
-  color: ${recordingThemeCssVariables.font.colorTertiary};
-  font-size: ${recordingThemeCssVariables.font.sizeXs};
-`;
-
-const StyledEntryText = styled.p`
-  line-height: 1.5;
-  margin: 0;
-`;
-
-const StyledWord = styled.span<{ $isSpoken: boolean }>`
-  color: ${({ $isSpoken }) =>
-    $isSpoken
-      ? recordingThemeCssVariables.font.colorPrimary
-      : recordingThemeCssVariables.font.colorTertiary};
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
-  transition: color 0.15s ease;
 `;
 
 type TranscriptEntryListProps = {
   entries: TranscriptEntry[];
   currentTimeSeconds: number;
+  calendarEventParticipants: CalendarEventRecordingParticipant[];
 };
 
 export const TranscriptEntryList = ({
   entries,
   currentTimeSeconds,
+  calendarEventParticipants,
 }: TranscriptEntryListProps) => {
   const activeEntryIndex = findActiveTranscriptEntryIndex(
     entries,
     currentTimeSeconds,
   );
+  const calendarEventParticipantBySpeakerName = useMemo(
+    () => buildCalendarEventParticipantBySpeakerName(calendarEventParticipants),
+    [calendarEventParticipants],
+  );
 
   return (
     <StyledTranscriptContainer>
-      {entries.map((entry, entryIndex) => (
-        <StyledEntry
-          key={entryIndex}
-          $isActive={entryIndex === activeEntryIndex}
-        >
-          <StyledEntryHeader>
-            <StyledSpeakerName>{entry.speakerName}</StyledSpeakerName>
-            {!isUndefined(entry.startSeconds) && (
-              <StyledTimestamp>
-                {formatTranscriptTimestamp(entry.startSeconds)}
-              </StyledTimestamp>
-            )}
-          </StyledEntryHeader>
-          <StyledEntryText>
-            {entry.words.map((word, wordIndex) => (
-              <StyledWord
-                key={wordIndex}
-                $isSpoken={isWordSpoken({ word, currentTimeSeconds })}
-              >
-                {wordIndex > 0 ? ' ' : ''}
-                {word.text}
-              </StyledWord>
-            ))}
-          </StyledEntryText>
-        </StyledEntry>
-      ))}
+      {entries.map((entry, entryIndex) => {
+        const calendarEventParticipant =
+          getCalendarEventParticipantForSpeakerName({
+            speakerName: entry.speakerName,
+            calendarEventParticipantBySpeakerName,
+          });
+
+        return (
+          <TranscriptEntryListItem
+            key={entryIndex}
+            entry={entry}
+            isActive={entryIndex === activeEntryIndex}
+            currentTimeSeconds={currentTimeSeconds}
+            calendarEventParticipant={calendarEventParticipant}
+          />
+        );
+      })}
     </StyledTranscriptContainer>
   );
 };
-
-const isWordSpoken = ({
-  word,
-  currentTimeSeconds,
-}: {
-  word: TranscriptWord;
-  currentTimeSeconds: number;
-}): boolean =>
-  !isUndefined(word.startSeconds) && currentTimeSeconds >= word.startSeconds;
