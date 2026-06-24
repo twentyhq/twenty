@@ -205,32 +205,39 @@ export const startCallbackServer = (options?: {
       const error = url.searchParams.get('error');
       const isDarkMode = url.searchParams.get('theme') === 'dark';
 
-      // Frame the response with an explicit Content-Length. Without it Node
-      // streams the (large) page with chunked transfer encoding, so the browser
-      // only treats it as complete once it sees the terminating chunk and a
-      // clean connection close. The CLI tears the server down the moment it has
-      // the code (closeAllConnections destroys the socket), and on fast
-      // localhost that race truncates the chunked stream — the browser renders a
-      // blank page (ERR_INCOMPLETE_CHUNKED_ENCODING). A length-delimited body is
-      // considered complete as soon as the bytes arrive, regardless of teardown.
-      const sendHtml = (body: string) => {
+      // Frame the response with an explicit Content-Length (rather than letting
+      // Node fall back to chunked transfer encoding) and only resolve the
+      // callback once the body has been fully flushed to the socket.
+      //
+      // The caller (login-oauth) resolves waitForCallback, exchanges the code
+      // for tokens, then tears the server down — close() calls
+      // closeAllConnections(), which destroys the still-open socket with a RST.
+      // Against a remote server the token exchange is slow enough that the page
+      // flushes first, but on localhost it returns almost instantly, so the
+      // teardown races in before the bytes leave and the browser is left with a
+      // dead/blank page (connection refused/reset). Resolving in the res.end
+      // completion callback guarantees the page is delivered before the token
+      // exchange and teardown can run.
+      const sendHtml = (body: string, onFlushed: () => void) => {
         res.writeHead(200, {
           'Content-Type': 'text/html',
           'Content-Length': Buffer.byteLength(body),
           Connection: 'close',
         });
-        res.end(body);
+        res.end(body, onFlushed);
       };
 
       if (code) {
-        sendHtml(successHtml(isDarkMode));
-        callbackResolve({ success: true, code });
+        sendHtml(successHtml(isDarkMode), () =>
+          callbackResolve({ success: true, code }),
+        );
       } else {
         const errorMessage =
           error ?? url.searchParams.get('error_description') ?? 'Unknown error';
 
-        sendHtml(errorHtml(errorMessage, isDarkMode));
-        callbackResolve({ success: false, error: errorMessage });
+        sendHtml(errorHtml(errorMessage, isDarkMode), () =>
+          callbackResolve({ success: false, error: errorMessage }),
+        );
       }
     });
 

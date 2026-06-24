@@ -81,6 +81,25 @@ describe('startCallbackServer', () => {
     }
   });
 
+  // Reproduces the dev-mode failure: the caller resolves waitForCallback and
+  // immediately tears the server down (closeAllConnections destroys the
+  // socket). The page must still arrive complete because we resolve only after
+  // the body has flushed — otherwise the teardown RST leaves a dead page.
+  it('should deliver the full page even when the server is closed right after the callback resolves', async () => {
+    const server = await startCallbackServer();
+
+    const responsePromise = httpGet(`${server.callbackUrl}?code=test-auth-code`);
+
+    await server.waitForCallback();
+    server.close();
+
+    const response = await responsePromise;
+
+    expect(response.status).toBe(200);
+    expect(response.body).toContain('Authentication successful');
+    expect(response.body).toContain('</html>');
+  });
+
   it('should resolve with error when callback contains an error', async () => {
     const server = await startCallbackServer();
 
