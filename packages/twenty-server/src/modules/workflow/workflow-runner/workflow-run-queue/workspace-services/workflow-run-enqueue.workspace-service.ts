@@ -110,17 +110,30 @@ export class WorkflowRunEnqueueWorkspaceService {
               status: WorkflowRunStatus.ENQUEUED,
             });
 
+            const failedWorkflowRunIds: string[] = [];
+
             for (const workflowRunId of batchIds) {
-              await this.messageQueueService.add<RunWorkflowJobData>(
-                RunWorkflowJob.name,
-                {
-                  workflowRunId,
-                  workspaceId,
-                },
-              );
+              try {
+                await this.messageQueueService.add<RunWorkflowJobData>(
+                  RunWorkflowJob.name,
+                  {
+                    workflowRunId,
+                    workspaceId,
+                  },
+                );
+              } catch (error) {
+                failedWorkflowRunIds.push(workflowRunId);
+              }
             }
 
-            totalEnqueuedCount += batchRuns.length;
+            if (failedWorkflowRunIds.length > 0) {
+              await workflowRunRepository.update(failedWorkflowRunIds, {
+                enqueuedAt: null,
+                status: WorkflowRunStatus.NOT_STARTED,
+              });
+            }
+
+            totalEnqueuedCount += batchRuns.length - failedWorkflowRunIds.length;
             remainingWorkflowRunToEnqueueCount -= batchRuns.length;
           }
 

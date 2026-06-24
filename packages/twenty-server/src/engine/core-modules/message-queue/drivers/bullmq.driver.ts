@@ -257,6 +257,43 @@ export class BullMQDriver
       delay: options?.delay,
     };
 
-    await this.queueMap[queueName].add(jobName, data, queueOptions);
+    try {
+      await this.queueMap[queueName].add(jobName, data, queueOptions);
+    } catch (error) {
+      const workspaceId =
+        typeof data === 'object' &&
+        data !== null &&
+        'workspaceId' in data &&
+        typeof data.workspaceId === 'string'
+          ? data.workspaceId
+          : undefined;
+
+      this.logger.error(
+        `Failed to publish job ${jobName} on queue ${queueName}${workspaceId ? ` [workspace=${workspaceId}]` : ''}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+
+      Sentry.withScope((scope) => {
+        scope.setTag('queueName', queueName);
+        scope.setTag('jobName', jobName);
+
+        if (isDefined(workspaceId)) {
+          scope.setTag('workspaceId', workspaceId);
+        }
+
+        scope.setContext('messageQueue.add', {
+          queueName,
+          jobName,
+          workspaceId,
+          hasCustomJobId: isDefined(options?.id),
+          hasDelay: isDefined(options?.delay),
+          retryLimit: options?.retryLimit ?? 0,
+        });
+
+        Sentry.captureException(error);
+      });
+
+      throw error;
+    }
   }
 }
