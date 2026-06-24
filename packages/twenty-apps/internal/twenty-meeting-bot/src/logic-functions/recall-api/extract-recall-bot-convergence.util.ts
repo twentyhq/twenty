@@ -1,6 +1,6 @@
 import { isArray, isUndefined } from '@sniptt/guards';
 
-import { type CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
@@ -8,6 +8,7 @@ import { normalizeRecallTimestamp } from 'src/logic-functions/recall-api/normali
 
 export type RecallBotConvergence = {
   status: CallRecordingStatus | undefined;
+  failureReason: string | undefined;
   startedAt: string | undefined;
   endedAt: string | undefined;
   externalRecordingId: string | undefined;
@@ -25,10 +26,17 @@ export const extractRecallBotConvergence = (
 ): RecallBotConvergence => {
   const statusChanges = extractStatusChanges(bot);
   const latestStatusChange = getLatestStatusChange(statusChanges);
+  const status = mapRecallStatusCodeToCallRecordingStatus(
+    latestStatusChange?.code,
+  );
   const recording = extractFirstRecording(bot);
 
   return {
-    status: mapRecallStatusCodeToCallRecordingStatus(latestStatusChange?.code),
+    status,
+    failureReason:
+      status === CallRecordingStatus.FAILED
+        ? latestStatusChange?.code
+        : undefined,
     startedAt: normalizeRecallTimestamp(
       recording?.startedAt ??
         findStatusChangeTimestamp(statusChanges, 'in_call_recording'),

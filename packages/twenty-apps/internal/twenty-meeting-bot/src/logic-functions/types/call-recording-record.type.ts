@@ -11,4 +11,5 @@ export type CallRecordingRecord = {
   calendarEventId?: string;
   externalBotId?: string;
   externalRecordingId?: string;
+  meetingBotFailureReason?: string;
 };

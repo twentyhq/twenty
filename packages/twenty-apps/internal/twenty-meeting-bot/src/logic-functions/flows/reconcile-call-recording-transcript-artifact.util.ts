@@ -172,10 +172,14 @@ const buildTranscriptFailureUpdate = ({
     recallTranscriptId: transcriptId,
     subCode,
   }),
+  meetingBotFailureReason: buildTranscriptFailureReason(subCode),
   ...(isCallRecordingStatusDowngrade({
     fromStatus: currentStatus,
-    toStatus: CallRecordingStatus.FAILED_UNKNOWN,
+    toStatus: CallRecordingStatus.FAILED,
   })
     ? {}
-    : { status: CallRecordingStatus.FAILED_UNKNOWN }),
+    : { status: CallRecordingStatus.FAILED }),
 });
+
+const buildTranscriptFailureReason = (subCode: string | null): string =>
+  isNull(subCode) ? 'transcript_failed' : `transcript_failed:${subCode}`;

@@ -36,6 +36,11 @@ type MatchedCallRecording = {
   video?: FilesFieldValue;
 };
 
+type ExternalRecordingIdResolution = {
+  externalRecordingId: string | undefined;
+  providerLookupFailed: boolean;
+};
+
 type RecallWebhookHandlerResult =
   | {
       status: 'updated';
@@ -134,21 +139,44 @@ const handleRecallStatusEvent = async ({
       ? {}
       : { externalBotId: webhookEvent.externalBotId }),
     ...buildExternalRecordingIdUpdate(webhookEvent),
+    ...buildMeetingBotFailureReasonUpdate({
+      reason: getRecallWebhookFailureReason(webhookEvent),
+      status: callRecordingStatus,
+    }),
     ...buildRecordingTimestampsUpdate({ webhookEvent, callRecording }),
   };
 
   if (isRecallRecordingDoneSignal({ event, statusCode })) {
+    const externalRecordingIdResolution = await resolveExternalRecordingId({
+      callRecording,
+      webhookEvent,
+    });
+
     Object.assign(
       updateData,
       await buildTranscriptArtifactUpdate({
         callRecording,
-        webhookEvent,
+        externalRecordingId: externalRecordingIdResolution.externalRecordingId,
       }),
     );
 
     Object.assign(
       updateData,
-      await buildMediaIngestionUpdate({ callRecording, webhookEvent }),
+      await buildMediaIngestionUpdate({
+        callRecording,
+        externalRecordingId: externalRecordingIdResolution.externalRecordingId,
+      }),
+    );
+
+    Object.assign(
+      updateData,
+      buildTerminalArtifactGateFailureUpdate({
+        callRecording,
+        providerLookupFailed:
+          externalRecordingIdResolution.providerLookupFailed,
+        updateData,
+        webhookEvent,
+      }),
     );
   }
 
@@ -245,7 +273,7 @@ const mapRecallEventToCallRecordingStatus = ({
   }
 
   if (event === 'recording.failed') {
-    return CallRecordingStatus.FAILED_UNKNOWN;
+    return CallRecordingStatus.FAILED;
   }
 
   return mapRecallStatusCodeToCallRecordingStatus(statusCode);
@@ -290,15 +318,87 @@ const buildExternalRecordingIdUpdate = (
     ? {}
     : { externalRecordingId: webhookEvent.externalRecordingId };
 
+const buildMeetingBotFailureReasonUpdate = ({
+  reason,
+  status,
+}: {
+  reason: string;
+  status: CallRecordingStatus;
+}): Pick<CallRecordingUpdateFields, 'meetingBotFailureReason'> =>
+  status === CallRecordingStatus.FAILED
+    ? { meetingBotFailureReason: reason }
+    : {};
+
+const buildTerminalArtifactGateFailureUpdate = ({
+  callRecording,
+  providerLookupFailed,
+  updateData,
+  webhookEvent,
+}: {
+  callRecording: MatchedCallRecording;
+  providerLookupFailed: boolean;
+  updateData: CallRecordingUpdateFields;
+  webhookEvent: RecallWebhookEvent;
+}): Pick<CallRecordingUpdateFields, 'status' | 'meetingBotFailureReason'> => {
+  if (updateData.status === CallRecordingStatus.FAILED) {
+    return isUndefined(updateData.meetingBotFailureReason)
+      ? {
+          meetingBotFailureReason: getRecallWebhookFailureReason(webhookEvent),
+        }
+      : {};
+  }
+
+  if (
+    providerLookupFailed ||
+    hasRecordingArtifactPath({ callRecording, updateData })
+  ) {
+    return {};
+  }
+
+  return {
+    status: CallRecordingStatus.FAILED,
+    meetingBotFailureReason: 'recording_artifacts_unavailable',
+  };
+};
+
+const getRecallWebhookFailureReason = ({
+  event,
+  statusCode,
+}: RecallWebhookEvent): string => statusCode ?? event;
+
+const hasRecordingArtifactPath = ({
+  callRecording,
+  updateData,
+}: {
+  callRecording: MatchedCallRecording;
+  updateData: CallRecordingUpdateFields;
+}): boolean =>
+  !isUndefined(
+    updateData.externalRecordingId ?? callRecording.externalRecordingId,
+  ) ||
+  isNonEmptyArray(updateData.audio ?? callRecording.audio) ||
+  isNonEmptyArray(updateData.video ?? callRecording.video) ||
+  hasReachableTranscript(updateData.transcript ?? callRecording.transcript);
+
+const hasReachableTranscript = (transcript: unknown): boolean => {
+  if (isNull(transcript) || isUndefined(transcript)) {
+    return false;
+  }
+
+  const marker = parseTranscriptMarker(transcript);
+
+  return isUndefined(marker) || marker.status === 'PENDING';
+};
+
 const isTranscriptUnset = (callRecording: MatchedCallRecording): boolean =>
   isUndefined(callRecording.transcript);
 
 const buildMediaIngestionUpdate = async ({
   callRecording,
-  webhookEvent,
+  externalRecordingId,
 }: {
   callRecording: MatchedCallRecording;
-  webhookEvent: RecallWebhookEvent;
+  externalRecordingId: string | undefined;
 }): Promise<Pick<CallRecordingUpdateFields, 'audio' | 'video'>> => {
   const hasAudio = isNonEmptyArray(callRecording.audio);
   const hasVideo = isNonEmptyArray(callRecording.video);
@@ -306,11 +406,6 @@ const buildMediaIngestionUpdate = async ({
   if (hasAudio && hasVideo) {
     return {};
   }
-
-  const externalRecordingId = await resolveExternalRecordingId({
-    callRecording,
-    webhookEvent,
-  });
 
   if (isUndefined(externalRecordingId)) {
     console.warn(
@@ -330,16 +425,11 @@ const buildMediaIngestionUpdate = async ({
 
 const buildTranscriptArtifactUpdate = async ({
   callRecording,
-  webhookEvent,
+  externalRecordingId,
 }: {
   callRecording: MatchedCallRecording;
-  webhookEvent: RecallWebhookEvent;
+  externalRecordingId: string | undefined;
 }): Promise<CallRecordingUpdateFields> => {
-  const externalRecordingId = await resolveExternalRecordingId({
-    callRecording,
-    webhookEvent,
-  });
-
   if (isUndefined(externalRecordingId)) {
     console.warn(
       `[twenty-meeting-bot] cannot reconcile transcript for call recording ${callRecording.id}: no Recall recording id available`,
@@ -371,16 +461,24 @@ const resolveExternalRecordingId = async ({
 }: {
   callRecording: MatchedCallRecording;
   webhookEvent: RecallWebhookEvent;
-}): Promise<string | undefined> =>
-  webhookEvent.externalRecordingId ??
-  callRecording.externalRecordingId ??
-  (isUndefined(webhookEvent.externalBotId)
-    ? undefined
-    : await fetchExternalRecordingIdFromRecallBot(webhookEvent.externalBotId));
+}): Promise<ExternalRecordingIdResolution> => {
+  const externalRecordingId =
+    webhookEvent.externalRecordingId ?? callRecording.externalRecordingId;
+
+  if (!isUndefined(externalRecordingId)) {
+    return { externalRecordingId, providerLookupFailed: false };
+  }
+
+  if (isUndefined(webhookEvent.externalBotId)) {
+    return { externalRecordingId: undefined, providerLookupFailed: false };
+  }
+
+  return fetchExternalRecordingIdFromRecallBot(webhookEvent.externalBotId);
+};
 
 const fetchExternalRecordingIdFromRecallBot = async (
   externalBotId: string,
-): Promise<string | undefined> => {
+): Promise<ExternalRecordingIdResolution> => {
   const botResult = await getRecallBot({ externalBotId });
 
   if (!botResult.ok) {
@@ -388,10 +486,14 @@ const fetchExternalRecordingIdFromRecallBot = async (
       `[twenty-meeting-bot] failed to fetch Recall bot ${externalBotId} while resolving a recording id: ${botResult.errorMessage}`,
     );
 
-    return undefined;
+    return { externalRecordingId: undefined, providerLookupFailed: true };
   }
 
-  return extractRecallBotConvergence(botResult.bot).externalRecordingId;
+  return {
+    externalRecordingId: extractRecallBotConvergence(botResult.bot)
+      .externalRecordingId,
+    providerLookupFailed: false,
+  };
 };
 
 const handleRecallTranscriptEvent = async ({
@@ -524,12 +626,13 @@ const applyTranscriptFailure = async ({
           transcriptId ?? existingMarker?.recallTranscriptId ?? null,
         subCode,
       }),
+      meetingBotFailureReason: buildTranscriptFailureReason(subCode),
       ...(isCallRecordingStatusDowngrade({
         fromStatus: callRecording.status,
-        toStatus: CallRecordingStatus.FAILED_UNKNOWN,
+        toStatus: CallRecordingStatus.FAILED,
       })
         ? {}
-        : { status: CallRecordingStatus.FAILED_UNKNOWN }),
+        : { status: CallRecordingStatus.FAILED }),
     },
   });
 
@@ -540,3 +643,6 @@ const applyTranscriptFailure = async ({
     transcriptOutcome: 'FAILED',
   };
 };
+
+const buildTranscriptFailureReason = (subCode: string | null): string =>
+  isNull(subCode) ? 'transcript_failed' : `transcript_failed:${subCode}`;
