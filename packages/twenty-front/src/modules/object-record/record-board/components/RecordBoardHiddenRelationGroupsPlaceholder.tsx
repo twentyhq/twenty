@@ -1,9 +1,11 @@
 import { styled } from '@linaria/react';
-import { plural } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { useRecordBoardRelationGroupsTotalCount } from '@/object-record/record-board/hooks/useRecordBoardRelationGroupsTotalCount';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -25,8 +27,9 @@ const StyledPill = styled.div`
 `;
 
 export const RecordBoardHiddenRelationGroupsPlaceholder = () => {
-  const { isRelationGrouping, totalRelationGroupsCount, loading } =
-    useRecordBoardRelationGroupsTotalCount();
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
+    recordIndexGroupFieldMetadataItemComponentState,
+  );
 
   const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
@@ -36,26 +39,25 @@ export const RecordBoardHiddenRelationGroupsPlaceholder = () => {
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
   );
 
-  const hiddenGroupsCount =
-    totalRelationGroupsCount - recordGroupDefinitions.length;
+  const isRelationGrouping =
+    isDefined(recordIndexGroupFieldMetadataItem) &&
+    isManyToOneRelationField(recordIndexGroupFieldMetadataItem);
+
+  const hasHiddenRelationGroups = recordGroupDefinitions.some(
+    (recordGroupDefinition) => !recordGroupDefinition.isVisible,
+  );
 
   if (
     !isRelationGrouping ||
-    loading ||
     recordIndexRecordGroupsAreInInitialLoading ||
-    hiddenGroupsCount <= 0
+    !hasHiddenRelationGroups
   ) {
     return null;
   }
 
   return (
     <StyledContainer>
-      <StyledPill>
-        {plural(hiddenGroupsCount, {
-          one: '# more group',
-          other: '# more groups',
-        })}
-      </StyledPill>
+      <StyledPill>{t`More groups`}</StyledPill>
     </StyledContainer>
   );
 };
