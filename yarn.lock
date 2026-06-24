@@ -5474,11 +5474,11 @@ __metadata:
   linkType: hard
 
 "@e2b/code-interpreter@npm:^2.6.0":
-  version: 2.6.0
-  resolution: "@e2b/code-interpreter@npm:2.6.0"
+  version: 2.6.1
+  resolution: "@e2b/code-interpreter@npm:2.6.1"
   dependencies:
     e2b: "npm:^2.28.0"
-  checksum: 10c0/b772ae32285003669afe0cf07dadc5952f7c60aa120194c1b5876af2e034b195a51b148aa06c1b2b25f517d1ae9de9b5dae72bf386bd8f20fcd21abe52318e31
+  checksum: 10c0/5c3613344a9bca6e7be27d0a582eb89fea05a006e549a5007cefc8ba7e27d416d30b08bc5ddd3f20f29722ac8a9b41055da54e2547954c6237f0d86942432599
   languageName: node
   linkType: hard
 
