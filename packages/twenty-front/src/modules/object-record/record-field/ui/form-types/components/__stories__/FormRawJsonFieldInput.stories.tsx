@@ -17,9 +17,6 @@ export default meta;
 
 type Story = StoryObj<typeof FormRawJsonFieldInput>;
 
-// Reproduces the side-panel overlap: a long validation error wraps to several
-// lines and must push the following field down instead of rendering on top of
-// it (e.g. the HTTP Request action Body field, see PR #21886).
 export const WithError: Story = {
   args: {
     label: 'Body',
