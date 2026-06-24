@@ -78,4 +78,12 @@ export class FrontComponentDTO {
 
   @Field(() => GraphQLJSON, { nullable: true })
   applicationVariables?: Record<string, string>;
+
+  // Resolved base URL the component's logic functions are served from on Twenty
+  // Cloud (the app's primary public domain, else {subdomain}.{publicBase}).
+  // Null when self-hosting, where the client falls back to {serverUrl}/s.
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  functionBaseUrl?: string;
 }

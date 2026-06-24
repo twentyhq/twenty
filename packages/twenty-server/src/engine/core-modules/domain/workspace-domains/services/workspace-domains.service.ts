@@ -191,16 +191,21 @@ export class WorkspaceDomainsService {
     };
   }
 
-  // Builds the canonical isolated URL of a logic function route, e.g.
-  // https://{workspaceSubdomain}.withtwenty.com/my-route. Returns undefined
-  // when no public domain base is configured (self-hosting).
-  buildPublicFunctionUrl({
+  // Origin an application's HTTP functions are served from on its isolated
+  // public domain: the app's primary registered domain when set, else the
+  // per-workspace {subdomain}.{publicBase} (e.g. https://acme.withtwenty.com).
+  // Undefined when no public domain is configured (self-hosting).
+  buildPublicFunctionBaseUrl({
     workspace,
-    path,
+    primaryPublicDomain,
   }: {
     workspace: Pick<WorkspaceEntity, 'subdomain'>;
-    path: string;
+    primaryPublicDomain?: string | null;
   }): string | undefined {
+    if (isNonEmptyString(primaryPublicDomain)) {
+      return `https://${primaryPublicDomain}`;
+    }
+
     const publicBaseHostname =
       this.domainServerConfigService.getPublicBaseHostnameOrUndefined();
 
@@ -211,9 +216,27 @@ export class WorkspaceDomainsService {
     const url = this.domainServerConfigService.getPublicDomainUrl();
 
     url.hostname = `${workspace.subdomain}.${publicBaseHostname}`;
-    url.pathname = path.startsWith('/') ? path : `/${path}`;
 
-    return url.toString();
+    return url.origin;
+  }
+
+  // Builds the canonical isolated URL of a logic function route, e.g.
+  // https://{workspaceSubdomain}.withtwenty.com/my-route. Returns undefined
+  // when no public domain base is configured (self-hosting).
+  buildPublicFunctionUrl({
+    workspace,
+    path,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'subdomain'>;
+    path: string;
+  }): string | undefined {
+    const baseUrl = this.buildPublicFunctionBaseUrl({ workspace });
+
+    if (!isDefined(baseUrl)) {
+      return undefined;
+    }
+
+    return `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
   }
 
   private getCustomWorkspaceUrl(customDomain: string) {
