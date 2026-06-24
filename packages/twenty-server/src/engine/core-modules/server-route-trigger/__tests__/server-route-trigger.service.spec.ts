@@ -171,14 +171,20 @@ describe('ServerRouteTriggerService', () => {
         id: 'tenant-copy',
         workspaceId: 'tenant-ws',
         application: {
-          applicationRegistration: { id: 'reg-1', ownerWorkspaceId: 'owner-ws' },
+          applicationRegistration: {
+            id: 'reg-1',
+            ownerWorkspaceId: 'owner-ws',
+          },
         },
       }),
       buildResolverRow({
         id: 'owner-copy',
         workspaceId: 'owner-ws',
         application: {
-          applicationRegistration: { id: 'reg-1', ownerWorkspaceId: 'owner-ws' },
+          applicationRegistration: {
+            id: 'reg-1',
+            ownerWorkspaceId: 'owner-ws',
+          },
         },
       }),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
