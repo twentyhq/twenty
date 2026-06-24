@@ -6,6 +6,7 @@ const REPO_ROOT = path.resolve(PLUGIN_ROOT, '..', '..');
 
 const PUBLIC_DOCS_MCP_SERVER_NAME = 'twenty-docs';
 const PUBLIC_DOCS_MCP_URL = 'https://docs.twenty.com/mcp';
+const CODEX_APP_ID = 'asdk_app_6a3bf414b7cc8191a0e2030906ca8a66';
 const LEGACY_SKILL_NAMES = [
   'app-readme-and-visuals',
   'build-app-features',
@@ -162,6 +163,7 @@ module.exports = {
   REPO_ROOT,
   PUBLIC_DOCS_MCP_SERVER_NAME,
   PUBLIC_DOCS_MCP_URL,
+  CODEX_APP_ID,
   LEGACY_SKILL_NAMES,
   VALID_CAPABILITIES,
   VALID_CATEGORIES,

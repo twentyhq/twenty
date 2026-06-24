@@ -1,0 +1,104 @@
+{
+  "$schema": "https://developers.openai.com/apps-sdk/schemas/chatgpt-app-submission.v1.json",
+  "schema_version": 1,
+  "app_info": {
+    "display_name": "Twenty Developer Tools",
+    "subtitle": "Build Twenty apps",
+    "description": "Twenty Developer Tools helps developers find Twenty documentation, API references, app SDK guidance, and implementation details while building, deploying, and troubleshooting Twenty apps. It searches the public Twenty documentation and can read specific documentation pages from a read-only virtual filesystem.",
+    "category": "DEVELOPER_TOOLS"
+  },
+  "tools": {
+    "search_twenty_documentation": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Searches public Twenty documentation and returns matching documentation references without modifying data.",
+        "open_world_justification": "Does not write to public internet state or external third-party systems.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    },
+    "query_docs_filesystem_twenty_documentation": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Runs read-only documentation lookup commands against an in-memory filesystem containing only public Twenty documentation and OpenAPI specs.",
+        "open_world_justification": "Does not write to public internet state or external third-party systems.",
+        "destructive_justification": "Does not delete, overwrite, revoke access, or perform irreversible actions."
+      }
+    }
+  },
+  "test_cases": [
+    {
+      "description": "Find guidance for creating a new Twenty app.",
+      "user_prompt": "Find the Twenty documentation for creating a new app and summarize the setup steps.",
+      "file_attachment_urls": null,
+      "tools_triggered": "search_twenty_documentation",
+      "expected_output": "Returns relevant Twenty app creation documentation links and a concise summary of the setup path.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Retrieve exact publishing guidance from the docs filesystem.",
+      "user_prompt": "Read the Twenty app publishing documentation and tell me the commands for preparing a marketplace release.",
+      "file_attachment_urls": null,
+      "tools_triggered": "query_docs_filesystem_twenty_documentation",
+      "expected_output": "Reads the relevant public documentation page and reports the release commands and publication caveats.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Find API reference details.",
+      "user_prompt": "Search the Twenty docs for API authentication and rate limit guidance.",
+      "file_attachment_urls": null,
+      "tools_triggered": "search_twenty_documentation",
+      "expected_output": "Returns public documentation references for API authentication and rate limits with enough context to continue reading.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Inspect documentation structure.",
+      "user_prompt": "List the top-level sections in the Twenty documentation filesystem.",
+      "file_attachment_urls": null,
+      "tools_triggered": "query_docs_filesystem_twenty_documentation",
+      "expected_output": "Returns the top-level documentation directories or files from the read-only virtual filesystem.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Research MCP setup for a Twenty workspace.",
+      "user_prompt": "Find Twenty docs about setting up MCP access for a workspace.",
+      "file_attachment_urls": null,
+      "tools_triggered": "search_twenty_documentation",
+      "expected_output": "Returns Twenty MCP setup documentation references and summarizes the public setup guidance.",
+      "expected_output_url": null
+    }
+  ],
+  "negative_test_cases": [
+    {
+      "description": "Do not trigger for requests to mutate a live workspace.",
+      "user_prompt": "Create a new custom object in my production Twenty workspace.",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked because the public docs tools cannot mutate workspace data.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Do not trigger for unrelated CRM data access.",
+      "user_prompt": "Show me all open HubSpot deals closing this month.",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked because the request targets a different CRM system.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Do not trigger for communication actions.",
+      "user_prompt": "Send an email to my team with the latest release notes.",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked because it cannot send emails or perform communication actions.",
+      "expected_output_url": null
+    }
+  ]
+}

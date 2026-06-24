@@ -77,23 +77,19 @@ myworkspace.localhost:3001   -> http://myworkspace.localhost:3001/mcp    name: t
 
 ### App Declaration
 
-Codex app declarations require a ChatGPT-created app or connector id. The plugin can reference that id, but it cannot create one from an MCP URL by itself.
-
-For that reason, this package does not ship a default `.app.json`. A bundled app declaration would either point to the wrong workspace or expose an app id that is not valid for each user's ChatGPT Developer Mode setup. Keep app declarations local until there is an official shared Twenty connector id.
-
-After creating the Twenty app in ChatGPT Developer Mode with your workspace MCP URL, add `packages/twenty-codex-plugin/.app.json`:
+This package ships a Codex app declaration for the public Twenty Developer Tools app:
 
 ```json
 {
   "apps": {
     "twenty": {
-      "id": "asdk_app_OR_connector_ID_FROM_CHATGPT"
+      "id": "asdk_app_6a3bf414b7cc8191a0e2030906ca8a66"
     }
   }
 }
 ```
 
-Then add `"apps": "./.app.json"` to `packages/twenty-codex-plugin/.codex-plugin/plugin.json` and include `.app.json` in this package's `files` array.
+The public app id is intentionally separate from the Twenty CRM workspace tools app. Workspace-specific MCP URLs still must not be committed; users add those locally with the setup helper above.
 
 ## Development
 

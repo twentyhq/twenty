@@ -7,6 +7,7 @@ const PLUGIN_ROOT = path.resolve(__dirname, '..', '..');
 const PLUGIN_JSON_PATH = path.join(PLUGIN_ROOT, '.codex-plugin', 'plugin.json');
 const PACKAGE_JSON_PATH = path.join(PLUGIN_ROOT, 'package.json');
 const MCP_JSON_PATH = path.join(PLUGIN_ROOT, '.mcp.json');
+const APP_JSON_PATH = path.join(PLUGIN_ROOT, '.app.json');
 const MARKETPLACE_TEMPLATE_PATH = path.join(PLUGIN_ROOT, 'templates', 'marketplace.example.json');
 
 const metadata = require('../validators/metadata');
@@ -142,6 +143,33 @@ test('assertJsonMetadata catches missing .mcp.json from package.json files', () 
   });
 });
 
+test('assertJsonMetadata catches missing .app.json from package.json files', () => {
+  withJsonMutation(PACKAGE_JSON_PATH, (pkg) => {
+    pkg.files = pkg.files.filter((f) => f !== '.app.json');
+  }, () => {
+    const failures = collectFailures(metadata.assertJsonMetadata);
+    assert.ok(failures.some((f) => f.includes('.app.json')));
+  });
+});
+
+test('assertJsonMetadata catches missing apps declaration from plugin.json', () => {
+  withJsonMutation(PLUGIN_JSON_PATH, (plugin) => {
+    delete plugin.apps;
+  }, () => {
+    const failures = collectFailures(metadata.assertJsonMetadata);
+    assert.ok(failures.some((f) => f.includes('apps as ./.app.json')));
+  });
+});
+
+test('assertJsonMetadata catches app id drift', () => {
+  withJsonMutation(APP_JSON_PATH, (app) => {
+    app.apps.twenty.id = 'asdk_app_invalid';
+  }, () => {
+    const failures = collectFailures(metadata.assertJsonMetadata);
+    assert.ok(failures.some((f) => f.includes('apps.twenty.id')));
+  });
+});
+
 test('assertJsonMetadata catches non-canonical MCP server', () => {
   withJsonMutation(MCP_JSON_PATH, (mcp) => {
     mcp.mcpServers['rogue-server'] = { url: 'https://example.com/mcp' };
@@ -151,12 +179,15 @@ test('assertJsonMetadata catches non-canonical MCP server', () => {
   });
 });
 
-test('assertNoBundledMcpConfig catches a bundled .app.json', () => {
-  const stub = path.join(PLUGIN_ROOT, '.app.json');
+test('assertNoBundledMcpConfig catches a nested .app.json', () => {
+  const stubDir = path.join(PLUGIN_ROOT, 'scratch-app');
+  const stub = path.join(stubDir, '.app.json');
+  fs.mkdirSync(stubDir, { recursive: true });
   withExtraFile(stub, '{}', () => {
     const failures = collectFailures(metadata.assertNoBundledMcpConfig);
-    assert.ok(failures.some((f) => f.includes('app declarations must not be shipped')));
+    assert.ok(failures.some((f) => f.includes('workspace-specific app declaration')));
   });
+  fs.rmSync(stubDir, { recursive: true, force: true });
 });
 
 test('assertNoBundledMcpConfig catches a non-placeholder URL', () => {
@@ -232,6 +263,28 @@ test('assertMarketplaceTemplate catches version drift', () => {
   }, () => {
     const failures = collectFailures(metadata.assertMarketplaceTemplate);
     assert.ok(failures.some((f) => f.includes('version must match')));
+  });
+});
+
+test('assertMarketplaceTemplate catches deprecated source type', () => {
+  withJsonMutation(MARKETPLACE_TEMPLATE_PATH, (t) => {
+    t.plugins[0].source.type = 'local';
+    delete t.plugins[0].source.source;
+  }, () => {
+    const failures = collectFailures(metadata.assertMarketplaceTemplate);
+    assert.ok(failures.some((f) => f.includes('source.source')));
+    assert.ok(failures.some((f) => f.includes('source.type is deprecated')));
+  });
+});
+
+test('assertMarketplaceTemplate catches lowercase policy values', () => {
+  withJsonMutation(MARKETPLACE_TEMPLATE_PATH, (t) => {
+    t.plugins[0].policy.installation = 'manual';
+    t.plugins[0].policy.authentication = 'user-local';
+  }, () => {
+    const failures = collectFailures(metadata.assertMarketplaceTemplate);
+    assert.ok(failures.some((f) => f.includes('installation must be AVAILABLE')));
+    assert.ok(failures.some((f) => f.includes('authentication must be ON_INSTALL')));
   });
 });
 

@@ -6,6 +6,7 @@ const {
   REPO_ROOT,
   PUBLIC_DOCS_MCP_SERVER_NAME,
   PUBLIC_DOCS_MCP_URL,
+  CODEX_APP_ID,
   VALID_CAPABILITIES,
   VALID_CATEGORIES,
   SHORT_DESCRIPTION_MAX,
@@ -20,6 +21,7 @@ const assertJsonMetadata = (fail) => {
   const packageJson = readJson('packages/twenty-codex-plugin/package.json');
   const pluginJson = readJson('packages/twenty-codex-plugin/.codex-plugin/plugin.json');
   const mcpJson = readJson('packages/twenty-codex-plugin/.mcp.json');
+  const appJson = readJson('packages/twenty-codex-plugin/.app.json');
   const marketplaceJson = readOptionalJson('.agents/plugins/marketplace.json');
 
   if (packageJson?.version !== pluginJson?.version) {
@@ -30,12 +32,26 @@ const assertJsonMetadata = (fail) => {
     fail('package.json files must include .mcp.json for the public docs MCP server');
   }
 
+  if (!packageJson?.files?.includes('.app.json')) {
+    fail('package.json files must include .app.json for the public Codex app declaration');
+  }
+
   if (!packageJson?.files?.includes('references')) {
     fail('package.json files must include references for shared plugin guidance');
   }
 
+  if (pluginJson?.apps !== './.app.json') {
+    fail('.codex-plugin/plugin.json must declare apps as ./.app.json');
+  }
+
   if (pluginJson?.mcpServers !== './.mcp.json') {
     fail('.codex-plugin/plugin.json must declare mcpServers as ./.mcp.json');
+  }
+
+  const appId = appJson?.apps?.twenty?.id;
+
+  if (appId !== CODEX_APP_ID) {
+    fail(`.app.json must declare apps.twenty.id as ${CODEX_APP_ID}`);
   }
 
   const servers = mcpJson?.mcpServers;
@@ -89,6 +105,10 @@ const assertNoBundledMcpConfig = (fail) => {
   for (const filePath of listFiles(PLUGIN_ROOT)) {
     const relativePath = path.relative(PLUGIN_ROOT, filePath);
 
+    if (relativePath === 'SUBMISSION_STATUS.md') {
+      continue;
+    }
+
     if (relativePath.split(path.sep).includes('__tests__')) {
       continue;
     }
@@ -97,8 +117,8 @@ const assertNoBundledMcpConfig = (fail) => {
       fail(`workspace-specific MCP config must not be shipped: ${relativePath}`);
     }
 
-    if (path.basename(filePath) === '.app.json') {
-      fail(`app declarations must not be shipped unless intentionally allowed in validation: ${relativePath}`);
+    if (path.basename(filePath) === '.app.json' && relativePath !== '.app.json') {
+      fail(`workspace-specific app declaration must not be shipped: ${relativePath}`);
     }
 
     const contents = readText(filePath);
@@ -235,12 +255,20 @@ const assertMarketplaceTemplate = (fail) => {
     fail(`${templatePath} twenty.source.path must be ./packages/twenty-codex-plugin`);
   }
 
-  if (!twentyEntry.policy?.installation) {
-    fail(`${templatePath} twenty.policy.installation is required`);
+  if (twentyEntry.source?.source !== 'local') {
+    fail(`${templatePath} twenty.source.source must be local`);
   }
 
-  if (!twentyEntry.policy?.authentication) {
-    fail(`${templatePath} twenty.policy.authentication is required`);
+  if (twentyEntry.source?.type) {
+    fail(`${templatePath} twenty.source.type is deprecated; use source.source`);
+  }
+
+  if (twentyEntry.policy?.installation !== 'AVAILABLE') {
+    fail(`${templatePath} twenty.policy.installation must be AVAILABLE`);
+  }
+
+  if (twentyEntry.policy?.authentication !== 'ON_INSTALL') {
+    fail(`${templatePath} twenty.policy.authentication must be ON_INSTALL`);
   }
 
   if (twentyEntry.category !== pluginJson?.interface?.category) {

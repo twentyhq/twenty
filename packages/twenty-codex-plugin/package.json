@@ -11,6 +11,7 @@
   },
   "files": [
     ".codex-plugin",
+    ".app.json",
     ".mcp.json",
     "AGENTS.md",
     "CHANGELOG.md",

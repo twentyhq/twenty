@@ -6,12 +6,12 @@
       "version": "0.1.0",
       "category": "Coding",
       "source": {
-        "type": "local",
+        "source": "local",
         "path": "./packages/twenty-codex-plugin"
       },
       "policy": {
-        "installation": "manual",
-        "authentication": "user-local"
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
       }
     }
   ]
