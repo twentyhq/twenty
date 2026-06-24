@@ -6,7 +6,10 @@ updates:
       - "packages/twenty-apps/**"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    # Version-update PRs disabled (limit 0). Security advisory updates are a
+    # separate channel and still open automatically — only routine version
+    # bumps are turned off to stop the constant PR churn.
+    open-pull-requests-limit: 0
     versioning-strategy: "lockfile-only"
     assignees:
       - "mabdullahabaid"
@@ -25,7 +28,7 @@ updates:
       - "/packages/twenty-apps/public/*"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 0
     versioning-strategy: "lockfile-only"
     groups:
       twenty-apps-public:
@@ -37,7 +40,7 @@ updates:
       - "/packages/twenty-apps/internal/*"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 0
     versioning-strategy: "lockfile-only"
     groups:
       twenty-apps-internal:
