@@ -2,14 +2,26 @@ import http from 'node:http';
 
 import { startCallbackServer } from '../callback-server';
 
-const httpGet = (url: string): Promise<{ status: number; body: string }> =>
+const httpGet = (
+  url: string,
+): Promise<{
+  status: number;
+  body: string;
+  headers: http.IncomingHttpHeaders;
+}> =>
   new Promise((resolve, reject) => {
     http
       .get(url, (res) => {
         let body = '';
 
         res.on('data', (chunk: string) => (body += chunk));
-        res.on('end', () => resolve({ status: res.statusCode ?? 0, body }));
+        res.on('end', () =>
+          resolve({
+            status: res.statusCode ?? 0,
+            body,
+            headers: res.headers,
+          }),
+        );
       })
       .on('error', reject);
   });
@@ -39,6 +51,31 @@ describe('startCallbackServer', () => {
       const result = await waitPromise;
 
       expect(result).toEqual({ success: true, code: 'test-auth-code' });
+    } finally {
+      server.close();
+    }
+  });
+
+  // The page is delivered length-delimited (not chunked) so the browser treats
+  // it as complete the moment the bytes arrive, even though the CLI destroys the
+  // socket right after the code is in hand. Chunked framing depends on a clean
+  // close and renders a blank page when the teardown races in on fast localhost.
+  it('should send the success page with an explicit Content-Length (not chunked)', async () => {
+    const server = await startCallbackServer();
+
+    try {
+      const waitPromise = server.waitForCallback();
+
+      const response = await httpGet(`${server.callbackUrl}?code=test-auth-code`);
+
+      await waitPromise;
+
+      expect(response.status).toBe(200);
+      expect(response.headers['transfer-encoding']).toBeUndefined();
+      expect(response.headers['content-length']).toBe(
+        String(Buffer.byteLength(response.body)),
+      );
+      expect(response.body).toContain('Authentication successful');
     } finally {
       server.close();
     }
