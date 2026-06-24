@@ -200,24 +200,29 @@ export default defineFrontComponent({
 
 Ön bileşenler, tarayıcı tarafında izole bir Web Worker içinde çalışırken, [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) sunucu tarafında çalışır. İkisi arasında doğrudan, işlem içi bir çağrı yoktur — bunun yerine, bir ön bileşen bir mantık işlevine HTTP üzerinden erişir.
 
-`httpRouteTriggerSettings` ile bildirilen bir mantık işlevi, `${TWENTY_API_URL}/s\<path>` altındaki `/s/` uç noktasında sunulur. Ön bileşeniniz bu rotayı, Twenty tarafından Worker'a enjekte edilen `TWENTY_APP_ACCESS_TOKEN` ile kimlik doğrulayan `twenty-client-sdk/rest` içindeki `RestApiClient` ile çağırır.
+`httpRouteTriggerSettings` ile bildirilen bir mantık işlevi, rota yolunda HTTP üzerinden erişilebilir durumdadır. Twenty, işlevlerinizin sunulduğu temel URL’yi, çağrıyı kimlik doğrulayan `TWENTY_APP_ACCESS_TOKEN` ile birlikte, worker’a `TWENTY_FUNCTIONS_URL` olarak enjekte eder. Kendi işlevlerinizi çağırmak için henüz özel bir SDK istemcisi yoktur, bu yüzden onları basit bir `fetch` ile çağırın:
 
-`RestApiClient` tam da bunun için oluşturulmuştur. Worker ortamından `TWENTY_API_URL` ve `TWENTY_APP_ACCESS_TOKEN` değerlerini okur, `Authorization: Bearer` başlığını ekler, JSON'u serileştirip ayrıştırır ve belirteç veya URL eksik olduğunda ya da yanıt 2xx dışı olduğunda bir `RestApiClientError` fırlatır — böylece bu şablon kodunu her bileşende yeniden uygulamak zorunda kalmazsınız.
+> **Twenty Cloud üzerinde, HTTP ile tetiklenen mantık işlevleri, çalışma alanı başına ayrılmış özel bir etki alanında** `https://\<your-workspace-subdomain>.twenty.com\<path>` adresinde sunulur — bu, `TWENTY_FUNCTIONS_URL`'ün tam olarak çözümlendiği değerdir. Harici çağrıcılar için, tam URL’yi işlevin **HTTP trigger** ayarlarından veya uygulamanın **Settings** sekmesinden kopyalayın.
+
+<Warning>
+  Eski `/s/` fonksiyon rotası **kullanımdan kaldırılmıştır (deprecated)** ve **2026-07-24 tarihinde devre dışı bırakılacaktır**. Bunun yerine yukarıdaki `TWENTY_FUNCTIONS_URL` değerini kullanın ve o tarihten önce sabit (hard-coded) tüm `/s/` URL’lerini taşıyın. `/s/` rotası, self-hosting için kullanılabilir olmaya devam eder.
+</Warning>
 
 Başsız bir ön bileşen, çağrıyı `Command` bileşeni aracılığıyla mount sırasında çalıştırabilir ve ardından otomatik olarak unmount olabilir:
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    const client = new RestApiClient();
-
-    await client.post('/s/github/fetch-prs', {
-      owner: 'twentyhq',
-      repo: 'twenty',
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
     });
   };
 
@@ -233,7 +238,7 @@ export default defineFrontComponent({
 });
 ```
 
-İstemciye iletilen yol, rotanın herkese açık yoludur — mantık fonksiyonunun `httpRouteTriggerSettings.path` değeri, başına `/s` eklenmiş hâlidir. `isAuthRequired: true` değerini koruyun; istemci, Twenty'nin bileşeniniz için oluşturduğu uygulama erişim jetonunu sağlar:
+`TWENTY_FUNCTIONS_URL` değerine eklenen yol (path), mantık fonksiyonunun `httpRouteTriggerSettings.path` değeridir. `isAuthRequired: true` ayarını koruyun; bileşeniniz için Twenty'nin oluşturduğu `TWENTY_APP_ACCESS_TOKEN` isteği kimlik doğrular:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -258,12 +263,12 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_API_URL` ve `TWENTY_APP_ACCESS_TOKEN` otomatik olarak enjekte edilir — bkz. [Uygulama değişkenleri](#application-variables). Gizli uygulama değişkenleri asla ön bileşenlere açığa çıkarılmadığından, API anahtarlarını ve diğer hassas mantığı ön bileşende değil, mantık işlevinin içinde tutun.
+`TWENTY_FUNCTIONS_URL` ve `TWENTY_APP_ACCESS_TOKEN` otomatik olarak enjekte edilir — bkz. [Uygulama değişkenleri](#application-variables). Gizli uygulama değişkenleri asla ön bileşenlere açığa çıkarılmadığından, API anahtarlarını ve diğer hassas mantığı ön bileşende değil, mantık işlevinin içinde tutun.
 </Note>
 
-### RestApiClient referansı
+### Twenty REST API'sini çağırma
 
-`RestApiClient` öğesini `twenty-client-sdk/rest` içinden içe aktarın. `CoreApiClient` ve `MetadataApiClient` ile aynı istemci ailesine aittir, ancak GraphQL API yerine uygulamanızın HTTP rotalarını hedefler.
+Bir front bileşeninden Twenty kayıtlarını okumak veya yazmak için, `twenty-client-sdk/rest` paketinden `RestApiClient` kullanın. `CoreApiClient` ve `MetadataApiClient` ile aynı istemci ailesine aittir, ancak GraphQL API yerine Twenty REST API'sini (`/rest/...`) hedefler ve temel URL'sini `TWENTY_API_URL` değerinden okur.
 
 | Yöntem                            | Açıklama                                 |
 | --------------------------------- | ---------------------------------------- |
@@ -280,7 +285,7 @@ Temel URL ve jeton varsayılan olarak ortamdan çözümlenir. Gerektiğinde — 
 
 ```ts
 const client = new RestApiClient({
-  baseUrl: 'https://api.example.com',
+  baseUrl: 'https://myworkspace.twenty.com',
   token: 'my-token',
 });
 ```
@@ -293,8 +298,8 @@ import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 const client = new RestApiClient();
 
 try {
-  const prs = await client.get('/s/github/fetch-prs', {
-    query: { state: 'open' },
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
   });
 } catch (error) {
   if (error instanceof RestApiClientError) {
@@ -374,10 +379,11 @@ Gizli değişkenler (`isSecret: true`) ön uç bileşenlere açıklanmaz. Bunlar
 
 Aşağıdaki sistem değişkenleri her zaman `process.env` aracılığıyla kullanılabilir:
 
-| Değişken                  | Açıklama                                                  |
-| ------------------------- | --------------------------------------------------------- |
-| `TWENTY_API_URL`          | Twenty API'nin temel URL'si                               |
-| `TWENTY_APP_ACCESS_TOKEN` | Uygulamanızın rolüyle sınırlanan kısa ömürlü bir belirteç |
+| Değişken                  | Açıklama                                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `TWENTY_FUNCTIONS_URL`    | Uygulamanızın HTTP mantık fonksiyonlarının sunulduğu temel URL (`RestApiClient` tarafından kullanılır) |
+| `TWENTY_API_URL`          | Twenty çekirdek API'sinin temel URL'si                                                                 |
+| `TWENTY_APP_ACCESS_TOKEN` | Uygulamanızın rolüyle sınırlanan kısa ömürlü bir belirteç                                              |
 
 ## Host iletişim API'si
 

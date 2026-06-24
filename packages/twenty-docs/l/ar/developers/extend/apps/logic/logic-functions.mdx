@@ -60,7 +60,7 @@ export default defineLogicFunction({
 * **cron**: يشغّل وظيفتك على جدول باستخدام تعبير CRON.
 * **databaseEvent**: يعمل على أحداث دورة حياة كائنات مساحة العمل. عندما تكون عملية الحدث هي `updated`، يمكن تحديد الحقول المحددة المراد الاستماع إليها في مصفوفة `updatedFields`. إذا تُركت غير معرّفة أو فارغة، فسيؤدي أي تحديث إلى تشغيل الدالة.
 > مثال: `person.updated`، `*.created`، `company.*`
-* **serverWebhook**: يستقبل خطافات الويب الواردة من خدمة خارجية (Stripe وGitHub وSvix و…) على نقطة نهاية واحدة ضمن نطاق التسجيل ويحدد مساحة العمل المستهدفة من الحمولة. راجع [مشغّل خطاف الويب على الخادم](#server-webhook-trigger).
+* **serverRoute**: يوفّر مسار HTTP واحدًا بنطاق التسجيل. تعمل دالة **resolver** (المُعلَنة باستخدام `serverRouteTriggerSettings`) في مساحة عمل المالك وتُرجِع مساحة العمل المستهدفة ودالة المنطق المستهدفة التي يجب التوجيه إليها؛ ثم يُشغِّل النظام الأساسي تلك الدالة **المستهدفة** ويُرجِع استجابتها. راجع [مشغّل مسار الخادم](#server-route-trigger).
 
 <Note>
 يمكنك أيضًا تنفيذ دالة يدويًا باستخدام CLI:
@@ -172,54 +172,108 @@ const handler = async (event: RoutePayload) => {
 يجب أن يكون رمز الحالة رمز حالة HTTP صالحًا (بين 100 و599). تتم مطابقة أسماء ترويسات الاستجابة دون حساسية لحالة الأحرف.
 </Note>
 
-#### مشغّل ربط الويب على الخادم
+#### مشغّل مسار الخادم
 
-`httpRouteTriggerSettings` يوفّر دالة تحت ‎`/s/`‎ ويحل مساحة العمل من مضيف الطلب — وهذا يعمل عندما تكون لكل مساحة عمل نطاقها الخاص. مع ذلك، يرسل المزوّدون الخارجيون أحداث كل مستأجر إلى عنوان URL واحد لربط الويب. في هذه الحالة، استخدم `serverWebhookTriggerSettings`: تكون الدالة متاحة عند نقطة نهاية ذات نطاق تسجيل ويتم حل مساحة العمل من الحمولة.
+`httpRouteTriggerSettings` يوفّر دالة تحت ‎`/s/`‎ ويحل مساحة العمل من مضيف الطلب — وهذا يعمل عندما تكون لكل مساحة عمل نطاقها الخاص. لكن المزوّدين من جهات خارجية يرسلون أحداث كل مستأجر إلى عنوان URL **واحد**. في هذه الحالة، استخدم `serverRouteTriggerSettings`.
 
-```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+يتكوّن المشغّل من جزأين:
+
+1. دالة منطق **resolver** — يتم التصريح عنها باستخدام `serverRouteTriggerSettings` — تعمل في **مساحة العمل المالكة** (مساحة العمل التي تمتلك تسجيل التطبيق). تتفحّص الطلب الوارد وتُرجِع `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`، لتحديد *كلٍ من* مساحة العمل المستهدفة والدالة المستهدفة. يُعَدّ الـ resolver نقطة التفويض الوحيدة — فعنوان URL يحمل فقط معرّف الـ resolver. **هذا هو المكان المفضّل للتحقق من تواقيع الطلبات**: يعمل الـ resolver قبل أي تأثير جانبي، ولديه إمكانية الوصول إلى `rawBody` الأصلي والرؤوس المُمرَّرة، ويمكنه رفض الطلب دون لمس الهدف مطلقًا.
+2. دالة منطق **target** — دالة منطق عادية لكل مساحة عمل — تعمل بعد ذلك في مساحة العمل التي تم حلّها باستخدام الحمولة التي أعادها الـ resolver (أو حمولة الطلب الأصلية إذا لم يقم الـ resolver بتحويلها). تصبح القيمة التي تعيدها هي استجابة HTTP.
+
+```ts src/logic-functions/resolve-server-route.logic-function.ts
+import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
-import { Response } from 'twenty-sdk/logic-function';
 
+// Runs in the owner workspace. Verifies the request signature, picks
+// which target function should handle the event, and returns the
+// workspace + target the platform should dispatch to.
 const handler = async (event: RoutePayload) => {
-  // Verify the signature yourself before doing anything (see below).
-  // Return a non-2xx Response to make the provider retry.
-  return { received: true };
+  // Fail closed if the secret isn't configured — never fall back to an
+  // empty key, which would let any caller forge a matching signature.
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+
+  if (!secret) {
+    throw new Error('GITHUB_WEBHOOK_SECRET is not configured');
+  }
+
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    throw new Error('invalid signature');
+  }
+
+  const body = (event.body ?? {}) as {
+    metadata?: { twentyWorkspaceId?: string };
+    type?: string;
+  };
+
+  return {
+    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    // Route different event types to different target functions.
+    targetLogicFunctionUniversalIdentifier:
+      body.type === 'invoice.paid'
+        ? 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10' // handle-invoice-paid
+        : 'd5f3b0c2-8e5f-5d0b-a0c3-3f2e7b5d9f21', // handle-other-event
+  };
 };
 
 export default defineLogicFunction({
   universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
-  name: 'handle-provider-webhook',
+  name: 'resolve-server-route',
   handler,
-  serverWebhookTriggerSettings: {
-    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
-    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  serverRouteTriggerSettings: {
+    forwardedRequestHeaders: ['x-hub-signature-256'],
   },
 });
 ```
 
-يمكن الوصول إلى الدالة عند:
+```ts src/logic-functions/handle-invoice-paid.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the resolved workspace. The resolver has already authenticated
+// the request, so this handler can focus on the actual work.
+const handler = async (event: RoutePayload) => {
+  // ...handle the verified event
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-invoice-paid',
+  handler,
+});
+```
+
+يمكن الوصول إلى نقطة النهاية عند:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
 ```
 
-كلا المعرّفين هما `universalIdentifier`s من البيان التعريفي الخاص بك — تسجيل التطبيق وهذه الدالة المنطقية. سجّل عنوان URL هذا لدى المزوّد.
+المعرّف هو `universalIdentifier` الخاص بالـ resolver من ملف manifest لديك. سجّل عنوان URL هذا لدى المزوّد.
 
-**حل مساحة العمل.** نظرًا لأن نقطة النهاية الواحدة تخدم كل مساحات العمل، يجب أن يضع تكاملك `workspaceId` المستهدف في مكان ما في التسليم، وتخبر `workspaceIdResolver.{ source, path }` المنصّة بمكان قراءته:
+**عقد الـ Resolver.** يفرض نوع `LogicFunctionConfig` في حزمة SDK هذا في وقت الترجمة: بمجرد تعيينك لـ `serverRouteTriggerSettings`، يُقيَّد الـ handler الخاص بك بأن يُرجِع `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (أو `Promise` من هذا الكائن). يجب أن يكون `workspaceId` لمساحة عمل تكون الدالة المستهدفة مثبّتة فيها، وإلا فسيتم رفض الطلب مع `404`.
 
-| الحقل    | القيم                                                     | الملاحظات                                                                                                                                          |
-| -------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `المصدر` | `body` \| `query` \| `header`                             | `body` يقرأ JSON المحلَّل. `query` هو الخيار الأكثر شمولاً — فعادةً ما تتحكم في عنوان URL لرد النداء الذي تسجّله، لذا أضِف `?twentyWorkspaceId=…`. |
-| `مسار`   | مسار بنقطة، على سبيل المثال: `metadata.twentyWorkspaceId` | يقتصر على مقاطع أبجدية رقمية / `_` / `-`؛ يتم رفض مفاتيح النموذج الأولي.                                                                           |
-
-يجب أن تكون القيمة المحلولة UUID صالحًا لمساحة عمل **و** يجب أن يكون تطبيقك مثبتًا في تلك المساحة، وإلا فسيتم رفض الطلب قبل تشغيل الدالة.
+| الحقل                                    | النوع              | الملاحظات                                                              |
+| ---------------------------------------- | ------------------ | ---------------------------------------------------------------------- |
+| `workspaceId`                            | `string`           | معرّف UUID لمساحة العمل التي سيعمل فيها الهدف.                         |
+| `targetLogicFunctionUniversalIdentifier` | `string`           | `universalIdentifier` لدالة المنطق التي سيتم استدعاؤها في تلك المساحة. |
+| `payload`                                | `object` (اختياري) | إذا تم تعيينه، فإنه يستبدل جسم الطلب المُرسَل إلى الهدف.               |
 
 <Warning>
-**التحقق من التوقيع من مسؤوليتك.** المنصّة لا تتحقّق من توقيعات ربط الويب لهذا المشغّل — فهي تكتفي بحل مساحة العمل وتشغيل الدالة الخاصة بك. يجب أن يتحقق معالِجك من التوقيع بنفسه باستخدام `event.rawBody` والرؤوس التي أدرجتها في `forwardedRequestHeaders`، مع المقارنة بسر محفوظ كمتغيّر خادم/تطبيق. تحقّق دائمًا **قبل** أي تأثير جانبي، واستخدم مقارنة بزمن ثابت.
+**مسؤولية التحقق من التوقيع تقع عليك — تحقّق في الـ resolver.** المنصّة لا تتحقق من تواقيع الطلبات. يُعَدّ الـ resolver المكان الموصى به للقيام بذلك: فهو يعمل أولًا، مع إمكانية الوصول إلى `event.rawBody` والرؤوس التي أدرجتها في `forwardedRequestHeaders`، وأي خطأ يتم رميه (أو أي `workspaceId` لا يطابق) يوقف عملية الإرسال قبل استدعاء الهدف. إذا دفعت التحقق بدلًا من ذلك إلى داخل الهدف، فيجب على الهدف أن يكون حذرًا حتى لا يفقد `rawBody` والرؤوس — أي يجب ألّا يعيد الـ resolver خاصية `payload`. تحقّق دائمًا **قبل** أي تأثير جانبي، واستخدم مقارنة بزمن ثابت.
 </Warning>
 
-يستخدم معظم المزوّدين HMAC-SHA256 للتوقيع؛ الأجزاء التي تختلف هي اسم الرأس وترميز الملخّص وسلسلة الحمولة الموقّعة. بعض الأمثلة:
+بالنسبة لتواقيع الطلبات، يستخدم معظم المزوّدين HMAC-SHA256 للتوقيع؛ الأجزاء التي تختلف هي اسم الرأس وترميز الملخّص وسلسلة الحمولة الموقّعة. بعض الأمثلة:
 
 | المزود                       | الرؤوس المطلوب تمريرها                                 | السلسلة الموقَّعة            | الملخّص                                            |
 | ---------------------------- | ------------------------------------------------------ | ---------------------------- | -------------------------------------------------- |
@@ -229,31 +283,10 @@ POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniv
 | Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                             |
 | Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (يبدأ بـ `v0=`)                                |
 
-```ts
-import { createHmac, timingSafeEqual } from 'crypto';
-
-const handler = async (event: RoutePayload) => {
-  const signature = event.headers['x-hub-signature-256'] ?? '';
-  const expected =
-    'sha256=' +
-    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
-      .update(event.rawBody ?? '')
-      .digest('hex');
-
-  const a = Buffer.from(signature);
-  const b = Buffer.from(expected);
-
-  if (a.length !== b.length || !timingSafeEqual(a, b)) {
-    return new Response({ error: 'invalid signature' }, { status: 401 });
-  }
-
-  // ...handle the verified event
-  return { received: true };
-};
-```
+يُظهِر مثال الـ resolver أعلاه بالفعل تدفّق GitHub HMAC-SHA256 — عدِّل اسم الرأس وترميز الملخّص وسلسلة الحمولة الموقّعة بحسب المزوّد الذي تدمجه.
 
 <Note>
-تعمل الدالة **بشكل متزامن** وتصبح القيمة التي تعيدها هي استجابة HTTP، لذا يرى المزوّدون رمز الحالة الخاص بك ويمكنهم إعادة المحاولة عند رموز غير 2xx. اجعل المعالِجات سريعة — بعض المزوّدين (مثل Slack) تنتهي مهلة طلباتهم خلال بضع ثوانٍ. نظرًا لأن الدالة تعمل قبل التحقق من التوقيع، قم بحماية نقطة النهاية هذه عبر تحديد المعدل على الحافة الخاصة بك.
+يعمل الهدف **بشكل متزامن** وتصبح القيمة التي يعيدها هي استجابة HTTP، لذا يرى المتّصلون رمز الحالة الخاص بك ويمكنهم إعادة المحاولة عند رموز غير 2xx. اجعل كلا المعالِجَيْن سريعين — بعض المزوّدين (مثل Slack) تنتهي مهلة طلباتهم خلال بضع ثوانٍ. نظرًا لأن الـ resolver يمكن الوصول إليه كنقطة نهاية عامة، قم بحمايته من خلال تحديد المعدّل (rate limiting) على الحافة لديك.
 </Note>
 
 #### حمولة مُحفِّز حدث قاعدة البيانات
@@ -615,12 +648,12 @@ console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-| المعلمة                            | النوع    | الوصف                                                                  |
-| ---------------------------------- | -------- | ---------------------------------------------------------------------- |
-| `fileBuffer`                       | `Buffer` | المحتوى الخام للملف                                                    |
-| `filename`                         | `string` | اسم الملف (يُستخدم للتخزين والعرض)                                     |
-| `contentType`                      | `string` | نوع MIME (القيمة الافتراضية `application/octet-stream` إذا لم يُحدَّد) |
-| `fieldMetadataUniversalIdentifier` | `string` | قيمة `universalIdentifier` لحقل نوع الملف في كائنك                     |
+| المعلمة                            | النوع        | الوصف                                                                  |
+| ---------------------------------- | ------------ | ---------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer`     | المحتوى الخام للملف                                                    |
+| `filename`                         | `string`     | اسم الملف (يُستخدم للتخزين والعرض)                                     |
+| `contentType`                      | `سلسلة نصية` | نوع MIME (القيمة الافتراضية `application/octet-stream` إذا لم يُحدَّد) |
+| `fieldMetadataUniversalIdentifier` | `سلسلة نصية` | قيمة `universalIdentifier` لحقل نوع الملف في كائنك                     |
 
 النقاط الرئيسية:
 * يستخدم `universalIdentifier` الخاص بالحقل (وليس معرّفه الخاص بمساحة العمل)، بحيث يعمل كود الرفع لديك عبر أي مساحة عمل مُثبَّت فيها تطبيقك.
