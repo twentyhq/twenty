@@ -173,61 +173,38 @@ export class ApplicationRegistrationVariableService {
         select: { id: true, manifest: true, ownerWorkspaceId: true },
       }),
       this.applicationRepository.find({
-        where: {
-          applicationRegistrationId: In(applicationRegistrationIds),
-        },
+        where: { applicationRegistrationId: In(applicationRegistrationIds) },
         select: { applicationRegistrationId: true, workspaceId: true },
       }),
     ]);
 
-    const variablesByRegistrationId = new Map<
-      string,
-      ApplicationRegistrationVariableEntity[]
-    >();
-
-    for (const variable of variables) {
-      const existing =
-        variablesByRegistrationId.get(variable.applicationRegistrationId) ?? [];
-
-      existing.push(variable);
-      variablesByRegistrationId.set(
-        variable.applicationRegistrationId,
-        existing,
-      );
-    }
-
-    const registrationById = new Map(
-      registrations.map(
-        (registration) =>
-          [registration.id, registration] as [
-            string,
-            ApplicationRegistrationEntity,
-          ],
-      ),
-    );
-
-    // Set of `${applicationRegistrationId}:${workspaceId}` for every workspace
-    // where the application is installed.
-    const installedKeys = new Set(
-      installedApps.map(
-        (app) => `${app.applicationRegistrationId}:${app.workspaceId}`,
-      ),
-    );
-
     const result = new Map<string, boolean>();
 
     for (const id of applicationRegistrationIds) {
-      const registrationVariables = variablesByRegistrationId.get(id) ?? [];
-      const requiredVariables = registrationVariables.filter(
-        (v) => v.isRequired,
+      const registration = registrations.find(
+        (registration) => registration.id === id,
       );
 
-      const areVariablesConfigured = requiredVariables.every((v) => v.isFilled);
+      const areVariablesConfigured = variables
+        .filter(
+          (variable) =>
+            variable.applicationRegistrationId === id && variable.isRequired,
+        )
+        .every((variable) => variable.isFilled);
+
+      const isInstalledOnOwnerWorkspace = installedApps.some(
+        (app) =>
+          app.applicationRegistrationId === id &&
+          app.workspaceId === registration?.ownerWorkspaceId,
+      );
 
       result.set(
         id,
         areVariablesConfigured &&
-          this.isServerRouteConfigured(registrationById.get(id), installedKeys),
+          this.isServerRouteConfigured(
+            registration,
+            isInstalledOnOwnerWorkspace,
+          ),
       );
     }
 
@@ -235,12 +212,11 @@ export class ApplicationRegistrationVariableService {
   }
 
   // A server-route logic function runs its resolver in the application's owner
-  // workspace, so an app exposing one is only usable — and only listable in the
-  // marketplace — once it is claimed (has an owner workspace) and installed on
-  // that owner workspace.
+  // workspace, so an app exposing one is only listable once it is claimed and
+  // installed on that owner workspace.
   private isServerRouteConfigured(
     registration: ApplicationRegistrationEntity | undefined,
-    installedKeys: Set<string>,
+    isInstalledOnOwnerWorkspace: boolean,
   ): boolean {
     const hasServerRouteFunction =
       registration?.manifest?.logicFunctions?.some((logicFunction) =>
@@ -251,11 +227,8 @@ export class ApplicationRegistrationVariableService {
       return true;
     }
 
-    const ownerWorkspaceId = registration?.ownerWorkspaceId;
-
     return (
-      isDefined(ownerWorkspaceId) &&
-      installedKeys.has(`${registration?.id}:${ownerWorkspaceId}`)
+      isDefined(registration?.ownerWorkspaceId) && isInstalledOnOwnerWorkspace
     );
   }
 
