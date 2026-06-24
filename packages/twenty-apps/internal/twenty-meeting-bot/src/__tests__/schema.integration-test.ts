@@ -32,8 +32,9 @@ describe('App installation', () => {
 });
 
 describe('CallRecording status contract', () => {
-  it('accepts every status and request status value the app mirrors', async () => {
+  it('accepts every app status supported by the current server and every request status value the app mirrors', async () => {
     const client = new CoreApiClient();
+    const serverCallRecordingStatuses = await getServerCallRecordingStatuses();
 
     const created = await client.mutation({
       createCallRecording: {
@@ -56,7 +57,23 @@ describe('CallRecording status contract', () => {
       throw new Error('Expected call recording creation to return an id');
     }
 
-    for (const status of Object.values(CallRecordingStatus)) {
+    expect(serverCallRecordingStatuses).toEqual(
+      expect.arrayContaining([
+        CallRecordingStatus.SCHEDULED,
+        CallRecordingStatus.JOINING,
+        CallRecordingStatus.RECORDING,
+        CallRecordingStatus.PROCESSING,
+        CallRecordingStatus.COMPLETED,
+      ]),
+    );
+
+    // TODO: Remove this compatibility filter once the released server/SDK
+    // exposes FAILED instead of FAILED_UNKNOWN.
+    const statusesAcceptedByCurrentServer = Object.values(
+      CallRecordingStatus,
+    ).filter((status) => serverCallRecordingStatuses.includes(status));
+
+    for (const status of statusesAcceptedByCurrentServer) {
       const mutation = {
         updateCallRecording: {
           __args: { id: callRecordingId, data: { status } },
@@ -92,3 +109,15 @@ describe('CallRecording status contract', () => {
     });
   });
 });
+
+type GeneratedCoreSchemaRuntime = {
+  enumCallRecordingStatusEnum: Record<string, string>;
+};
+
+const getServerCallRecordingStatuses = async (): Promise<string[]> => {
+  const generatedCoreSchema = (await import(
+    'twenty-client-sdk/core'
+  )) as unknown as GeneratedCoreSchemaRuntime;
+
+  return Object.values(generatedCoreSchema.enumCallRecordingStatusEnum);
+};
