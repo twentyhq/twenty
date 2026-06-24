@@ -5474,11 +5474,11 @@ __metadata:
   linkType: hard
 
 "@e2b/code-interpreter@npm:^2.6.0":
-  version: 2.6.0
-  resolution: "@e2b/code-interpreter@npm:2.6.0"
+  version: 2.6.1
+  resolution: "@e2b/code-interpreter@npm:2.6.1"
   dependencies:
     e2b: "npm:^2.28.0"
-  checksum: 10c0/b772ae32285003669afe0cf07dadc5952f7c60aa120194c1b5876af2e034b195a51b148aa06c1b2b25f517d1ae9de9b5dae72bf386bd8f20fcd21abe52318e31
+  checksum: 10c0/5c3613344a9bca6e7be27d0a582eb89fea05a006e549a5007cefc8ba7e27d416d30b08bc5ddd3f20f29722ac8a9b41055da54e2547954c6237f0d86942432599
   languageName: node
   linkType: hard
 
@@ -19540,14 +19540,14 @@ __metadata:
   linkType: hard
 
 "@storybook/addon-a11y@npm:^10.3.3":
-  version: 10.4.1
-  resolution: "@storybook/addon-a11y@npm:10.4.1"
+  version: 10.4.6
+  resolution: "@storybook/addon-a11y@npm:10.4.6"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
     axe-core: "npm:^4.2.0"
   peerDependencies:
-    storybook: ^10.4.1
-  checksum: 10c0/2a051276db77dbf196b0c509aae6e49e1d1a722db1ecd3a73fa60ff8c1d88e61900f9c31a66201cedab8dd555718fca407099b4f27662fd3d9404b2096770344
+    storybook: ^10.4.6
+  checksum: 10c0/cdb88829b82bb2f2caac363eb54981d1573161494da8ac2feb840e36a51951a4a97ecb7985ac152a450b580ec8323dac3fba98dc5533e8b1d32421eeabb42a5e
   languageName: node
   linkType: hard
 
@@ -46501,13 +46501,13 @@ __metadata:
   linkType: hard
 
 "react-error-boundary@npm:^4.0.11":
-  version: 4.0.13
-  resolution: "react-error-boundary@npm:4.0.13"
+  version: 4.1.2
+  resolution: "react-error-boundary@npm:4.1.2"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
   peerDependencies:
     react: ">=16.13.1"
-  checksum: 10c0/6f3e0e4d7669f680ccf49c08c9571519c6e31f04dcfc30a765a7136c7e6fbbbe93423dd5a9fce12107f8166e54133e9dd5c2079a00c7a38201ac811f7a28b8e7
+  checksum: 10c0/0737e5259bed40ce14eb0823b3c7b152171921f2179e604f48f3913490cdc594d6c22d43d7abb4ffb1512c832850228db07aa69d3b941db324953a5e393cb399
   languageName: node
   linkType: hard
 

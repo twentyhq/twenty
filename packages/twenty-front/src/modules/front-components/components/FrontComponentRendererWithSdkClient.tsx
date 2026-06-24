@@ -14,6 +14,7 @@ type FrontComponentRendererWithSdkClientProps = {
   componentUrl: string;
   applicationAccessToken: string;
   applicationId: string;
+  functionsBaseUrl?: string;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   applicationVariables?: Record<string, string>;
@@ -25,6 +26,7 @@ export const FrontComponentRendererWithSdkClient = ({
   componentUrl,
   applicationAccessToken,
   applicationId,
+  functionsBaseUrl,
   executionContext,
   frontComponentHostCommunicationApi,
   applicationVariables,
@@ -47,6 +49,7 @@ export const FrontComponentRendererWithSdkClient = ({
           componentUrl={componentUrl}
           applicationAccessToken={applicationAccessToken}
           apiUrl={REACT_APP_SERVER_BASE_URL}
+          functionsBaseUrl={functionsBaseUrl}
           sdkClientUrls={sdkClientState.blobUrls}
           executionContext={executionContext}
           frontComponentHostCommunicationApi={

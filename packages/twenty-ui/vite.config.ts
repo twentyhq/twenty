@@ -55,7 +55,7 @@ export default defineConfig(({ command }) => {
     tsconfigPath: tsConfigPath,
   };
 
-  const BUNDLED_DEPS = ['@tabler/icons-react'];
+  const BUNDLED_DEPS: string[] = [];
 
   const externalDeps = Object.keys({
     ...(packageJson.dependencies || {}),
@@ -68,7 +68,6 @@ export default defineConfig(({ command }) => {
         '@ui/': path.resolve(__dirname, 'src') + '/',
         '@assets/': path.resolve(__dirname, 'src/assets') + '/',
         '@styles/': path.resolve(__dirname, 'src/styles') + '/',
-        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
     css: {

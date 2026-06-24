@@ -5,44 +5,7 @@
   "projectType": "library",
   "tags": ["scope:shared"],
   "targets": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": [
-        "{projectRoot}/dist",
-        "{projectRoot}/accessibility/package.json",
-        "{projectRoot}/accessibility/dist",
-        "{projectRoot}/assets/package.json",
-        "{projectRoot}/assets/dist",
-        "{projectRoot}/data-display/package.json",
-        "{projectRoot}/data-display/dist",
-        "{projectRoot}/feedback/package.json",
-        "{projectRoot}/feedback/dist",
-        "{projectRoot}/icon/package.json",
-        "{projectRoot}/icon/dist",
-        "{projectRoot}/input/package.json",
-        "{projectRoot}/input/dist",
-        "{projectRoot}/json-visualizer/package.json",
-        "{projectRoot}/json-visualizer/dist",
-        "{projectRoot}/layout/package.json",
-        "{projectRoot}/layout/dist",
-        "{projectRoot}/navigation/package.json",
-        "{projectRoot}/navigation/dist",
-        "{projectRoot}/styles/package.json",
-        "{projectRoot}/styles/dist",
-        "{projectRoot}/surfaces/package.json",
-        "{projectRoot}/surfaces/dist",
-        "{projectRoot}/testing/package.json",
-        "{projectRoot}/testing/dist",
-        "{projectRoot}/theme/package.json",
-        "{projectRoot}/theme/dist",
-        "{projectRoot}/theme-constants/package.json",
-        "{projectRoot}/theme-constants/dist",
-        "{projectRoot}/typography/package.json",
-        "{projectRoot}/typography/dist",
-        "{projectRoot}/utilities/package.json",
-        "{projectRoot}/utilities/dist"
-      ]
-    },
+    "build": { "dependsOn": ["^build"], "outputs": ["{projectRoot}/dist"] },
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -73,6 +36,20 @@
       "inputs": ["{projectRoot}/dist", "{projectRoot}/.size-limit.json"],
       "options": { "cwd": "{projectRoot}", "command": "npx size-limit" },
       "configurations": { "why": { "command": "npx size-limit --why" } }
+    },
+    "pack-size": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["build"],
+      "inputs": [
+        "{projectRoot}/dist",
+        "{projectRoot}/package.json",
+        "{projectRoot}/scripts/checkPackSize.ts"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx scripts/checkPackSize.ts"
+      }
     },
     "clean": {
       "executor": "nx:run-commands",

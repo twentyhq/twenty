@@ -12,4 +12,5 @@ export type SelectOption<
   disabled?: boolean;
   color?: ThemeColor | 'transparent';
   contextualText?: string;
+  searchKeywords?: string;
 };
