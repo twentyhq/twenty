@@ -1,7 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
+import { START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM } from '@/settings/billing/constants/StartSubscriptionAfterPaymentMethodQueryParam';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
-import { START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM } from '@/settings/billing/constants/StartSubscriptionAfterPaymentMethodQueryParam';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -26,6 +26,10 @@ type AddPaymentMethodFormContentProps = {
   finalRedirectPath?: string;
   onPaymentMethodAdded: () => Promise<void>;
 };
+
+// The component props-type naming lint rule requires a `<Component>Props` type,
+// so keep this alias even though it matches the content props one-to-one.
+type AddPaymentMethodFormProps = AddPaymentMethodFormContentProps;
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -163,7 +167,7 @@ const AddPaymentMethodFormContent = ({
 export const AddPaymentMethodForm = ({
   finalRedirectPath,
   onPaymentMethodAdded,
-}: AddPaymentMethodFormContentProps) => {
+}: AddPaymentMethodFormProps) => {
   const stripePromise = useStripePromise();
   const appearance = useStripeAppearance();
 

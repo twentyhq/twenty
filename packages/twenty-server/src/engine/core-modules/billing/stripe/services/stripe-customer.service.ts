@@ -48,7 +48,9 @@ export class StripeCustomerService {
   // Lets the embedded Payment Element collect and save a card for an existing
   // customer without creating a new subscription (used outside onboarding, e.g.
   // adding a card to end a trial).
-  async createSetupIntent(stripeCustomerId: string): Promise<Stripe.SetupIntent> {
+  async createSetupIntent(
+    stripeCustomerId: string,
+  ): Promise<Stripe.SetupIntent> {
     return await this.stripe.setupIntents.create({
       customer: stripeCustomerId,
       usage: 'off_session',
