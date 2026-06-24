@@ -1,8 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
-
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -41,7 +39,7 @@ describe('SubdomainManagerService', () => {
                     .map((subdomain) => ({ subdomain }) as WorkspaceEntity),
                 ),
             ),
-          } as Partial<Repository<WorkspaceEntity>>,
+          },
         },
         {
           provide: TwentyConfigService,
