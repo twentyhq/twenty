@@ -1,19 +1,53 @@
 import {
-  getCommandMenuItemUniversalIdentifier,
+  getGlobalCommandMenuItemUniversalIdentifier,
+  getGlobalObjectContextCommandMenuItemUniversalIdentifier,
   getNavigationCommandUniversalIdentifier,
+  getRecordSelectionCommandMenuItemUniversalIdentifier,
 } from '@/application/deterministic-identifier/get-command-menu-item-universal-identifier.util';
 
 const APP = '11111111-1111-4111-8111-111111111111';
 const OBJECT = '22222222-2222-4222-8222-222222222222';
 
-describe('getCommandMenuItemUniversalIdentifier', () => {
-  it('derives a deterministic id from the command label within its application', () => {
+describe('getGlobalCommandMenuItemUniversalIdentifier', () => {
+  it('derives a deterministic id from the engineComponentKey within GLOBAL', () => {
     expect(
-      getCommandMenuItemUniversalIdentifier({
+      getGlobalCommandMenuItemUniversalIdentifier({
         applicationUniversalIdentifier: APP,
-        label: 'Create Record',
+        engineComponentKey: 'EXPORT_RECORDS',
       }),
-    ).toBe('e284adf7-5332-5253-9c94-9e6b3c57237f');
+    ).toBe('bba78a2e-c117-52af-b25d-126702e8cf57');
+  });
+});
+
+describe('getGlobalObjectContextCommandMenuItemUniversalIdentifier', () => {
+  it('derives a deterministic id from the engineComponentKey within GLOBAL_OBJECT_CONTEXT', () => {
+    expect(
+      getGlobalObjectContextCommandMenuItemUniversalIdentifier({
+        applicationUniversalIdentifier: APP,
+        engineComponentKey: 'CREATE_NEW_RECORD',
+      }),
+    ).toBe('77fb3fcd-ee35-50ea-9c3c-ab95cef5e0e2');
+  });
+});
+
+describe('getRecordSelectionCommandMenuItemUniversalIdentifier', () => {
+  it('includes the target object when scoped to one', () => {
+    expect(
+      getRecordSelectionCommandMenuItemUniversalIdentifier({
+        applicationUniversalIdentifier: APP,
+        engineComponentKey: 'COMPOSE_EMAIL',
+        objectUniversalIdentifier: OBJECT,
+      }),
+    ).toBe('dd10a2b1-229b-572a-a887-ea20e487cfd3');
+  });
+
+  it('omits the object for object-agnostic record-selection commands', () => {
+    expect(
+      getRecordSelectionCommandMenuItemUniversalIdentifier({
+        applicationUniversalIdentifier: APP,
+        engineComponentKey: 'DELETE_RECORDS',
+      }),
+    ).toBe('36b20ed1-6172-5da5-9a21-58de9c8acb22');
   });
 });
 

@@ -44,6 +44,7 @@ export const persistCallRecordingProgress = async (
   const nonStatusUpdate: CallRecordingUpdateFields = { ...updateData };
 
   delete nonStatusUpdate.status;
+  delete nonStatusUpdate.meetingBotFailureReason;
 
   if (Object.keys(nonStatusUpdate).length > 0) {
     await updateCallRecording(client, { id, data: nonStatusUpdate });

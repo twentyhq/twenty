@@ -1,4 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { v5 } from 'uuid';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -9,6 +10,9 @@ import {
   NAVIGATION_INTERPOLATED_LABEL,
   NAVIGATION_INTERPOLATED_SHORT_LABEL,
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
+
+const NAVIGATION_COMMAND_UUID_NAMESPACE =
+  'b31830da-2ae0-48eb-a915-12fa4ab96dd3';
 
 const baseObjectMetadata = {
   id: 'obj-id-1',
@@ -25,14 +29,18 @@ const baseArgs = {
   workspaceId: 'ws-id-1',
   position: 5,
   now: '2026-01-01T00:00:00.000Z',
-  universalIdentifier: 'nav-universal-1',
 };
 
 describe('buildNavigationFlatCommandMenuItem', () => {
-  it('should use the provided universalIdentifier', () => {
+  it('should produce a deterministic universalIdentifier via UUID v5', () => {
     const result = buildNavigationFlatCommandMenuItem(baseArgs);
 
-    expect(result.universalIdentifier).toBe('nav-universal-1');
+    const expectedUniversalIdentifier = v5(
+      baseObjectMetadata.universalIdentifier,
+      NAVIGATION_COMMAND_UUID_NAMESPACE,
+    );
+
+    expect(result.universalIdentifier).toBe(expectedUniversalIdentifier);
   });
 
   it('should set label and shortLabel as interpolation templates', () => {

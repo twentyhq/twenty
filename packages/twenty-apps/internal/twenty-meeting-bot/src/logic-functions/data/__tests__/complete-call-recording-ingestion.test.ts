@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { completeCallRecordingIngestion } from 'src/logic-functions/data/complete-call-recording-ingestion.util';
 
 describe('completeCallRecordingIngestion', () => {
-  it('guards the flip with status != COMPLETED and returns true when the row is claimed', async () => {
+  it('guards the flip with non-terminal statuses and returns true when the row is claimed', async () => {
     let capturedArgs: { filter: unknown; data: unknown } | undefined;
     const mutation = vi.fn(async (mutationArg: any) => {
       capturedArgs = mutationArg.updateCallRecordings.__args;
@@ -22,7 +22,7 @@ describe('completeCallRecordingIngestion', () => {
     expect(mutation).toHaveBeenCalledTimes(1);
     expect(capturedArgs?.filter).toEqual({
       id: { eq: 'call-recording-1' },
-      status: { neq: 'COMPLETED' },
+      status: { in: ['SCHEDULED', 'JOINING', 'RECORDING', 'PROCESSING'] },
     });
     expect(capturedArgs?.data).toEqual({ status: 'COMPLETED' });
   });

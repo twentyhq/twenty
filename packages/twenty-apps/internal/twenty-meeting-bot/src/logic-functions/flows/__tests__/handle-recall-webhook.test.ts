@@ -970,6 +970,56 @@ describe('handleRecallWebhook', () => {
     expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
   });
 
+  it('marks FAILED on recording.done when no recording artifact path exists', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: { id: 'recall-bot-1', recordings: [] },
+    });
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        startedAt: '2026-01-01T13:02:00.000Z',
+        endedAt: '2026-01-01T14:05:00.000Z',
+        transcript: null,
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'recording.done',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+            },
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'recording.done',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'FAILED',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'FAILED',
+          externalBotId: 'recall-bot-1',
+          meetingBotFailureReason: 'recording_artifacts_unavailable',
+        },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
+  });
+
   it('completes and charges on transcript.done when media is already ingested', async () => {
     const transcriptContent = [
       {
@@ -1187,7 +1237,8 @@ describe('handleRecallWebhook', () => {
             status: 'FAILED',
             subCode: 'transcription_failed',
           },
-          status: 'FAILED_UNKNOWN',
+          meetingBotFailureReason: 'transcript_failed:transcription_failed',
+          status: 'FAILED',
         },
       },
     ]);

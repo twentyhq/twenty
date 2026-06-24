@@ -270,8 +270,10 @@ export class BillingSubscriptionUpdateService {
         });
       }
     } else {
-      const subscriptionOptions =
-        computeSubscriptionUpdateOptions(subscriptionUpdate);
+      const subscriptionOptions = computeSubscriptionUpdateOptions(
+        subscriptionUpdate,
+        { currentSeats: licensedItem.quantity },
+      );
 
       if (
         subscriptionUpdate.type === SubscriptionUpdateType.RESOURCE_CREDIT_PRICE
