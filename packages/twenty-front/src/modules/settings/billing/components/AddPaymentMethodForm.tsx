@@ -1,5 +1,4 @@
 import { currentUserState } from '@/auth/states/currentUserState';
-import { CREATE_BILLING_PAYMENT_METHOD_SETUP_INTENT } from '@/settings/billing/graphql/mutations/createBillingPaymentMethodSetupIntent';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
 import { START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM } from '@/settings/billing/constants/StartSubscriptionAfterPaymentMethodQueryParam';
@@ -27,8 +26,6 @@ type AddPaymentMethodFormContentProps = {
   finalRedirectPath?: string;
   onPaymentMethodAdded: () => Promise<void>;
 };
-
-type AddPaymentMethodFormProps = AddPaymentMethodFormContentProps;
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -166,7 +163,7 @@ const AddPaymentMethodFormContent = ({
 export const AddPaymentMethodForm = ({
   finalRedirectPath,
   onPaymentMethodAdded,
-}: AddPaymentMethodFormProps) => {
+}: AddPaymentMethodFormContentProps) => {
   const stripePromise = useStripePromise();
   const appearance = useStripeAppearance();
 
