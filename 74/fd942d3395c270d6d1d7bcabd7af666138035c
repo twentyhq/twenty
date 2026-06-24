@@ -1,0 +1,31 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service.ts
+  s_47b33e25f96fca::t_c13632b80cc136 254
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service.ts
+  s_47b33e25f96fca::t_c13632b80cc136 75,173
+packages/twenty-server/src/modules/calendar/common/services/calendar-channel-sync-status.service.ts
+  s_47b33e25f96fca::t_c13632b80cc136 209
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service.ts
+  s_47b33e25f96fca::t_c13632b80cc136 90
+packages/twenty-server/src/modules/messaging/message-import-manager/services/__tests__/messaging-messages-import.service.spec.ts
+  s_47b33e25f96fca::t_c13632b80cc136 81
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-messages-import.service.ts
+  s_47b33e25f96fca::t_c13632b80cc136 111,217
+packages/twenty-server/src/modules/messaging/common/services/message-channel-sync-status.service.ts
+  s_47b33e25f96fca::t_c13632b80cc136 220
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "74fd942d3395c270d6d1d7bcabd7af666138035c",
+  "prompts": {},
+  "sessions": {
+    "s_47b33e25f96fca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52e8b61d-c2a5-470f-9272-a73ed75c984c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
