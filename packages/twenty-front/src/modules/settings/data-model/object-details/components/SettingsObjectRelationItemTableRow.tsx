@@ -18,7 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
-import { capitalize, getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
   IconRelationManyToMany,
@@ -136,7 +136,7 @@ export const SettingsObjectRelationItemTableRow = ({
   const morphRelationCount = fieldMetadataItem.morphRelations?.length ?? 0;
   const morphRelationTargetLabel =
     morphRelationCount === 1 ? t`1 Object` : t`${morphRelationCount} Objects`;
-  const morphRelationFieldLabel = capitalize(fieldMetadataItem.name);
+  const morphRelationFieldLabel = fieldMetadataItem.label;
   const displayRelationType = isMorphRelation
     ? fieldMetadataItem.morphRelations?.[0]?.type
     : relationType;

@@ -25,7 +25,7 @@ import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
@@ -92,10 +92,6 @@ const getRelationTargetObjectMetadataIds = (field: FieldMetadataItem) => {
 };
 
 const getMorphRelationTargetLabel = (field: FieldMetadataItem) => {
-  if (field.type !== FieldMetadataType.MORPH_RELATION) {
-    return undefined;
-  }
-
   const morphRelationCount = field.morphRelations?.length ?? 0;
 
   return morphRelationCount === 1
@@ -104,11 +100,7 @@ const getMorphRelationTargetLabel = (field: FieldMetadataItem) => {
 };
 
 const getMorphRelationFieldLabel = (field: FieldMetadataItem) => {
-  if (field.type !== FieldMetadataType.MORPH_RELATION) {
-    return undefined;
-  }
-
-  return capitalize(field.name);
+  return field.label;
 };
 
 export const SettingsObjectRelationsTable = ({
@@ -124,27 +116,6 @@ export const SettingsObjectRelationsTable = ({
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const objectMetadataItemsById = useMemo(
-    () =>
-      new Map(
-        objectMetadataItems.map((objectMetadataItem) => [
-          objectMetadataItem.id,
-          objectMetadataItem,
-        ]),
-      ),
-    [objectMetadataItems],
-  );
-
-  const systemObjectMetadataIds = useMemo(
-    () =>
-      new Set(
-        objectMetadataItems
-          .filter((objectMetadataItem) => objectMetadataItem.isSystem)
-          .map((objectMetadataItem) => objectMetadataItem.id),
-      ),
-    [objectMetadataItems],
-  );
-
   const relationFields = useMemo(() => {
     return objectMetadataItem.fields.filter((field) => {
       const isRelationField =
@@ -159,7 +130,12 @@ export const SettingsObjectRelationsTable = ({
         getRelationTargetObjectMetadataIds(field);
 
       const isRelationToSystemObject = relationTargetObjectMetadataIds.some(
-        (objectMetadataId) => systemObjectMetadataIds.has(objectMetadataId),
+        (objectMetadataId) =>
+          objectMetadataItems.some(
+            (objectMetadataItem) =>
+              objectMetadataItem.id === objectMetadataId &&
+              objectMetadataItem.isSystem,
+          ),
       );
 
       return (
@@ -170,7 +146,7 @@ export const SettingsObjectRelationsTable = ({
   }, [
     objectMetadataItem.fields,
     isAdvancedModeEnabled,
-    systemObjectMetadataIds,
+    objectMetadataItems,
   ]);
 
   const sortedRelationFields = useSortedArray(relationFields, tableMetadata);
@@ -183,8 +159,9 @@ export const SettingsObjectRelationsTable = ({
       const relationTargetObjectLabels = getRelationTargetObjectMetadataIds(
         field,
       ).flatMap((objectMetadataId) => {
-        const relationObjectMetadataItem =
-          objectMetadataItemsById.get(objectMetadataId);
+        const relationObjectMetadataItem = objectMetadataItems.find(
+          (objectMetadataItem) => objectMetadataItem.id === objectMetadataId,
+        );
 
         return isDefined(relationObjectMetadataItem)
           ? [
@@ -194,9 +171,19 @@ export const SettingsObjectRelationsTable = ({
           : [];
       });
 
-      const searchableText = [field.label, ...relationTargetObjectLabels]
-        .concat(getMorphRelationTargetLabel(field) ?? [])
-        .concat(getMorphRelationFieldLabel(field) ?? [])
+      const morphRelationLabels =
+        field.type === FieldMetadataType.MORPH_RELATION
+          ? [
+              getMorphRelationTargetLabel(field),
+              getMorphRelationFieldLabel(field),
+            ]
+          : [];
+
+      const searchableText = [
+        field.label,
+        ...relationTargetObjectLabels,
+        ...morphRelationLabels,
+      ]
         .map(normalizeSearchText)
         .join(' ');
 
@@ -204,7 +191,7 @@ export const SettingsObjectRelationsTable = ({
 
       return matchesActiveFilter && matchesSearch;
     });
-  }, [objectMetadataItemsById, sortedRelationFields, searchTerm, showInactive]);
+  }, [objectMetadataItems, sortedRelationFields, searchTerm, showInactive]);
 
   return (
     <>
@@ -273,7 +260,7 @@ export const SettingsObjectRelationsTable = ({
               ))
             ) : (
               <TableCell color={themeCssVariables.font.color.tertiary}>
-                {t`No relation with non-system objects`}
+                {t`No relations found`}
               </TableCell>
             )}
           </TableBody>
