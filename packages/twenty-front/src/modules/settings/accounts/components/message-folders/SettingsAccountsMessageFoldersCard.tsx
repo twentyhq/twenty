@@ -3,6 +3,7 @@ import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/compon
 import { SettingsMessageFoldersSkeletonLoader } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersSkeletonLoader';
 import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
+import { computeToggleAllFoldersState } from '@/settings/accounts/components/message-folders/utils/computeToggleAllFoldersState';
 import { useMyMessageFolders } from '@/settings/accounts/hooks/useMyMessageFolders';
 import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
@@ -85,21 +86,17 @@ export const SettingsAccountsMessageFoldersCard = () => {
     return computeMessageFolderTree(filteredMessageFolders);
   }, [filteredMessageFolders]);
 
-  const allFoldersToggled = useMemo(() => {
-    return filteredMessageFolders.every((folder) => folder.isSynced);
-  }, [filteredMessageFolders]);
+  const { allSynced, messageFolderIds, targetSyncState } = useMemo(
+    () => computeToggleAllFoldersState(messageFolders),
+    [messageFolders],
+  );
 
-  const handleToggleAllFolders = async (
-    messageFoldersToToggle: MessageFolder[],
-  ) => {
-    if (messageFoldersToToggle.length === 0) return;
-
-    const allSynced = messageFoldersToToggle.every((folder) => folder.isSynced);
-    const targetSyncState = !allSynced;
+  const handleToggleAllFolders = async () => {
+    if (messageFolderIds.length === 0) return;
 
     try {
       await updateMessageFoldersSyncStatus({
-        messageFolderIds: messageFoldersToToggle.map((folder) => folder.id),
+        messageFolderIds,
         isSynced: targetSyncState,
       });
     } catch (error) {
@@ -160,8 +157,8 @@ export const SettingsAccountsMessageFoldersCard = () => {
             padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
           >
             <Checkbox
-              checked={allFoldersToggled}
-              onChange={() => handleToggleAllFolders(messageFolders)}
+              checked={allSynced}
+              onChange={handleToggleAllFolders}
               size={CheckboxSize.Small}
             />
           </TableCell>
