@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
+import { enrichAllFlatEntityMapsWithDefaultViews } from 'src/engine/core-modules/application/application-manifest/utils/enrich-all-flat-entity-maps-with-default-views.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import {
   ApplicationException,
@@ -207,6 +208,18 @@ export class ApplicationManifestMigrationService {
         now,
         workspaceId,
       });
+
+    enrichAllFlatEntityMapsWithDefaultViews({
+      allFlatEntityMaps: fromAllFlatEntityMaps,
+      flatApplication: ownerFlatApplication,
+      now,
+    });
+
+    enrichAllFlatEntityMapsWithDefaultViews({
+      allFlatEntityMaps: toAllUniversalFlatEntityMaps,
+      flatApplication: ownerFlatApplication,
+      now,
+    });
 
     const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds:
