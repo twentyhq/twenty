@@ -285,7 +285,9 @@ export const RecordDetailRelationRecordsListItem = ({
           subtitle={
             <Trans>
               Are you sure you want to delete this related{' '}
-              {relationObjectMetadataLabelSingular ?? relationObjectMetadataNameSingular}?
+              {relationObjectMetadataLabelSingular ??
+                relationObjectMetadataNameSingular}
+              ?
               <br />
               This action will break all its relationships with other objects.
             </Trans>

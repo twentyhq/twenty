@@ -143,7 +143,8 @@ export const FieldWidgetJunctionRelationCard = ({
       return {
         record: extracted.record,
         objectNameSingular: objectMetadata.nameSingular,
-        objectLabelSingular: objectMetadata.labelSingular ?? objectMetadata.nameSingular,
+        objectLabelSingular:
+          objectMetadata.labelSingular ?? objectMetadata.nameSingular,
       };
     })
     .filter(isDefined);
@@ -183,7 +184,9 @@ export const FieldWidgetJunctionRelationCard = ({
                     onClick={handleItemClick}
                     relationRecord={item.record}
                     relationObjectMetadataNameSingular={item.objectNameSingular}
-                    relationObjectMetadataLabelSingular={item.objectLabelSingular}
+                    relationObjectMetadataLabelSingular={
+                      item.objectLabelSingular
+                    }
                     relationFieldMetadataId=""
                   />
                 </Fragment>
