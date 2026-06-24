@@ -250,7 +250,12 @@ const computePackageJsonFilesAndExportsConfig = (
   return {
     exports,
     typesVersions: { '*': typesVersionsEntries },
-    files: ['dist', '!dist/individual', '!dist/individual/**', '!dist/**/*.map'],
+    files: [
+      'dist',
+      '!dist/individual',
+      '!dist/individual/**',
+      '!dist/**/*.map',
+    ],
   };
 };
 

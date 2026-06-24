@@ -32,16 +32,16 @@ if (packResult === undefined) {
 const { size, unpackedSize, entryCount } = packResult;
 
 if (unpackedSize > MAX_UNPACKED_BYTES) {
-  console.error(
+  process.stderr.write(
     `twenty-ui unpacked size ${formatMegabytes(unpackedSize)} exceeds budget ${formatMegabytes(
       MAX_UNPACKED_BYTES,
-    )} (tarball ${formatMegabytes(size)}, ${entryCount} files)`,
+    )} (tarball ${formatMegabytes(size)}, ${entryCount} files)\n`,
   );
   process.exit(1);
 }
 
-console.log(
+process.stdout.write(
   `twenty-ui pack OK: tarball ${formatMegabytes(size)}, unpacked ${formatMegabytes(
     unpackedSize,
-  )}, ${entryCount} files`,
+  )}, ${entryCount} files\n`,
 );
