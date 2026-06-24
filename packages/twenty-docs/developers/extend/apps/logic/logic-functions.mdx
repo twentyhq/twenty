@@ -191,12 +191,18 @@ import type { RoutePayload } from 'twenty-sdk/logic-function';
 // which target function should handle the event, and returns the
 // workspace + target the platform should dispatch to.
 const handler = async (event: RoutePayload) => {
+  // Fail closed if the secret isn't configured — never fall back to an
+  // empty key, which would let any caller forge a matching signature.
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+
+  if (!secret) {
+    throw new Error('GITHUB_WEBHOOK_SECRET is not configured');
+  }
+
   const signature = event.headers['x-hub-signature-256'] ?? '';
   const expected =
     'sha256=' +
-    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
-      .update(event.rawBody ?? '')
-      .digest('hex');
+    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
 
   const a = Buffer.from(signature);
   const b = Buffer.from(expected);
