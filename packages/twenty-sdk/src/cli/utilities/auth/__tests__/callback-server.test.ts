@@ -56,10 +56,6 @@ describe('startCallbackServer', () => {
     }
   });
 
-  // The page is delivered length-delimited (not chunked) so the browser treats
-  // it as complete the moment the bytes arrive, even though the CLI destroys the
-  // socket right after the code is in hand. Chunked framing depends on a clean
-  // close and renders a blank page when the teardown races in on fast localhost.
   it('should send the success page with an explicit Content-Length (not chunked)', async () => {
     const server = await startCallbackServer();
 
@@ -83,11 +79,6 @@ describe('startCallbackServer', () => {
     }
   });
 
-  // Reproduces the dev-mode failure: the caller tears the server down the
-  // instant the callback resolves. waitForCallback only resolves once the
-  // socket has closed gracefully, so the browser receives the complete page —
-  // whereas hard-destroying the socket (the old closeAllConnections) would RST
-  // it and leave a blank page on fast localhost.
   it('should deliver the full page even when the server is closed right after the callback resolves', async () => {
     const server = await startCallbackServer();
 

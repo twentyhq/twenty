@@ -225,14 +225,6 @@ export const startCallbackServer = (options?: {
         Connection: 'close',
       });
 
-      // Resolve the callback only once this socket has fully closed, not as soon
-      // as the body is written. The caller (login-oauth) tears the server down
-      // the instant waitForCallback resolves; if we resolved earlier the
-      // teardown would hard-destroy the still-open socket with a TCP RST, and on
-      // fast localhost the RST reaches the browser before it has drained the
-      // response — the kernel then discards the unread bytes and the page is
-      // blank. Letting the socket close gracefully (Connection: close → FIN)
-      // guarantees the page is delivered before we hand control back.
       res.on('close', () => callbackResolve(result));
       res.end(body);
     });
@@ -265,11 +257,6 @@ export const startCallbackServer = (options?: {
         },
         close: () => {
           clearTimeout(timeoutHandle);
-          // Stop accepting new connections and free the port immediately, but
-          // never hard-destroy live sockets: closeAllConnections() would RST the
-          // socket still delivering the page and leave the browser blank.
-          // closeIdleConnections() only reaps idle keep-alive sockets (which
-          // carry no pending response) so the process can still exit.
           server.close();
           server.closeIdleConnections();
         },
