@@ -3,46 +3,46 @@ import { ViewKey } from '@/types/ViewKey';
 
 // A view is identified by its name within its object.
 export const getViewUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   objectUniversalIdentifier,
   name,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   objectUniversalIdentifier: string;
   name: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'view',
     value: `${objectUniversalIdentifier}:${name}`,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });
 
 // The INDEX view is an object's singleton main table view; its name is
 // server-generated, so it is keyed by the stable INDEX view key.
 export const getIndexViewUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   objectUniversalIdentifier,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   objectUniversalIdentifier: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'view',
     value: `${objectUniversalIdentifier}:${ViewKey.INDEX}`,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });
 
 // A fields-widget view is 1:1 with its FIELDS page-layout widget, so it is keyed
 // by that widget's deterministic universalIdentifier (its name is server-generated).
 export const getFieldsWidgetViewUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   pageLayoutWidgetUniversalIdentifier,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   pageLayoutWidgetUniversalIdentifier: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'view',
     value: pageLayoutWidgetUniversalIdentifier,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

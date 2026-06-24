@@ -7,7 +7,7 @@ describe('getPageLayoutTabUniversalIdentifier', () => {
   it('derives a deterministic id from the tab title within its page layout', () => {
     expect(
       getPageLayoutTabUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         pageLayoutUniversalIdentifier: PAGE_LAYOUT,
         title: 'Home',
       }),

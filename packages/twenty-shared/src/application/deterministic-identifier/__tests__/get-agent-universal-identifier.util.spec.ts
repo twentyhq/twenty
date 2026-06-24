@@ -6,7 +6,7 @@ describe('getAgentUniversalIdentifier', () => {
   it('derives a deterministic id from the agent name within its application', () => {
     expect(
       getAgentUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         name: 'My Agent',
       }),
     ).toBe('3d16dbdf-98c9-59c6-b770-81161144fc78');

@@ -408,7 +408,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         this.findNavigationCommandMenuItemForObject({
           objectUniversalIdentifier:
             flatObjectMetadataToDelete.universalIdentifier,
-          ownerApplicationUniversalIdentifier:
+          applicationUniversalIdentifier:
             flatObjectMetadataToDelete.applicationUniversalIdentifier,
           flatCommandMenuItemMaps,
         }),
@@ -683,8 +683,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       position: 0,
       universalIdentifier: getIndexViewUniversalIdentifier({
-        ownerApplicationUniversalIdentifier:
-          flatApplication.universalIdentifier,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
         objectUniversalIdentifier: objectMetadata.universalIdentifier,
       }),
       visibility: ViewVisibility.WORKSPACE,
@@ -801,7 +800,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       position: nextPosition,
       now: new Date().toISOString(),
       universalIdentifier: getNavigationCommandUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+        applicationUniversalIdentifier,
         objectUniversalIdentifier: objectMetadata.universalIdentifier,
       }),
     });
@@ -809,18 +808,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
   private findNavigationCommandMenuItemForObject({
     objectUniversalIdentifier,
-    ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
     flatCommandMenuItemMaps,
   }: {
     objectUniversalIdentifier: string;
-    ownerApplicationUniversalIdentifier: string;
+    applicationUniversalIdentifier: string;
     flatCommandMenuItemMaps: {
       byUniversalIdentifier: Record<string, FlatCommandMenuItem | undefined>;
     };
   }): FlatCommandMenuItem | undefined {
     const commandMenuItemUniversalIdentifier =
       getNavigationCommandUniversalIdentifier({
-        ownerApplicationUniversalIdentifier,
+        applicationUniversalIdentifier,
         objectUniversalIdentifier,
       });
 
@@ -863,7 +862,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         this.findNavigationCommandMenuItemForObject({
           objectUniversalIdentifier:
             existingFlatObjectMetadata.universalIdentifier,
-          ownerApplicationUniversalIdentifier:
+          applicationUniversalIdentifier:
             existingFlatObjectMetadata.applicationUniversalIdentifier,
           flatCommandMenuItemMaps,
         });
@@ -898,7 +897,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         this.findNavigationCommandMenuItemForObject({
           objectUniversalIdentifier:
             existingFlatObjectMetadata.universalIdentifier,
-          ownerApplicationUniversalIdentifier:
+          applicationUniversalIdentifier:
             existingFlatObjectMetadata.applicationUniversalIdentifier,
           flatCommandMenuItemMaps,
         });

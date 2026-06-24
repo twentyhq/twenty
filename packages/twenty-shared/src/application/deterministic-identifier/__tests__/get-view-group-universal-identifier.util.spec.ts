@@ -7,7 +7,7 @@ describe('getViewGroupUniversalIdentifier', () => {
   it('derives a deterministic id from the field value it groups by within its view', () => {
     expect(
       getViewGroupUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         viewUniversalIdentifier: VIEW,
         fieldValue: 'OPTION_A',
       }),

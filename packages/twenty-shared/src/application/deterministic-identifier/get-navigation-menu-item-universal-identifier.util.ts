@@ -2,14 +2,14 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // A navigation menu item is identified by its name within its application.
 export const getNavigationMenuItemUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   name,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   name: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'navigationMenuItem',
     value: name,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

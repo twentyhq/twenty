@@ -8,7 +8,7 @@ describe('getViewSortUniversalIdentifier', () => {
   it('derives a deterministic id from the field it sorts within its view', () => {
     expect(
       getViewSortUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         viewUniversalIdentifier: VIEW,
         fieldMetadataUniversalIdentifier: FIELD,
       }),

@@ -44,7 +44,7 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
   const now = new Date().toISOString();
   const pageLayoutId = v4();
   const pageLayoutUniversalIdentifier = getRecordPageLayoutUniversalIdentifier({
-    ownerApplicationUniversalIdentifier: flatApplication.universalIdentifier,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
     objectUniversalIdentifier: objectMetadata.universalIdentifier,
   });
 
@@ -66,13 +66,13 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
     const widgetProps = WIDGET_PROPS[widgetKey];
     const tabId = v4();
     const tabUniversalIdentifier = getPageLayoutTabUniversalIdentifier({
-      ownerApplicationUniversalIdentifier: flatApplication.universalIdentifier,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
       pageLayoutUniversalIdentifier,
       title: tabProps.title,
     });
     const widgetId = v4();
     const widgetUniversalIdentifier = getPageLayoutWidgetUniversalIdentifier({
-      ownerApplicationUniversalIdentifier: flatApplication.universalIdentifier,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
       pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
       title: widgetProps.title,
     });

@@ -6,7 +6,7 @@ describe('getSkillUniversalIdentifier', () => {
   it('derives a deterministic id from the skill name within its application', () => {
     expect(
       getSkillUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         name: 'search',
       }),
     ).toBe('91cd3731-e098-5a62-86af-6fe9ac79812b');

@@ -2,16 +2,16 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // A field is identified by its name within its object.
 export const getFieldUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   objectUniversalIdentifier,
   name,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   objectUniversalIdentifier: string;
   name: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'fieldMetadata',
     value: `${objectUniversalIdentifier}:${name}`,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

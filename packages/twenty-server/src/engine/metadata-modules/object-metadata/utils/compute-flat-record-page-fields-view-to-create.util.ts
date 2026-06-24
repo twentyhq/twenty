@@ -44,7 +44,7 @@ export const computeFlatRecordPageFieldsViewToCreate = ({
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     position: 0,
     universalIdentifier: getFieldsWidgetViewUniversalIdentifier({
-      ownerApplicationUniversalIdentifier: flatApplication.universalIdentifier,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
       pageLayoutWidgetUniversalIdentifier,
     }),
     visibility: ViewVisibility.WORKSPACE,

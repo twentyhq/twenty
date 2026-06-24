@@ -6,7 +6,7 @@ describe('getNavigationMenuItemUniversalIdentifier', () => {
   it('derives a deterministic id from the item name within its application', () => {
     expect(
       getNavigationMenuItemUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         name: 'Home',
       }),
     ).toBe('dc0ca522-7f09-567d-a7f7-d33824495fc4');

@@ -7,7 +7,7 @@ describe('getFieldUniversalIdentifier', () => {
   it('derives a deterministic id from the field name within its object', () => {
     expect(
       getFieldUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         objectUniversalIdentifier: OBJECT,
         name: 'createdAt',
       }),

@@ -10,7 +10,7 @@ describe('getCommandMenuItemUniversalIdentifier', () => {
   it('derives a deterministic id from the command label within its application', () => {
     expect(
       getCommandMenuItemUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         label: 'Create Record',
       }),
     ).toBe('e284adf7-5332-5253-9c94-9e6b3c57237f');
@@ -21,7 +21,7 @@ describe('getNavigationCommandUniversalIdentifier', () => {
   it('derives a deterministic id from the navigation role within its object', () => {
     expect(
       getNavigationCommandUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         objectUniversalIdentifier: OBJECT,
       }),
     ).toBe('ec4626f3-3170-5ddc-a309-bdf2a18d4e84');

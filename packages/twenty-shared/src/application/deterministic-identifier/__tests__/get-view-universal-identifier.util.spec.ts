@@ -12,7 +12,7 @@ describe('getViewUniversalIdentifier', () => {
   it('derives a deterministic id from the view name within its object', () => {
     expect(
       getViewUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         objectUniversalIdentifier: OBJECT,
         name: 'My View',
       }),
@@ -24,7 +24,7 @@ describe('getIndexViewUniversalIdentifier', () => {
   it('derives a deterministic id from the stable INDEX view key within its object', () => {
     expect(
       getIndexViewUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         objectUniversalIdentifier: OBJECT,
       }),
     ).toBe('3803a536-0158-554c-bfb4-e5492323e57f');
@@ -35,7 +35,7 @@ describe('getFieldsWidgetViewUniversalIdentifier', () => {
   it('derives a deterministic id from its 1:1 FIELDS page-layout widget', () => {
     expect(
       getFieldsWidgetViewUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         pageLayoutWidgetUniversalIdentifier: WIDGET,
       }),
     ).toBe('5f45a1bd-97df-56f7-a8ad-7839ef0045b5');

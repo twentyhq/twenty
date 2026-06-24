@@ -6,7 +6,7 @@ describe('getConnectionProviderUniversalIdentifier', () => {
   it('derives a deterministic id from the provider name within its application', () => {
     expect(
       getConnectionProviderUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         name: 'Gmail',
       }),
     ).toBe('69c2371f-465c-57cd-9d36-3fbba8ea8510');

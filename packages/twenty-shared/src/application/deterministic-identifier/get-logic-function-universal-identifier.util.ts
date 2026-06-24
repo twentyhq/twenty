@@ -2,14 +2,14 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // A logic function is identified by its name within its application.
 export const getLogicFunctionUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   name,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   name: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'logicFunction',
     value: name,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

@@ -2,16 +2,16 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // An option is identified by its stable value (not its renameable label) within its field.
 export const getSelectOptionUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   fieldUniversalIdentifier,
   value,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   fieldUniversalIdentifier: string;
   value: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'selectOption',
     value: `${fieldUniversalIdentifier}:${value}`,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

@@ -6,7 +6,7 @@ describe('getLogicFunctionUniversalIdentifier', () => {
   it('derives a deterministic id from the function name within its application', () => {
     expect(
       getLogicFunctionUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         name: 'sendEmail',
       }),
     ).toBe('4a470da0-dd48-5b7f-a1be-4e24fcc5b6c5');

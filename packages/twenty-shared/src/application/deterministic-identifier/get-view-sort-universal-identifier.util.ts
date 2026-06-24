@@ -2,16 +2,16 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // A view sort is identified by the field it sorts, within its view.
 export const getViewSortUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   viewUniversalIdentifier,
   fieldMetadataUniversalIdentifier,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   viewUniversalIdentifier: string;
   fieldMetadataUniversalIdentifier: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'viewSort',
     value: `${viewUniversalIdentifier}:${fieldMetadataUniversalIdentifier}`,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

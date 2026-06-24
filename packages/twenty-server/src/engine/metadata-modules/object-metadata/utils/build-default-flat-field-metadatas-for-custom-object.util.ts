@@ -40,9 +40,9 @@ const buildObjectSystemFlatFieldMetadatas = ({
     updatedBy,
   } = PARTIAL_SYSTEM_FLAT_FIELD_METADATAS;
 
-  const systemFieldUniversalIdentifier = (fieldName: string) =>
+  const getSystemFieldUniversalIdentifier = (fieldName: string) =>
     getFieldUniversalIdentifier({
-      ownerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+      applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadataUniversalIdentifier,
       name: fieldName,
     });
@@ -50,7 +50,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
   return {
     id: {
       ...id,
-      universalIdentifier: systemFieldUniversalIdentifier(id.name),
+      universalIdentifier: getSystemFieldUniversalIdentifier(id.name),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -58,7 +58,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     createdAt: {
       ...createdAt,
-      universalIdentifier: systemFieldUniversalIdentifier(createdAt.name),
+      universalIdentifier: getSystemFieldUniversalIdentifier(createdAt.name),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -66,7 +66,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     createdBy: {
       ...createdBy,
-      universalIdentifier: systemFieldUniversalIdentifier(createdBy.name),
+      universalIdentifier: getSystemFieldUniversalIdentifier(createdBy.name),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -74,7 +74,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     deletedAt: {
       ...deletedAt,
-      universalIdentifier: systemFieldUniversalIdentifier(deletedAt.name),
+      universalIdentifier: getSystemFieldUniversalIdentifier(deletedAt.name),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -82,7 +82,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     position: {
       ...position,
-      universalIdentifier: systemFieldUniversalIdentifier(position.name),
+      universalIdentifier: getSystemFieldUniversalIdentifier(position.name),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -90,7 +90,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     searchVector: {
       ...searchVector,
-      universalIdentifier: systemFieldUniversalIdentifier(searchVector.name),
+      universalIdentifier: getSystemFieldUniversalIdentifier(searchVector.name),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -99,7 +99,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     updatedAt: {
       ...updatedAt,
-      universalIdentifier: systemFieldUniversalIdentifier(updatedAt.name),
+      universalIdentifier: getSystemFieldUniversalIdentifier(updatedAt.name),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -107,7 +107,7 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     updatedBy: {
       ...updatedBy,
-      universalIdentifier: systemFieldUniversalIdentifier(updatedBy.name),
+      universalIdentifier: getSystemFieldUniversalIdentifier(updatedBy.name),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,
@@ -134,7 +134,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           isLabelSyncedWithName: false,
           isUnique: false,
           universalIdentifier: getFieldUniversalIdentifier({
-            ownerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+            applicationUniversalIdentifier,
             objectUniversalIdentifier: objectMetadataUniversalIdentifier,
             name: 'name',
           }),

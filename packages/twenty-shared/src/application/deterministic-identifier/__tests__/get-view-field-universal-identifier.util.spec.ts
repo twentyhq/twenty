@@ -8,7 +8,7 @@ describe('getViewFieldUniversalIdentifier', () => {
   it('derives a deterministic id from the field it displays within its view', () => {
     expect(
       getViewFieldUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         viewUniversalIdentifier: VIEW,
         fieldMetadataUniversalIdentifier: FIELD,
       }),

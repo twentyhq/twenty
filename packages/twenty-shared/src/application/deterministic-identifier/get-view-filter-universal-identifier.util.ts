@@ -2,13 +2,13 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // A view filter is identified by its field + operand (+ sub-field), within its view.
 export const getViewFilterUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   viewUniversalIdentifier,
   fieldMetadataUniversalIdentifier,
   operand,
   subFieldName,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   viewUniversalIdentifier: string;
   fieldMetadataUniversalIdentifier: string;
   operand: string;
@@ -17,5 +17,5 @@ export const getViewFilterUniversalIdentifier = ({
   computeDeterministicUuid({
     entityNamespace: 'viewFilter',
     value: `${viewUniversalIdentifier}:${fieldMetadataUniversalIdentifier}:${operand}:${subFieldName ?? ''}`,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

@@ -6,7 +6,7 @@ describe('getPermissionFlagUniversalIdentifier', () => {
   it('derives a deterministic id from the flag key within its application', () => {
     expect(
       getPermissionFlagUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         key: 'WORKFLOWS',
       }),
     ).toBe('e9f8bad8-54da-51f7-b7d7-77ed600a589d');

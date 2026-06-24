@@ -6,7 +6,7 @@ describe('getApplicationVariableUniversalIdentifier', () => {
   it('derives a deterministic id from the variable key within its application', () => {
     expect(
       getApplicationVariableUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         key: 'API_KEY',
       }),
     ).toBe('83da1579-61d6-55f5-8b6c-c6ef698608bf');

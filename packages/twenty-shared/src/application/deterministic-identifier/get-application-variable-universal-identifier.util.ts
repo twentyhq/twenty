@@ -2,14 +2,14 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // An application variable is identified by its key within its application.
 export const getApplicationVariableUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   key,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   key: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'applicationVariable',
     value: key,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

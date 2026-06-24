@@ -2,14 +2,14 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // A permission flag is identified by its key within its application.
 export const getPermissionFlagUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   key,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   key: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'permissionFlag',
     value: key,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

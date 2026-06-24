@@ -8,7 +8,7 @@ describe('getFieldPermissionUniversalIdentifier', () => {
   it('derives a deterministic id from the field within its role', () => {
     expect(
       getFieldPermissionUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         roleUniversalIdentifier: ROLE,
         fieldUniversalIdentifier: FIELD,
       }),

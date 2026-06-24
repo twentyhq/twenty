@@ -2,16 +2,16 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // A view group is identified by the field value it groups by, within its view.
 export const getViewGroupUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   viewUniversalIdentifier,
   fieldValue,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   viewUniversalIdentifier: string;
   fieldValue: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'viewGroup',
     value: `${viewUniversalIdentifier}:${fieldValue}`,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

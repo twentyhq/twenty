@@ -8,7 +8,7 @@ describe('getRolePermissionFlagUniversalIdentifier', () => {
   it('derives a deterministic id from the permission flag within its role', () => {
     expect(
       getRolePermissionFlagUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         roleUniversalIdentifier: ROLE,
         permissionFlagUniversalIdentifier: PERMISSION_FLAG,
       }),

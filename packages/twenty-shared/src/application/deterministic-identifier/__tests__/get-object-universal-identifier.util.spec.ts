@@ -6,7 +6,7 @@ describe('getObjectUniversalIdentifier', () => {
   it('derives a deterministic id from the object nameSingular within its application', () => {
     expect(
       getObjectUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         nameSingular: 'rocket',
       }),
     ).toBe('676819ee-d700-5936-9d6f-58dd7f71ae07');

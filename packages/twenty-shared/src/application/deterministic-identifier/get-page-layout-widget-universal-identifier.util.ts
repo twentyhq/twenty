@@ -2,16 +2,16 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // A widget is identified by its title within its tab.
 export const getPageLayoutWidgetUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   pageLayoutTabUniversalIdentifier,
   title,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   pageLayoutTabUniversalIdentifier: string;
   title: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'pageLayoutWidget',
     value: `${pageLayoutTabUniversalIdentifier}:${title}`,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

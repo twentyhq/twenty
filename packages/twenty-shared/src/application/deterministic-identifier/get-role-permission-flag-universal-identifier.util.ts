@@ -2,16 +2,16 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // A role permission flag is identified by its permission flag, within its role.
 export const getRolePermissionFlagUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   roleUniversalIdentifier,
   permissionFlagUniversalIdentifier,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   roleUniversalIdentifier: string;
   permissionFlagUniversalIdentifier: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'rolePermissionFlag',
     value: `${roleUniversalIdentifier}:${permissionFlagUniversalIdentifier}`,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

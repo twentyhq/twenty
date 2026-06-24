@@ -7,7 +7,7 @@ describe('getSelectOptionUniversalIdentifier', () => {
   it('derives a deterministic id from the option value within its field', () => {
     expect(
       getSelectOptionUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         fieldUniversalIdentifier: FIELD,
         value: 'OPTION_A',
       }),

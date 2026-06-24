@@ -2,16 +2,16 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 // A field permission is identified by its field (which implies its object), within its role.
 export const getFieldPermissionUniversalIdentifier = ({
-  ownerApplicationUniversalIdentifier,
+  applicationUniversalIdentifier,
   roleUniversalIdentifier,
   fieldUniversalIdentifier,
 }: {
-  ownerApplicationUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
   roleUniversalIdentifier: string;
   fieldUniversalIdentifier: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'fieldPermission',
     value: `${roleUniversalIdentifier}:${fieldUniversalIdentifier}`,
-    applicationUniversalIdentifier: ownerApplicationUniversalIdentifier,
+    applicationUniversalIdentifier,
   });

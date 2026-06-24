@@ -82,7 +82,7 @@ export const buildStandardFlatCommandMenuItemMaps = ({
       position,
       now,
       universalIdentifier: getNavigationCommandUniversalIdentifier({
-        ownerApplicationUniversalIdentifier:
+        applicationUniversalIdentifier:
           TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         objectUniversalIdentifier: flatObject.universalIdentifier,
       }),

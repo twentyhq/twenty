@@ -8,7 +8,7 @@ describe('getObjectPermissionUniversalIdentifier', () => {
   it('derives a deterministic id from the object within its role', () => {
     expect(
       getObjectPermissionUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         roleUniversalIdentifier: ROLE,
         objectUniversalIdentifier: OBJECT,
       }),

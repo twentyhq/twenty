@@ -7,7 +7,7 @@ describe('getIndexUniversalIdentifier', () => {
   it('derives a deterministic id from the generated index name within its object', () => {
     expect(
       getIndexUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         objectUniversalIdentifier: OBJECT,
         name: 'IDX_abc',
       }),

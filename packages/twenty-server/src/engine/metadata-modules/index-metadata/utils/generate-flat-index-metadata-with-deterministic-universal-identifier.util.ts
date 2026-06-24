@@ -1,6 +1,6 @@
 import { getIndexUniversalIdentifier } from 'twenty-shared/application';
 
-import { computeFlatIndexNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/compute-flat-index-name.util';
+import { computeFlatIndexNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/compute-flat-index-name-or-throw.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
@@ -41,7 +41,7 @@ export const generateFlatIndexMetadataWithDeterministicUniversalIdentifierOrThro
     });
 
     const universalIdentifier = getIndexUniversalIdentifier({
-      ownerApplicationUniversalIdentifier:
+      applicationUniversalIdentifier:
         flatObjectMetadata.applicationUniversalIdentifier,
       objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       name,

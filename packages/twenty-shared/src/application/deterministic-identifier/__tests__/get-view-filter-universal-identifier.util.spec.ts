@@ -8,7 +8,7 @@ describe('getViewFilterUniversalIdentifier', () => {
   it('derives a deterministic id from the field, operand and sub-field within its view', () => {
     expect(
       getViewFilterUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         viewUniversalIdentifier: VIEW,
         fieldMetadataUniversalIdentifier: FIELD,
         operand: 'is',

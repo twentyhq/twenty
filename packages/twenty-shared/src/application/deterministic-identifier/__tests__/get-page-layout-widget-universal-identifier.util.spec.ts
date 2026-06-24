@@ -7,7 +7,7 @@ describe('getPageLayoutWidgetUniversalIdentifier', () => {
   it('derives a deterministic id from the widget title within its tab', () => {
     expect(
       getPageLayoutWidgetUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         pageLayoutTabUniversalIdentifier: TAB,
         title: 'Fields',
       }),

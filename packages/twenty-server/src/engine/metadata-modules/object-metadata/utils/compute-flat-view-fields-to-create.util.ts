@@ -60,8 +60,7 @@ export const computeFlatViewFieldsToCreate = ({
       updatedAt: createdAt,
       deletedAt: null,
       universalIdentifier: getViewFieldUniversalIdentifier({
-        ownerApplicationUniversalIdentifier:
-          flatApplication.universalIdentifier,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
         viewUniversalIdentifier,
         fieldMetadataUniversalIdentifier: field.universalIdentifier,
       }),

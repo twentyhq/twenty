@@ -10,7 +10,7 @@ describe('getPageLayoutUniversalIdentifier', () => {
   it('derives a deterministic id from the layout name within its object', () => {
     expect(
       getPageLayoutUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         objectUniversalIdentifier: OBJECT,
         name: 'My Dashboard',
       }),
@@ -20,7 +20,7 @@ describe('getPageLayoutUniversalIdentifier', () => {
   it('derives a deterministic id from the layout name alone when standalone', () => {
     expect(
       getPageLayoutUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         name: 'Standalone',
       }),
     ).toBe('d382c85c-204a-5648-a101-e65575c3a853');
@@ -31,7 +31,7 @@ describe('getRecordPageLayoutUniversalIdentifier', () => {
   it('derives a deterministic id from the RECORD_PAGE role within its object', () => {
     expect(
       getRecordPageLayoutUniversalIdentifier({
-        ownerApplicationUniversalIdentifier: APP,
+        applicationUniversalIdentifier: APP,
         objectUniversalIdentifier: OBJECT,
       }),
     ).toBe('80289fa4-d714-5883-bd1d-bc59c7b9a1c2');
