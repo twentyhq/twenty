@@ -4,10 +4,6 @@ import { useFrontComponentExecutionContext } from '@/front-components/hooks/useF
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { getFunctionsBaseUrl } from '@/settings/logic-functions/utils/getLogicFunctionHttpUrl';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
@@ -32,16 +28,6 @@ export const FrontComponentRenderer = ({
 }: FrontComponentRendererProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
-
-  const { publicFunctionDomain } = useAtomStateValue(domainConfigurationState);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  // Fully-resolved function base the SDK targets: the isolated domain on Twenty
-  // Cloud, or {serverUrl}/s when self-hosting. The SDK just appends the route.
-  const functionsBaseUrl =
-    getFunctionsBaseUrl({
-      publicFunctionDomain,
-      workspaceSubdomain: currentWorkspace?.subdomain,
-    }) ?? `${REACT_APP_SERVER_BASE_URL}/s`;
 
   const setFrontComponentApplicationTokenPair = useSetAtomComponentState(
     frontComponentApplicationTokenPairComponentState,
@@ -117,6 +103,11 @@ export const FrontComponentRenderer = ({
 
   const applicationVariables =
     data.frontComponent.applicationVariables ?? undefined;
+
+  // The server resolves the function base (app's primary domain, else the
+  // workspace's isolated domain). Self-hosting returns null → fall back to /s.
+  const functionsBaseUrl =
+    data.frontComponent.functionBaseUrl ?? `${REACT_APP_SERVER_BASE_URL}/s`;
 
   if (usesSdkClient) {
     return (
