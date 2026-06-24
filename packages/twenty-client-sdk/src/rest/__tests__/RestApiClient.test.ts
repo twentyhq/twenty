@@ -20,7 +20,6 @@ describe('RestApiClient', () => {
     (globalThis as Record<string, unknown>).process = {
       env: {
         TWENTY_FUNCTIONS_URL: 'https://acme.withtwenty.com',
-        TWENTY_API_URL: 'https://api.twenty.test',
         TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
       },
     };
@@ -53,36 +52,18 @@ describe('RestApiClient', () => {
     expect(requestInit.method).toBe('GET');
   });
 
-  it('falls back to the workspace url when no function url is configured', async () => {
-    delete (
-      (globalThis as Record<string, unknown>).process as {
-        env: Record<string, string>;
-      }
-    ).env.TWENTY_FUNCTIONS_URL;
-
-    const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
-
-    const client = new RestApiClient({ fetch: fetchMock });
-
-    await client.get('/rest/companies');
-
-    const [url] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://api.twenty.test/rest/companies');
-  });
-
-  it('prefers the function url over the workspace url', async () => {
+  it('prefers an explicit functionUrl option, trimming whitespace', async () => {
     const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
 
     const client = new RestApiClient({
       fetch: fetchMock,
-      functionUrl: 'https://acme.withtwenty.com/',
-      workspaceUrl: 'https://api.twenty.test',
+      functionUrl: '  https://app.example.com  ',
     });
 
     await client.post('/my-app/my-route', { name: 'Twenty' });
 
     const [url] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://acme.withtwenty.com/my-app/my-route');
+    expect(url).toBe('https://app.example.com/my-app/my-route');
   });
 
   it('trims surrounding whitespace from the function url', async () => {

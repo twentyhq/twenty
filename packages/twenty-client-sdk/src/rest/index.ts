@@ -1,6 +1,5 @@
 import {
   DEFAULT_API_KEY_NAME,
-  DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
@@ -10,7 +9,6 @@ const isDefined = <T>(value: T): value is NonNullable<T> =>
 
 export type RestApiClientOptions = {
   functionUrl?: string;
-  workspaceUrl?: string;
   token?: string;
   fetch?: typeof globalThis.fetch;
   defaultHeaders?: HeadersInit;
@@ -90,7 +88,6 @@ const buildRequestUrl = (
 
 export class RestApiClient {
   private functionUrl: string | undefined;
-  private workspaceUrl: string | undefined;
   private token: string | undefined;
   private defaultHeaders: HeadersInit | undefined;
   private fetchImplementation: typeof globalThis.fetch | null;
@@ -99,7 +96,6 @@ export class RestApiClient {
 
   constructor(options?: RestApiClientOptions) {
     this.functionUrl = options?.functionUrl;
-    this.workspaceUrl = options?.workspaceUrl;
     this.token = options?.token;
     this.defaultHeaders = options?.defaultHeaders;
     this.fetchImplementation = options?.fetch ?? globalThis.fetch ?? null;
@@ -144,21 +140,6 @@ export class RestApiClient {
 
   delete<TResponse = unknown>(path: string, options?: RestApiRequestOptions) {
     return this.execute<TResponse>('DELETE', path, undefined, options);
-  }
-
-  private resolveWorkspaceUrl(): string | undefined {
-    const workspaceUrl =
-      this.workspaceUrl ?? getProcessEnvironment()[DEFAULT_API_URL_NAME];
-
-    if (!isDefined(workspaceUrl)) {
-      return undefined;
-    }
-
-    const normalizedWorkspaceUrl = normalizeBaseUrl(workspaceUrl);
-
-    return normalizedWorkspaceUrl.length === 0
-      ? undefined
-      : normalizedWorkspaceUrl;
   }
 
   private resolveToken(): string {
@@ -323,11 +304,11 @@ export class RestApiClient {
   }
 
   private resolveRequestBaseUrl(): string {
-    const baseUrl = this.resolveFunctionUrl() ?? this.resolveWorkspaceUrl();
+    const baseUrl = this.resolveFunctionUrl();
 
     if (!isDefined(baseUrl)) {
       throw new RestApiClientError(
-        `Missing API url. Set the \`${DEFAULT_FUNCTIONS_URL_NAME}\` (or \`${DEFAULT_API_URL_NAME}\`) environment variable, or pass \`functionUrl\` / \`workspaceUrl\` to \`RestApiClient\`.`,
+        `Missing functions url. Set the \`${DEFAULT_FUNCTIONS_URL_NAME}\` environment variable or pass \`functionUrl\` to \`RestApiClient\`.`,
       );
     }
 

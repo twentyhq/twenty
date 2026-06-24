@@ -278,7 +278,7 @@ Import `RestApiClient` from `twenty-client-sdk/rest`. It belongs to the same cli
 
 `options` accepts `headers`, `query` (a record of query-string params; nullish values are skipped), and an `AbortSignal` via `signal`. A non-`FormData` object `body` is JSON-serialized automatically. On a `401`, the client refreshes the access token once through the host and retries the request.
 
-The function base URL and token are resolved from the environment by default. Pass overrides to the constructor when needed — for example in tests, or `workspaceUrl` for the rare case of calling the core REST API instead of your functions:
+The function base URL and token are resolved from the environment by default. Pass overrides to the constructor when needed — for example in tests:
 
 ```ts
 const client = new RestApiClient({
