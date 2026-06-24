@@ -8,35 +8,35 @@ import type { Response } from 'express';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import {
-  ServerWebhookTriggerException,
-  ServerWebhookTriggerExceptionCode,
-} from 'src/engine/core-modules/server-webhook-trigger/exceptions/server-webhook-trigger.exception';
+  ServerRouteTriggerException,
+  ServerRouteTriggerExceptionCode,
+} from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import type { CustomException } from 'src/utils/custom-exception';
 
-@Catch(ServerWebhookTriggerException)
-export class ServerWebhookTriggerRestApiExceptionFilter implements ExceptionFilter {
+@Catch(ServerRouteTriggerException)
+export class ServerRouteTriggerRestApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
   ) {}
 
-  catch(exception: ServerWebhookTriggerException, host: ArgumentsHost) {
+  catch(exception: ServerRouteTriggerException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
     switch (exception.code) {
-      case ServerWebhookTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
+      case ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,
           404,
         );
-      case ServerWebhookTriggerExceptionCode.FEATURE_DISABLED:
+      case ServerRouteTriggerExceptionCode.FEATURE_DISABLED:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,
           503,
         );
-      case ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_USER_UNCAUGHT_ERROR:
+      case ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,
@@ -45,13 +45,13 @@ export class ServerWebhookTriggerRestApiExceptionFilter implements ExceptionFilt
           undefined,
           { shouldBeCapturedBySentry: false },
         );
-      case ServerWebhookTriggerExceptionCode.SERVER_WEBHOOK_PLATFORM_ERROR:
+      case ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,
           500,
         );
-      case ServerWebhookTriggerExceptionCode.RESOLVER_INVALID_RESULT:
+      case ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,

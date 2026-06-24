@@ -4021,7 +4021,7 @@ input CreateLogicFunctionFromSourceInput {
   cronTriggerSettings: JSON
   databaseEventTriggerSettings: JSON
   httpRouteTriggerSettings: JSON
-  serverWebhookTriggerSettings: JSON
+  serverRouteTriggerSettings: JSON
   toolTriggerSettings: JSON
   workflowActionTriggerSettings: JSON
 }

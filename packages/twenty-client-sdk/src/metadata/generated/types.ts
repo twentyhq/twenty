@@ -10329,7 +10329,7 @@ export default {
             "httpRouteTriggerSettings": [
                 15
             ],
-            "serverWebhookTriggerSettings": [
+            "serverRouteTriggerSettings": [
                 15
             ],
             "toolTriggerSettings": [

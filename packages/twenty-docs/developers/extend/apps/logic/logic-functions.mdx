@@ -60,7 +60,7 @@ To invoke a route-triggered logic function from a (headless) front component, se
 - **cron**: Runs your function on a schedule using a CRON expression.
 - **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
 > e.g. `person.updated`, `*.created`, `company.*`
-- **serverWebhook**: Exposes a single registration-scoped webhook endpoint. A **resolver** function (declared with `serverWebhookTriggerSettings`) runs in the owner workspace, picks the target workspace from the incoming request, and the platform then runs a regular workspace **target** function in that workspace. See [Server webhook trigger](#server-webhook-trigger).
+- **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and returns the target workspace AND the target logic function to dispatch to; the platform then runs that **target** function and returns its response. See [Server route trigger](#server-route-trigger).
 
 <Note>
 You can also manually execute a function using the CLI:
@@ -173,44 +173,54 @@ For security reasons, response headers are restricted to an allow-list. Any head
 The status code must be a valid HTTP status code (between 100 and 599). Response header names are matched case-insensitively.
 </Note>
 
-#### Server webhook trigger
+#### Server route trigger
 
-`httpRouteTriggerSettings` exposes a function under `/s/` and resolves the workspace from the request host — which works when each workspace has its own domain. Third-party providers, however, deliver every tenant's events to **one** webhook URL. For that case, use `serverWebhookTriggerSettings`.
+`httpRouteTriggerSettings` exposes a function under `/s/` and resolves the workspace from the request host — which works when each workspace has its own domain. Third-party providers, however, deliver every tenant's events to **one** URL. For that case, use `serverRouteTriggerSettings`.
 
 The trigger has two parts:
 
-1. A **resolver** logic function — declared with `serverWebhookTriggerSettings` — runs in your **owner workspace** (the workspace that owns the application registration). Its only job is to inspect the incoming request and return `{ workspaceId, payload? }`.
-2. A **target** logic function — a regular per-workspace logic function — then runs in the resolved workspace with the payload returned by the resolver (or the original request payload if the resolver didn't transform it). Its return value becomes the HTTP response. **The target is where you verify the webhook signature** — it's reachable like any public HTTP endpoint, so treat it as one.
+1. A **resolver** logic function — declared with `serverRouteTriggerSettings` — runs in your **owner workspace** (the workspace that owns the application registration). It inspects the incoming request and returns `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, picking *both* the target workspace and the target function. The resolver is the single point of authorization — the URL only carries the resolver's identifier.
+2. A **target** logic function — a regular per-workspace logic function — then runs in the resolved workspace with the payload returned by the resolver (or the original request payload if the resolver didn't transform it). Its return value becomes the HTTP response. **The target is where you verify the request signature** — the route behaves like any public HTTP endpoint, so treat it as one.
 
-```ts src/logic-functions/resolve-workspace-from-webhook.logic-function.ts
+```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
 
-// Runs in the owner workspace. Reads the workspaceId off the request and
-// passes the original payload through so the target can verify the
-// signature.
+// Runs in the owner workspace. Reads the workspaceId off the request,
+// picks which target function should handle it, and passes the original
+// payload through so the target can verify the signature.
 const handler = async (event: RoutePayload) => {
-  const body = (event.body ?? {}) as { metadata?: { twentyWorkspaceId?: string } };
+  const body = (event.body ?? {}) as {
+    metadata?: { twentyWorkspaceId?: string };
+    type?: string;
+  };
 
-  return { workspaceId: body.metadata?.twentyWorkspaceId ?? '' };
+  return {
+    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    // Route different event types to different target functions.
+    targetLogicFunctionUniversalIdentifier:
+      body.type === 'invoice.paid'
+        ? 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10' // handle-invoice-paid
+        : 'd5f3b0c2-8e5f-5d0b-a0c3-3f2e7b5d9f21', // handle-other-event
+  };
 };
 
 export default defineLogicFunction({
   universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
-  name: 'resolve-workspace-from-webhook',
+  name: 'resolve-server-route',
   handler,
-  serverWebhookTriggerSettings: {
+  serverRouteTriggerSettings: {
     forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
   },
 });
 ```
 
-```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+```ts src/logic-functions/handle-invoice-paid.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the resolved workspace. Receives the full RoutePayload (headers
-// and rawBody included), verifies the webhook signature, and does the
+// and rawBody included), verifies the request signature, and does the
 // real work.
 const handler = async (event: RoutePayload) => {
   // verify signature here — see example below.
@@ -219,7 +229,7 @@ const handler = async (event: RoutePayload) => {
 
 export default defineLogicFunction({
   universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
-  name: 'handle-provider-webhook',
+  name: 'handle-invoice-paid',
   handler,
 });
 ```
@@ -227,23 +237,24 @@ export default defineLogicFunction({
 The endpoint is reachable at:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier/:targetLogicFunctionUniversalIdentifier
+POST https://your-twenty-server.com/server-routes/:resolverLogicFunctionUniversalIdentifier
 ```
 
-Both identifiers are the `universalIdentifier`s from your manifest — the resolver's, then the target's. Register that URL with the provider.
+The identifier is the resolver's `universalIdentifier` from your manifest. Register that URL with the provider.
 
-**Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverWebhookTriggerSettings`, your handler is constrained to return `{ workspaceId: string; payload?: object }` (or a `Promise` of it). The `workspaceId` must be a workspace where your target function is installed, otherwise the request is rejected with `404`.
+**Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverRouteTriggerSettings`, your handler is constrained to return `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (or a `Promise` of it). The `workspaceId` must be a workspace where the target function is installed, otherwise the request is rejected with `404`.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `workspaceId` | `string` | Workspace UUID where the target will run. |
+| `targetLogicFunctionUniversalIdentifier` | `string` | `universalIdentifier` of the logic function to invoke in that workspace. |
 | `payload` | `object` (optional) | If set, replaces the request body sent to the target. Leave it out (the default) when the target needs the original `rawBody` and headers to verify the signature. |
 
 <Warning>
-**Signature verification is the target's responsibility.** The platform does not verify webhook signatures — the endpoint behaves like any public HTTP webhook, and the caller controls which target function in the resolved workspace runs. Verify the signature in the **target** using `event.rawBody` and the headers you listed in the resolver's `forwardedRequestHeaders`. Reject (throw or return a non-2xx) **before** any side effect, and use a constant-time comparison. Don't rely on the resolver for verification — when it returns a `payload`, the target loses `rawBody` and headers.
+**Signature verification is the target's responsibility.** The platform does not verify request signatures — the endpoint behaves like any public HTTP route. Verify the signature in the **target** using `event.rawBody` and the headers you listed in the resolver's `forwardedRequestHeaders`. Reject (throw or return a non-2xx) **before** any side effect, and use a constant-time comparison. Don't rely on the resolver for verification — when it returns a `payload`, the target loses `rawBody` and headers.
 </Warning>
 
-Most providers sign with HMAC-SHA256; the parts that differ are the header name, the digest encoding, and the signed-payload string. A few examples:
+For request signatures, most providers sign with HMAC-SHA256; the parts that differ are the header name, the digest encoding, and the signed-payload string. A few examples:
 
 | Provider | Headers to forward | Signed string | Digest |
 |----------|--------------------|---------------|--------|
@@ -255,7 +266,7 @@ Most providers sign with HMAC-SHA256; the parts that differ are the header name,
 
 Verify the signature **in the target** before any side effect:
 
-```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+```ts src/logic-functions/handle-invoice-paid.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
@@ -282,13 +293,13 @@ const handler = async (event: RoutePayload) => {
 
 export default defineLogicFunction({
   universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
-  name: 'handle-provider-webhook',
+  name: 'handle-invoice-paid',
   handler,
 });
 ```
 
 <Note>
-The target runs **synchronously** and its returned value becomes the HTTP response, so providers see your status code and can retry on non-2xx. Keep both handlers fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is unauthenticated by design, protect this endpoint with rate limiting at your edge.
+The target runs **synchronously** and its returned value becomes the HTTP response, so callers see your status code and can retry on non-2xx. Keep both handlers fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is unauthenticated by design, protect this endpoint with rate limiting at your edge.
 </Note>
 
 #### Database event trigger payload

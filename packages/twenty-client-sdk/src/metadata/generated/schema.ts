@@ -6366,7 +6366,7 @@ export interface DeleteOneIndexInput {
 /** The id of the custom index to delete. */
 id: Scalars['UUID']}
 
-export interface CreateLogicFunctionFromSourceInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),source?: (Scalars['JSON'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null),serverWebhookTriggerSettings?: (Scalars['JSON'] | null),toolTriggerSettings?: (Scalars['JSON'] | null),workflowActionTriggerSettings?: (Scalars['JSON'] | null)}
+export interface CreateLogicFunctionFromSourceInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),source?: (Scalars['JSON'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null),serverRouteTriggerSettings?: (Scalars['JSON'] | null),toolTriggerSettings?: (Scalars['JSON'] | null),workflowActionTriggerSettings?: (Scalars['JSON'] | null)}
 
 export interface ExecuteOneLogicFunctionInput {
 /** Id of the logic function to execute */

@@ -12,7 +12,7 @@ import {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
-  ServerWebhookTriggerSettings,
+  ServerRouteTriggerSettings,
   ToolTriggerSettings,
   WorkflowActionTriggerSettings,
 } from 'twenty-shared/application';
@@ -87,7 +87,7 @@ export class LogicFunctionEntity
   httpRouteTriggerSettings: JsonbProperty<HttpRouteTriggerSettings> | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  serverWebhookTriggerSettings: JsonbProperty<ServerWebhookTriggerSettings> | null;
+  serverRouteTriggerSettings: JsonbProperty<ServerRouteTriggerSettings> | null;
 
   @Column({ nullable: true, type: 'jsonb' })
   toolTriggerSettings: JsonbProperty<ToolTriggerSettings> | null;

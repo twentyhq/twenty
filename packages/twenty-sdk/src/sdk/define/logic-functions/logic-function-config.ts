@@ -1,21 +1,25 @@
 import {
   type LogicFunctionManifest,
-  type ServerWebhookTriggerSettings,
+  type ServerRouteTriggerSettings,
 } from 'twenty-shared/application';
 
 export type LogicFunctionHandler = (...args: any[]) => any | Promise<any>;
 
-// A resolver function attached to `serverWebhookTriggerSettings` runs in the
-// owner workspace and must return the target workspace to dispatch to. The
-// server contract is `{ workspaceId: string; payload?: object }`.
-export type ServerWebhookResolverResult = {
+// A resolver function attached to `serverRouteTriggerSettings` runs in the
+// owner workspace and must return BOTH the target workspace and the target
+// logic function to dispatch to. The server contract is
+// `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string;
+// payload?: object }`. The resolver is the single point of authorization —
+// the URL only carries the resolver's universalIdentifier.
+export type ServerRouteResolverResult = {
   workspaceId: string;
+  targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
 };
 
-export type ServerWebhookResolverHandler = (
+export type ServerRouteResolverHandler = (
   ...args: any[]
-) => ServerWebhookResolverResult | Promise<ServerWebhookResolverResult>;
+) => ServerRouteResolverResult | Promise<ServerRouteResolverResult>;
 
 type LogicFunctionConfigBase = Omit<
   LogicFunctionManifest,
@@ -23,17 +27,17 @@ type LogicFunctionConfigBase = Omit<
   | 'builtHandlerPath'
   | 'builtHandlerChecksum'
   | 'handlerName'
-  | 'serverWebhookTriggerSettings'
+  | 'serverRouteTriggerSettings'
 >;
 
 export type LogicFunctionConfig = LogicFunctionConfigBase &
   (
     | {
-        serverWebhookTriggerSettings?: undefined;
+        serverRouteTriggerSettings?: undefined;
         handler: LogicFunctionHandler;
       }
     | {
-        serverWebhookTriggerSettings: ServerWebhookTriggerSettings;
-        handler: ServerWebhookResolverHandler;
+        serverRouteTriggerSettings: ServerRouteTriggerSettings;
+        handler: ServerRouteResolverHandler;
       }
   );
