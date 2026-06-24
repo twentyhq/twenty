@@ -1,6 +1,5 @@
 import path from 'path';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 
 const entries = [
@@ -51,15 +50,11 @@ export default defineConfig(() => {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-client-sdk',
     resolve: {
+      tsconfigPaths: true,
       alias: {
         '@/': path.resolve(__dirname, 'src') + '/',
       },
     },
-    plugins: [
-      tsconfigPaths({
-        root: __dirname,
-      }),
-    ],
     build: {
       emptyOutDir: false,
       outDir: 'dist',

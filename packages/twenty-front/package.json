@@ -204,7 +204,6 @@
     "storybook-addon-mock-date": "2.0.0",
     "storybook-addon-pseudo-states": "^10.3.3",
     "ts-jest": "^29.1.1",
-    "vite-plugin-svgr": "^4.3.0",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-plugin-svgr": "^4.3.0"
   }
 }
