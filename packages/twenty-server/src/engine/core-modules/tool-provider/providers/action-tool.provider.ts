@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { ACTION_TOOL_LABELS } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
+import {
+  ACTION_TOOL_LABELS,
+  type ActionToolId,
+} from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ActionToolLabel } from 'src/engine/core-modules/tool-provider/types/action-tool-label.type';
 import { translateToolLabel } from 'src/engine/core-modules/tool-provider/utils/translate-tool-label.util';
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 
@@ -196,11 +201,12 @@ export class ActionToolProvider implements ToolProvider {
     includeSchemas: boolean,
     locale?: ToolProviderContext['locale'],
   ): ToolIndexEntry | ToolDescriptor {
-    const labels = ACTION_TOOL_LABELS[toolId];
+    const labels: ActionToolLabel | undefined =
+      ACTION_TOOL_LABELS[toolId as ActionToolId];
 
     return {
       name: toolId,
-      label: labels
+      label: isDefined(labels)
         ? translateToolLabel(labels.label, this.i18nService, locale)
         : humanizeToolName(toolId),
       description: tool.description,

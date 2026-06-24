@@ -1,4 +1,5 @@
 import { i18n } from '@lingui/core';
+import { ToolCategory } from 'twenty-shared/ai';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
@@ -18,7 +19,7 @@ const makeDisplayContext = ({
 }: {
   labels?: Array<[string, string]>;
   indexEntries?: Array<
-    [string, { category: string; objectName?: string | null }]
+    [string, { category: ToolCategory; objectName?: string | null }]
   >;
   objectMetadataItems?: Array<
     Pick<
@@ -377,7 +378,7 @@ describe('getToolDisplayMessage', () => {
     it('should use default Ran/Running for action tools without custom status labels', () => {
       const displayContext = makeDisplayContext({
         labels: [['http_request', 'HTTP Request']],
-        indexEntries: [['http_request', { category: 'ACTION' }]],
+        indexEntries: [['http_request', { category: ToolCategory.ACTION }]],
       });
 
       const finished = getToolDisplayMessage({
@@ -407,7 +408,7 @@ describe('getToolDisplayMessage', () => {
         indexEntries: [
           [
             'create_one_person',
-            { category: 'DATABASE_CRUD', objectName: 'person' },
+            { category: ToolCategory.DATABASE_CRUD, objectName: 'person' },
           ],
         ],
         objectMetadataItems: [personMetadata],
@@ -429,7 +430,7 @@ describe('getToolDisplayMessage', () => {
         indexEntries: [
           [
             'create_one_person',
-            { category: 'DATABASE_CRUD', objectName: 'person' },
+            { category: ToolCategory.DATABASE_CRUD, objectName: 'person' },
           ],
         ],
         objectMetadataItems: [personMetadata],
@@ -472,7 +473,7 @@ describe('getToolDisplayMessage', () => {
     it('should use custom action status labels when available', () => {
       const displayContext = makeDisplayContext({
         labels: [['send_email', 'Send Email']],
-        indexEntries: [['send_email', { category: 'ACTION' }]],
+        indexEntries: [['send_email', { category: ToolCategory.ACTION }]],
       });
 
       const finished = getToolDisplayMessage({

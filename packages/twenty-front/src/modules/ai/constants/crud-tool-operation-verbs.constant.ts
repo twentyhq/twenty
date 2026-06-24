@@ -5,10 +5,6 @@ import { type ToolStatusLabels } from '@/ai/types/tool-status-labels.type';
 
 export type CrudToolOperation = DatabaseCrudOperation;
 
-export const isCrudPluralOperation = (
-  operation: CrudToolOperation,
-): boolean => operation.endsWith('_many') || operation === 'group_by';
-
 export const CRUD_TOOL_OPERATION_VERBS: Record<
   CrudToolOperation,
   ToolStatusLabels

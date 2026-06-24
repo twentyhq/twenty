@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
+import { type ActionToolLabel } from 'src/engine/core-modules/tool-provider/types/action-tool-label.type';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const ACTION_TOOL_IDS = [
@@ -12,10 +13,6 @@ export const ACTION_TOOL_IDS = [
 ] as const;
 
 export type ActionToolId = (typeof ACTION_TOOL_IDS)[number];
-
-type ActionToolLabel = {
-  label: string;
-};
 
 export const ACTION_TOOL_LABELS: Record<ActionToolId, ActionToolLabel> = {
   http_request: {

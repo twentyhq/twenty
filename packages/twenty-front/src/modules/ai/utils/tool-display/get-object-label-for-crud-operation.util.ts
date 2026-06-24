@@ -1,9 +1,7 @@
 import { i18n } from '@lingui/core';
 
-import {
-  isCrudPluralOperation,
-  type CrudToolOperation,
-} from '@/ai/constants/crud-tool-operation-verbs.constant';
+import { type CrudToolOperation } from '@/ai/constants/crud-tool-operation-verbs.constant';
+import { isCrudPluralOperation } from '@/ai/utils/tool-display/is-crud-plural-operation.util';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 

@@ -107,13 +107,8 @@ const buildToolDisplayMessage = ({
     case 'code_interpreter': {
       const parsed = ModelGeneratedLabelSchema.safeParse(input);
 
-      if (
-        parsed.success &&
-        isNonEmptyString(parsed.data.loadingMessage)
-      ) {
-        const completedMessage = isNonEmptyString(
-          parsed.data.completedMessage,
-        )
+      if (parsed.success && isNonEmptyString(parsed.data.loadingMessage)) {
+        const completedMessage = isNonEmptyString(parsed.data.completedMessage)
           ? parsed.data.completedMessage
           : parsed.data.loadingMessage;
 

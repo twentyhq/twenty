@@ -37,7 +37,7 @@ export const buildCrudToolStatusMessage = ({
 
   return pickStatusLabel({
     isFinished,
-    loadingLabel: i18n._(verbs.loading, { objectLabel }),
-    completedLabel: i18n._(verbs.completed, { objectLabel }),
+    loadingLabel: i18n._({ ...verbs.loading, values: { objectLabel } }),
+    completedLabel: i18n._({ ...verbs.completed, values: { objectLabel } }),
   });
 };

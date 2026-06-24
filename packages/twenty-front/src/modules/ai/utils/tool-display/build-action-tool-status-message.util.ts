@@ -1,4 +1,5 @@
 import { i18n } from '@lingui/core';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ACTION_TOOL_STATUS_LABELS } from '@/ai/constants/action-tool-status-labels.constant';
 import { buildGenericToolStatusMessage } from '@/ai/utils/tool-display/build-generic-tool-status-message.util';
@@ -17,7 +18,7 @@ export const buildActionToolStatusMessage = ({
   const label = displayContext.labelByName.get(toolName) ?? toolName;
   const statusLabels = ACTION_TOOL_STATUS_LABELS[toolName];
 
-  if (statusLabels) {
+  if (isDefined(statusLabels)) {
     return pickStatusLabel({
       isFinished,
       loadingLabel: i18n._(statusLabels.loading),
