@@ -40,7 +40,8 @@ type CurrentSchemaMutationResult = {
   updateCallRecordings?: { id?: string }[] | null;
 };
 
-// Typed bridge until the generated SDK includes the current CallRecording schema.
+// TODO: Remove this bridge once the released SDK includes the current
+// CallRecording schema with FAILED and meetingBotFailureReason.
 export const executeCurrentSchemaMutation = (
   client: CoreApiClient,
   mutation: CurrentSchemaMutation,
