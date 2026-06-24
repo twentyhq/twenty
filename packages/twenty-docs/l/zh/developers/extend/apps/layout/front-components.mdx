@@ -200,24 +200,29 @@ export default defineFrontComponent({
 
 前端组件在沙盒 Web Worker 中于浏览器端运行，而[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)在服务器端运行。 二者之间没有直接的进程内调用——前端组件通过 HTTP 访问逻辑函数。
 
-使用 `httpRouteTriggerSettings` 声明的逻辑函数会通过 `/s/` 端点暴露在 `${TWENTY_API_URL}/s\<path>` 下。 你的前端组件使用来自 `twenty-client-sdk/rest` 的 `RestApiClient` 调用该路由，该客户端会使用 Twenty 注入到 worker 中的 `TWENTY_APP_ACCESS_TOKEN` 进行身份验证。
+使用 `httpRouteTriggerSettings` 声明的逻辑函数，可以通过其路由路径在 HTTP 上进行访问。 Twenty 会将提供你函数服务的基础 URL 作为 `TWENTY_FUNCTIONS_URL` 注入到 worker 中，同时注入用于对调用进行身份验证的 `TWENTY_APP_ACCESS_TOKEN`。 目前还没有用于调用你自定义函数的专用 SDK 客户端，因此请使用普通的 `fetch` 来调用它们：
 
-`RestApiClient` 正是为这种场景而构建的。 它会从 worker 环境中读取 `TWENTY_API_URL` 和 `TWENTY_APP_ACCESS_TOKEN`，附加 `Authorization: Bearer` 请求头，对 JSON 进行序列化和解析，并在 token 或 URL 缺失或响应为非 2xx 时抛出 `RestApiClientError`——这样你就不必在每个组件中重复实现这些样板逻辑。
+> **在 Twenty Cloud 上，HTTP 触发的逻辑函数通过每个工作区的专用域名提供服务**，域名为 `https://\<your-workspace-subdomain>.twenty.com\<path>`——这正是 `TWENTY_FUNCTIONS_URL` 所解析到的地址。 对于外部调用方，请从函数的 **HTTP trigger** 设置或应用的 **Settings** 选项卡中复制准确的 URL。
+
+<Warning>
+  旧版的 `/s/` 函数路由已被**弃用**，并将于 **2026-07-24 停用**。 请改用上面的 `TWENTY_FUNCTIONS_URL`，并在该日期之前迁移所有硬编码的 `/s/` URL。 `/s/` 路由在自托管场景下仍可用。
+</Warning>
 
 无头前端组件可以通过 `Command` 组件在挂载时执行调用，然后自动卸载：
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    const client = new RestApiClient();
-
-    await client.post('/s/github/fetch-prs', {
-      owner: 'twentyhq',
-      repo: 'twenty',
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
     });
   };
 
@@ -233,7 +238,7 @@ export default defineFrontComponent({
 });
 ```
 
-传递给客户端的路径是该路由的公共路径——逻辑函数的 `httpRouteTriggerSettings.path`，并以 `/s` 作为前缀。 保持 `isAuthRequired: true`；客户端会为你的组件提供由 Twenty 签发的应用访问令牌：
+附加到 `TWENTY_FUNCTIONS_URL` 的路径是逻辑函数的 `httpRouteTriggerSettings.path`。 保持 `isAuthRequired: true`；Twenty 为你的组件生成的 `TWENTY_APP_ACCESS_TOKEN` 会对请求进行认证：
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -258,12 +263,12 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_API_URL` 和 `TWENTY_APP_ACCESS_TOKEN` 会被自动注入——参见 [应用变量](#application-variables)。 由于机密应用变量永远不会暴露给前端组件，请将 API 密钥和其他敏感逻辑保留在逻辑函数中，而不是前端组件中。
+`TWENTY_FUNCTIONS_URL` 和 `TWENTY_APP_ACCESS_TOKEN` 会被自动注入——参见 [应用变量](#application-variables)。 由于机密应用变量永远不会暴露给前端组件，请将 API 密钥和其他敏感逻辑保留在逻辑函数中，而不是前端组件中。
 </Note>
 
-### RestApiClient 参考
+### 调用 Twenty REST API
 
-从 `twenty-client-sdk/rest` 中导入 `RestApiClient`。 它与 `CoreApiClient` 和 `MetadataApiClient` 属于同一客户端家族，但目标是你应用的 HTTP 路由，而不是 GraphQL API。
+要在前端组件中读取或写入 Twenty 记录，请使用来自 `twenty-client-sdk/rest` 的 `RestApiClient`。 它与 `CoreApiClient` 和 `MetadataApiClient` 属于同一客户端家族，但目标是 Twenty REST API（`/rest/...`），而不是 GraphQL API，其基础 URL 来自 `TWENTY_API_URL`。
 
 | 方法                                | 描述                |
 | --------------------------------- | ----------------- |
@@ -280,7 +285,7 @@ export default defineLogicFunction({
 
 ```ts
 const client = new RestApiClient({
-  baseUrl: 'https://api.example.com',
+  baseUrl: 'https://myworkspace.twenty.com',
   token: 'my-token',
 });
 ```
@@ -293,8 +298,8 @@ import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 const client = new RestApiClient();
 
 try {
-  const prs = await client.get('/s/github/fetch-prs', {
-    query: { state: 'open' },
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
   });
 } catch (error) {
   if (error instanceof RestApiClientError) {
@@ -374,10 +379,11 @@ export default defineFrontComponent({
 
 以下系统变量始终可以通过 `process.env` 获取：
 
-| 变量                        | 描述                 |
-| ------------------------- | ------------------ |
-| `TWENTY_API_URL`          | Twenty API 的基础 URL |
-| `TWENTY_APP_ACCESS_TOKEN` | 限定在你的应用角色范围内的短期令牌  |
+| 变量                        | 描述                                           |
+| ------------------------- | -------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | 提供你应用 HTTP 逻辑函数的基础 URL（由 `RestApiClient` 使用） |
+| `TWENTY_API_URL`          | Twenty 核心 API 的基础 URL                        |
+| `TWENTY_APP_ACCESS_TOKEN` | 限定在你的应用角色范围内的短期令牌                            |
 
 ## 宿主通信 API
 

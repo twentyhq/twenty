@@ -18,7 +18,7 @@
   {
     "name": "testing",
     "path": "dist/testing.mjs",
-    "limit": "188 kB"
+    "limit": "50 kB"
   },
   {
     "name": "data-display",
@@ -38,7 +38,7 @@
   {
     "name": "surfaces",
     "path": "dist/surfaces.mjs",
-    "limit": "100 kB"
+    "limit": "70 kB"
   },
   {
     "name": "feedback",
@@ -53,7 +53,7 @@
   {
     "name": "layout",
     "path": "dist/layout.mjs",
-    "limit": "60 kB"
+    "limit": "25 kB"
   },
   {
     "name": "navigation",
@@ -63,17 +63,17 @@
   {
     "name": "json-visualizer",
     "path": "dist/json-visualizer.mjs",
-    "limit": "173 kB"
+    "limit": "30 kB"
   },
   {
     "name": "theme",
     "path": "dist/theme.mjs",
-    "limit": "55 kB"
+    "limit": "25 kB"
   },
   {
     "name": "theme-constants",
     "path": "dist/theme-constants.mjs",
-    "limit": "20 kB"
+    "limit": "12 kB"
   },
   {
     "name": "utilities",
@@ -83,6 +83,6 @@
   {
     "name": "style.css",
     "path": "dist/style.css",
-    "limit": "40 kB"
+    "limit": "20 kB"
   }
 ]
