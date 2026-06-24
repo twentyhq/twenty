@@ -1139,6 +1139,7 @@ export type CreateLogicFunctionFromSourceInput = {
   httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   name: Scalars['String']['input'];
+  serverRouteTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
   source?: InputMaybe<Scalars['JSON']['input']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;
   toolTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
