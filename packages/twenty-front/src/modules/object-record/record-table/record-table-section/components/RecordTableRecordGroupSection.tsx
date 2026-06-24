@@ -4,11 +4,14 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { RecordGroupRelationChip } from '@/object-record/record-group/components/RecordGroupRelationChip';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { isRelationValueRecordGroup } from '@/object-record/record-group/utils/isRelationValueRecordGroup';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -125,6 +128,10 @@ export const RecordTableRecordGroupSection = () => {
     currentRecordGroupId,
   );
 
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
+    recordIndexGroupFieldMetadataItemComponentState,
+  );
+
   const recordIndexAggregateDisplayValueForGroupValue =
     useAtomComponentFamilyStateValue(
       recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
@@ -188,6 +195,11 @@ export const RecordTableRecordGroupSection = () => {
     return null;
   }
 
+  const isRelationValueGroup = isRelationValueRecordGroup({
+    fieldMetadataItem: recordIndexGroupFieldMetadataItem,
+    recordGroupDefinition,
+  });
+
   return (
     <StyledTrContainer onClick={handleDropdownToggle}>
       <StyledRecordTableDragAndDropPlaceholderCell />
@@ -206,20 +218,27 @@ export const RecordTableRecordGroupSection = () => {
         width={widthOfLabelIdentifierRecordField}
       >
         <StyledTagContainer>
-          <Tag
-            variant={
-              recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-                ? 'solid'
-                : 'outline'
-            }
-            color={
-              recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-                ? recordGroupDefinition.color
-                : 'transparent'
-            }
-            text={recordGroupDefinition.title}
-            weight="medium"
-          />
+          {isRelationValueGroup ? (
+            <RecordGroupRelationChip
+              fieldMetadataItem={recordIndexGroupFieldMetadataItem!}
+              recordId={recordGroupDefinition.value!}
+            />
+          ) : (
+            <Tag
+              variant={
+                recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
+                  ? 'solid'
+                  : 'outline'
+              }
+              color={
+                recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
+                  ? recordGroupDefinition.color
+                  : 'transparent'
+              }
+              text={recordGroupDefinition.title}
+              weight="medium"
+            />
+          )}
         </StyledTagContainer>
         <RecordBoardColumnHeaderAggregateDropdown
           aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
