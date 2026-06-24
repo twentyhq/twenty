@@ -82,6 +82,12 @@ jobs:
         with:
           tag: scope:backend
           tasks: lint,typecheck,lingui:extract
+      # Separate step so compile never races extract on the .po files.
+      - name: Server / Run lingui compile
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: lingui:compile
 
   server-previous-version-upgrade-mutation-guard:
     timeout-minutes: 5
