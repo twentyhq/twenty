@@ -10,9 +10,11 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 describe('SubdomainManagerService', () => {
   let service: SubdomainManagerService;
   const takenSubdomains = new Set<string>();
+  let areAllSubdomainsTaken = false;
 
   beforeEach(async () => {
     takenSubdomains.clear();
+    areAllSubdomainsTaken = false;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -22,7 +24,8 @@ describe('SubdomainManagerService', () => {
           useValue: {
             findOne: jest.fn((options: { where: { subdomain: string } }) =>
               Promise.resolve(
-                takenSubdomains.has(options.where.subdomain)
+                areAllSubdomainsTaken ||
+                  takenSubdomains.has(options.where.subdomain)
                   ? ({} as WorkspaceEntity)
                   : null,
               ),
@@ -91,6 +94,14 @@ describe('SubdomainManagerService', () => {
       subdomains.forEach((candidate) =>
         expect(takenSubdomains.has(candidate)).toBe(false),
       );
+    });
+
+    it('does not pad with unverified subdomains when availability is scarce', async () => {
+      areAllSubdomainsTaken = true;
+
+      const subdomains = await service.findAvailableSubdomains('acme', 3);
+
+      expect(subdomains).toHaveLength(1);
     });
   });
 });

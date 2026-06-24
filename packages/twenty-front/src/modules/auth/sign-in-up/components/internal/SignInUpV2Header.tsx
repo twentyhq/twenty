@@ -18,7 +18,8 @@ const StyledHeader = styled.div`
 const StyledSide = styled.div`
   align-items: center;
   display: flex;
-  flex: 1 0 0;
+  flex: 1 1 0;
+  min-width: 0;
 `;
 
 const StyledLeftSide = styled(StyledSide)`
@@ -29,9 +30,9 @@ const StyledLeftSide = styled(StyledSide)`
 const StyledCenter = styled.div`
   align-items: center;
   display: flex;
-  flex-shrink: 0;
+  flex: 0 1 ${HEADER_CENTER_WIDTH}px;
   justify-content: flex-start;
-  width: ${HEADER_CENTER_WIDTH}px;
+  min-width: 0;
 `;
 
 const StyledLogo = styled.div`

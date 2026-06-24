@@ -213,6 +213,7 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
               if (isDefined(file)) {
                 handleLogoUpload(file);
               }
+              event.target.value = '';
             }}
           />
           <Button

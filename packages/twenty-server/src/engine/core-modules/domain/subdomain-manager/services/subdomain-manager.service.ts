@@ -112,12 +112,8 @@ export class SubdomainManagerService {
       await collectIfFreeToUse(generateRandomSubdomain());
     }
 
-    while (availableSubdomains.length < count) {
-      const candidate = generateRandomSubdomain();
-
-      if (!availableSubdomains.includes(candidate)) {
-        availableSubdomains.push(candidate);
-      }
+    if (availableSubdomains.length === 0) {
+      availableSubdomains.push(generateRandomSubdomain());
     }
 
     return availableSubdomains;
