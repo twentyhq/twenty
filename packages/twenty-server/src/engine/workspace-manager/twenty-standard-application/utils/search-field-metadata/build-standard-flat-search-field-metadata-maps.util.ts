@@ -12,16 +12,21 @@ import { buildCallRecordingStandardFlatSearchFieldMetadatas } from 'src/engine/w
 import { buildCompanyStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-company-standard-flat-search-field-metadata.util';
 import { buildDashboardStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-dashboard-standard-flat-search-field-metadata.util';
 import { buildMessageCampaignStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-campaign-standard-flat-search-field-metadata.util';
+import { buildMessageChannelMessageAssociationMessageFolderStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-channel-message-association-message-folder-standard-flat-search-field-metadata.util';
 import { buildMessageChannelMessageAssociationStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-channel-message-association-standard-flat-search-field-metadata.util';
+import { buildMessageListMemberStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-list-member-standard-flat-search-field-metadata.util';
 import { buildMessageListStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-list-standard-flat-search-field-metadata.util';
 import { buildMessageParticipantStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-participant-standard-flat-search-field-metadata.util';
 import { buildMessageStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-standard-flat-search-field-metadata.util';
 import { buildMessageThreadStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-message-thread-standard-flat-search-field-metadata.util';
 import { buildNoteStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-note-standard-flat-search-field-metadata.util';
+import { buildNoteTargetStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-note-target-standard-flat-search-field-metadata.util';
 import { buildOpportunityStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-opportunity-standard-flat-search-field-metadata.util';
 import { buildPersonStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-person-standard-flat-search-field-metadata.util';
 import { buildTaskStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-task-standard-flat-search-field-metadata.util';
+import { buildTaskTargetStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-task-target-standard-flat-search-field-metadata.util';
 import { buildTimelineActivityStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-timeline-activity-standard-flat-search-field-metadata.util';
+import { buildWorkflowAutomatedTriggerStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-workflow-automated-trigger-standard-flat-search-field-metadata.util';
 import { buildWorkflowRunStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-workflow-run-standard-flat-search-field-metadata.util';
 import { buildWorkflowStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-workflow-standard-flat-search-field-metadata.util';
 import { buildWorkflowVersionStandardFlatSearchFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/compute-workflow-version-standard-flat-search-field-metadata.util';
@@ -32,17 +37,13 @@ type StandardSearchFieldBuilder<P extends AllStandardObjectName> = (
   args: Omit<CreateStandardSearchFieldArgs<P>, 'context'>,
 ) => FlatSearchFieldMetadata[];
 
-// Rows are emitted for every object whose searchVector indexes a meaningful field,
-// not just the isSearchable ones: object-level isSearchable only gates global search,
-// while scoped/record-picker search (and the searchVector column itself) is decoupled
-// from it. Each object's field set mirrors its searchVector asExpression, built from
-// the same SEARCH_FIELDS_FOR_* constant.
-// Intentionally excluded: objects whose searchVector indexes only `id` or nothing
-// (noteTarget, taskTarget, messageListMember, workflowAutomatedTrigger,
-// messageChannelMessageAssociationMessageFolder) — these carry no searchable text.
-// The searchVector column is kept; in a follow-up, with zero search field metadata
-// rows it derives to `to_tsvector('simple', NULL)` and drops its GIN index, rather
-// than being removed.
+// Rows are emitted for every object that authors a searchVector, not just the
+// isSearchable ones: object-level isSearchable only gates global search, while
+// scoped/record-picker search (and the searchVector column itself) is decoupled from it.
+// Each object's row set mirrors its searchVector asExpression, built from the same
+// SEARCH_FIELDS_FOR_* constant. Junction objects with no searchable text field index
+// their UUID id (their label identifier) so the rows still mirror the column and the
+// record stays resolvable by its full id — there are no excluded objects.
 const STANDARD_FLAT_SEARCH_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: buildAttachmentStandardFlatSearchFieldMetadatas,
   blocklist: buildBlocklistStandardFlatSearchFieldMetadatas,
@@ -58,15 +59,22 @@ const STANDARD_FLAT_SEARCH_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   messageCampaign: buildMessageCampaignStandardFlatSearchFieldMetadatas,
   messageChannelMessageAssociation:
     buildMessageChannelMessageAssociationStandardFlatSearchFieldMetadatas,
+  messageChannelMessageAssociationMessageFolder:
+    buildMessageChannelMessageAssociationMessageFolderStandardFlatSearchFieldMetadatas,
   messageList: buildMessageListStandardFlatSearchFieldMetadatas,
+  messageListMember: buildMessageListMemberStandardFlatSearchFieldMetadatas,
   messageParticipant: buildMessageParticipantStandardFlatSearchFieldMetadatas,
   messageThread: buildMessageThreadStandardFlatSearchFieldMetadatas,
   note: buildNoteStandardFlatSearchFieldMetadatas,
+  noteTarget: buildNoteTargetStandardFlatSearchFieldMetadatas,
   opportunity: buildOpportunityStandardFlatSearchFieldMetadatas,
   person: buildPersonStandardFlatSearchFieldMetadatas,
   task: buildTaskStandardFlatSearchFieldMetadatas,
+  taskTarget: buildTaskTargetStandardFlatSearchFieldMetadatas,
   timelineActivity: buildTimelineActivityStandardFlatSearchFieldMetadatas,
   workflow: buildWorkflowStandardFlatSearchFieldMetadatas,
+  workflowAutomatedTrigger:
+    buildWorkflowAutomatedTriggerStandardFlatSearchFieldMetadatas,
   workflowRun: buildWorkflowRunStandardFlatSearchFieldMetadatas,
   workflowVersion: buildWorkflowVersionStandardFlatSearchFieldMetadatas,
   workspaceMember: buildWorkspaceMemberStandardFlatSearchFieldMetadatas,

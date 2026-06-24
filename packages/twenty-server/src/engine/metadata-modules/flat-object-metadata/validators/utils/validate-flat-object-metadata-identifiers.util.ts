@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import {
   isDefined,
   isLabelIdentifierFieldMetadataTypes,
-  isSearchableFieldType,
 } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -52,13 +51,6 @@ export const validateFlatObjectMetadataIdentifiers = ({
         message:
           'labelIdentifierFieldMetadataUniversalIdentifier validation failed: field type not compatible',
         userFriendlyMessage: msg`Field cannot be used as label identifier due to its type: should be of type UUID, text or full name`,
-      });
-    } else if (!isSearchableFieldType(universalFlatFieldMetadata.type)) {
-      errors.push({
-        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-        message:
-          'labelIdentifierFieldMetadataUniversalIdentifier validation failed: field type not compatible',
-        userFriendlyMessage: msg`Field cannot be used as label identifier due to its type`,
       });
     }
   }

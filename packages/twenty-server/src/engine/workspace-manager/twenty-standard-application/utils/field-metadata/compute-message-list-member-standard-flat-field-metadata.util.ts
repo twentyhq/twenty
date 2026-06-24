@@ -15,6 +15,7 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
+import { SEARCH_FIELDS_FOR_MESSAGE_LIST_MEMBER } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 
 export const buildMessageListMemberStandardFlatFieldMetadatas = ({
   now,
@@ -235,9 +236,9 @@ export const buildMessageListMemberStandardFlatFieldMetadatas = ({
       isNullable: true,
       settings: {
         generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields([
-          { name: 'id', type: FieldMetadataType.UUID },
-        ]),
+        asExpression: getTsVectorColumnExpressionFromFields(
+          SEARCH_FIELDS_FOR_MESSAGE_LIST_MEMBER,
+        ),
       },
     },
     standardObjectMetadataRelatedEntityIds,
