@@ -43,10 +43,7 @@ export default defineConfig(() => {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-ui-individual',
     assetsInclude: ['src/**/*.svg'],
-    plugins: [
-      react(),
-      svgr(),
-    ],
+    plugins: [react(), svgr()],
     build: {
       cssCodeSplit: false,
       minify: 'esbuild',

@@ -11,7 +11,7 @@ process.env.TWENTY_API_KEY = TWENTY_API_KEY;
 
 export default defineConfig({
   resolve: {
-    tsconfigPaths: './tsconfig.spec.json',
+    tsconfigPaths: true,
   },
   test: {
     testTimeout: 120_000,
