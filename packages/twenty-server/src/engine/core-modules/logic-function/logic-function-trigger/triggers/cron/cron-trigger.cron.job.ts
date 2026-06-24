@@ -21,7 +21,7 @@ import {
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getMatchingTriggerTimestamp } from 'src/utils/should-run-now.utils';
+import { shouldTriggerNow } from 'src/utils/should-trigger-now.utils';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
@@ -80,10 +80,7 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          const triggerTimestamp = getMatchingTriggerTimestamp(
-            cronSettings.pattern,
-            now,
-          );
+          const triggerTimestamp = shouldTriggerNow(cronSettings.pattern, now);
 
           if (triggerTimestamp === null) {
             continue;

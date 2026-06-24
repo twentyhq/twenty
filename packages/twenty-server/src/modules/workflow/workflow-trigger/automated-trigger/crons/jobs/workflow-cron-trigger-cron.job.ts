@@ -26,7 +26,7 @@ import {
   WorkflowTriggerJob,
   type WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
-import { shouldRunNow } from 'src/utils/should-run-now.utils';
+import { shouldTriggerNow } from 'src/utils/should-trigger-now.utils';
 
 export const WORKFLOW_CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
@@ -82,7 +82,7 @@ export class WorkflowCronTriggerCronJob {
           continue;
         }
 
-        if (!shouldRunNow(trigger.pattern, now)) {
+        if (shouldTriggerNow(trigger.pattern, now) === null) {
           continue;
         }
 
@@ -178,7 +178,7 @@ export class WorkflowCronTriggerCronJob {
 
         triggersToCache.push(cachedTrigger);
 
-        if (shouldRunNow(settings.pattern, now)) {
+        if (shouldTriggerNow(settings.pattern, now) !== null) {
           this.logger.log(
             `Trigger ${trigger.id}: enqueuing WorkflowTriggerJob for workflow ${trigger.workflowId}`,
           );

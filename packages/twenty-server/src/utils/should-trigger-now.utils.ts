@@ -1,6 +1,6 @@
 import { CronExpressionParser } from 'cron-parser';
 
-export const getMatchingTriggerTimestamp = (
+export const shouldTriggerNow = (
   pattern: string,
   now: Date,
   rootCronIntervalMs = 60_000,
@@ -20,9 +20,3 @@ export const getMatchingTriggerTimestamp = (
     return null;
   }
 };
-
-export const shouldRunNow = (
-  pattern: string,
-  now: Date,
-  rootCronIntervalMs = 60_000,
-) => getMatchingTriggerTimestamp(pattern, now, rootCronIntervalMs) !== null;
