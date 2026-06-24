@@ -405,6 +405,8 @@ export type ApplicationVariable = {
   id: Scalars['UUID']['output'];
   isSecret: Scalars['Boolean']['output'];
   key: Scalars['String']['output'];
+  options?: Maybe<Scalars['JSON']['output']>;
+  type: Scalars['String']['output'];
   value: Scalars['String']['output'];
 };
 

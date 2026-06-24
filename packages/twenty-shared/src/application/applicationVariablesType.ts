@@ -26,20 +26,6 @@ export type ApplicationVariableOption = {
   value: string;
 };
 
-// SELECT / MULTI_SELECT are the only types that carry options.
-const OPTIONED_APPLICATION_VARIABLE_FIELD_METADATA_TYPES = [
-  FieldMetadataType.SELECT,
-  FieldMetadataType.MULTI_SELECT,
-] as const;
-
-type OptionedApplicationVariableType =
-  (typeof OPTIONED_APPLICATION_VARIABLE_FIELD_METADATA_TYPES)[number];
-
-type NonOptionedApplicationVariableType = Exclude<
-  ApplicationVariableType,
-  OptionedApplicationVariableType
->;
-
 // Manifest authors may declare typed values; everything is serialized to a
 // string before being encrypted and persisted.
 export type ApplicationVariableValue =
@@ -50,17 +36,12 @@ export type ApplicationVariableValue =
   | Record<string, unknown>
   | null;
 
-// `options` is required for SELECT / MULTI_SELECT and forbidden otherwise.
-type TypedApplicationVariable =
-  | {
-      type: OptionedApplicationVariableType;
-      options: ApplicationVariableOption[];
-    }
-  | {
-      // Defaults to FieldMetadataType.TEXT when omitted.
-      type?: NonOptionedApplicationVariableType;
-      options?: never;
-    };
+// `type` defaults to FieldMetadataType.TEXT when omitted; `options` is only
+// meaningful for SELECT / MULTI_SELECT (validated at manifest build time).
+type TypedApplicationVariable = {
+  type?: ApplicationVariableType;
+  options?: ApplicationVariableOption[];
+};
 
 type SecretApplicationVariable = SyncableEntityOptions &
   TypedApplicationVariable & {
