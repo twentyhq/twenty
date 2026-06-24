@@ -167,6 +167,79 @@ describe('Manifest update - navigation menu items', () => {
     });
   }, 60000);
 
+  it('should move existing menu items into a folder created in the same sync', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        navigationMenuItems: [
+          {
+            universalIdentifier: TEST_CHILD_ID,
+            type: NavigationMenuItemType.LINK,
+            name: 'Child Link',
+            icon: 'IconLink',
+            position: 0,
+            link: 'https://example.com',
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    const itemsAfterFirstSync = await findAppNavigationMenuItems();
+
+    expect(itemsAfterFirstSync).toHaveLength(1);
+    expect(itemsAfterFirstSync[0]).toMatchObject({
+      type: NavigationMenuItemType.LINK,
+      name: 'Child Link',
+      folderId: null,
+    });
+
+    // Second sync creates a new folder AND moves the existing item into it in a
+    // single deploy. The folder is created after the item update is validated,
+    // so the update must resolve the parent against entities being created.
+    await syncApplication({
+      manifest: buildManifest({
+        navigationMenuItems: [
+          {
+            universalIdentifier: TEST_FOLDER_ID,
+            type: NavigationMenuItemType.FOLDER,
+            name: 'Test Folder',
+            icon: 'IconFolder',
+            position: 0,
+          },
+          {
+            universalIdentifier: TEST_CHILD_ID,
+            type: NavigationMenuItemType.LINK,
+            name: 'Child Link',
+            icon: 'IconLink',
+            position: 0,
+            link: 'https://example.com',
+            folderUniversalIdentifier: TEST_FOLDER_ID,
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    const itemsAfterSecondSync = await findAppNavigationMenuItems();
+
+    expect(itemsAfterSecondSync).toHaveLength(2);
+
+    const folder = itemsAfterSecondSync.find(
+      (item) => item.type === NavigationMenuItemType.FOLDER,
+    );
+    const child = itemsAfterSecondSync.find(
+      (item) => item.type === NavigationMenuItemType.LINK,
+    );
+
+    expect(folder).toBeDefined();
+    expect(child).toBeDefined();
+    expect(child).toMatchObject({
+      type: NavigationMenuItemType.LINK,
+      name: 'Child Link',
+      folderId: folder!.id,
+    });
+  }, 60000);
+
   it('should delete navigation menu items when removed from manifest on second sync', async () => {
     await syncApplication({
       manifest: buildManifest({
