@@ -54,7 +54,11 @@ The plugin works in two layers:
 ### Quick MCP Setup
 
 ```bash
+# From the Twenty monorepo:
 bash packages/twenty-codex-plugin/scripts/setup-mcp.sh myworkspace.twenty.com
+
+# From an openai/plugins checkout:
+bash plugins/twenty/scripts/setup-mcp.sh myworkspace.twenty.com
 ```
 
 The helper names the server after the workspace host (`twenty-myworkspace`, `twenty-acme-example`, etc.). Codex may open OAuth automatically after the server is added; if it does not, run `codex mcp login <server-name>`. Use `--force-login` only for terminal-only setup.
@@ -77,19 +81,9 @@ myworkspace.localhost:3001   -> http://myworkspace.localhost:3001/mcp    name: t
 
 ### App Declaration
 
-This package ships a Codex app declaration for the public Twenty Developer Tools app:
+This is a Codex plugin, not a ChatGPT app submission. It intentionally ships no `.app.json` and no `apps` entry in `.codex-plugin/plugin.json`.
 
-```json
-{
-  "apps": {
-    "twenty": {
-      "id": "asdk_app_6a3bf414b7cc8191a0e2030906ca8a66"
-    }
-  }
-}
-```
-
-The public app id is intentionally separate from the Twenty CRM workspace tools app. Workspace-specific MCP URLs still must not be committed; users add those locally with the setup helper above.
+The installable surface is the Codex skill bundle plus the bundled public `twenty-docs` MCP server. Workspace-specific MCP endpoints remain user-local and are configured with the setup helper above.
 
 ## Development
 

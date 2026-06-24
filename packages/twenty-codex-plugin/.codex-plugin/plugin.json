@@ -22,14 +22,13 @@
     "publishing"
   ],
   "skills": "./skills/",
-  "apps": "./.app.json",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Twenty",
     "shortDescription": "Create, develop, publish, and query apps",
     "longDescription": "Scaffold, develop, deploy, and publish Twenty apps end-to-end. Five focused skills cover app creation, entity development (objects, fields, logic, layouts, front components), remote/sync/deploy operations, marketplace publishing assets, and workspace data retrieval via MCP. The bundled Twenty docs MCP server keeps guidance current, and the setup helper wires per-user workspace MCP with OAuth in one command.",
     "developerName": "Twenty PBC",
-    "category": "Coding",
+    "category": "Developer Tools",
     "capabilities": [
       "Interactive",
       "Read",

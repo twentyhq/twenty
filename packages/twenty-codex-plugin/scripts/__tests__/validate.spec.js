@@ -7,7 +7,6 @@ const PLUGIN_ROOT = path.resolve(__dirname, '..', '..');
 const PLUGIN_JSON_PATH = path.join(PLUGIN_ROOT, '.codex-plugin', 'plugin.json');
 const PACKAGE_JSON_PATH = path.join(PLUGIN_ROOT, 'package.json');
 const MCP_JSON_PATH = path.join(PLUGIN_ROOT, '.mcp.json');
-const APP_JSON_PATH = path.join(PLUGIN_ROOT, '.app.json');
 const MARKETPLACE_TEMPLATE_PATH = path.join(PLUGIN_ROOT, 'templates', 'marketplace.example.json');
 
 const metadata = require('../validators/metadata');
@@ -143,30 +142,12 @@ test('assertJsonMetadata catches missing .mcp.json from package.json files', () 
   });
 });
 
-test('assertJsonMetadata catches missing .app.json from package.json files', () => {
-  withJsonMutation(PACKAGE_JSON_PATH, (pkg) => {
-    pkg.files = pkg.files.filter((f) => f !== '.app.json');
-  }, () => {
-    const failures = collectFailures(metadata.assertJsonMetadata);
-    assert.ok(failures.some((f) => f.includes('.app.json')));
-  });
-});
-
-test('assertJsonMetadata catches missing apps declaration from plugin.json', () => {
+test('assertJsonMetadata catches a shipped apps declaration in plugin.json', () => {
   withJsonMutation(PLUGIN_JSON_PATH, (plugin) => {
-    delete plugin.apps;
+    plugin.apps = './.app.json';
   }, () => {
     const failures = collectFailures(metadata.assertJsonMetadata);
-    assert.ok(failures.some((f) => f.includes('apps as ./.app.json')));
-  });
-});
-
-test('assertJsonMetadata catches app id drift', () => {
-  withJsonMutation(APP_JSON_PATH, (app) => {
-    app.apps.twenty.id = 'asdk_app_invalid';
-  }, () => {
-    const failures = collectFailures(metadata.assertJsonMetadata);
-    assert.ok(failures.some((f) => f.includes('apps.twenty.id')));
+    assert.ok(failures.some((f) => f.includes('must not declare apps')));
   });
 });
 
@@ -185,7 +166,7 @@ test('assertNoBundledMcpConfig catches a nested .app.json', () => {
   fs.mkdirSync(stubDir, { recursive: true });
   withExtraFile(stub, '{}', () => {
     const failures = collectFailures(metadata.assertNoBundledMcpConfig);
-    assert.ok(failures.some((f) => f.includes('workspace-specific app declaration')));
+    assert.ok(failures.some((f) => f.includes('app declarations must not be shipped')));
   });
   fs.rmSync(stubDir, { recursive: true, force: true });
 });

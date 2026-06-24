@@ -52,12 +52,20 @@ myworkspace.localhost:3001   -> http://myworkspace.localhost:3001/mcp   name: tw
 Use the bundled helper from the Twenty repo or plugin checkout:
 
 ```bash
+# From the Twenty monorepo:
 bash packages/twenty-codex-plugin/scripts/setup-mcp.sh <workspace-url-or-mcp-url>
+
+# From an openai/plugins checkout:
+bash plugins/twenty/scripts/setup-mcp.sh <workspace-url-or-mcp-url>
+
+# From inside the plugin directory:
+bash scripts/setup-mcp.sh <workspace-url-or-mcp-url>
 ```
 
 Use `--name <server-name>` when configuring multiple Twenty workspaces:
 
 ```bash
+# From the Twenty monorepo:
 bash packages/twenty-codex-plugin/scripts/setup-mcp.sh --name twenty-prod acme.twenty.com
 bash packages/twenty-codex-plugin/scripts/setup-mcp.sh --name twenty-local acme.localhost:3001
 ```
@@ -65,13 +73,13 @@ bash packages/twenty-codex-plugin/scripts/setup-mcp.sh --name twenty-local acme.
 Use `--force-login` only when running from a normal terminal and Codex did not open OAuth automatically:
 
 ```bash
-bash packages/twenty-codex-plugin/scripts/setup-mcp.sh --force-login acme.twenty.com
+bash scripts/setup-mcp.sh --force-login acme.twenty.com
 ```
 
 Use `--print-url` to preview normalization without changing client config:
 
 ```bash
-bash packages/twenty-codex-plugin/scripts/setup-mcp.sh --print-url myworkspace.localhost:3001
+bash scripts/setup-mcp.sh --print-url myworkspace.localhost:3001
 ```
 
 The helper:
@@ -123,7 +131,7 @@ Use this workflow when the user reports missing tools, unexpected workspace data
 2. Normalize the intended workspace to its MCP URL:
 
 ```bash
-bash packages/twenty-codex-plugin/scripts/setup-mcp.sh --print-url <workspace-url-or-mcp-url>
+bash scripts/setup-mcp.sh --print-url <workspace-url-or-mcp-url>
 ```
 
 3. Inspect configured Twenty MCP servers and compare their URLs to the intended normalized URL:
@@ -136,7 +144,7 @@ codex mcp get <server-name>
 4. If no configured server points to the intended MCP URL, configure one with a workspace-specific name:
 
 ```bash
-bash packages/twenty-codex-plugin/scripts/setup-mcp.sh --name <server-name> <workspace-url-or-mcp-url>
+bash scripts/setup-mcp.sh --name <server-name> <workspace-url-or-mcp-url>
 ```
 
 5. If the server exists but authentication fails or MCP startup reports `Auth required`, run OAuth for that exact server:

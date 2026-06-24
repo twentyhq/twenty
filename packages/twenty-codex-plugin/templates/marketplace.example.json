@@ -4,7 +4,7 @@
     {
       "name": "twenty",
       "version": "0.1.0",
-      "category": "Coding",
+      "category": "Developer Tools",
       "source": {
         "source": "local",
         "path": "./packages/twenty-codex-plugin"
