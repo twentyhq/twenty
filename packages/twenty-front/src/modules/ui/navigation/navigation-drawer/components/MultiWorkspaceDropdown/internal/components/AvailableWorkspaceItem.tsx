@@ -4,6 +4,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { t } from '@lingui/core/macro';
 import React from 'react';
@@ -49,7 +50,9 @@ export const AvailableWorkspaceItem = ({
         avatar={
           <Avatar
             placeholder={availableWorkspace.displayName || ''}
-            avatarUrl={availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+            avatarUrl={getAbsoluteImageUrl(
+              availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+            )}
           />
         }
         selected={isSelected}

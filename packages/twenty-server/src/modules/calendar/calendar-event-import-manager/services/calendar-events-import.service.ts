@@ -21,16 +21,15 @@ import {
   CalendarEventImportDriverException,
   CalendarEventImportDriverExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
-import { MicrosoftCalendarImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/services/microsoft-calendar-import-events.service';
 import {
   CalendarEventImportErrorHandlerService,
   CalendarEventImportSyncStep,
 } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-exception-handler.service';
+import { CalendarImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-import-events.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -46,7 +45,7 @@ export class CalendarEventsImportService {
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly calendarSaveEventsService: CalendarSaveEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
-    private readonly microsoftCalendarImportEventService: MicrosoftCalendarImportEventsService,
+    private readonly calendarImportEventsService: CalendarImportEventsService,
     private readonly emailAliasManagerService: EmailAliasManagerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -56,7 +55,6 @@ export class CalendarEventsImportService {
     calendarChannel: CalendarChannelEntity,
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
-    fetchedCalendarEvents?: FetchedCalendarEvent[],
   ): Promise<void> {
     await this.calendarChannelSyncStatusService.markAsCalendarEventsImportOngoing(
       [calendarChannel.id],
@@ -67,45 +65,26 @@ export class CalendarEventsImportService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        let calendarEvents: FetchedCalendarEvent[] = [];
-
         try {
-          if (fetchedCalendarEvents) {
-            calendarEvents = fetchedCalendarEvents;
-          } else {
-            const eventIdsToFetch: string[] = await this.cacheStorage.setPop(
-              `calendar-events-to-import:${workspaceId}:${calendarChannel.id}`,
-              CALENDAR_EVENT_IMPORT_BATCH_SIZE,
-            );
+          const eventIdsToFetch: string[] = await this.cacheStorage.setPop(
+            `calendar-events-to-import:${workspaceId}:${calendarChannel.id}`,
+            CALENDAR_EVENT_IMPORT_BATCH_SIZE,
+          );
 
-            if (!eventIdsToFetch || eventIdsToFetch.length === 0) {
-              await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
-                [calendarChannel.id],
-                workspaceId,
-              );
-
-              return;
-            }
-
-            switch (connectedAccount.provider) {
-              case 'microsoft':
-                calendarEvents =
-                  await this.microsoftCalendarImportEventService.getCalendarEvents(
-                    connectedAccount,
-                    eventIdsToFetch,
-                  );
-                break;
-              default:
-                break;
-            }
-          }
-
-          if (!calendarEvents || calendarEvents?.length === 0) {
-            await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
+          if (!eventIdsToFetch || eventIdsToFetch.length === 0) {
+            await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
               [calendarChannel.id],
               workspaceId,
             );
+
+            return;
           }
+
+          const calendarEvents =
+            await this.calendarImportEventsService.getCalendarEvents(
+              connectedAccount,
+              eventIdsToFetch,
+            );
 
           const userWorkspace = await this.userWorkspaceRepository.findOne({
             where: {
@@ -190,10 +169,17 @@ export class CalendarEventsImportService {
             workspaceId,
           );
 
-          await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
-            [calendarChannel.id],
-            workspaceId,
-          );
+          if (eventIdsToFetch.length < CALENDAR_EVENT_IMPORT_BATCH_SIZE) {
+            await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
+              [calendarChannel.id],
+              workspaceId,
+            );
+          } else {
+            await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
+              [calendarChannel.id],
+              workspaceId,
+            );
+          }
         } catch (error) {
           await this.calendarEventImportErrorHandlerService.handleDriverException(
             error,

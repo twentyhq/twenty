@@ -1,8 +1,9 @@
-import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import {
@@ -17,8 +18,10 @@ import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util
 import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
-import { requestTranscript } from 'src/logic-functions/flows/request-transcript.util';
+import { reconcileCallRecordingTranscriptArtifact } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact.util';
+import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
 import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
 import {
   updateCallRecording,
@@ -26,14 +29,6 @@ import {
 } from 'src/logic-functions/data/update-call-recording.util';
 
 const CONVERGENCE_LOOKBACK_DAYS = 7;
-const LIVE_MEETING_GRACE_MINUTES = 30;
-
-const NON_TERMINAL_CALL_RECORDING_STATUSES = [
-  CallRecordingStatus.SCHEDULED,
-  CallRecordingStatus.JOINING,
-  CallRecordingStatus.RECORDING,
-  CallRecordingStatus.PROCESSING,
-];
 
 type DivergedCallRecordingCandidate = {
   id: string;
@@ -46,6 +41,7 @@ type DivergedCallRecordingCandidate = {
   audio: FilesFieldValue | undefined;
   video: FilesFieldValue | undefined;
   createdAt: string | undefined;
+  calendarEventStartsAt: string | undefined;
   calendarEventEndsAt: string | undefined;
 };
 
@@ -60,14 +56,7 @@ type DivergedCallRecordingNode = {
   audio?: FilesFieldValue | null;
   video?: FilesFieldValue | null;
   createdAt?: string | null;
-  calendarEvent?: { endsAt?: string | null } | null;
-};
-
-export type ConvergeDivergedCallRecordingsResult = {
-  candidateCount: number;
-  updatedCallRecordingIds: string[];
-  markedFailedCallRecordingIds: string[];
-  unconvergeableCallRecordingIds: string[];
+  calendarEvent?: { startsAt?: string | null; endsAt?: string | null } | null;
 };
 
 // Webhook deliveries get lost; this pull pass re-derives state from Recall.
@@ -82,15 +71,13 @@ export const convergeDivergedCallRecordings = async ({
   const convergenceLowerBound = new Date(
     now.getTime() - CONVERGENCE_LOOKBACK_DAYS * 24 * 60 * 60 * 1000,
   );
-  const liveMeetingCutoff = new Date(
-    now.getTime() - LIVE_MEETING_GRACE_MINUTES * 60 * 1000,
-  );
-
   const result: ConvergeDivergedCallRecordingsResult = {
     candidateCount: candidates.length,
     updatedCallRecordingIds: [],
     markedFailedCallRecordingIds: [],
+    requestedTranscriptCallRecordingIds: [],
     unconvergeableCallRecordingIds: [],
+    skippedNotStartedCallRecordingIds: [],
   };
 
   for (const candidate of candidates) {
@@ -110,7 +97,8 @@ export const convergeDivergedCallRecordings = async ({
       continue;
     }
 
-    if (isPossiblyStillLive(candidate, liveMeetingCutoff)) {
+    if (isBeforeMeetingStart(candidate, now)) {
+      result.skippedNotStartedCallRecordingIds.push(candidate.id);
       continue;
     }
 
@@ -169,6 +157,7 @@ const fetchDivergedCallRecordingCandidates = async (
               video: { fileId: true },
               createdAt: true,
               calendarEvent: {
+                startsAt: true,
                 endsAt: true,
               },
             },
@@ -197,6 +186,7 @@ const fetchDivergedCallRecordingCandidates = async (
     audio: node.audio ?? undefined,
     video: node.video ?? undefined,
     createdAt: node.createdAt ?? undefined,
+    calendarEventStartsAt: node.calendarEvent?.startsAt ?? undefined,
     calendarEventEndsAt: node.calendarEvent?.endsAt ?? undefined,
   }));
 };
@@ -215,15 +205,13 @@ const isOutsideConvergenceBound = (
   );
 };
 
-// Inside the grace period the meeting may still be recording; webhooks own it.
-const isPossiblyStillLive = (
+// Until the meeting starts the bot has recorded nothing, so there is nothing to pull yet.
+const isBeforeMeetingStart = (
   candidate: DivergedCallRecordingCandidate,
-  liveMeetingCutoff: Date,
+  now: Date,
 ): boolean =>
-  candidate.status !== CallRecordingStatus.COMPLETED &&
-  !isUndefined(candidate.calendarEventEndsAt) &&
-  new Date(candidate.calendarEventEndsAt).getTime() >
-    liveMeetingCutoff.getTime();
+  !isUndefined(candidate.calendarEventStartsAt) &&
+  new Date(candidate.calendarEventStartsAt).getTime() > now.getTime();
 
 const convergeCallRecording = async ({
   client,
@@ -266,20 +254,19 @@ const convergeCallRecording = async ({
     candidate.externalRecordingId ?? convergence.externalRecordingId;
 
   if (convergence.isRecallRecordingDone && !isUndefined(externalRecordingId)) {
-    if (isUndefined(candidate.transcript)) {
-      const transcriptMarker = await requestTranscript({
+    const transcriptArtifactResult =
+      await reconcileCallRecordingTranscriptArtifact({
+        callRecordingId: candidate.id,
+        currentStatus: candidate.status,
         externalRecordingId,
         requestedAt: now.toISOString(),
+        transcript: candidate.transcript,
       });
 
-      if (!isNull(transcriptMarker)) {
-        updateData.transcript = transcriptMarker;
-        updateData.externalRecordingId = externalRecordingId;
-        await updateCallRecording(client, {
-          id: candidate.id,
-          data: { transcript: transcriptMarker, externalRecordingId },
-        });
-      }
+    Object.assign(updateData, transcriptArtifactResult.updateData);
+
+    if (transcriptArtifactResult.requestedTranscript) {
+      result.requestedTranscriptCallRecordingIds.push(candidate.id);
     }
 
     Object.assign(
@@ -291,6 +278,18 @@ const convergeCallRecording = async ({
         hasVideo: isNonEmptyArray(candidate.video),
       }),
     );
+  }
+
+  const terminalArtifactGateFailureUpdate =
+    buildTerminalArtifactGateFailureUpdate({
+      candidate,
+      convergence,
+      externalRecordingId,
+      updateData,
+    });
+
+  if (!isUndefined(terminalArtifactGateFailureUpdate)) {
+    Object.assign(updateData, terminalArtifactGateFailureUpdate);
   }
 
   const completesIngestion = shouldCompleteCallRecordingIngestion({
@@ -330,6 +329,11 @@ const buildConvergenceFieldUpdates = ({
     })
   ) {
     updateData.status = convergence.status;
+
+    if (convergence.status === CallRecordingStatus.FAILED) {
+      updateData.meetingBotFailureReason =
+        convergence.failureReason ?? 'recall_bot_failed';
+    }
   }
 
   if (isUndefined(candidate.startedAt) && !isUndefined(convergence.startedAt)) {
@@ -348,6 +352,63 @@ const buildConvergenceFieldUpdates = ({
   }
 
   return updateData;
+};
+
+type TerminalArtifactGateFailureUpdate = {
+  status: CallRecordingStatus.FAILED;
+  meetingBotFailureReason: string;
+};
+
+const buildTerminalArtifactGateFailureUpdate = ({
+  candidate,
+  convergence,
+  externalRecordingId,
+  updateData,
+}: {
+  candidate: DivergedCallRecordingCandidate;
+  convergence: RecallBotConvergence;
+  externalRecordingId: string | undefined;
+  updateData: CallRecordingUpdateFields;
+}): TerminalArtifactGateFailureUpdate | undefined => {
+  if (
+    candidate.status === CallRecordingStatus.COMPLETED ||
+    updateData.status === CallRecordingStatus.FAILED ||
+    !convergence.isRecallRecordingDone ||
+    !isUndefined(externalRecordingId) ||
+    hasRecordingArtifactPath({ candidate, updateData })
+  ) {
+    return undefined;
+  }
+
+  return {
+    status: CallRecordingStatus.FAILED,
+    meetingBotFailureReason:
+      convergence.failureReason ?? 'recording_artifacts_unavailable',
+  };
+};
+
+const hasRecordingArtifactPath = ({
+  candidate,
+  updateData,
+}: {
+  candidate: DivergedCallRecordingCandidate;
+  updateData: CallRecordingUpdateFields;
+}): boolean => {
+  return (
+    isNonEmptyArray(updateData.audio ?? candidate.audio) ||
+    isNonEmptyArray(updateData.video ?? candidate.video) ||
+    hasReachableTranscript(updateData.transcript ?? candidate.transcript)
+  );
+};
+
+const hasReachableTranscript = (transcript: unknown): boolean => {
+  if (isUndefined(transcript)) {
+    return false;
+  }
+
+  const marker = parseTranscriptMarker(transcript);
+
+  return isUndefined(marker) || marker.status === 'PENDING';
 };
 
 const markCallRecordingFailedAfterBotLoss = async ({
@@ -369,7 +430,7 @@ const markCallRecordingFailedAfterBotLoss = async ({
   if (
     isCallRecordingStatusDowngrade({
       fromStatus: candidate.status,
-      toStatus: CallRecordingStatus.FAILED_UNKNOWN,
+      toStatus: CallRecordingStatus.FAILED,
     })
   ) {
     result.unconvergeableCallRecordingIds.push(candidate.id);
@@ -379,7 +440,10 @@ const markCallRecordingFailedAfterBotLoss = async ({
 
   await updateCallRecording(client, {
     id: candidate.id,
-    data: { status: CallRecordingStatus.FAILED_UNKNOWN },
+    data: {
+      status: CallRecordingStatus.FAILED,
+      meetingBotFailureReason: 'recall_bot_not_found',
+    },
   });
   result.markedFailedCallRecordingIds.push(candidate.id);
 };

@@ -1,4 +1,4 @@
-import { InstallPayload, definePostInstallLogicFunction } from 'twenty-sdk/define';
+import { type InstallPayload, definePostInstallLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (_payload: InstallPayload) => {

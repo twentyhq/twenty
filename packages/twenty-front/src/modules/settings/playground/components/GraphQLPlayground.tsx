@@ -55,6 +55,9 @@ export const GraphQLPlayground = ({
 
   const fetcher = createGraphiQLFetcher({
     url: baseUrl,
+    headers: {
+      Authorization: `Bearer ${playgroundApiKey.token}`,
+    },
   });
 
   return (

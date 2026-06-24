@@ -1,13 +1,12 @@
 import { clsx } from 'clsx';
-import { motion, type MotionProps } from 'framer-motion';
-import { type ComponentProps, type MouseEvent, useContext } from 'react';
+import { type ComponentProps, type MouseEvent } from 'react';
 
 import { type IconComponent } from '@ui/icon';
 import {
   type LightIconButtonAccent,
   type LightIconButtonSize,
 } from '@ui/input/LightIconButton/LightIconButton';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './AnimatedLightIconButton.module.scss';
 
@@ -21,26 +20,25 @@ export type AnimatedLightIconButtonProps = {
   active?: boolean;
   disabled?: boolean;
   focus?: boolean;
+  rotate?: number;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-} & Pick<ComponentProps<'button'>, 'aria-label' | 'title'> &
-  Pick<MotionProps, 'animate' | 'transition'>;
+} & Pick<ComponentProps<'button'>, 'aria-label' | 'title'>;
 
 export const AnimatedLightIconButton = ({
   'aria-label': ariaLabel,
   className,
   testId,
-  animate,
-  transition,
   Icon,
   active = false,
   size = 'small',
   accent = 'secondary',
   disabled = false,
   focus = false,
+  rotate,
   onClick,
   title,
 }: AnimatedLightIconButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <button
@@ -55,17 +53,21 @@ export const AnimatedLightIconButton = ({
       className={clsx(styles.button, styles[size], className)}
       title={title}
     >
-      <motion.div
+      <div
         className={styles.iconContainer}
-        animate={animate}
-        transition={transition}
+        style={
+          rotate !== undefined
+            ? { transform: `rotate(${rotate}deg)` }
+            : undefined
+        }
       >
         {Icon && (
           <Icon
             size={size === 'medium' ? theme.icon.size.md : theme.icon.size.sm}
+            aria-hidden={!!ariaLabel}
           />
         )}
-      </motion.div>
+      </div>
     </button>
   );
 };

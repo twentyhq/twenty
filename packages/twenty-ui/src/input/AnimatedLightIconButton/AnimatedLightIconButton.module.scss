@@ -27,6 +27,8 @@
     outline: none;
   }
 
+  @include focus-ring;
+
   &:active {
     background: var(--t-background-transparent-medium);
   }
@@ -74,4 +76,5 @@
   align-items: center;
   display: flex;
   justify-content: center;
+  transition: transform duration(normal) ease;
 }

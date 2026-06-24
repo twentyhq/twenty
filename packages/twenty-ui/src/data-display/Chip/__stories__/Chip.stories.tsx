@@ -3,6 +3,7 @@ import { IconUser, IconX } from '@ui/icon';
 import { Avatar } from '@ui/data-display/Avatar/Avatar';
 
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -64,8 +65,7 @@ export const WithLeftIcon: Story = {
 };
 
 export const EmptyLabel: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     label: '',
     clickable: true,
@@ -89,8 +89,7 @@ export const Catalog: CatalogStory<Story, typeof Chip> = {
     leftComponent: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.active'] },
     catalog: {
       dimensions: [
@@ -153,8 +152,7 @@ export const WithAvatarCatalog: CatalogStory<Story, typeof Chip> = {
     leftComponent: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.active'] },
     catalog: {
       dimensions: [

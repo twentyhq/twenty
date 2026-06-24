@@ -19,7 +19,6 @@ const METADATA_QUERY = `
           labelPlural
           description
           icon
-          isCustom
           isRemote
           isActive
           isSystem
@@ -62,7 +61,6 @@ const METADATA_QUERY = `
             label
             description
             icon
-            isCustom
             isActive
             isSystem
             isUIEditable

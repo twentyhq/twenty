@@ -19,6 +19,8 @@ export const shouldCompleteCallRecordingIngestion = ({
   updateData: CallRecordingUpdateFields;
 }): boolean =>
   current.status !== CallRecordingStatus.COMPLETED &&
+  current.status !== CallRecordingStatus.FAILED &&
+  updateData.status !== CallRecordingStatus.FAILED &&
   computeCallRecordingCharge({
     startedAt: updateData.startedAt ?? current.startedAt,
     endedAt: updateData.endedAt ?? current.endedAt,

@@ -1,6 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import type { RoutePayload } from 'twenty-sdk/define';
-import { defineLogicFunction } from 'twenty-sdk/define';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { DISCORD_POST_MESSAGE_ROUTE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { discordPostMessageHandler } from 'src/logic-functions/handlers/discord-post-message-handler';
@@ -21,7 +19,7 @@ const handler = async (event: RoutePayload) => {
   const channelId = rawChannelId.trim();
   const messageText = rawMessageText.trim();
 
-  if (!isNonEmptyString(channelId) || !isNonEmptyString(messageText)) {
+  if (channelId.length === 0 || messageText.length === 0) {
     return {
       success: false,
       message: 'Failed to post Discord message',

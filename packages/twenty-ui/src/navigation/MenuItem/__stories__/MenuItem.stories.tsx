@@ -3,6 +3,7 @@ import { action } from 'storybook/actions';
 
 import { IconBell } from '@ui/icon';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -20,15 +21,14 @@ export default meta;
 type Story = StoryObj<typeof MenuItem>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     text: 'Menu item text',
     LeftIcon: IconBell,
     accent: 'default',
     iconButtons: [
-      { Icon: IconBell, onClick: action('Clicked') },
-      { Icon: IconBell, onClick: action('Clicked') },
+      { Icon: IconBell, onClick: action('Clicked'), ariaLabel: 'Notify' },
+      { Icon: IconBell, onClick: action('Clicked'), ariaLabel: 'Notify' },
     ],
   },
   decorators: [ComponentDecorator],
@@ -42,8 +42,7 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
     iconButtons: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
@@ -100,10 +99,12 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
                     {
                       Icon: IconBell,
                       onClick: action('Clicked on first icon button'),
+                      ariaLabel: 'Notify',
                     },
                     {
                       Icon: IconBell,
                       onClick: action('Clicked on second icon button'),
+                      ariaLabel: 'Notify',
                     },
                   ],
                 };
@@ -140,8 +141,7 @@ export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
     iconButtons: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
@@ -204,8 +204,7 @@ export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
   },
   decorators: [CatalogDecorator],
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
@@ -252,6 +251,7 @@ export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
                     {
                       Icon: IconBell,
                       onClick: action('Clicked on icon button'),
+                      ariaLabel: 'Notify',
                     },
                   ],
                 };
@@ -302,8 +302,7 @@ export const SubMenuCatalog: CatalogStory<Story, typeof MenuItem> = {
     hasSubMenu: true,
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {

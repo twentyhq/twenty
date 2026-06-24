@@ -1,0 +1,58 @@
+---
+title: Génération
+description: Générez des fichiers d'entité de manière interactive avec `yarn twenty dev:add` — objets, champs, vues, fonctions logiques et plus encore.
+icon: wand-magic-sparkles
+---
+
+Au lieu de créer manuellement les fichiers d'entité, utilisez l'outil de génération interactif :
+
+```bash filename="Terminal"
+yarn twenty dev:add
+```
+
+Il vous invite à choisir un type d'entité, vous guide à travers les champs requis, puis écrit un fichier prêt à l'emploi avec un `universalIdentifier` stable et l'appel `defineEntity()` correct.
+
+Vous pouvez également passer directement le type d'entité pour ignorer la première invite :
+
+```bash filename="Terminal"
+yarn twenty dev:add object
+yarn twenty dev:add logicFunction
+yarn twenty dev:add frontComponent
+```
+
+## Types d’entités disponibles
+
+| Type d’entité                 | Commande                                 | Fichier généré                                          |
+| ----------------------------- | ---------------------------------------- | ------------------------------------------------------- |
+| Objet                         | `yarn twenty dev:add object`             | `src/objects/\<name>.ts`               |
+| Champ                         | `yarn twenty dev:add field`              | `src/fields/\<name>.ts`                |
+| Fonction logique              | `yarn twenty dev:add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| Composant frontal             | `yarn twenty dev:add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| Rôle                          | `yarn twenty dev:add role`               | `src/roles/\<name>.ts`                 |
+| Compétence                    | `yarn twenty dev:add skill`              | `src/skills/\<name>.ts`                |
+| Agent                         | `yarn twenty dev:add agent`              | `src/agents/\<name>.ts`                |
+| Vue                           | `yarn twenty dev:add view`               | `src/views/\<name>.ts`                 |
+| Élément de menu de navigation | `yarn twenty dev:add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| Mise en page                  | `yarn twenty dev:add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+
+## Ce que génère l'outil de génération
+
+Chaque type d'entité a son propre modèle. Par exemple, `yarn twenty dev:add object` demande :
+
+1. **Nom (singulier)** — p. ex., `invoice`
+2. **Nom (pluriel)** — p. ex., `invoices`
+3. **Libellé (singulier)** — rempli automatiquement depuis le nom (p. ex., `Invoice`)
+4. **Libellé (pluriel)** — rempli automatiquement (p. ex., `Invoices`)
+5. **Créer une vue et un élément de navigation ?** — si vous répondez oui, l'outil génère également une vue correspondante et un lien de barre latérale pour le nouvel objet.
+
+Les autres types d'entités ont des invites plus simples — la plupart ne demandent qu'un nom.
+
+Le type d'entité `field` est plus détaillé : il demande le nom du champ, son libellé, son type (à partir d'une liste de tous les types de champs disponibles comme `TEXT`, `NUMBER`, `SELECT`, `RELATION`, etc.), et le `universalIdentifier` de l'objet cible.
+
+## Chemin de sortie personnalisé
+
+Utilisez l'option `--path` pour placer le fichier généré à un emplacement personnalisé :
+
+```bash filename="Terminal"
+yarn twenty dev:add logicFunction --path src/custom-folder
+```

@@ -1,9 +1,8 @@
 import { clsx } from 'clsx';
-import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 import { type IconComponent } from '@ui/icon';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './FloatingButton.module.scss';
 
@@ -14,6 +13,7 @@ export type FloatingButtonProps = {
   className?: string;
   Icon?: IconComponent;
   title?: string;
+  ariaLabel?: string;
   size?: FloatingButtonSize;
   position?: FloatingButtonPosition;
   applyShadow?: boolean;
@@ -27,6 +27,7 @@ export const FloatingButton = ({
   className,
   Icon,
   title,
+  ariaLabel,
   size = 'small',
   position = 'standalone',
   applyBlur = true,
@@ -35,7 +36,7 @@ export const FloatingButton = ({
   focus = false,
   to,
 }: FloatingButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   // Replaces the legacy Linaria `as` polymorphism: react-router Link when a
   // `to` is provided, a native button otherwise. Typed as any to forward all
@@ -46,6 +47,7 @@ export const FloatingButton = ({
   return (
     <ButtonComponent
       disabled={disabled}
+      aria-label={ariaLabel}
       className={clsx(styles.button, styles[size], className)}
       data-position={position}
       data-apply-blur={applyBlur || undefined}
@@ -54,7 +56,7 @@ export const FloatingButton = ({
       data-focus={(focus && !disabled) || undefined}
       to={to}
     >
-      {Icon && <Icon size={theme.icon.size.sm} />}
+      {Icon && <Icon size={theme.icon.size.sm} aria-hidden />}
       {title}
     </ButtonComponent>
   );

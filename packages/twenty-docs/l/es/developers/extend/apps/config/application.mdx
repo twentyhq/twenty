@@ -1,0 +1,64 @@
+---
+title: Configuración de la aplicación
+description: Declara la identidad de tu aplicación, el rol predeterminado, las variables y los metadatos del marketplace con defineApplication.
+icon: rocket
+---
+
+Cada aplicación debe tener exactamente una llamada a `defineApplication`. Declara:
+
+* **Identidad** — identificador universal, nombre para mostrar, descripción.
+* **Permisos** — bajo qué rol se ejecutan sus funciones de lógica y componentes de frontend.
+* **Variables** *(opcionales)* — pares clave–valor expuestos a tu código como variables de entorno.
+* **Hooks de preinstalación / postinstalación** *(opcionales)* — consulta [Funciones de lógica](/l/es/developers/extend/apps/logic/logic-functions).
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+});
+```
+
+Notas:
+
+* Los campos `universalIdentifier` son identificadores deterministas que te pertenecen. Genéralos una vez y mantenlos estables entre sincronizaciones.
+* `applicationVariables` se convierten en variables de entorno para tus funciones y componentes de frontend. En las funciones lógicas (del lado del servidor), están disponibles como `process.env.VARIABLE_NAME`. En los componentes de frontend, usa `getApplicationVariable('VARIABLE_NAME')` de `twenty-sdk/front-component`. Las variables marcadas con `isSecret: true` solo se inyectan en las funciones lógicas. Los componentes de frontend solo reciben variables no secretas.
+* El rol predeterminado se detecta automáticamente a partir del archivo de rol marcado con [`defineApplicationRole()`](/l/es/developers/extend/apps/config/roles); no necesitas hacer referencia a él desde `defineApplication()`.
+* Las funciones de preinstalación y posinstalación se detectan automáticamente durante la compilación del manifiesto; no necesitas referenciarlas en `defineApplication()`.
+* Pasar `defaultRoleUniversalIdentifier` explícitamente sigue siendo compatible por motivos de retrocompatibilidad, pero está en desuso en favor de `defineApplicationRole()`.
+
+## Rol de función predeterminado
+
+El rol declarado con [`defineApplicationRole()`](/l/es/developers/extend/apps/config/roles) controla a qué pueden acceder las funciones de lógica y los componentes de interfaz de la aplicación:
+
+* El token en tiempo de ejecución inyectado como `TWENTY_APP_ACCESS_TOKEN` se deriva de este rol.
+* El cliente de API tipado está restringido a los permisos otorgados a ese rol.
+* Sigue el principio de mínimo privilegio: declara solo los permisos que necesitan tus funciones.
+
+Cuando generas una nueva aplicación, la CLI crea un archivo de rol inicial en `src/roles/default-role.ts`. Consulta [Roles y permisos](/l/es/developers/extend/apps/config/roles) para obtener la referencia completa.
+
+## Metadatos del Marketplace
+
+Si planeas [publicar tu aplicación](/l/es/developers/extend/apps/operations/publishing), estos campos opcionales controlan cómo aparece en el marketplace:
+
+| Campo              | Descripción                                                                                                                            |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `author`           | Nombre del autor o de la empresa                                                                                                       |
+| `category`         | Categoría de la aplicación para el filtrado en el marketplace                                                                          |
+| `logoUrl`          | Ruta al logotipo de tu aplicación (p. ej., `public/logo.png`)                                                                          |
+| `screenshots`      | Arreglo de rutas de capturas de pantalla (p. ej., `public/screenshot-1.png`)                                                           |
+| `aboutDescription` | Descripción en Markdown más extensa para la pestaña "Acerca de". Si se omite, el marketplace utiliza el `README.md` del paquete en npm |
+| `websiteUrl`       | Enlace a tu sitio web                                                                                                                  |
+| `termsUrl`         | Enlace a los términos del servicio                                                                                                     |
+| `emailSupport`     | Dirección de correo electrónico de soporte                                                                                             |
+| `issueReportUrl`   | Enlace al rastreador de incidencias                                                                                                    |

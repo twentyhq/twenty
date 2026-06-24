@@ -1,6 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { ComponentWithRouterDecorator } from '@ui/testing';
+import {
+  A11Y_DEFER_COLOR_CONTRAST,
+  ComponentWithRouterDecorator,
+} from '@ui/testing';
 import { GithubVersionLink } from '@ui/navigation/GithubVersionLink/GithubVersionLink';
 
 const meta: Meta<typeof GithubVersionLink> = {
@@ -13,6 +16,6 @@ export default meta;
 type Story = StoryObj<typeof GithubVersionLink>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: { version: '0.1.0' },
 };

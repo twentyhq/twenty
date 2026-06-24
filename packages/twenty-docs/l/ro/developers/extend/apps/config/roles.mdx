@@ -50,6 +50,124 @@ export default defineRole({
 });
 ```
 
+## Securitate la nivel de rând
+
+Permisiunile pentru obiecte și câmpuri decid *ce obiecte și câmpuri* poate accesa un rol. **Predicate de
+permisiuni la nivel de rând** merg mai departe și decid *ce înregistrări* poate vedea și asupra cărora poate acționa un rol — de
+exemplu, un rol de tip autoservire în care fiecare utilizator extern își vede doar propriile înregistrări.
+
+Declară predicate cu `rowLevelPermissionPredicates` în rol. La fel ca restul manifestului,
+fiecare predicat are propriul `universalIdentifier` și face referire la un obiect și un câmp prin
+`universalIdentifier`, un `operand` și (opțional) un câmp workspaceMember a cărui valoare este injectată
+în momentul interogării — astfel încât poți exprima „relația de proprietar a înregistrării **este** membrul curent al spațiului de lucru”:
+
+```ts src/roles/partner-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/account-owner.field';
+
+export default defineRole({
+  universalIdentifier: 'c3c1dc2e-1a08-4de5-abb7-2139b3d99343',
+  label: 'Partner',
+  description: 'External partner — sees only its own records',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+          .universalIdentifier,
+    },
+  ],
+});
+```
+
+Deoarece predicatele sunt livrate în manifest, ele sunt create, actualizate și eliminate împreună cu
+rolul la fiecare instalare și actualizare — nu există un pas separat post-instalare pentru a le menține sincronizate.
+
+### Combinarea predicatelor cu grupuri
+
+În mod implicit, predicatele unui rol sunt combinate cu `AND`. Pentru a combina unele dintre ele cu `OR` (sau pentru a
+imbrica logica), declară o intrare `rowLevelPermissionPredicateGroups` și asociază fiecare predicat la aceasta prin
+`predicateGroupUniversalIdentifier`. Acest rol permite unui partener să vadă o oportunitate pe care fie o **deține**,
+fie pentru care este **punctul de contact**:
+
+```ts src/roles/partner-opportunities-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+const CURRENT_MEMBER =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+    .universalIdentifier;
+
+export default defineRole({
+  universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
+  label: 'Partner (opportunities)',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      canReadObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicateGroups: [
+    {
+      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+    {
+      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier:
+        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+  ],
+});
+```
+
+Notițe:
+
+* Oferă fiecărui predicat și fiecărui grup un `universalIdentifier` stabil (orice uuid) — acesta este cheia entității
+  de-a lungul actualizărilor, iar predicatele fac referire la grupuri prin el.
+* Predicatele pot face referire la obiecte și câmpuri deținute de aplicația ta sau de obiectele standard ale Twenty.
+* Securitatea la nivel de rând este aplicată pentru spațiile de lucru din planurile care o includ; predicatele se sincronizează în continuare
+  pe alte planuri, doar că nu sunt aplicate.
+
 ## Rolul implicit pentru funcții
 
 Când generați o aplicație nouă, CLI creează un fișier de rol implicit declarat cu `defineApplicationRole()`:

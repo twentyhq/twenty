@@ -205,6 +205,8 @@ const StyledContainer = styled.div<{
 
   & .react-datepicker__month {
     margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
 
     pointer-events: ${({ calendarDisabled }) =>
       calendarDisabled ? 'none' : 'auto'};

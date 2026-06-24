@@ -19,7 +19,7 @@ export const mapRecallStatusCodeToCallRecordingStatus = (
     case 'fatal':
     case 'analysis_failed':
     case 'recording_permission_denied':
-      return CallRecordingStatus.FAILED_UNKNOWN;
+      return CallRecordingStatus.FAILED;
     default:
       return undefined;
   }

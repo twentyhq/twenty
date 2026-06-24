@@ -1,5 +1,6 @@
 ---
 title: Liens
+icon: lien
 ---
 
 <Frame>
@@ -11,40 +12,49 @@ title: Liens
 Un composant de lien stylisé pour afficher les informations de contact.
 
 <Tabs>
-  <Tab title="Utilisation">
-    ```jsx
-    import { BrowserRouter as Router } from 'react-router-dom';
+<Tab title="Utilisation">
 
-    import { ContactLink } from 'twenty-ui/navigation';
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
 
-    export const MyComponent = () => {
-      const handleLinkClick = (event) => {
-        console.log('Contact link clicked!', event);
-      };
+import { ContactLink } from 'twenty-ui/navigation';
 
-      return (
-        <Router>
-          <ContactLink
-            className
-            href="mailto:example@example.com"
-            onClick={handleLinkClick}
-          >
-            example@example.com
-          </ContactLink>
-        </Router>
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
 
-  <Tab title="Propriétés">
-    | Propriétés  | Type              | Description                                              |
-    | ----------- | ----------------- | -------------------------------------------------------- |
-    | nomDeClasse | chaîne            | Nom facultatif pour un style supplémentaire              |
-    | href        | chaîne            | L'URL cible ou le chemin du lien                         |
-    | onClick     | fonction          | Fonction de rappel à déclencher lors du clic sur le lien |
-    | enfants     | `React.ReactNode` | Le contenu à afficher à l'intérieur du lien              |
-  </Tab>
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+
+</Tab>
+<Tab title="Propriétés">
+
+
+| Propriétés  | Type              | Description                                              |
+| ----------- | ----------------- | -------------------------------------------------------- |
+| nomDeClasse | chaîne            | Nom facultatif pour un style supplémentaire              |
+| href        | chaîne            | L'URL cible ou le chemin du lien                         |
+| onClick     | fonction          | Fonction de rappel à déclencher lors du clic sur le lien |
+| enfants     | `React.ReactNode` | Le contenu à afficher à l'intérieur du lien              |
+
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Lien brut
@@ -52,36 +62,44 @@ Un composant de lien stylisé pour afficher les informations de contact.
 Un composant de lien stylisé pour afficher les liens.
 
 <Tabs>
-  <Tab title="Utilisation">
-    ```jsx
-    import { RawLink } from "/navigation";
-    import { BrowserRouter as Router } from "react-router-dom";
+<Tab title="Utilisation">
 
-    export const MyComponent = () => {
-      const handleLinkClick = (event) => {
-        console.log("Contact link clicked!", event);
-      };
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
 
-      return (
-        <Router>
-          <RawLink className href="/contact" onClick={handleLinkClick}>
-            Contact Us
-          </RawLink>
-        </Router>
-      );
-    };
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
 
-    ```
-  </Tab>
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
 
-  <Tab title="Propriétés">
-    | Propriétés  | Type              | Description                                              |
-    | ----------- | ----------------- | -------------------------------------------------------- |
-    | nomDeClasse | chaîne            | Nom facultatif pour un style supplémentaire              |
-    | href        | chaîne            | L'URL cible ou le chemin du lien                         |
-    | onClick     | fonction          | Fonction de rappel à déclencher lors du clic sur le lien |
-    | enfants     | `React.ReactNode` | Le contenu à afficher à l'intérieur du lien              |
-  </Tab>
+```
+
+
+</Tab>
+<Tab title="Propriétés">
+
+
+| Propriétés  | Type              | Description                                              |
+| ----------- | ----------------- | -------------------------------------------------------- |
+| nomDeClasse | chaîne            | Nom facultatif pour un style supplémentaire              |
+| href        | chaîne            | L'URL cible ou le chemin du lien                         |
+| onClick     | fonction          | Fonction de rappel à déclencher lors du clic sur le lien |
+| enfants     | `React.ReactNode` | Le contenu à afficher à l'intérieur du lien              |
+
+
+
+
+</Tab>
 </Tabs>
 
 ## Lien arrondi
@@ -89,34 +107,41 @@ Un composant de lien stylisé pour afficher les liens.
 Un lien de style arrondi avec un composant Chip pour les liens.
 
 <Tabs>
-  <Tab title="Utilisation">
-    ```jsx
-    import { RoundedLink } from "/navigation";
-    import { BrowserRouter as Router } from "react-router-dom";
+<Tab title="Utilisation">
 
-    export const MyComponent = () => {
-      const handleLinkClick = (event) => {
-        console.log("Contact link clicked!", event);
-      };
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
 
-      return (
-        <Router>
-          <RoundedLink href="/contact" onClick={handleLinkClick}>
-            Contact Us
-          </RoundedLink>
-        </Router>
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
 
-  <Tab title="Propriétés">
-    | Propriétés | Type              | Description                                              |
-    | ---------- | ----------------- | -------------------------------------------------------- |
-    | href       | chaîne            | L'URL cible ou le chemin du lien                         |
-    | enfants    | `React.ReactNode` | Le contenu à afficher à l'intérieur du lien              |
-    | onClick    | fonction          | Fonction de rappel à déclencher lors du clic sur le lien |
-  </Tab>
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Propriétés">
+
+
+| Propriétés | Type              | Description                                              |
+| ---------- | ----------------- | -------------------------------------------------------- |
+| href       | chaîne            | L'URL cible ou le chemin du lien                         |
+| enfants    | `React.ReactNode` | Le contenu à afficher à l'intérieur du lien              |
+| onClick    | fonction          | Fonction de rappel à déclencher lors du clic sur le lien |
+
+
+
+</Tab>
 </Tabs>
 
 ## Lien social
@@ -124,30 +149,37 @@ Un lien de style arrondi avec un composant Chip pour les liens.
 Liens sociaux stylisés, avec support pour différents types de liens sociaux, tels que les URL, LinkedIn, et X (ou Twitter).
 
 <Tabs>
-  <Tab title="Utilisation">
-    ```jsx
-    import { SocialLink } from "twenty-ui/navigation";
-    import { BrowserRouter as Router } from "react-router-dom";
+<Tab title="Utilisation">
 
-    export const MyComponent = () => {
-      return (
-        <Router>
-          <SocialLink
-            type="twitter"
-            href="https://twitter.com/twentycrm"
-          ></SocialLink>
-        </Router>
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
 
-  <Tab title="Propriétés">
-    | Propriétés | Type              | Description                                                                     |
-    | ---------- | ----------------- | ------------------------------------------------------------------------------- |
-    | href       | chaîne            | L'URL cible ou le chemin du lien                                                |
-    | enfants    | `React.ReactNode` | Le contenu à afficher à l'intérieur du lien                                     |
-    | type       | chaîne            | Le type de liens sociaux. Les options incluent: `url`, `LinkedIn`, et `Twitter` |
-    | onClick    | fonction          | Fonction de rappel à déclencher lors du clic sur le lien                        |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Propriétés">
+
+
+| Propriétés | Type              | Description                                                                     |
+| ---------- | ----------------- | ------------------------------------------------------------------------------- |
+| href       | chaîne            | L'URL cible ou le chemin du lien                                                |
+| enfants    | `React.ReactNode` | Le contenu à afficher à l'intérieur du lien                                     |
+| type       | chaîne            | Le type de liens sociaux. Les options incluent: `url`, `LinkedIn`, et `Twitter` |
+| onClick    | fonction          | Fonction de rappel à déclencher lors du clic sur le lien                        |
+
+
+
+
+</Tab>
 </Tabs>

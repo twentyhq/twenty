@@ -18,7 +18,8 @@ import {
   TRIGGER_STEP_ID,
   WORKFLOW_TRIGGER_METADATA_KEY,
   WORKFLOW_TRIGGER_PAYLOAD_KEY,
-  WORKFLOW_TRIGGER_PAYLOAD_LABEL,
+  WORKFLOW_TRIGGER_RECORD_LABEL,
+  WORKFLOW_TRIGGER_RECORDS_LABEL,
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
@@ -30,6 +31,7 @@ import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
 import {
+  type BaseOutputSchema,
   Leaf,
   Node,
   type OutputSchema,
@@ -96,6 +98,7 @@ export class WorkflowSchemaWorkspaceService {
       case WorkflowActionType.UPDATE_RECORD:
       case WorkflowActionType.DELETE_RECORD:
       case WorkflowActionType.UPSERT_RECORD:
+      case WorkflowActionType.PICK_RECORD:
         return this.computeRecordOutputSchema({
           objectType: step.settings.input.objectName,
           workspaceId,
@@ -134,14 +137,10 @@ export class WorkflowSchemaWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        return {
-          response: {
-            label: 'Response',
-            isLeaf: true,
-            type: 'string',
-            value: 'Response of the agent',
-          },
-        };
+        return this.computeAiAgentActionOutputSchema({
+          agentId: step.settings.input.agentId,
+          workspaceId,
+        });
       }
       case WorkflowTriggerType.WEBHOOK:
       case WorkflowActionType.CODE:
@@ -379,6 +378,63 @@ export class WorkflowSchemaWorkspaceService {
     return { success: { isLeaf: true, type: 'boolean', value: true } };
   }
 
+  private async computeAiAgentActionOutputSchema({
+    agentId,
+    workspaceId,
+  }: {
+    agentId?: string;
+    workspaceId: string;
+  }): Promise<OutputSchema> {
+    const textResponseOutputSchema: OutputSchema = {
+      response: {
+        label: 'Response',
+        isLeaf: true,
+        type: 'string',
+        value: 'Response of the agent',
+      },
+    };
+
+    if (!isDefined(agentId)) {
+      return textResponseOutputSchema;
+    }
+
+    const { flatAgentMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatAgentMaps'],
+        },
+      );
+
+    const flatAgent = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: agentId,
+      flatEntityMaps: flatAgentMaps,
+    });
+
+    const responseFormat = flatAgent?.responseFormat;
+
+    if (responseFormat?.type !== 'json') {
+      return textResponseOutputSchema;
+    }
+
+    return Object.entries(responseFormat.schema.properties || {}).reduce(
+      (outputSchema, [propertyName, property]) => {
+        outputSchema[propertyName] = {
+          isLeaf: true,
+          type: property.type,
+          label: propertyName,
+          ...(isDefined(property.description)
+            ? { description: property.description }
+            : {}),
+          value: generateFakeValue(property.type),
+        };
+
+        return outputSchema;
+      },
+      {} as BaseOutputSchema,
+    );
+  }
+
   private async computeFormActionOutputSchema({
     formFieldMetadataItems,
     workspaceId,
@@ -426,7 +482,7 @@ export class WorkflowSchemaWorkspaceService {
       const payload: Node = {
         isLeaf: false,
         type: 'object',
-        label: WORKFLOW_TRIGGER_PAYLOAD_LABEL,
+        label: WORKFLOW_TRIGGER_RECORD_LABEL,
         value: recordOutputSchema,
       };
 
@@ -446,7 +502,7 @@ export class WorkflowSchemaWorkspaceService {
       const payload: Node = {
         isLeaf: false,
         type: 'object',
-        label: WORKFLOW_TRIGGER_PAYLOAD_LABEL,
+        label: WORKFLOW_TRIGGER_RECORDS_LABEL,
         value: {
           [objectMetadataInfo.flatObjectMetadata.namePlural]: {
             label: objectMetadataInfo.flatObjectMetadata.labelPlural,

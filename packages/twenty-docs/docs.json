@@ -409,6 +409,7 @@
                     "pages": [
                       "developers/extend/apps/logic/overview",
                       "developers/extend/apps/logic/logic-functions",
+                      "developers/extend/apps/logic/key-value-store",
                       "developers/extend/apps/logic/skills-and-agents",
                       "developers/extend/apps/logic/connections"
                     ]
@@ -469,27 +470,27 @@
         "language": "fr",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "Prise en main",
             "groups": [
               {
-                "group": "Welcome",
+                "group": "Bienvenue",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/fr/getting-started/introduction",
+                  "l/fr/getting-started/key-features",
+                  "l/fr/getting-started/quickstart"
                 ]
               },
               {
-                "group": "Core Concepts",
+                "group": "Concepts clés",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/fr/getting-started/core-concepts/data-model",
+                  "l/fr/getting-started/core-concepts/layout",
+                  "l/fr/getting-started/core-concepts/workflows",
+                  "l/fr/getting-started/core-concepts/calendar-and-email",
+                  "l/fr/getting-started/core-concepts/ai",
+                  "l/fr/getting-started/core-concepts/apps",
+                  "l/fr/getting-started/core-concepts/dashboards",
+                  "l/fr/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -498,7 +499,7 @@
             "tab": "Guide de l'utilisateur",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Vue d'ensemble",
                 "pages": [
                   "l/fr/user-guide/introduction"
                 ]
@@ -509,7 +510,7 @@
                 "pages": [
                   "l/fr/user-guide/data-model/overview",
                   {
-                    "group": "Reference",
+                    "group": "Référence",
                     "pages": [
                       "l/fr/user-guide/data-model/capabilities/objects",
                       "l/fr/user-guide/data-model/capabilities/fields",
@@ -535,7 +536,7 @@
                 "pages": [
                   "l/fr/user-guide/data-migration/overview",
                   {
-                    "group": "Reference",
+                    "group": "Référence",
                     "pages": [
                       "l/fr/user-guide/data-migration/capabilities/file-formats",
                       "l/fr/user-guide/data-migration/capabilities/field-mapping",
@@ -567,7 +568,7 @@
                 "pages": [
                   "l/fr/user-guide/calendar-emails/overview",
                   {
-                    "group": "Reference",
+                    "group": "Référence",
                     "pages": [
                       "l/fr/user-guide/calendar-emails/capabilities/mailbox",
                       "l/fr/user-guide/calendar-emails/capabilities/calendar"
@@ -592,7 +593,7 @@
                 "pages": [
                   "l/fr/user-guide/workflows/overview",
                   {
-                    "group": "Reference",
+                    "group": "Référence",
                     "pages": [
                       "l/fr/user-guide/workflows/capabilities/workflow-triggers",
                       "l/fr/user-guide/workflows/capabilities/workflow-actions",
@@ -618,7 +619,7 @@
                           "l/fr/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
-                          "user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
+                          "l/fr/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -655,7 +656,7 @@
                 "pages": [
                   "l/fr/user-guide/ai/overview",
                   {
-                    "group": "Reference",
+                    "group": "Référence",
                     "pages": [
                       "l/fr/user-guide/ai/capabilities/ai-chatbot",
                       "l/fr/user-guide/ai/capabilities/ai-agents",
@@ -671,16 +672,16 @@
                 ]
               },
               {
-                "group": "Layout",
+                "group": "Disposition",
                 "icon": "table-columns",
                 "pages": [
-                  "user-guide/layout/overview",
+                  "l/fr/user-guide/layout/overview",
                   {
-                    "group": "Reference",
+                    "group": "Référence",
                     "pages": [
-                      "user-guide/layout/capabilities/navigation",
+                      "l/fr/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "Vues",
                         "pages": [
                           "l/fr/user-guide/views-pipelines/capabilities/table-views",
                           "l/fr/user-guide/views-pipelines/capabilities/kanban-views",
@@ -690,11 +691,11 @@
                           "l/fr/user-guide/views-pipelines/capabilities/view-settings"
                         ]
                       },
-                      "user-guide/layout/capabilities/record-pages"
+                      "l/fr/user-guide/layout/capabilities/record-pages"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guides pratiques",
                     "pages": [
                       "l/fr/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/fr/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -713,7 +714,7 @@
                 "pages": [
                   "l/fr/user-guide/dashboards/overview",
                   {
-                    "group": "Reference",
+                    "group": "Référence",
                     "pages": [
                       "l/fr/user-guide/dashboards/capabilities/dashboards",
                       "l/fr/user-guide/dashboards/capabilities/widgets",
@@ -735,7 +736,7 @@
                 "pages": [
                   "l/fr/user-guide/permissions-access/overview",
                   {
-                    "group": "Reference",
+                    "group": "Référence",
                     "pages": [
                       "l/fr/user-guide/permissions-access/capabilities/permissions",
                       "l/fr/user-guide/permissions-access/capabilities/sso-configuration"
@@ -755,7 +756,7 @@
                 "pages": [
                   "l/fr/user-guide/billing/overview",
                   {
-                    "group": "Reference",
+                    "group": "Référence",
                     "pages": [
                       "l/fr/user-guide/billing/capabilities/pricing-plans",
                       "l/fr/user-guide/billing/capabilities/credits"
@@ -775,7 +776,7 @@
                 "pages": [
                   "l/fr/user-guide/settings/overview",
                   {
-                    "group": "Reference",
+                    "group": "Référence",
                     "pages": [
                       "l/fr/user-guide/settings/capabilities/workspace-settings",
                       "l/fr/user-guide/settings/capabilities/member-management",
@@ -799,72 +800,73 @@
             "tab": "Développeurs",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Vue d'ensemble",
                 "pages": [
                   "l/fr/developers/introduction"
                 ]
               },
               {
-                "group": "Apps",
+                "group": "Applications",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "Prise en main",
                     "pages": [
-                      "developers/extend/apps/getting-started/quick-start",
-                      "developers/extend/apps/getting-started/concepts",
-                      "developers/extend/apps/getting-started/project-structure",
-                      "developers/extend/apps/getting-started/local-server",
-                      "developers/extend/apps/getting-started/scaffolding",
-                      "developers/extend/apps/getting-started/troubleshooting"
+                      "l/fr/developers/extend/apps/getting-started/quick-start",
+                      "l/fr/developers/extend/apps/getting-started/concepts",
+                      "l/fr/developers/extend/apps/getting-started/project-structure",
+                      "l/fr/developers/extend/apps/getting-started/local-server",
+                      "l/fr/developers/extend/apps/getting-started/scaffolding",
+                      "l/fr/developers/extend/apps/getting-started/troubleshooting"
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "Configuration",
                     "pages": [
-                      "developers/extend/apps/config/overview",
-                      "developers/extend/apps/config/application",
-                      "developers/extend/apps/config/roles",
-                      "developers/extend/apps/config/install-hooks",
-                      "developers/extend/apps/config/public-assets"
+                      "l/fr/developers/extend/apps/config/overview",
+                      "l/fr/developers/extend/apps/config/application",
+                      "l/fr/developers/extend/apps/config/roles",
+                      "l/fr/developers/extend/apps/config/install-hooks",
+                      "l/fr/developers/extend/apps/config/public-assets"
                     ]
                   },
                   {
-                    "group": "Data",
+                    "group": "Données",
                     "pages": [
-                      "developers/extend/apps/data/overview",
-                      "developers/extend/apps/data/objects",
-                      "developers/extend/apps/data/extending-objects",
-                      "developers/extend/apps/data/relations"
+                      "l/fr/developers/extend/apps/data/overview",
+                      "l/fr/developers/extend/apps/data/objects",
+                      "l/fr/developers/extend/apps/data/extending-objects",
+                      "l/fr/developers/extend/apps/data/relations"
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "Logique",
                     "pages": [
-                      "developers/extend/apps/logic/overview",
-                      "developers/extend/apps/logic/logic-functions",
-                      "developers/extend/apps/logic/skills-and-agents",
-                      "developers/extend/apps/logic/connections"
+                      "l/fr/developers/extend/apps/logic/overview",
+                      "l/fr/developers/extend/apps/logic/logic-functions",
+                      "l/fr/developers/extend/apps/logic/key-value-store",
+                      "l/fr/developers/extend/apps/logic/skills-and-agents",
+                      "l/fr/developers/extend/apps/logic/connections"
                     ]
                   },
                   {
-                    "group": "Layout",
+                    "group": "Disposition",
                     "pages": [
-                      "developers/extend/apps/layout/overview",
-                      "developers/extend/apps/layout/views",
-                      "developers/extend/apps/layout/navigation-menu-items",
-                      "developers/extend/apps/layout/page-layouts",
-                      "developers/extend/apps/layout/front-components",
-                      "developers/extend/apps/layout/command-menu-items"
+                      "l/fr/developers/extend/apps/layout/overview",
+                      "l/fr/developers/extend/apps/layout/views",
+                      "l/fr/developers/extend/apps/layout/navigation-menu-items",
+                      "l/fr/developers/extend/apps/layout/page-layouts",
+                      "l/fr/developers/extend/apps/layout/front-components",
+                      "l/fr/developers/extend/apps/layout/command-menu-items"
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "Opérations",
                     "pages": [
-                      "developers/extend/apps/operations/overview",
-                      "developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
-                      "developers/extend/apps/operations/testing",
-                      "developers/extend/apps/operations/publishing"
+                      "l/fr/developers/extend/apps/operations/overview",
+                      "l/fr/developers/extend/apps/operations/cli",
+                      "l/fr/developers/extend/apps/operations/sync-and-recovery",
+                      "l/fr/developers/extend/apps/operations/testing",
+                      "l/fr/developers/extend/apps/operations/publishing"
                     ]
                   }
                 ]
@@ -872,9 +874,9 @@
               {
                 "group": "API",
                 "pages": [
-                  "developers/extend/api",
-                  "developers/extend/webhooks",
-                  "developers/extend/oauth"
+                  "l/fr/developers/extend/api",
+                  "l/fr/developers/extend/webhooks",
+                  "l/fr/developers/extend/oauth"
                 ]
               },
               {
@@ -890,8 +892,8 @@
                 "group": "Contribuer",
                 "pages": [
                   "l/fr/developers/contribute/capabilities/local-setup",
-                  "developers/contribute/commands",
-                  "developers/contribute/style-guide"
+                  "l/fr/developers/contribute/commands",
+                  "l/fr/developers/contribute/style-guide"
                 ]
               }
             ]
@@ -907,22 +909,22 @@
               {
                 "group": "مرحبًا",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/ar/getting-started/introduction",
+                  "l/ar/getting-started/key-features",
+                  "l/ar/getting-started/quickstart"
                 ]
               },
               {
                 "group": "المفاهيم الأساسية",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/ar/getting-started/core-concepts/data-model",
+                  "l/ar/getting-started/core-concepts/layout",
+                  "l/ar/getting-started/core-concepts/workflows",
+                  "l/ar/getting-started/core-concepts/calendar-and-email",
+                  "l/ar/getting-started/core-concepts/ai",
+                  "l/ar/getting-started/core-concepts/apps",
+                  "l/ar/getting-started/core-concepts/dashboards",
+                  "l/ar/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -1241,63 +1243,64 @@
                 "group": "التطبيقات",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "البدء",
                     "pages": [
-                      "developers/extend/apps/getting-started/quick-start",
-                      "developers/extend/apps/getting-started/concepts",
-                      "developers/extend/apps/getting-started/project-structure",
-                      "developers/extend/apps/getting-started/local-server",
-                      "developers/extend/apps/getting-started/scaffolding",
-                      "developers/extend/apps/getting-started/troubleshooting"
+                      "l/ar/developers/extend/apps/getting-started/quick-start",
+                      "l/ar/developers/extend/apps/getting-started/concepts",
+                      "l/ar/developers/extend/apps/getting-started/project-structure",
+                      "l/ar/developers/extend/apps/getting-started/local-server",
+                      "l/ar/developers/extend/apps/getting-started/scaffolding",
+                      "l/ar/developers/extend/apps/getting-started/troubleshooting"
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "التهيئة",
                     "pages": [
-                      "developers/extend/apps/config/overview",
-                      "developers/extend/apps/config/application",
-                      "developers/extend/apps/config/roles",
-                      "developers/extend/apps/config/install-hooks",
-                      "developers/extend/apps/config/public-assets"
+                      "l/ar/developers/extend/apps/config/overview",
+                      "l/ar/developers/extend/apps/config/application",
+                      "l/ar/developers/extend/apps/config/roles",
+                      "l/ar/developers/extend/apps/config/install-hooks",
+                      "l/ar/developers/extend/apps/config/public-assets"
                     ]
                   },
                   {
-                    "group": "Data",
+                    "group": "بيانات",
                     "pages": [
-                      "developers/extend/apps/data/overview",
-                      "developers/extend/apps/data/objects",
-                      "developers/extend/apps/data/extending-objects",
-                      "developers/extend/apps/data/relations"
+                      "l/ar/developers/extend/apps/data/overview",
+                      "l/ar/developers/extend/apps/data/objects",
+                      "l/ar/developers/extend/apps/data/extending-objects",
+                      "l/ar/developers/extend/apps/data/relations"
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "المنطق",
                     "pages": [
-                      "developers/extend/apps/logic/overview",
-                      "developers/extend/apps/logic/logic-functions",
-                      "developers/extend/apps/logic/skills-and-agents",
-                      "developers/extend/apps/logic/connections"
+                      "l/ar/developers/extend/apps/logic/overview",
+                      "l/ar/developers/extend/apps/logic/logic-functions",
+                      "l/ar/developers/extend/apps/logic/key-value-store",
+                      "l/ar/developers/extend/apps/logic/skills-and-agents",
+                      "l/ar/developers/extend/apps/logic/connections"
                     ]
                   },
                   {
-                    "group": "Layout",
+                    "group": "التخطيط",
                     "pages": [
-                      "developers/extend/apps/layout/overview",
-                      "developers/extend/apps/layout/views",
-                      "developers/extend/apps/layout/navigation-menu-items",
-                      "developers/extend/apps/layout/page-layouts",
-                      "developers/extend/apps/layout/front-components",
-                      "developers/extend/apps/layout/command-menu-items"
+                      "l/ar/developers/extend/apps/layout/overview",
+                      "l/ar/developers/extend/apps/layout/views",
+                      "l/ar/developers/extend/apps/layout/navigation-menu-items",
+                      "l/ar/developers/extend/apps/layout/page-layouts",
+                      "l/ar/developers/extend/apps/layout/front-components",
+                      "l/ar/developers/extend/apps/layout/command-menu-items"
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "العمليات",
                     "pages": [
-                      "developers/extend/apps/operations/overview",
-                      "developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
-                      "developers/extend/apps/operations/testing",
-                      "developers/extend/apps/operations/publishing"
+                      "l/ar/developers/extend/apps/operations/overview",
+                      "l/ar/developers/extend/apps/operations/cli",
+                      "l/ar/developers/extend/apps/operations/sync-and-recovery",
+                      "l/ar/developers/extend/apps/operations/testing",
+                      "l/ar/developers/extend/apps/operations/publishing"
                     ]
                   }
                 ]
@@ -1340,22 +1343,22 @@
               {
                 "group": "Vítejte",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/cs/getting-started/introduction",
+                  "l/cs/getting-started/key-features",
+                  "l/cs/getting-started/quickstart"
                 ]
               },
               {
                 "group": "Základní pojmy",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/cs/getting-started/core-concepts/data-model",
+                  "l/cs/getting-started/core-concepts/layout",
+                  "l/cs/getting-started/core-concepts/workflows",
+                  "l/cs/getting-started/core-concepts/calendar-and-email",
+                  "l/cs/getting-started/core-concepts/ai",
+                  "l/cs/getting-started/core-concepts/apps",
+                  "l/cs/getting-started/core-concepts/dashboards",
+                  "l/cs/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -1674,63 +1677,64 @@
                 "group": "Aplikace",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "Začínáme",
                     "pages": [
-                      "developers/extend/apps/getting-started/quick-start",
-                      "developers/extend/apps/getting-started/concepts",
-                      "developers/extend/apps/getting-started/project-structure",
-                      "developers/extend/apps/getting-started/local-server",
-                      "developers/extend/apps/getting-started/scaffolding",
-                      "developers/extend/apps/getting-started/troubleshooting"
+                      "l/cs/developers/extend/apps/getting-started/quick-start",
+                      "l/cs/developers/extend/apps/getting-started/concepts",
+                      "l/cs/developers/extend/apps/getting-started/project-structure",
+                      "l/cs/developers/extend/apps/getting-started/local-server",
+                      "l/cs/developers/extend/apps/getting-started/scaffolding",
+                      "l/cs/developers/extend/apps/getting-started/troubleshooting"
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "Konfigurace",
                     "pages": [
-                      "developers/extend/apps/config/overview",
-                      "developers/extend/apps/config/application",
-                      "developers/extend/apps/config/roles",
-                      "developers/extend/apps/config/install-hooks",
-                      "developers/extend/apps/config/public-assets"
+                      "l/cs/developers/extend/apps/config/overview",
+                      "l/cs/developers/extend/apps/config/application",
+                      "l/cs/developers/extend/apps/config/roles",
+                      "l/cs/developers/extend/apps/config/install-hooks",
+                      "l/cs/developers/extend/apps/config/public-assets"
                     ]
                   },
                   {
                     "group": "Data",
                     "pages": [
-                      "developers/extend/apps/data/overview",
-                      "developers/extend/apps/data/objects",
-                      "developers/extend/apps/data/extending-objects",
-                      "developers/extend/apps/data/relations"
+                      "l/cs/developers/extend/apps/data/overview",
+                      "l/cs/developers/extend/apps/data/objects",
+                      "l/cs/developers/extend/apps/data/extending-objects",
+                      "l/cs/developers/extend/apps/data/relations"
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "Logika",
                     "pages": [
-                      "developers/extend/apps/logic/overview",
-                      "developers/extend/apps/logic/logic-functions",
-                      "developers/extend/apps/logic/skills-and-agents",
-                      "developers/extend/apps/logic/connections"
+                      "l/cs/developers/extend/apps/logic/overview",
+                      "l/cs/developers/extend/apps/logic/logic-functions",
+                      "l/cs/developers/extend/apps/logic/key-value-store",
+                      "l/cs/developers/extend/apps/logic/skills-and-agents",
+                      "l/cs/developers/extend/apps/logic/connections"
                     ]
                   },
                   {
-                    "group": "Layout",
+                    "group": "Rozvržení",
                     "pages": [
-                      "developers/extend/apps/layout/overview",
-                      "developers/extend/apps/layout/views",
-                      "developers/extend/apps/layout/navigation-menu-items",
-                      "developers/extend/apps/layout/page-layouts",
-                      "developers/extend/apps/layout/front-components",
-                      "developers/extend/apps/layout/command-menu-items"
+                      "l/cs/developers/extend/apps/layout/overview",
+                      "l/cs/developers/extend/apps/layout/views",
+                      "l/cs/developers/extend/apps/layout/navigation-menu-items",
+                      "l/cs/developers/extend/apps/layout/page-layouts",
+                      "l/cs/developers/extend/apps/layout/front-components",
+                      "l/cs/developers/extend/apps/layout/command-menu-items"
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "Operace",
                     "pages": [
-                      "developers/extend/apps/operations/overview",
-                      "developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
-                      "developers/extend/apps/operations/testing",
-                      "developers/extend/apps/operations/publishing"
+                      "l/cs/developers/extend/apps/operations/overview",
+                      "l/cs/developers/extend/apps/operations/cli",
+                      "l/cs/developers/extend/apps/operations/sync-and-recovery",
+                      "l/cs/developers/extend/apps/operations/testing",
+                      "l/cs/developers/extend/apps/operations/publishing"
                     ]
                   }
                 ]
@@ -1773,22 +1777,22 @@
               {
                 "group": "Willkommen",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/de/getting-started/introduction",
+                  "l/de/getting-started/key-features",
+                  "l/de/getting-started/quickstart"
                 ]
               },
               {
                 "group": "Kernkonzepte",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/de/getting-started/core-concepts/data-model",
+                  "l/de/getting-started/core-concepts/layout",
+                  "l/de/getting-started/core-concepts/workflows",
+                  "l/de/getting-started/core-concepts/calendar-and-email",
+                  "l/de/getting-started/core-concepts/ai",
+                  "l/de/getting-started/core-concepts/apps",
+                  "l/de/getting-started/core-concepts/dashboards",
+                  "l/de/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -2141,6 +2145,7 @@
                     "pages": [
                       "l/de/developers/extend/apps/logic/overview",
                       "l/de/developers/extend/apps/logic/logic-functions",
+                      "l/de/developers/extend/apps/logic/key-value-store",
                       "l/de/developers/extend/apps/logic/skills-and-agents",
                       "l/de/developers/extend/apps/logic/connections"
                     ]
@@ -2201,27 +2206,27 @@
         "language": "es",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "Primeros pasos",
             "groups": [
               {
-                "group": "Welcome",
+                "group": "Bienvenido",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/es/getting-started/introduction",
+                  "l/es/getting-started/key-features",
+                  "l/es/getting-started/quickstart"
                 ]
               },
               {
-                "group": "Core Concepts",
+                "group": "Conceptos clave",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/es/getting-started/core-concepts/data-model",
+                  "l/es/getting-started/core-concepts/layout",
+                  "l/es/getting-started/core-concepts/workflows",
+                  "l/es/getting-started/core-concepts/calendar-and-email",
+                  "l/es/getting-started/core-concepts/ai",
+                  "l/es/getting-started/core-concepts/apps",
+                  "l/es/getting-started/core-concepts/dashboards",
+                  "l/es/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -2230,7 +2235,7 @@
             "tab": "Guía de usuario",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Resumen",
                 "pages": [
                   "l/es/user-guide/introduction"
                 ]
@@ -2241,7 +2246,7 @@
                 "pages": [
                   "l/es/user-guide/data-model/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referencia",
                     "pages": [
                       "l/es/user-guide/data-model/capabilities/objects",
                       "l/es/user-guide/data-model/capabilities/fields",
@@ -2267,7 +2272,7 @@
                 "pages": [
                   "l/es/user-guide/data-migration/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referencia",
                     "pages": [
                       "l/es/user-guide/data-migration/capabilities/file-formats",
                       "l/es/user-guide/data-migration/capabilities/field-mapping",
@@ -2299,7 +2304,7 @@
                 "pages": [
                   "l/es/user-guide/calendar-emails/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referencia",
                     "pages": [
                       "l/es/user-guide/calendar-emails/capabilities/mailbox",
                       "l/es/user-guide/calendar-emails/capabilities/calendar"
@@ -2324,7 +2329,7 @@
                 "pages": [
                   "l/es/user-guide/workflows/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referencia",
                     "pages": [
                       "l/es/user-guide/workflows/capabilities/workflow-triggers",
                       "l/es/user-guide/workflows/capabilities/workflow-actions",
@@ -2350,7 +2355,7 @@
                           "l/es/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/es/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
                           "l/es/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
-                          "user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
+                          "l/es/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -2387,7 +2392,7 @@
                 "pages": [
                   "l/es/user-guide/ai/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referencia",
                     "pages": [
                       "l/es/user-guide/ai/capabilities/ai-chatbot",
                       "l/es/user-guide/ai/capabilities/ai-agents",
@@ -2403,16 +2408,16 @@
                 ]
               },
               {
-                "group": "Layout",
+                "group": "Diseño",
                 "icon": "table-columns",
                 "pages": [
-                  "user-guide/layout/overview",
+                  "l/es/user-guide/layout/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referencia",
                     "pages": [
-                      "user-guide/layout/capabilities/navigation",
+                      "l/es/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "Vistas",
                         "pages": [
                           "l/es/user-guide/views-pipelines/capabilities/table-views",
                           "l/es/user-guide/views-pipelines/capabilities/kanban-views",
@@ -2422,11 +2427,11 @@
                           "l/es/user-guide/views-pipelines/capabilities/view-settings"
                         ]
                       },
-                      "user-guide/layout/capabilities/record-pages"
+                      "l/es/user-guide/layout/capabilities/record-pages"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guías prácticas",
                     "pages": [
                       "l/es/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/es/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -2445,7 +2450,7 @@
                 "pages": [
                   "l/es/user-guide/dashboards/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referencia",
                     "pages": [
                       "l/es/user-guide/dashboards/capabilities/dashboards",
                       "l/es/user-guide/dashboards/capabilities/widgets",
@@ -2467,7 +2472,7 @@
                 "pages": [
                   "l/es/user-guide/permissions-access/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referencia",
                     "pages": [
                       "l/es/user-guide/permissions-access/capabilities/permissions",
                       "l/es/user-guide/permissions-access/capabilities/sso-configuration"
@@ -2487,7 +2492,7 @@
                 "pages": [
                   "l/es/user-guide/billing/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referencia",
                     "pages": [
                       "l/es/user-guide/billing/capabilities/pricing-plans",
                       "l/es/user-guide/billing/capabilities/credits"
@@ -2507,7 +2512,7 @@
                 "pages": [
                   "l/es/user-guide/settings/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referencia",
                     "pages": [
                       "l/es/user-guide/settings/capabilities/workspace-settings",
                       "l/es/user-guide/settings/capabilities/member-management",
@@ -2531,72 +2536,73 @@
             "tab": "Desarrolladores",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Resumen",
                 "pages": [
                   "l/es/developers/introduction"
                 ]
               },
               {
-                "group": "Apps",
+                "group": "Aplicaciones",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "Primeros pasos",
                     "pages": [
-                      "developers/extend/apps/getting-started/quick-start",
-                      "developers/extend/apps/getting-started/concepts",
-                      "developers/extend/apps/getting-started/project-structure",
-                      "developers/extend/apps/getting-started/local-server",
-                      "developers/extend/apps/getting-started/scaffolding",
-                      "developers/extend/apps/getting-started/troubleshooting"
+                      "l/es/developers/extend/apps/getting-started/quick-start",
+                      "l/es/developers/extend/apps/getting-started/concepts",
+                      "l/es/developers/extend/apps/getting-started/project-structure",
+                      "l/es/developers/extend/apps/getting-started/local-server",
+                      "l/es/developers/extend/apps/getting-started/scaffolding",
+                      "l/es/developers/extend/apps/getting-started/troubleshooting"
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "Configuración",
                     "pages": [
-                      "developers/extend/apps/config/overview",
-                      "developers/extend/apps/config/application",
-                      "developers/extend/apps/config/roles",
-                      "developers/extend/apps/config/install-hooks",
-                      "developers/extend/apps/config/public-assets"
+                      "l/es/developers/extend/apps/config/overview",
+                      "l/es/developers/extend/apps/config/application",
+                      "l/es/developers/extend/apps/config/roles",
+                      "l/es/developers/extend/apps/config/install-hooks",
+                      "l/es/developers/extend/apps/config/public-assets"
                     ]
                   },
                   {
-                    "group": "Data",
+                    "group": "Datos",
                     "pages": [
-                      "developers/extend/apps/data/overview",
-                      "developers/extend/apps/data/objects",
-                      "developers/extend/apps/data/extending-objects",
-                      "developers/extend/apps/data/relations"
+                      "l/es/developers/extend/apps/data/overview",
+                      "l/es/developers/extend/apps/data/objects",
+                      "l/es/developers/extend/apps/data/extending-objects",
+                      "l/es/developers/extend/apps/data/relations"
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "Lógica",
                     "pages": [
-                      "developers/extend/apps/logic/overview",
-                      "developers/extend/apps/logic/logic-functions",
-                      "developers/extend/apps/logic/skills-and-agents",
-                      "developers/extend/apps/logic/connections"
+                      "l/es/developers/extend/apps/logic/overview",
+                      "l/es/developers/extend/apps/logic/logic-functions",
+                      "l/es/developers/extend/apps/logic/key-value-store",
+                      "l/es/developers/extend/apps/logic/skills-and-agents",
+                      "l/es/developers/extend/apps/logic/connections"
                     ]
                   },
                   {
-                    "group": "Layout",
+                    "group": "Diseño",
                     "pages": [
-                      "developers/extend/apps/layout/overview",
-                      "developers/extend/apps/layout/views",
-                      "developers/extend/apps/layout/navigation-menu-items",
-                      "developers/extend/apps/layout/page-layouts",
-                      "developers/extend/apps/layout/front-components",
-                      "developers/extend/apps/layout/command-menu-items"
+                      "l/es/developers/extend/apps/layout/overview",
+                      "l/es/developers/extend/apps/layout/views",
+                      "l/es/developers/extend/apps/layout/navigation-menu-items",
+                      "l/es/developers/extend/apps/layout/page-layouts",
+                      "l/es/developers/extend/apps/layout/front-components",
+                      "l/es/developers/extend/apps/layout/command-menu-items"
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "Operaciones",
                     "pages": [
-                      "developers/extend/apps/operations/overview",
-                      "developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
-                      "developers/extend/apps/operations/testing",
-                      "developers/extend/apps/operations/publishing"
+                      "l/es/developers/extend/apps/operations/overview",
+                      "l/es/developers/extend/apps/operations/cli",
+                      "l/es/developers/extend/apps/operations/sync-and-recovery",
+                      "l/es/developers/extend/apps/operations/testing",
+                      "l/es/developers/extend/apps/operations/publishing"
                     ]
                   }
                 ]
@@ -2604,9 +2610,9 @@
               {
                 "group": "API",
                 "pages": [
-                  "developers/extend/api",
-                  "developers/extend/webhooks",
-                  "developers/extend/oauth"
+                  "l/es/developers/extend/api",
+                  "l/es/developers/extend/webhooks",
+                  "l/es/developers/extend/oauth"
                 ]
               },
               {
@@ -2622,8 +2628,8 @@
                 "group": "Contribuir",
                 "pages": [
                   "l/es/developers/contribute/capabilities/local-setup",
-                  "developers/contribute/commands",
-                  "developers/contribute/style-guide"
+                  "l/es/developers/contribute/commands",
+                  "l/es/developers/contribute/style-guide"
                 ]
               }
             ]
@@ -2639,22 +2645,22 @@
               {
                 "group": "Benvenuto",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/it/getting-started/introduction",
+                  "l/it/getting-started/key-features",
+                  "l/it/getting-started/quickstart"
                 ]
               },
               {
                 "group": "Concetti chiave",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/it/getting-started/core-concepts/data-model",
+                  "l/it/getting-started/core-concepts/layout",
+                  "l/it/getting-started/core-concepts/workflows",
+                  "l/it/getting-started/core-concepts/calendar-and-email",
+                  "l/it/getting-started/core-concepts/ai",
+                  "l/it/getting-started/core-concepts/apps",
+                  "l/it/getting-started/core-concepts/dashboards",
+                  "l/it/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -2973,63 +2979,64 @@
                 "group": "App",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "Per iniziare",
                     "pages": [
-                      "developers/extend/apps/getting-started/quick-start",
-                      "developers/extend/apps/getting-started/concepts",
-                      "developers/extend/apps/getting-started/project-structure",
-                      "developers/extend/apps/getting-started/local-server",
-                      "developers/extend/apps/getting-started/scaffolding",
-                      "developers/extend/apps/getting-started/troubleshooting"
+                      "l/it/developers/extend/apps/getting-started/quick-start",
+                      "l/it/developers/extend/apps/getting-started/concepts",
+                      "l/it/developers/extend/apps/getting-started/project-structure",
+                      "l/it/developers/extend/apps/getting-started/local-server",
+                      "l/it/developers/extend/apps/getting-started/scaffolding",
+                      "l/it/developers/extend/apps/getting-started/troubleshooting"
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "Configurazione",
                     "pages": [
-                      "developers/extend/apps/config/overview",
-                      "developers/extend/apps/config/application",
-                      "developers/extend/apps/config/roles",
-                      "developers/extend/apps/config/install-hooks",
-                      "developers/extend/apps/config/public-assets"
+                      "l/it/developers/extend/apps/config/overview",
+                      "l/it/developers/extend/apps/config/application",
+                      "l/it/developers/extend/apps/config/roles",
+                      "l/it/developers/extend/apps/config/install-hooks",
+                      "l/it/developers/extend/apps/config/public-assets"
                     ]
                   },
                   {
-                    "group": "Data",
+                    "group": "Dati",
                     "pages": [
-                      "developers/extend/apps/data/overview",
-                      "developers/extend/apps/data/objects",
-                      "developers/extend/apps/data/extending-objects",
-                      "developers/extend/apps/data/relations"
+                      "l/it/developers/extend/apps/data/overview",
+                      "l/it/developers/extend/apps/data/objects",
+                      "l/it/developers/extend/apps/data/extending-objects",
+                      "l/it/developers/extend/apps/data/relations"
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "Logica",
                     "pages": [
-                      "developers/extend/apps/logic/overview",
-                      "developers/extend/apps/logic/logic-functions",
-                      "developers/extend/apps/logic/skills-and-agents",
-                      "developers/extend/apps/logic/connections"
+                      "l/it/developers/extend/apps/logic/overview",
+                      "l/it/developers/extend/apps/logic/logic-functions",
+                      "l/it/developers/extend/apps/logic/key-value-store",
+                      "l/it/developers/extend/apps/logic/skills-and-agents",
+                      "l/it/developers/extend/apps/logic/connections"
                     ]
                   },
                   {
                     "group": "Layout",
                     "pages": [
-                      "developers/extend/apps/layout/overview",
-                      "developers/extend/apps/layout/views",
-                      "developers/extend/apps/layout/navigation-menu-items",
-                      "developers/extend/apps/layout/page-layouts",
-                      "developers/extend/apps/layout/front-components",
-                      "developers/extend/apps/layout/command-menu-items"
+                      "l/it/developers/extend/apps/layout/overview",
+                      "l/it/developers/extend/apps/layout/views",
+                      "l/it/developers/extend/apps/layout/navigation-menu-items",
+                      "l/it/developers/extend/apps/layout/page-layouts",
+                      "l/it/developers/extend/apps/layout/front-components",
+                      "l/it/developers/extend/apps/layout/command-menu-items"
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "Operazioni",
                     "pages": [
-                      "developers/extend/apps/operations/overview",
-                      "developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
-                      "developers/extend/apps/operations/testing",
-                      "developers/extend/apps/operations/publishing"
+                      "l/it/developers/extend/apps/operations/overview",
+                      "l/it/developers/extend/apps/operations/cli",
+                      "l/it/developers/extend/apps/operations/sync-and-recovery",
+                      "l/it/developers/extend/apps/operations/testing",
+                      "l/it/developers/extend/apps/operations/publishing"
                     ]
                   }
                 ]
@@ -3066,32 +3073,6 @@
       {
         "language": "ja",
         "tabs": [
-          {
-            "tab": "Getting Started",
-            "groups": [
-              {
-                "group": "Welcome",
-                "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
-                ]
-              },
-              {
-                "group": "Core Concepts",
-                "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
-                ]
-              }
-            ]
-          },
           {
             "tab": "ユーザーガイド",
             "groups": [
@@ -3215,8 +3196,7 @@
                           "l/ja/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/ja/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
-                          "user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
+                          "l/ja/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
                         ]
                       },
                       {
@@ -3272,11 +3252,9 @@
                 "group": "Layout",
                 "icon": "table-columns",
                 "pages": [
-                  "user-guide/layout/overview",
                   {
                     "group": "Reference",
                     "pages": [
-                      "user-guide/layout/capabilities/navigation",
                       {
                         "group": "Views",
                         "pages": [
@@ -3287,8 +3265,7 @@
                           "l/ja/user-guide/views-pipelines/capabilities/fields-and-columns",
                           "l/ja/user-guide/views-pipelines/capabilities/view-settings"
                         ]
-                      },
-                      "user-guide/layout/capabilities/record-pages"
+                      }
                     ]
                   },
                   {
@@ -3403,79 +3380,6 @@
                 ]
               },
               {
-                "group": "Apps",
-                "pages": [
-                  {
-                    "group": "Getting Started",
-                    "pages": [
-                      "developers/extend/apps/getting-started/quick-start",
-                      "developers/extend/apps/getting-started/concepts",
-                      "developers/extend/apps/getting-started/project-structure",
-                      "developers/extend/apps/getting-started/local-server",
-                      "developers/extend/apps/getting-started/scaffolding",
-                      "developers/extend/apps/getting-started/troubleshooting"
-                    ]
-                  },
-                  {
-                    "group": "Config",
-                    "pages": [
-                      "developers/extend/apps/config/overview",
-                      "developers/extend/apps/config/application",
-                      "developers/extend/apps/config/roles",
-                      "developers/extend/apps/config/install-hooks",
-                      "developers/extend/apps/config/public-assets"
-                    ]
-                  },
-                  {
-                    "group": "Data",
-                    "pages": [
-                      "developers/extend/apps/data/overview",
-                      "developers/extend/apps/data/objects",
-                      "developers/extend/apps/data/extending-objects",
-                      "developers/extend/apps/data/relations"
-                    ]
-                  },
-                  {
-                    "group": "Logic",
-                    "pages": [
-                      "developers/extend/apps/logic/overview",
-                      "developers/extend/apps/logic/logic-functions",
-                      "developers/extend/apps/logic/skills-and-agents",
-                      "developers/extend/apps/logic/connections"
-                    ]
-                  },
-                  {
-                    "group": "Layout",
-                    "pages": [
-                      "developers/extend/apps/layout/overview",
-                      "developers/extend/apps/layout/views",
-                      "developers/extend/apps/layout/navigation-menu-items",
-                      "developers/extend/apps/layout/page-layouts",
-                      "developers/extend/apps/layout/front-components",
-                      "developers/extend/apps/layout/command-menu-items"
-                    ]
-                  },
-                  {
-                    "group": "Operations",
-                    "pages": [
-                      "developers/extend/apps/operations/overview",
-                      "developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
-                      "developers/extend/apps/operations/testing",
-                      "developers/extend/apps/operations/publishing"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "API",
-                "pages": [
-                  "developers/extend/api",
-                  "developers/extend/webhooks",
-                  "developers/extend/oauth"
-                ]
-              },
-              {
                 "group": "セルフホスト",
                 "pages": [
                   "l/ja/developers/self-host/capabilities/docker-compose",
@@ -3487,9 +3391,7 @@
               {
                 "group": "貢献",
                 "pages": [
-                  "l/ja/developers/contribute/capabilities/local-setup",
-                  "developers/contribute/commands",
-                  "developers/contribute/style-guide"
+                  "l/ja/developers/contribute/capabilities/local-setup"
                 ]
               }
             ]
@@ -3500,27 +3402,27 @@
         "language": "ko",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "시작하기",
             "groups": [
               {
-                "group": "Welcome",
+                "group": "환영합니다",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/ko/getting-started/introduction",
+                  "l/ko/getting-started/key-features",
+                  "l/ko/getting-started/quickstart"
                 ]
               },
               {
-                "group": "Core Concepts",
+                "group": "핵심 개념",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/ko/getting-started/core-concepts/data-model",
+                  "l/ko/getting-started/core-concepts/layout",
+                  "l/ko/getting-started/core-concepts/workflows",
+                  "l/ko/getting-started/core-concepts/calendar-and-email",
+                  "l/ko/getting-started/core-concepts/ai",
+                  "l/ko/getting-started/core-concepts/apps",
+                  "l/ko/getting-started/core-concepts/dashboards",
+                  "l/ko/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -3529,7 +3431,7 @@
             "tab": "사용자 안내서",
             "groups": [
               {
-                "group": "Overview",
+                "group": "개요",
                 "pages": [
                   "l/ko/user-guide/introduction"
                 ]
@@ -3540,7 +3442,7 @@
                 "pages": [
                   "l/ko/user-guide/data-model/overview",
                   {
-                    "group": "Reference",
+                    "group": "참고",
                     "pages": [
                       "l/ko/user-guide/data-model/capabilities/objects",
                       "l/ko/user-guide/data-model/capabilities/fields",
@@ -3566,7 +3468,7 @@
                 "pages": [
                   "l/ko/user-guide/data-migration/overview",
                   {
-                    "group": "Reference",
+                    "group": "참고",
                     "pages": [
                       "l/ko/user-guide/data-migration/capabilities/file-formats",
                       "l/ko/user-guide/data-migration/capabilities/field-mapping",
@@ -3598,7 +3500,7 @@
                 "pages": [
                   "l/ko/user-guide/calendar-emails/overview",
                   {
-                    "group": "Reference",
+                    "group": "참고",
                     "pages": [
                       "l/ko/user-guide/calendar-emails/capabilities/mailbox",
                       "l/ko/user-guide/calendar-emails/capabilities/calendar"
@@ -3623,7 +3525,7 @@
                 "pages": [
                   "l/ko/user-guide/workflows/overview",
                   {
-                    "group": "Reference",
+                    "group": "참고",
                     "pages": [
                       "l/ko/user-guide/workflows/capabilities/workflow-triggers",
                       "l/ko/user-guide/workflows/capabilities/workflow-actions",
@@ -3649,7 +3551,7 @@
                           "l/ko/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
-                          "user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
+                          "l/ko/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -3686,7 +3588,7 @@
                 "pages": [
                   "l/ko/user-guide/ai/overview",
                   {
-                    "group": "Reference",
+                    "group": "참고",
                     "pages": [
                       "l/ko/user-guide/ai/capabilities/ai-chatbot",
                       "l/ko/user-guide/ai/capabilities/ai-agents",
@@ -3702,16 +3604,16 @@
                 ]
               },
               {
-                "group": "Layout",
+                "group": "레이아웃",
                 "icon": "table-columns",
                 "pages": [
-                  "user-guide/layout/overview",
+                  "l/ko/user-guide/layout/overview",
                   {
-                    "group": "Reference",
+                    "group": "참고",
                     "pages": [
-                      "user-guide/layout/capabilities/navigation",
+                      "l/ko/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "보기",
                         "pages": [
                           "l/ko/user-guide/views-pipelines/capabilities/table-views",
                           "l/ko/user-guide/views-pipelines/capabilities/kanban-views",
@@ -3721,11 +3623,11 @@
                           "l/ko/user-guide/views-pipelines/capabilities/view-settings"
                         ]
                       },
-                      "user-guide/layout/capabilities/record-pages"
+                      "l/ko/user-guide/layout/capabilities/record-pages"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "사용 방법",
                     "pages": [
                       "l/ko/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/ko/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -3744,7 +3646,7 @@
                 "pages": [
                   "l/ko/user-guide/dashboards/overview",
                   {
-                    "group": "Reference",
+                    "group": "참고",
                     "pages": [
                       "l/ko/user-guide/dashboards/capabilities/dashboards",
                       "l/ko/user-guide/dashboards/capabilities/widgets",
@@ -3766,7 +3668,7 @@
                 "pages": [
                   "l/ko/user-guide/permissions-access/overview",
                   {
-                    "group": "Reference",
+                    "group": "참고",
                     "pages": [
                       "l/ko/user-guide/permissions-access/capabilities/permissions",
                       "l/ko/user-guide/permissions-access/capabilities/sso-configuration"
@@ -3786,7 +3688,7 @@
                 "pages": [
                   "l/ko/user-guide/billing/overview",
                   {
-                    "group": "Reference",
+                    "group": "참고",
                     "pages": [
                       "l/ko/user-guide/billing/capabilities/pricing-plans",
                       "l/ko/user-guide/billing/capabilities/credits"
@@ -3806,7 +3708,7 @@
                 "pages": [
                   "l/ko/user-guide/settings/overview",
                   {
-                    "group": "Reference",
+                    "group": "참고",
                     "pages": [
                       "l/ko/user-guide/settings/capabilities/workspace-settings",
                       "l/ko/user-guide/settings/capabilities/member-management",
@@ -3830,72 +3732,73 @@
             "tab": "개발자",
             "groups": [
               {
-                "group": "Overview",
+                "group": "개요",
                 "pages": [
                   "l/ko/developers/introduction"
                 ]
               },
               {
-                "group": "Apps",
+                "group": "앱",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "시작하기",
                     "pages": [
-                      "developers/extend/apps/getting-started/quick-start",
-                      "developers/extend/apps/getting-started/concepts",
-                      "developers/extend/apps/getting-started/project-structure",
-                      "developers/extend/apps/getting-started/local-server",
-                      "developers/extend/apps/getting-started/scaffolding",
-                      "developers/extend/apps/getting-started/troubleshooting"
+                      "l/ko/developers/extend/apps/getting-started/quick-start",
+                      "l/ko/developers/extend/apps/getting-started/concepts",
+                      "l/ko/developers/extend/apps/getting-started/project-structure",
+                      "l/ko/developers/extend/apps/getting-started/local-server",
+                      "l/ko/developers/extend/apps/getting-started/scaffolding",
+                      "l/ko/developers/extend/apps/getting-started/troubleshooting"
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "설정",
                     "pages": [
-                      "developers/extend/apps/config/overview",
-                      "developers/extend/apps/config/application",
-                      "developers/extend/apps/config/roles",
-                      "developers/extend/apps/config/install-hooks",
-                      "developers/extend/apps/config/public-assets"
+                      "l/ko/developers/extend/apps/config/overview",
+                      "l/ko/developers/extend/apps/config/application",
+                      "l/ko/developers/extend/apps/config/roles",
+                      "l/ko/developers/extend/apps/config/install-hooks",
+                      "l/ko/developers/extend/apps/config/public-assets"
                     ]
                   },
                   {
-                    "group": "Data",
+                    "group": "데이터",
                     "pages": [
-                      "developers/extend/apps/data/overview",
-                      "developers/extend/apps/data/objects",
-                      "developers/extend/apps/data/extending-objects",
-                      "developers/extend/apps/data/relations"
+                      "l/ko/developers/extend/apps/data/overview",
+                      "l/ko/developers/extend/apps/data/objects",
+                      "l/ko/developers/extend/apps/data/extending-objects",
+                      "l/ko/developers/extend/apps/data/relations"
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "로직",
                     "pages": [
-                      "developers/extend/apps/logic/overview",
-                      "developers/extend/apps/logic/logic-functions",
-                      "developers/extend/apps/logic/skills-and-agents",
-                      "developers/extend/apps/logic/connections"
+                      "l/ko/developers/extend/apps/logic/overview",
+                      "l/ko/developers/extend/apps/logic/logic-functions",
+                      "l/ko/developers/extend/apps/logic/key-value-store",
+                      "l/ko/developers/extend/apps/logic/skills-and-agents",
+                      "l/ko/developers/extend/apps/logic/connections"
                     ]
                   },
                   {
-                    "group": "Layout",
+                    "group": "레이아웃",
                     "pages": [
-                      "developers/extend/apps/layout/overview",
-                      "developers/extend/apps/layout/views",
-                      "developers/extend/apps/layout/navigation-menu-items",
-                      "developers/extend/apps/layout/page-layouts",
-                      "developers/extend/apps/layout/front-components",
-                      "developers/extend/apps/layout/command-menu-items"
+                      "l/ko/developers/extend/apps/layout/overview",
+                      "l/ko/developers/extend/apps/layout/views",
+                      "l/ko/developers/extend/apps/layout/navigation-menu-items",
+                      "l/ko/developers/extend/apps/layout/page-layouts",
+                      "l/ko/developers/extend/apps/layout/front-components",
+                      "l/ko/developers/extend/apps/layout/command-menu-items"
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "작업",
                     "pages": [
-                      "developers/extend/apps/operations/overview",
-                      "developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
-                      "developers/extend/apps/operations/testing",
-                      "developers/extend/apps/operations/publishing"
+                      "l/ko/developers/extend/apps/operations/overview",
+                      "l/ko/developers/extend/apps/operations/cli",
+                      "l/ko/developers/extend/apps/operations/sync-and-recovery",
+                      "l/ko/developers/extend/apps/operations/testing",
+                      "l/ko/developers/extend/apps/operations/publishing"
                     ]
                   }
                 ]
@@ -3903,9 +3806,9 @@
               {
                 "group": "API",
                 "pages": [
-                  "developers/extend/api",
-                  "developers/extend/webhooks",
-                  "developers/extend/oauth"
+                  "l/ko/developers/extend/api",
+                  "l/ko/developers/extend/webhooks",
+                  "l/ko/developers/extend/oauth"
                 ]
               },
               {
@@ -3921,8 +3824,8 @@
                 "group": "기여",
                 "pages": [
                   "l/ko/developers/contribute/capabilities/local-setup",
-                  "developers/contribute/commands",
-                  "developers/contribute/style-guide"
+                  "l/ko/developers/contribute/commands",
+                  "l/ko/developers/contribute/style-guide"
                 ]
               }
             ]
@@ -3938,22 +3841,22 @@
               {
                 "group": "Boas-vindas",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/pt/getting-started/introduction",
+                  "l/pt/getting-started/key-features",
+                  "l/pt/getting-started/quickstart"
                 ]
               },
               {
                 "group": "Conceitos essenciais",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/pt/getting-started/core-concepts/data-model",
+                  "l/pt/getting-started/core-concepts/layout",
+                  "l/pt/getting-started/core-concepts/workflows",
+                  "l/pt/getting-started/core-concepts/calendar-and-email",
+                  "l/pt/getting-started/core-concepts/ai",
+                  "l/pt/getting-started/core-concepts/apps",
+                  "l/pt/getting-started/core-concepts/dashboards",
+                  "l/pt/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -4306,6 +4209,7 @@
                     "pages": [
                       "l/pt/developers/extend/apps/logic/overview",
                       "l/pt/developers/extend/apps/logic/logic-functions",
+                      "l/pt/developers/extend/apps/logic/key-value-store",
                       "l/pt/developers/extend/apps/logic/skills-and-agents",
                       "l/pt/developers/extend/apps/logic/connections"
                     ]
@@ -4371,22 +4275,22 @@
               {
                 "group": "Bun venit",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/ro/getting-started/introduction",
+                  "l/ro/getting-started/key-features",
+                  "l/ro/getting-started/quickstart"
                 ]
               },
               {
                 "group": "Concepte cheie",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/ro/getting-started/core-concepts/data-model",
+                  "l/ro/getting-started/core-concepts/layout",
+                  "l/ro/getting-started/core-concepts/workflows",
+                  "l/ro/getting-started/core-concepts/calendar-and-email",
+                  "l/ro/getting-started/core-concepts/ai",
+                  "l/ro/getting-started/core-concepts/apps",
+                  "l/ro/getting-started/core-concepts/dashboards",
+                  "l/ro/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -4739,6 +4643,7 @@
                     "pages": [
                       "l/ro/developers/extend/apps/logic/overview",
                       "l/ro/developers/extend/apps/logic/logic-functions",
+                      "l/ro/developers/extend/apps/logic/key-value-store",
                       "l/ro/developers/extend/apps/logic/skills-and-agents",
                       "l/ro/developers/extend/apps/logic/connections"
                     ]
@@ -4804,22 +4709,22 @@
               {
                 "group": "Добро пожаловать",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/ru/getting-started/introduction",
+                  "l/ru/getting-started/key-features",
+                  "l/ru/getting-started/quickstart"
                 ]
               },
               {
                 "group": "Основные понятия",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/ru/getting-started/core-concepts/data-model",
+                  "l/ru/getting-started/core-concepts/layout",
+                  "l/ru/getting-started/core-concepts/workflows",
+                  "l/ru/getting-started/core-concepts/calendar-and-email",
+                  "l/ru/getting-started/core-concepts/ai",
+                  "l/ru/getting-started/core-concepts/apps",
+                  "l/ru/getting-started/core-concepts/dashboards",
+                  "l/ru/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -5172,6 +5077,7 @@
                     "pages": [
                       "l/ru/developers/extend/apps/logic/overview",
                       "l/ru/developers/extend/apps/logic/logic-functions",
+                      "l/ru/developers/extend/apps/logic/key-value-store",
                       "l/ru/developers/extend/apps/logic/skills-and-agents",
                       "l/ru/developers/extend/apps/logic/connections"
                     ]
@@ -5237,22 +5143,22 @@
               {
                 "group": "Hoş geldiniz",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/tr/getting-started/introduction",
+                  "l/tr/getting-started/key-features",
+                  "l/tr/getting-started/quickstart"
                 ]
               },
               {
                 "group": "Temel Kavramlar",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/tr/getting-started/core-concepts/data-model",
+                  "l/tr/getting-started/core-concepts/layout",
+                  "l/tr/getting-started/core-concepts/workflows",
+                  "l/tr/getting-started/core-concepts/calendar-and-email",
+                  "l/tr/getting-started/core-concepts/ai",
+                  "l/tr/getting-started/core-concepts/apps",
+                  "l/tr/getting-started/core-concepts/dashboards",
+                  "l/tr/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -5605,6 +5511,7 @@
                     "pages": [
                       "l/tr/developers/extend/apps/logic/overview",
                       "l/tr/developers/extend/apps/logic/logic-functions",
+                      "l/tr/developers/extend/apps/logic/key-value-store",
                       "l/tr/developers/extend/apps/logic/skills-and-agents",
                       "l/tr/developers/extend/apps/logic/connections"
                     ]
@@ -5670,22 +5577,22 @@
               {
                 "group": "欢迎",
                 "pages": [
-                  "getting-started/introduction",
-                  "getting-started/key-features",
-                  "getting-started/quickstart"
+                  "l/zh/getting-started/introduction",
+                  "l/zh/getting-started/key-features",
+                  "l/zh/getting-started/quickstart"
                 ]
               },
               {
                 "group": "核心概念",
                 "pages": [
-                  "getting-started/core-concepts/data-model",
-                  "getting-started/core-concepts/layout",
-                  "getting-started/core-concepts/workflows",
-                  "getting-started/core-concepts/calendar-and-email",
-                  "getting-started/core-concepts/ai",
-                  "getting-started/core-concepts/apps",
-                  "getting-started/core-concepts/dashboards",
-                  "getting-started/core-concepts/glossary"
+                  "l/zh/getting-started/core-concepts/data-model",
+                  "l/zh/getting-started/core-concepts/layout",
+                  "l/zh/getting-started/core-concepts/workflows",
+                  "l/zh/getting-started/core-concepts/calendar-and-email",
+                  "l/zh/getting-started/core-concepts/ai",
+                  "l/zh/getting-started/core-concepts/apps",
+                  "l/zh/getting-started/core-concepts/dashboards",
+                  "l/zh/getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -6038,6 +5945,7 @@
                     "pages": [
                       "l/zh/developers/extend/apps/logic/overview",
                       "l/zh/developers/extend/apps/logic/logic-functions",
+                      "l/zh/developers/extend/apps/logic/key-value-store",
                       "l/zh/developers/extend/apps/logic/skills-and-agents",
                       "l/zh/developers/extend/apps/logic/connections"
                     ]

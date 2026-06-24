@@ -4,6 +4,7 @@ import { IconBell } from '@ui/icon';
 import { MenuItemNavigate } from '@ui/navigation/MenuItemNavigate/MenuItemNavigate';
 
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogDimension,
   type CatalogOptions,
@@ -33,8 +34,7 @@ export const Catalog: CatalogStory<Story, typeof MenuItemNavigate> = {
     className: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [

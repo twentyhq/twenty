@@ -36,6 +36,12 @@ const SignInUp = lazy(() =>
   })),
 );
 
+const SignInUpV2 = lazy(() =>
+  import('~/pages/auth/SignInUpV2').then((module) => ({
+    default: module.SignInUpV2,
+  })),
+);
+
 const PasswordReset = lazy(() =>
   import('~/pages/auth/PasswordReset').then((module) => ({
     default: module.PasswordReset,
@@ -48,9 +54,9 @@ const Authorize = lazy(() =>
   })),
 );
 
-const CreateWorkspace = lazy(() =>
-  import('~/pages/onboarding/CreateWorkspace').then((module) => ({
-    default: module.CreateWorkspace,
+const WorkspaceActivation = lazy(() =>
+  import('~/pages/onboarding/WorkspaceActivation').then((module) => ({
+    default: module.WorkspaceActivation,
   })),
 );
 
@@ -148,10 +154,10 @@ export const useCreateAppRouter = (
             }
           />
           <Route
-            path={AppPath.CreateWorkspace}
+            path={AppPath.WorkspaceActivation}
             element={
               <LazyRoute fallback={null}>
-                <CreateWorkspace />
+                <WorkspaceActivation />
               </LazyRoute>
             }
           />
@@ -257,6 +263,14 @@ export const useCreateAppRouter = (
           </Route>
         </Route>
         <Route element={<BlankLayout />}>
+          <Route
+            path={AppPath.SignInUpV2}
+            element={
+              <LazyRoute fallback={null}>
+                <SignInUpV2 />
+              </LazyRoute>
+            }
+          />
           <Route
             path={AppPath.Authorize}
             element={

@@ -12,7 +12,6 @@ import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   formatUpgradeCommandName,
-  getImageAbsoluteURI,
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
@@ -30,8 +29,8 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 type SettingsAdminWorkspaceContentProps = {
@@ -83,14 +82,11 @@ export const SettingsAdminWorkspaceContent = ({
           })}
           leftComponent={
             <AvatarOrIcon
-              avatarUrl={
-                getImageAbsoluteURI({
-                  imageUrl: isNonEmptyString(activeWorkspace?.logo)
-                    ? activeWorkspace?.logo
-                    : DEFAULT_WORKSPACE_LOGO,
-                  baseUrl: REACT_APP_SERVER_BASE_URL,
-                }) ?? ''
-              }
+              avatarUrl={getAbsoluteImageUrl(
+                isNonEmptyString(activeWorkspace?.logo)
+                  ? activeWorkspace?.logo
+                  : DEFAULT_WORKSPACE_LOGO,
+              )}
             />
           }
         />

@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -31,6 +32,7 @@ const InteractiveToggle = ({
       toggleSize={toggleSize}
       color={color}
       disabled={disabled}
+      aria-label="Toggle"
     />
   );
 };
@@ -44,8 +46,6 @@ export default meta;
 type Story = StoryObj<typeof InteractiveToggle>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
   args: {
     initialValue: false,
     disabled: false,
@@ -63,8 +63,7 @@ export const Catalog: CatalogStory<Story, typeof InteractiveToggle> = {
     color: { control: false },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {

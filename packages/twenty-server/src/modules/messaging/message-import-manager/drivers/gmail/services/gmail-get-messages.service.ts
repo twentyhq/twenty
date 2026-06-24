@@ -9,6 +9,7 @@ import { MessageFolderImportPolicy } from 'twenty-shared/types';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MESSAGING_GMAIL_EXCLUDED_SYSTEM_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-system-labels.constant';
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
 import { filterGmailMessagesByFolderPolicy } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/filter-gmail-messages-by-folder-policy.util';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
@@ -185,6 +186,12 @@ export class GmailGetMessagesService {
           connectedAccount,
         );
       })
-      .filter(isDefined);
+      .filter(isDefined)
+      .filter(
+        (message) =>
+          !(message.labelIds ?? []).some((labelId) =>
+            MESSAGING_GMAIL_EXCLUDED_SYSTEM_LABELS.includes(labelId),
+          ),
+      );
   }
 }

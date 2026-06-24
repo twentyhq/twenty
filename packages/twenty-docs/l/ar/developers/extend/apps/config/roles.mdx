@@ -1,0 +1,201 @@
+---
+title: الأدوار والصلاحيات
+description: حدِّد الكائنات والحقول التي يمكن لوظائف منطق تطبيقك ومكوّنات الواجهة الأمامية قراءتها وكتابتها.
+icon: shield-halved
+---
+
+**الدور** هو مجموعة من الأذونات: الكائنات التي يمكن لتطبيق ما قراءتها أو كتابتها، والحقول التي يمكنه رؤيتها، والقدرات على مستوى المنصّة التي يمكنه استخدامها. ترث جميع وظائف منطق كل تطبيق ومكوّنات الواجهة الأمامية الأذونات الخاصة بالدور المُعلَّم باستخدام `defineApplicationRole()` (انظر [دور الدالة الافتراضي](#the-default-function-role) أدناه).
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+});
+```
+
+## أمن على مستوى الصف
+
+تحدّد أذونات الكائن والحقل *أي الكائنات والحقول* يمكن لدورٍ معيّن التفاعل معها. **محددات الأذونات على مستوى الصف** تتعمّق أكثر وتحدّد *أي السجلات* يمكن لدورٍ معيّن رؤيتها والتصرّف فيها — على سبيل المثال، دور للخدمة الذاتية حيث يرى كل مستخدم خارجي سجلاته الخاصة فقط.
+
+عرِّف المحددات باستخدام `rowLevelPermissionPredicates` على الدور. مثل باقي ملف manifest، يحمل كل محدِّد `universalIdentifier` خاصًا به، ويشير إلى كائن وحقل باستخدام `universalIdentifier` الخاصّ بهما، و`operand`، وحقل workspaceMember (اختياري) تُحقن قيمته وقت الاستعلام — بحيث يمكنك التعبير عن: "علاقة مالك السجل **هي** عضو مساحة العمل الحالي":
+
+```ts src/roles/partner-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/account-owner.field';
+
+export default defineRole({
+  universalIdentifier: 'c3c1dc2e-1a08-4de5-abb7-2139b3d99343',
+  label: 'Partner',
+  description: 'External partner — sees only its own records',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+          .universalIdentifier,
+    },
+  ],
+});
+```
+
+نظرًا إلى أنّ المحددات (predicates) تُشحَن داخل ملف manifest، فإنّه يتم إنشاؤها وتحديثها وإزالتها مع الدور نفسه في كل عملية تثبيت وترقية — ولا توجد خطوة ما بعد التثبيت منفصلة تحتاج إلى مزامنتها.
+
+### دمج المحددات مع المجموعات
+
+افتراضيًا، يتم دمج محددات الدور باستخدام `AND`. لدمج بعضها باستخدام `OR` (أو لتداخل المنطق)، قم بتعريف إدخال `rowLevelPermissionPredicateGroups` وأشِر كل محدد إليه من خلال `predicateGroupUniversalIdentifier`. يُتيح هذا الدور للشريك رؤية فرصة (Opportunity) إذا كان إمّا **مالكها** أو **جهة الاتصال** لها:
+
+```ts src/roles/partner-opportunities-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+const CURRENT_MEMBER =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+    .universalIdentifier;
+
+export default defineRole({
+  universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
+  label: 'Partner (opportunities)',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      canReadObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicateGroups: [
+    {
+      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+    {
+      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier:
+        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+  ],
+});
+```
+
+الملاحظات:
+
+* امنح كل محدد وكل مجموعة قيمة `universalIdentifier` ثابتة (أي uuid) — فهي المفتاح الذي يعرّف الكيان عبر الترقيات، كما أنّ المحددات تشير إلى المجموعات من خلاله.
+* يمكن للمحددات الإشارة إلى الكائنات والحقول التي يملكها تطبيقك أو إلى كائنات Twenty القياسية.
+* يتم تطبيق الأمان على مستوى الصف (row-level security) لمساحات العمل في الخطط التي تتضمنه؛ بينما تستمر مزامنة المحددات في الخطط الأخرى ولكن دون تطبيقها فعليًا.
+
+## الدور الافتراضي للوظيفة
+
+عند إنشاء هيكل لتطبيق جديد، ينشئ CLI ملف دور افتراضي مُصرَّحًا به باستخدام `defineApplicationRole()`:
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlagUniversalIdentifiers: [],
+});
+```
+
+تُعد `defineApplicationRole()` غلافًا بسيطًا حول `defineRole()` يشير إلى الدور المستخدم كإعداد افتراضي لتطبيقك وقت التثبيت. يتطابق التحقق من الصحة مع `defineRole`، لكن خط تجميع البناء يربط تلقائيًا قيمة `universalIdentifier` بصفة `defaultRoleUniversalIdentifier` في بيان التطبيق (manifest)، وبالتالي لا تحتاج إلى الإشارة إليه من [`defineApplication`](/l/ar/developers/extend/apps/config/application) بنفسك.
+
+الملاحظات:
+
+* يُسمح بوجود **استدعاء واحد فقط** لـ `defineApplicationRole(...)` لكل تطبيق — سيفشل إنشاء بيان التطبيق (manifest) إذا عثر على أكثر من واحد.
+* استخدم `defineRole()` (وليس `defineApplicationRole()`) لأي أدوار **إضافية** يأتي بها تطبيقك.
+* لا يزال تعيين `defaultRoleUniversalIdentifier` صراحةً على `defineApplication()` مدعومًا للتوافق مع الإصدارات السابقة، ولكنه مُهمَل لصالح `defineApplicationRole()`.
+
+## أفضل الممارسات
+
+* ابدأ من الدور المُنشأ تلقائيًا، ثم قم بتقييده تدريجيًا — إذ يمنح الإعداد الافتراضي صلاحيات قراءة واسعة، وهو ما نادرًا ما تريده في بيئة الإنتاج.
+* استبدل `objectPermissions` و`fieldPermissions` بالكائنات والحقول الدقيقة التي تحتاجها وظائفك فعليًا.
+* `permissionFlagUniversalIdentifiers` تتحكم في الوصول إلى القدرات على مستوى المنصة. اجعلها في حدّها الأدنى.
+* اطّلع على مثال عملي: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

@@ -1,6 +1,7 @@
 import { Dialog } from '@base-ui/react/dialog';
 import { clsx } from 'clsx';
 import { useRef } from 'react';
+import { useThemeContainer } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type ModalOverlay } from '@ui/surfaces/Modal/types/ModalOverlay';
@@ -40,6 +41,7 @@ const OVERLAY_CLASS_NAMES: Record<ModalOverlay, string | undefined> = {
 
 export const Modal = ({
   isOpen,
+  ariaLabel,
   children,
   size = 'medium',
   padding = 'medium',
@@ -62,6 +64,11 @@ export const Modal = ({
   const internalRef = useRef<HTMLDivElement>(null);
   const resolvedRef = externalRef ?? internalRef;
 
+  const themeContainer = useThemeContainer();
+  const resolvedContainer = isDefined(container)
+    ? container
+    : (themeContainer ?? undefined);
+
   const handleBackdropMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
     onBackdropMouseDown?.(e);
@@ -72,7 +79,7 @@ export const Modal = ({
   // Modal, open/close is fully controlled by the isOpen prop
   return (
     <Dialog.Root open={isOpen} modal={false} disablePointerDismissal>
-      <Dialog.Portal container={isDefined(container) ? container : undefined}>
+      <Dialog.Portal container={resolvedContainer}>
         <ModalBackdrop
           data-testid={backdropTestId}
           data-click-outside-id={backdropClickOutsideId}
@@ -92,6 +99,7 @@ export const Modal = ({
             render={
               <div
                 ref={resolvedRef}
+                aria-label={ariaLabel}
                 className={clsx(
                   styles.modal,
                   styles[size],

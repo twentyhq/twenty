@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'src/utils/is-defined';
 
 export const DISCORD_BOT_TOKEN_ENV_VAR = 'DISCORD_BOT_TOKEN';
 

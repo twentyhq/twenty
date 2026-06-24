@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { ComponentDecorator } from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 import { AnimatedExpandableContainer } from '@ui/layout/AnimatedExpandableContainer/AnimatedExpandableContainer';
@@ -113,8 +113,7 @@ export default meta;
 type Story = StoryObj<typeof AnimatedExpandableContainerWithButton>;
 
 export const Default: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     isExpanded: false,
     dimension: 'height',
@@ -124,8 +123,7 @@ export const Default: Story = {
 };
 
 export const FitContent: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     ...Default.args,
     mode: 'fit-content',
@@ -133,8 +131,7 @@ export const FitContent: Story = {
 };
 
 export const CustomDurations: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     ...Default.args,
     animationDurations: { opacity: 0.8, size: 1.2 },
@@ -142,8 +139,7 @@ export const CustomDurations: Story = {
 };
 
 export const WidthAnimation: Story = {
-  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-  parameters: { a11y: { test: 'todo' } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     ...Default.args,
     dimension: 'width',

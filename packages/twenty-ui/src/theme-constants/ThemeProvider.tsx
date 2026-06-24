@@ -1,5 +1,9 @@
-import { createContext, useLayoutEffect, useState } from 'react';
+import { clsx } from 'clsx';
+import { createContext, useLayoutEffect, useRef, useState } from 'react';
 
+import { isDefined } from '@ui/utilities/utils/isDefined';
+
+import { ThemeScopeContext } from './ThemeScopeContext';
 import { themeCssVariables } from './themeCssVariables';
 
 type StringLeaves<T> = {
@@ -47,7 +51,9 @@ export type ThemeContextType = {
   colorScheme: 'light' | 'dark';
 };
 
-const computeThemeFromCss = (): ThemeType => {
+export type ThemeOverrides = Record<string, string | number>;
+
+const computeThemeFromCss = (sourceElement?: HTMLElement): ThemeType => {
   if (
     typeof document === 'undefined' ||
     typeof getComputedStyle !== 'function'
@@ -55,7 +61,9 @@ const computeThemeFromCss = (): ThemeType => {
     return themeCssVariables as unknown as ThemeType;
   }
 
-  const computedStyle = getComputedStyle(document.documentElement);
+  const computedStyle = getComputedStyle(
+    sourceElement ?? document.documentElement,
+  );
 
   const resolve = (obj: Record<string, unknown>): Record<string, unknown> => {
     const result: Record<string, unknown> = {};
@@ -99,23 +107,68 @@ export const ThemeContext = createContext<ThemeContextType>({
 export const ThemeProvider = ({
   children,
   colorScheme,
+  applyToRoot = true,
+  overrides,
+  className,
 }: {
   children: React.ReactNode;
   colorScheme: 'light' | 'dark';
+  applyToRoot?: boolean;
+  overrides?: ThemeOverrides;
+  className?: string;
 }) => {
+  const isScoped = isDefined(overrides) || !applyToRoot;
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
   const [theme, setTheme] = useState<ThemeType>(() => {
-    applyColorSchemeClass(colorScheme);
+    if (applyToRoot) {
+      applyColorSchemeClass(colorScheme);
+    }
     return computeThemeFromCss();
   });
+  const [scopeContainer, setScopeContainer] = useState<HTMLElement | null>(
+    null,
+  );
+
+  const overridesKey = isDefined(overrides) ? JSON.stringify(overrides) : '';
 
   useLayoutEffect(() => {
-    applyColorSchemeClass(colorScheme);
-    setTheme(computeThemeFromCss());
-  }, [colorScheme]);
+    if (applyToRoot) {
+      applyColorSchemeClass(colorScheme);
+    }
+
+    setTheme(
+      computeThemeFromCss(
+        isScoped ? (wrapperRef.current ?? undefined) : undefined,
+      ),
+    );
+    setScopeContainer(isScoped ? wrapperRef.current : null);
+  }, [colorScheme, applyToRoot, isScoped, overridesKey]);
+
+  const contextValue = { theme, colorScheme };
+
+  if (!isScoped) {
+    return (
+      <ThemeContext.Provider value={contextValue}>
+        {children}
+      </ThemeContext.Provider>
+    );
+  }
+
+  const overridesStyle = (overrides ?? {}) as React.CSSProperties;
 
   return (
-    <ThemeContext.Provider value={{ theme, colorScheme }}>
-      {children}
+    <ThemeContext.Provider value={contextValue}>
+      <ThemeScopeContext.Provider value={scopeContainer}>
+        <div
+          ref={wrapperRef}
+          className={clsx(applyToRoot ? undefined : colorScheme, className)}
+          style={{ display: 'contents', ...overridesStyle }}
+        >
+          {children}
+        </div>
+      </ThemeScopeContext.Provider>
     </ThemeContext.Provider>
   );
 };

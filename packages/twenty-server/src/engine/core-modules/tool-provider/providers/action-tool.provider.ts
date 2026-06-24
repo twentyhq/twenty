@@ -1,11 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import {
+  ACTION_TOOL_LABELS,
+  type ActionToolId,
+} from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ActionToolLabel } from 'src/engine/core-modules/tool-provider/types/action-tool-label.type';
+import { translateToolLabel } from 'src/engine/core-modules/tool-provider/utils/translate-tool-label.util';
+import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 
 import { ToolCategory } from 'twenty-shared/ai';
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
@@ -17,6 +26,8 @@ import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/dr
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
+import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
+import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
@@ -35,8 +46,11 @@ export class ActionToolProvider implements ToolProvider {
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly navigateAppTool: NavigateAppTool,
+    private readonly extractJsonPathsTool: ExtractJsonPathsTool,
+    private readonly searchOutputTool: SearchOutputTool,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly permissionsService: PermissionsService,
+    private readonly i18nService: I18nService,
   ) {
     this.toolMap = new Map<string, Tool>([
       ['http_request', this.httpTool],
@@ -45,6 +59,8 @@ export class ActionToolProvider implements ToolProvider {
       ['search_help_center', this.searchHelpCenterTool],
       ['code_interpreter', this.codeInterpreterTool],
       ['navigate_app', this.navigateAppTool],
+      ['extract_json_paths', this.extractJsonPathsTool],
+      ['search_output', this.searchOutputTool],
     ]);
   }
 
@@ -67,7 +83,12 @@ export class ActionToolProvider implements ToolProvider {
 
     if (hasHttpPermission) {
       descriptors.push(
-        this.buildDescriptor('http_request', this.httpTool, includeSchemas),
+        this.buildDescriptor(
+          'http_request',
+          this.httpTool,
+          includeSchemas,
+          context.locale,
+        ),
       );
     }
 
@@ -79,13 +100,19 @@ export class ActionToolProvider implements ToolProvider {
 
     if (hasEmailPermission) {
       descriptors.push(
-        this.buildDescriptor('send_email', this.sendEmailTool, includeSchemas),
+        this.buildDescriptor(
+          'send_email',
+          this.sendEmailTool,
+          includeSchemas,
+          context.locale,
+        ),
       );
       descriptors.push(
         this.buildDescriptor(
           'draft_email',
           this.draftEmailTool,
           includeSchemas,
+          context.locale,
         ),
       );
     }
@@ -95,6 +122,7 @@ export class ActionToolProvider implements ToolProvider {
         'search_help_center',
         this.searchHelpCenterTool,
         includeSchemas,
+        context.locale,
       ),
     );
 
@@ -102,6 +130,23 @@ export class ActionToolProvider implements ToolProvider {
       this.buildDescriptor(
         'navigate_app',
         this.navigateAppTool,
+        includeSchemas,
+        context.locale,
+      ),
+    );
+
+    descriptors.push(
+      this.buildDescriptor(
+        'extract_json_paths',
+        this.extractJsonPathsTool,
+        includeSchemas,
+      ),
+    );
+
+    descriptors.push(
+      this.buildDescriptor(
+        'search_output',
+        this.searchOutputTool,
         includeSchemas,
       ),
     );
@@ -120,6 +165,7 @@ export class ActionToolProvider implements ToolProvider {
           'code_interpreter',
           this.codeInterpreterTool,
           includeSchemas,
+          context.locale,
         ),
       );
     }
@@ -153,9 +199,16 @@ export class ActionToolProvider implements ToolProvider {
     toolId: string,
     tool: Tool,
     includeSchemas: boolean,
+    locale?: ToolProviderContext['locale'],
   ): ToolIndexEntry | ToolDescriptor {
+    const labels: ActionToolLabel | undefined =
+      ACTION_TOOL_LABELS[toolId as ActionToolId];
+
     return {
       name: toolId,
+      label: isDefined(labels)
+        ? translateToolLabel(labels.label, this.i18nService, locale)
+        : humanizeToolName(toolId),
       description: tool.description,
       category: ToolCategory.ACTION,
       icon: 'IconPlayerPlay',

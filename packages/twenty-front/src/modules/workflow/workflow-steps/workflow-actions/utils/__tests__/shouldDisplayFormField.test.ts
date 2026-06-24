@@ -98,6 +98,50 @@ describe('shouldDisplayFormField', () => {
     expect(result).toBe(true);
   });
 
+  it('returns false for UPDATE_RECORD with non UI editable field', () => {
+    const field = { ...baseField, isUIEditable: false } as FieldMetadataItem;
+    const result = shouldDisplayFormField({
+      fieldMetadataItem: field,
+      actionType: 'UPDATE_RECORD',
+    });
+    expect(result).toBe(false);
+  });
+
+  it('returns true for DATABASE_EVENT with non UI editable field', () => {
+    const field = { ...baseField, isUIEditable: false } as FieldMetadataItem;
+    const result = shouldDisplayFormField({
+      fieldMetadataItem: field,
+      actionType: 'DATABASE_EVENT',
+    });
+    expect(result).toBe(true);
+  });
+
+  it('returns false for DATABASE_EVENT with hidden system field', () => {
+    const field = {
+      ...baseField,
+      isSystem: true,
+      name: 'position',
+    } as FieldMetadataItem;
+    const result = shouldDisplayFormField({
+      fieldMetadataItem: field,
+      actionType: 'DATABASE_EVENT',
+    });
+    expect(result).toBe(false);
+  });
+
+  it('returns false for DATABASE_EVENT with RELATION not MANY_TO_ONE', () => {
+    const field = {
+      ...baseField,
+      type: FieldMetadataType.RELATION,
+      settings: { relationType: 'ONE_TO_MANY' },
+    } as FieldMetadataItem;
+    const result = shouldDisplayFormField({
+      fieldMetadataItem: field,
+      actionType: 'DATABASE_EVENT',
+    });
+    expect(result).toBe(false);
+  });
+
   it('throws error on unsupported action', () => {
     expect(() =>
       shouldDisplayFormField({

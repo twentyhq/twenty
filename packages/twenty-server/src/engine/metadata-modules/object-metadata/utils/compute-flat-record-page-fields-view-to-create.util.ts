@@ -1,3 +1,4 @@
+import { getFieldsWidgetViewUniversalIdentifier } from 'twenty-shared/application';
 import {
   ViewOpenRecordIn,
   ViewType,
@@ -12,9 +13,11 @@ import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-m
 export const computeFlatRecordPageFieldsViewToCreate = ({
   objectMetadata,
   flatApplication,
+  pageLayoutWidgetUniversalIdentifier,
 }: {
   flatApplication: FlatApplication;
   objectMetadata: UniversalFlatObjectMetadata & { id: string };
+  pageLayoutWidgetUniversalIdentifier: string;
 }): UniversalFlatView & { id: string } => {
   const createdAt = new Date().toISOString();
 
@@ -34,12 +37,16 @@ export const computeFlatRecordPageFieldsViewToCreate = ({
     calendarLayout: null,
     isCompact: false,
     shouldHideEmptyGroups: false,
+    kanbanColumnWidth: null,
     kanbanAggregateOperation: null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
     mainGroupByFieldMetadataUniversalIdentifier: null,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     position: 0,
-    universalIdentifier: v4(),
+    universalIdentifier: getFieldsWidgetViewUniversalIdentifier({
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      pageLayoutWidgetUniversalIdentifier,
+    }),
     visibility: ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: null,
     isActive: true,

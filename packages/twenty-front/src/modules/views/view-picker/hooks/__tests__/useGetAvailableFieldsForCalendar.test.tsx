@@ -96,6 +96,54 @@ describe('useGetAvailableFieldsForCalendar', () => {
     ]);
   });
 
+  it('should exclude date fields not supported in groupBy while keeping createdAt and updatedAt', () => {
+    const fields = [
+      {
+        id: '1',
+        name: 'dueAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: 'Due Date',
+        isActive: true,
+        isSystem: false,
+      },
+      {
+        id: '2',
+        name: 'createdAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: 'Created At',
+        isActive: true,
+        isSystem: true,
+      },
+      {
+        id: '3',
+        name: 'updatedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: 'Updated At',
+        isActive: true,
+        isSystem: true,
+      },
+      {
+        id: '4',
+        name: 'deletedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: 'Deleted At',
+        isActive: true,
+        isSystem: true,
+      },
+    ];
+
+    const objectMetadataItems = [createMockObjectMetadataItem(fields)];
+    const wrapper = createWrapper(objectMetadataItems);
+
+    const { result } = renderHook(() => useGetAvailableFieldsForCalendar(), {
+      wrapper,
+    });
+
+    expect(
+      result.current.availableFieldsForCalendar.map((field) => field.name),
+    ).toEqual(['dueAt', 'createdAt', 'updatedAt']);
+  });
+
   it('should return the navigateToDateFieldSettings function', () => {
     const fields = [
       {

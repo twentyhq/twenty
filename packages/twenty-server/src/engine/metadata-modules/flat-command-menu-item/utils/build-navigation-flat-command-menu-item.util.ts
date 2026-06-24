@@ -1,7 +1,6 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v5 } from 'uuid';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -54,6 +53,7 @@ export const buildNavigationFlatCommandMenuItem = ({
   workspaceId,
   position,
   now,
+  universalIdentifier,
 }: {
   objectMetadata: {
     id: string;
@@ -67,12 +67,8 @@ export const buildNavigationFlatCommandMenuItem = ({
   workspaceId: string;
   position: number;
   now: string;
+  universalIdentifier: string;
 }): FlatCommandMenuItem => {
-  const universalIdentifier = v5(
-    objectMetadata.universalIdentifier,
-    NAVIGATION_COMMAND_UUID_NAMESPACE,
-  );
-
   const conditionalAvailabilityExpression =
     buildNavigationConditionalAvailabilityExpression({
       universalIdentifier: objectMetadata.universalIdentifier,

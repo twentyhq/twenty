@@ -5,6 +5,7 @@ import {
   type LightIconButtonSize,
 } from '@ui/input/LightIconButton/LightIconButton';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
@@ -27,13 +28,9 @@ export const Default: Story = {
     active: false,
     focus: false,
     Icon: IconSearch,
-    animate: { scale: 1.2 },
-    transition: { duration: 0.3 },
   },
   argTypes: {
     Icon: { control: false },
-    animate: { control: 'object' },
-    transition: { control: 'object' },
   },
   decorators: [ComponentDecorator],
 };
@@ -42,20 +39,15 @@ export const Catalog: CatalogStory<Story, typeof AnimatedLightIconButton> = {
   args: {
     title: 'Filter',
     Icon: IconSearch,
-    animate: { scale: 1.2 },
-    transition: { duration: 0.3 },
   },
   argTypes: {
     accent: { control: false },
     disabled: { control: false },
     active: { control: false },
     focus: { control: false },
-    animate: { control: 'object' },
-    transition: { control: 'object' },
   },
   parameters: {
-    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
-    a11y: { test: 'todo' },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: { hover: ['.hover'], active: ['.pressed'] },
     catalog: {
       dimensions: [

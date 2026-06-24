@@ -1,10 +1,10 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 
 import { type IconComponent, IconGripVertical } from '@ui/icon';
 import { OverflowingTextWithTooltip } from '@ui/surfaces';
 import { type ThemeColor } from '@ui/theme';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { themeCssVariables, useTheme } from '@ui/theme-constants';
 import { type MenuItemDraggableGripMode } from '@ui/navigation/MenuItem/types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from '@ui/navigation/MenuItem/parts/MenuItemIcon';
 import { MenuItemIconBoxContainer } from '@ui/navigation/MenuItem/parts/MenuItemIconBoxContainer';
@@ -46,7 +46,7 @@ export const MenuItemLeftContent = ({
   gripMode = 'never',
   disabled = false,
 }: MenuItemLeftContentProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const gripIconColor = withIconContainer
     ? themeCssVariables.font.color.tertiary

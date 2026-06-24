@@ -1,8 +1,8 @@
 import { clsx } from 'clsx';
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { type IconComponent } from '@ui/icon';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './FloatingIconButton.module.scss';
 
@@ -16,6 +16,7 @@ export type FloatingIconButtonPosition =
 export type FloatingIconButtonProps = {
   className?: string;
   Icon?: IconComponent;
+  ariaLabel?: string;
   size?: FloatingIconButtonSize;
   position?: FloatingIconButtonPosition;
   applyShadow?: boolean;
@@ -29,6 +30,7 @@ export type FloatingIconButtonProps = {
 export const FloatingIconButton = ({
   className,
   Icon,
+  ariaLabel,
   size = 'small',
   position = 'standalone',
   applyShadow = true,
@@ -38,11 +40,12 @@ export const FloatingIconButton = ({
   onClick,
   isActive,
 }: FloatingIconButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <button
       disabled={disabled}
+      aria-label={ariaLabel}
       className={clsx(styles.button, styles[size], className)}
       data-position={position}
       data-apply-shadow={applyShadow || undefined}
@@ -52,7 +55,7 @@ export const FloatingIconButton = ({
       data-is-active={isActive || undefined}
       onClick={onClick}
     >
-      {Icon && <Icon size={theme.icon.size.md} />}
+      {Icon && <Icon size={theme.icon.size.md} aria-hidden={!!ariaLabel} />}
     </button>
   );
 };

@@ -253,7 +253,8 @@ export const PageChangeEffect = () => {
         }
         break;
       }
-      case isMatchingLocation(location, AppPath.SignInUp): {
+      case isMatchingLocation(location, AppPath.SignInUp):
+      case isMatchingLocation(location, AppPath.SignInUpV2): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.SignInUp,
@@ -301,13 +302,13 @@ export const PageChangeEffect = () => {
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.CreateWorkspace): {
+      case isMatchingLocation(location, AppPath.WorkspaceActivation): {
         resetFocusStackToFocusItem({
           focusStackItem: {
-            focusId: PageFocusId.CreateWorkspace,
+            focusId: PageFocusId.WorkspaceActivation,
             componentInstance: {
               componentType: FocusComponentType.PAGE,
-              componentInstanceId: PageFocusId.CreateWorkspace,
+              componentInstanceId: PageFocusId.WorkspaceActivation,
             },
             globalHotkeysConfig: {
               enableGlobalHotkeysWithModifiers: false,

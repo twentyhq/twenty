@@ -13,8 +13,6 @@ import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-la
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
-import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
-import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -508,39 +506,32 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     const allViewFields: UniversalFlatViewField[] = [];
 
     for (const customObject of customObjectsWithoutPageLayout) {
-      const fieldsView = computeFlatRecordPageFieldsViewToCreate({
-        objectMetadata: customObject,
-        flatApplication: twentyStandardFlatApplication,
-      });
-
       const objectFieldMetadatas = Object.values(
         flatFieldMetadataMaps.byUniversalIdentifier,
       )
         .filter(isDefined)
         .filter((field) => field.objectMetadataId === customObject.id);
 
-      const viewFields = computeFlatViewFieldsToCreate({
-        objectFlatFieldMetadatas: objectFieldMetadatas,
-        viewUniversalIdentifier: fieldsView.universalIdentifier,
+      const {
+        pageLayouts,
+        pageLayoutTabs,
+        pageLayoutWidgets,
+        recordPageFieldsView,
+        recordPageFieldsViewFields,
+      } = computeFlatDefaultRecordPageLayoutToCreate({
+        objectMetadata: customObject,
         flatApplication: twentyStandardFlatApplication,
+        objectFlatFieldMetadatas: objectFieldMetadatas,
         labelIdentifierFieldMetadataUniversalIdentifier:
           customObject.labelIdentifierFieldMetadataUniversalIdentifier,
-        excludeLabelIdentifier: true,
+        workspaceId,
       });
-
-      const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } =
-        computeFlatDefaultRecordPageLayoutToCreate({
-          objectMetadata: customObject,
-          flatApplication: twentyStandardFlatApplication,
-          recordPageFieldsView: fieldsView,
-          workspaceId,
-        });
 
       allPageLayouts.push(...pageLayouts);
       allTabs.push(...pageLayoutTabs);
       allWidgets.push(...pageLayoutWidgets);
-      allViews.push(fieldsView);
-      allViewFields.push(...viewFields);
+      allViews.push(recordPageFieldsView);
+      allViewFields.push(...recordPageFieldsViewFields);
     }
 
     const result =

@@ -1,10 +1,12 @@
 import { isUndefined } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotMetadata } from 'src/logic-functions/domain/build-recall-bot-metadata.util';
+import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
+import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
@@ -14,11 +16,13 @@ export const ensureMeetingBot = async (
   { callRecording, calendarEvent }: MeetingRecording,
 ): Promise<boolean> => {
   const meetingUrl = calendarEvent.conferenceLinkUrl;
-  const joinAt = calendarEvent.startsAt;
+  const meetingStartsAt = calendarEvent.startsAt;
 
-  if (isUndefined(meetingUrl) || isUndefined(joinAt)) {
+  if (isUndefined(meetingUrl) || isUndefined(meetingStartsAt)) {
     return false;
   }
+
+  const joinAt = computeRecallBotJoinAt(meetingStartsAt);
 
   const freshCallRecording = (
     await findCallRecordingsByIds(client, [callRecording.id])
@@ -33,10 +37,24 @@ export const ensureMeetingBot = async (
     return false;
   }
 
+  const workspaceId = getCurrentWorkspaceId();
+
+  if (isUndefined(workspaceId)) {
+    console.error(
+      `[twenty-meeting-bot] cannot schedule Recall bot for callRecording ${callRecording.id}: workspace id unavailable, the shared webhook could not be routed back`,
+    );
+
+    return false;
+  }
+
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,
     joinAt,
-    metadata: buildRecallBotMetadata({ callRecording, calendarEvent }),
+    metadata: buildRecallBotMetadata({
+      callRecording,
+      calendarEvent,
+      workspaceId,
+    }),
   });
 
   if (!scheduleResult.ok) {

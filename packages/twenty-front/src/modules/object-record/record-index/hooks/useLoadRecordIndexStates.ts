@@ -15,10 +15,13 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
+import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
+import { clampRecordBoardColumnWidth } from '@/object-record/record-board/utils/clampRecordBoardColumnWidth';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
@@ -67,6 +70,10 @@ export const useLoadRecordIndexStates = () => {
     useAtomComponentStateCallbackState(
       recordIndexShouldHideEmptyRecordGroupsComponentState,
     );
+
+  const recordIndexKanbanColumnWidthAtom = useAtomComponentStateCallbackState(
+    recordIndexKanbanColumnWidthComponentState,
+  );
 
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
@@ -318,6 +325,13 @@ export const useLoadRecordIndexStates = () => {
             view.shouldHideEmptyGroups,
           );
 
+          batchSet(
+            recordIndexKanbanColumnWidthAtom,
+            clampRecordBoardColumnWidth(
+              view.kanbanColumnWidth ?? RECORD_BOARD_COLUMN_WIDTH,
+            ),
+          );
+
           if (isDefined(recordIndexGroupFieldMetadataItemValue)) {
             batchSet(
               recordIndexGroupFieldMetadataItemAtom,
@@ -355,6 +369,7 @@ export const useLoadRecordIndexStates = () => {
       recordIndexGroupAggregateOperationAtom,
       recordIndexGroupAggregateFieldMetadataItemAtom,
       recordIndexShouldHideEmptyRecordGroupsAtom,
+      recordIndexKanbanColumnWidthAtom,
       getFieldMetadataItemByIdOrThrow,
       setRecordGroupsFromViewGroups,
       syncRecordIndexViewFields,

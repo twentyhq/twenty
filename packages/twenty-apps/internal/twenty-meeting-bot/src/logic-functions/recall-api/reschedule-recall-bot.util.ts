@@ -1,5 +1,7 @@
-import { RECALL_BOT_AUTOMATIC_LEAVE } from 'src/logic-functions/constants/recall-bot-automatic-leave';
-import { RECALL_BOT_RECORDING_CONFIG } from 'src/logic-functions/constants/recall-bot-recording-config';
+import { isUndefined } from '@sniptt/guards';
+
+import { getRecallBotAutomaticLeave } from 'src/logic-functions/constants/recall-bot-automatic-leave';
+import { getRecallBotRecordingConfig } from 'src/logic-functions/constants/recall-bot-recording-config';
 import { type RecallBotScheduleResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import {
   extractRecallBotId,
@@ -25,6 +27,8 @@ export const rescheduleRecallBot = async ({
     return { ok: false, status: null, errorMessage: configResult.error };
   }
 
+  const automaticLeave = getRecallBotAutomaticLeave();
+
   const result = await recallBotApiRequest<RecallBotResponse>({
     config: configResult.config,
     path: `/bot/${externalBotId}/`,
@@ -33,8 +37,8 @@ export const rescheduleRecallBot = async ({
       meeting_url: meetingUrl,
       join_at: joinAt,
       bot_name: configResult.config.botName,
-      automatic_leave: RECALL_BOT_AUTOMATIC_LEAVE,
-      recording_config: RECALL_BOT_RECORDING_CONFIG,
+      ...(isUndefined(automaticLeave) ? {} : { automatic_leave: automaticLeave }),
+      recording_config: getRecallBotRecordingConfig(),
       metadata,
     },
   });

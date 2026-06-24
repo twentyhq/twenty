@@ -1,9 +1,11 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { Avatar } from '@ui/data-display/Avatar/Avatar';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 import { type Nullable } from '@ui/utilities';
-import { useContext } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './AvatarOrIcon.module.scss';
@@ -31,7 +33,7 @@ export const AvatarOrIcon = ({
   IconBackgroundColor,
   onClick,
 }: AvatarOrIconProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   if (!isDefined(Icon)) {
     return (
@@ -47,13 +49,20 @@ export const AvatarOrIcon = ({
   }
 
   const isClickable = isDefined(onClick);
+  const accessibleLabel = isNonEmptyString(placeholder)
+    ? placeholder
+    : 'Avatar';
 
   if (isIconInverted || isDefined(IconBackgroundColor)) {
     return (
       <div
         className={styles.wrapper}
         data-clickable={isClickable || undefined}
+        role={isClickable ? 'button' : undefined}
+        tabIndex={isClickable ? 0 : undefined}
+        aria-label={isClickable ? accessibleLabel : undefined}
         onClick={onClick}
+        onKeyDown={handleClickableElementKeyDown}
       >
         <div
           className={styles.iconWithBackgroundContainer}
@@ -69,6 +78,7 @@ export const AvatarOrIcon = ({
             color={theme.font.color.inverted}
             size={theme.icon.size.sm}
             stroke={theme.icon.stroke.sm}
+            aria-hidden
           />
         </div>
       </div>
@@ -79,12 +89,17 @@ export const AvatarOrIcon = ({
     <div
       className={styles.wrapper}
       data-clickable={isClickable || undefined}
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      aria-label={isClickable ? accessibleLabel : undefined}
       onClick={onClick}
+      onKeyDown={handleClickableElementKeyDown}
     >
       <Icon
         size={theme.icon.size.sm}
         stroke={theme.icon.stroke.sm}
         color={IconColor || 'currentColor'}
+        aria-hidden
       />
     </div>
   );

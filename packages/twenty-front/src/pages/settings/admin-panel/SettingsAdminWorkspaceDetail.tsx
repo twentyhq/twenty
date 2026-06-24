@@ -45,6 +45,7 @@ import { H2Title } from 'twenty-ui/typography';
 import { Button, Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import {
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,
@@ -267,7 +268,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                         overflow="hidden"
                       >
                         <Avatar
-                          avatarUrl={user.avatarUrl}
+                          avatarUrl={getAbsoluteImageUrl(user.avatarUrl)}
                           placeholder={
                             `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
                             user.email

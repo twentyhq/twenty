@@ -17,7 +17,6 @@ describe('objectsResolver (e2e)', () => {
                 labelPlural
                 description
                 icon
-                isCustom
                 isRemote
                 isActive
                 isSystem
@@ -59,7 +58,6 @@ describe('objectsResolver (e2e)', () => {
           expect(objects).toHaveProperty('labelPlural');
           expect(objects).toHaveProperty('description');
           expect(objects).toHaveProperty('icon');
-          expect(objects).toHaveProperty('isCustom');
           expect(objects).toHaveProperty('isRemote');
           expect(objects).toHaveProperty('isActive');
           expect(objects).toHaveProperty('isSystem');

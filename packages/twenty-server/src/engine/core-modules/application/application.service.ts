@@ -320,6 +320,15 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ) {
+    const existingApplication = await this.findByUniversalIdentifier({
+      universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      workspaceId,
+    });
+
+    if (isDefined(existingApplication)) {
+      return existingApplication;
+    }
+
     const defaultPackageFields = await getDefaultApplicationPackageFields();
 
     const twentyStandardApplication = await this.create(

@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 type SettingsItemTypeTagProps = {
   item: {
-    isCustom?: boolean;
     isRemote?: boolean;
     applicationId?: string | null;
   };

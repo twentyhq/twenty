@@ -1,9 +1,8 @@
 import { VisibilityHidden } from '@ui/accessibility';
 import { IconChevronDown } from '@ui/icon';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { themeCssVariables, useTheme } from '@ui/theme-constants';
 import { clsx } from 'clsx';
-import { useContext } from 'react';
 
 import styles from './JsonArrow.module.scss';
 
@@ -16,7 +15,7 @@ export const JsonArrow = ({
   onClick: () => void;
   variant?: 'blue' | 'red';
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { arrowButtonCollapsedLabel, arrowButtonExpandedLabel } =
     useJsonTreeContextOrThrow();
 

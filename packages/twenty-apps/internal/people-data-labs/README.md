@@ -1,204 +1,77 @@
-# People Data Labs enrichment app
+# People Data Labs enrichment
 
-Enriches **Person** and **Company** records with [People Data Labs](https://www.peopledatalabs.com/) (PDL) data.
+Enriches **Person** and **Company** records with data from [People Data Labs](https://www.peopledatalabs.com/) (PDL): job and role details, location, company firmographics, funding, social profiles, and more.
 
-> **Status: data model + enrichment mapper.** This package defines the fields, relation,
-> views, role, and manifest, and implements the enrichment **logic functions** that call the
-> PDL REST API and map the response onto the standard + `pdl*` fields. The manual "Enrich"
-> record-action workflows are currently **created by hand** — automatic post-install seeding is
-> implemented but not wired up (see [Seeded workflows](#seeded-workflows-post-install)).
+## What it does
 
----
+For each record you enrich, the app matches it against People Data Labs and writes the result back to Twenty. It fills a handful of Twenty standard fields, adds a rich set of dedicated PDL fields, and records the outcome of the last attempt.
 
-## Enrichment logic functions
+### Standard fields it can fill
 
-`enrich-companies` / `enrich-people` (bulk workflow actions, for the manual record action) and
-`enrich-company` / `enrich-person` (single-record functions exposed **both** as a workflow action
-and as an AI tool) all delegate to a shared, trigger-agnostic core in `src/logic-functions/handlers/`:
+- **Person:** name, emails, phone numbers, job title, and LinkedIn link. If the person has no company yet, the app also looks up (or creates) their current company and links it.
+- **Company:** name, domain name, LinkedIn link, and address.
 
-- The bulk workflow-action functions accept a **list of records** (`{ records, overrideExistingValues? }`),
-  call the PDL **bulk** Enrichment endpoints (`/person/bulk`, `/company/enrich/bulk`), and loop the
-  single-record core over each, aggregating the outcome (`total` / `matched` / `notFound` / `skipped` /
-  `errored`); a per-record failure is captured as `ERROR` without aborting the batch
-  (`src/logic-functions/utils/run-batch-enrichment.ts`).
-- The single-record functions accept one record (`{ recordId, overrideExistingValues? }`), call the PDL
-  **single-record** Enrichment endpoints (`/person/enrich`, `/company/enrich` —
-  `src/logic-functions/utils/post-pdl-single-enrich.ts`), and return a single `EnrichResult`
-  (`src/logic-functions/utils/run-single-enrichment.ts`). They declare both a
-  `workflowActionTriggerSettings` and a `toolTriggerSettings`, so one function is usable as a workflow
-  step and as an AI tool.
+Standard fields are only used to complete your existing data. By default they are filled **only when empty**, so your own values are never overwritten unless you explicitly choose to overwrite (see overwrite modes below). The existing person-to-company link is never overwritten.
 
-- Read the record, guard against re-enriching within a TTL (`pdlLastEnrichedAt`), pick a
-  match identifier (person: `pdlId` → LinkedIn → email → name; company: `pdlId` → domain →
-  name), and call the PDL Person/Company Enrichment API (`src/logic-functions/utils/`).
-- On a match: fill **standard fields only when empty** (never clobber user data), always
-  (re)write `pdl*` fields, and set `pdlEnrichmentStatus = MATCHED`, `pdlLastEnrichedAt`,
-  `pdlRawPayload` (+ `pdlLikelihood` for Person). PDL `404` → `NOT_FOUND`; other errors →
-  `ERROR`. No identifier / fresh TTL → skipped with no writes.
-- SELECT/MULTI_SELECT values are normalized and dropped if not in the field's option set
-  (`src/logic-functions/utils/`); the option sets are the same `src/constants/*-options.ts`
-  the field definitions use.
+### PDL fields it adds
 
-Run locally: `yarn twenty dev:function:exec -n enrich-people -p '{"records":[{"id":"<id>"}]}'` (bulk)
-or `yarn twenty dev:function:exec -n enrich-person -p '{"recordId":"<id>"}'` (single record).
+The app adds around 30 dedicated PDL data fields on Person and 28 on Company (plus the bookkeeping fields listed below). These are always written on a match. Highlights:
 
-### Billing
+- **Person:** seniority, job role, job title class and sub-role, industry, inferred salary, headline and summaries, years of experience, LinkedIn connections, birth date/year, skills, interests, education, work experience, certifications, languages, social profiles (GitHub, Twitter/X, Facebook), and a detailed PDL location.
+- **Company:** industry, company type, size range and employee count, founded year, funding stages and total funding (in USD), headline and summary, legal name, ticker and exchange, tags, alternative names and domains, NAICS/SIC classifications, employee counts by country, and social profiles.
 
-Each **successful match** is billed to the workspace in Twenty credits via
-`chargeCredits` (`twenty-sdk/billing`), mirroring PDL's own model — PDL only consumes a
-credit on a `200` match, so `not_found`, errors, and skipped records are free:
+Each object also gets bookkeeping fields: a PDL id, the raw PDL payload, the time of the last enrichment, the match likelihood (Person), and an enrichment status.
 
-- Person match: **336,000 micro-credits** ($0.336 — PDL list price $0.28 + 20% margin)
-- Company match: **120,000 micro-credits** ($0.12 — PDL list price $0.10 + 20% margin)
+Two pre-built table views named **Enriched (PDL)** are added — one on People and one on Companies — to surface the enrichment fields.
 
-The charge is emitted once per PDL batch call (`src/logic-functions/utils/enrich-chunk.ts`)
-with `quantity` = number of matches and `resourceContext` `pdl/person` / `pdl/company`,
-at the moment PDL returns — a record whose subsequent write fails is still billed, since the
-PDL cost was already incurred. Prices live in `src/constants/*-match-cost-dollars.ts` and
-the margin in `src/constants/billing-margin-multiplier.ts`. Billing is non-fatal: a failed
-charge never fails the enrichment.
+## How matching works
 
-### Seeded workflows (post-install)
+The app matches records using the identifiers already on them, in priority order:
 
-> **Not currently wired up.** `post-install.function.ts` is a no-op
-> (`return { seededWorkflows: [] }`); the seeding implementation in
-> `src/logic-functions/handlers/post-install.ts` (`postInstallCore`) is **not invoked**. An
-> app's `CoreApiClient` only exposes per-object CRUD over the workspace `/graphql` schema, and the
-> workflow-builder mutations needed to seed a workflow (`createWorkflowVersionStep` /
-> `activateWorkflowVersion`) are core resolvers the app surface does not yet expose. Until the SDK
-> exposes them, **create the two "Enrich" workflows by hand**.
+- **Person:** PDL id, LinkedIn URL, primary email, or full name paired with a company name. LinkedIn URL and email are treated as strong identifiers; a name on its own is not used.
+- **Company:** PDL id, website domain, LinkedIn URL, or company name. Website and LinkedIn are treated as strong identifiers.
 
-When re-enabled, each workflow is a `MANUAL` / `BULK_RECORDS` trigger wired to a single
-`LOGIC_FUNCTION` step whose `records` input is bound to the selected records
-(`{{trigger.companies}}` / `{{trigger.people}}`):
+When a record has only weak signals (for example a person's name plus company, or a company name alone), the app applies a stricter confidence threshold to reduce false positives.
 
-- **Enrich companies** — runs `enrich-companies` over the selected Companies.
-- **Enrich people** — runs `enrich-people` over the selected People.
+If a record has no usable identifier, it is **skipped** (and never billed).
 
-The intended seeding (`postInstallCore`) resolves each function's runtime id from its
-`universalIdentifier` via the metadata API, publishes the version
-(`activateWorkflowVersion`), and is **idempotent** (skips a workflow whose name already exists).
+## Overwrite modes
 
-**Deferred to a later PR:** auto-enrichment triggers (on-create event + cron backfill).
+When you trigger enrichment you can choose how matched data is written back:
 
----
+- **Yes and don't overwrite** (default): writes PDL fields and fills standard fields only where they are currently empty.
+- **Yes and overwrite**: writes PDL fields and replaces existing standard field values.
+- **No**: returns the enriched data without modifying the record.
 
-## Data-model decisions
+In all cases the dedicated PDL fields are written on a match.
 
-### Bundle scope
+## Enrichment status
 
-Only the core PDL company fields are defined. Premium / Comprehensive / specialized fields
-(`inferred_revenue`, `linkedin_follower_count`, employee growth/churn/tenure, parent /
-subsidiary, exec movement, top employers, `funding_details`, …) are **out of scope** for this app.
+The enrichment status field written to each record records the outcome of the last attempt, and can hold one of three values:
 
-### Enums → SELECT / MULTI_SELECT
+- **Matched** — a confident match was found and data was written.
+- **No Match** — PDL returned no confident match.
+- **Error** — the enrichment attempt failed.
 
-Every PDL enum that has a canonical file is a SELECT, **validated 0-missing/0-extra against
-PDL schema v34.1**:
+Records that are skipped because they have no usable identifier are reported as skipped in the action's returned result and bulk summary, but no status is written back to the record (nothing is changed or billed for them).
 
-| Field                                                                                                                                                                                           | Type         | Options                                    |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------ |
-| `pdlSeniority` (`job_title_levels`, array)                                                                                                                                                      | MULTI_SELECT | 10                                         |
-| `pdlFundingStages` (`funding_stages`, array)                                                                                                                                                    | MULTI_SELECT | 29                                         |
-| `pdlIndustry` (`industry`)                                                                                                                                                                      | SELECT       | 147                                        |
-| `pdlJobTitleSubRole` (`job_title_sub_role`)                                                                                                                                                     | SELECT       | 106                                        |
-| `pdlJobTitleClass`, `pdlInferredSalary`, `pdlSex`, `pdlCompanyType`, `pdlSizeRange`, `pdlLatestFundingStage`, `pdlLocationContinent`, `pdlLocationMetro`, `pdlMicExchange`                       | SELECT       | 5 / 11 / 2 / 6 / 8 / 29 / 7 / 384 / 70     |
+## How to trigger it
 
-- Option `value`s are normalized to **GraphQL enum names** (`united states` → `UNITED_STATES`):
-  uppercase, accents stripped, non-alphanumeric → `_`, digit-leading prefixed.
-- Option `universalIdentifier`s are **unique per field** (shared enums like industry, metro, and
-  funding stage get a separate id-set per field).
-- The large option sets (`metro-options.ts`, `industry-options.ts`, …) and the UUID registry
-  (`universal-identifiers.ts`) are generated from the PDL taxonomy and checked in. When
-  regenerating for a newer PDL schema, **never change an existing option or field UUID** — that
-  orphans stored data; only append ids for new options. `select-option-constants.spec.ts` guards
-  global UUID uniqueness, value normalization, and per-field id integrity.
-- **Stays `TEXT`** (no canonical PDL enum file exists): `pdlIndustryDetail` (`industry_v2`),
-  `pdlJobOnetCode`. PDL `location_region` has no dedicated field — it fills the `state` slot of
-  the person `pdlLocation` ADDRESS composite.
+- **Manual action:** run enrichment on a single record or on a selection of records from a People or Companies view.
+- **Workflow action:** add **Enrich Person**, **Enrich Company**, **Enrich People**, or **Enrich Companies** as a step in a workflow.
+- **AI tool:** the single-record **Enrich Person** and **Enrich Company** actions are also available to AI agents.
 
-### Standard-field mapping
+Bulk enrichment processes records in batches and reports how many were matched, not found, skipped, or errored.
 
-`pdl*` shadows are **removed** where an equivalent standard field exists; the mapper writes
-the standard field instead:
+## Billing
 
-| Object  | Removed shadow → standard target                                                                                                                                          |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Person  | `pdlLinkedinUrl`→`linkedinLink`, `pdlJobTitle`→`jobTitle`, `pdlFullName`→`name`, `pdlWorkEmail`/`pdlPersonalEmails`→`emails`, `pdlMobilePhone`/`pdlPhoneNumbers`→`phones` |
-| Company | `pdlLinkedinUrl`→`linkedinLink`, `pdlWebsite`→`domainName`, `pdlDisplayName`→`name`                                                                                       |
+Only successful matches are billed, in Twenty credits — records that are not found, skipped, or that error are free.
 
-Shadows are **kept** where no reliable standard field is available: `pdlEmployeeCount`,
-`pdlTwitterUrl`.
-_Trade-off:_ PDL's work/personal-email and mobile/other-phone distinction is dropped (folded
-into the standard bags).
+- **Person match:** $0.336
+- **Company match:** $0.12
 
-### Location → ADDRESS composite
+A match is billed based on PDL's response. In the rare case where a record matches but the write back to Twenty fails afterward, the match is still counted.
 
-- **Company** location → the **standard `address`** composite (street/city/state/postcode/country/geo).
-- **Person** has no standard address field → dedicated **`pdlLocation` (ADDRESS)**.
-- `pdlLocationMetro` (both) and `pdlLocationContinent` (company) stay SELECT — ADDRESS has no slot.
-  _Trade-off:_ ADDRESS `country` is free text, so the country SELECT was dropped.
+## Setup
 
-### Current company → standard `company`
-
-PDL's detected current employer (`job_company_*`) is resolved to a Company record
-(**find-or-create**, matched by `pdlId` → domain → LinkedIn → name; created with
-`name` / `domainName` / `linkedinLink` + `pdlId` / `pdlIndustry` / `pdlSizeRange` when none
-matches) and linked via the **standard `company`** relation, **fill-only-if-empty** — it never
-overwrites a company the user already set, and the lookup is skipped entirely when the person
-already has one (no orphan companies).
-
-Company attributes live on the **Company** record, not denormalized on the Person. The earlier
-`pdlCurrentCompany` / `pdlCurrentEmployees` relation and the six `pdlJobCompany*` scalar fields
-were **removed** as duplicates of the standard `company` relation and the linked Company's own
-fields.
-
-### Enrichment metadata
-
-- `pdlId` — PDL record id (re-enrich by id: more precise than by email).
-- `pdlLikelihood` (Person, NUMBER) — PDL match confidence 1–10.
-- `pdlEnrichmentStatus` (SELECT: `MATCHED` / `NOT_FOUND` / `ERROR`) — distinguishes
-  "no match" from "never tried" (drives re-enrichment scheduling).
-- `pdlLastEnrichedAt` (DATE_TIME), `pdlRawPayload` (RAW_JSON, full response).
-
-### Other
-
-- `pdlTotalFunding` is `CURRENCY` (mapper must convert the bare USD float → micros).
-- **Views**: a curated "People Data Labs" TABLE view per object.
-- **Role**: read/update on Person & Company (object-level; tighten to field-scoped later).
-
----
-
-## What the mapper does
-
-**Orchestration** (`src/logic-functions/`)
-
-1. Runs from the manual "Enrich" record action (`BULK_RECORDS`) or the single-record
-   `enrich-company` / `enrich-person` functions (as a workflow step or an AI tool).
-2. Calls the PDL Person / Company Enrichment API with `PDL_API_KEY`, passing a `min_likelihood`
-   chosen by identifier strength (2 with a strong identifier, 6 for a weaker name-based match;
-   overridable per call).
-3. A match → `pdlEnrichmentStatus = MATCHED`; PDL `404` / no match → `NOT_FOUND`; other errors →
-   `ERROR`. Errored and not-found records are also stamped with `pdlLastEnrichedAt` so the TTL
-   guard backs off instead of re-submitting them on every run.
-4. **TTL guard**: skips re-enrichment when `pdlLastEnrichedAt` is within 7 days (bypass with
-   `force`), and prefers re-enriching by `pdlId`.
-
-**Field writing**
-
-5. **Standard fields** are filled **only when empty** (never clobber user data): Person `name`,
-   `emails`, `phones`, `linkedinLink`, `jobTitle`; Company `name`, `domainName`, `linkedinLink`,
-   `address`. All `pdl*` fields are (re)written on every match.
-6. **SELECT guard**: a SELECT/MULTI_SELECT value is written only if its normalized form is in the
-   field's option set; otherwise it is skipped and preserved in `pdlRawPayload` (handles PDL
-   schema versions newer than the bundled one). `job_title_levels` → `pdlSeniority`,
-   `funding_stages` → `pdlFundingStages`.
-7. **CURRENCY**: `total_funding_raised` (USD) → `{ amountMicros: value × 1_000_000, currencyCode: 'USD' }`.
-8. **ADDRESS**: PDL `location.*` is split into the composite — Company → standard `address`,
-   Person → `pdlLocation`.
-9. **Current company**: `job_company_*` is resolved to a Company record (find-or-create, matched by
-   `pdlId` → domain → LinkedIn → name) and linked via the standard `company` relation
-   (fill-only-if-empty); resolutions are cached within a batch run.
-10. **Dates**: partial PDL dates (`YYYY`, `YYYY-MM`) for `job_start_date`, `last_funding_date`,
-    `birth_date` are expanded and range-validated.
-11. Always sets `pdlId`, `pdlLastEnrichedAt`, `pdlRawPayload` (+ `pdlLikelihood` for Person).
+Set the **`PDL_API_KEY`** server variable to your People Data Labs API key. This is required for the app to function.

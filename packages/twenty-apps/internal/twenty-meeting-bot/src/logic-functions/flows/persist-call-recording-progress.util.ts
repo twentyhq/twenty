@@ -1,4 +1,4 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { completeAndChargeCallRecording } from 'src/logic-functions/flows/complete-and-charge-call-recording.util';
@@ -44,6 +44,7 @@ export const persistCallRecordingProgress = async (
   const nonStatusUpdate: CallRecordingUpdateFields = { ...updateData };
 
   delete nonStatusUpdate.status;
+  delete nonStatusUpdate.meetingBotFailureReason;
 
   if (Object.keys(nonStatusUpdate).length > 0) {
     await updateCallRecording(client, { id, data: nonStatusUpdate });

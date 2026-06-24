@@ -25,7 +25,11 @@ export type BatchEnrichmentAdapter<TNode, TData, TParams> = {
     enrichedAt: string;
     companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
     overrideExistingValues: boolean;
-  }) => Promise<Record<string, unknown>>;
+    shouldPersist: boolean;
+  }) => Promise<{
+    mappedData: Record<string, unknown>;
+    persistData: Record<string, unknown>;
+  }>;
   updateOne: (args: {
     client: CoreApiClient;
     recordId: string;

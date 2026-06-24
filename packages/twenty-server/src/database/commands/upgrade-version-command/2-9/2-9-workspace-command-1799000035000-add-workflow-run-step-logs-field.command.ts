@@ -87,7 +87,6 @@ export class AddWorkflowRunStepLogsFieldCommand extends ActiveOrSuspendedWorkspa
       icon: 'IconTerminal2',
       isNullable: true,
       isUIReadOnly: true,
-      isCustom: false,
       isSystem: true,
       isActive: true,
       universalIdentifier: STEP_LOGS_FIELD_UNIVERSAL_IDENTIFIER,

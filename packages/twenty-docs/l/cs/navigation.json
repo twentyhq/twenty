@@ -155,7 +155,27 @@
           "label": "Přehled"
         },
         "apps": {
-          "label": "Aplikace"
+          "label": "Aplikace",
+          "groups": {
+            "appsGettingStarted": {
+              "label": "Začínáme"
+            },
+            "appsConfig": {
+              "label": "Konfigurace"
+            },
+            "appsData": {
+              "label": "Data"
+            },
+            "appsLogic": {
+              "label": "Logika"
+            },
+            "appsLayout": {
+              "label": "Rozvržení"
+            },
+            "appsOperations": {
+              "label": "Operace"
+            }
+          }
         },
         "api": {
           "label": "API"

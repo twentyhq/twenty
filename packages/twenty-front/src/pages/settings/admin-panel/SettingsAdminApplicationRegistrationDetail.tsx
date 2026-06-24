@@ -15,6 +15,7 @@ import {
   IconSettings,
   IconWorld,
 } from 'twenty-ui/icon';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
@@ -108,7 +109,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
           <Avatar
             type="app"
             size="md"
-            avatarUrl={registration.logoUrl ?? undefined}
+            avatarUrl={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
             placeholder={registration.name}
             placeholderColorSeed={registration.name}
           />

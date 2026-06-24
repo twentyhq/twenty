@@ -1,0 +1,97 @@
+---
+title: 개요
+description: 워크스페이스에 앱이 추가하는 데이터(개체, 필드, 관계)의 구성을 정의하세요.
+icon: database
+---
+
+Twenty 앱의 **데이터 레이어**는 워크스페이스에 앱이 *추가하는* 데이터입니다. 앱이 선언하는 새로운 레코드 타입, 기존 개체에 추가하는 열, 그리고 이러한 레코드들이 서로 연결되는 방식이 여기에 포함됩니다.
+
+```text
+┌──────────────────────────────────────────────────┐
+│ Object — a record type, e.g. PostCard            │
+│    ├─ Field     (name, type, label)              │
+│    ├─ Field                                      │
+│    └─ Relation  (link to another object)         │
+└──────────────────────────────────────────────────┘
+            │
+            ├── lives in your app, OR
+            │
+            ▼
+┌──────────────────────────────────────────────────┐
+│ Standard / other apps' objects                   │
+│    └─ Field added by your app via defineField    │
+└──────────────────────────────────────────────────┘
+```
+
+## 이 섹션에서 다루는 내용
+
+<CardGroup cols={2}>
+  <Card title="개체" icon="table" href="/l/ko/developers/extend/apps/data/objects">
+    `defineObject` — 자체 필드를 가진 새로운 레코드 타입을 선언합니다.
+  </Card>
+  <Card title="객체 확장하기" icon="wand-magic-sparkles" href="/l/ko/developers/extend/apps/data/extending-objects">
+    `defineField` — 표준 개체 또는 다른 앱의 개체에 필드를 추가합니다.
+  </Card>
+  <Card title="관계" icon="diagram-project" href="/l/ko/developers/extend/apps/data/relations">
+    개체 간의 양방향 `MANY_TO_ONE` / `ONE_TO_MANY` 연결입니다.
+  </Card>
+</CardGroup>
+
+## 엔터티 한눈에 보기
+
+| 엔터티    | 목적                                                                          | 정의 방식                                      |
+| ------ | --------------------------------------------------------------------------- | ------------------------------------------ |
+| **객체** | 고유한 필드를 가진 새로운 사용자 정의 레코드 타입(예: PostCard, Invoice)                          | `defineObject()`                           |
+| **필드** | 객체의 열 독립형 필드를 사용하면 직접 생성하지 않은 객체도 확장할 수 있습니다(예: Company에 `loyaltyTier` 추가). | `defineField()`                            |
+| **관계** | 두 객체 사이의 양방향 연결 — 양쪽 모두 필드로 선언됩니다.                                          | `FieldType.RELATION`을 사용하는 `defineField()` |
+| **색인** | 객체 중 하나에 대해 반복적으로 실행되는 쿼리를 빠르게 하기 위한 데이터베이스 색인                              | `defineIndex()`                            |
+
+SDK는 빌드 시 AST 분석을 통해 이를 감지하므로, 파일 구성은 전적으로 여러분에게 달려 있습니다. 권장 컨벤션은 `src/objects/`, `src/fields/`, `src/indexes/`입니다. 안정적인 `universalIdentifier` UUID가 배포 간 모든 것을 하나로 연결합니다.
+
+## 색인(선택 사항)
+
+앱은 반복적인 쿼리를 빠르게 유지하기 위해 객체와 함께 색인을 포함하여 배포할 수 있습니다. 가장 일반적인 사례는 자주 읽는 상태 열 또는 외래 키 열입니다.
+
+```ts src/indexes/post-card-status.index.ts
+import { defineIndex } from 'twenty-sdk/define';
+
+import {
+  POST_CARD_UNIVERSAL_IDENTIFIER,
+  STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+} from '../objects/post-card.object';
+
+export default defineIndex({
+  universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff0',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  fields: [
+    {
+      universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff1',
+      fieldUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  ],
+});
+```
+
+### 고유 색인
+
+`defineIndex`는 단일 열 및 다중 열 고유성 모두에 대해 `isUnique: true`를 허용합니다. 이것이 권장 기본 요소이며, `defineField({ isUnique: true })`는 사용이 중단(deprecated)되었고 향후 릴리스에서 제거될 예정입니다.
+
+```ts
+defineIndex({
+  universalIdentifier: '…',
+  objectUniversalIdentifier: PERSON_UNIVERSAL_IDENTIFIER,
+  isUnique: true,
+  fields: [{ universalIdentifier: '…', fieldUniversalIdentifier: EMAIL_FIELD_UNIVERSAL_IDENTIFIER }],
+});
+```
+
+### 기타 제약 조건
+
+* 부분 `WHERE` 절은 관리자 제어 하에 유지되며, 앱에서 이를 선언할 수 없습니다.
+* 각 객체에는 사용자 정의 색인이 최대 10개까지 허용됩니다(프레임워크 자체 색인은 포함되지 않음).
+
+`fields` 배열의 순서는 Postgres가 사용하는 순서대로 지정하세요. 전화번호부처럼 가장 왼쪽 열이 먼저 오도록 합니다. 색인은 공짜가 아닙니다. 테이블에 대한 모든 쓰기 작업은 색인을 갱신합니다. 해당 색인을 필요로 하는 쿼리가 있을 때에만 색인을 추가하세요.
+
+<Note>
+**Application Config** 또는 **Roles & Permissions**를 찾고 계신가요? 이러한 항목은 앱이 추가하는 데이터가 아니라 앱 자체를 설명하며, [Config](/l/ko/developers/extend/apps/config/overview) 아래에 있습니다. **Connections**(Linear, GitHub, Slack OAuth)를 찾고 계신가요? 이들은 로직 함수 *내부에서* 호출되기 위한 것이며, [Logic](/l/ko/developers/extend/apps/logic/connections) 아래에 있습니다.
+</Note>
