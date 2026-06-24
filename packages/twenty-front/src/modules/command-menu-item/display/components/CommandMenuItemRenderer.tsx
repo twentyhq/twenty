@@ -118,6 +118,15 @@ const CommandMenuItemSelectableRenderer = ({
     handleClick();
   };
 
+  const loaderComponent =
+    disabled && showDisabledLoader ? (
+      isDefined(progress) ? (
+        <CommandListItemLoader progress={progress} />
+      ) : (
+        <Loader />
+      )
+    ) : undefined;
+
   if (isThirdPartyApp) {
     return (
       <SelectableListItem itemId={item.id} onEnter={onItemClick}>
@@ -127,21 +136,13 @@ const CommandMenuItemSelectableRenderer = ({
           onClick={disabled ? undefined : handleClick}
           focused={!disabled && isSelectedItemId}
           disabled={disabled}
+          RightComponent={loaderComponent}
         />
       </SelectableListItem>
     );
   }
 
   if (displayType === 'listItem') {
-    const loaderComponent =
-      disabled && showDisabledLoader ? (
-        isDefined(progress) ? (
-          <CommandListItemLoader progress={progress} />
-        ) : (
-          <Loader />
-        )
-      ) : undefined;
-
     return (
       <SelectableListItem itemId={item.id} onEnter={onItemClick}>
         <CommandMenuItem
