@@ -21,6 +21,8 @@ The app is intentionally separate from the existing Twenty CRM workspace tools a
 
 Created under the Twenty organization in OpenAI Platform as `Twenty Developer Tools`.
 
+Status: submitted for OpenAI review. The OpenAI Platform app list shows version `1.0.0` with status `Review`.
+
 Uploaded during draft preparation:
 
 - `chatgpt-app-submission.json`
@@ -41,17 +43,14 @@ The demo recording was generated from a real ChatGPT Developer Mode conversation
 
 The MCP Server step has been scanned successfully for `https://docs.twenty.com/mcp` with `No Auth`. Tool justifications were entered manually because the JSON import did not auto-fill them after scanning.
 
-Domain verification is the current blocker. The OpenAI Platform draft expects this token:
+Domain verification used this token:
 
 ```text
 GmIMFesuj8xvCg3AIdW2yXJvqU85nIl2yn6meatbPLg
 ```
 
-The website challenge file at `packages/twenty-website/public/.well-known/openai-apps-challenge` has been updated to that token. Platform accepts a parent hostname for the MCP hostname, so the intended verification base URL is `https://twenty.com` and the expected public URL is `https://twenty.com/.well-known/openai-apps-challenge`.
+The website challenge file at `packages/twenty-website/public/.well-known/openai-apps-challenge` has been updated to that token. Platform accepts a parent hostname for the MCP hostname, so the verification base URL was `https://twenty.com` and the verified public URL was `https://twenty.com/.well-known/openai-apps-challenge`.
 
-## Remaining Manual Steps
+## Remaining Steps
 
-1. Deploy the updated website challenge file so `https://twenty.com/.well-known/openai-apps-challenge` returns the token above.
-2. In the MCP Server step, set `Challenge Base URL` to `https://twenty.com` and click `Verify Domain`.
-3. Continue to Testing and verify the five positive and three negative test cases from `chatgpt-app-submission.json`.
-4. Continue to Global, review any final policy fields, and submit the app for OpenAI review.
+Wait for OpenAI review to complete. If review requests changes, update the Platform app version and this plugin branch together so the `.app.json` app id and submission artifacts remain in sync.
