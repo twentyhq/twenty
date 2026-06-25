@@ -307,9 +307,6 @@ export class ApplicationManifestMigrationService {
       }
     }
 
-    // `settingsCustomTabFrontComponentUniversalIdentifier` is deprecated and
-    // intentionally ignored here. Existing custom tab configurations are left
-    // untouched on the application but are no longer synced or rendered.
     if (isDefined(defaultRoleId)) {
       await this.applicationService.update(ownerFlatApplication.id, {
         workspaceId,

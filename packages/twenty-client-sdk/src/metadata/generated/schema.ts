@@ -475,6 +475,7 @@ export interface Application {
     applicationRegistrationId?: Scalars['UUID']
     canBeUninstalled: Scalars['Boolean']
     defaultRoleId?: Scalars['String']
+    /** @deprecated Custom settings tabs are no longer supported. This field is ignored. */
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     defaultLogicFunctionRole?: Role
     agents: Agent[]
@@ -3510,6 +3511,7 @@ export interface ApplicationGenqlSelection{
     applicationRegistrationId?: boolean | number
     canBeUninstalled?: boolean | number
     defaultRoleId?: boolean | number
+    /** @deprecated Custom settings tabs are no longer supported. This field is ignored. */
     settingsCustomTabFrontComponentId?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
     agents?: AgentGenqlSelection

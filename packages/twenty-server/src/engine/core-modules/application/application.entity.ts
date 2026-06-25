@@ -102,9 +102,11 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
 
-  // @deprecated Custom settings tabs are no longer supported. The column is
-  // kept (not dropped) so existing installations upgrade cleanly, but the
-  // value is no longer read or synced from manifests.
+  /**
+   * @deprecated Custom settings tabs are no longer supported. The column is
+   * kept (not dropped) so existing installations upgrade cleanly, but the
+   * value is no longer read or synced from manifests.
+   */
   @Column({ nullable: true, type: 'uuid' })
   settingsCustomTabFrontComponentId: string | null;
 
