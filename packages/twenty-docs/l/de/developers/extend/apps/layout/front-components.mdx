@@ -121,7 +121,7 @@ Importieren Sie sie aus `twenty-sdk/command`:
 * **`Command`** — Führt einen asynchronen Callback über das Prop `execute` aus.
 * **`CommandLink`** — Navigiert zu einem App-Pfad. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Öffnet einen Bestätigungsdialog. Bestätigt der Benutzer, wird der Callback `execute` ausgeführt. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Öffnet eine bestimmte Seite im Seitenpanel. Props: `page`, `pageTitle`, `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Öffnet eine Seite im Seitenpanel. Props hängen von `page` ab — z. B. verwendet `ViewRecord` `recordId` + `objectNameSingular`, andere Seiten verwenden `pageTitle` + `pageIcon`.
 
 Hier ist ein vollständiges Beispiel einer Headless-Front-Komponente, die `Command` verwendet, um eine Aktion aus dem Befehlsmenü auszuführen:
 
@@ -379,11 +379,11 @@ Geheime Variablen (`isSecret: true`) werden **nicht** in Front-Komponenten offen
 
 Die folgenden Systemvariablen sind immer über `process.env` verfügbar:
 
-| Variable                  | Beschreibung                                                                                                 |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `TWENTY_FUNCTIONS_URL`    | Basis-URL, von der die HTTP-Logikfunktionen deiner App bereitgestellt werden (verwendet von `RestApiClient`) |
-| `TWENTY_API_URL`          | Basis-URL der Twenty-Core-API                                                                                |
-| `TWENTY_APP_ACCESS_TOKEN` | Kurzlebiges Token mit dem Geltungsbereich der Rolle Ihrer App                                                |
+| Variable                  | Beschreibung                                                                 |
+| ------------------------- | ---------------------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | Basis-URL, von der die HTTP-Logikfunktionen deiner App bereitgestellt werden |
+| `TWENTY_API_URL`          | Basis-URL der Twenty-Core-API                                                |
+| `TWENTY_APP_ACCESS_TOKEN` | Kurzlebiges Token mit dem Geltungsbereich der Rolle Ihrer App                |
 
 ## Host-Kommunikations-API
 
