@@ -185,7 +185,15 @@ export class ImapGetMessageListService {
         return false;
       }
 
-      const uidNext = Number(status.uidNext ?? 1);
+      if (!isDefined(status.uidNext)) {
+        this.logger.debug(
+          `Folder ${folderPath}: Server missing UIDNEXT. Sync required.`,
+        );
+
+        return false;
+      }
+
+      const uidNext = Number(status.uidNext);
       const uidValidity = Number(status.uidValidity);
 
       if (previousCursor.uidValidity !== uidValidity) {
