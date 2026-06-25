@@ -68,40 +68,31 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Promise<SendMessageResult> {
-    const { gmailClient, encodedMessage, messageBuffer } =
-      await this.composeGmailMessage(connectedAccount, sendMessageInput);
-
-    const draftId = await this.findDraftIdByMessageId(
-      gmailClient,
-      draftExternalId,
+    const sendResult = await this.sendMessage(
+      sendMessageInput,
+      connectedAccount,
     );
 
-    if (!isDefined(draftId)) {
-      return this.sendMessage(sendMessageInput, connectedAccount);
+    await this.deleteDraftByMessageId(connectedAccount, draftExternalId);
+
+    return sendResult;
+  }
+
+  private async deleteDraftByMessageId(
+    connectedAccount: ConnectedAccountEntity,
+    messageId: string,
+  ): Promise<void> {
+    const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
+
+    const gmailClient = google.gmail({ version: 'v1', auth: oAuth2Client });
+
+    const draftId = await this.findDraftIdByMessageId(gmailClient, messageId);
+
+    if (isDefined(draftId)) {
+      await gmailClient.users.drafts.delete({ userId: 'me', id: draftId });
     }
-
-    await gmailClient.users.drafts.update({
-      userId: 'me',
-      id: draftId,
-      requestBody: {
-        message: {
-          raw: encodedMessage,
-        },
-      },
-    });
-
-    const { data } = await gmailClient.users.drafts.send({
-      userId: 'me',
-      requestBody: {
-        id: draftId,
-      },
-    });
-
-    return {
-      headerMessageId: extractMessageIdFromBuffer(messageBuffer),
-      messageExternalId: data.id ?? undefined,
-      threadExternalId: data.threadId ?? undefined,
-    };
   }
 
   private async findDraftIdByMessageId(
