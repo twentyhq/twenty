@@ -261,6 +261,65 @@ describe('findRelationPathsToPerson', () => {
     ]);
   });
 
+  it('does not reach person through the messageParticipant junction (would flood the timeline with the owner mailbox)', () => {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      buildGraphFixtures({
+        opportunity: [
+          {
+            fieldName: 'pointOfContact',
+            relationType: RelationType.MANY_TO_ONE,
+            targetObjectNameSingular: 'person',
+            inverseFieldName: 'pointOfContactForOpportunities',
+          },
+          {
+            fieldName: 'owner',
+            relationType: RelationType.MANY_TO_ONE,
+            targetObjectNameSingular: 'workspaceMember',
+            inverseFieldName: 'opportunities',
+          },
+        ],
+        workspaceMember: [
+          {
+            fieldName: 'messageParticipants',
+            relationType: RelationType.ONE_TO_MANY,
+            targetObjectNameSingular: 'messageParticipant',
+            inverseFieldName: 'workspaceMember',
+          },
+        ],
+        messageParticipant: [
+          {
+            fieldName: 'workspaceMember',
+            relationType: RelationType.MANY_TO_ONE,
+            targetObjectNameSingular: 'workspaceMember',
+            inverseFieldName: 'messageParticipants',
+          },
+          {
+            fieldName: 'person',
+            relationType: RelationType.MANY_TO_ONE,
+            targetObjectNameSingular: 'person',
+            inverseFieldName: 'messageParticipants',
+          },
+        ],
+        person: [],
+      });
+
+    expect(
+      findRelationPathsToPerson({
+        rootObjectNameSingular: 'opportunity',
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    ).toEqual([
+      [
+        {
+          direction: RelationType.MANY_TO_ONE,
+          queryObjectNameSingular: 'opportunity',
+          joinColumnName: 'pointOfContactId',
+        },
+      ],
+    ]);
+  });
+
   it('returns no path when person is unreachable, terminating on relation cycles', () => {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       buildGraphFixtures({

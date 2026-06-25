@@ -15,6 +15,13 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 const PERSON_OBJECT_NAME_SINGULAR = 'person';
 const DEFAULT_MAX_RELATION_DEPTH_TO_PERSON = 3;
 
+// Skip participant junctions: traversing them pulls in the owner's whole
+// mailbox via owner -> participant -> person.
+const EXCLUDED_INTERMEDIATE_OBJECT_NAME_SINGULARS = new Set<string>([
+  'messageParticipant',
+  'calendarEventParticipant',
+]);
+
 export type RelationHopToPerson = {
   direction: RelationType;
   queryObjectNameSingular: string;
@@ -110,7 +117,12 @@ export const findRelationPathsToPerson = ({
           PERSON_OBJECT_NAME_SINGULAR
         ) {
           pathsToPerson.push(nextPath);
-        } else if (!visitedObjectIds.has(targetObjectId)) {
+        } else if (
+          !visitedObjectIds.has(targetObjectId) &&
+          !EXCLUDED_INTERMEDIATE_OBJECT_NAME_SINGULARS.has(
+            relation.targetObjectMetadata.nameSingular,
+          )
+        ) {
           objectIdsReachedThisDepth.add(targetObjectId);
           nextFrontier.push({ objectId: targetObjectId, path: nextPath });
         }
