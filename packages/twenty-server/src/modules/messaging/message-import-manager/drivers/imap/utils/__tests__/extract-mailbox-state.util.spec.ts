@@ -18,9 +18,9 @@ const createMailbox = (
   overrides: Partial<NonNullable<ImapFlow['mailbox']>> = {},
 ) =>
   ({
-    uidValidity: 100n,
+    uidValidity: BigInt(100),
     uidNext: 51,
-    highestModseq: 9n,
+    highestModseq: BigInt(9),
     ...overrides,
   }) as NonNullable<ImapFlow['mailbox']>;
 
@@ -38,7 +38,7 @@ describe('resolveMailboxState', () => {
       uidValidity: 100,
       uidNext: 51,
       maxUid: 50,
-      highestModSeq: 9n,
+      highestModSeq: BigInt(9),
     });
     expect(client.status).not.toHaveBeenCalled();
     expect(client.search).not.toHaveBeenCalled();
