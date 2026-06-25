@@ -1,12 +1,27 @@
 import { renderHook } from '@testing-library/react';
 
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: jest.fn(),
 }));
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: jest.fn(),
+jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
+  useObjectMetadataItem: jest.fn(() => ({
+    objectMetadataItem: {
+      fields: [
+        {
+          id: 'target-some-object-field',
+          name: 'targetSomeObject',
+          type: FieldMetadataType.MORPH_RELATION,
+          isActive: true,
+          settings: {
+            joinColumnName: 'targetSomeObjectId',
+          },
+        },
+      ],
+    },
+  })),
 }));
 
 describe('useAttachments', () => {
@@ -27,13 +42,9 @@ describe('useAttachments', () => {
     const useFindManyRecordsMock = jest.requireMock(
       '@/object-record/hooks/useFindManyRecords',
     );
-    const useIsFeatureEnabledMock = jest.requireMock(
-      '@/workspace/hooks/useIsFeatureEnabled',
-    );
     useFindManyRecordsMock.useFindManyRecords.mockReturnValue({
       records: mockAttachments,
     });
-    useIsFeatureEnabledMock.useIsFeatureEnabled.mockReturnValue(false);
 
     const { result } = renderHook(() => useAttachments(mockTargetableObject));
 
@@ -49,11 +60,7 @@ describe('useAttachments', () => {
     const useFindManyRecordsMock = jest.requireMock(
       '@/object-record/hooks/useFindManyRecords',
     );
-    const useIsFeatureEnabledMock = jest.requireMock(
-      '@/workspace/hooks/useIsFeatureEnabled',
-    );
     useFindManyRecordsMock.useFindManyRecords.mockReturnValue({ records: [] });
-    useIsFeatureEnabledMock.useIsFeatureEnabled.mockReturnValue(false);
 
     const { result } = renderHook(() => useAttachments(mockTargetableObject));
 

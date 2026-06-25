@@ -11,6 +11,7 @@ import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyW
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
+import { isAttachmentTargetFieldDefined } from '@/activities/utils/isAttachmentTargetFieldDefined';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -62,6 +63,11 @@ export const RichTextFieldEditor = ({
     objectNameSingular,
   });
 
+  const { objectMetadataItem: attachmentObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.Attachment,
+    });
+
   const fieldMetadataItem = objectMetadataItem.fields.find(
     (field) => field.name === fieldName,
   );
@@ -84,6 +90,11 @@ export const RichTextFieldEditor = ({
     nameSingular: objectNameSingular,
   });
 
+  const hasAttachmentTargetField = isAttachmentTargetFieldDefined({
+    objectNameSingular,
+    attachmentFields: attachmentObjectMetadataItem.fields,
+  });
+
   const { records: attachments } = useFindManyRecords<Attachment>({
     objectNameSingular: CoreObjectNameSingular.Attachment,
     filter: {
@@ -91,6 +102,7 @@ export const RichTextFieldEditor = ({
         eq: recordId,
       },
     },
+    skip: !hasAttachmentTargetField,
   });
 
   const { syncAttachments } = useAttachmentSync(attachments);
