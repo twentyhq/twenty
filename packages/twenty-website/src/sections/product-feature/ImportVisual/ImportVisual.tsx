@@ -1,5 +1,7 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
@@ -37,11 +39,12 @@ const HeaderCell = styled.span`
 `;
 
 export function ImportVisual({ active: _active }: { active: boolean }) {
+  const { i18n } = useLingui();
   return (
     <Root>
       <HeaderRow>
-        <HeaderCell>Imported data</HeaderCell>
-        <HeaderCell>Twenty fields</HeaderCell>
+        <HeaderCell>{i18n._(msg`Imported data`)}</HeaderCell>
+        <HeaderCell>{i18n._(msg`Twenty fields`)}</HeaderCell>
       </HeaderRow>
       {MAPPINGS.map((mapping) => (
         <MappingRow key={mapping.header} mapping={mapping} />

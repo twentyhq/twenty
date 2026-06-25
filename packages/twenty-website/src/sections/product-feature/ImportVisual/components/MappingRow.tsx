@@ -1,3 +1,7 @@
+'use client';
+
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconChevronDown } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
@@ -83,18 +87,19 @@ const FieldIcon = styled.span`
 
 export function MappingRow({ mapping }: { mapping: ColumnMapping }) {
   const { Icon, example, field, header } = mapping;
+  const { i18n } = useLingui();
   return (
     <Row>
       <ImportedCell>
         <ColumnHeader>{header}</ColumnHeader>
-        <ColumnExample>ex: {example}</ColumnExample>
+        <ColumnExample>{i18n._(msg`ex: ${example}`)}</ColumnExample>
       </ImportedCell>
       <FieldCell>
         <FieldSelect>
           <FieldIcon>
             <Icon size={16} stroke={2} />
           </FieldIcon>
-          <FieldName>{field}</FieldName>
+          <FieldName>{i18n._(field)}</FieldName>
           <FieldIcon>
             <IconChevronDown size={16} stroke={2} />
           </FieldIcon>
