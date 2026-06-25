@@ -9,7 +9,7 @@ import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/i
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
 import { TextInput } from '@/ui/field/input/components/TextInput';
-import { FieldLabel } from 'twenty-ui/input';
+import { Field } from 'twenty-ui/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -296,7 +296,7 @@ export const FormArrayFieldInput = ({
 
   return (
     <FormFieldInputContainer data-testid={testId}>
-      {label ? <FieldLabel>{label}</FieldLabel> : null}
+      {label ? <Field.Label>{label}</Field.Label> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer

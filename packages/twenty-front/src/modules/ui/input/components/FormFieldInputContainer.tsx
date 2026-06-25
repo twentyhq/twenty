@@ -1,10 +1,28 @@
-import { styled } from '@linaria/react';
+import { css, cx } from '@linaria/core';
+import { type ReactNode } from 'react';
 import { Field } from 'twenty-ui/input';
 
-const StyledFormFieldInputContainer = styled(Field)`
+const containerClassName = css`
   display: flex;
   flex-direction: column;
   width: 100%;
 `;
 
-export { StyledFormFieldInputContainer as FormFieldInputContainer };
+type FormFieldInputContainerProps = {
+  children?: ReactNode;
+  className?: string;
+  'data-testid'?: string;
+};
+
+export const FormFieldInputContainer = ({
+  children,
+  className,
+  'data-testid': dataTestId,
+}: FormFieldInputContainerProps) => (
+  <Field.Root
+    className={cx(containerClassName, className)}
+    data-testid={dataTestId}
+  >
+    {children}
+  </Field.Root>
+);
