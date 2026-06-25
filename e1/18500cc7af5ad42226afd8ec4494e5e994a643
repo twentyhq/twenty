@@ -1,0 +1,29 @@
+packages/twenty-front/src/modules/command-menu-item/display/utils/localizeStandardCommandMenuItemLabel.ts
+  s_d538f59a153110::t_ad8cc6cb31ea73 2-33,35-43,63-104,106-107,110,112-113,116-130,134,141-146
+  s_d538f59a153110::t_3418b72fab2603 131-133,135
+  s_d538f59a153110::t_ae68cd8260eb99 1,34,44-62,105,108-109,111,114-115,136-140
+packages/twenty-front/src/modules/command-menu-item/display/utils/interpolateCommandMenuItemFields.ts
+  s_d538f59a153110::t_ad8cc6cb31ea73 4,32-36
+packages/twenty-front/src/modules/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch.ts
+  s_d538f59a153110::t_ad8cc6cb31ea73 5,29-34,36
+packages/twenty-front/src/modules/command-menu-item/display/utils/__tests__/localizeStandardCommandMenuItemLabel.test.ts
+  s_d538f59a153110::t_536ddd516b4190 44-54
+  s_d538f59a153110::t_e1ac5ee6e20948 1-2,4-43,55-65
+  s_d538f59a153110::t_83deda962f60d4 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "e118500cc7af5ad42226afd8ec4494e5e994a643",
+  "prompts": {},
+  "sessions": {
+    "s_d538f59a153110": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019efd12-0597-7021-aa2b-647bd2f645f0",
+        "model": "gpt-5.5"
+      },
+      "human_author": "RISHAV DEWAN <rishavdewan10@gmail.com>"
+    }
+  }
+}
