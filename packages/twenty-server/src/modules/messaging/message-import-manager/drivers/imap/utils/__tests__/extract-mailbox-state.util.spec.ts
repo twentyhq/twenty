@@ -78,6 +78,24 @@ describe('resolveMailboxState', () => {
     expect(state.maxUid).toBe(41);
   });
 
+  it('handles a mailbox with 100k+ UIDs without overflowing the call stack', async () => {
+    const client = createClient();
+
+    client.status.mockResolvedValue({ uidNext: 0 });
+    client.search.mockResolvedValue(
+      Array.from({ length: 200_000 }, (_, index) => index + 1),
+    );
+
+    const state = await resolveMailboxState(
+      asImapFlow(client),
+      'INBOX',
+      createMailbox({ uidNext: undefined }),
+    );
+
+    expect(state.uidNext).toBe(200_001);
+    expect(state.maxUid).toBe(200_000);
+  });
+
   it('treats an empty mailbox as uidNext 1 when no UID source is available', async () => {
     const client = createClient();
 

@@ -27,8 +27,9 @@ const resolveUidNext = async (
   }
 
   const uids = await client.search({ uid: '1:*' }, { uid: true });
-  const highestUid =
-    Array.isArray(uids) && uids.length > 0 ? Math.max(...uids) : 0;
+  const highestUid = Array.isArray(uids)
+    ? uids.reduce((max, uid) => (uid > max ? uid : max), 0)
+    : 0;
 
   return highestUid + 1;
 };
