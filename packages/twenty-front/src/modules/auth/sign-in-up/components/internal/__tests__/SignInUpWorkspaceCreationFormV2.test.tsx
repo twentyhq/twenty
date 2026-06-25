@@ -74,7 +74,7 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
     });
 
     it('creates the workspace with the chosen name and subdomain', async () => {
-      createWorkspaceMock.mockResolvedValue(undefined);
+      createWorkspaceMock.mockResolvedValue(true);
 
       renderForm();
 
@@ -94,10 +94,10 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
       });
     });
 
-    it('moves to the activation step while creating and back to the creation step afterwards', async () => {
-      let resolveCreateWorkspace: () => void = () => {};
+    it('stays on the activation step while creating and on success', async () => {
+      let resolveCreateWorkspace: (isCreated: boolean) => void = () => {};
       createWorkspaceMock.mockReturnValue(
-        new Promise<void>((resolve) => {
+        new Promise<boolean>((resolve) => {
           resolveCreateWorkspace = resolve;
         }),
       );
@@ -115,7 +115,23 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
       );
 
       await act(async () => {
-        resolveCreateWorkspace();
+        resolveCreateWorkspace(true);
+      });
+
+      expect(jotaiStore.get(signInUpStepState.atom)).toBe(
+        SignInUpStep.WorkspaceActivation,
+      );
+    });
+
+    it('returns to the creation step when workspace creation fails', async () => {
+      createWorkspaceMock.mockResolvedValue(false);
+
+      renderForm();
+
+      await act(async () => {
+        fireEvent.click(
+          screen.getByRole('button', { name: 'Create workspace' }),
+        );
       });
 
       expect(jotaiStore.get(signInUpStepState.atom)).toBe(
@@ -159,7 +175,7 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
     });
 
     it('hides the subdomain field and creates without a subdomain', async () => {
-      createWorkspaceMock.mockResolvedValue(undefined);
+      createWorkspaceMock.mockResolvedValue(true);
 
       renderForm();
 
