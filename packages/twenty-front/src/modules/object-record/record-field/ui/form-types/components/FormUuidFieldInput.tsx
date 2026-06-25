@@ -4,7 +4,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
-import { InputLabel } from 'twenty-ui/input';
+import { FieldLabel } from 'twenty-ui/input';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { t } from '@lingui/core/macro';
 import { useId, useState } from 'react';
@@ -87,7 +87,7 @@ export const FormUuidFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel htmlFor={instanceId}>{label}</InputLabel> : null}
+      {label ? <FieldLabel htmlFor={instanceId}>{label}</FieldLabel> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer

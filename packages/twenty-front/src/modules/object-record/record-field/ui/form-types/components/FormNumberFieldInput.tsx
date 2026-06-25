@@ -4,7 +4,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
-import { InputHint, InputLabel } from 'twenty-ui/input';
+import { FieldDescription, FieldLabel } from 'twenty-ui/input';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
@@ -98,7 +98,7 @@ export const FormNumberFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel htmlFor={instanceId}>{label}</InputLabel> : null}
+      {label ? <FieldLabel htmlFor={instanceId}>{label}</FieldLabel> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
@@ -135,8 +135,8 @@ export const FormNumberFieldInput = ({
         ) : null}
       </FormFieldInputRowContainer>
 
-      {hint ? <InputHint>{hint}</InputHint> : null}
-      {error && <InputHint danger>{error}</InputHint>}
+      {hint ? <FieldDescription>{hint}</FieldDescription> : null}
+      {error && <FieldDescription danger>{error}</FieldDescription>}
     </FormFieldInputContainer>
   );
 };

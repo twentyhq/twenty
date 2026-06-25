@@ -4,7 +4,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { TextVariableEditor } from '@/object-record/record-field/ui/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/ui/form-types/hooks/useTextVariableEditor';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { InputHint, InputLabel } from 'twenty-ui/input';
+import { FieldDescription, FieldLabel } from 'twenty-ui/input';
 import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -74,7 +74,7 @@ export const FormFilesFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {label ? <FieldLabel>{label}</FieldLabel> : null}
 
       <FormFieldInputRowContainer multiline>
         <FormFieldInputInnerContainer
@@ -94,7 +94,7 @@ export const FormFilesFieldInput = ({
           />
         )}
       </FormFieldInputRowContainer>
-      {error && <InputHint danger>{error}</InputHint>}
+      {error && <FieldDescription danger>{error}</FieldDescription>}
     </FormFieldInputContainer>
   );
 };

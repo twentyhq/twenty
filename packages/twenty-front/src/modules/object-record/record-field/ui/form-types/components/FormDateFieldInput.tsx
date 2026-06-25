@@ -3,7 +3,7 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { InputLabel } from 'twenty-ui/input';
+import { FieldLabel } from 'twenty-ui/input';
 import {
   DatePicker,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
@@ -264,7 +264,7 @@ export const FormDateFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {label ? <FieldLabel>{label}</FieldLabel> : null}
 
       <FormFieldInputRowContainer>
         <StyledDatePickerInputWrapper ref={datePickerWrapperRef}>

@@ -29,7 +29,7 @@ import {
 } from '@/object-record/record-field/ui/form-types/utils/parseWorkspaceMemberFilterValue';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { InputLabel } from 'twenty-ui/input';
+import { FieldLabel } from 'twenty-ui/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 
@@ -233,7 +233,7 @@ export const FormWorkspaceMemberFilterValueInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {label ? <FieldLabel>{label}</FieldLabel> : null}
       <FormFieldInputRowContainer>
         {readonly ? (
           <StyledFormSelectContainerWrapper readonly>

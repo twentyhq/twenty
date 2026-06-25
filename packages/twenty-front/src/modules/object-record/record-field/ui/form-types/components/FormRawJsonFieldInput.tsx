@@ -5,7 +5,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { TextVariableEditor } from '@/object-record/record-field/ui/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/ui/form-types/hooks/useTextVariableEditor';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { InputHint, InputLabel } from 'twenty-ui/input';
+import { FieldDescription, FieldLabel } from 'twenty-ui/input';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
@@ -69,7 +69,7 @@ export const FormRawJsonFieldInput = ({
 
   return (
     <FormFieldInputContainer className={className}>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {label ? <FieldLabel>{label}</FieldLabel> : null}
 
       <FormFieldInputRowContainer multiline>
         <FormFieldInputInnerContainer
@@ -89,7 +89,7 @@ export const FormRawJsonFieldInput = ({
           />
         )}
       </FormFieldInputRowContainer>
-      {error && <InputHint danger>{error}</InputHint>}
+      {error && <FieldDescription danger>{error}</FieldDescription>}
     </FormFieldInputContainer>
   );
 };

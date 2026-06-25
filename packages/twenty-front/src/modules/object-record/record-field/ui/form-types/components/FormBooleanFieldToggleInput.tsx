@@ -1,7 +1,7 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
-import { InputHint, InputLabel, Toggle } from 'twenty-ui/input';
+import { FieldDescription, FieldLabel, Toggle } from 'twenty-ui/input';
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -51,7 +51,7 @@ export const FormBooleanFieldToggleInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {label ? <FieldLabel>{label}</FieldLabel> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
@@ -72,7 +72,7 @@ export const FormBooleanFieldToggleInput = ({
         </StyledToggleContainer>
       </FormFieldInputRowContainer>
 
-      {hint && <InputHint>{hint}</InputHint>}
+      {hint && <FieldDescription>{hint}</FieldDescription>}
     </FormFieldInputContainer>
   );
 };

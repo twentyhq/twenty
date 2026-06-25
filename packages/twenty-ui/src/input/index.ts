@@ -44,6 +44,9 @@ export type {
 export { ColorSchemeCard } from './ColorSchemeCard/ColorSchemeCard';
 export type { ColorSchemePickerProps } from './ColorSchemePicker/ColorSchemePicker';
 export { ColorSchemePicker } from './ColorSchemePicker/ColorSchemePicker';
+export { Field } from './Field/Field';
+export { FieldDescription } from './Field/FieldDescription';
+export { FieldLabel } from './Field/FieldLabel';
 export type {
   FloatingButtonSize,
   FloatingButtonPosition,

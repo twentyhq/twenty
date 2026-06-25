@@ -5,7 +5,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldLinksDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { InputLabel } from 'twenty-ui/input';
+import { FieldLabel } from 'twenty-ui/input';
 
 type FormLinksFieldInputProps = {
   label?: string;
@@ -37,7 +37,7 @@ export const FormLinksFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {label ? <FieldLabel>{label}</FieldLabel> : null}
       <FormNestedFieldInputContainer>
         <FormTextFieldInput
           label={t`Primary Link Label`}
