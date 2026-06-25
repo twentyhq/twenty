@@ -97,6 +97,23 @@ export class WorkspaceDomainsService {
     return workspace;
   }
 
+  async isWorkspaceDomain(origin: string): Promise<boolean> {
+    const { workspace } = await this.resolveWorkspaceAndPublicDomain(origin);
+
+    if (!isDefined(workspace)) {
+      return false;
+    }
+
+    const { subdomainUrl, customUrl } = this.getWorkspaceUrls(workspace);
+
+    return [subdomainUrl, customUrl]
+      .filter(isDefined)
+      .some(
+        (workspaceUrl) =>
+          new URL(workspaceUrl).origin === new URL(origin).origin,
+      );
+  }
+
   async resolveWorkspaceAndPublicDomain(origin: string): Promise<{
     workspace: WorkspaceEntity | undefined;
     publicDomain: PublicDomainEntity | null;
