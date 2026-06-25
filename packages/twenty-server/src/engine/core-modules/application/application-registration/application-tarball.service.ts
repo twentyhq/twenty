@@ -9,6 +9,7 @@ import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -201,6 +202,9 @@ export class ApplicationTarballService {
         },
       });
 
+      // Cast the payload: the manifest JSON column holds the full Manifest
+      // type, which TypeORM's _QueryDeepPartialEntity can't recurse into
+      // cleanly.
       await this.appRegistrationRepository.update(appRegistration.id, {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
         tarballFileId: savedFile.id,
@@ -210,7 +214,7 @@ export class ApplicationTarballService {
         isListed: false,
         isFeatured: false,
         ownerWorkspaceId: params.ownerWorkspaceId,
-      });
+      } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
 
       if (manifest.application?.serverVariables) {
         await this.applicationRegistrationVariableService.syncVariableSchemas(

@@ -23,7 +23,6 @@ export const APPLICATION_FRAGMENT = gql`
     }
     canBeUninstalled
     defaultRoleId
-    settingsCustomTabFrontComponentId
     availablePackages
     applicationVariables {
       id
@@ -31,6 +30,8 @@ export const APPLICATION_FRAGMENT = gql`
       value
       description
       isSecret
+      type
+      options
     }
     agents {
       ...AgentFields
