@@ -1,3 +1,7 @@
+'use client';
+
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconChevronDown } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
@@ -9,6 +13,7 @@ import { type ColumnMapping } from '../types/column-mapping';
 const Row = styled.div`
   border-bottom: 1px solid ${THEME_LIGHT.border.color.medium};
   display: flex;
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   min-height: 64px;
 
   &:last-child {
@@ -28,7 +33,6 @@ const ImportedCell = styled.div`
 
 const ColumnHeader = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.medium};
   overflow: hidden;
   text-overflow: ellipsis;
@@ -69,7 +73,6 @@ const FieldSelect = styled.span`
 const FieldName = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
   flex: 1;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -84,18 +87,19 @@ const FieldIcon = styled.span`
 
 export function MappingRow({ mapping }: { mapping: ColumnMapping }) {
   const { Icon, example, field, header } = mapping;
+  const { i18n } = useLingui();
   return (
     <Row>
       <ImportedCell>
         <ColumnHeader>{header}</ColumnHeader>
-        <ColumnExample>ex: {example}</ColumnExample>
+        <ColumnExample>{i18n._(msg`ex: ${example}`)}</ColumnExample>
       </ImportedCell>
       <FieldCell>
         <FieldSelect>
           <FieldIcon>
             <Icon size={16} stroke={2} />
           </FieldIcon>
-          <FieldName>{field}</FieldName>
+          <FieldName>{i18n._(field)}</FieldName>
           <FieldIcon>
             <IconChevronDown size={16} stroke={2} />
           </FieldIcon>
