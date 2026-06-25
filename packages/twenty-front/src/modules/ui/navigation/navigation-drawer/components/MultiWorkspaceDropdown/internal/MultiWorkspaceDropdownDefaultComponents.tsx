@@ -4,6 +4,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -69,6 +70,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { colorScheme, colorSchemeList } = useColorScheme();
   const supportChat = useAtomStateValue(supportChatState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const isSupportChatConfigured =
     supportChat?.supportDriver === 'FRONT' &&
     isNonEmptyString(supportChat.supportFrontChatId);
@@ -140,11 +144,13 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItem
-                    LeftIcon={IconPlus}
-                    text={t`Create Workspace`}
-                    onClick={createWorkspace}
-                  />
+                  {isMultiWorkspaceEnabled && (
+                    <MenuItem
+                      LeftIcon={IconPlus}
+                      text={t`Create Workspace`}
+                      onClick={createWorkspace}
+                    />
+                  )}
                   <MenuItem
                     LeftIcon={IconLogout}
                     text={t`Log out`}
