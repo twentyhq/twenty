@@ -1,0 +1,36 @@
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-event-list-fetch.cron.job.ts
+  s_172294139274eb::t_a459ed610e2006 24
+  s_172294139274eb::t_f66bdaeb89c47f 75-80
+  s_172294139274eb::t_48c915ea6f35bd 7-10
+packages/twenty-server/src/modules/connected-account/utils/is-last-successful-sync-stale.util.ts
+  s_172294139274eb::t_1e7bccf3df148e 3
+  s_172294139274eb::t_9d9d323b195807 18
+  s_172294139274eb::t_d2ec3360352994 1-2,4-17,19
+packages/twenty-server/src/modules/connected-account/utils/__tests__/is-last-successful-sync-stale.util.spec.ts
+  s_172294139274eb::t_e2e0cd1cb5bb97 1,3-8,10-16,18-33
+  s_172294139274eb::t_c511789dc876c7 2
+  s_172294139274eb::t_cb8c1717e15a87 9
+  s_172294139274eb::t_2d7036768a18ea 17
+packages/twenty-server/src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job.ts
+  s_172294139274eb::t_a03c3230dc261f 10
+  s_172294139274eb::t_adc8d7e35a4bc3 24
+  s_172294139274eb::t_dba8197481d118 76-81
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/constants/webhook-sync-staleness-threshold-ms.constant.ts
+  s_172294139274eb::t_0d5c5a1de35c13 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "2af520ea73c5f4b86d1fbaeffd4304270d13b472",
+  "prompts": {},
+  "sessions": {
+    "s_172294139274eb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "94dc1f99-99a3-4403-bc85-e978db509d53",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
