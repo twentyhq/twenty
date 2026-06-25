@@ -9,7 +9,6 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { ServerRouteTriggerExceptionCode } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.service';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
@@ -55,7 +54,6 @@ describe('ServerRouteTriggerService', () => {
   let logicFunctionExecutorService: jest.Mocked<
     Pick<LogicFunctionExecutorService, 'execute'>
   >;
-  let twentyConfigService: jest.Mocked<Pick<TwentyConfigService, 'get'>>;
 
   const handle = () =>
     service.handle({
@@ -69,7 +67,7 @@ describe('ServerRouteTriggerService', () => {
     workspaceId: 'owner-ws',
     serverRouteTriggerSettings: { forwardedRequestHeaders: ['x-test'] },
     application: {
-      applicationRegistration: { ownerWorkspaceId: 'owner-ws' },
+      applicationRegistration: { id: 'reg-1', ownerWorkspaceId: 'owner-ws' },
     },
     ...overrides,
   });
@@ -98,12 +96,10 @@ describe('ServerRouteTriggerService', () => {
         // target returns the final response body
         .mockResolvedValueOnce(buildExecuteResult({ ok: true })),
     };
-    twentyConfigService = { get: jest.fn().mockReturnValue(true) };
 
     service = new ServerRouteTriggerService(
       logicFunctionRepository as unknown as Repository<LogicFunctionEntity>,
       logicFunctionExecutorService as unknown as LogicFunctionExecutorService,
-      twentyConfigService as unknown as TwentyConfigService,
     );
   });
 
@@ -131,14 +127,6 @@ describe('ServerRouteTriggerService', () => {
         body: { ok: true },
       }),
     );
-  });
-
-  it('refuses when the feature is disabled', async () => {
-    twentyConfigService.get.mockReturnValue(false);
-
-    await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.FEATURE_DISABLED,
-    });
   });
 
   it('throws LOGIC_FUNCTION_NOT_FOUND when no row matches the universalIdentifier', async () => {
@@ -171,14 +159,20 @@ describe('ServerRouteTriggerService', () => {
         id: 'tenant-copy',
         workspaceId: 'tenant-ws',
         application: {
-          applicationRegistration: { ownerWorkspaceId: 'owner-ws' },
+          applicationRegistration: {
+            id: 'reg-1',
+            ownerWorkspaceId: 'owner-ws',
+          },
         },
       }),
       buildResolverRow({
         id: 'owner-copy',
         workspaceId: 'owner-ws',
         application: {
-          applicationRegistration: { ownerWorkspaceId: 'owner-ws' },
+          applicationRegistration: {
+            id: 'reg-1',
+            ownerWorkspaceId: 'owner-ws',
+          },
         },
       }),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -320,6 +314,55 @@ describe('ServerRouteTriggerService', () => {
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED,
+    });
+  });
+
+  it('scopes the target lookup to the resolver application registration', async () => {
+    await handle();
+
+    expect(logicFunctionRepository.findOne).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        where: expect.objectContaining({
+          universalIdentifier: TARGET_UID,
+          workspaceId: 'target-ws',
+          application: { applicationRegistrationId: 'reg-1' },
+        }),
+      }),
+    );
+  });
+
+  it('throws LOGIC_FUNCTION_NOT_FOUND when the resolver is not linked to an application registration', async () => {
+    logicFunctionRepository.find.mockResolvedValue([
+      buildResolverRow({
+        application: {
+          applicationRegistration: { ownerWorkspaceId: 'owner-ws' },
+        },
+      }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ] as any);
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+    });
+  });
+
+  it('does not leak the raw executor error message to the caller', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute
+      .mockResolvedValueOnce(
+        buildExecuteResult({
+          workspaceId: 'target-ws',
+          targetLogicFunctionUniversalIdentifier: TARGET_UID,
+        }),
+      )
+      .mockRejectedValueOnce(
+        new Error('internal: connection to lambda-internal:5000 refused'),
+      );
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR,
+      message: 'An unexpected error occurred while handling the server route',
     });
   });
 });

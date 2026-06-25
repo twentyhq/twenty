@@ -714,7 +714,7 @@ type Application {
   applicationRegistrationId: UUID
   canBeUninstalled: Boolean!
   defaultRoleId: String
-  settingsCustomTabFrontComponentId: UUID
+  settingsCustomTabFrontComponentId: UUID @deprecated(reason: "Custom settings tabs are no longer supported. This field is ignored.")
   defaultLogicFunctionRole: Role
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
@@ -2355,6 +2355,7 @@ type SubdomainAvailabilityDTO {
   isValid: Boolean!
   available: Boolean!
   suggestedSubdomain: String!
+  suggestedSubdomains: [String!]!
 }
 
 type WorkspaceCreationDefaultsDTO {
@@ -3298,6 +3299,7 @@ type Mutation {
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
+  createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
   switchSubscriptionInterval: BillingUpdate!
   switchBillingPlan: BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!

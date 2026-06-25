@@ -4610,6 +4610,9 @@ export default {
             "suggestedSubdomain": [
                 1
             ],
+            "suggestedSubdomains": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -7427,6 +7430,9 @@ export default {
                         "String!"
                     ]
                 }
+            ],
+            "createBillingPaymentMethodSetupIntent": [
+                152
             ],
             "switchSubscriptionInterval": [
                 154

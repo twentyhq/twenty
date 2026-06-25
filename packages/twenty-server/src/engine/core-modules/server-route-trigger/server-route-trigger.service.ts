@@ -20,7 +20,6 @@ import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 type ResolverResult = {
@@ -37,7 +36,6 @@ export class ServerRouteTriggerService {
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async handle({
@@ -47,13 +45,6 @@ export class ServerRouteTriggerService {
     request: Request;
     resolverLogicFunctionUniversalIdentifier: string;
   }): Promise<RouteTriggerResponse> {
-    if (!this.twentyConfigService.get('IS_SERVER_LOGIC_FUNCTION_ENABLED')) {
-      throw new ServerRouteTriggerException(
-        'Server logic functions are disabled on this instance',
-        ServerRouteTriggerExceptionCode.FEATURE_DISABLED,
-      );
-    }
-
     const resolver = await this.findResolver({
       logicFunctionUniversalIdentifier:
         resolverLogicFunctionUniversalIdentifier,
@@ -62,6 +53,16 @@ export class ServerRouteTriggerService {
     if (!isDefined(resolver)) {
       throw new ServerRouteTriggerException(
         `Server resolver function ${resolverLogicFunctionUniversalIdentifier} not found`,
+        ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const applicationRegistrationId =
+      resolver.application?.applicationRegistration?.id;
+
+    if (!isDefined(applicationRegistrationId)) {
+      throw new ServerRouteTriggerException(
+        `Server resolver function ${resolverLogicFunctionUniversalIdentifier} is not linked to an application registration`,
         ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
       );
     }
@@ -86,6 +87,7 @@ export class ServerRouteTriggerService {
         resolved.targetLogicFunctionUniversalIdentifier,
       workspaceId: resolved.workspaceId,
       payload: resolved.payload ?? event,
+      applicationRegistrationId,
     });
 
     if (isDefined(targetResult.error)) {
@@ -160,16 +162,24 @@ export class ServerRouteTriggerService {
     logicFunctionUniversalIdentifier,
     workspaceId,
     payload,
+    applicationRegistrationId,
   }: {
     logicFunctionUniversalIdentifier: string;
     workspaceId: string;
     payload: object;
+    applicationRegistrationId?: string;
   }): Promise<{ data: object | null; error?: { errorMessage: string } }> {
     const logicFunction = await this.logicFunctionRepository.findOne({
       where: {
         universalIdentifier: logicFunctionUniversalIdentifier,
         workspaceId,
+        ...(isDefined(applicationRegistrationId)
+          ? { application: { applicationRegistrationId } }
+          : {}),
       },
+      ...(isDefined(applicationRegistrationId)
+        ? { relations: { application: true } }
+        : {}),
     });
 
     if (!isDefined(logicFunction)) {
@@ -190,10 +200,25 @@ export class ServerRouteTriggerService {
         `Server logic function ${logicFunction.id} failed in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
       );
+      const code = this.mapExecutorErrorToServerRouteCode(error);
+
       throw new ServerRouteTriggerException(
-        error instanceof Error ? error.message : String(error),
-        this.mapExecutorErrorToServerRouteCode(error),
+        this.getPublicErrorMessageForCode(code),
+        code,
       );
+    }
+  }
+
+  private getPublicErrorMessageForCode(
+    code: ServerRouteTriggerExceptionCode,
+  ): string {
+    switch (code) {
+      case ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED:
+        return 'Rate limit exceeded';
+      case ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
+        return 'Logic function not found';
+      default:
+        return 'An unexpected error occurred while handling the server route';
     }
   }
 

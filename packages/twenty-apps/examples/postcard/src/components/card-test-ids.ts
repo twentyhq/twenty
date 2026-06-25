@@ -6,4 +6,8 @@ export const CARD_TEST_IDS = {
   name: 'postcard-card-name',
   status: 'postcard-card-status',
   content: 'postcard-card-content',
+  sdkPanel: 'postcard-sdk-panel',
+  sdkCore: 'postcard-sdk-core',
+  sdkMetadata: 'postcard-sdk-metadata',
+  sdkRest: 'postcard-sdk-rest',
 } as const;

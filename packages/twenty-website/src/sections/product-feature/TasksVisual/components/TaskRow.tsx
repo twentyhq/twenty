@@ -1,3 +1,6 @@
+'use client';
+
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconCalendar, IconCheck } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
@@ -10,14 +13,16 @@ import { type Task } from '../types/task';
 
 const Row = styled.div`
   align-items: center;
+  background-color: ${THEME_LIGHT.background.secondary};
   box-sizing: border-box;
+  cursor: pointer;
   display: flex;
   gap: 8px;
   height: 48px;
   padding: 0 16px;
 
   &:hover {
-    background-color: ${THEME_LIGHT.background.transparent.light};
+    background-color: transparent;
   }
 `;
 
@@ -29,14 +34,30 @@ const RowLeft = styled.div`
   overflow: hidden;
 `;
 
+const CheckboxButton = styled.span`
+  align-items: center;
+  border-radius: ${THEME_LIGHT.border.radius.rounded};
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: 5px;
+
+  &:hover {
+    background-color: ${THEME_LIGHT.background.transparent.light};
+  }
+
+  &[data-done]:hover {
+    background-color: ${THEME_LIGHT.background.transparent.blue};
+  }
+`;
+
 const Checkbox = styled.span`
   align-items: center;
-  border: 1px solid ${THEME_LIGHT.border.color.strong};
+  border: 1px solid ${THEME_LIGHT.border.color.inverted};
   border-radius: ${THEME_LIGHT.border.radius.rounded};
   box-sizing: border-box;
   color: ${THEME_LIGHT.font.color.inverted};
   display: flex;
-  flex-shrink: 0;
   height: 14px;
   justify-content: center;
   width: 14px;
@@ -88,15 +109,40 @@ const Due = styled.span`
   white-space: nowrap;
 `;
 
-export function TaskRow({ task }: { task: Task }) {
+export function TaskRow({
+  task,
+  onToggle,
+}: {
+  task: Task;
+  onToggle: () => void;
+}) {
+  const { i18n } = useLingui();
+  const title = i18n._(task.title);
+  const doneFlag = task.done ? '' : undefined;
+
   return (
     <Row>
       <RowLeft>
-        <Checkbox data-done={task.done ? '' : undefined}>
-          {task.done ? <IconCheck size={11} stroke={2.5} /> : null}
-        </Checkbox>
-        <Title data-done={task.done ? '' : undefined}>{task.title}</Title>
-        <Body>{task.body}</Body>
+        <CheckboxButton
+          aria-checked={task.done}
+          aria-label={title}
+          data-done={doneFlag}
+          onClick={onToggle}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              onToggle();
+            }
+          }}
+          role="checkbox"
+          tabIndex={0}
+        >
+          <Checkbox data-done={doneFlag}>
+            {task.done ? <IconCheck size={11} stroke={2.5} /> : null}
+          </Checkbox>
+        </CheckboxButton>
+        <Title data-done={doneFlag}>{title}</Title>
+        <Body>{i18n._(task.body)}</Body>
       </RowLeft>
       <RowRight>
         <Due>
@@ -113,7 +159,7 @@ export function TaskRow({ task }: { task: Task }) {
               }}
             />
           }
-          variant="transparent"
+          variant="highlighted"
         />
       </RowRight>
     </Row>

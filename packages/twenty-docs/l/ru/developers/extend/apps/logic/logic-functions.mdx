@@ -60,7 +60,7 @@ export default defineLogicFunction({
 * **cron**: Запускает вашу функцию по расписанию с использованием выражения CRON.
 * **databaseEvent**: Запускается при событиях жизненного цикла объектов рабочего пространства. Когда операция события — `updated`, можно указать конкретные поля для отслеживания в массиве `updatedFields`. Если оставить не заданным или пустым, любое обновление будет вызывать функцию.
 > например, `person.updated`, `*.created`, `company.*`
-* **serverWebhook**: получает входящие вебхуки от стороннего сервиса (Stripe, GitHub, Svix, …) на единственной конечной точке в области регистрации и определяет целевое рабочее пространство из полезной нагрузки. См. [триггер серверного вебхука](#server-webhook-trigger).
+* **serverRoute**: открывает один HTTP-маршрут в области регистрации. Функция-резолвер (объявленная с помощью `serverRouteTriggerSettings`) выполняется в рабочем пространстве-владельце и возвращает целевое рабочее пространство И целевую логическую функцию для маршрутизации; платформа затем запускает эту **целевую** функцию и возвращает ее ответ. См. [триггер серверного маршрута](#server-route-trigger).
 
 <Note>
 Вы также можете вручную выполнить функцию с помощью CLI:
@@ -172,54 +172,112 @@ const handler = async (event: RoutePayload) => {
 Код состояния должен быть допустимым кодом состояния HTTP (в диапазоне от 100 до 599). Имена заголовков ответа сравниваются без учета регистра.
 </Note>
 
-#### Серверный триггер вебхука
+#### Триггер серверного маршрута
 
-`httpRouteTriggerSettings` предоставляет функцию по пути `/s/` и определяет рабочее пространство из хоста запроса — это работает, когда у каждого рабочего пространства свой домен. Поставщики сторонних сервисов, однако, отправляют события всех арендаторов на **один** URL вебхука. В этом случае используйте `serverWebhookTriggerSettings`: функция доступна на конечной точке в области регистрации, а рабочее пространство определяется из полезной нагрузки.
+`httpRouteTriggerSettings` предоставляет функцию по пути `/s/` и определяет рабочее пространство из хоста запроса — это работает, когда у каждого рабочего пространства свой домен. Поставщики сторонних сервисов, однако, отправляют события всех арендаторов на **один** URL. В этом случае используйте `serverRouteTriggerSettings`.
 
-```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+Триггер состоит из двух частей:
+
+1. Логическая функция-**резолвер** — объявляется с помощью `serverRouteTriggerSettings` — выполняется в вашем **рабочем пространстве-владельце** (рабочем пространстве, которому принадлежит регистрация приложения). Она анализирует входящий запрос и возвращает `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, выбирая *и* целевое рабочее пространство, и целевую функцию. Резолвер является единой точкой авторизации — URL содержит только идентификатор резолвера. **Это предпочтительное место для проверки подписей запросов**: резолвер выполняется до любых побочных эффектов, имеет доступ к исходным `rawBody` и переадресованным заголовкам и может отклонить запрос, не обращаясь к целевой функции.
+2. **Целевая** логическая функция — обычная логическая функция на рабочее пространство — затем выполняется в определенном рабочем пространстве с полезной нагрузкой, возвращенной резолвером (или с исходной полезной нагрузкой запроса, если резолвер ее не преобразовал). Ее возвращаемое значение становится HTTP-ответом.
+
+```ts src/logic-functions/resolve-server-route.logic-function.ts
+import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
-import { Response } from 'twenty-sdk/logic-function';
 
+// Runs in the owner workspace. Verifies the request signature, picks
+// which target function should handle the event, and returns the
+// workspace + target the platform should dispatch to.
 const handler = async (event: RoutePayload) => {
-  // Verify the signature yourself before doing anything (see below).
-  // Return a non-2xx Response to make the provider retry.
-  return { received: true };
+  // Fail closed if the secret isn't configured — never fall back to an
+  // empty key, which would let any caller forge a matching signature.
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+
+  if (!secret) {
+    throw new Error('GITHUB_WEBHOOK_SECRET is not configured');
+  }
+
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    throw new Error('invalid signature');
+  }
+
+  const body = (event.body ?? {}) as {
+    metadata?: { twentyWorkspaceId?: string };
+    type?: string;
+  };
+
+  return {
+    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    // Route different event types to different target functions.
+    targetLogicFunctionUniversalIdentifier:
+      body.type === 'invoice.paid'
+        ? 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10' // handle-invoice-paid
+        : 'd5f3b0c2-8e5f-5d0b-a0c3-3f2e7b5d9f21', // handle-other-event
+  };
 };
 
 export default defineLogicFunction({
   universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
-  name: 'handle-provider-webhook',
+  name: 'resolve-server-route',
   handler,
-  serverWebhookTriggerSettings: {
-    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
-    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  serverRouteTriggerSettings: {
+    forwardedRequestHeaders: ['x-hub-signature-256'],
   },
 });
 ```
 
-Функция доступна по адресу:
+```ts src/logic-functions/handle-invoice-paid.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the resolved workspace. The resolver has already authenticated
+// the request, so this handler can focus on the actual work.
+const handler = async (event: RoutePayload) => {
+  // ...handle the verified event
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-invoice-paid',
+  handler,
+});
+```
+
+Конечная точка доступна по адресу:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
 ```
 
-Оба идентификатора — это `universalIdentifier` из вашего манифеста: регистрации приложения и этой логической функции. Зарегистрируйте этот URL у поставщика.
+Идентификатор — это `universalIdentifier` резолвера из вашего манифеста. Зарегистрируйте этот URL у поставщика.
 
-**Определение рабочего пространства.** Поскольку одна конечная точка обслуживает все рабочие пространства, ваша интеграция должна поместить целевой `workspaceId` в передаваемые данные, а `workspaceIdResolver.{ source, path }` указывает платформе, откуда его прочитать:
+<Note>
+**Приложение должно быть закреплено и установлено в рабочем пространстве владельца.** Поскольку резолвер выполняется в **рабочем пространстве владельца** (рабочем пространстве, которому принадлежит регистрация приложения), триггер серверного маршрута будет работать только после того, как приложение будет *закреплено* — то есть у него появится рабочее пространство владельца — **и** это приложение будет **установлено в рабочем пространстве владельца**. Пока оба этих условия не выполнены, резолверу негде выполняться, поэтому маршрут не может быть отправлен на обработку. Приложение, которое предоставляет логическую функцию `serverRouteTriggerSettings`, соответственно, не может быть размещено в маркетплейсе, пока оно не будет закреплено и установлено в рабочем пространстве владельца.
+</Note>
 
-| Поле     | Значения                                             | Заметки                                                                                                                                                                              |
-| -------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `source` | `body` \| `query` \| `header`                        | `body` читает разобранный JSON. `query` — самый универсальный вариант: вы обычно контролируете URL обратного вызова, который регистрируете, поэтому добавьте `?twentyWorkspaceId=…`. |
-| `path`   | точечный путь, например `metadata.twentyWorkspaceId` | Ограничено сегментами из буквенно-цифровых символов / `_` / `-`; ключи прототипа отклоняются.                                                                                        |
+**Контракт резолвера.** Тип `LogicFunctionConfig` в SDK обеспечивает это на этапе компиляции: как только вы задаете `serverRouteTriggerSettings`, ваш обработчик обязан возвращать `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (или `Promise` этого объекта). `workspaceId` должен указывать на рабочее пространство, в котором установлена целевая функция, иначе запрос будет отклонен с кодом `404`.
 
-Определённое значение должно быть действительным UUID рабочего пространства, и ваше приложение должно быть установлено в этом рабочем пространстве, иначе запрос будет отклонён до запуска функции.
+| Поле                                     | Тип                       | Заметки                                                                                      |
+| ---------------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------- |
+| `workspaceId`                            | `string`                  | UUID рабочего пространства, в котором будет выполняться целевая функция.                     |
+| `targetLogicFunctionUniversalIdentifier` | `string`                  | `universalIdentifier` логической функции, которую нужно вызвать в этом рабочем пространстве. |
+| `payload`                                | `object` (необязательный) | Если задан, заменяет тело запроса, отправляемое целевой функции.                             |
 
 <Warning>
-**Проверка подписи — ваша ответственность.** Платформа не проверяет подписи вебхуков для этого триггера — она только определяет рабочее пространство и запускает вашу функцию. Ваш обработчик должен самостоятельно проверить подпись, используя `event.rawBody` и заголовки, перечисленные в `forwardedRequestHeaders`, сравнивая с секретом, хранящимся как серверная/приложенческая переменная. Всегда выполняйте проверку **до** любых побочных эффектов и используйте сравнение с постоянным временем выполнения.
+**Ответственность за проверку подписи лежит на вас — выполняйте проверку в резолвере.** Платформа не проверяет подписи запросов. Резолвер — рекомендуемое место для этого: он выполняется первым, имеет доступ к `event.rawBody` и заголовкам, которые вы указали в `forwardedRequestHeaders`, и выброшенная ошибка (или любой `workspaceId`, не соответствующий ожидаемому) останавливает диспетчеризацию до вызова целевой функции. Если вместо этого вы перенесете проверку в целевую функцию, целевая функция должна позаботиться о том, чтобы не потерять `rawBody` и заголовки — то есть резолвер не должен возвращать `payload`. Всегда выполняйте проверку **до** любых побочных эффектов и используйте сравнение с постоянным временем выполнения.
 </Warning>
 
-Большинство провайдеров подписывают с помощью HMAC-SHA256; различаются имя заголовка, кодировка дайджеста и строка подписываемой полезной нагрузки. Несколько примеров:
+Для подписей запросов большинство провайдеров используют HMAC-SHA256; различаются имя заголовка, кодировка дайджеста и строка подписываемой полезной нагрузки. Несколько примеров:
 
 | Провайдер                    | Заголовки для пересылки                                | Подписываемая строка         | Дайджест                                                          |
 | ---------------------------- | ------------------------------------------------------ | ---------------------------- | ----------------------------------------------------------------- |
@@ -229,31 +287,10 @@ POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniv
 | Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                            |
 | Слэк                         | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (с префиксом `v0=`)                                           |
 
-```ts
-import { createHmac, timingSafeEqual } from 'crypto';
-
-const handler = async (event: RoutePayload) => {
-  const signature = event.headers['x-hub-signature-256'] ?? '';
-  const expected =
-    'sha256=' +
-    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
-      .update(event.rawBody ?? '')
-      .digest('hex');
-
-  const a = Buffer.from(signature);
-  const b = Buffer.from(expected);
-
-  if (a.length !== b.length || !timingSafeEqual(a, b)) {
-    return new Response({ error: 'invalid signature' }, { status: 401 });
-  }
-
-  // ...handle the verified event
-  return { received: true };
-};
-```
+Приведенный выше пример резолвера уже показывает поток GitHub HMAC-SHA256 — адаптируйте имя заголовка, кодировку дайджеста и строку подписываемой полезной нагрузки в соответствии с провайдером, с которым вы интегрируетесь.
 
 <Note>
-Функция выполняется **синхронно**, и возвращаемое вами значение становится HTTP-ответом, поэтому провайдеры видят ваш статус-код и могут повторить запрос при не-2xx коде. Делайте обработчики быстрыми — некоторые провайдеры (например, Slack) прерывают запрос через несколько секунд. Поскольку функция выполняется до проверки подписи, защитите эту конечную точку ограничением частоты на периметре (edge).
+Целевая функция выполняется **синхронно**, и ее возвращаемое значение становится HTTP-ответом, поэтому вызывающая сторона видит ваш статус-код и может повторить запрос при не-2xx коде. Делайте оба обработчика быстрыми — некоторые провайдеры (например, Slack) прерывают запрос через несколько секунд. Поскольку резолвер доступен как публичная конечная точка, защитите его с помощью ограничения частоты запросов (rate limiting) на вашем периметре (edge).
 </Note>
 
 #### Полезная нагрузка триггера события базы данных
