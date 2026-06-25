@@ -1,0 +1,32 @@
+packages/twenty-server/src/modules/messaging/message-outbound-manager/resolvers/send-email.resolver.ts
+  s_65b4d7a4a34b4e::t_211fcfd11f561a 99-113
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
+  s_65b4d7a4a34b4e::t_c2890567363969 52-53,61,68,74,94-95
+  s_65b4d7a4a34b4e::t_6e7205b516da4e 9,11,97,141,146
+packages/twenty-server/src/modules/messaging/message-outbound-manager/services/send-email.service.ts
+  s_65b4d7a4a34b4e::t_a901db1ed8e404 40,43,48,50-53
+packages/twenty-front/src/modules/activities/emails/hooks/useEmailComposerState.ts
+  s_65b4d7a4a34b4e::t_2bfe3b2b90a2b3 6,10,25,31-35,82,97
+packages/twenty-front/src/modules/activities/emails/types/EmailDraftPrefill.ts
+  s_65b4d7a4a34b4e::t_35838c40ce8c83 3
+packages/twenty-front/src/modules/activities/emails/utils/getEmailDraftPrefillFromMessage.ts
+  s_65b4d7a4a34b4e::t_78ec4d96efd270 1,5,7
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+  s_65b4d7a4a34b4e::t_6a51ef56594561 7,41,49,69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "2199aa8e3d43c95ac604214c074a7f277c34be0e",
+  "prompts": {},
+  "sessions": {
+    "s_65b4d7a4a34b4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "999529aa-2648-487c-b4a2-c3eff6141891",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
