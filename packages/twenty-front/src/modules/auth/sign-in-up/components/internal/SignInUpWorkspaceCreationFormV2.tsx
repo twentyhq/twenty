@@ -1,6 +1,5 @@
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
-import { SignInUpWorkspaceActivationV2 } from '@/auth/sign-in-up/components/SignInUpWorkspaceActivationV2';
-import { SignInUpWorkspaceActivationV2Effect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceActivationV2Effect';
+import { SignInUpWorkspaceCreationLoader } from '@/auth/sign-in-up/components/SignInUpWorkspaceCreationLoader';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
@@ -195,12 +194,7 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
           : undefined;
 
   if (isCreatingWorkspace) {
-    return (
-      <>
-        <SignInUpWorkspaceActivationV2Effect />
-        <SignInUpWorkspaceActivationV2 />
-      </>
-    );
+    return <SignInUpWorkspaceCreationLoader />;
   }
 
   return (

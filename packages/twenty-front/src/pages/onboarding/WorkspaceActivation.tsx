@@ -6,8 +6,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isOnboardingV2State } from '@/auth/states/isOnboardingV2State';
-import { SignInUpWorkspaceActivationV2 } from '@/auth/sign-in-up/components/SignInUpWorkspaceActivationV2';
-import { SignInUpWorkspaceActivationV2Effect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceActivationV2Effect';
+import { isWorkspaceActivationFailedState } from '@/auth/states/isWorkspaceActivationFailedState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ModalContent } from 'twenty-ui/surfaces';
@@ -16,6 +15,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
@@ -57,8 +57,8 @@ export const WorkspaceActivation = () => {
   );
   const [activationStep, setActivationStep] =
     useState<ActivationStep>('pending');
-  const [hasFailed, setHasFailed] = useState(false);
-  const [isActivated, setIsActivated] = useState(false);
+  const [isWorkspaceActivationFailed, setIsWorkspaceActivationFailed] =
+    useAtomState(isWorkspaceActivationFailedState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isOnboardingV2 = useAtomStateValue(isOnboardingV2State);
 
@@ -71,8 +71,7 @@ export const WorkspaceActivation = () => {
   }, []);
 
   const activate = useCallback(async () => {
-    setHasFailed(false);
-    setIsActivated(false);
+    setIsWorkspaceActivationFailed(false);
 
     stepTimeoutsRef.current = [
       setTimeout(() => {
@@ -98,11 +97,10 @@ export const WorkspaceActivation = () => {
       }
 
       await loadCurrentUser();
-      setIsActivated(true);
       setNextOnboardingStatus();
     } catch (error) {
       setActivationStep('pending');
-      setHasFailed(true);
+      setIsWorkspaceActivationFailed(true);
 
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
@@ -115,14 +113,16 @@ export const WorkspaceActivation = () => {
     clearStepTimeouts,
     enqueueErrorSnackBar,
     loadCurrentUser,
+    setIsWorkspaceActivationFailed,
     setNextOnboardingStatus,
   ]);
 
   useEffect(() => {
     return () => {
       clearStepTimeouts();
+      setIsWorkspaceActivationFailed(false);
     };
-  }, [clearStepTimeouts]);
+  }, [clearStepTimeouts, setIsWorkspaceActivationFailed]);
 
   // Guard the one-shot trigger with a ref, not state: a ref mutation is
   // synchronous and survives StrictMode's double-invocation of effects, whereas
@@ -139,7 +139,7 @@ export const WorkspaceActivation = () => {
     void activate();
   }, [activate, currentWorkspace]);
 
-  if (hasFailed) {
+  if (isWorkspaceActivationFailed) {
     return (
       <ModalContent isVerticallyCentered isHorizontallyCentered>
         <Logo
@@ -173,16 +173,7 @@ export const WorkspaceActivation = () => {
   }
 
   if (isOnboardingV2) {
-    if (isActivated) {
-      return null;
-    }
-
-    return (
-      <ModalContent isVerticallyCentered isHorizontallyCentered>
-        <SignInUpWorkspaceActivationV2Effect />
-        <SignInUpWorkspaceActivationV2 />
-      </ModalContent>
-    );
+    return null;
   }
 
   return (
