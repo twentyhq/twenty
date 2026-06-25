@@ -18,11 +18,8 @@ export type OpenSidePanelPageFunction = (params: {
   pageTitle: string;
   pageIcon?: string;
   shouldResetSearchState?: boolean;
-}) => Promise<void>;
-
-export type OpenRecordInSidePanelFunction = (params: {
-  recordId: string;
-  objectNameSingular: string;
+  recordId?: string;
+  objectNameSingular?: string;
   resetNavigationStack?: boolean;
 }) => Promise<void>;
 
@@ -59,7 +56,6 @@ export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
   requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;
   openSidePanelPage?: OpenSidePanelPageFunction;
-  openRecordInSidePanel?: OpenRecordInSidePanelFunction;
   openCommandConfirmationModal?: OpenCommandConfirmationModalFunction;
   unmountFrontComponent?: UnmountFrontComponentFunction;
   enqueueSnackbar?: EnqueueSnackbarFunction;

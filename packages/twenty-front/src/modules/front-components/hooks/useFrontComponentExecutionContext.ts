@@ -6,7 +6,11 @@ import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
 } from 'twenty-front-component-renderer';
-import { AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
+import {
+  AppPath,
+  SidePanelPages,
+  type EnqueueSnackbarParams,
+} from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
@@ -114,7 +118,38 @@ export const useFrontComponentExecutionContext = ({
   };
 
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
-    async ({ page, pageTitle, pageIcon, shouldResetSearchState }) => {
+    async ({
+      page,
+      pageTitle,
+      pageIcon,
+      shouldResetSearchState,
+      recordId,
+      objectNameSingular,
+      resetNavigationStack,
+    }) => {
+      if (
+        page === SidePanelPages.ViewRecord &&
+        isDefined(recordId) &&
+        isDefined(objectNameSingular)
+      ) {
+        if (isMobile || !canOpenObjectInSidePanel(objectNameSingular)) {
+          await navigate(AppPath.RecordShowPage, {
+            objectNameSingular,
+            objectRecordId: recordId,
+          });
+
+          return;
+        }
+
+        openRecordInSidePanelInternal({
+          recordId,
+          objectNameSingular,
+          resetNavigationStack,
+        });
+
+        return;
+      }
+
       navigateSidePanel({
         page,
         pageTitle,
@@ -124,24 +159,6 @@ export const useFrontComponentExecutionContext = ({
       if (shouldResetSearchState === true) {
         setSidePanelSearch('');
       }
-    };
-
-  const openRecordInSidePanel: FrontComponentHostCommunicationApi['openRecordInSidePanel'] =
-    async ({ recordId, objectNameSingular, resetNavigationStack }) => {
-      if (isMobile || !canOpenObjectInSidePanel(objectNameSingular)) {
-        await navigate(AppPath.RecordShowPage, {
-          objectNameSingular,
-          objectRecordId: recordId,
-        });
-
-        return;
-      }
-
-      openRecordInSidePanelInternal({
-        recordId,
-        objectNameSingular,
-        resetNavigationStack,
-      });
     };
 
   const openCommandConfirmationModal: FrontComponentHostCommunicationApi['openCommandConfirmationModal'] =
@@ -251,7 +268,6 @@ export const useFrontComponentExecutionContext = ({
       navigate,
       requestAccessTokenRefresh,
       openSidePanelPage,
-      openRecordInSidePanel,
       openCommandConfirmationModal,
       enqueueSnackbar,
       unmountFrontComponent,

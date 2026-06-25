@@ -4,7 +4,6 @@ import {
   type EnqueueSnackbarFunction,
   type NavigateFunction,
   type OpenCommandConfirmationModalHostFunction,
-  type OpenRecordInSidePanelFunction,
   type OpenSidePanelPageFunction,
   type RequestAccessTokenRefreshFunction,
   type UnmountFrontComponentFunction,
@@ -15,7 +14,6 @@ export type FrontComponentHostCommunicationApi = {
   navigate: NavigateFunction;
   requestAccessTokenRefresh: RequestAccessTokenRefreshFunction;
   openSidePanelPage: OpenSidePanelPageFunction;
-  openRecordInSidePanel: OpenRecordInSidePanelFunction;
   openCommandConfirmationModal: OpenCommandConfirmationModalHostFunction;
   unmountFrontComponent: UnmountFrontComponentFunction;
   enqueueSnackbar: EnqueueSnackbarFunction;

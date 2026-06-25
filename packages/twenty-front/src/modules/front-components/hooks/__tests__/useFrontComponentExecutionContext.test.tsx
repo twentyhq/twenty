@@ -2,7 +2,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
@@ -347,15 +347,17 @@ describe('useFrontComponentExecutionContext', () => {
     });
   });
 
-  describe('openRecordInSidePanel', () => {
+  describe('openSidePanelPage with a record context', () => {
     it('should open the record in the side panel when the object is supported', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
 
       await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.openRecordInSidePanel(
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
           {
+            page: SidePanelPages.ViewRecord,
+            pageTitle: 'Lead',
             recordId: 'lead-1',
             objectNameSingular: 'lead',
             resetNavigationStack: true,
@@ -369,6 +371,7 @@ describe('useFrontComponentExecutionContext', () => {
         resetNavigationStack: true,
       });
       expect(mockNavigateApp).not.toHaveBeenCalled();
+      expect(mockNavigateSidePanel).not.toHaveBeenCalled();
     });
 
     it('should fall back to full-page navigation on mobile', async () => {
@@ -379,8 +382,10 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.openRecordInSidePanel(
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
           {
+            page: SidePanelPages.ViewRecord,
+            pageTitle: 'Lead',
             recordId: 'lead-1',
             objectNameSingular: 'lead',
           },
@@ -402,8 +407,10 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.openRecordInSidePanel(
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
           {
+            page: SidePanelPages.ViewRecord,
+            pageTitle: 'Workflow',
             recordId: 'workflow-1',
             objectNameSingular: 'workflow',
           },

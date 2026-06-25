@@ -10,9 +10,12 @@ import { type SidePanelPages } from 'twenty-shared/types';
 export type CommandOpenSidePanelPageProps = {
   page: SidePanelPages;
   pageTitle: string;
-  pageIcon: string;
+  pageIcon?: string;
   onClick?: () => void;
   shouldResetSearchState?: boolean;
+  recordId?: string;
+  objectNameSingular?: string;
+  resetNavigationStack?: boolean;
 };
 
 export const CommandOpenSidePanelPage = ({
@@ -21,6 +24,9 @@ export const CommandOpenSidePanelPage = ({
   pageIcon,
   onClick,
   shouldResetSearchState = false,
+  recordId,
+  objectNameSingular,
+  resetNavigationStack = false,
 }: CommandOpenSidePanelPageProps) => {
   const [hasExecuted, setHasExecuted] = useState(false);
 
@@ -41,6 +47,9 @@ export const CommandOpenSidePanelPage = ({
         pageTitle,
         pageIcon,
         shouldResetSearchState,
+        recordId,
+        objectNameSingular,
+        resetNavigationStack,
       });
 
       await unmountFrontComponent();
@@ -52,6 +61,9 @@ export const CommandOpenSidePanelPage = ({
     pageTitle,
     pageIcon,
     shouldResetSearchState,
+    recordId,
+    objectNameSingular,
+    resetNavigationStack,
     onClick,
     hasExecuted,
     frontComponentId,
