@@ -5506,6 +5506,9 @@ export default {
             "error": [
                 1
             ],
+            "messageThreadId": [
+                1
+            ],
             "__typename": [
                 1
             ]
