@@ -20,7 +20,10 @@ const buildRecordingDoneWebhookBody = () => ({
   data: {
     bot: {
       id: 'recall-bot-1',
-      metadata: { twentyWorkspaceId: '123e4567-e89b-12d3-a456-426614174000' },
+      metadata: {
+        twentyWorkspaceId: '123e4567-e89b-12d3-a456-426614174000',
+        twentyCallRecordingId: 'call-recording-1',
+      },
     },
     recording: { id: 'recall-recording-1' },
   },
@@ -36,8 +39,8 @@ describe('process-recall-webhook', () => {
   it('declares no external trigger so it only runs when dispatched by the resolver', () => {
     expect(processRecallWebhookLogicFunction.success).toBe(true);
     expect(
-      processRecallWebhookLogicFunction.config.serverRouteTriggerSettings,
-    ).toBeUndefined();
+      'serverRouteTriggerSettings' in processRecallWebhookLogicFunction.config,
+    ).toBe(false);
     expect(
       processRecallWebhookLogicFunction.config.httpRouteTriggerSettings,
     ).toBeUndefined();

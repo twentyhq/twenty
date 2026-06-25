@@ -19,6 +19,7 @@ vi.mock(
 const SECRET_BYTES = Buffer.from('entry-test-secret');
 const SECRET = `whsec_${SECRET_BYTES.toString('base64')}`;
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
+const CALL_RECORDING_ID = 'call-recording-1';
 
 type RecallWebhookRoutePayload = Parameters<
   typeof recallWebhookRouteHandler
@@ -53,6 +54,7 @@ const buildRecordingDoneWebhookBody = () => ({
       id: 'recall-bot-1',
       metadata: {
         twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: CALL_RECORDING_ID,
       },
     },
     recording: {
@@ -72,6 +74,14 @@ describe('recallWebhookRouteHandler', () => {
     expect(
       recallWebhookLogicFunction.config.httpRouteTriggerSettings,
     ).toBeUndefined();
+    expect(
+      'serverRouteTriggerSettings' in recallWebhookLogicFunction.config,
+    ).toBe(true);
+
+    if (!('serverRouteTriggerSettings' in recallWebhookLogicFunction.config)) {
+      throw new Error('Expected a server route trigger');
+    }
+
     expect(
       recallWebhookLogicFunction.config.serverRouteTriggerSettings,
     ).toEqual({
