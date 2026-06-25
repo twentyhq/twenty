@@ -1,6 +1,5 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewGroupAPIPersist } from '@/views/hooks/internal/usePerformViewGroupAPIPersist';
@@ -18,7 +17,6 @@ export const useAddRecordGroup = () => {
   const { getViewFromState } = useGetViewFromState();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
-  const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const currentViewIdCallbackState = useAtomComponentStateCallbackState(
     contextStoreCurrentViewIdComponentState,
@@ -81,12 +79,6 @@ export const useAddRecordGroup = () => {
     if (result.status !== 'successful') {
       return;
     }
-
-    addToDraft({
-      key: 'viewGroups',
-      items: [{ ...newViewGroup, viewId: currentViewId }],
-    });
-    applyChanges();
 
     setRecordGroupsFromViewGroups({
       viewId: currentViewId,
