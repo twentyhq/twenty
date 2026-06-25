@@ -1,5 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 
+import { getRecallWebhookBotMetadata } from 'src/logic-functions/recall-api/get-recall-webhook-bot-metadata.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getRecordAtPath } from 'src/logic-functions/utils/get-record-at-path.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
@@ -60,10 +61,9 @@ export const parseRecallWebhookEvent = (
       getString(getRecordAtPath(data, ['status', 'recording_id'])) ??
       getString(getRecordAtPath(data, ['recording', 'id'])) ??
       getString(data?.recording_id),
-    callRecordingIdFromMetadata: extractCallRecordingIdFromMetadata({
-      data,
-      bot,
-    }),
+    callRecordingIdFromMetadata: getString(
+      getRecallWebhookBotMetadata(body)?.twentyCallRecordingId,
+    ),
     recordingStartedAt: normalizeRecallTimestamp(
       getString(getRecordAtPath(data, ['recording', 'started_at'])),
     ),
@@ -85,20 +85,4 @@ const getStatusCodeFromEventName = (event: string): string | undefined => {
   const statusCode = event.slice('bot.'.length);
 
   return statusCode === 'status_change' ? undefined : statusCode;
-};
-
-const extractCallRecordingIdFromMetadata = ({
-  data,
-  bot,
-}: {
-  data: Record<string, unknown> | undefined;
-  bot: Record<string, unknown> | undefined;
-}): string | undefined => {
-  const metadata =
-    asRecord(bot?.metadata) ??
-    asRecord(getRecordAtPath(data, ['bot', 'metadata'])) ??
-    asRecord(getRecordAtPath(data, ['recording', 'metadata'])) ??
-    asRecord(data?.metadata);
-
-  return getString(metadata?.twentyCallRecordingId);
 };

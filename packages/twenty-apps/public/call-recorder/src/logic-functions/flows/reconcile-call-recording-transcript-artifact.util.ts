@@ -68,7 +68,6 @@ export const reconcileCallRecordingTranscriptArtifact = async ({
   ) {
     const createResult = await createAsyncRecallTranscript({
       externalRecordingId,
-      callRecordingId,
     });
 
     if (!createResult.ok) {
