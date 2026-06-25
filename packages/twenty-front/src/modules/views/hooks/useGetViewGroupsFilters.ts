@@ -1,9 +1,10 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
+import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   ViewFilterOperand,
@@ -38,41 +39,25 @@ export const useGetViewGroupsFilters = (): ViewGroupsFilters => {
     isDefined(mainGroupByFieldMetadataItem) &&
     isManyToOneRelationField(mainGroupByFieldMetadataItem)
   ) {
-    const columnName = getFieldMetadataItemGqlFieldName(
-      mainGroupByFieldMetadataItem,
-    );
-
     const visibleGroups = viewGroups.filter((group) => group.isVisible);
 
-    const clauses: RecordGqlOperationFilter[] = [];
-
-    const visibleRecordIds = visibleGroups
-      .map((group) => group.fieldValue)
-      .filter(
-        (fieldValue): fieldValue is string =>
-          isDefined(fieldValue) && fieldValue !== '',
-      );
-
-    if (visibleRecordIds.length > 0) {
-      clauses.push({ [columnName]: { in: visibleRecordIds } });
+    if (!isNonEmptyArray(visibleGroups)) {
+      return {
+        recordFilters: [],
+        recordGroupGqlFilter: { id: { is: 'NULL' } },
+      };
     }
 
-    const isNoValueGroupVisible = visibleGroups.some(
-      (group) => !isDefined(group.fieldValue) || group.fieldValue === '',
+    const visibleRecordGroupValues = visibleGroups.map((group) =>
+      isNonEmptyString(group.fieldValue) ? group.fieldValue : null,
     );
-
-    if (isNoValueGroupVisible) {
-      clauses.push({ [columnName]: { is: 'NULL' } });
-    }
 
     return {
       recordFilters: [],
-      recordGroupGqlFilter:
-        clauses.length === 0
-          ? { id: { is: 'NULL' } }
-          : clauses.length === 1
-            ? clauses[0]
-            : { or: clauses },
+      recordGroupGqlFilter: computeRecordGroupOptionsFilter({
+        recordGroupFieldMetadata: mainGroupByFieldMetadataItem,
+        recordGroupValues: visibleRecordGroupValues,
+      }),
     };
   }
 
