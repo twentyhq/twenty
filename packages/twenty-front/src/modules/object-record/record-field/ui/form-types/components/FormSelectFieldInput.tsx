@@ -4,11 +4,7 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import {
-  FieldDescription,
-  FieldLabel,
-  type SelectOption,
-} from 'twenty-ui/input';
+import { Field, type SelectOption } from 'twenty-ui/input';
 import { type CallToActionButton, Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -140,7 +136,7 @@ export const FormSelectFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <FieldLabel>{label}</FieldLabel> : null}
+      {label ? <Field.Label>{label}</Field.Label> : null}
 
       <FormFieldInputRowContainer>
         {draftValue.type === 'static' ? (
@@ -178,7 +174,7 @@ export const FormSelectFieldInput = ({
           />
         )}
       </FormFieldInputRowContainer>
-      {hint && <FieldDescription>{hint}</FieldDescription>}
+      {hint && <Field.Description>{hint}</Field.Description>}
     </FormFieldInputContainer>
   );
 };

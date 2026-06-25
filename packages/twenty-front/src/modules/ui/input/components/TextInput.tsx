@@ -1,4 +1,4 @@
-import { Field, FieldDescription, FieldLabel } from 'twenty-ui/input';
+import { Field } from 'twenty-ui/input';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { css } from '@linaria/core';
@@ -30,7 +30,7 @@ const StyledErrorHelper = styled.div`
   position: absolute;
 `;
 
-const StyledFieldRoot = styled(Field)`
+const fieldRootClassName = css`
   display: contents;
 `;
 
@@ -317,16 +317,16 @@ const TextInputComponent = forwardRef<
     const instanceId = useId();
 
     return (
-      <StyledFieldRoot>
+      <Field.Root className={fieldRootClassName}>
         <StyledContainer
           className={className}
           fullWidth={fullWidth ?? false}
           data-click-outside-id={textClickOutsideId}
         >
           {label && (
-            <FieldLabel htmlFor={instanceId}>
+            <Field.Label htmlFor={instanceId}>
               {label + (required ? '*' : '')}
-            </FieldLabel>
+            </Field.Label>
           )}
           <StyledInputContainer>
             {leftAdornment && (
@@ -412,11 +412,11 @@ const TextInputComponent = forwardRef<
           </StyledInputContainer>
           {!noErrorHelper && error && (
             <StyledErrorHelper aria-live="polite">
-              <FieldDescription danger>{error}</FieldDescription>
+              <Field.Error>{error}</Field.Error>
             </StyledErrorHelper>
           )}
         </StyledContainer>
-      </StyledFieldRoot>
+      </Field.Root>
     );
   },
 );

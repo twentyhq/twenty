@@ -6,17 +6,13 @@ import styles from './FieldDescription.module.scss';
 type FieldDescriptionProps = {
   children?: React.ReactNode;
   className?: string;
-  danger?: boolean;
 };
 
 export const FieldDescription = ({
   children,
   className,
-  danger,
 }: FieldDescriptionProps) => (
-  <FieldPrimitive.Description
-    className={clsx(styles.description, danger && styles.danger, className)}
-  >
+  <FieldPrimitive.Description className={clsx(styles.description, className)}>
     {children}
   </FieldPrimitive.Description>
 );

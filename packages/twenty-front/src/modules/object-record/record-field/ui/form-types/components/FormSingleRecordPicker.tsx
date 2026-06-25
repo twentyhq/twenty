@@ -12,7 +12,7 @@ import { SingleRecordPicker } from '@/object-record/record-picker/single-record-
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { FieldLabel } from 'twenty-ui/input';
+import { Field } from 'twenty-ui/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -197,7 +197,7 @@ export const FormSingleRecordPicker = ({
 
   return (
     <FormFieldInputContainer data-testid={testId}>
-      {label ? <FieldLabel>{label}</FieldLabel> : null}
+      {label ? <Field.Label>{label}</Field.Label> : null}
       <FormFieldInputRowContainer>
         {disabled ? (
           <StyledFormSelectContainerWrapper readonly>

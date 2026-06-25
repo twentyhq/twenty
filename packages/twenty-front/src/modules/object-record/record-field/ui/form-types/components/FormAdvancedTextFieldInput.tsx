@@ -5,7 +5,7 @@ import {
 } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { FieldDescription, FieldLabel, LightIconButton } from 'twenty-ui/input';
+import { Field, LightIconButton } from 'twenty-ui/input';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -202,7 +202,7 @@ export const FormAdvancedTextFieldInput = ({
     <>
       <StyledAdvancedTextFieldContainerWrapper>
         <FormFieldInputContainer>
-          {label ? <FieldLabel>{label}</FieldLabel> : null}
+          {label ? <Field.Label>{label}</Field.Label> : null}
 
           <StyledAdvancedTextFieldFieldContainer>
             <StyledAdvancedTextFieldInnerContainer>
@@ -239,8 +239,8 @@ export const FormAdvancedTextFieldInput = ({
               ) : null}
             </StyledAdvancedTextFieldInnerContainer>
           </StyledAdvancedTextFieldFieldContainer>
-          {hint && <FieldDescription>{hint}</FieldDescription>}
-          {error && <FieldDescription danger>{error}</FieldDescription>}
+          {hint && <Field.Description>{hint}</Field.Description>}
+          {error && <Field.Error>{error}</Field.Error>}
         </FormFieldInputContainer>
       </StyledAdvancedTextFieldContainerWrapper>
 

@@ -1,23 +1,14 @@
 import { Field as FieldPrimitive } from '@base-ui/react/field';
 
-type FieldProps = {
-  children?: React.ReactNode;
-  className?: string;
-  name?: string;
-  'data-testid'?: string;
-};
+import { FieldDescription } from './internal/FieldDescription';
+import { FieldError } from './internal/FieldError';
+import { FieldLabel } from './internal/FieldLabel';
+import { FieldRoot } from './internal/FieldRoot';
 
-export const Field = ({
-  children,
-  className,
-  name,
-  'data-testid': dataTestId,
-}: FieldProps) => (
-  <FieldPrimitive.Root
-    className={className}
-    name={name}
-    data-testid={dataTestId}
-  >
-    {children}
-  </FieldPrimitive.Root>
-);
+export const Field = {
+  Root: FieldRoot,
+  Label: FieldLabel,
+  Control: FieldPrimitive.Control,
+  Description: FieldDescription,
+  Error: FieldError,
+};

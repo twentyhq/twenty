@@ -5,7 +5,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { TextVariableEditor } from '@/object-record/record-field/ui/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/ui/form-types/hooks/useTextVariableEditor';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { FieldDescription, FieldLabel } from 'twenty-ui/input';
+import { Field } from 'twenty-ui/input';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -66,7 +66,7 @@ export const FormTextFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <FieldLabel>{label}</FieldLabel> : null}
+      {label ? <Field.Label>{label}</Field.Label> : null}
 
       <FormFieldInputRowContainer multiline={multiline}>
         <FormFieldInputInnerContainer
@@ -90,8 +90,8 @@ export const FormTextFieldInput = ({
           />
         ) : null}
       </FormFieldInputRowContainer>
-      {hint && <FieldDescription>{hint}</FieldDescription>}
-      {error && <FieldDescription danger>{error}</FieldDescription>}
+      {hint && <Field.Description>{hint}</Field.Description>}
+      {error && <Field.Error>{error}</Field.Error>}
     </FormFieldInputContainer>
   );
 };
