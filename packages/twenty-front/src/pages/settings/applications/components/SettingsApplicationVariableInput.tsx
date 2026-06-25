@@ -54,10 +54,12 @@ const parseRichTextValue = (value: string): FieldRichTextValue => {
     if (isDefined(parsed) && typeof parsed === 'object') {
       // Stored values are untyped JSON; only forward string fields so a
       // malformed payload cannot break the rich-text input.
-      return {
-        blocknote: typeof parsed.blocknote === 'string' ? parsed.blocknote : null,
-        markdown: typeof parsed.markdown === 'string' ? parsed.markdown : null,
-      };
+      const blocknote =
+        typeof parsed.blocknote === 'string' ? parsed.blocknote : null;
+      const markdown =
+        typeof parsed.markdown === 'string' ? parsed.markdown : null;
+
+      return { blocknote, markdown };
     }
   } catch {
     // Fallback for legacy plain-string values.
