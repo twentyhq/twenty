@@ -8,6 +8,9 @@ type InputLabelProps = {
   htmlFor?: string;
 };
 
+/**
+ * @deprecated Compose `Field.Label` inside `Field.Root` (from `twenty-ui/input`) instead.
+ */
 export const InputLabel = ({
   children,
   className,
