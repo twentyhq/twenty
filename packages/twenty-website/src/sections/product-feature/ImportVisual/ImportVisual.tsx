@@ -11,16 +11,10 @@ import { MAPPINGS } from './data/import-mappings';
 const Root = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
   display: flex;
+  flex-direction: column;
   font-family: var(--font-product), sans-serif;
   height: 100%;
-  justify-content: center;
   overflow: hidden;
-  width: 100%;
-`;
-
-const Grid = styled.div`
-  display: flex;
-  flex-direction: column;
   width: 100%;
 `;
 
@@ -45,15 +39,13 @@ const HeaderCell = styled.span`
 export function ImportVisual({ active: _active }: { active: boolean }) {
   return (
     <Root>
-      <Grid>
-        <HeaderRow>
-          <HeaderCell>Imported data</HeaderCell>
-          <HeaderCell>Twenty fields</HeaderCell>
-        </HeaderRow>
-        {MAPPINGS.map((mapping) => (
-          <MappingRow key={mapping.header} mapping={mapping} />
-        ))}
-      </Grid>
+      <HeaderRow>
+        <HeaderCell>Imported data</HeaderCell>
+        <HeaderCell>Twenty fields</HeaderCell>
+      </HeaderRow>
+      {MAPPINGS.map((mapping) => (
+        <MappingRow key={mapping.header} mapping={mapping} />
+      ))}
     </Root>
   );
 }
