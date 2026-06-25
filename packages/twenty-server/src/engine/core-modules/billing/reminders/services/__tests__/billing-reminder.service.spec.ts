@@ -24,7 +24,6 @@ jest.mock('twenty-emails', () => ({
 
 const CONFIG: Record<string, unknown> = {
   IS_BILLING_ENABLED: true,
-  BILLING_REMINDER_EMAILS_ENABLED: true,
   BILLING_TRIAL_WITHOUT_CREDIT_CARD_REMINDER_DAYS_BEFORE: 1,
   BILLING_TRIAL_WITH_CREDIT_CARD_REMINDER_DAYS_BEFORE: 7,
   BILLING_SUBSCRIPTION_RENEWAL_REMINDER_DAYS_BEFORE: 7,
@@ -225,27 +224,5 @@ describe('BillingReminderService', () => {
 
     expect(emailSend).not.toHaveBeenCalled();
     CONFIG.IS_BILLING_ENABLED = true;
-  });
-
-  it('never sends when the reminder kill-switch is off (default)', async () => {
-    const { service, emailSend } = buildService({
-      trialingSubscriptions: [
-        {
-          workspaceId: 'workspace-1',
-          status: SubscriptionStatus.Trialing,
-          interval: SubscriptionInterval.Month,
-          trialStart: addDays(new Date(), -6),
-          trialEnd: addDays(new Date(), 1),
-          billingCustomer: { hasPaymentMethod: false },
-        },
-      ],
-    });
-    CONFIG.BILLING_REMINDER_EMAILS_ENABLED = false;
-
-    await service.processReminders();
-
-    expect(emailSend).not.toHaveBeenCalled();
-    expect(BillingTrialEndingEmail).not.toHaveBeenCalled();
-    CONFIG.BILLING_REMINDER_EMAILS_ENABLED = true;
   });
 });

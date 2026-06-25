@@ -3,6 +3,7 @@ import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
+import { BILLING_SETTINGS_URL } from 'src/constants/billing-settings-url.constant';
 import { createI18nInstance } from 'src/utils/i18n.utils';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
@@ -54,7 +55,7 @@ export const WarnSuspendedWorkspaceEmail = ({
       </MainText>
       <br />
       <CallToAction
-        href="https://app.twenty.com/settings/billing"
+        href={BILLING_SETTINGS_URL}
         value={i18n._('Reactivate workspace')}
       />
       <br />

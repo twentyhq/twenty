@@ -3,6 +3,7 @@ import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
+import { BILLING_SETTINGS_URL } from 'src/constants/billing-settings-url.constant';
 import { createI18nInstance } from 'src/utils/i18n.utils';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
@@ -10,7 +11,6 @@ type BillingSubscriptionRenewingEmailProps = {
   userName: string;
   workspaceDisplayName: string | undefined;
   renewsAt: Date;
-  billingUrl: string;
   locale: keyof typeof APP_LOCALES;
 };
 
@@ -21,7 +21,6 @@ export const BillingSubscriptionRenewingEmail = ({
   userName,
   workspaceDisplayName,
   renewsAt,
-  billingUrl,
   locale,
 }: BillingSubscriptionRenewingEmailProps) => {
   const i18n = createI18nInstance(locale);
@@ -55,7 +54,10 @@ export const BillingSubscriptionRenewingEmail = ({
         <Trans id="No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then." />
       </MainText>
       <br />
-      <CallToAction href={billingUrl} value={i18n._('Manage subscription')} />
+      <CallToAction
+        href={BILLING_SETTINGS_URL}
+        value={i18n._('Manage subscription')}
+      />
       <br />
       <br />
     </BaseEmail>
@@ -66,7 +68,6 @@ BillingSubscriptionRenewingEmail.PreviewProps = {
   userName: 'John Doe',
   workspaceDisplayName: 'Acme Inc.',
   renewsAt: new Date('2027-07-02'),
-  billingUrl: 'https://app.twenty.com/settings/billing',
   locale: 'en',
 } as BillingSubscriptionRenewingEmailProps;
 

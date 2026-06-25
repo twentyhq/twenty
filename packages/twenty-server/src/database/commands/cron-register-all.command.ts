@@ -84,12 +84,6 @@ export class CronRegisterAllCommand extends CommandRunner {
 
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
 
-    // Off by default: only schedule the reminder cron once an operator opts in,
-    // so the customer-facing reminder emails can never be sent inadvertently.
-    const isBillingReminderEnabled =
-      isBillingEnabled &&
-      this.twentyConfigService.get('BILLING_REMINDER_EMAILS_ENABLED');
-
     const allCommands = [
       {
         name: 'MessagingMessagesImport',
@@ -192,7 +186,7 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'BillingReminder',
         command: this.billingReminderCronCommand,
-        isEnabled: isBillingReminderEnabled,
+        isEnabled: isBillingEnabled,
       },
     ];
 

@@ -849,15 +849,6 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Master switch for the billing reminder emails (trial-ending, trial-converting and yearly-renewal). Defaults to false so these customer-facing emails can never be sent inadvertently; set to true only once Stripe automated emails are disabled and the copy and timing have been reviewed.',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  BILLING_REMINDER_EMAILS_ENABLED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BILLING_CONFIG,
-    description:
       'Number of days before a trial WITHOUT a credit card ends to send the reminder to add a payment method',
     type: ConfigVariableType.NUMBER,
   })

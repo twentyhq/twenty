@@ -19,7 +19,6 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import {
-  BILLING_REMINDER_SETTINGS_URL,
   BILLING_RENEWAL_REMINDER_SENT_KEY,
   BILLING_TRIAL_REMINDER_SENT_KEY,
 } from 'src/engine/core-modules/billing/reminders/constants/billing-reminder-sent-keys.constant';
@@ -56,18 +55,7 @@ export class BillingReminderService {
   ) {}
 
   async processReminders(): Promise<void> {
-    // Hard safety guard: these emails reach real customers, so they are OFF by
-    // default and only ever sent when an operator explicitly opts in. This check
-    // runs on every invocation (not just at cron registration) so the emails can
-    // never be sent inadvertently, whatever triggers this job.
-    if (
-      !this.twentyConfigService.get('IS_BILLING_ENABLED') ||
-      !this.twentyConfigService.get('BILLING_REMINDER_EMAILS_ENABLED')
-    ) {
-      this.logger.log(
-        'Billing reminder emails are disabled (BILLING_REMINDER_EMAILS_ENABLED is false); skipping.',
-      );
-
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
     }
 
@@ -328,7 +316,6 @@ export class BillingReminderService {
             dataRetentionDays: this.twentyConfigService.get(
               'WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION',
             ),
-            billingUrl: BILLING_REMINDER_SETTINGS_URL,
             locale,
           }),
         };
@@ -340,7 +327,6 @@ export class BillingReminderService {
             workspaceDisplayName,
             trialEndsAt: reminder.trialEndsAt,
             interval: reminder.interval,
-            billingUrl: BILLING_REMINDER_SETTINGS_URL,
             locale,
           }),
         };
@@ -351,7 +337,6 @@ export class BillingReminderService {
             userName,
             workspaceDisplayName,
             renewsAt: reminder.renewsAt,
-            billingUrl: BILLING_REMINDER_SETTINGS_URL,
             locale,
           }),
         };
