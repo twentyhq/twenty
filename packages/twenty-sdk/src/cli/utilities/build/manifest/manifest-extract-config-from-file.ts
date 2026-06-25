@@ -83,6 +83,7 @@ const loadModule = async ({
     target: 'node18',
     jsx: 'automatic',
     tsconfig: hasTsconfig ? tsconfigPath : undefined,
+    loader: { '.css': 'empty' },
     alias: {
       ...(reactPath && { react: reactPath }),
       ...(reactDomPath && { 'react-dom': reactDomPath }),
