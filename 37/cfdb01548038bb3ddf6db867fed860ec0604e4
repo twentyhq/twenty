@@ -1,0 +1,22 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-16/2-16-workspace-command-1799100002000-add-message-is-draft-field.command.ts
+  s_65b4d7a4a34b4e::t_d4f530c08b901b 1-129
+packages/twenty-server/src/database/commands/upgrade-version-command/2-16/2-16-upgrade-version-command.module.ts
+  s_65b4d7a4a34b4e::t_ee83a35146c3f6 4
+  s_65b4d7a4a34b4e::t_5cf9f41e3df323 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "37cfdb01548038bb3ddf6db867fed860ec0604e4",
+  "prompts": {},
+  "sessions": {
+    "s_65b4d7a4a34b4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "999529aa-2648-487c-b4a2-c3eff6141891",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
