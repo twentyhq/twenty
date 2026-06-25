@@ -16,9 +16,18 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/input';
-import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
+
+const StyledContainer = styled.div`
+  align-items: center;
+  background: ${themeCssVariables.background.primary};
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+`;
 
 const StyledButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[8]};
@@ -82,11 +91,15 @@ export const WorkspaceActivationV2 = () => {
   }, [activate, currentWorkspace]);
 
   if (!hasFailed) {
-    return <SignInUpWorkspaceCreationLoader />;
+    return (
+      <StyledContainer>
+        <SignInUpWorkspaceCreationLoader />
+      </StyledContainer>
+    );
   }
 
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
+    <StyledContainer>
       <Logo
         primaryLogo={
           isNonEmptyString(currentWorkspace?.logo)
@@ -112,6 +125,6 @@ export const WorkspaceActivationV2 = () => {
           fullWidth
         />
       </StyledButtonContainer>
-    </ModalContent>
+    </StyledContainer>
   );
 };

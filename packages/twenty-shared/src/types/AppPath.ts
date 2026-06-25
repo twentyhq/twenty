@@ -9,6 +9,7 @@ export enum AppPath {
 
   // Onboarding
   WorkspaceActivation = '/workspace-activation',
+  WorkspaceActivationV2 = '/workspace-activation-v2',
   CreateProfile = '/create/profile',
   SyncEmails = '/sync/emails',
   InviteTeam = '/invite-team',

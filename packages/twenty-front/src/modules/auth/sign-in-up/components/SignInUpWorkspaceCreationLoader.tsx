@@ -2,11 +2,9 @@ import { SignInUpWorkspaceActivationV2 } from '@/auth/sign-in-up/components/Sign
 import { SignInUpWorkspaceActivationV2Effect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceActivationV2Effect';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background: ${themeCssVariables.background.secondary};
   display: flex;
   flex: 1;
   flex-direction: column;

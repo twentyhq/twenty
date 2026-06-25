@@ -54,9 +54,15 @@ const Authorize = lazy(() =>
   })),
 );
 
-const WorkspaceActivationRouter = lazy(() =>
-  import('~/pages/onboarding/WorkspaceActivationRouter').then((module) => ({
-    default: module.WorkspaceActivationRouter,
+const WorkspaceActivation = lazy(() =>
+  import('~/pages/onboarding/WorkspaceActivation').then((module) => ({
+    default: module.WorkspaceActivation,
+  })),
+);
+
+const WorkspaceActivationV2 = lazy(() =>
+  import('~/pages/onboarding/WorkspaceActivationV2').then((module) => ({
+    default: module.WorkspaceActivationV2,
   })),
 );
 
@@ -157,7 +163,7 @@ export const useCreateAppRouter = (
             path={AppPath.WorkspaceActivation}
             element={
               <LazyRoute fallback={null}>
-                <WorkspaceActivationRouter />
+                <WorkspaceActivation />
               </LazyRoute>
             }
           />
@@ -268,6 +274,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute fallback={null}>
                 <SignInUpV2 />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.WorkspaceActivationV2}
+            element={
+              <LazyRoute fallback={null}>
+                <WorkspaceActivationV2 />
               </LazyRoute>
             }
           />
