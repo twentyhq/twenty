@@ -19,16 +19,18 @@ export const useShowWorkspaceCreationLoader = () => {
       return false;
     }
 
-    const isOnboardingV2FromUrl =
-      new URLSearchParams(location.search).get('onboardingV2') === 'true';
+    const isOnWorkspaceCreationRoute =
+      isMatchingLocation(location, AppPath.Verify) ||
+      isMatchingLocation(location, AppPath.WorkspaceActivation);
 
-    if (!isOnboardingV2 && !isOnboardingV2FromUrl) {
+    if (!isOnWorkspaceCreationRoute) {
       return false;
     }
 
-    return (
-      isMatchingLocation(location, AppPath.Verify) ||
-      isMatchingLocation(location, AppPath.WorkspaceActivation)
-    );
+    if (isOnboardingV2) {
+      return true;
+    }
+
+    return new URLSearchParams(location.search).get('onboardingV2') === 'true';
   }, [isOnboardingV2, isWorkspaceActivationFailed, location]);
 };
