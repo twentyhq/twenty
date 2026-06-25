@@ -5,6 +5,7 @@ import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isOnboardingV2State } from '@/auth/states/isOnboardingV2State';
 import { SignInUpWorkspaceActivationV2 } from '@/auth/sign-in-up/components/SignInUpWorkspaceActivationV2';
 import { SignInUpWorkspaceActivationV2Effect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceActivationV2Effect';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
@@ -17,6 +18,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
@@ -27,6 +29,24 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
+const StyledLoaderContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  margin-top: ${themeCssVariables.spacing[8]};
+  width: 100%;
+`;
+
+type ActivationStep = 'pending' | 'database' | 'data-model' | 'prefill';
+
+const StyledActivationStep = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`;
+
 export const WorkspaceActivation = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -35,11 +55,30 @@ export const WorkspaceActivation = () => {
   const [activateWorkspace, { loading: isActivating }] = useMutation(
     ActivateWorkspaceDocument,
   );
+  const [activationStep, setActivationStep] =
+    useState<ActivationStep>('pending');
   const [hasFailed, setHasFailed] = useState(false);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isOnboardingV2 = useAtomStateValue(isOnboardingV2State);
 
   const activate = useCallback(async () => {
     setHasFailed(false);
+
+    const databaseTimeout = setTimeout(() => {
+      setActivationStep('database');
+    }, 500);
+    const dataModelTimeout = setTimeout(() => {
+      setActivationStep('data-model');
+    }, 2000);
+    const prefillTimeout = setTimeout(() => {
+      setActivationStep('prefill');
+    }, 5000);
+
+    const clearStepTimeouts = () => {
+      clearTimeout(databaseTimeout);
+      clearTimeout(dataModelTimeout);
+      clearTimeout(prefillTimeout);
+    };
 
     try {
       const result = await activateWorkspace({
@@ -55,11 +94,14 @@ export const WorkspaceActivation = () => {
       await loadCurrentUser();
       setNextOnboardingStatus();
     } catch (error) {
+      setActivationStep('pending');
       setHasFailed(true);
 
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
+    } finally {
+      clearStepTimeouts();
     }
   }, [
     activateWorkspace,
@@ -116,10 +158,47 @@ export const WorkspaceActivation = () => {
     );
   }
 
+  if (isOnboardingV2) {
+    return (
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
+        <SignInUpWorkspaceActivationV2Effect />
+        <SignInUpWorkspaceActivationV2 />
+      </ModalContent>
+    );
+  }
+
   return (
     <ModalContent isVerticallyCentered isHorizontallyCentered>
-      <SignInUpWorkspaceActivationV2Effect />
-      <SignInUpWorkspaceActivationV2 />
+      <Logo
+        primaryLogo={
+          isNonEmptyString(currentWorkspace?.logo)
+            ? currentWorkspace?.logo
+            : undefined
+        }
+      />
+      <Title>
+        <Trans>Creating your workspace</Trans>
+      </Title>
+      <StyledActivationStep>
+        {activationStep === 'database' && (
+          <SubTitle>
+            <Trans>Setting up your database...</Trans>
+          </SubTitle>
+        )}
+        {activationStep === 'data-model' && (
+          <SubTitle>
+            <Trans>Creating your data model...</Trans>
+          </SubTitle>
+        )}
+        {activationStep === 'prefill' && (
+          <SubTitle>
+            <Trans>Prefilling your workspace data...</Trans>
+          </SubTitle>
+        )}
+      </StyledActivationStep>
+      <StyledLoaderContainer>
+        <Loader color="gray" />
+      </StyledLoaderContainer>
     </ModalContent>
   );
 };

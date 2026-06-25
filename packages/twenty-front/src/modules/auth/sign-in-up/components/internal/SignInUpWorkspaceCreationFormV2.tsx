@@ -4,6 +4,7 @@ import { SignInUpWorkspaceActivationV2Effect } from '@/auth/sign-in-up/component
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
+import { isOnboardingV2State } from '@/auth/states/isOnboardingV2State';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -102,6 +103,7 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
 
   const isCreatingWorkspace = useAtomStateValue(isCreatingWorkspaceState);
   const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
+  const setIsOnboardingV2 = useSetAtomState(isOnboardingV2State);
   const [logo, setLogo] = useState<File | undefined>(undefined);
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | undefined>(
     undefined,
@@ -160,6 +162,7 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
     }
 
     setIsCreatingWorkspace(true);
+    setIsOnboardingV2(true);
 
     const isWorkspaceCreated = await createWorkspace({
       displayName: workspaceName.trim(),
