@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { EmailComposerFields } from '@/activities/emails/components/EmailComposerFields';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 import { type ReplyContextReady } from '@/activities/emails/hooks/useReplyContext';
-import { type EmailThreadDraftSeed } from '@/activities/emails/types/EmailThreadDraftSeed';
+import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { EmailThreadComposerFooterEffect } from '@/page-layout/widgets/email-thread/components/EmailThreadComposerFooterEffect';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
@@ -38,7 +38,7 @@ type EmailThreadComposerProps = {
   isInSidePanel: boolean;
   isComposerOpen: boolean;
   setIsComposerOpen: (open: boolean) => void;
-  draftSeed?: EmailThreadDraftSeed | null;
+  draftPrefill?: EmailDraftPrefill | null;
 };
 
 export const EmailThreadComposer = ({
@@ -46,7 +46,7 @@ export const EmailThreadComposer = ({
   isInSidePanel,
   isComposerOpen,
   setIsComposerOpen,
-  draftSeed,
+  draftPrefill,
 }: EmailThreadComposerProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
@@ -66,7 +66,7 @@ export const EmailThreadComposer = ({
 
   const composerState = useEmailComposerState({
     connectedAccountId: replyContext.connectedAccountId,
-    draftSeed,
+    draftPrefill,
     defaultTo: replyContext.to,
     defaultSubject: replyContext.subject,
     defaultInReplyTo: replyContext.inReplyTo,

@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { type ComposedEmail } from 'src/engine/core-modules/tool/tools/email-tool/types/composed-email.type';
 import { MessagingDraftSendService } from 'src/modules/messaging/message-outbound-manager/services/messaging-draft-send.service';
 import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
@@ -39,20 +37,20 @@ export class SendEmailService {
     });
   }
 
-  async finalizeSentDraft(
+  async deleteSentDraft(
     draftMessageId: string,
-    messageExternalId: string | undefined,
     workspaceId: string,
-  ): Promise<string | undefined> {
+  ): Promise<void> {
     await this.messagingDraftSendService.deleteSentDraft({
       draftMessageId,
       workspaceId,
     });
+  }
 
-    if (!isDefined(messageExternalId)) {
-      return undefined;
-    }
-
+  async getSentMessageThreadId(
+    messageExternalId: string,
+    workspaceId: string,
+  ): Promise<string | undefined> {
     return this.messagingDraftSendService.getSentMessageThreadId({
       messageExternalId,
       workspaceId,

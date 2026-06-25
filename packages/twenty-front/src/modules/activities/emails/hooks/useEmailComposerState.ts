@@ -3,11 +3,11 @@ import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
-import { type EmailThreadDraftSeed } from '@/activities/emails/types/EmailThreadDraftSeed';
+import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 
 type UseEmailComposerStateArgs = {
   connectedAccountId: string;
-  draftSeed?: EmailThreadDraftSeed | null;
+  draftPrefill?: EmailDraftPrefill | null;
   defaultTo?: string;
   defaultSubject?: string;
   defaultInReplyTo?: string;
@@ -22,17 +22,17 @@ const countRecipients = (csv: string): number =>
 
 export const useEmailComposerState = ({
   connectedAccountId: initialConnectedAccountId,
-  draftSeed,
+  draftPrefill,
   defaultTo = '',
   defaultSubject = '',
   defaultInReplyTo,
   onSent,
 }: UseEmailComposerStateArgs) => {
-  const initialTo = draftSeed?.to ?? defaultTo;
-  const initialCc = draftSeed?.cc ?? '';
-  const initialBcc = draftSeed?.bcc ?? '';
-  const initialSubject = draftSeed?.subject ?? defaultSubject;
-  const initialBody = draftSeed?.body ?? '';
+  const initialTo = draftPrefill?.to ?? defaultTo;
+  const initialCc = draftPrefill?.cc ?? '';
+  const initialBcc = draftPrefill?.bcc ?? '';
+  const initialSubject = draftPrefill?.subject ?? defaultSubject;
+  const initialBody = draftPrefill?.body ?? '';
 
   const [connectedAccountId, setConnectedAccountId] = useState(
     initialConnectedAccountId,
@@ -79,7 +79,7 @@ export const useEmailComposerState = ({
       subject,
       body,
       inReplyTo: defaultInReplyTo,
-      draftMessageId: draftSeed?.messageId,
+      draftMessageId: draftPrefill?.messageId,
       files: files.length > 0 ? files : undefined,
     });
 
@@ -94,7 +94,7 @@ export const useEmailComposerState = ({
     subject,
     body,
     defaultInReplyTo,
-    draftSeed?.messageId,
+    draftPrefill?.messageId,
     files,
     sendEmail,
     onSent,

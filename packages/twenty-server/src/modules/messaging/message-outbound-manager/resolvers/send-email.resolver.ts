@@ -96,13 +96,21 @@ export class SendEmailResolver {
         );
       }
 
-      const messageThreadId = isDefined(input.draftMessageId)
-        ? await this.sendEmailService.finalizeSentDraft(
-            input.draftMessageId,
-            sendResult.messageExternalId,
-            workspace.id,
-          )
-        : undefined;
+      if (isDefined(input.draftMessageId)) {
+        await this.sendEmailService.deleteSentDraft(
+          input.draftMessageId,
+          workspace.id,
+        );
+      }
+
+      const messageThreadId =
+        isDefined(input.draftMessageId) &&
+        isDefined(sendResult.messageExternalId)
+          ? await this.sendEmailService.getSentMessageThreadId(
+              sendResult.messageExternalId,
+              workspace.id,
+            )
+          : undefined;
 
       const attachmentFileIds = (input.files ?? []).map((file) => file.id);
 

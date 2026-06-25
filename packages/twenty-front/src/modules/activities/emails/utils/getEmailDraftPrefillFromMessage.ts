@@ -1,10 +1,10 @@
-import { type EmailThreadDraftSeed } from '@/activities/emails/types/EmailThreadDraftSeed';
+import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
-export const getEmailThreadDraftSeedFromMessage = (
+export const getEmailDraftPrefillFromMessage = (
   message: EmailThreadMessageWithSender,
-): EmailThreadDraftSeed => {
+): EmailDraftPrefill => {
   const joinHandlesByRole = (role: MessageParticipantRole) =>
     message.messageParticipants
       .filter((participant) => participant.role === role)

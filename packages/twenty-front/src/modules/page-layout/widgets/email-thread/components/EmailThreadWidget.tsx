@@ -6,9 +6,9 @@ import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { useReplyContext } from '@/activities/emails/hooks/useReplyContext';
-import { type EmailThreadDraftSeed } from '@/activities/emails/types/EmailThreadDraftSeed';
+import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { getEmailThreadDraftSeedFromMessage } from '@/activities/emails/utils/getEmailThreadDraftSeedFromMessage';
+import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
@@ -49,8 +49,8 @@ export const EmailThreadWidget = ({
   const [composerIntent, setComposerIntent] = useState<
     'opened' | 'closed' | null
   >(null);
-  const [clickedDraftSeed, setClickedDraftSeed] =
-    useState<EmailThreadDraftSeed | null>(null);
+  const [clickedDraftPrefill, setClickedDraftPrefill] =
+    useState<EmailDraftPrefill | null>(null);
   const [previousTargetRecordId, setPreviousTargetRecordId] = useState(
     targetRecord.id,
   );
@@ -58,20 +58,20 @@ export const EmailThreadWidget = ({
   if (previousTargetRecordId !== targetRecord.id) {
     setPreviousTargetRecordId(targetRecord.id);
     setComposerIntent(null);
-    setClickedDraftSeed(null);
+    setClickedDraftPrefill(null);
   }
 
   const handleComposerOpenChange = useCallback((open: boolean) => {
     setComposerIntent(open ? 'opened' : 'closed');
 
     if (!open) {
-      setClickedDraftSeed(null);
+      setClickedDraftPrefill(null);
     }
   }, []);
 
   const handleDraftClick = useCallback(
     (message: EmailThreadMessageWithSender) => {
-      setClickedDraftSeed(getEmailThreadDraftSeedFromMessage(message));
+      setClickedDraftPrefill(getEmailDraftPrefillFromMessage(message));
       setComposerIntent('opened');
     },
     [],
@@ -91,10 +91,10 @@ export const EmailThreadWidget = ({
   const lastMessage = messages[messagesCount - 1];
 
   const trailingDraft = lastMessage?.isDraft ? lastMessage : undefined;
-  const draftSeed =
-    clickedDraftSeed ??
+  const draftPrefill =
+    clickedDraftPrefill ??
     (isDefined(trailingDraft)
-      ? getEmailThreadDraftSeedFromMessage(trailingDraft)
+      ? getEmailDraftPrefillFromMessage(trailingDraft)
       : null);
   const isComposerOpen =
     composerIntent === 'opened' ||
@@ -138,12 +138,12 @@ export const EmailThreadWidget = ({
       </StyledContainer>
       {canReply && (
         <EmailThreadComposer
-          key={draftSeed?.messageId ?? 'reply'}
+          key={draftPrefill?.messageId ?? 'reply'}
           replyContext={replyContext}
           isInSidePanel={isInSidePanel}
           isComposerOpen={isComposerOpen}
           setIsComposerOpen={handleComposerOpenChange}
-          draftSeed={draftSeed}
+          draftPrefill={draftPrefill}
         />
       )}
     </StyledWrapper>
