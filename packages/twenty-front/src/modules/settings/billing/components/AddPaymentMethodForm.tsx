@@ -17,8 +17,8 @@ import {
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Info, Loader } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
+import { Info } from 'twenty-ui/feedback';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { CreateBillingPaymentMethodSetupIntentDocument } from '~/generated-metadata/graphql';
 
@@ -34,11 +34,6 @@ const StyledFormContainer = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   width: 100%;
-`;
-
-const StyledButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
 `;
 
 const AddPaymentMethodFormContent = ({
@@ -144,15 +139,16 @@ const AddPaymentMethodFormContent = ({
             : undefined,
         }}
       />
-      <StyledButtonContainer>
-        <MainButton
-          title={t`Add credit card`}
-          onClick={handleSubmit}
-          width={200}
-          Icon={() => (isSubmitting ? <Loader /> : null)}
-          disabled={!isStripeReady || isSubmitting}
-        />
-      </StyledButtonContainer>
+      <Button
+        title={t`Add credit card`}
+        onClick={handleSubmit}
+        variant="secondary"
+        accent="blue"
+        fullWidth
+        justify="center"
+        isLoading={isSubmitting}
+        disabled={!isStripeReady || isSubmitting}
+      />
     </StyledFormContainer>
   );
 };
