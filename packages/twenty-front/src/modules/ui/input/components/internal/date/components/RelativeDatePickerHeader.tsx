@@ -132,7 +132,9 @@ export const RelativeDatePickerHeader = ({
               unit,
             };
 
-            if (relativeDateFilterSchema.safeParse(valueParts).success === true) {
+            if (
+              relativeDateFilterSchema.safeParse(valueParts).success === true
+            ) {
               onChange?.(valueParts);
             }
           }}

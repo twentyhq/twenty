@@ -1,4 +1,4 @@
-import { Temporal } from 'temporal-polyfill';
+import { type Temporal } from 'temporal-polyfill';
 import { isPlainDateBefore } from 'twenty-shared/utils';
 
 export const getHighlightedDates = (

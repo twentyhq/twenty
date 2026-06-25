@@ -15,9 +15,9 @@ describe('getHighlightedDates', () => {
       start: getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z'),
       end: getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z'),
     };
-    expect(
-      getHighlightedDates(dateRange.start, dateRange.end),
-    ).toEqual([getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z')]);
+    expect(getHighlightedDates(dateRange.start, dateRange.end)).toEqual([
+      getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z'),
+    ]);
   });
 
   it('should should return two days if range is 2 days', () => {
@@ -25,9 +25,7 @@ describe('getHighlightedDates', () => {
       start: getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z'),
       end: getUTCPlainDateFromISO('2024-10-13T00:00:00.000Z'),
     };
-    expect(
-      getHighlightedDates(dateRange.start, dateRange.end),
-    ).toEqual([
+    expect(getHighlightedDates(dateRange.start, dateRange.end)).toEqual([
       getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z'),
       getUTCPlainDateFromISO('2024-10-13T00:00:00.000Z'),
     ]);
@@ -38,9 +36,7 @@ describe('getHighlightedDates', () => {
       start: getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z'),
       end: getUTCPlainDateFromISO('2024-10-21T00:00:00.000Z'),
     };
-    expect(
-      getHighlightedDates(dateRange.start, dateRange.end),
-    ).toEqual([
+    expect(getHighlightedDates(dateRange.start, dateRange.end)).toEqual([
       getUTCPlainDateFromISO('2024-10-12T00:00:00.000Z'),
       getUTCPlainDateFromISO('2024-10-13T00:00:00.000Z'),
       getUTCPlainDateFromISO('2024-10-14T00:00:00.000Z'),
@@ -59,9 +55,7 @@ describe('getHighlightedDates', () => {
       start: getUTCPlainDateFromISO('2023-10-01T00:00:00.000Z'),
       end: getUTCPlainDateFromISO('2023-10-10T00:00:00.000Z'),
     };
-    expect(
-      getHighlightedDates(dateRange.start, dateRange.end),
-    ).toEqual([
+    expect(getHighlightedDates(dateRange.start, dateRange.end)).toEqual([
       getUTCPlainDateFromISO('2023-10-01T00:00:00.000Z'),
       getUTCPlainDateFromISO('2023-10-02T00:00:00.000Z'),
       getUTCPlainDateFromISO('2023-10-03T00:00:00.000Z'),

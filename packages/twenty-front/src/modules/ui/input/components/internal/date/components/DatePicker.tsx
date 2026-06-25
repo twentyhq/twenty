@@ -375,9 +375,7 @@ export const DatePicker = ({
       : null;
 
   const relativeDatePickerKey =
-    isRelative &&
-    isDefined(relativeDate?.start) &&
-    isDefined(relativeDate?.end)
+    isRelative && isDefined(relativeDate?.start) && isDefined(relativeDate?.end)
       ? `${relativeDate.start}-${relativeDate.end}`
       : undefined;
 

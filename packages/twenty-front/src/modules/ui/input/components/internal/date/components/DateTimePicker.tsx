@@ -394,9 +394,7 @@ export const DateTimePicker = ({
       : null;
 
   const relativeDatePickerKey =
-    isRelative &&
-    isDefined(relativeDate?.start) &&
-    isDefined(relativeDate?.end)
+    isRelative && isDefined(relativeDate?.start) && isDefined(relativeDate?.end)
       ? `${relativeDate.start}-${relativeDate.end}`
       : undefined;
 
@@ -413,7 +411,9 @@ export const DateTimePicker = ({
   const dateToUse =
     date ??
     (isRelative && isDefined(relativeDate?.start)
-      ? relativeDate.start.toPlainDate().toZonedDateTime(timeZone ?? userTimezone)
+      ? relativeDate.start
+          .toPlainDate()
+          .toZonedDateTime(timeZone ?? userTimezone)
       : Temporal.Now.zonedDateTimeISO(timeZone ?? userTimezone));
 
   const displayZonedDateTime =
