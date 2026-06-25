@@ -1,3 +1,6 @@
+/**
+ * @queue-driver: bullmq
+ */
 import gql from 'graphql-tag';
 import request from 'supertest';
 import {

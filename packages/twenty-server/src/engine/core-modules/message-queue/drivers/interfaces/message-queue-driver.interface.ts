@@ -14,6 +14,12 @@ export interface MessageQueueDriver {
     data: T,
     options?: QueueJobOptions,
   ): Promise<void>;
+  addAndWaitForCompletion<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobName: string,
+    data: T,
+    options?: QueueJobOptions,
+  ): Promise<void>;
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,

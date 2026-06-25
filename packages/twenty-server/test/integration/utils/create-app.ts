@@ -18,9 +18,12 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { ExceptionHandlerMockService } from 'src/engine/core-modules/exception-handler/mocks/exception-handler-mock.service';
 import { MockedUnhandledExceptionFilter } from 'src/engine/core-modules/exception-handler/mocks/mock-unhandled-exception.filter';
 import { SyncDriver } from 'src/engine/core-modules/message-queue/drivers/sync.driver';
+import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces/message-queue-module-options.interface';
 import { JobsModule } from 'src/engine/core-modules/message-queue/jobs.module';
 import { QUEUE_DRIVER } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
+
+import { relaxMigrationLockTimeoutForTests } from 'test/integration/utils/relax-migration-lock-timeout.util';
 
 interface TestingModuleCreatePreHook {
   (moduleBuilder: TestingModuleBuilder): TestingModuleBuilder;
@@ -36,6 +39,11 @@ export type TestingAppCreatePreHook = (
 // Shared SyncDriver instance for all queues in tests
 // This enables synchronous processing of jobs during integration tests
 const syncDriver = new SyncDriver();
+
+// When MESSAGE_QUEUE_TYPE is bull-mq the tests exercise the real driver and
+// await jobs natively; otherwise jobs run inline through the sync driver.
+const isBullMqDriverEnabled =
+  process.env.MESSAGE_QUEUE_TYPE === MessageQueueDriverType.BullMQ;
 
 /**
  * Sets basic integration testing module of app
@@ -66,9 +74,13 @@ export const createApp = async (
       getCurrentDriver: () => ({
         validate: async () => ({ success: true }),
       }),
-    })
-    .overrideProvider(QUEUE_DRIVER)
-    .useValue(syncDriver);
+    });
+
+  if (!isBullMqDriverEnabled) {
+    moduleBuilder = moduleBuilder
+      .overrideProvider(QUEUE_DRIVER)
+      .useValue(syncDriver);
+  }
 
   if (config.moduleBuilderHook) {
     moduleBuilder = config.moduleBuilderHook(moduleBuilder);
@@ -102,6 +114,10 @@ export const createApp = async (
   }
 
   await app.init();
+
+  if (isBullMqDriverEnabled) {
+    relaxMigrationLockTimeoutForTests(app);
+  }
 
   return app;
 };

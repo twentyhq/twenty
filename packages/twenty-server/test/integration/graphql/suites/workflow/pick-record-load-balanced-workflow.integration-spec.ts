@@ -1,3 +1,6 @@
+/**
+ * @queue-driver: bullmq
+ */
 import request from 'supertest';
 import {
   destroyWorkflowRun,

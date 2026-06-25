@@ -390,6 +390,84 @@ jobs:
           configuration: 'with-db-reset'
           args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
 
+  server-integration-test-bullmq:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    needs: server-build
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+      clickhouse:
+        image: clickhouse/clickhouse-server:25.8.8
+        env:
+          CLICKHOUSE_PASSWORD: clickhousePassword
+          CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
+        ports:
+          - 8123:8123
+          - 9000:9000
+        options: >-
+          --health-cmd "clickhouse-client --host=localhost --port=9000 --user=default --password=clickhousePassword --query='SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      NODE_ENV: test
+      ANALYTICS_ENABLED: true
+      CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
+      CLICKHOUSE_PASSWORD: clickhousePassword
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Update .env.test for integrations tests
+        run: |
+          echo "" >> .env.test
+          echo "IS_BILLING_ENABLED=true" >> .env.test
+          echo "BILLING_STRIPE_API_KEY=test-api-key" >> .env.test
+          echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
+          echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
+          echo "BILLING_PLAN_REQUIRED_LINK=http://localhost:3001/stripe-redirection" >> .env.test
+      - name: Restore server build cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
+      - name: Server / Build
+        run: npx nx build twenty-server
+      - name: Build dependencies
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-emails
+      - name: Server / Create Test DB
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+      - name: Run ClickHouse migrations
+        run: npx nx clickhouse:migrate twenty-server
+      - name: Run ClickHouse seeds
+        run: npx nx clickhouse:seed twenty-server
+      - name: Server / Run Integration Tests (real BullMQ)
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: 'test:integration:bullmq'
+          configuration: 'with-db-reset'
+
   cross-version-upgrade:
     needs: [upgrade-changed-files-check, server-build]
     uses: ./.github/workflows/ci-cross-version-upgrade.yaml
@@ -409,6 +487,7 @@ jobs:
         server-validation,
         server-test,
         server-integration-test,
+        server-integration-test-bullmq,
         cross-version-upgrade,
       ]
     steps:

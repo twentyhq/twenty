@@ -357,14 +357,6 @@ describe('workspace permissions', () => {
     });
 
     describe('logo update', () => {
-      beforeAll(() => {
-        jest.useRealTimers();
-      });
-
-      afterAll(() => {
-        jest.useFakeTimers();
-      });
-
       it('should update workspace logo when user has workspace settings permission', async () => {
         const testImageBuffer = Buffer.from(
           'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',

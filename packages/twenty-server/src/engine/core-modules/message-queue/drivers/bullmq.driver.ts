@@ -6,12 +6,15 @@ import {
 
 import * as Sentry from '@sentry/node';
 import {
+  type Job,
   type JobsOptions,
   MetricsTime,
   Queue,
+  QueueEvents,
   type QueueOptions,
   Worker,
 } from 'bullmq';
+import IORedis from 'ioredis';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -34,6 +37,8 @@ import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/
 export type BullMQDriverOptions = QueueOptions;
 
 const V4_LENGTH = 36;
+
+const ADD_AND_WAIT_FOR_COMPLETION_TIMEOUT_MS = 30_000;
 
 export class BullMQDriver
   implements MessageQueueDriver, OnModuleDestroy, OnModuleInit
@@ -238,6 +243,47 @@ export class BullMQDriver
     data: T,
     options?: QueueJobOptions,
   ): Promise<void> {
+    await this.enqueueJob(queueName, jobName, data, options);
+  }
+
+  // Enqueues a job and resolves once the worker finishes it, using BullMQ's
+  // native job event stream (QueueEvents). Rejects if the job fails or does not
+  // finish within the ttl. QueueEvents needs its own blocking connection and is
+  // created and closed per call so it never leaks an open handle.
+  async addAndWaitForCompletion<T>(
+    queueName: MessageQueue,
+    jobName: string,
+    data: T,
+    options?: QueueJobOptions,
+  ): Promise<void> {
+    const job = await this.enqueueJob(queueName, jobName, data, options);
+
+    if (!isDefined(job)) {
+      return;
+    }
+
+    const connection = (this.options.connection as IORedis).duplicate();
+    const queueEvents = new QueueEvents(queueName, { connection });
+
+    try {
+      await queueEvents.waitUntilReady();
+
+      await job.waitUntilFinished(
+        queueEvents,
+        ADD_AND_WAIT_FOR_COMPLETION_TIMEOUT_MS,
+      );
+    } finally {
+      await queueEvents.close();
+      await connection.quit();
+    }
+  }
+
+  private async enqueueJob<T>(
+    queueName: MessageQueue,
+    jobName: string,
+    data: T,
+    options?: QueueJobOptions,
+  ): Promise<Job | undefined> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
@@ -253,7 +299,7 @@ export class BullMQDriver
       );
 
       if (isJobAlreadyWaiting) {
-        return;
+        return undefined;
       }
     }
 
@@ -272,6 +318,6 @@ export class BullMQDriver
       delay: options?.delay,
     };
 
-    await this.queueMap[queueName].add(jobName, data, queueOptions);
+    return this.queueMap[queueName].add(jobName, data, queueOptions);
   }
 }

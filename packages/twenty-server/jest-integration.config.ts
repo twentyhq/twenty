@@ -3,7 +3,11 @@ import { type JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
+import { discoverBullmqSpecs } from './test/integration/utils/bullmq-opt-in-specs';
 import testTokens from './test/integration/constants/test-tokens.json';
+
+const escapeForRegex = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // Load .env vars at jest boot time
 if (process.env.NODE_ENV === 'test') {
@@ -30,6 +34,10 @@ const jestConfig: JestConfigWithTsJest = {
   testPathIgnorePatterns: [
     ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
     ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),
+    // Specs tagged @bullmq-real-driver run under jest-integration-bullmq.config.ts.
+    ...discoverBullmqSpecs().map(
+      (specPath) => `<rootDir>/${escapeForRegex(specPath)}`,
+    ),
   ],
   testRegex: '\\.integration-spec\\.ts$',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
@@ -80,9 +88,6 @@ const jestConfig: JestConfigWithTsJest = {
       prefix: '<rootDir>/',
     }),
     '^test/(.*)$': '<rootDir>/test/$1',
-  },
-  fakeTimers: {
-    enableGlobally: true,
   },
   globals: {
     APP_PORT: 4000,

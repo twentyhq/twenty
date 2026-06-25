@@ -25,6 +25,15 @@ export class SyncDriver implements MessageQueueDriver {
     await this.processJob(queueName, { id: '', name: jobName, data });
   }
 
+  async addAndWaitForCompletion<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobName: string,
+    data: T,
+  ): Promise<void> {
+    // The sync driver runs the handler inline, so adding already awaits it.
+    await this.add(queueName, jobName, data);
+  }
+
   async addCron<T extends MessageQueueJobData | undefined>({
     queueName,
     jobName,
