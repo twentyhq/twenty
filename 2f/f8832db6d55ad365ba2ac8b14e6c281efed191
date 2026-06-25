@@ -1,0 +1,23 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service.spec.ts
+  s_8a5a157e980979::t_9dd18a3e5f21b1 102
+  s_8a5a157e980979::t_e5df8039028c0c 149
+  s_8a5a157e980979::t_9f2fccd10928fc 193
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/__tests__/compute-gmail-exclude-search-filter.spec.ts
+  s_8a5a157e980979::t_610223f9102357 194
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "2ff8832db6d55ad365ba2ac8b14e6c281efed191",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
