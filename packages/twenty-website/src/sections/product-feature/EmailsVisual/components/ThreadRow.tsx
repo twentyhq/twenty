@@ -1,3 +1,6 @@
+'use client';
+
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
@@ -85,6 +88,7 @@ const ReceivedAt = styled.span`
 `;
 
 export function ThreadRow({ thread }: { thread: EmailThread }) {
+  const { i18n } = useLingui();
   return (
     <Row>
       <Sender>
@@ -108,8 +112,8 @@ export function ThreadRow({ thread }: { thread: EmailThread }) {
         <MessageCount>{thread.messageCount}</MessageCount>
       </Sender>
       <SubjectBody>
-        <Subject>{thread.subject}</Subject>
-        <Preview>{thread.preview}</Preview>
+        <Subject>{i18n._(thread.subject)}</Subject>
+        <Preview>{i18n._(thread.preview)}</Preview>
       </SubjectBody>
       <ReceivedAt>{thread.date}</ReceivedAt>
     </Row>

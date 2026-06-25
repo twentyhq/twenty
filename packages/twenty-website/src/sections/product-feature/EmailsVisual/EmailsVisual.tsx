@@ -1,5 +1,7 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconPlus } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
@@ -74,18 +76,19 @@ const ThreadCard = styled.div`
 `;
 
 export function EmailsVisual({ active: _active }: { active: boolean }) {
+  const { i18n } = useLingui();
   return (
     <Root>
       <RecordTabHeader active="Emails" />
       <Panel>
         <InboxHeader>
           <InboxTitle>
-            Inbox
+            {i18n._(msg`Inbox`)}
             <InboxCount>{THREADS.length}</InboxCount>
           </InboxTitle>
           <ComposeButton>
             <IconPlus size={12} stroke={2} />
-            Compose
+            {i18n._(msg`Compose`)}
           </ComposeButton>
         </InboxHeader>
         <ThreadCard>
