@@ -18,7 +18,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChartBar, IconExternalLink } from 'twenty-ui/icon';
 import { HorizontalSeparator, Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
-import { ProgressBar } from 'twenty-ui/feedback';
+import { Info, ProgressBar } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -58,6 +58,14 @@ export const SettingsBillingCreditsSection = ({
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
 
+  const usedCreditsDisplay = formatNumber(usedCredits, { decimals: 2 });
+  const totalGrantedCreditsDisplay = formatNumber(totalGrantedCredits, {
+    decimals: 2,
+  });
+  const grantedCreditsDisplay = formatNumber(grantedCredits, { decimals: 2 });
+  const rolloverCreditsDisplay = formatNumber(rolloverCredits, { decimals: 2 });
+  const rolloverCapDisplay = formatNumber(grantedCredits * 2, { decimals: 2 });
+
   const resourceCreditPrices = getResourceCreditPricesByInterval(
     currentBillingSubscription.interval,
   );
@@ -72,7 +80,7 @@ export const SettingsBillingCreditsSection = ({
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
             label={t`Credits Used`}
-            value={`${formatNumber(usedCredits, { abbreviate: true, decimals: 2 })}/${formatNumber(totalGrantedCredits, { abbreviate: true, decimals: 2 })}`}
+            value={t`${usedCreditsDisplay} / ${totalGrantedCreditsDisplay} available`}
           />
           <ProgressBar
             value={progressBarValue}
@@ -87,32 +95,19 @@ export const SettingsBillingCreditsSection = ({
             <>
               <HorizontalSeparator noMargin color={theme.background.tertiary} />
               <SettingsBillingLabelValueItem
-                label={t`Base Credits`}
-                value={formatNumber(grantedCredits, {
-                  abbreviate: true,
-                  decimals: 2,
-                })}
+                label={t`This ${intervalLabel}'s credits`}
+                value={grantedCreditsDisplay}
               />
               {rolloverCredits > 0 && (
                 <SettingsBillingLabelValueItem
-                  label={t`Rollover Credits`}
-                  value={formatNumber(rolloverCredits, {
-                    abbreviate: true,
-                    decimals: 2,
-                  })}
-                  tooltipText={t`Unused credits from the previous period. Expired at the end of the period.`}
-                  tooltipId="rollover-credits-info"
+                  label={t`Rolled over`}
+                  value={`+${rolloverCreditsDisplay}`}
                 />
               )}
-              {rolloverCredits > 0 && (
-                <SettingsBillingLabelValueItem
-                  label={t`Total Available`}
-                  value={formatNumber(totalGrantedCredits, {
-                    abbreviate: true,
-                    decimals: 2,
-                  })}
-                />
-              )}
+              <Info
+                accent="blue"
+                text={t`Unused credits roll over, up to 2× your plan's credits (max ${rolloverCapDisplay}).`}
+              />
             </>
           )}
         </SubscriptionInfoContainer>
