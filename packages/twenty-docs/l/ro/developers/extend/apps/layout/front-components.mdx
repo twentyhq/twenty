@@ -121,7 +121,7 @@ Importați-le din `twenty-sdk/command`:
 * **`Command`** — Rulează un callback asincron prin prop-ul `execute`.
 * **`CommandLink`** — Navighează către o rută a aplicației. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Deschide un modal de confirmare. Dacă utilizatorul confirmă, execută callback-ul `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Deschide o anumită pagină din panoul lateral. Props: `page`, `pageTitle`, `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Deschide o pagină din panoul lateral. Props depind de `page` — de ex. `ViewRecord` primește `recordId` + `objectNameSingular`, alte pagini primesc `pageTitle` + `pageIcon`.
 
 Iată un exemplu complet de componentă front-end headless care folosește `Command` pentru a rula o acțiune din meniul de comenzi:
 
@@ -379,11 +379,11 @@ Variabilele secrete (`isSecret: true`) **nu** sunt expuse componentelor de inter
 
 Următoarele variabile de sistem sunt întotdeauna disponibile prin `process.env`:
 
-| Variabilă                 | Descriere                                                                                                          |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `TWENTY_FUNCTIONS_URL`    | URL-ul de bază de la care sunt deservite funcțiile de logică HTTP ale aplicației tale (folosit de `RestApiClient`) |
-| `TWENTY_API_URL`          | URL-ul de bază al API-ului de bază Twenty                                                                          |
-| `TWENTY_APP_ACCESS_TOKEN` | Token cu durată scurtă, limitat la rolul aplicației dvs.                                                           |
+| Variabilă                 | Descriere                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | URL-ul de bază de la care sunt deservite funcțiile de logică HTTP ale aplicației tale |
+| `TWENTY_API_URL`          | URL-ul de bază al API-ului de bază Twenty                                             |
+| `TWENTY_APP_ACCESS_TOKEN` | Token cu durată scurtă, limitat la rolul aplicației dvs.                              |
 
 ## API-ul de comunicare cu gazda
 

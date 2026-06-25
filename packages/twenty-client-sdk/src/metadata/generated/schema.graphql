@@ -714,7 +714,7 @@ type Application {
   applicationRegistrationId: UUID
   canBeUninstalled: Boolean!
   defaultRoleId: String
-  settingsCustomTabFrontComponentId: UUID
+  settingsCustomTabFrontComponentId: UUID @deprecated(reason: "Custom settings tabs are no longer supported. This field is ignored.")
   defaultLogicFunctionRole: Role
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!

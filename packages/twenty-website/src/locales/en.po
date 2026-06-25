@@ -479,7 +479,7 @@ msgid "Add filters between workflow steps with conditions and only let data cont
 msgstr "Add filters between workflow steps with conditions and only let data continue if it meets the criteria you define."
 
 #. js-lingui-id: woOp+c
-#: src/sections/stepper/product-stepper-data.ts
+#: src/sections/product-stepper/data/product-stepper-data.ts
 msgid "Add objects and fields"
 msgstr "Add objects and fields"
 
@@ -497,6 +497,11 @@ msgstr "Add rich text directly inside layouts with the new dedicated field widge
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add Several emails for one contact"
 msgstr "Add Several emails for one contact"
+
+#. js-lingui-id: hWkQMS
+#: src/sections/product-feature/TasksVisual/components/AddTaskButton.tsx
+msgid "Add task"
+msgstr "Add task"
 
 #. js-lingui-id: Y2K3rp
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -838,7 +843,7 @@ msgid "Austria 🇦🇹"
 msgstr "Austria 🇦🇹"
 
 #. js-lingui-id: FFv0Vh
-#: src/sections/stepper/product-stepper-data.ts
+#: src/sections/product-stepper/data/product-stepper-data.ts
 msgid "Automation"
 msgstr "Automation"
 
@@ -933,7 +938,7 @@ msgid "Become a Twenty Partner — Apply"
 msgstr "Become a Twenty Partner — Apply"
 
 #. js-lingui-id: 83Wi6G
-#: src/sections/stepper/stepper.data.ts
+#: src/sections/home-stepper/data/stepper.data.ts
 msgid "Begin with production-grade *building blocks*"
 msgstr "Begin with production-grade *building blocks*"
 
@@ -1339,10 +1344,20 @@ msgstr "Community support"
 msgid "Comoros 🇰🇲"
 msgstr "Comoros 🇰🇲"
 
+#. js-lingui-id: 7i8j3G
+#: src/sections/product-feature/ImportVisual/data/import-mappings.ts
+msgid "Company"
+msgstr "Company"
+
 #. js-lingui-id: SHjhDC
 #: src/partner-application/partner-application-copy.ts
 msgid "Company or brand *"
 msgstr "Company or brand *"
+
+#. js-lingui-id: QOhkyl
+#: src/sections/product-feature/EmailsVisual/EmailsVisual.tsx
+msgid "Compose"
+msgstr "Compose"
 
 #. js-lingui-id: Fkb+LW
 #: src/sections/three-cards/ThreeCards.tsx
@@ -1350,7 +1365,7 @@ msgid "Compose your CRM and internal apps with a single extensibility toolkit."
 msgstr "Compose your CRM and internal apps with a single extensibility toolkit."
 
 #. js-lingui-id: kD7ZGH
-#: src/sections/stepper/stepper.data.ts
+#: src/sections/home-stepper/data/stepper.data.ts
 msgid "Compose your CRM and internal apps with a single extensibility toolkit. Data model, layout, and automation."
 msgstr "Compose your CRM and internal apps with a single extensibility toolkit. Data model, layout, and automation."
 
@@ -1405,7 +1420,7 @@ msgid "Context lives with the record."
 msgstr "Context lives with the record."
 
 #. js-lingui-id: mXovG/
-#: src/sections/stepper/stepper.data.ts
+#: src/sections/home-stepper/data/stepper.data.ts
 msgid "Continue iteration *without friction*"
 msgstr "Continue iteration *without friction*"
 
@@ -1438,6 +1453,11 @@ msgstr "Control without drag"
 #: src/case-studies/case-study-stories.ts
 msgid "Control without the overhead"
 msgstr "Control without the overhead"
+
+#. js-lingui-id: na8oL/
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Coordinated with the IT team."
+msgstr "Coordinated with the IT team."
 
 #. js-lingui-id: PiH3UR
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -1485,7 +1505,7 @@ msgid "Create a Kanban view on any object and streamline processes like recruitm
 msgstr "Create a Kanban view on any object and streamline processes like recruitment or onboarding."
 
 #. js-lingui-id: Xn2Nlq
-#: src/sections/stepper/product-stepper-data.ts
+#: src/sections/product-stepper/data/product-stepper-data.ts
 msgid "Create a workflow"
 msgstr "Create a workflow"
 
@@ -1704,6 +1724,11 @@ msgstr "Custom sidebar"
 msgid "Custom views"
 msgstr "Custom views"
 
+#. js-lingui-id: cLeXFe
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Customer Feedback"
+msgstr "Customer Feedback"
+
 #. js-lingui-id: 5xK1jE
 #: src/sections/helped/HelpedScene.tsx
 #: src/sections/case-study-catalog/CaseStudyCatalogGrid.tsx
@@ -1737,7 +1762,7 @@ msgid "Customers"
 msgstr "Customers"
 
 #. js-lingui-id: qqLY+j
-#: src/sections/stepper/ProductStepperContent.tsx
+#: src/sections/product-stepper/components/ProductStepperContent.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Customization"
 msgstr "Customization"
@@ -1788,7 +1813,7 @@ msgid "Data import"
 msgstr "Data import"
 
 #. js-lingui-id: 5cNMFz
-#: src/sections/stepper/product-stepper-data.ts
+#: src/sections/product-stepper/data/product-stepper-data.ts
 msgid "Data model"
 msgstr "Data model"
 
@@ -1811,6 +1836,11 @@ msgstr "Datetime Field"
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Deals that move themselves."
 msgstr "Deals that move themselves."
+
+#. js-lingui-id: 1BzJf0
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Dear Team, I am pleased to submit our proposal for your consideration. We have carefully reviewed your requirements."
+msgstr "Dear Team, I am pleased to submit our proposal for your consideration. We have carefully reviewed your requirements."
 
 #. js-lingui-id: H1UtjM
 #: src/partner-application/data/partner-country-options.ts
@@ -1906,9 +1936,14 @@ msgid "Dominican Republic 🇩🇴"
 msgstr "Dominican Republic 🇩🇴"
 
 #. js-lingui-id: pOLPPB
-#: src/sections/stepper/stepper.data.ts
+#: src/sections/home-stepper/data/stepper.data.ts
 msgid "Don't get locked into someone else's ecosystem. Twenty's developer experience looks like normal software, with local setup, real data, live testing, and no proprietary tooling."
 msgstr "Don't get locked into someone else's ecosystem. Twenty's developer experience looks like normal software, with local setup, real data, live testing, and no proprietary tooling."
+
+#. js-lingui-id: MI1emd
+#: src/sections/product-feature/TasksVisual/TasksVisual.tsx
+msgid "DONE"
+msgstr "DONE"
 
 #. js-lingui-id: HDR0en
 #: src/partner-application/data/partner-country-options.ts
@@ -2031,6 +2066,11 @@ msgstr "Email thread widgets and an inline reply composer make it easier to work
 msgid "Email/calendar activity on each record"
 msgstr "Email/calendar activity on each record"
 
+#. js-lingui-id: BXEcos
+#: src/sections/product-feature/ImportVisual/data/import-mappings.ts
+msgid "Emails"
+msgstr "Emails"
+
 #. js-lingui-id: XGd8Wo
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Emails & Calendar"
@@ -2098,7 +2138,7 @@ msgid "Enhanced Timeline"
 msgstr "Enhanced Timeline"
 
 #. js-lingui-id: Ijh+h+
-#: src/sections/stepper/stepper.data.ts
+#: src/sections/home-stepper/data/stepper.data.ts
 msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 msgstr "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 
@@ -2192,6 +2232,11 @@ msgstr "Everything updates in real time, with AI chat always ready to help you m
 #: src/sections/product-feature/ProductFeature.tsx
 msgid "Everything you need, *out of the box*"
 msgstr "Everything you need, *out of the box*"
+
+#. js-lingui-id: YL/KFo
+#: src/sections/product-feature/ImportVisual/components/MappingRow.tsx
+msgid "ex: {example}"
+msgstr "ex: {example}"
 
 #. js-lingui-id: 2NGXKo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2409,6 +2454,16 @@ msgstr "Focus on the use case, not the plumbing"
 msgid "Folder/Label import"
 msgstr "Folder/Label import"
 
+#. js-lingui-id: qNRBdW
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Follow up on pricing"
+msgstr "Follow up on pricing"
+
+#. js-lingui-id: Fj3URJ
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Follow-up on Discussion"
+msgstr "Follow-up on Discussion"
+
 #. js-lingui-id: qwJuVW
 #: src/sections/footer/FooterNav.tsx
 msgid "Footer"
@@ -2587,7 +2642,7 @@ msgid "Gmail integration"
 msgstr "Gmail integration"
 
 #. js-lingui-id: n8waaJ
-#: src/sections/stepper/ProductStepperContent.tsx
+#: src/sections/product-stepper/components/ProductStepperContent.tsx
 msgid "Go the extra mile *with no-code*"
 msgstr "Go the extra mile *with no-code*"
 
@@ -2666,6 +2721,11 @@ msgstr "Halftone generator"
 msgid "Halftone Generator | Twenty"
 msgstr "Halftone Generator | Twenty"
 
+#. js-lingui-id: nYmi60
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Hello, I wanted to share some positive feedback from our recent customer satisfaction survey."
+msgstr "Hello, I wanted to share some positive feedback from our recent customer satisfaction survey."
+
 #. js-lingui-id: c3XJ18
 #: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 #: src/sections/footer/footer.data.ts
@@ -2677,10 +2737,20 @@ msgstr "Help"
 msgid "Help center"
 msgstr "Help center"
 
+#. js-lingui-id: xJnMnj
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Hey team, I've been in touch with Notion and Figma about potential integrations."
+msgstr "Hey team, I've been in touch with Notion and Figma about potential integrations."
+
 #. js-lingui-id: LiWOgh
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Hey, I'm interested in meeting. Here's my project:"
 msgstr "Hey, I'm interested in meeting. Here's my project:"
+
+#. js-lingui-id: EB4Pk9
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Hi, I wanted to follow up on our conversation from last week regarding the new initiative."
+msgstr "Hi, I wanted to follow up on our conversation from last week regarding the new initiative."
 
 #. js-lingui-id: EhWatX
 #: src/app-preview/terminal/diff/DiffPill.tsx
@@ -2854,6 +2924,11 @@ msgstr "Import V2"
 msgid "Import your data with field mapping, including relations. Export anytime — your data is always yours."
 msgstr "Import your data with field mapping, including relations. Export anytime — your data is always yours."
 
+#. js-lingui-id: wsKZ+v
+#: src/sections/product-feature/ImportVisual/ImportVisual.tsx
+msgid "Imported data"
+msgstr "Imported data"
+
 #. js-lingui-id: cCwGqi
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Improved Onboarding Experience"
@@ -2878,6 +2953,11 @@ msgstr "In production."
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "In-app preview for supported file types (when enabled)"
 msgstr "In-app preview for supported file types (when enabled)"
+
+#. js-lingui-id: Gp4Yi6
+#: src/sections/product-feature/EmailsVisual/EmailsVisual.tsx
+msgid "Inbox"
+msgstr "Inbox"
 
 #. js-lingui-id: 3XP8Lk
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -3059,6 +3139,11 @@ msgstr "Japan 🇯🇵"
 msgid "Japanese"
 msgstr "Japanese"
 
+#. js-lingui-id: 27z+FV
+#: src/sections/product-feature/ImportVisual/data/import-mappings.ts
+msgid "Job Title"
+msgstr "Job Title"
+
 #. js-lingui-id: Lsf2+K
 #: src/partner-application/partner-application-copy.ts
 msgid "Join our ecosystem and help businesses take control of their customer data with open-source primitives."
@@ -3203,7 +3288,7 @@ msgid "Latvia 🇱🇻"
 msgstr "Latvia 🇱🇻"
 
 #. js-lingui-id: rdU729
-#: src/sections/stepper/product-stepper-data.ts
+#: src/sections/product-stepper/data/product-stepper-data.ts
 msgid "Layout"
 msgstr "Layout"
 
@@ -3326,6 +3411,11 @@ msgstr "Lock-in"
 #: src/sections/menu/Menu.tsx
 msgid "Log in"
 msgstr "Log in"
+
+#. js-lingui-id: 8xX9yd
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Loop in legal before sending."
+msgstr "Loop in legal before sending."
 
 #. js-lingui-id: KPLAuI
 #: src/case-studies/case-study-catalog.ts
@@ -3583,6 +3673,7 @@ msgid "Myanmar 🇲🇲"
 msgstr "Myanmar 🇲🇲"
 
 #. js-lingui-id: 6YtxFj
+#: src/sections/product-feature/ImportVisual/data/import-mappings.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Name"
 msgstr "Name"
@@ -3608,7 +3699,7 @@ msgid "Navigation menu"
 msgstr "Navigation menu"
 
 #. js-lingui-id: LfNsfa
-#: src/sections/stepper/ProductStepperContent.tsx
+#: src/sections/product-stepper/components/ProductStepperContent.tsx
 msgid "Need a quick change? Skip the engineering ticket. Customize your workspace in minutes."
 msgstr "Need a quick change? Skip the engineering ticket. Customize your workspace in minutes."
 
@@ -3976,6 +4067,11 @@ msgstr "Partner testimonials"
 msgid "Partners"
 msgstr "Partners"
 
+#. js-lingui-id: /Zw40D
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Partnerships - Q4 Strategy"
+msgstr "Partnerships - Q4 Strategy"
+
 #. js-lingui-id: 9yo8NN
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Paste the key and click Activate."
@@ -4062,6 +4158,11 @@ msgstr "Portugal 🇵🇹"
 msgid "Portuguese"
 msgstr "Portuguese"
 
+#. js-lingui-id: O1WMgS
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Prepare onboarding deck"
+msgstr "Prepare onboarding deck"
+
 #. js-lingui-id: LZoO8F
 #: src/sections/testimonials/TestimonialsCarousel.tsx
 #: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
@@ -4144,6 +4245,11 @@ msgstr "Project minimum"
 #: src/case-studies/case-study-catalog.ts
 msgid "Proposal automation"
 msgstr "Proposal automation"
+
+#. js-lingui-id: EFk+4q
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Proposal Submission"
+msgstr "Proposal Submission"
 
 #. js-lingui-id: a24q7E
 #: src/sections/problem/problem.data.ts
@@ -4522,6 +4628,11 @@ msgstr "Scale without *breaking operations*"
 msgid "Scale without breaking operations"
 msgstr "Scale without breaking operations"
 
+#. js-lingui-id: sQOyAb
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Schedule security review"
+msgstr "Schedule security review"
+
 #. js-lingui-id: vk6sVR
 #: src/partner-application/partner-application-copy.ts
 msgid "Search a country…"
@@ -4649,6 +4760,16 @@ msgstr "Selfhosting"
 #: src/app-preview/terminal/TerminalSendButton.tsx
 msgid "Send message"
 msgstr "Send message"
+
+#. js-lingui-id: C27JUE
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Send NDA"
+msgstr "Send NDA"
+
+#. js-lingui-id: uW79Hr
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Send the updated annual quote."
+msgstr "Send the updated annual quote."
 
 #. js-lingui-id: D50Vyu
 #: src/partner-application/data/partner-country-options.ts
@@ -4878,7 +4999,7 @@ msgstr ""
 "without credit card."
 
 #. js-lingui-id: ThcPyu
-#: src/sections/stepper/stepper.data.ts
+#: src/sections/home-stepper/data/stepper.data.ts
 msgid "Stay in control with our *open-source software*"
 msgstr "Stay in control with our *open-source software*"
 
@@ -4995,7 +5116,7 @@ msgid "Tagalog"
 msgstr "Tagalog"
 
 #. js-lingui-id: 9M02G5
-#: src/sections/stepper/product-stepper-data.ts
+#: src/sections/product-stepper/data/product-stepper-data.ts
 msgid "Tailor record pages, menus, and views"
 msgstr "Tailor record pages, menus, and views"
 
@@ -5340,6 +5461,11 @@ msgstr "To enhance privacy, you can now add specific email addresses to a blockl
 msgid "To maintain the simplicity of Twenty, we are introducing \"Advanced Settings.\" This option consolidates all settings intended for advanced use cases, often preferred by developers, such as API and function settings or security settings."
 msgstr "To maintain the simplicity of Twenty, we are introducing \"Advanced Settings.\" This option consolidates all settings intended for advanced use cases, often preferred by developers, such as API and function settings or security settings."
 
+#. js-lingui-id: aeKe9G
+#: src/sections/product-feature/TasksVisual/TasksVisual.tsx
+msgid "TODO"
+msgstr "TODO"
+
 #. js-lingui-id: DeTupk
 #: src/partner-application/data/partner-country-options.ts
 msgid "Togo 🇹🇬"
@@ -5513,6 +5639,11 @@ msgstr "Twenty Customers — How Modern Teams Run Their CRM"
 #: src/case-studies/case-study-stories.ts
 msgid "Twenty delivers on what CRMs should have always been: fairly priced software with a fully modular and customizable model, a clean and modern UI, granular permissions, automations, enterprise features. A compelling solution with high potential to rightfully disrupt the CRM market."
 msgstr "Twenty delivers on what CRMs should have always been: fairly priced software with a fully modular and customizable model, a clean and modern UI, granular permissions, automations, enterprise features. A compelling solution with high potential to rightfully disrupt the CRM market."
+
+#. js-lingui-id: JnaRPe
+#: src/sections/product-feature/ImportVisual/ImportVisual.tsx
+msgid "Twenty fields"
+msgstr "Twenty fields"
 
 #. js-lingui-id: fwep/o
 #: src/case-studies/case-study-stories.ts
@@ -5726,6 +5857,11 @@ msgstr "US"
 #: src/partner-application/data/partner-country-options.ts
 msgid "USA 🇺🇸"
 msgstr "USA 🇺🇸"
+
+#. js-lingui-id: LHNoHI
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Use the Q3 template."
+msgstr "Use the Q3 template."
 
 #. js-lingui-id: Roaswv
 #: src/sections/menu/menu.data.ts
