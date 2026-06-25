@@ -1,12 +1,21 @@
 import { conditionalAvailabilityTransformPlugin } from '@/cli/utilities/build/common/conditional-availability/conditional-availability-transform-plugin';
-import { pathExists, remove } from '@/cli/utilities/file/fs-utils';
+import { pathExists } from '@/cli/utilities/file/fs-utils';
 import { type ValidationResult } from '@/sdk/define';
 import * as esbuild from 'esbuild';
 import { createRequire } from 'module';
-import { mkdtemp, writeFile } from 'node:fs/promises';
-import os from 'os';
+import vm from 'node:vm';
 import path from 'path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+
+// Signature of the function produced by vm.compileFunction, matching Node's
+// CommonJS module wrapper parameters.
+type CompiledModuleWrapper = (
+  exports: Record<string, unknown>,
+  require: NodeRequire,
+  module: { exports: Record<string, unknown> },
+  filename: string,
+  dirname: string,
+) => void;
 
 const MANIFEST_MOCK_MODULES = [
   'twenty-sdk/ui',
@@ -86,20 +95,29 @@ const loadModule = async ({
 
   const code = result.outputFiles[0].text;
 
-  const tempDir = await mkdtemp(path.join(os.tmpdir(), 'twenty-manifest-'));
-  const tempFile = path.join(tempDir, 'module.cjs');
+  // Evaluate the bundled CJS in memory instead of writing it to disk and routing
+  // it through Node's global require cache. esbuild runs with `bundle: true`, so
+  // the output is self-contained (only Node builtins remain as `require` calls):
+  // there is nothing to leak because `vm.compileFunction` never populates
+  // `Module._cache`, so memory stays bounded across dev-mode rebuilds. As a bonus,
+  // stack traces point at the real source file rather than a random temp path.
+  const compiledWrapper = vm.compileFunction(
+    code,
+    ['exports', 'require', 'module', '__filename', '__dirname'],
+    { filename: filePath },
+  ) as unknown as CompiledModuleWrapper;
 
-  try {
-    await writeFile(tempFile, code);
+  const moduleShim: { exports: Record<string, unknown> } = { exports: {} };
 
-    return appRequire(tempFile) as Record<string, unknown>;
-  } finally {
-    // Evict the bundled module from the require cache, otherwise every dev-mode
-    // rebuild leaks one fully-bundled module per entity file into Module._cache
-    // (each under a unique mkdtemp path), eventually exhausting the heap.
-    delete appRequire.cache[tempFile];
-    await remove(tempDir);
-  }
+  compiledWrapper(
+    moduleShim.exports,
+    appRequire,
+    moduleShim,
+    filePath,
+    path.dirname(filePath),
+  );
+
+  return moduleShim.exports;
 };
 
 const extractDefaultConfigFromModuleOrThrow = <T>(
